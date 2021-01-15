@@ -1,0 +1,9 @@
+{
+  "short_name": "Variant Monitor",
+  "name": "Variant Monitor",
+  "icons": [],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#ffffff"
+}
