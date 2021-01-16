@@ -28,7 +28,6 @@ export class VariantDashboard extends React.Component {
   componentDidUpdate(prevProps, prevState, snapshot) {
     // TODO Use a better equality check for the variant
     if (prevProps.country !== this.props.country || prevProps.variant !== this.props.variant) {
-      console.log("New plot", this.props);
       this.updateView();
     }
   }

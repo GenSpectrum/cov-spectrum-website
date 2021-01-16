@@ -3,6 +3,7 @@ import { NewVariantPage } from "./NewVariantPage";
 import { Col, Container, Row, Tab, Tabs } from "react-bootstrap";
 import { VariantDashboard } from "./VariantDashboard";
 import { KnownVariantsList } from "./KnownVariantsList";
+import { InternationalComparison } from "./InternationalComparison";
 
 
 export class MainPage extends React.Component {
@@ -39,12 +40,18 @@ export class MainPage extends React.Component {
             <Col>
               <Tabs defaultActiveKey="knownVariants" id="variantList" transition={false}>
                 <Tab eventKey="knownVariants" title="Known Variants">
-                  <KnownVariantsList onVariantAndCountrySelect={e =>
-                    this.handleVariantAndCountrySelect(e, 0.8)}/>
+                  <div style={{ marginTop: '20px' }}>
+                    <KnownVariantsList
+                      onVariantAndCountrySelect={e => this.handleVariantAndCountrySelect(e, 0.8)}
+                    />
+                  </div>
                 </Tab>
                 <Tab eventKey="newVariants" title="Find New Variants">
-                  <NewVariantPage onVariantAndCountrySelect={e =>
-                    this.handleVariantAndCountrySelect(e, 1)}/>
+                  <div style={{ marginTop: '20px' }}>
+                    <NewVariantPage
+                      onVariantAndCountrySelect={e => this.handleVariantAndCountrySelect(e, 1)}
+                    />
+                  </div>
                 </Tab>
               </Tabs>
             </Col>
@@ -53,13 +60,19 @@ export class MainPage extends React.Component {
           {
             this.state.variantDashboard.country && this.state.variantDashboard.variant ?
               <>
-                <hr />
+                <hr/>
                 <VariantDashboard
                   country={this.state.variantDashboard.country}
                   variant={this.state.variantDashboard.variant}
                   matchPercentage={this.state.variantDashboard.matchPercentage}
                 />
-              </>:
+                <hr/>
+                <InternationalComparison
+                  country={this.state.variantDashboard.country}
+                  variant={this.state.variantDashboard.variant}
+                  matchPercentage={this.state.variantDashboard.matchPercentage}
+                />
+              </> :
               null
           }
 
