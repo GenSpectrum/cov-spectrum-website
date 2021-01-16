@@ -4,7 +4,6 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import { BackendService } from "./BackendService";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { NewVariantTable } from "./NewVariantTable";
-import { VariantDashboard } from "./VariantDashboard";
 
 
 export class NewVariantPage extends React.Component {
@@ -56,12 +55,10 @@ export class NewVariantPage extends React.Component {
 
 
   handleVariantSelect(variant) {
-    this.setState({
-      variantDashboard: {
-        variant,
-        country: this.state.table.country
-      }
-    });
+    this.props.onVariantAndCountrySelect({
+      variant,
+      country: this.state.table.country
+    })
   }
 
 
@@ -119,26 +116,20 @@ export class NewVariantPage extends React.Component {
           </Col>
         </Row>
 
-        <hr/>
-
         {
           this.state.table.country && this.state.table.week ?
-            <NewVariantTable
-              country={this.state.table.country}
-              yearWeek={this.state.table.week}
-              onVariantSelect={this.handleVariantSelect}
-            /> :
+            <>
+              <hr />
+              <NewVariantTable
+                country={this.state.table.country}
+                yearWeek={this.state.table.week}
+                onVariantSelect={this.handleVariantSelect}
+              />
+            </>:
             null
         }
 
-        {
-          this.state.variantDashboard.country && this.state.variantDashboard.variant ?
-            <VariantDashboard
-              country={this.state.variantDashboard.country}
-              variant={this.state.variantDashboard.variant}
-            /> :
-            null
-        }
+
 
       </Container>
     );
