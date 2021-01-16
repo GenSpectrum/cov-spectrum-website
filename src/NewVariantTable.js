@@ -16,7 +16,6 @@ export class NewVariantTable extends React.Component {
 
 
   componentDidMount() {
-    console.log(1);
     this.updateView();
   }
 
@@ -55,12 +54,20 @@ export class NewVariantTable extends React.Component {
             <tbody>
             {
               this.state.data.map(d => (
-                <tr>
+                <tr key={d.variant.mutations.join(',')}>
                   <td>{d.variant.mutations.join(',')}</td>
                   <td>{d.t1Count}</td>
                   <td>{d.t1Proportion.toFixed(4)} (+ {d.absoluteDifferenceProportion.toFixed(4)})</td>
                   <td>{d.relativeDifferenceProportion?.toFixed(4)}</td>
-                  <td><Button variant="outline-secondary" size="sm">Show Details</Button></td>
+                  <td>
+                    <Button
+                      onClick={() => {
+                        this.props.onVariantSelect(d.variant);
+                      }}
+                      variant="outline-secondary"
+                      size="sm"
+                    >Show Details</Button>
+                  </td>
                 </tr>
               ))
             }

@@ -4,6 +4,7 @@ import { Typeahead } from 'react-bootstrap-typeahead';
 import { BackendService } from "./BackendService";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { NewVariantTable } from "./NewVariantTable";
+import { VariantDashboard } from "./VariantDashboard";
 
 
 export class NewVariantPage extends React.Component {
@@ -16,8 +17,14 @@ export class NewVariantPage extends React.Component {
       table: {
         country: null,
         week: null
+      },
+      variantDashboard: {
+        variant: null,
+        country: null
       }
     };
+
+    this.handleVariantSelect = this.handleVariantSelect.bind(this);
   }
 
 
@@ -48,6 +55,16 @@ export class NewVariantPage extends React.Component {
   }
 
 
+  handleVariantSelect(variant) {
+    this.setState({
+      variantDashboard: {
+        variant,
+        country: this.state.table.country
+      }
+    });
+  }
+
+
   render() {
     return (
       <Container fluid="md">
@@ -66,7 +83,6 @@ export class NewVariantPage extends React.Component {
                           selectedCountry = selected[0];
                         }
                         this.setState({ selectedCountry });
-                        console.log(selectedCountry);
                       }}
                       options={this.state.allCountries}
                     />
@@ -81,7 +97,6 @@ export class NewVariantPage extends React.Component {
                 <Form.Label>Week</Form.Label>
                 <Form.Control value={this.state.selectedWeek} as="select" onChange={(e) => {
                   this.setState({ selectedWeek: e.target.value });
-                  console.log(e.target.value)
                 }}>
                   {
                     this.state.weeks.map(week => <option key={week}>{week}</option>)
@@ -108,9 +123,23 @@ export class NewVariantPage extends React.Component {
 
         {
           this.state.table.country && this.state.table.week ?
-            <NewVariantTable country={this.state.table.country} yearWeek={this.state.table.week}/> :
+            <NewVariantTable
+              country={this.state.table.country}
+              yearWeek={this.state.table.week}
+              onVariantSelect={this.handleVariantSelect}
+            /> :
             null
         }
+
+        {
+          this.state.variantDashboard.country && this.state.variantDashboard.variant ?
+            <VariantDashboard
+              country={this.state.variantDashboard.country}
+              variant={this.state.variantDashboard.variant}
+            /> :
+            null
+        }
+
       </Container>
     );
   }
