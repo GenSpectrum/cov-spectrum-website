@@ -1,4 +1,4 @@
-const host = '//localhost:30000';
+const host = process.env.REACT_APP_SERVER_HOST;
 
 
 export class BackendService {
