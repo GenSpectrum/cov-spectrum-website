@@ -55,7 +55,7 @@ export class NewVariantTable extends React.Component {
               {
                 this.state.data.map(d => (
                   <tr key={d.variant.mutations.join(',')}>
-                    <td>{d.variant.mutations.join(',')}</td>
+                    <td style={{ maxWidth: '400px', lineBreak: 'auto' }}>{d.variant.mutations.join(', ')}</td>
                     <td>{d.t1Count}</td>
                     <td>{d.t1Proportion.toFixed(4)} (+{d.absoluteDifferenceProportion.toFixed(4)})</td>
                     <td>{d.relativeDifferenceProportion?.toFixed(4)}</td>

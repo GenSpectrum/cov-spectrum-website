@@ -3,6 +3,7 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import './App.css';
 import { MainPage } from "./MainPage";
 import { Header } from "./Header";
+import { Footer } from "./Footer";
 
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
     <div className="App">
       <Header />
       <MainPage/>
+      <Footer/>
     </div>
   );
 }
