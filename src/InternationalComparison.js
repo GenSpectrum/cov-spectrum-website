@@ -5,6 +5,8 @@ import { BackendService } from "./BackendService";
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Table from "react-bootstrap/Table";
 import { Utils } from "./Utils";
+import { Link } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 const Plotly = window.Plotly;
 const Plot = createPlotlyComponent(Plotly);
@@ -27,7 +29,8 @@ export class InternationalComparison extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     // TODO Use a better equality check for the variant
-    if (prevProps.variant !== this.props.variant || prevProps.country !== this.props.country) {
+    if (prevProps.variant !== this.props.variant || prevProps.country !== this.props.country
+      || prevProps.matchPercentage !== this.props.matchPercentage) {
       this.updateView();
     }
   }
@@ -39,7 +42,7 @@ export class InternationalComparison extends React.Component {
 
 
   async loadInternationalTimeDistribution() {
-    this.state.distribution = null;
+    this.setState({ distribution: null });
     const mutationsString = this.props.variant.mutations.join(',');
     const endpoint = '/variant/international-time-distribution';
     const distribution
@@ -86,13 +89,23 @@ export class InternationalComparison extends React.Component {
       }));
     });
 
-
-    console.log(aggregated, countryData);
-
     return (<>
-      <h3>
-        {this.props.variant.name ?? 'Unnamed Variant'} - International Comparison
-      </h3>
+      <div style={{ display: 'flex' }}>
+        <h3 style={{ flexGrow: 1 }}>
+          {this.props.variant.name ?? 'Unnamed Variant'} - International Comparison
+        </h3>
+        <div>
+          <Link
+            to={'/sample?mutations=' + this.props.variant.mutations.join(',') +
+            '&matchPercentage=' + this.props.matchPercentage}
+          >
+            <Button
+              variant="outline-dark"
+              size="sm"
+            >Show all samples</Button>
+          </Link>
+        </div>
+      </div>
       {
         plotData ? (<>
             <Plot
@@ -168,16 +181,29 @@ export class InternationalComparison extends React.Component {
                   <th>Total Variant Sequences</th>
                   <th>First seq. found at</th>
                   <th>Last seq. found at</th>
+                  <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 {
                   countryData.map(c => (
-                    <tr>
+                    <tr key={c.country}>
                       <td>{c.country}</td>
                       <td>{c.count}</td>
                       <td>{c.first.yearWeek}</td>
                       <td>{c.last.yearWeek}</td>
+                      <td>
+                        <Link
+                          to={'/sample?mutations=' + this.props.variant.mutations.join(',') +
+                          '&country=' + c.country +
+                          '&matchPercentage=' + this.props.matchPercentage}
+                        >
+                          <Button
+                            variant="outline-dark"
+                            size="sm"
+                          >Show samples</Button>
+                        </Link>
+                      </td>
                     </tr>
                   ))
                 }

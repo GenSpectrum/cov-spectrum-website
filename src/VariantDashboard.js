@@ -3,7 +3,8 @@ import { BackendService } from "./BackendService";
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
 import createPlotlyComponent from 'react-plotly.js/factory';
-import { Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import { Link } from "react-router-dom";
 
 const Plotly = window.Plotly;
 const Plot = createPlotlyComponent(Plotly);
@@ -27,7 +28,8 @@ export class VariantDashboard extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     // TODO Use a better equality check for the variant
-    if (prevProps.country !== this.props.country || prevProps.variant !== this.props.variant) {
+    if (prevProps.country !== this.props.country || prevProps.variant !== this.props.variant
+      || prevProps.matchPercentage !== this.props.matchPercentage) {
       this.updateView();
     }
   }
@@ -63,9 +65,24 @@ export class VariantDashboard extends React.Component {
 
   render() {
     return (<>
-      <h3>
-        {this.props.variant.name ?? 'Unnamed Variant'} in {this.props.country}
-      </h3>
+      <div style={{ display: 'flex' }}>
+        <h3 style={{ flexGrow: 1 }}>
+          {this.props.variant.name ?? 'Unnamed Variant'} in {this.props.country}
+        </h3>
+        <div>
+          <Link
+            to={'/sample?mutations=' + this.props.variant.mutations.join(',') +
+            '&country=' + this.props.country +
+            '&matchPercentage=' + this.props.matchPercentage}
+          >
+            <Button
+              variant="outline-dark"
+              size="sm"
+            >Show samples</Button>
+          </Link>
+        </div>
+      </div>
+
 
       <p><b>Mutations:</b> {this.props.variant.mutations.join(', ')}</p>
 
