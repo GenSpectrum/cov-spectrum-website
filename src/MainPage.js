@@ -4,6 +4,7 @@ import { Col, Container, Row, Tab, Tabs } from "react-bootstrap";
 import { VariantDashboard } from "./VariantDashboard";
 import { KnownVariantsList } from "./KnownVariantsList";
 import { InternationalComparison } from "./InternationalComparison";
+import { MutationLookup } from "./MutationLookup";
 
 
 export class MainPage extends React.Component {
@@ -50,6 +51,13 @@ export class MainPage extends React.Component {
                   <div style={{ marginTop: '20px' }}>
                     <NewVariantPage
                       onVariantAndCountrySelect={e => this.handleVariantAndCountrySelect(e, 1)}
+                    />
+                  </div>
+                </Tab>
+                <Tab eventKey="lookupMutations" title="Lookup Mutations">
+                  <div style={{ marginTop: '20px' }}>
+                    <MutationLookup
+                      onVariantAndCountrySelect={this.handleVariantAndCountrySelect}
                     />
                   </div>
                 </Tab>
