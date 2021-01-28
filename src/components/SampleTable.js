@@ -1,5 +1,5 @@
 import React from "react";
-import { BackendService } from "./BackendService";
+import { BackendService } from "../services/BackendService";
 import { Col, Container, Row } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 

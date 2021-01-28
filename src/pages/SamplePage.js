@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { SampleTable } from "./SampleTable";
+import { SampleTable } from "../components/SampleTable";
 
 
 function useQuery() {

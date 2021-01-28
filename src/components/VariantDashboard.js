@@ -1,5 +1,5 @@
 import React from "react";
-import { BackendService } from "./BackendService";
+import { BackendService } from "../services/BackendService";
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
 import createPlotlyComponent from 'react-plotly.js/factory';

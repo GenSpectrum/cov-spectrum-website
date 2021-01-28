@@ -1,12 +1,12 @@
 import React from 'react';
 import Form from "react-bootstrap/Form";
 import { Typeahead } from 'react-bootstrap-typeahead';
-import { BackendService } from "./BackendService";
+import { BackendService } from "../services/BackendService";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { NewVariantTable } from "./NewVariantTable";
 
 
-export class NewVariantPage extends React.Component {
+export class NewVariantLookup extends React.Component {
 
   constructor(props) {
     super(props);

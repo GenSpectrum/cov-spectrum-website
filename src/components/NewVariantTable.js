@@ -1,6 +1,6 @@
 import React from "react";
 import Table from "react-bootstrap/Table";
-import { BackendService } from "./BackendService";
+import { BackendService } from "../services/BackendService";
 import { Button } from "react-bootstrap";
 
 

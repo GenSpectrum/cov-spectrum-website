@@ -3,7 +3,7 @@ import { Button } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 import Form from "react-bootstrap/Form";
 import { Typeahead } from "react-bootstrap-typeahead";
-import { BackendService } from "./BackendService";
+import { BackendService } from "../services/BackendService";
 
 
 export class KnownVariantsList extends React.Component {

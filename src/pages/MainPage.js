@@ -1,10 +1,10 @@
 import React from "react";
-import { NewVariantPage } from "./NewVariantPage";
+import { NewVariantLookup } from "../components/NewVariantLookup";
 import { Col, Container, Row, Tab, Tabs } from "react-bootstrap";
-import { VariantDashboard } from "./VariantDashboard";
-import { KnownVariantsList } from "./KnownVariantsList";
-import { InternationalComparison } from "./InternationalComparison";
-import { MutationLookup } from "./MutationLookup";
+import { VariantDashboard } from "../components/VariantDashboard";
+import { KnownVariantsList } from "../components/KnownVariantsList";
+import { InternationalComparison } from "../components/InternationalComparison";
+import { MutationLookup } from "../components/MutationLookup";
 
 
 export class MainPage extends React.Component {
@@ -49,7 +49,7 @@ export class MainPage extends React.Component {
                 </Tab>
                 <Tab eventKey="newVariants" title="Find New Variants">
                   <div style={{ marginTop: '20px' }}>
-                    <NewVariantPage
+                    <NewVariantLookup
                       onVariantAndCountrySelect={e => this.handleVariantAndCountrySelect(e, 1)}
                     />
                   </div>

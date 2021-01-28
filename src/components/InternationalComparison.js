@@ -1,10 +1,10 @@
 import React from "react";
-import { BackendService } from "./BackendService";
+import { BackendService } from "../services/BackendService";
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
 import createPlotlyComponent from 'react-plotly.js/factory';
 import Table from "react-bootstrap/Table";
-import { Utils } from "./Utils";
+import { Utils } from "../services/Utils";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 
