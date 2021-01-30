@@ -44,7 +44,7 @@ export class InternationalComparison extends React.Component {
   async loadInternationalTimeDistribution() {
     this.setState({ distribution: null });
     const mutationsString = this.props.variant.mutations.join(',');
-    const endpoint = '/variant/international-time-distribution';
+    const endpoint = '/plot/variant/international-time-distribution';
     const distribution
       = await BackendService.get(`${endpoint}?mutations=${mutationsString}` +
       `&matchPercentage=${this.props.matchPercentage}`);
