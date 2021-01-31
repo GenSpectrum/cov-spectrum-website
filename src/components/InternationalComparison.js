@@ -1,15 +1,11 @@
 import React from "react";
 import { BackendService } from "../services/BackendService";
-
-// See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
-import createPlotlyComponent from 'react-plotly.js/factory';
 import Table from "react-bootstrap/Table";
 import { Utils } from "../services/Utils";
 import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
-
-const Plotly = window.Plotly;
-const Plot = createPlotlyComponent(Plotly);
+import { VariantInternationalComparisonPlot } from "../widgets/VariantInternationalComparisonPlot";
+import { WidgetWrapper } from "./WidgetWrapper";
 
 
 export class InternationalComparison extends React.Component {
@@ -53,20 +49,6 @@ export class InternationalComparison extends React.Component {
 
 
   render() {
-    const countriesToPlot = new Set(['United Kingdom', 'Denmark', 'Switzerland', this.props.country]);
-
-    const plotData = this.state.distribution?.filter(d => countriesToPlot.has(d.x.country));
-
-    // TODO Remove hard-coding..
-    const colorMap = [
-      { target: 'United Kingdom', value: { marker: { color: 'black' } } },
-      { target: 'Denmark', value: { marker: { color: 'green' } } },
-      { target: 'Switzerland', value: { marker: { color: 'red' } } }
-    ];
-    if (!['United Kingdom', 'Denmark', 'Switzerland'].includes(this.props.country)) {
-      colorMap.push({ target: this.props.country, value: { marker: { color: 'blue' } } });
-    }
-
     const aggregated = Utils.groupBy(this.state.distribution, d => d.x.country);
     const countryData = [];
     aggregated?.forEach((value, name) => {
@@ -89,6 +71,12 @@ export class InternationalComparison extends React.Component {
       }));
     });
 
+    const plotData = {
+      country: this.props.country,
+      matchPercentage: this.props.matchPercentage,
+      mutations: this.props.variant.mutations
+    };
+
     return (<>
       <div style={{ display: 'flex' }}>
         <h3 style={{ flexGrow: 1 }}>
@@ -106,73 +94,13 @@ export class InternationalComparison extends React.Component {
           </Link>
         </div>
       </div>
+      <div style={{ height: '500px' }}>
+        <WidgetWrapper shareUrl={VariantInternationalComparisonPlot.dataToUrl(plotData)}>
+          <VariantInternationalComparisonPlot data={plotData} />
+        </WidgetWrapper>
+      </div>
       {
-        plotData ? (<>
-            <Plot
-              style={{ width: '100%' }}
-              data={[
-                {
-                  type: 'scatter',
-                  mode: 'lines+markers',
-                  x: plotData.map(d => d.x.week.firstDayInWeek),
-                  y: plotData.map(d => (d.y.proportion.value * 100).toFixed(2)),
-                  transforms: [{
-                    type: 'groupby',
-                    groups: plotData.map(d => d.x.country),
-                    styles: colorMap
-                  }]
-                },
-                {
-                  type: 'scatter',
-                  mode: 'lines',
-                  x: plotData.map(d => d.x.week.firstDayInWeek),
-                  y: plotData.map(d => (d.y.proportion.ciLower * 100).toFixed(2)),
-                  line: {
-                    dash: 'dash',
-                    width: 2
-                  },
-                  transforms: [{
-                    type: 'groupby',
-                    groups: plotData.map(d => d.x.country),
-                    styles: colorMap
-                  }],
-                  showlegend: false
-                },
-                {
-                  type: 'scatter',
-                  mode: 'lines',
-                  x: plotData.map(d => d.x.week.firstDayInWeek),
-                  y: plotData.map(d => (d.y.proportion.ciUpper * 100).toFixed(2)),
-                  line: {
-                    dash: 'dash',
-                    width: 2
-                  },
-                  transforms: [{
-                    type: 'groupby',
-                    groups: plotData.map(d => d.x.country),
-                    styles: colorMap
-                  }],
-                  showlegend: false
-                }
-              ]}
-              layout={{
-                height: 500,
-                title: '',
-                yaxis: {
-                  title: 'Estimated Percentage'
-                },
-                legend: {
-                  x: 0,
-                  xanchor: 'left',
-                  y: 1
-                }
-              }}
-              config={{
-                displaylogo: false,
-                modeBarButtons: [["zoom2d", "toImage", "resetScale2d", "pan2d"]]
-              }}
-            />
-
+        countryData ? (<>
             <div style={{ maxHeight: '400px', overflow: 'auto' }}>
               <Table striped bordered hover>
                 <thead>
