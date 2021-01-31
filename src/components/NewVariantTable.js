@@ -31,7 +31,8 @@ export class NewVariantTable extends React.Component {
     this.setState({ data: null });
     const [year, week] = this.props.yearWeek.split('-');
 
-    const data = await BackendService.get(`/variant?year=${year}&week=${week}&country=${this.props.country}`);
+    const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${this.props.country}`;
+    const data = await BackendService.get(endpoint);
     this.setState({ data });
   }
 

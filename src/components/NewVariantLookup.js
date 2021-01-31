@@ -34,7 +34,7 @@ export class NewVariantLookup extends React.Component {
 
 
   async fetchCountries() {
-    const countries = await BackendService.get('/country');
+    const countries = await BackendService.get('/resource/country');
     this.setState({ allCountries: countries });
   }
 

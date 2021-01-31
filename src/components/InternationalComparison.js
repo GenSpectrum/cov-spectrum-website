@@ -44,7 +44,7 @@ export class InternationalComparison extends React.Component {
   async loadInternationalTimeDistribution() {
     this.setState({ distribution: null });
     const mutationsString = this.props.variant.mutations.join(',');
-    const endpoint = '/variant/international-time-distribution';
+    const endpoint = '/plot/variant/international-time-distribution';
     const distribution
       = await BackendService.get(`${endpoint}?mutations=${mutationsString}` +
       `&matchPercentage=${this.props.matchPercentage}`);
@@ -55,7 +55,7 @@ export class InternationalComparison extends React.Component {
   render() {
     const countriesToPlot = new Set(['United Kingdom', 'Denmark', 'Switzerland', this.props.country]);
 
-    const plotData = this.state.distribution?.filter(d => countriesToPlot.has(d.country));
+    const plotData = this.state.distribution?.filter(d => countriesToPlot.has(d.x.country));
 
     // TODO Remove hard-coding..
     const colorMap = [
@@ -67,14 +67,14 @@ export class InternationalComparison extends React.Component {
       colorMap.push({ target: this.props.country, value: { marker: { color: 'blue' } } });
     }
 
-    const aggregated = Utils.groupBy(this.state.distribution, d => d.country);
+    const aggregated = Utils.groupBy(this.state.distribution, d => d.x.country);
     const countryData = [];
     aggregated?.forEach((value, name) => {
       countryData.push(value.reduce((aggregated, entry) => ({
         country: aggregated.country,
-        count: aggregated.count + entry.count,
-        first: Utils.minBy(aggregated.first, entry.week, w => w.firstDayInWeek),
-        last: Utils.maxBy(aggregated.last, entry.week, w => w.firstDayInWeek),
+        count: aggregated.count + entry.y.count,
+        first: Utils.minBy(aggregated.first, entry.x.week, w => w.firstDayInWeek),
+        last: Utils.maxBy(aggregated.last, entry.x.week, w => w.firstDayInWeek),
       }), {
         country: name,
         count: 0,
@@ -114,26 +114,26 @@ export class InternationalComparison extends React.Component {
                 {
                   type: 'scatter',
                   mode: 'lines+markers',
-                  x: plotData.map(d => d.week.firstDayInWeek),
-                  y: plotData.map(d => (d.p * 100).toFixed(2)),
+                  x: plotData.map(d => d.x.week.firstDayInWeek),
+                  y: plotData.map(d => (d.y.proportion.value * 100).toFixed(2)),
                   transforms: [{
                     type: 'groupby',
-                    groups: plotData.map(d => d.country),
+                    groups: plotData.map(d => d.x.country),
                     styles: colorMap
                   }]
                 },
                 {
                   type: 'scatter',
                   mode: 'lines',
-                  x: plotData.map(d => d.week.firstDayInWeek),
-                  y: plotData.map(d => (d.pLower * 100).toFixed(2)),
+                  x: plotData.map(d => d.x.week.firstDayInWeek),
+                  y: plotData.map(d => (d.y.proportion.ciLower * 100).toFixed(2)),
                   line: {
                     dash: 'dash',
                     width: 2
                   },
                   transforms: [{
                     type: 'groupby',
-                    groups: plotData.map(d => d.country),
+                    groups: plotData.map(d => d.x.country),
                     styles: colorMap
                   }],
                   showlegend: false
@@ -141,15 +141,15 @@ export class InternationalComparison extends React.Component {
                 {
                   type: 'scatter',
                   mode: 'lines',
-                  x: plotData.map(d => d.week.firstDayInWeek),
-                  y: plotData.map(d => (d.pUpper * 100).toFixed(2)),
+                  x: plotData.map(d => d.x.week.firstDayInWeek),
+                  y: plotData.map(d => (d.y.proportion.ciUpper * 100).toFixed(2)),
                   line: {
                     dash: 'dash',
                     width: 2
                   },
                   transforms: [{
                     type: 'groupby',
-                    groups: plotData.map(d => d.country),
+                    groups: plotData.map(d => d.x.country),
                     styles: colorMap
                   }],
                   showlegend: false

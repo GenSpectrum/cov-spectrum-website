@@ -41,15 +41,15 @@ export class SampleTable extends React.Component {
     });
     this.state.distribution = null;
     const mutationsString = this.props.variant.mutations.join(',');
-    const endpoint = '/variant/samples';
+    const endpoint = '/resource/sample';
     let url = `${endpoint}?mutations=${mutationsString}&matchPercentage=${this.props.matchPercentage}`;
     if (this.props.country) {
       url += `&country=${this.props.country}`;
     }
     const response = await BackendService.get(url);
     this.setState({
-      totalNumber: response.totalAvailableSamples,
-      samples: response.samples
+      totalNumber: response.total,
+      samples: response.data
     });
   }
 
