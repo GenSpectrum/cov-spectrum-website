@@ -48,8 +48,8 @@ export class SampleTable extends React.Component {
     }
     const response = await BackendService.get(url);
     this.setState({
-      totalNumber: response.totalAvailableSamples,
-      samples: response.samples
+      totalNumber: response.total,
+      samples: response.data
     });
   }
 

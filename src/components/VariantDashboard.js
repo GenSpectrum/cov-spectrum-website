@@ -101,12 +101,12 @@ export class VariantDashboard extends React.Component {
                     data={[
                       {
                         type: 'bar',
-                        x: this.state.timeDistribution.map(d => new Date(d.week.firstDayInWeek)),
-                        y: this.state.timeDistribution.map(d => d.count)
+                        x: this.state.timeDistribution.map(d => new Date(d.x.firstDayInWeek)),
+                        y: this.state.timeDistribution.map(d => d.y.count)
                       },
                       {
-                        x: this.state.timeDistribution.map(d => new Date(d.week.firstDayInWeek)),
-                        y: this.state.timeDistribution.map(d => d.proportion * 100),
+                        x: this.state.timeDistribution.map(d => new Date(d.x.firstDayInWeek)),
+                        y: this.state.timeDistribution.map(d => d.y.proportion.value * 100),
                         type: 'scatter',
                         mode: 'lines+markers',
                         marker: { color: 'red' },
@@ -143,12 +143,12 @@ export class VariantDashboard extends React.Component {
                     data={[
                       {
                         type: 'bar',
-                        x: this.state.ageDistribution.map(d => d.ageGroup),
-                        y: this.state.ageDistribution.map(d => d.count)
+                        x: this.state.ageDistribution.map(d => d.x),
+                        y: this.state.ageDistribution.map(d => d.y.count)
                       },
                       {
-                        x: this.state.ageDistribution.map(d => d.ageGroup),
-                        y: this.state.ageDistribution.map(d => d.proportion * 100),
+                        x: this.state.ageDistribution.map(d => d.x),
+                        y: this.state.ageDistribution.map(d => d.y.proportion.value * 100),
                         type: 'scatter',
                         mode: 'lines+markers',
                         marker: { color: 'red' },
@@ -181,6 +181,4 @@ export class VariantDashboard extends React.Component {
       </Container>
     </>);
   }
-
-
 }
