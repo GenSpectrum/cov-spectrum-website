@@ -5,6 +5,9 @@ import { BackendService } from "../services/BackendService";
 import createPlotlyComponent from 'react-plotly.js/factory';
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { VariantTimeDistributionPlot } from "../widgets/VariantTimeDistributionPlot";
+import { WidgetWrapper } from "./WidgetWrapper";
+import { VariantAgeDistributionPlot } from "../widgets/VariantAgeDistributionPlot";
 
 const Plotly = window.Plotly;
 const Plot = createPlotlyComponent(Plotly);
@@ -15,55 +18,17 @@ export class VariantDashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      ageDistribution: null,
-      timeDistribution: null
     };
   }
 
 
-  componentDidMount() {
-    this.updateView();
-  }
-
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    // TODO Use a better equality check for the variant
-    if (prevProps.country !== this.props.country || prevProps.variant !== this.props.variant
-      || prevProps.matchPercentage !== this.props.matchPercentage) {
-      this.updateView();
-    }
-  }
-
-
-  async updateView() {
-    this.loadTimeDistribution();
-    this.loadAgeDistribution();
-  }
-
-
-  async loadTimeDistribution() {
-    this.state.timeDistribution = null;
-    const mutationsString = this.props.variant.mutations.join(',');
-    const endpoint = '/plot/variant/time-distribution';
-    const timeDistribution
-      = await BackendService.get(`${endpoint}?country=${this.props.country}&mutations=${mutationsString}` +
-      `&matchPercentage=${this.props.matchPercentage}`);
-    this.setState({ timeDistribution })
-  }
-
-
-  async loadAgeDistribution() {
-    this.state.ageDistribution = null;
-    const mutationsString = this.props.variant.mutations.join(',');
-    const endpoint = '/plot/variant/age-distribution';
-    const ageDistribution
-      = await BackendService.get(`${endpoint}?country=${this.props.country}&mutations=${mutationsString}` +
-      `&matchPercentage=${this.props.matchPercentage}`);
-    this.setState({ ageDistribution })
-  }
-
-
   render() {
+    const variantDistributionPlotData = {
+      country: this.props.country,
+      matchPercentage: this.props.matchPercentage,
+      mutations: this.props.variant.mutations
+    };
+
     return (<>
       <div style={{ display: 'flex' }}>
         <h3 style={{ flexGrow: 1 }}>
@@ -94,88 +59,14 @@ export class VariantDashboard extends React.Component {
       <Container fluid="md">
         <Row>
           <Col md={7}>
-            {
-              this.state.timeDistribution ? (
-                  <Plot
-                    style={{ width: '100%' }}
-                    data={[
-                      {
-                        type: 'bar',
-                        x: this.state.timeDistribution.map(d => new Date(d.x.firstDayInWeek)),
-                        y: this.state.timeDistribution.map(d => d.y.count)
-                      },
-                      {
-                        x: this.state.timeDistribution.map(d => new Date(d.x.firstDayInWeek)),
-                        y: this.state.timeDistribution.map(d => d.y.proportion.value * 100),
-                        type: 'scatter',
-                        mode: 'lines+markers',
-                        marker: { color: 'red' },
-                        yaxis: 'y2'
-                      }
-                    ]}
-                    layout={{
-                      height: 500,
-                      title: 'Time Distribution',
-                      yaxis: {
-                        title: 'Number Sequences'
-                      },
-                      yaxis2: {
-                        title: 'Estimated Percentage',
-                        overlaying: 'y',
-                        side: 'right'
-                      },
-                      showlegend: false
-                    }}
-                    config={{
-                      displaylogo: false,
-                      modeBarButtons: [["zoom2d", "toImage", "resetScale2d", "pan2d"]]
-                    }}
-                  />
-                ) :
-                null
-            }
+            <WidgetWrapper shareUrl={VariantTimeDistributionPlot.dataToUrl(variantDistributionPlotData)}>
+              <VariantTimeDistributionPlot data={variantDistributionPlotData}/>
+            </WidgetWrapper>
           </Col>
           <Col md={5}>
-            {
-              this.state.ageDistribution ? (
-                  <Plot
-                    style={{ width: '100%' }}
-                    data={[
-                      {
-                        type: 'bar',
-                        x: this.state.ageDistribution.map(d => d.x),
-                        y: this.state.ageDistribution.map(d => d.y.count)
-                      },
-                      {
-                        x: this.state.ageDistribution.map(d => d.x),
-                        y: this.state.ageDistribution.map(d => d.y.proportion.value * 100),
-                        type: 'scatter',
-                        mode: 'lines+markers',
-                        marker: { color: 'red' },
-                        yaxis: 'y2'
-                      }
-                    ]}
-                    layout={{
-                      height: 500,
-                      title: 'Age Distribution',
-                      yaxis: {
-                        title: 'Number Sequences'
-                      },
-                      yaxis2: {
-                        title: 'Estimated Percentage',
-                        overlaying: 'y',
-                        side: 'right'
-                      },
-                      showlegend: false
-                    }}
-                    config={{
-                      displaylogo: false,
-                      modeBarButtons: [["zoom2d", "toImage", "resetScale2d", "pan2d"]]
-                    }}
-                  />
-                ) :
-                null
-            }
+            <WidgetWrapper shareUrl={VariantAgeDistributionPlot.dataToUrl(variantDistributionPlotData)}>
+              <VariantAgeDistributionPlot data={variantDistributionPlotData}/>
+            </WidgetWrapper>
           </Col>
         </Row>
       </Container>

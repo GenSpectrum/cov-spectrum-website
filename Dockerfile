@@ -10,8 +10,10 @@ RUN npm set progress=false && \
     npm --quiet ci
 
 COPY . .
+# TODO: Update REACT_APP_WEBSITE_HOST
 RUN npm set progress=false && \
     npm config set depth 0 && \
+    export REACT_APP_WEBSITE_HOST=http://localhost:3030 && \
     export REACT_APP_SERVER_HOST=/api && \
     npm --quiet run build
 
