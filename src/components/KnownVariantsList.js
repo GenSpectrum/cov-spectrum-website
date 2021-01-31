@@ -12,23 +12,8 @@ export class KnownVariantsList extends React.Component {
     super(props);
 
     this.state = {
-      variants: [
-        {
-          name: 'B.1.1.7',
-          mutations: [
-            'S:Y144-', 'S:N501Y', 'S:A570D', 'S:P681H', 'S:T716I', 'S:S982A', 'S:D1118H', 'ORF8:R52I', 'ORF8:Y73C',
-            'N:D3L', 'N:S235F', 'ORF1a:T1001I', 'ORF1a:S3675-', 'ORF1a:G3676-', 'ORF1a:A1708D', 'ORF1a:I2230T',
-            'ORF1a:F3677-', 'ORF8:Q27*', 'S:V70-', 'S:H69-'
-          ]
-        },
-        {
-          name: 'S.501Y.V2',
-          mutations: [
-            'ORF1a:T265I', 'ORF1a:K1655N', 'ORF1a:K3353R', 'S:D80A', 'S:K417N', 'S:E484K', 'S:N501Y', 'S:A701V',
-            'ORF3a:Q57H', 'ORF3a:S171L', 'E:P71L', 'N:T205I'
-          ]
-        }
-      ],
+      allCountries: null,
+      variants: null,
       selectedCountry: 'Switzerland',
       selectedCountryField: ['Switzerland']
     };
@@ -40,12 +25,19 @@ export class KnownVariantsList extends React.Component {
 
   async componentDidMount() {
     this.fetchCountries();
+    this.fetchVariants();
   }
 
 
   async fetchCountries() {
     const countries = await BackendService.get('/resource/country');
     this.setState({ allCountries: countries });
+  }
+
+
+  async fetchVariants() {
+    const variants = await BackendService.get('/resource/variant');
+    this.setState({ variants });
   }
 
 
@@ -92,7 +84,7 @@ export class KnownVariantsList extends React.Component {
         </thead>
         <tbody>
         {
-          this.state.variants.map(d => (
+          this.state.variants?.map(d => (
             <tr key={d.name}>
               <td>{d.name}</td>
               <td>
