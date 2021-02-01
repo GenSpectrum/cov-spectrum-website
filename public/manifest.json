@@ -1,6 +1,6 @@
 {
-  "short_name": "Variant Monitor",
-  "name": "Variant Monitor",
+  "short_name": "CoV-Spectrum",
+  "name": "CoV-Spectrum",
   "icons": [],
   "start_url": ".",
   "display": "standalone",

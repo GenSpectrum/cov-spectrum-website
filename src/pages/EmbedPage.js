@@ -51,7 +51,7 @@ export function EmbedPage() {
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
       <div>
         This widget is provided by the <a rel="noreferrer"
-        target="_blank" href={host}><span style={{ color: 'orange', fontWeight: 'bold' }}>Variant Monitor</span></a>.
+        target="_blank" href={host}><span style={{ color: 'orange', fontWeight: 'bold' }}>CoV-Spectrum</span></a>.
       </div>
       <div style={{ flexGrow: 1 }}>
         {widgetEl}

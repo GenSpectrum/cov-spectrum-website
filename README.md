@@ -1,4 +1,4 @@
-# Variant Monitor - Website
+# CoV-Spectrum - Website
 
 Required environment variable:
 

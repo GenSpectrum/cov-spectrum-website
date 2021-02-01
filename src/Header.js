@@ -11,7 +11,7 @@ export class Header extends React.Component {
         <Row>
           <Col>
             <Navbar bg="light" expand="md">
-              <Navbar.Brand href="/variant">Variant Monitor</Navbar.Brand>
+              <Navbar.Brand href="/variant">CoV-Spectrum</Navbar.Brand>
             </Navbar>
           </Col>
         </Row>

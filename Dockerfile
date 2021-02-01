@@ -23,6 +23,6 @@ RUN npm set progress=false && \
 FROM nginx:stable as server
 
 COPY --from=builder /build/build /app
-COPY docker_resources/nginx-variant-monitor.conf /etc/nginx/conf.d/default.conf
+COPY docker_resources/nginx-cov-spectrum.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 3000
