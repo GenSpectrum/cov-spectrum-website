@@ -7,6 +7,7 @@ import { Footer } from "./Footer";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { SamplePage } from "./pages/SamplePage";
 import { EmbedPage } from "./pages/EmbedPage";
+import { LoginPage } from "./pages/LoginPage";
 
 
 function App() {
@@ -27,6 +28,7 @@ function MainApp() {
       <Header/>
       <Switch>
         <Route exact path="/"><Redirect to="/variant"/></Route>
+        <Route path="/login"><LoginPage/></Route>
         <Route path="/variant"><MainPage/></Route>
         <Route path="/sample"><SamplePage/></Route>
       </Switch>
