@@ -1,16 +1,10 @@
 import React from "react";
-import { BackendService } from "../services/BackendService";
 
-// See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
-import createPlotlyComponent from 'react-plotly.js/factory';
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { VariantTimeDistributionPlot } from "../widgets/VariantTimeDistributionPlot";
 import { WidgetWrapper } from "./WidgetWrapper";
 import { VariantAgeDistributionPlot } from "../widgets/VariantAgeDistributionPlot";
-
-const Plotly = window.Plotly;
-const Plot = createPlotlyComponent(Plotly);
 
 
 export class VariantDashboard extends React.Component {

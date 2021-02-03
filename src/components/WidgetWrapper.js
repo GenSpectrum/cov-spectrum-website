@@ -19,7 +19,7 @@ export function WidgetWrapper({ shareUrl, children }) {
       <div
         style={{
           position: 'absolute',
-          zIndex: 1000,
+          zIndex: 500,
           left: '10px',
           top: '10px'
         }}
