@@ -6,8 +6,6 @@ const host = process.env.REACT_APP_WEBSITE_HOST;
 
 
 export function WidgetWrapper({ shareUrl, children }) {
-  console.log(shareUrl);
-
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);

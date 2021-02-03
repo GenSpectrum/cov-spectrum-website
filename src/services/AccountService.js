@@ -8,10 +8,10 @@ export class AccountService {
    */
   static async login(username, password) {
     // Login attempt: Get a JWT token
-    const response = await BackendService.post('/internal/login', {
+    const response = await (await BackendService.post('/internal/login', {
       username,
       password
-    });
+    })).json();
     if (response.error) {
       return false;
     }

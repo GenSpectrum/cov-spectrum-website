@@ -15,7 +15,9 @@ export class KnownVariantsList extends React.Component {
       allCountries: null,
       variants: null,
       selectedCountry: 'Switzerland',
-      selectedCountryField: ['Switzerland']
+      selectedCountryField: ['Switzerland'],
+      countryReq: null,
+      variantReq: null
     };
 
     this.handleVariantSelect = this.handleVariantSelect.bind(this);
@@ -30,13 +32,21 @@ export class KnownVariantsList extends React.Component {
 
 
   async fetchCountries() {
-    const countries = await BackendService.get('/resource/country');
-    this.setState({ allCountries: countries });
+    this.state.countryReq?.cancel();
+    const countryReq = BackendService.get('/resource/country');
+    this.setState({ countryReq });
+    const allCountries = await (await countryReq).json();
+
+    this.setState({ allCountries });
   }
 
 
   async fetchVariants() {
-    const variants = await BackendService.get('/resource/variant');
+    this.state.variantReq?.cancel();
+    const variantReq = BackendService.get('/resource/variant');
+    this.setState({ variantReq });
+    const variants = await (await variantReq).json();
+
     this.setState({ variants });
   }
 

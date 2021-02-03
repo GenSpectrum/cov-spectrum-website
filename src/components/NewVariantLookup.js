@@ -20,7 +20,8 @@ export class NewVariantLookup extends React.Component {
       variantDashboard: {
         variant: null,
         country: null
-      }
+      },
+      countryReq: null
     };
 
     this.handleVariantSelect = this.handleVariantSelect.bind(this);
@@ -34,14 +35,18 @@ export class NewVariantLookup extends React.Component {
 
 
   async fetchCountries() {
-    const countries = await BackendService.get('/resource/country');
-    this.setState({ allCountries: countries });
+    this.state.countryReq?.cancel();
+    const countryReq = BackendService.get('/resource/country');
+    this.setState({ countryReq });
+    const allCountries = await (await countryReq).json();
+
+    this.setState({ allCountries });
   }
 
 
   async setWeeks() {
     // TODO Improve the whole function
-    const currentIsoWeek = await BackendService.get('/utils/current-week');
+    const currentIsoWeek = await (await BackendService.get('/utils/current-week')).json();
 
     const weeks = []
     for (let i = 40; i <= 53; i++) {

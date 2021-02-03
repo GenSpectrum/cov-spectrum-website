@@ -3,6 +3,7 @@ import { BackendService } from "../services/BackendService";
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
 import createPlotlyComponent from 'react-plotly.js/factory';
+import { Utils } from "../services/Utils";
 
 const Plotly = window.Plotly;
 const Plot = createPlotlyComponent(Plotly);
@@ -46,7 +47,8 @@ export class VariantInternationalComparisonPlot extends React.Component {
     super(props);
     this.state = {
       plotData: null,
-      colorMap: null
+      colorMap: null,
+      req: null
     };
   }
 
@@ -58,18 +60,23 @@ export class VariantInternationalComparisonPlot extends React.Component {
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     // TODO Use a better equality check for the variant
-    if (prevProps.data !== this.props.data) {
+    if (!Utils.deepEqual(prevProps.data, this.props.data)) {
+      console.log('Plotting VariantInternationalComparisonPlot', prevProps.data, this.props.data);
       this.updateView();
     }
   }
 
 
   async updateView() {
-    this.state.distribution = null;
+    this.state.req?.cancel();
+    this.setState({ distribution: null });
+
     const mutationsString = this.props.data.mutations.join(',');
     const endpoint = '/plot/variant/international-time-distribution';
-    const distribution = await BackendService.get(`${endpoint}?mutations=${mutationsString}` +
+    const req = BackendService.get(`${endpoint}?mutations=${mutationsString}` +
       `&matchPercentage=${this.props.data.matchPercentage}`);
+    this.setState({ req });
+    const distribution = await (await req).json();
 
     const countriesToPlot = new Set(['United Kingdom', 'Denmark', 'Switzerland', this.props.data.country]);
     const plotData = distribution.filter(d => countriesToPlot.has(d.x.country));

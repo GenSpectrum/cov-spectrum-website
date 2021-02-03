@@ -13,7 +13,8 @@ export class InternationalComparison extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      distribution: null
+      distribution: null,
+      req: null
     };
   }
 
@@ -38,12 +39,16 @@ export class InternationalComparison extends React.Component {
 
 
   async loadInternationalTimeDistribution() {
+    this.state.req?.cancel();
     this.setState({ distribution: null });
+
     const mutationsString = this.props.variant.mutations.join(',');
     const endpoint = '/plot/variant/international-time-distribution';
-    const distribution
-      = await BackendService.get(`${endpoint}?mutations=${mutationsString}` +
+    const req = BackendService.get(`${endpoint}?mutations=${mutationsString}` +
       `&matchPercentage=${this.props.matchPercentage}`);
+    this.setState({ req });
+
+    const distribution = await (await req).json();
     this.setState({ distribution });
   }
 

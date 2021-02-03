@@ -10,7 +10,8 @@ export class NewVariantTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      data: null
+      data: null,
+      req: null
     };
   }
 
@@ -29,10 +30,15 @@ export class NewVariantTable extends React.Component {
 
   async updateView() {
     this.setState({ data: null });
+    this.state.req?.cancel();
+
     const [year, week] = this.props.yearWeek.split('-');
 
     const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${this.props.country}`;
-    const data = await BackendService.get(endpoint);
+    const req = BackendService.get(endpoint);
+    this.setState({ req });
+    const data = await (await req).json();
+
     this.setState({ data });
   }
 

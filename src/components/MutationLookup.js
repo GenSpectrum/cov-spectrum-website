@@ -16,7 +16,8 @@ export class MutationLookup extends React.Component {
       selectedCountryField: ['Switzerland'],
       selectedMutations: '',
       // This may not be changed right now because the initial default range slider is at 50.
-      selectedMatchPercentage: 50
+      selectedMatchPercentage: 50,
+      countryReq: null
     };
 
     this.handleCountryFieldChange = this.handleCountryFieldChange.bind(this);
@@ -32,8 +33,12 @@ export class MutationLookup extends React.Component {
 
 
   async fetchCountries() {
-    const countries = await BackendService.get('/resource/country');
-    this.setState({ allCountries: countries });
+    this.state.countryReq?.cancel();
+    const countryReq = BackendService.get('/resource/country');
+    this.setState({ countryReq });
+    const allCountries = await (await countryReq).json();
+
+    this.setState({ allCountries });
   }
 
 

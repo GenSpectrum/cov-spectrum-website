@@ -10,7 +10,8 @@ export class SampleTable extends React.Component {
     super(props);
     this.state = {
       totalNumber: null,
-      samples: null
+      samples: null,
+      req: null
     };
   }
 
@@ -35,18 +36,22 @@ export class SampleTable extends React.Component {
 
 
   async loadSamples() {
+    this.state.req?.cancel();
     this.setState({
       totalNumber: null,
       samples: null
     });
-    this.state.distribution = null;
+
     const mutationsString = this.props.variant.mutations.join(',');
     const endpoint = '/resource/sample';
     let url = `${endpoint}?mutations=${mutationsString}&matchPercentage=${this.props.matchPercentage}`;
     if (this.props.country) {
       url += `&country=${this.props.country}`;
     }
-    const response = await BackendService.get(url);
+    const req = BackendService.get(url);
+    this.setState({ req });
+    const response = await (await req).json();
+
     this.setState({
       totalNumber: response.total,
       samples: response.data
