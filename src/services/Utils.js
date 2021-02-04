@@ -14,7 +14,6 @@ export class Utils {
     return grouped;
   }
 
-
   static minBy(element1, element2, byFunc) {
     if (byFunc(element1) < byFunc(element2)) {
       return element1;
@@ -23,7 +22,6 @@ export class Utils {
     }
   }
 
-
   static maxBy(element1, element2, byFunc) {
     if (byFunc(element1) > byFunc(element2)) {
       return element1;
@@ -31,7 +29,6 @@ export class Utils {
       return element2;
     }
   }
-
 
   static deepEqual(obj1, obj2) {
     // Adopted from https://stackoverflow.com/a/45683145
@@ -57,8 +54,7 @@ export class Utils {
     return true;
   }
 
-
   static _isPrimitive(obj) {
-    return (obj !== Object(obj));
+    return obj !== Object(obj);
   }
 }

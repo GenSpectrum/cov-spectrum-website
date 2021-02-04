@@ -3,47 +3,44 @@ import { BackendService } from "../services/BackendService";
 import { Col, Container, Row } from "react-bootstrap";
 import Table from "react-bootstrap/Table";
 
-
 export class SampleTable extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       totalNumber: null,
       samples: null,
-      req: null
+      req: null,
     };
   }
-
 
   componentDidMount() {
     this.updateView();
   }
 
-
   componentDidUpdate(prevProps, prevState, snapshot) {
     // TODO Use a better equality check for the variant
-    if (prevProps.variant !== this.props.variant || prevProps.country !== this.props.country
-      || prevProps.matchPercentage !== this.props.matchPercentage) {
+    if (
+      prevProps.variant !== this.props.variant ||
+      prevProps.country !== this.props.country ||
+      prevProps.matchPercentage !== this.props.matchPercentage
+    ) {
       this.updateView();
     }
   }
-
 
   async updateView() {
     this.loadSamples();
   }
 
-
   async loadSamples() {
     this.state.req?.cancel();
     this.setState({
       totalNumber: null,
-      samples: null
+      samples: null,
     });
 
-    const mutationsString = this.props.variant.mutations.join(',');
-    const endpoint = '/resource/sample';
+    const mutationsString = this.props.variant.mutations.join(",");
+    const endpoint = "/resource/sample";
     let url = `${endpoint}?mutations=${mutationsString}&matchPercentage=${this.props.matchPercentage}`;
     if (this.props.country) {
       url += `&country=${this.props.country}`;
@@ -54,54 +51,56 @@ export class SampleTable extends React.Component {
 
     this.setState({
       totalNumber: response.total,
-      samples: response.data
+      samples: response.data,
     });
   }
 
-
   render() {
-
     return (
-      <div style={{ marginTop: '20px' }}>
+      <div style={{ marginTop: "20px" }}>
         <Container fluid="md">
           <Row>
             <Col>
-              <h3>Samples {this.props.country && 'in ' + this.props.country}</h3>
+              <h3>
+                Samples {this.props.country && "in " + this.props.country}
+              </h3>
 
-              <p><b>Mutations:</b> {this.props.variant.mutations.join(', ')}</p>
+              <p>
+                <b>Mutations:</b> {this.props.variant.mutations.join(", ")}
+              </p>
 
-              {
-                this.state.samples && (<>
-                  <p>{ this.state.totalNumber } samples have at least <b>{Math.round(this.props.matchPercentage * 100)}%
-                  </b> of the mutations. {this.state.samples.length < this.state.totalNumber
-                  && this.state.samples.length + ' will be displayed.'}</p>
+              {this.state.samples && (
+                <>
+                  <p>
+                    {this.state.totalNumber} samples have at least{" "}
+                    <b>{Math.round(this.props.matchPercentage * 100)}%</b> of
+                    the mutations.{" "}
+                    {this.state.samples.length < this.state.totalNumber &&
+                      this.state.samples.length + " will be displayed."}
+                  </p>
 
                   <Table striped bordered hover>
                     <thead>
-                    <tr>
-                      <th>GISAID ID</th>
-                      <th>Date</th>
-                      <th>Country</th>
-                      <th>Mutations</th>
-                    </tr>
+                      <tr>
+                        <th>GISAID ID</th>
+                        <th>Date</th>
+                        <th>Country</th>
+                        <th>Mutations</th>
+                      </tr>
                     </thead>
                     <tbody>
-                    {
-                      this.state.samples.map( sample =>
+                      {this.state.samples.map((sample) => (
                         <tr key={sample.name}>
                           <td>{sample.name}</td>
                           <td>{sample.date}</td>
                           <td>{sample.country}</td>
-                          <td>{sample.mutations.join(', ')}</td>
+                          <td>{sample.mutations.join(", ")}</td>
                         </tr>
-                      )
-                    }
+                      ))}
                     </tbody>
                   </Table>
-
-                </>)
-              }
-
+                </>
+              )}
             </Col>
           </Row>
         </Container>

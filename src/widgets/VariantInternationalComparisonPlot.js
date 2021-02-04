@@ -2,28 +2,26 @@ import React from "react";
 import { BackendService } from "../services/BackendService";
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
-import createPlotlyComponent from 'react-plotly.js/factory';
+import createPlotlyComponent from "react-plotly.js/factory";
 import { Utils } from "../services/Utils";
 
 const Plotly = window.Plotly;
 const Plot = createPlotlyComponent(Plotly);
 
-
 export class VariantInternationalComparisonPlot extends React.Component {
-
   static dataFromUrl(urlSearchParams) {
     const params = Array.from(urlSearchParams.entries());
     const data = {};
     for (let [key, value] of params) {
       switch (key) {
-        case 'country':
-          data['country'] = value;
+        case "country":
+          data["country"] = value;
           break;
-        case 'matchPercentage':
-          data['matchPercentage'] = parseFloat(value);
+        case "matchPercentage":
+          data["matchPercentage"] = parseFloat(value);
           break;
-        case 'mutations':
-          data['mutations'] = value.split(',');
+        case "mutations":
+          data["mutations"] = value.split(",");
           break;
         default:
       }
@@ -31,142 +29,166 @@ export class VariantInternationalComparisonPlot extends React.Component {
     return data;
   }
 
-
   static dataToUrl(data) {
     const urlSearchParams = new URLSearchParams();
     if (data.country) {
-      urlSearchParams.append('country', data.country);
+      urlSearchParams.append("country", data.country);
     }
-    urlSearchParams.append('matchPercentage', data.matchPercentage);
-    urlSearchParams.append('mutations', data.mutations.join(','));
-    return 'variant_international-comparison?' + urlSearchParams.toString();
+    urlSearchParams.append("matchPercentage", data.matchPercentage);
+    urlSearchParams.append("mutations", data.mutations.join(","));
+    return "variant_international-comparison?" + urlSearchParams.toString();
   }
-
 
   constructor(props) {
     super(props);
     this.state = {
       plotData: null,
       colorMap: null,
-      req: null
+      req: null,
     };
   }
-
 
   componentDidMount() {
     this.updateView();
   }
 
-
   componentDidUpdate(prevProps, prevState, snapshot) {
     // TODO Use a better equality check for the variant
     if (!Utils.deepEqual(prevProps.data, this.props.data)) {
-      console.log('Plotting VariantInternationalComparisonPlot', prevProps.data, this.props.data);
+      console.log(
+        "Plotting VariantInternationalComparisonPlot",
+        prevProps.data,
+        this.props.data
+      );
       this.updateView();
     }
   }
-
 
   async updateView() {
     this.state.req?.cancel();
     this.setState({ distribution: null });
 
-    const mutationsString = this.props.data.mutations.join(',');
-    const endpoint = '/plot/variant/international-time-distribution';
-    const req = BackendService.get(`${endpoint}?mutations=${mutationsString}` +
-      `&matchPercentage=${this.props.data.matchPercentage}`);
+    const mutationsString = this.props.data.mutations.join(",");
+    const endpoint = "/plot/variant/international-time-distribution";
+    const req = BackendService.get(
+      `${endpoint}?mutations=${mutationsString}` +
+        `&matchPercentage=${this.props.data.matchPercentage}`
+    );
     this.setState({ req });
     const distribution = await (await req).json();
 
-    const countriesToPlot = new Set(['United Kingdom', 'Denmark', 'Switzerland', this.props.data.country]);
-    const plotData = distribution.filter(d => countriesToPlot.has(d.x.country));
+    const countriesToPlot = new Set([
+      "United Kingdom",
+      "Denmark",
+      "Switzerland",
+      this.props.data.country,
+    ]);
+    const plotData = distribution.filter((d) =>
+      countriesToPlot.has(d.x.country)
+    );
 
     // TODO Remove hard-coding..
     const colorMap = [
-      { target: 'United Kingdom', value: { marker: { color: 'black' } } },
-      { target: 'Denmark', value: { marker: { color: 'green' } } },
-      { target: 'Switzerland', value: { marker: { color: 'red' } } }
+      { target: "United Kingdom", value: { marker: { color: "black" } } },
+      { target: "Denmark", value: { marker: { color: "green" } } },
+      { target: "Switzerland", value: { marker: { color: "red" } } },
     ];
-    if (!['United Kingdom', 'Denmark', 'Switzerland'].includes(this.props.data.country)) {
-      colorMap.push({ target: this.props.data.country, value: { marker: { color: 'blue' } } });
+    if (
+      !["United Kingdom", "Denmark", "Switzerland"].includes(
+        this.props.data.country
+      )
+    ) {
+      colorMap.push({
+        target: this.props.data.country,
+        value: { marker: { color: "blue" } },
+      });
     }
 
-    this.setState({ plotData, colorMap })
+    this.setState({ plotData, colorMap });
   }
-
 
   render() {
     const { plotData, colorMap } = this.state;
 
     return (
-      <div style={{ height: '100%' }}>
-        {plotData &&
-        <Plot
-          style={{ width: '100%', height: '100%' }}
-          data={[
-            {
-              type: 'scatter',
-              mode: 'lines+markers',
-              x: plotData.map(d => d.x.week.firstDayInWeek),
-              y: plotData.map(d => (d.y.proportion.value * 100).toFixed(2)),
-              transforms: [{
-                type: 'groupby',
-                groups: plotData.map(d => d.x.country),
-                styles: colorMap
-              }]
-            },
-            {
-              type: 'scatter',
-              mode: 'lines',
-              x: plotData.map(d => d.x.week.firstDayInWeek),
-              y: plotData.map(d => (d.y.proportion.ciLower * 100).toFixed(2)),
-              line: {
-                dash: 'dash',
-                width: 2
+      <div style={{ height: "100%" }}>
+        {plotData && (
+          <Plot
+            style={{ width: "100%", height: "100%" }}
+            data={[
+              {
+                type: "scatter",
+                mode: "lines+markers",
+                x: plotData.map((d) => d.x.week.firstDayInWeek),
+                y: plotData.map((d) => (d.y.proportion.value * 100).toFixed(2)),
+                transforms: [
+                  {
+                    type: "groupby",
+                    groups: plotData.map((d) => d.x.country),
+                    styles: colorMap,
+                  },
+                ],
               },
-              transforms: [{
-                type: 'groupby',
-                groups: plotData.map(d => d.x.country),
-                styles: colorMap
-              }],
-              showlegend: false
-            },
-            {
-              type: 'scatter',
-              mode: 'lines',
-              x: plotData.map(d => d.x.week.firstDayInWeek),
-              y: plotData.map(d => (d.y.proportion.ciUpper * 100).toFixed(2)),
-              line: {
-                dash: 'dash',
-                width: 2
+              {
+                type: "scatter",
+                mode: "lines",
+                x: plotData.map((d) => d.x.week.firstDayInWeek),
+                y: plotData.map((d) =>
+                  (d.y.proportion.ciLower * 100).toFixed(2)
+                ),
+                line: {
+                  dash: "dash",
+                  width: 2,
+                },
+                transforms: [
+                  {
+                    type: "groupby",
+                    groups: plotData.map((d) => d.x.country),
+                    styles: colorMap,
+                  },
+                ],
+                showlegend: false,
               },
-              transforms: [{
-                type: 'groupby',
-                groups: plotData.map(d => d.x.country),
-                styles: colorMap
-              }],
-              showlegend: false
-            }
-          ]}
-          layout={{
-            title: '',
-            yaxis: {
-              title: 'Estimated Percentage'
-            },
-            legend: {
-              x: 0,
-              xanchor: 'left',
-              y: 1
-            }
-          }}
-          config={{
-            displaylogo: false,
-            modeBarButtons: [["zoom2d", "toImage", "resetScale2d", "pan2d"]],
-            responsive: true
-          }}
-        />}
+              {
+                type: "scatter",
+                mode: "lines",
+                x: plotData.map((d) => d.x.week.firstDayInWeek),
+                y: plotData.map((d) =>
+                  (d.y.proportion.ciUpper * 100).toFixed(2)
+                ),
+                line: {
+                  dash: "dash",
+                  width: 2,
+                },
+                transforms: [
+                  {
+                    type: "groupby",
+                    groups: plotData.map((d) => d.x.country),
+                    styles: colorMap,
+                  },
+                ],
+                showlegend: false,
+              },
+            ]}
+            layout={{
+              title: "",
+              yaxis: {
+                title: "Estimated Percentage",
+              },
+              legend: {
+                x: 0,
+                xanchor: "left",
+                y: 1,
+              },
+            }}
+            config={{
+              displaylogo: false,
+              modeBarButtons: [["zoom2d", "toImage", "resetScale2d", "pan2d"]],
+              responsive: true,
+            }}
+          />
+        )}
       </div>
     );
   }
-
 }

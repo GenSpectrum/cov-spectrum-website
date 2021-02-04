@@ -3,7 +3,6 @@
  * it ensures that subsequent promise handlers will not be called.
  */
 export class CancelableRequest {
-
   static cancelableFetch(resource, init) {
     if (!init) {
       init = {};
@@ -19,7 +18,6 @@ export class CancelableRequest {
     return request;
   }
 
-
   /**
    * @private
    */
@@ -31,7 +29,6 @@ export class CancelableRequest {
 
     this._controller = undefined;
   }
-
 
   /**
    *
@@ -46,7 +43,6 @@ export class CancelableRequest {
     });
   }
 
-
   /**
    *
    * @param reject
@@ -60,10 +56,8 @@ export class CancelableRequest {
     });
   }
 
-
   cancel() {
     this._controller.abort();
     this._isCanceled = true;
   }
-
 }
