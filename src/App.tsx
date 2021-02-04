@@ -4,7 +4,7 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 import "./App.css";
 import { MainPage } from "./pages/MainPage";
 import { Header } from "./Header";
-import { Footer } from "./Footer";
+import Footer from "./Footer";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { SamplePage } from "./pages/SamplePage";
 import { EmbedPage } from "./pages/EmbedPage";
