@@ -87,8 +87,8 @@ export class VariantInternationalComparisonPlot extends React.Component {
       { target: 'Denmark', value: { marker: { color: 'green' } } },
       { target: 'Switzerland', value: { marker: { color: 'red' } } }
     ];
-    if (!['United Kingdom', 'Denmark', 'Switzerland'].includes(this.props.country)) {
-      colorMap.push({ target: this.props.country, value: { marker: { color: 'blue' } } });
+    if (!['United Kingdom', 'Denmark', 'Switzerland'].includes(this.props.data.country)) {
+      colorMap.push({ target: this.props.data.country, value: { marker: { color: 'blue' } } });
     }
 
     this.setState({ plotData, colorMap })
