@@ -1,54 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { AccountService } from "../services/AccountService";
+import { fetchAgeDistributionData } from "../services/api";
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
 import createPlotlyComponent from "react-plotly.js/factory";
-import { Utils } from "../services/Utils";
 
 const Plotly = window.Plotly;
 const Plot = createPlotlyComponent(Plotly);
-
-const getBaseHeaders = () => {
-  const headers = {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  };
-  if (AccountService.isLoggedIn()) {
-    headers["Authorization"] = "Bearer " + AccountService.getJwt();
-  }
-  return headers;
-};
 
 export const VariantAgeDistributionPlot = ({ data }) => {
   const [distribution, setDistribution] = useState(null);
 
   useEffect(() => {
-    const mutationsString = data.mutations.join(",");
-    const endpoint = "/plot/variant/age-distribution";
-    const requestString =
-      `${endpoint}?country=${data.country}&mutations=${mutationsString}` +
-      `&matchPercentage=${data.matchPercentage}`;
     let isSubscribed = true;
-    //fetchdata
-    const host = process.env.REACT_APP_SERVER_HOST;
-    fetch(host + requestString, {
-      headers: getBaseHeaders(),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (isSubscribed) {
-          console.log(
-            "Update state for Variant Age Distribution for data",
-            data
-          );
-          setDistribution(data);
-        }
-      });
+    const controller = new AbortController();
+    const signal = controller.signal;
+    fetchAgeDistributionData(
+      data.country,
+      data.mutations,
+      data.matchPercentage,
+      signal
+    ).then((newDistributionData) => {
+      if (isSubscribed) {
+        setDistribution(newDistributionData);
+      }
+    });
     return () => {
       isSubscribed = false;
+      controller.abort();
       console.log("Cleanup render for variant age distribution plot");
     };
-  }, []);
+  }, [data]);
 
   return (
     <div style={{ height: "100%" }}>
