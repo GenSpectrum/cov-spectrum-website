@@ -1,24 +1,22 @@
-import React from "react";
-import { NewVariantLookup } from "../components/NewVariantLookup";
-import { Col, Container, Row, Tab, Tabs } from "react-bootstrap";
-import { VariantDashboard } from "../components/VariantDashboard";
-import { KnownVariantsList } from "../components/KnownVariantsList";
-import { InternationalComparison } from "../components/InternationalComparison";
-import { MutationLookup } from "../components/MutationLookup";
+import React from 'react'
+import { NewVariantLookup } from '../components/NewVariantLookup'
+import { Col, Container, Row, Tab, Tabs } from 'react-bootstrap'
+import { VariantDashboard } from '../components/VariantDashboard'
+import { KnownVariantsList } from '../components/KnownVariantsList'
+import { InternationalComparison } from '../components/InternationalComparison'
+import { MutationLookup } from '../components/MutationLookup'
 
 export class MainPage extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       variantDashboard: {
         variant: null,
         country: null,
       },
-    };
+    }
 
-    this.handleVariantAndCountrySelect = this.handleVariantAndCountrySelect.bind(
-      this
-    );
+    this.handleVariantAndCountrySelect = this.handleVariantAndCountrySelect.bind(this)
   }
 
   handleVariantAndCountrySelect({ variant, country }, matchPercentage) {
@@ -28,53 +26,40 @@ export class MainPage extends React.Component {
         country,
         matchPercentage,
       },
-    });
+    })
   }
 
   render() {
     return (
-      <div style={{ marginTop: "20px" }}>
-        <Container fluid="md">
+      <div style={{ marginTop: '20px' }}>
+        <Container fluid='md'>
           <Row>
             <Col>
-              <Tabs
-                defaultActiveKey="knownVariants"
-                id="variantList"
-                transition={false}
-              >
-                <Tab eventKey="knownVariants" title="Known Variants">
-                  <div style={{ marginTop: "20px" }}>
+              <Tabs defaultActiveKey='knownVariants' id='variantList' transition={false}>
+                <Tab eventKey='knownVariants' title='Known Variants'>
+                  <div style={{ marginTop: '20px' }}>
                     <KnownVariantsList
-                      onVariantAndCountrySelect={(e) =>
-                        this.handleVariantAndCountrySelect(e, 0.8)
-                      }
+                      onVariantAndCountrySelect={e => this.handleVariantAndCountrySelect(e, 0.8)}
                     />
                   </div>
                 </Tab>
-                <Tab eventKey="newVariants" title="Find New Variants">
-                  <div style={{ marginTop: "20px" }}>
+                <Tab eventKey='newVariants' title='Find New Variants'>
+                  <div style={{ marginTop: '20px' }}>
                     <NewVariantLookup
-                      onVariantAndCountrySelect={(e) =>
-                        this.handleVariantAndCountrySelect(e, 1)
-                      }
+                      onVariantAndCountrySelect={e => this.handleVariantAndCountrySelect(e, 1)}
                     />
                   </div>
                 </Tab>
-                <Tab eventKey="lookupMutations" title="Lookup Mutations">
-                  <div style={{ marginTop: "20px" }}>
-                    <MutationLookup
-                      onVariantAndCountrySelect={
-                        this.handleVariantAndCountrySelect
-                      }
-                    />
+                <Tab eventKey='lookupMutations' title='Lookup Mutations'>
+                  <div style={{ marginTop: '20px' }}>
+                    <MutationLookup onVariantAndCountrySelect={this.handleVariantAndCountrySelect} />
                   </div>
                 </Tab>
               </Tabs>
             </Col>
           </Row>
 
-          {this.state.variantDashboard.country &&
-          this.state.variantDashboard.variant ? (
+          {this.state.variantDashboard.country && this.state.variantDashboard.variant ? (
             <>
               <hr />
               <VariantDashboard
@@ -92,6 +77,6 @@ export class MainPage extends React.Component {
           ) : null}
         </Container>
       </div>
-    );
+    )
   }
 }

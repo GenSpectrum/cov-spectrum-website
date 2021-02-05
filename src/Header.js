@@ -1,24 +1,24 @@
-import React from "react";
-import { Col, Container, Row, Navbar, Nav } from "react-bootstrap";
-import { AccountService } from "./services/AccountService";
+import React from 'react'
+import { Col, Container, Row, Navbar, Nav } from 'react-bootstrap'
+import { AccountService } from './services/AccountService'
 
 export class Header extends React.Component {
   render() {
-    const loggedIn = AccountService.isLoggedIn();
-    let username = null;
+    const loggedIn = AccountService.isLoggedIn()
+    let username = null
     if (loggedIn) {
-      username = AccountService.getUsername();
+      username = AccountService.getUsername()
     }
 
     return (
       <>
-        <Container fluid="md">
+        <Container fluid='md'>
           <Row>
             <Col>
-              <Navbar bg="light" expand="md">
-                <Navbar.Brand href="/variant">CoV-Spectrum</Navbar.Brand>
+              <Navbar bg='light' expand='md'>
+                <Navbar.Brand href='/variant'>CoV-Spectrum</Navbar.Brand>
                 <Navbar.Collapse>
-                  <Nav className="mr-auto"></Nav>
+                  <Nav className='mr-auto'></Nav>
                   <Nav>
                     {loggedIn ? (
                       <>
@@ -26,13 +26,13 @@ export class Header extends React.Component {
                         <Nav.Link>
                           <button
                             onClick={() => {
-                              AccountService.logout();
-                              window.location.href = "/login?left";
+                              AccountService.logout()
+                              window.location.href = '/login?left'
                             }}
                             style={{
-                              background: "none",
-                              outline: "none",
-                              border: "none",
+                              background: 'none',
+                              outline: 'none',
+                              border: 'none',
                             }}
                           >
                             Logout
@@ -40,7 +40,7 @@ export class Header extends React.Component {
                         </Nav.Link>
                       </>
                     ) : (
-                      <Nav.Link href="/login">Login</Nav.Link>
+                      <Nav.Link href='/login'>Login</Nav.Link>
                     )}
                   </Nav>
                 </Navbar.Collapse>
@@ -49,6 +49,6 @@ export class Header extends React.Component {
           </Row>
         </Container>
       </>
-    );
+    )
   }
 }

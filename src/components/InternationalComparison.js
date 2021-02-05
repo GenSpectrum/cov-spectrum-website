@@ -1,24 +1,24 @@
-import React from "react";
-import { BackendService } from "../services/BackendService";
-import Table from "react-bootstrap/Table";
-import { Utils } from "../services/Utils";
-import { Link } from "react-router-dom";
-import { Button } from "react-bootstrap";
-import { VariantInternationalComparisonPlot } from "../widgets/VariantInternationalComparisonPlot";
-import { WidgetWrapper } from "./WidgetWrapper";
-import { dataToUrl } from "../helpers/urlConversion";
+import React from 'react'
+import { BackendService } from '../services/BackendService'
+import Table from 'react-bootstrap/Table'
+import { Utils } from '../services/Utils'
+import { Link } from 'react-router-dom'
+import { Button } from 'react-bootstrap'
+import { VariantInternationalComparisonPlot } from '../widgets/VariantInternationalComparisonPlot'
+import { WidgetWrapper } from './WidgetWrapper'
+import { dataToUrl } from '../helpers/urlConversion'
 
 export class InternationalComparison extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       distribution: null,
       req: null,
-    };
+    }
   }
 
   componentDidMount() {
-    this.updateView();
+    this.updateView()
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -28,107 +28,92 @@ export class InternationalComparison extends React.Component {
       prevProps.country !== this.props.country ||
       prevProps.matchPercentage !== this.props.matchPercentage
     ) {
-      this.updateView();
+      this.updateView()
     }
   }
 
   async updateView() {
-    this.loadInternationalTimeDistribution();
+    this.loadInternationalTimeDistribution()
   }
 
   async loadInternationalTimeDistribution() {
-    this.state.req?.cancel();
-    this.setState({ distribution: null });
+    this.state.req?.cancel()
+    this.setState({ distribution: null })
 
-    const mutationsString = this.props.variant.mutations.join(",");
-    const endpoint = "/plot/variant/international-time-distribution";
+    const mutationsString = this.props.variant.mutations.join(',')
+    const endpoint = '/plot/variant/international-time-distribution'
     const req = BackendService.get(
-      `${endpoint}?mutations=${mutationsString}` +
-        `&matchPercentage=${this.props.matchPercentage}`
-    );
-    this.setState({ req });
+      `${endpoint}?mutations=${mutationsString}` + `&matchPercentage=${this.props.matchPercentage}`
+    )
+    this.setState({ req })
 
-    const distribution = await (await req).json();
-    this.setState({ distribution });
+    const distribution = await (await req).json()
+    this.setState({ distribution })
   }
 
   render() {
-    const aggregated = Utils.groupBy(
-      this.state.distribution,
-      (d) => d.x.country
-    );
-    const countryData = [];
+    const aggregated = Utils.groupBy(this.state.distribution, d => d.x.country)
+    const countryData = []
     aggregated?.forEach((value, name) => {
       countryData.push(
         value.reduce(
           (aggregated, entry) => ({
             country: aggregated.country,
             count: aggregated.count + entry.y.count,
-            first: Utils.minBy(
-              aggregated.first,
-              entry.x.week,
-              (w) => w.firstDayInWeek
-            ),
-            last: Utils.maxBy(
-              aggregated.last,
-              entry.x.week,
-              (w) => w.firstDayInWeek
-            ),
+            first: Utils.minBy(aggregated.first, entry.x.week, w => w.firstDayInWeek),
+            last: Utils.maxBy(aggregated.last, entry.x.week, w => w.firstDayInWeek),
           }),
           {
             country: name,
             count: 0,
             first: {
               firstDayInWeek: Infinity,
-              yearWeek: "XXXX-XX",
+              yearWeek: 'XXXX-XX',
             },
             last: {
               firstDayInWeek: -Infinity,
-              yearWeek: "XXXX-XX",
+              yearWeek: 'XXXX-XX',
             },
           }
         )
-      );
-    });
+      )
+    })
 
     const plotData = {
       country: this.props.country,
       matchPercentage: this.props.matchPercentage,
       mutations: this.props.variant.mutations,
-    };
+    }
 
     return (
       <>
-        <div style={{ display: "flex" }}>
+        <div style={{ display: 'flex' }}>
           <h3 style={{ flexGrow: 1 }}>
-            {this.props.variant.name ?? "Unnamed Variant"} - International
-            Comparison
+            {this.props.variant.name ?? 'Unnamed Variant'} - International Comparison
           </h3>
           <div>
             <Link
               to={
-                "/sample?mutations=" +
-                this.props.variant.mutations.join(",") +
-                "&matchPercentage=" +
+                '/sample?mutations=' +
+                this.props.variant.mutations.join(',') +
+                '&matchPercentage=' +
                 this.props.matchPercentage
               }
             >
-              <Button variant="outline-dark" size="sm">
+              <Button variant='outline-dark' size='sm'>
                 Show all samples
               </Button>
             </Link>
           </div>
         </div>
-        <div style={{ height: "500px" }}>
-          <WidgetWrapper
-            shareUrl={dataToUrl(plotData, "VariantInternationalComparison")}
-          >
+        <div style={{ height: '500px' }}>
+          <WidgetWrapper shareUrl={dataToUrl(plotData, 'VariantInternationalComparison')}>
             <VariantInternationalComparisonPlot data={plotData} />
           </WidgetWrapper>
         </div>
         {countryData ? (
           <>
-            <div style={{ maxHeight: "400px", overflow: "auto" }}>
+            <div style={{ maxHeight: '400px', overflow: 'auto' }}>
               <Table striped bordered hover>
                 <thead>
                   <tr>
@@ -140,7 +125,7 @@ export class InternationalComparison extends React.Component {
                   </tr>
                 </thead>
                 <tbody>
-                  {countryData.map((c) => (
+                  {countryData.map(c => (
                     <tr key={c.country}>
                       <td>{c.country}</td>
                       <td>{c.count}</td>
@@ -149,15 +134,15 @@ export class InternationalComparison extends React.Component {
                       <td>
                         <Link
                           to={
-                            "/sample?mutations=" +
-                            this.props.variant.mutations.join(",") +
-                            "&country=" +
+                            '/sample?mutations=' +
+                            this.props.variant.mutations.join(',') +
+                            '&country=' +
                             c.country +
-                            "&matchPercentage=" +
+                            '&matchPercentage=' +
                             this.props.matchPercentage
                           }
                         >
-                          <Button variant="outline-dark" size="sm">
+                          <Button variant='outline-dark' size='sm'>
                             Show samples
                           </Button>
                         </Link>
@@ -170,6 +155,6 @@ export class InternationalComparison extends React.Component {
           </>
         ) : null}
       </>
-    );
+    )
   }
 }

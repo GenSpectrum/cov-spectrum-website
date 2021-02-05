@@ -1,50 +1,41 @@
-import { AccountService } from "../services/AccountService";
+import { AccountService } from '../services/AccountService'
 
-const HOST = process.env.REACT_APP_SERVER_HOST;
+const HOST = process.env.REACT_APP_SERVER_HOST
 
 const getBaseHeaders = () => {
   const headers = {
-    Accept: "application/json",
-    "Content-Type": "application/json",
-  };
+    'Accept': 'application/json',
+    'Content-Type': 'application/json',
+  }
   if (AccountService.isLoggedIn()) {
-    headers["Authorization"] = "Bearer " + AccountService.getJwt();
+    headers['Authorization'] = 'Bearer ' + AccountService.getJwt()
   }
-  return headers;
-};
+  return headers
+}
 
-const getVariantEndpoint = (distributionType) => {
+const getVariantEndpoint = distributionType => {
   switch (distributionType) {
-    case "Age":
-      return "/plot/variant/age-distribution";
-    case "Time":
-      return "/plot/variant/time-distribution";
-    case "International":
-      return "/plot/variant/international-time-distribution";
+    case 'Age':
+      return '/plot/variant/age-distribution'
+    case 'Time':
+      return '/plot/variant/time-distribution'
+    case 'International':
+      return '/plot/variant/international-time-distribution'
     default:
-      return "/plot/variant/age-distribution";
+      return '/plot/variant/age-distribution'
   }
-};
+}
 
-const getVariantRequestUrl = (
-  distributionType,
-  country,
-  mutations,
-  matchPercentage
-) => {
-  const endpoint = getVariantEndpoint(distributionType);
+const getVariantRequestUrl = (distributionType, country, mutations, matchPercentage) => {
+  const endpoint = getVariantEndpoint(distributionType)
   if (country !== null) {
     return (
-      `${HOST}${endpoint}?country=${country}&mutations=${mutations}` +
-      `&matchPercentage=${matchPercentage}`
-    );
+      `${HOST}${endpoint}?country=${country}&mutations=${mutations}` + `&matchPercentage=${matchPercentage}`
+    )
   } else {
-    return (
-      `${HOST}${endpoint}?mutations=${mutations}` +
-      `&matchPercentage=${matchPercentage}`
-    );
+    return `${HOST}${endpoint}?mutations=${mutations}` + `&matchPercentage=${matchPercentage}`
   }
-};
+}
 
 export const fetchVariantDistributionData = (
   distributionType,
@@ -53,24 +44,19 @@ export const fetchVariantDistributionData = (
   matchPercentage,
   signal
 ) => {
-  const url = getVariantRequestUrl(
-    distributionType,
-    country,
-    mutations,
-    matchPercentage
-  );
+  const url = getVariantRequestUrl(distributionType, country, mutations, matchPercentage)
   return fetch(url, {
     headers: getBaseHeaders(),
     signal,
   })
-    .then((response) => response.json())
-    .then((ageDistributionData) => {
-      return ageDistributionData;
+    .then(response => response.json())
+    .then(ageDistributionData => {
+      return ageDistributionData
     })
-    .catch((e) => {
-      console.log("Error fetching");
-      return e;
-    });
-};
+    .catch(e => {
+      console.log('Error fetching')
+      return e
+    })
+}
 
-export const fetchTimeDistributionData = () => {};
+export const fetchTimeDistributionData = () => {}
