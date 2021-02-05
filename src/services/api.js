@@ -13,7 +13,7 @@ const getBaseHeaders = () => {
   return headers;
 };
 
-const getEndpoint = (distributionType) => {
+const getVariantEndpoint = (distributionType) => {
   switch (distributionType) {
     case "Age":
       return "/plot/variant/age-distribution";
@@ -26,6 +26,26 @@ const getEndpoint = (distributionType) => {
   }
 };
 
+const getVariantRequestUrl = (
+  distributionType,
+  country,
+  mutations,
+  matchPercentage
+) => {
+  const endpoint = getVariantEndpoint(distributionType);
+  if (country !== null) {
+    return (
+      `${HOST}${endpoint}?country=${country}&mutations=${mutations}` +
+      `&matchPercentage=${matchPercentage}`
+    );
+  } else {
+    return (
+      `${HOST}${endpoint}?mutations=${mutations}` +
+      `&matchPercentage=${matchPercentage}`
+    );
+  }
+};
+
 export const fetchVariantDistributionData = (
   distributionType,
   country,
@@ -33,12 +53,13 @@ export const fetchVariantDistributionData = (
   matchPercentage,
   signal
 ) => {
-  const endpoint = getEndpoint(distributionType);
-  const request =
-    `${endpoint}?country=${country}&mutations=${mutations}` +
-    `&matchPercentage=${matchPercentage}`;
-  console.log("request is", request);
-  return fetch(HOST + request, {
+  const url = getVariantRequestUrl(
+    distributionType,
+    country,
+    mutations,
+    matchPercentage
+  );
+  return fetch(url, {
     headers: getBaseHeaders(),
     signal,
   })
