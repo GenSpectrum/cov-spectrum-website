@@ -20,7 +20,7 @@ export const dataFromUrl = (urlSearchParams, type) => {
   }
 };
 export const dataToUrl = (data, type) => {
-  if (type === "variantAgeDistribution") {
+  if (type === "VariantAgeDistribution") {
     const urlSearchParams = new URLSearchParams();
     urlSearchParams.append("country", data.country);
     urlSearchParams.append("matchPercentage", data.matchPercentage);

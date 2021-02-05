@@ -3,6 +3,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { VariantTimeDistributionPlot } from "../widgets/VariantTimeDistributionPlot";
 import { VariantAgeDistributionPlot } from "../widgets/VariantAgeDistributionPlot";
 import { VariantInternationalComparisonPlot } from "../widgets/VariantInternationalComparisonPlot";
+import { dataFromUrl } from "../helpers/urlConversion";
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 
@@ -23,7 +24,7 @@ export function EmbedPage() {
 
   switch (widget) {
     case "variant_age-distribution":
-      data = VariantAgeDistributionPlot.dataFromUrl(query);
+      data = dataFromUrl(query, "VariantAgeDistributionPlot");
       widgetEl = <VariantAgeDistributionPlot data={data} />;
       break;
     case "variant_international-comparison":

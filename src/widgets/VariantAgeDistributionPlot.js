@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { AccountService } from "../services/AccountService";
 import { fetchAgeDistributionData } from "../services/api";
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
