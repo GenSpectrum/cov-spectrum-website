@@ -28,7 +28,11 @@ export const dataFromUrl = (urlSearchParams, type) => {
 
 export const dataToUrl = (data, type) => {
   const urlSearchParams = new URLSearchParams();
-  if (data.country) {
+  if (data === undefined || data === null) {
+    console.log("udnefined data for conversion");
+    return;
+  }
+  if (data && data.country) {
     urlSearchParams.append("country", data.country);
   }
   urlSearchParams.append("matchPercentage", data.matchPercentage);
