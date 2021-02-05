@@ -26,5 +26,7 @@ export const dataToUrl = (data, type) => {
     urlSearchParams.append("matchPercentage", data.matchPercentage);
     urlSearchParams.append("mutations", data.mutations.join(","));
     return "variant_age-distribution?" + urlSearchParams.toString();
+  } else {
+    return "No url";
   }
 };

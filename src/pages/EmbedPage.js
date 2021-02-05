@@ -24,7 +24,7 @@ export function EmbedPage() {
 
   switch (widget) {
     case "variant_age-distribution":
-      data = dataFromUrl(query, "VariantAgeDistributionPlot");
+      data = dataFromUrl(query, "VariantAgeDistribution");
       widgetEl = <VariantAgeDistributionPlot data={data} />;
       break;
     case "variant_international-comparison":

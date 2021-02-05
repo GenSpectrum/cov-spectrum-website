@@ -72,7 +72,7 @@ export class VariantDashboard extends React.Component {
               <WidgetWrapper
                 shareUrl={dataToUrl(
                   variantDistributionPlotData,
-                  "VariantAgeDistributionPlot"
+                  "VariantAgeDistribution"
                 )}
               >
                 <VariantAgeDistributionPlot
