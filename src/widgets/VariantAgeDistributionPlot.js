@@ -33,7 +33,7 @@ export const VariantAgeDistributionPlot = ({ data }) => {
 
   return (
     <div style={{ height: "100%" }}>
-      {distribution && (
+      {distribution != null && !distribution.error && (
         <Plot
           style={{ width: "100%", height: "100%" }}
           data={[
@@ -70,6 +70,7 @@ export const VariantAgeDistributionPlot = ({ data }) => {
           }}
         />
       )}
+      {distribution && distribution.error && <p>Error loading data</p>}
     </div>
   );
 };

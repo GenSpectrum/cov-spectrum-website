@@ -23,6 +23,7 @@ export const fetchAgeDistributionData = (
   const request =
     `${endpoint}?country=${country}&mutations=${mutations}` +
     `&matchPercentage=${matchPercentage}`;
+  console.log("request is", request);
   return fetch(HOST + request, {
     headers: getBaseHeaders(),
     signal,
@@ -30,5 +31,9 @@ export const fetchAgeDistributionData = (
     .then((response) => response.json())
     .then((ageDistributionData) => {
       return ageDistributionData;
+    })
+    .catch((e) => {
+      console.log("Error fetching");
+      return e;
     });
 };
