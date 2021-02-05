@@ -1,5 +1,9 @@
 export const dataFromUrl = (urlSearchParams, type) => {
-  if (type === "variantAgeDistribution") {
+  if (
+    type === "VariantAgeDistribution" ||
+    type === "VariantTimeDistribution" ||
+    type === "VariantInternationalComparison"
+  ) {
     const params = Array.from(urlSearchParams.entries());
     const data = {};
     for (let [key, value] of params) {
@@ -17,6 +21,8 @@ export const dataFromUrl = (urlSearchParams, type) => {
       }
     }
     return data;
+  } else {
+    console.log("Error getting data from URL");
   }
 };
 

@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { Button } from "react-bootstrap";
 import { VariantInternationalComparisonPlot } from "../widgets/VariantInternationalComparisonPlot";
 import { WidgetWrapper } from "./WidgetWrapper";
+import { dataToUrl } from "../helpers/urlConversion";
 
 export class InternationalComparison extends React.Component {
   constructor(props) {
@@ -120,7 +121,7 @@ export class InternationalComparison extends React.Component {
         </div>
         <div style={{ height: "500px" }}>
           <WidgetWrapper
-            shareUrl={VariantInternationalComparisonPlot.dataToUrl(plotData)}
+            shareUrl={dataToUrl(plotData, "VariantInternationalComparison")}
           >
             <VariantInternationalComparisonPlot data={plotData} />
           </WidgetWrapper>
