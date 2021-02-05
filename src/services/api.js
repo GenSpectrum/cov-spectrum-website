@@ -13,13 +13,27 @@ const getBaseHeaders = () => {
   return headers;
 };
 
-export const fetchAgeDistributionData = (
+const getEndpoint = (distributionType) => {
+  switch (distributionType) {
+    case "Age":
+      return "/plot/variant/age-distribution";
+    case "Time":
+      return "/plot/variant/time-distribution";
+    case "International":
+      return "/plot/variant/international-time-distribution";
+    default:
+      return "/plot/variant/age-distribution";
+  }
+};
+
+export const fetchVariantDistributionData = (
+  distributionType,
   country,
   mutations,
   matchPercentage,
   signal
 ) => {
-  const endpoint = "/plot/variant/age-distribution";
+  const endpoint = getEndpoint(distributionType);
   const request =
     `${endpoint}?country=${country}&mutations=${mutations}` +
     `&matchPercentage=${matchPercentage}`;
@@ -37,3 +51,5 @@ export const fetchAgeDistributionData = (
       return e;
     });
 };
+
+export const fetchTimeDistributionData = () => {};
