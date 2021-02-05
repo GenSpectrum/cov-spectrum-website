@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { VariantTimeDistributionPlot } from "../widgets/VariantTimeDistributionPlot";
 import { WidgetWrapper } from "./WidgetWrapper";
 import { VariantAgeDistributionPlot } from "../widgets/VariantAgeDistributionPlot";
+import { dataToUrl } from "../helpers/urlConversion";
 
 export class VariantDashboard extends React.Component {
   constructor(props) {
@@ -69,8 +70,9 @@ export class VariantDashboard extends React.Component {
             </Col>
             <Col md={5}>
               <WidgetWrapper
-                shareUrl={VariantAgeDistributionPlot.dataToUrl(
-                  variantDistributionPlotData
+                shareUrl={dataToUrl(
+                  variantDistributionPlotData,
+                  "variantDistributionPlotData"
                 )}
               >
                 <VariantAgeDistributionPlot
