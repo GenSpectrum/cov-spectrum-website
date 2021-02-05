@@ -59,8 +59,9 @@ export class VariantDashboard extends React.Component {
           <Row>
             <Col md={7}>
               <WidgetWrapper
-                shareUrl={VariantTimeDistributionPlot.dataToUrl(
-                  variantDistributionPlotData
+                shareUrl={dataToUrl(
+                  variantDistributionPlotData,
+                  "VariantTimeDistribution"
                 )}
               >
                 <VariantTimeDistributionPlot

@@ -28,11 +28,11 @@ export function EmbedPage() {
       widgetEl = <VariantAgeDistributionPlot data={data} />;
       break;
     case "variant_international-comparison":
-      data = VariantInternationalComparisonPlot.dataFromUrl(query);
+      data = dataFromUrl(query, "VariantInternationalComparison");
       widgetEl = <VariantInternationalComparisonPlot data={data} />;
       break;
     case "variant_time-distribution":
-      data = VariantTimeDistributionPlot.dataFromUrl(query);
+      data = dataFromUrl(query, "VariantTimeDistribution");
       widgetEl = <VariantTimeDistributionPlot data={data} />;
       break;
     default:
