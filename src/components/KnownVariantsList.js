@@ -85,22 +85,26 @@ export class KnownVariantsList extends React.Component {
             </tr>
           </thead>
           <tbody>
-            {this.state.variants?.map((d) => (
-              <tr key={d.name}>
-                <td>{d.name}</td>
-                <td>
-                  <Button
-                    onClick={() => {
-                      this.handleVariantSelect(d);
-                    }}
-                    variant="outline-secondary"
-                    size="sm"
-                  >
-                    Show Details
-                  </Button>
-                </td>
-              </tr>
-            ))}
+            {this.state.variants ? (
+              this.state.variants.map((d) => (
+                <tr key={d.name}>
+                  <td>{d.name}</td>
+                  <td>
+                    <Button
+                      onClick={() => {
+                        this.handleVariantSelect(d);
+                      }}
+                      variant="outline-secondary"
+                      size="sm"
+                    >
+                      Show Details
+                    </Button>
+                  </td>
+                </tr>
+              ))
+            ) : (
+              <p>Loading...</p>
+            )}
           </tbody>
         </Table>
       </>
