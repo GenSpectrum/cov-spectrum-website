@@ -71,4 +71,13 @@ export const fetchVariantDistributionData = (
     });
 };
 
+export const getVariants = () => {
+  const url = HOST + '/resource/variant';
+  return fetch(url, { headers: getBaseHeaders() }).then(response => response.json());
+};
+
+export const getCountries = () => {
+  const url = HOST + '/resource/country';
+  return fetch(url, { headers: getBaseHeaders() }).then(response => response.json());
+};
 export const fetchTimeDistributionData = () => {};

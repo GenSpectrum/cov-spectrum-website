@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { BackendService } from '../services/BackendService';
 import Table from 'react-bootstrap/Table';
 import { Utils } from '../services/Utils';
 import { Link } from 'react-router-dom';
@@ -33,40 +32,6 @@ export const InternationalComparison = ({ country, matchPercentage, variant }) =
       console.log('TIME Cleanup render for variant age distribution plot');
     };
   }, [country, matchPercentage, variant]);
-
-  // componentDidMount() {
-  //   this.updateView();
-  // }
-
-  // componentDidUpdate(prevProps, prevState, snapshot) {
-  //   // TODO Use a better equality check for the variant
-  //   if (
-  //     prevProps.variant !== this.props.variant ||
-  //     prevProps.country !== this.props.country ||
-  //     prevProps.matchPercentage !== this.props.matchPercentage
-  //   ) {
-  //     this.updateView();
-  //   }
-  // }
-
-  // async updateView() {
-  //   this.loadInternationalTimeDistribution();
-  // }
-
-  // async loadInternationalTimeDistribution() {
-  //   this.state.req?.cancel();
-  //   this.setState({ distribution: null });
-
-  //   const mutationsString = this.props.variant.mutations.join(',');
-  //   const endpoint = '/plot/variant/international-time-distribution';
-  //   const req = BackendService.get(
-  //     `${endpoint}?mutations=${mutationsString}` + `&matchPercentage=${this.props.matchPercentage}`
-  //   );
-  //   this.setState({ req });
-
-  //   const distribution = await (await req).json();
-  //   this.setState({ distribution });
-  // }
 
   const [countryData, setCountryData] = useState([]);
 
