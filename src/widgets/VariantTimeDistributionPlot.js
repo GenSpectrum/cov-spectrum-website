@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchVariantDistributionData } from '../services/api';
+import { getVariantDistributionData } from '../services/api';
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
 import createPlotlyComponent from 'react-plotly.js/factory';
@@ -14,7 +14,7 @@ export const VariantTimeDistributionPlot = ({ data }) => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    fetchVariantDistributionData('Time', data.country, data.mutations, data.matchPercentage, signal).then(
+    getVariantDistributionData('Time', data.country, data.mutations, data.matchPercentage, signal).then(
       newDistributionData => {
         if (isSubscribed) {
           console.log('TIME SET', newDistributionData);

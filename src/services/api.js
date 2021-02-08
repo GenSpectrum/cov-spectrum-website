@@ -44,13 +44,7 @@ const getVariantRequestUrl = (distributionType, country, mutations, matchPercent
   }
 };
 
-export const fetchVariantDistributionData = (
-  distributionType,
-  country,
-  mutations,
-  matchPercentage,
-  signal
-) => {
+export const getVariantDistributionData = (distributionType, country, mutations, matchPercentage, signal) => {
   const url = getVariantRequestUrl(distributionType, country, mutations, matchPercentage);
   // console.log('Fetching variant request', url);
   return fetch(url, {
@@ -69,6 +63,12 @@ export const fetchVariantDistributionData = (
       console.log('Error fetching', e);
       return e;
     });
+};
+
+export const getGrowingVariants = (year, week, country, signal) => {
+  const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${this.props.country}`;
+  const url = HOST + endpoint;
+  return fetch(url, { headers: getBaseHeaders(), signal }).then(response => response.json());
 };
 
 export const getVariants = () => {

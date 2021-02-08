@@ -6,7 +6,7 @@ import { Button } from 'react-bootstrap';
 import { VariantInternationalComparisonPlot } from '../widgets/VariantInternationalComparisonPlot';
 import { WidgetWrapper } from './WidgetWrapper';
 import { dataToUrl } from '../helpers/urlConversion';
-import { fetchVariantDistributionData } from '../services/api';
+import { getVariantDistributionData } from '../services/api';
 
 export const InternationalComparison = ({ country, matchPercentage, variant }) => {
   const [distribution, setDistribution] = useState(null);
@@ -16,7 +16,7 @@ export const InternationalComparison = ({ country, matchPercentage, variant }) =
     const controller = new AbortController();
     const signal = controller.signal;
     const mutationsString = variant.mutations.join(',');
-    fetchVariantDistributionData('International', null, mutationsString, matchPercentage, signal).then(
+    getVariantDistributionData('International', null, mutationsString, matchPercentage, signal).then(
       newDistributionData => {
         if (isSubscribed) {
           console.log('TIME SET', newDistributionData);
