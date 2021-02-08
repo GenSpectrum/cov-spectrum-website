@@ -17,14 +17,17 @@ export const VariantTimeDistributionPlot = ({ data }) => {
     fetchVariantDistributionData('Time', data.country, data.mutations, data.matchPercentage, signal).then(
       newDistributionData => {
         if (isSubscribed) {
+          console.log('TIME SET', newDistributionData);
           setDistribution(newDistributionData);
+        } else {
+          console.log('TIME NOT SET');
         }
       }
     );
     return () => {
       isSubscribed = false;
       controller.abort();
-      console.log('Cleanup render for variant age distribution plot');
+      console.log('TIME Cleanup render for variant age distribution plot');
     };
   }, [data]);
 

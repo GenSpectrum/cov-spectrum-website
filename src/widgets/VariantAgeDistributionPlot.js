@@ -14,17 +14,22 @@ export const VariantAgeDistributionPlot = ({ data }) => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    fetchVariantDistributionData('Age', data.country, data.mutations, data.matchPercentage, signal).then(
-      newDistributionData => {
+    fetchVariantDistributionData('Age', data.country, data.mutations, data.matchPercentage, signal)
+      .then(newDistributionData => {
         if (isSubscribed) {
+          console.log('AGE set');
           setDistribution(newDistributionData);
+        } else {
+          console.log('AGE NOT SET');
         }
-      }
-    );
+      })
+      .catch(e => {
+        console.log('Called fetch data error', e);
+      });
     return () => {
       isSubscribed = false;
       controller.abort();
-      console.log('Cleanup render for variant age distribution plot');
+      console.log('AGE Cleanup render for variant age distribution plot');
     };
   }, [data]);
 

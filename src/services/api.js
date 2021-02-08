@@ -48,12 +48,16 @@ export const fetchVariantDistributionData = (
     headers: getBaseHeaders(),
     signal,
   })
-    .then(response => response.json())
-    .then(ageDistributionData => {
-      return ageDistributionData;
+    .then(response => {
+      // console.log('Response is', response);
+      return response.json();
+    })
+    .then(distributionData => {
+      console.log('Data for ', distributionType, distributionData);
+      return distributionData;
     })
     .catch(e => {
-      console.log('Error fetching');
+      console.log('Error fetching', e);
       return e;
     });
 };
