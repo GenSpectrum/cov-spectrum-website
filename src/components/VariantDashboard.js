@@ -6,6 +6,15 @@ import { VariantTimeDistributionPlot } from '../widgets/VariantTimeDistributionP
 import { WidgetWrapper } from './WidgetWrapper';
 import { VariantAgeDistributionPlot } from '../widgets/VariantAgeDistributionPlot';
 import { dataToUrl } from '../helpers/urlConversion';
+import styled from 'styled-components';
+
+const RowWrapper = styled(Row)`
+  /* height: 100rem; */
+`;
+
+const ColWrapper = styled(Col)`
+  /* height: 100%; */
+`;
 
 export const VariantDashboard = ({ country, matchPercentage, variant }) => {
   const [variantDistributionPlotData, setVariantDistributionPlotData] = useState(undefined);
@@ -56,7 +65,7 @@ export const VariantDashboard = ({ country, matchPercentage, variant }) => {
       </p>
 
       <Container fluid='md'>
-        <Row>
+        <RowWrapper>
           <Col md={7}>
             <WidgetWrapper shareUrl={dataToUrl(variantDistributionPlotData, 'VariantTimeDistribution')}>
               <VariantTimeDistributionPlot data={variantDistributionPlotData} />
@@ -67,7 +76,7 @@ export const VariantDashboard = ({ country, matchPercentage, variant }) => {
               <VariantAgeDistributionPlot data={variantDistributionPlotData} />
             </WidgetWrapper>
           </Col>
-        </Row>
+        </RowWrapper>
       </Container>
     </>
   ) : (

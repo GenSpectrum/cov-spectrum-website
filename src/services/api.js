@@ -43,7 +43,7 @@ export const fetchVariantDistributionData = (
   signal
 ) => {
   const url = getVariantRequestUrl(distributionType, country, mutations, matchPercentage);
-  console.log('Fetching variant request', url);
+  // console.log('Fetching variant request', url);
   return fetch(url, {
     headers: getBaseHeaders(),
     signal,
@@ -53,7 +53,7 @@ export const fetchVariantDistributionData = (
       return response.json();
     })
     .then(distributionData => {
-      console.log('Data for ', distributionType, distributionData);
+      // console.log('Data for ', distributionType, distributionData);
       return distributionData;
     })
     .catch(e => {

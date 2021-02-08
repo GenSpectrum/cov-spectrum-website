@@ -32,6 +32,12 @@ export const MainPage = () => {
   const [variantDashboard, setVariantDashboard] = useState({ variant: null, country: null });
 
   const handleSelect = ({ variant, country }, matchPercentage) => {
+    console.log('Update VDash to ', {
+      variant,
+      country,
+      matchPercentage,
+    });
+
     setVariantDashboard({
       variant,
       country,
@@ -81,7 +87,7 @@ export const MainPage = () => {
             />
           </>
         ) : (
-          <h1>ERROR</h1>
+          <h1>Loading</h1>
         )}
       </Container>
     </div>

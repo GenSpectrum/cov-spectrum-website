@@ -17,7 +17,7 @@ export const VariantAgeDistributionPlot = ({ data }) => {
     fetchVariantDistributionData('Age', data.country, data.mutations, data.matchPercentage, signal)
       .then(newDistributionData => {
         if (isSubscribed) {
-          console.log('AGE set');
+          console.log('AGE SET', newDistributionData);
           setDistribution(newDistributionData);
         } else {
           console.log('AGE NOT SET');

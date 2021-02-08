@@ -1,17 +1,23 @@
 import { Button, Modal, Form } from 'react-bootstrap';
 import { useState } from 'react';
+import styled from 'styled-components';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
+const HEIGHT = 500;
 
-export function WidgetWrapper({ shareUrl, children }) {
+const Wrapper = styled.div`
+  height: ${HEIGHT}px;
+`;
+
+export function WidgetWrapper({ shareUrl, children, isLoading = false }) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const embeddingCode = `<iframe src="${host}/embed/${shareUrl}" width="800" height="500" frameborder="0"></iframe>`;
+  const embeddingCode = `<iframe src="${host}/embed/${shareUrl}" width="800" height="${HEIGHT}" frameborder="0"></iframe>`;
 
   return (
-    <>
+    <Wrapper>
       <div style={{ position: 'relative' }}>
         <div
           style={{
@@ -21,9 +27,11 @@ export function WidgetWrapper({ shareUrl, children }) {
             top: '10px',
           }}
         >
-          <Button variant='outline-primary' size='sm' onClick={handleShow}>
-            Share
-          </Button>
+          {!isLoading && (
+            <Button variant='outline-primary' size='sm' onClick={handleShow}>
+              Share
+            </Button>
+          )}
         </div>
         {children}
       </div>
@@ -37,6 +45,6 @@ export function WidgetWrapper({ shareUrl, children }) {
           <Form.Control as='textarea' value={embeddingCode} rows={7} />
         </Modal.Body>
       </Modal>
-    </>
+    </Wrapper>
   );
 }
