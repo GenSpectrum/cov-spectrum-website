@@ -81,6 +81,14 @@ export const getCurrentWeek = () => {
   return fetch(url, { headers: getBaseHeaders() }).then(response => response.json());
 };
 
+export const getSample = (mutationsString, matchPercentage, country = null) => {
+  let url = HOST + `/ressource/sample/?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
+  if (country) {
+    url += `&country=${country}`;
+  }
+  return fetch(url, { headers: getBaseHeaders() }).then(response => response.json());
+};
+
 export const getCountries = () => {
   const url = HOST + '/resource/country';
   return fetch(url, { headers: getBaseHeaders() }).then(response => response.json());

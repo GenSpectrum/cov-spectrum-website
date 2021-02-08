@@ -3,6 +3,7 @@ import { BackendService } from '../services/BackendService';
 import { Col, Container, Row } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 
+//Get information about a sample
 export class SampleTable extends React.Component {
   constructor(props) {
     super(props);
