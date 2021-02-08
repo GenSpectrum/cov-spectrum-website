@@ -1,48 +1,31 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
 import { Typeahead } from 'react-bootstrap-typeahead';
-import { BackendService } from '../services/BackendService';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { NewVariantTable } from './NewVariantTable';
+import { getCountries, getCurrentWeek } from '../services/api';
 
-export class NewVariantLookup extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      allCountries: [],
-      weeks: [],
-      table: {
-        country: null,
-        week: null,
-      },
-      variantDashboard: {
-        variant: null,
-        country: null,
-      },
-      countryReq: null,
-    };
+// export class NewVariantLookup extends React.Component {
 
-    this.handleVariantSelect = this.handleVariantSelect.bind(this);
-  }
+export const NewVariantLookup = ({ onVariantAndCountrySelect }) => {
+  const [countries, setCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState('Switzerland');
 
-  async componentDidMount() {
-    this.fetchCountries();
-    this.setWeeks();
-  }
+  const [weeks, setWeeks] = useState([]);
+  const [selectedWeek, setSelectedWeek] = useState('2021-1');
 
-  async fetchCountries() {
-    this.state.countryReq?.cancel();
-    const countryReq = BackendService.get('/resource/country');
-    this.setState({ countryReq });
-    const allCountries = await (await countryReq).json();
+  const [table, setTable] = useState({ country: 'Switzerland', week: 0 });
+  const [variantDashboard, setVariantDashboard] = useState({ country: null, week: null });
 
-    this.setState({ allCountries });
-  }
+  const handleVariantSelect = variant => {
+    console.log('new country is ', table.country);
+    onVariantAndCountrySelect({
+      variant,
+      country: table.country,
+    });
+  };
 
-  async setWeeks() {
-    // TODO Improve the whole function
-    const currentIsoWeek = await (await BackendService.get('/utils/current-week')).json();
-
+  const convertToWeeks = currentIsoWeek => {
     const weeks = [];
     for (let i = 40; i <= 53; i++) {
       weeks.unshift('2020-' + i);
@@ -50,88 +33,103 @@ export class NewVariantLookup extends React.Component {
     for (let i = 1; i <= currentIsoWeek; i++) {
       weeks.unshift('2021-' + i);
     }
-    this.setState({ weeks, selectedWeek: weeks[0] });
-  }
+    return weeks;
+  };
 
-  handleVariantSelect(variant) {
-    this.props.onVariantAndCountrySelect({
-      variant,
-      country: this.state.table.country,
+  useEffect(() => {
+    let isSubscribed = true;
+    // const controller = new AbortController();
+    // const signal = controller.signal;
+    getCurrentWeek().then(week => {
+      if (isSubscribed) {
+        const newWeeks = convertToWeeks(week);
+        console.log('new weeks is ', weeks, 'for', week);
+        setWeeks(newWeeks);
+        setSelectedWeek(newWeeks[0]);
+      }
     });
-  }
+    getCountries().then(countries => {
+      if (isSubscribed) {
+        setCountries(countries);
+      }
+    });
+    return () => {
+      isSubscribed = false;
+      // controller.abort();
+      console.log('TIME Cleanup render for variant age distribution plot');
+    };
+  }, []);
 
-  render() {
-    return (
-      <Container fluid='md'>
-        <Row>
-          <Col>
-            {
-              <Form>
-                <Form.Group controlId='countryFieldGroup'>
-                  <Form.Label>Country</Form.Label>
-                  <Typeahead
-                    id='countryField'
-                    onChange={selected => {
-                      let selectedCountry = null;
-                      if (selected.length === 1) {
-                        selectedCountry = selected[0];
-                      }
-                      this.setState({ selectedCountry });
-                    }}
-                    options={this.state.allCountries}
-                  />
-                </Form.Group>
-              </Form>
-            }
-          </Col>
-          <Col>
+  return (
+    <Container fluid='md'>
+      <Row>
+        <Col>
+          {
             <Form>
               <Form.Group controlId='countryFieldGroup'>
-                <Form.Label>Week</Form.Label>
-                <Form.Control
-                  value={this.state.selectedWeek}
-                  as='select'
-                  onChange={e => {
-                    this.setState({ selectedWeek: e.target.value });
+                <Form.Label>Country</Form.Label>
+                <Typeahead
+                  id='countryField'
+                  onChange={selected => {
+                    let selectedCountry = null;
+                    if (selected.length === 1) {
+                      selectedCountry = selected[0];
+                    }
+                    console.log('Selected Country is', selected[0]);
+                    setSelectedCountry(selectedCountry);
                   }}
-                >
-                  {this.state.weeks.map(week => (
-                    <option key={week}>{week}</option>
-                  ))}
-                </Form.Control>
+                  options={countries}
+                />
               </Form.Group>
             </Form>
-          </Col>
-          <Col>
-            <Button
-              onClick={e => {
-                if (this.state.selectedCountry && this.state.selectedWeek) {
-                  this.setState({
-                    table: {
-                      country: this.state.selectedCountry,
-                      week: this.state.selectedWeek,
-                    },
-                  });
-                }
-              }}
-              style={{ marginTop: '30px', width: '100%' }}
-            >
-              Lookup
-            </Button>
-          </Col>
-        </Row>
+          }
+        </Col>
+        <Col>
+          <Form>
+            <Form.Group controlId='countryFieldGroup'>
+              <Form.Label>Week</Form.Label>
+              <Form.Control
+                value={selectedWeek}
+                as='select'
+                onChange={e => {
+                  setSelectedWeek(e.target.value);
+                }}
+              >
+                {weeks.map(week => (
+                  <option key={week}>{week}</option>
+                ))}
+              </Form.Control>
+            </Form.Group>
+          </Form>
+        </Col>
+        <Col>
+          <Button
+            onClick={e => {
+              if (selectedCountry && selectedWeek) {
+                setTable({
+                  country: selectedCountry,
+                  week: selectedWeek,
+                });
+              }
+            }}
+            style={{ marginTop: '30px', width: '100%' }}
+          >
+            Lookup
+          </Button>
+        </Col>
+      </Row>
 
-        {this.state.table.country && this.state.table.week ? (
-          <>
-            <hr />
-            <NewVariantTable
-              country={this.state.table.country}
-              yearWeek={this.state.table.week}
-              onVariantSelect={this.handleVariantSelect}
-            />
-          </>
-        ) : null}
-      </Container>
-    );
-  }
-}
+      {table.country && table.week ? (
+        <>
+          <hr />
+          <NewVariantTable
+            country={table.country}
+            yearWeek={table.week}
+            onVariantSelect={handleVariantSelect}
+          />
+        </>
+      ) : null}
+    </Container>
+  );
+  // }
+};

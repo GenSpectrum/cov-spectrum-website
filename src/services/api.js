@@ -66,13 +66,18 @@ export const getVariantDistributionData = (distributionType, country, mutations,
 };
 
 export const getGrowingVariants = (year, week, country, signal) => {
-  const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${this.props.country}`;
+  const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${country}`;
   const url = HOST + endpoint;
   return fetch(url, { headers: getBaseHeaders(), signal }).then(response => response.json());
 };
 
 export const getVariants = () => {
   const url = HOST + '/resource/variant';
+  return fetch(url, { headers: getBaseHeaders() }).then(response => response.json());
+};
+
+export const getCurrentWeek = () => {
+  const url = HOST + '/utils/current-week';
   return fetch(url, { headers: getBaseHeaders() }).then(response => response.json());
 };
 

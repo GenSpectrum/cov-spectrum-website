@@ -3,47 +3,14 @@ import Table from 'react-bootstrap/Table';
 import { Button } from 'react-bootstrap';
 import { getGrowingVariants } from '../services/api';
 
-// export class NewVariantTable extends React.Component {
 export const NewVariantTable = ({ country, yearWeek, onVariantSelect }) => {
   const [data, setData] = useState(null);
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     data: null,
-  //     req: null,
-  //   };
-  // }
-
-  // componentDidMount() {
-  //   this.updateView();
-  // }
-
-  // componentDidUpdate(prevProps, prevState, snapshot) {
-  //   if (prevProps.country !== this.props.country || prevProps.yearWeek !== this.props.yearWeek) {
-  //     this.updateView();
-  //   }
-  // }
-
-  // async updateView() {
-  //   this.setState({ data: null });
-  //   this.state.req?.cancel();
-
-  //   const [year, week] = this.props.yearWeek.split('-');
-
-  //   const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${this.props.country}`;
-  //   const req = BackendService.get(endpoint);
-  //   this.setState({ req });
-  //   const data = await (await req).json();
-
-  //   this.setState({ data });
-  // }
-
-  // render() {
 
   useEffect(() => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
+    console.log('year week is', yearWeek);
     const [year, week] = yearWeek.split('-');
     getGrowingVariants(year, week, country, signal).then(newData => {
       if (isSubscribed) {
