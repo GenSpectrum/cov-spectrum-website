@@ -1,105 +1,100 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import { Typeahead } from 'react-bootstrap-typeahead';
-import { BackendService } from '../services/BackendService';
+import { getCountries, getVariants } from '../services/api';
 
-export class MutationLookup extends React.Component {
-  constructor(props) {
-    super(props);
+export const MutationLookup = ({ onVariantAndCountrySelect }) => {
+  const [variants, setVariants] = useState([]);
+  const [countries, setCountries] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState('Switzerland');
+  const [selectedCountryField, setSelectedCountryField] = useState(['Switzerland']);
 
-    this.state = {
-      variants: [],
-      selectedCountry: 'Switzerland',
-      selectedCountryField: ['Switzerland'],
-      selectedMutations: '',
-      // This may not be changed right now because the initial default range slider is at 50.
-      selectedMatchPercentage: 50,
-      countryReq: null,
-    };
+  const [selectedMutations, setSelectedMutations] = useState('');
+  const [selectedMatchPercentage, setSelectedMatchPercentage] = useState(50);
 
-    this.handleCountryFieldChange = this.handleCountryFieldChange.bind(this);
-    this.handleMutationFieldChange = this.handleMutationFieldChange.bind(this);
-    this.handleMatchPercentageFieldChange = this.handleMatchPercentageFieldChange.bind(this);
-    this.handleSearchButtonClick = this.handleSearchButtonClick.bind(this);
-  }
-
-  async componentDidMount() {
-    this.fetchCountries();
-  }
-
-  async fetchCountries() {
-    this.state.countryReq?.cancel();
-    const countryReq = BackendService.get('/resource/country');
-    this.setState({ countryReq });
-    const allCountries = await (await countryReq).json();
-
-    this.setState({ allCountries });
-  }
-
-  handleCountryFieldChange(selected) {
+  const handleCountryFieldChange = selected => {
     let selectedCountry = null;
     if (selected.length === 1) {
       selectedCountry = selected[0];
     }
-    this.setState({ selectedCountry, selectedCountryField: selected });
-  }
+    // setState({ selectedCountry, selectedCountryField: selected });
+    setSelectedCountry(selectedCountry);
+    setSelectedCountryField(selected);
+  };
 
-  handleMutationFieldChange(e) {
-    this.setState({ selectedMutations: e.target.value });
-  }
+  const handleMutationFieldChange = e => {
+    setSelectedMutations(e.target.value);
+  };
 
-  handleMatchPercentageFieldChange(e) {
-    this.setState({ selectedMatchPercentage: e.target.value });
-  }
+  const handleMatchPercentageFieldChange = e => {
+    setSelectedMatchPercentage(e.target.value);
+  };
 
-  handleSearchButtonClick() {
+  const handleSearchButtonClick = () => {
     const variant = {
-      mutations: this.state.selectedMutations.split(',').map(m => m.trim()),
+      mutations: selectedMutations.split(',').map(m => m.trim()),
     };
-    this.props.onVariantAndCountrySelect(
+    onVariantAndCountrySelect(
       {
         variant,
-        country: this.state.selectedCountry,
+        country: selectedCountry,
       },
-      this.state.selectedMatchPercentage / 100
+      selectedMatchPercentage / 100
     );
-  }
+  };
 
-  render() {
-    return (
-      <>
-        {this.state.allCountries && (
-          <Form>
-            <Form.Group controlId='countryFieldGroup'>
-              <Form.Label>Country</Form.Label>
-              <Typeahead
-                id='countryField'
-                selected={this.state.selectedCountryField}
-                onChange={this.handleCountryFieldChange}
-                options={this.state.allCountries}
-              />
-            </Form.Group>
-            <Form.Group controlId='mutationsFieldGroup'>
-              <Form.Label>Mutations (comma-separated and case-sensitive)</Form.Label>
-              <Form.Control
-                type='text'
-                value={this.state.selectedMutations}
-                placeholder='Example: S:N501Y,ORF1a:G3676-,ORF8:Q27*'
-                onChange={this.handleMutationFieldChange}
-              />
-            </Form.Group>
-            <Form.Group controlId='matchPercentageGroup'>
-              <Form.Label>Match Percentage</Form.Label>
-              <span style={{ marginLeft: '30px' }}>{this.state.selectedMatchPercentage}%</span>
-              <Form.Control type='range' onChange={this.handleMatchPercentageFieldChange} />
-            </Form.Group>
-            <Button variant='primary' onClick={this.handleSearchButtonClick}>
-              Search
-            </Button>
-          </Form>
-        )}
-      </>
-    );
-  }
-}
+  useEffect(() => {
+    let isSubscribed = true;
+    getCountries().then(newCountries => {
+      if (isSubscribed) {
+        setCountries(newCountries);
+      }
+    });
+    getVariants().then(newVariants => {
+      if (isSubscribed) {
+        setVariants(newVariants);
+      }
+    });
+    return () => {
+      isSubscribed = false;
+      // controller.abort();
+      console.log('TIME Cleanup render for variant age distribution plot');
+    };
+  }, []);
+
+  return (
+    <>
+      {countries && (
+        <Form>
+          <Form.Group controlId='countryFieldGroup'>
+            <Form.Label>Country</Form.Label>
+            <Typeahead
+              id='countryField'
+              selected={selectedCountryField}
+              onChange={handleCountryFieldChange}
+              options={countries}
+            />
+          </Form.Group>
+          <Form.Group controlId='mutationsFieldGroup'>
+            <Form.Label>Mutations (comma-separated and case-sensitive)</Form.Label>
+            <Form.Control
+              type='text'
+              value={selectedMutations}
+              placeholder='Example: S:N501Y,ORF1a:G3676-,ORF8:Q27*'
+              onChange={handleMutationFieldChange}
+            />
+          </Form.Group>
+          <Form.Group controlId='matchPercentageGroup'>
+            <Form.Label>Match Percentage</Form.Label>
+            <span style={{ marginLeft: '30px' }}>{selectedMatchPercentage}%</span>
+            <Form.Control type='range' onChange={handleMatchPercentageFieldChange} />
+          </Form.Group>
+          <Button variant='primary' onClick={handleSearchButtonClick}>
+            Search
+          </Button>
+        </Form>
+      )}
+    </>
+  );
+};

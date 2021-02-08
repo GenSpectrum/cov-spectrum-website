@@ -5,8 +5,6 @@ import { Button, Col, Container, Row } from 'react-bootstrap';
 import { NewVariantTable } from './NewVariantTable';
 import { getCountries, getCurrentWeek } from '../services/api';
 
-// export class NewVariantLookup extends React.Component {
-
 export const NewVariantLookup = ({ onVariantAndCountrySelect }) => {
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState('Switzerland');
