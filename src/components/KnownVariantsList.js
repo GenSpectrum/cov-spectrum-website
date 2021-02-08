@@ -76,17 +76,16 @@ export class KnownVariantsList extends React.Component {
             </Form.Group>
           </Form>
         )}
-
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Variant</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {this.state.variants ? (
-              this.state.variants.map(d => (
+        {this.state.variants ? (
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Variant</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.variants.map(d => (
                 <tr key={d.name}>
                   <td>{d.name}</td>
                   <td>
@@ -101,12 +100,12 @@ export class KnownVariantsList extends React.Component {
                     </Button>
                   </td>
                 </tr>
-              ))
-            ) : (
-              <p>Loading...</p>
-            )}
-          </tbody>
-        </Table>
+              ))}
+            </tbody>
+          </Table>
+        ) : (
+          <p>Loading...</p>
+        )}
       </>
     );
   }

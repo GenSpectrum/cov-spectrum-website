@@ -43,6 +43,7 @@ export const fetchVariantDistributionData = (
   signal
 ) => {
   const url = getVariantRequestUrl(distributionType, country, mutations, matchPercentage);
+  console.log('Fetching variant request', url);
   return fetch(url, {
     headers: getBaseHeaders(),
     signal,

@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
 const Footer = () => {
-  return <div style={{ height: "100px" }}></div>;
+  return <div style={{ height: '100px' }}></div>;
 };
 
 export default Footer;
