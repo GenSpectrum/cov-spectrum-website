@@ -13,6 +13,15 @@ const getBaseHeaders = () => {
   return headers;
 };
 
+export const post = (endpoint, body) => {
+  const url = HOST + endpoint;
+  return fetch(url, {
+    method: 'POST',
+    headers: getBaseHeaders(),
+    body: JSON.stringify(body),
+  });
+};
+
 const getVariantEndpoint = distributionType => {
   switch (distributionType) {
     case 'Age':

@@ -1,4 +1,5 @@
 import { BackendService } from './BackendService';
+import { post } from './api';
 export class AccountService {
   /**
    * @return {Promise<boolean>} true if login was successful; otherwise false
@@ -6,11 +7,18 @@ export class AccountService {
   static async login(username, password) {
     // Login attempt: Get a JWT token
     const response = await (
-      await BackendService.post('/internal/login', {
+      await post('/internal/login', {
         username,
         password,
       })
     ).json();
+    // const response = await (
+    //   await BackendService.post('/internal/login', {
+    //     username,
+    //     password,
+    //   })
+    // ).json();
+    console.log('Login response is ', response);
     if (response.error) {
       return false;
     }

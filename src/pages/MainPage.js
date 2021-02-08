@@ -6,28 +6,6 @@ import { KnownVariantsList } from '../components/KnownVariantsList';
 import { InternationalComparison } from '../components/InternationalComparison';
 import { MutationLookup } from '../components/MutationLookup';
 
-// export class MainPage extends React.Component {
-// constructor(props) {
-//   super(props);
-//   this.state = {
-//     variantDashboard: {
-//       variant: null,
-//       country: null,
-//     },
-//   };
-
-//   this.handleVariantAndCountrySelect = this.handleVariantAndCountrySelect.bind(this);
-// }
-
-// handleVariantAndCountrySelect({ variant, country }, matchPercentage) {
-//   this.setState({
-//     variantDashboard: {
-//       variant,
-//       country,
-//       matchPercentage,
-//     },
-//   });
-// }
 export const MainPage = () => {
   const [variantDashboard, setVariantDashboard] = useState({ variant: null, country: null });
 
@@ -45,7 +23,6 @@ export const MainPage = () => {
     });
   };
 
-  // render() {
   return (
     <div style={{ marginTop: '20px' }}>
       <Container fluid='md'>
@@ -90,5 +67,4 @@ export const MainPage = () => {
       </Container>
     </div>
   );
-  // }
 };
