@@ -86,9 +86,7 @@ export const MainPage = () => {
               matchPercentage={variantDashboard.matchPercentage}
             />
           </>
-        ) : (
-          <h1>Loading</h1>
-        )}
+        ) : null}
       </Container>
     </div>
   );
