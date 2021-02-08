@@ -1,40 +1,27 @@
-import { BackendService } from './BackendService';
 import { post } from './api';
 export class AccountService {
   /**
+   * Login by getting and storing JWT token
    * @return {Promise<boolean>} true if login was successful; otherwise false
    */
   static async login(username, password) {
-    // Login attempt: Get a JWT token
     const response = await (
       await post('/internal/login', {
         username,
         password,
       })
     ).json();
-    // const response = await (
-    //   await BackendService.post('/internal/login', {
-    //     username,
-    //     password,
-    //   })
-    // ).json();
     console.log('Login response is ', response);
     if (response.error) {
       return false;
     }
-
-    // Parse token
     const token = response.token;
     const parsed = AccountService._parseJwt(token);
-
-    // Keep the token in the local storage
     localStorage.setItem('auth', JSON.stringify({ token, parsed }));
-
     return true;
   }
 
   static logout() {
-    // The backend is currently not able to invalidate tokens.
     localStorage.removeItem('auth');
   }
 

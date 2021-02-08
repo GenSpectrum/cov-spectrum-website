@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BackendService } from '../services/BackendService';
 import Table from 'react-bootstrap/Table';
 import { Utils } from '../services/Utils';
@@ -7,55 +7,75 @@ import { Button } from 'react-bootstrap';
 import { VariantInternationalComparisonPlot } from '../widgets/VariantInternationalComparisonPlot';
 import { WidgetWrapper } from './WidgetWrapper';
 import { dataToUrl } from '../helpers/urlConversion';
+import { fetchVariantDistributionData } from '../services/api';
 
-export class InternationalComparison extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      distribution: null,
-      req: null,
-    };
-  }
+export const InternationalComparison = ({ country, matchPercentage, variant }) => {
+  const [distribution, setDistribution] = useState(null);
 
-  componentDidMount() {
-    this.updateView();
-  }
-
-  componentDidUpdate(prevProps, prevState, snapshot) {
-    // TODO Use a better equality check for the variant
-    if (
-      prevProps.variant !== this.props.variant ||
-      prevProps.country !== this.props.country ||
-      prevProps.matchPercentage !== this.props.matchPercentage
-    ) {
-      this.updateView();
-    }
-  }
-
-  async updateView() {
-    this.loadInternationalTimeDistribution();
-  }
-
-  async loadInternationalTimeDistribution() {
-    this.state.req?.cancel();
-    this.setState({ distribution: null });
-
-    const mutationsString = this.props.variant.mutations.join(',');
-    const endpoint = '/plot/variant/international-time-distribution';
-    const req = BackendService.get(
-      `${endpoint}?mutations=${mutationsString}` + `&matchPercentage=${this.props.matchPercentage}`
+  useEffect(() => {
+    let isSubscribed = true;
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const mutationsString = variant.mutations.join(',');
+    fetchVariantDistributionData('International', null, mutationsString, matchPercentage, signal).then(
+      newDistributionData => {
+        if (isSubscribed) {
+          console.log('TIME SET', newDistributionData);
+          setDistribution(newDistributionData);
+        } else {
+          console.log('TIME NOT SET');
+        }
+      }
     );
-    this.setState({ req });
+    return () => {
+      isSubscribed = false;
+      controller.abort();
+      console.log('TIME Cleanup render for variant age distribution plot');
+    };
+  }, [country, matchPercentage, variant]);
 
-    const distribution = await (await req).json();
-    this.setState({ distribution });
-  }
+  // componentDidMount() {
+  //   this.updateView();
+  // }
 
-  render() {
-    const aggregated = Utils.groupBy(this.state.distribution, d => d.x.country);
-    const countryData = [];
+  // componentDidUpdate(prevProps, prevState, snapshot) {
+  //   // TODO Use a better equality check for the variant
+  //   if (
+  //     prevProps.variant !== this.props.variant ||
+  //     prevProps.country !== this.props.country ||
+  //     prevProps.matchPercentage !== this.props.matchPercentage
+  //   ) {
+  //     this.updateView();
+  //   }
+  // }
+
+  // async updateView() {
+  //   this.loadInternationalTimeDistribution();
+  // }
+
+  // async loadInternationalTimeDistribution() {
+  //   this.state.req?.cancel();
+  //   this.setState({ distribution: null });
+
+  //   const mutationsString = this.props.variant.mutations.join(',');
+  //   const endpoint = '/plot/variant/international-time-distribution';
+  //   const req = BackendService.get(
+  //     `${endpoint}?mutations=${mutationsString}` + `&matchPercentage=${this.props.matchPercentage}`
+  //   );
+  //   this.setState({ req });
+
+  //   const distribution = await (await req).json();
+  //   this.setState({ distribution });
+  // }
+
+  const [countryData, setCountryData] = useState([]);
+
+  useEffect(() => {
+    let isSubscribed = true;
+    const aggregated = Utils.groupBy(distribution, d => d.x.country);
+    const newCountryData = [];
     aggregated?.forEach((value, name) => {
-      countryData.push(
+      newCountryData.push(
         value.reduce(
           (aggregated, entry) => ({
             country: aggregated.country,
@@ -78,83 +98,82 @@ export class InternationalComparison extends React.Component {
         )
       );
     });
-
-    const plotData = {
-      country: this.props.country,
-      matchPercentage: this.props.matchPercentage,
-      mutations: this.props.variant.mutations,
+    if (isSubscribed === true) {
+      setCountryData(newCountryData);
+    }
+    return () => {
+      isSubscribed = false;
     };
+  }, [distribution]);
 
-    return (
-      <>
-        <div style={{ display: 'flex' }}>
-          <h3 style={{ flexGrow: 1 }}>
-            {this.props.variant.name ?? 'Unnamed Variant'} - International Comparison
-          </h3>
-          <div>
-            <Link
-              to={
-                '/sample?mutations=' +
-                this.props.variant.mutations.join(',') +
-                '&matchPercentage=' +
-                this.props.matchPercentage
-              }
-            >
-              <Button variant='outline-dark' size='sm'>
-                Show all samples
-              </Button>
-            </Link>
-          </div>
+  const plotData = {
+    country: country,
+    matchPercentage: matchPercentage,
+    mutations: variant.mutations,
+  };
+
+  return (
+    <>
+      <div style={{ display: 'flex' }}>
+        <h3 style={{ flexGrow: 1 }}>{variant.name ?? 'Unnamed Variant'} - International Comparison</h3>
+        <div>
+          <Link
+            to={'/sample?mutations=' + variant.mutations.join(',') + '&matchPercentage=' + matchPercentage}
+          >
+            <Button variant='outline-dark' size='sm'>
+              Show all samples
+            </Button>
+          </Link>
         </div>
-        <div style={{ height: '500px' }}>
-          <WidgetWrapper shareUrl={dataToUrl(plotData, 'VariantInternationalComparison')}>
-            <VariantInternationalComparisonPlot data={plotData} />
-          </WidgetWrapper>
-        </div>
-        {countryData ? (
-          <>
-            <div style={{ maxHeight: '400px', overflow: 'auto' }}>
-              <Table striped bordered hover>
-                <thead>
-                  <tr>
-                    <th>Country</th>
-                    <th>Total Variant Sequences</th>
-                    <th>First seq. found at</th>
-                    <th>Last seq. found at</th>
-                    <th></th>
+      </div>
+      <div style={{ height: '500px' }}>
+        <WidgetWrapper shareUrl={dataToUrl(plotData, 'VariantInternationalComparison')}>
+          <VariantInternationalComparisonPlot data={plotData} />
+        </WidgetWrapper>
+      </div>
+      {countryData ? (
+        <>
+          <div style={{ maxHeight: '400px', overflow: 'auto' }}>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Country</th>
+                  <th>Total Variant Sequences</th>
+                  <th>First seq. found at</th>
+                  <th>Last seq. found at</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {countryData.map(c => (
+                  <tr key={c.country}>
+                    <td>{c.country}</td>
+                    <td>{c.count}</td>
+                    <td>{c.first.yearWeek}</td>
+                    <td>{c.last.yearWeek}</td>
+                    <td>
+                      <Link
+                        to={
+                          '/sample?mutations=' +
+                          variant.mutations.join(',') +
+                          '&country=' +
+                          c.country +
+                          '&matchPercentage=' +
+                          matchPercentage
+                        }
+                      >
+                        <Button variant='outline-dark' size='sm'>
+                          Show samples
+                        </Button>
+                      </Link>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {countryData.map(c => (
-                    <tr key={c.country}>
-                      <td>{c.country}</td>
-                      <td>{c.count}</td>
-                      <td>{c.first.yearWeek}</td>
-                      <td>{c.last.yearWeek}</td>
-                      <td>
-                        <Link
-                          to={
-                            '/sample?mutations=' +
-                            this.props.variant.mutations.join(',') +
-                            '&country=' +
-                            c.country +
-                            '&matchPercentage=' +
-                            this.props.matchPercentage
-                          }
-                        >
-                          <Button variant='outline-dark' size='sm'>
-                            Show samples
-                          </Button>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </Table>
-            </div>
-          </>
-        ) : null}
-      </>
-    );
-  }
-}
+                ))}
+              </tbody>
+            </Table>
+          </div>
+        </>
+      ) : null}
+    </>
+  );
+};
