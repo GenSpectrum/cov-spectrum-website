@@ -17,13 +17,12 @@ export const KnownVariantsList = ({ onVariantAndCountrySelect }) => {
     let isSubscribed = true;
     getCountries().then(countries => {
       if (isSubscribed) {
-        console.log('Countries are', countries);
+        console.log('Countries set to', countries);
         setCountries(countries);
       }
     });
     getVariants().then(countries => {
       if (isSubscribed) {
-        console.log('Countries are', countries);
         setVariants(countries);
       }
     });
@@ -44,8 +43,9 @@ export const KnownVariantsList = ({ onVariantAndCountrySelect }) => {
     if (selected.length === 1) {
       selectedCountry = selected[0];
     }
+    console.log('Selected', selectedCountry, selected, 'from ', countries);
     setSelectedCountry(selectedCountry);
-    setSelectedCountryField(selectedCountryField);
+    // setSelectedCountryField(selectedCountryField);
   };
 
   return (
@@ -56,7 +56,8 @@ export const KnownVariantsList = ({ onVariantAndCountrySelect }) => {
             <Form.Label>Country</Form.Label>
             <Typeahead
               id='countryField'
-              selected={selectedCountryField}
+              // selected={[selectedCountry]}
+              placeholder='Select a country'
               onChange={handleCountryChange}
               options={countries}
             />

@@ -10,7 +10,6 @@ export const NewVariantTable = ({ country, yearWeek, onVariantSelect }) => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    console.log('year week is', yearWeek);
     const [year, week] = yearWeek.split('-');
     getGrowingVariants(year, week, country, signal).then(newData => {
       if (isSubscribed) {
