@@ -1,5 +1,4 @@
 import { BackendService } from './BackendService';
-
 export class AccountService {
   /**
    * @return {Promise<boolean>} true if login was successful; otherwise false
@@ -33,7 +32,7 @@ export class AccountService {
 
   static getJwt() {
     const auth = AccountService._getAuth();
-    if (auth && auth.parsed.exp >= new Date()) {
+    if (auth && auth.parsed.exp <= new Date()) {
       AccountService.logout();
       window.location.href = '/login?expired';
       return;
@@ -50,7 +49,12 @@ export class AccountService {
   }
 
   static _getAuth() {
-    return JSON.parse(localStorage.getItem('auth'));
+    const auth = JSON.parse(localStorage.getItem('auth'));
+    if (auth) {
+      auth.parsed.exp = new Date(auth.parsed.exp);
+      auth.parsed.iat = new Date(auth.parsed.iat);
+    }
+    return auth;
   }
 
   static _parseJwt(token) {
