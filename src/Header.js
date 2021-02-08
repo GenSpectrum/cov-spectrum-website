@@ -1,13 +1,13 @@
-import React from 'react'
-import { Col, Container, Row, Navbar, Nav } from 'react-bootstrap'
-import { AccountService } from './services/AccountService'
+import React from 'react';
+import { Col, Container, Row, Navbar, Nav } from 'react-bootstrap';
+import { AccountService } from './services/AccountService';
 
 export class Header extends React.Component {
   render() {
-    const loggedIn = AccountService.isLoggedIn()
-    let username = null
+    const loggedIn = AccountService.isLoggedIn();
+    let username = null;
     if (loggedIn) {
-      username = AccountService.getUsername()
+      username = AccountService.getUsername();
     }
 
     return (
@@ -26,8 +26,8 @@ export class Header extends React.Component {
                         <Nav.Link>
                           <button
                             onClick={() => {
-                              AccountService.logout()
-                              window.location.href = '/login?left'
+                              AccountService.logout();
+                              window.location.href = '/login?left';
                             }}
                             style={{
                               background: 'none',
@@ -49,6 +49,6 @@ export class Header extends React.Component {
           </Row>
         </Container>
       </>
-    )
+    );
   }
 }

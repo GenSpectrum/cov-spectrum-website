@@ -1,22 +1,22 @@
-import React from 'react'
-import { NewVariantLookup } from '../components/NewVariantLookup'
-import { Col, Container, Row, Tab, Tabs } from 'react-bootstrap'
-import { VariantDashboard } from '../components/VariantDashboard'
-import { KnownVariantsList } from '../components/KnownVariantsList'
-import { InternationalComparison } from '../components/InternationalComparison'
-import { MutationLookup } from '../components/MutationLookup'
+import React from 'react';
+import { NewVariantLookup } from '../components/NewVariantLookup';
+import { Col, Container, Row, Tab, Tabs } from 'react-bootstrap';
+import { VariantDashboard } from '../components/VariantDashboard';
+import { KnownVariantsList } from '../components/KnownVariantsList';
+import { InternationalComparison } from '../components/InternationalComparison';
+import { MutationLookup } from '../components/MutationLookup';
 
 export class MainPage extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       variantDashboard: {
         variant: null,
         country: null,
       },
-    }
+    };
 
-    this.handleVariantAndCountrySelect = this.handleVariantAndCountrySelect.bind(this)
+    this.handleVariantAndCountrySelect = this.handleVariantAndCountrySelect.bind(this);
   }
 
   handleVariantAndCountrySelect({ variant, country }, matchPercentage) {
@@ -26,7 +26,7 @@ export class MainPage extends React.Component {
         country,
         matchPercentage,
       },
-    })
+    });
   }
 
   render() {
@@ -77,6 +77,6 @@ export class MainPage extends React.Component {
           ) : null}
         </Container>
       </div>
-    )
+    );
   }
 }

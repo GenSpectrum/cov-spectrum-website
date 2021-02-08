@@ -1,39 +1,39 @@
-import React from 'react'
-import Table from 'react-bootstrap/Table'
-import { BackendService } from '../services/BackendService'
-import { Button } from 'react-bootstrap'
+import React from 'react';
+import Table from 'react-bootstrap/Table';
+import { BackendService } from '../services/BackendService';
+import { Button } from 'react-bootstrap';
 
 export class NewVariantTable extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       data: null,
       req: null,
-    }
+    };
   }
 
   componentDidMount() {
-    this.updateView()
+    this.updateView();
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
     if (prevProps.country !== this.props.country || prevProps.yearWeek !== this.props.yearWeek) {
-      this.updateView()
+      this.updateView();
     }
   }
 
   async updateView() {
-    this.setState({ data: null })
-    this.state.req?.cancel()
+    this.setState({ data: null });
+    this.state.req?.cancel();
 
-    const [year, week] = this.props.yearWeek.split('-')
+    const [year, week] = this.props.yearWeek.split('-');
 
-    const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${this.props.country}`
-    const req = BackendService.get(endpoint)
-    this.setState({ req })
-    const data = await (await req).json()
+    const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${this.props.country}`;
+    const req = BackendService.get(endpoint);
+    this.setState({ req });
+    const data = await (await req).json();
 
-    this.setState({ data })
+    this.setState({ data });
   }
 
   render() {
@@ -64,7 +64,7 @@ export class NewVariantTable extends React.Component {
                     <td>
                       <Button
                         onClick={() => {
-                          this.props.onVariantSelect(d.variant)
+                          this.props.onVariantSelect(d.variant);
                         }}
                         variant='outline-secondary'
                         size='sm'
@@ -79,6 +79,6 @@ export class NewVariantTable extends React.Component {
           </div>
         )}
       </div>
-    )
+    );
   }
 }

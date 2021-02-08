@@ -1,14 +1,14 @@
-import { Button, Modal, Form } from 'react-bootstrap'
-import { useState } from 'react'
+import { Button, Modal, Form } from 'react-bootstrap';
+import { useState } from 'react';
 
-const host = process.env.REACT_APP_WEBSITE_HOST
+const host = process.env.REACT_APP_WEBSITE_HOST;
 
 export function WidgetWrapper({ shareUrl, children }) {
-  const [show, setShow] = useState(false)
-  const handleClose = () => setShow(false)
-  const handleShow = () => setShow(true)
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
-  const embeddingCode = `<iframe src="${host}/embed/${shareUrl}" width="800" height="500" frameborder="0"></iframe>`
+  const embeddingCode = `<iframe src="${host}/embed/${shareUrl}" width="800" height="500" frameborder="0"></iframe>`;
 
   return (
     <>
@@ -38,5 +38,5 @@ export function WidgetWrapper({ shareUrl, children }) {
         </Modal.Body>
       </Modal>
     </>
-  )
+  );
 }

@@ -5,17 +5,17 @@
 export class CancelableRequest {
   static cancelableFetch(resource, init) {
     if (!init) {
-      init = {}
+      init = {};
     }
 
-    const controller = new AbortController()
-    init.signal = controller.signal
+    const controller = new AbortController();
+    init.signal = controller.signal;
 
-    const request = new CancelableRequest()
-    request._promise = fetch(resource, init)
-    request._isCanceled = false
-    request._controller = controller
-    return request
+    const request = new CancelableRequest();
+    request._promise = fetch(resource, init);
+    request._isCanceled = false;
+    request._controller = controller;
+    return request;
   }
 
   /**
@@ -23,11 +23,11 @@ export class CancelableRequest {
    */
   constructor() {
     /** @type {Promise<Response>} */
-    this._promise = undefined
+    this._promise = undefined;
 
-    this._isCanceled = undefined
+    this._isCanceled = undefined;
 
-    this._controller = undefined
+    this._controller = undefined;
   }
 
   /**
@@ -38,9 +38,9 @@ export class CancelableRequest {
   then(resolve) {
     return this._promise.then(x => {
       if (!this._isCanceled) {
-        return resolve(x)
+        return resolve(x);
       }
-    })
+    });
   }
 
   /**
@@ -51,13 +51,13 @@ export class CancelableRequest {
   catch(reject) {
     return this._promise.catch(err => {
       if (!this._isCanceled) {
-        return reject(err)
+        return reject(err);
       }
-    })
+    });
   }
 
   cancel() {
-    this._controller.abort()
-    this._isCanceled = true
+    this._controller.abort();
+    this._isCanceled = true;
   }
 }

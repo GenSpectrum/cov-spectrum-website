@@ -1,20 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import { fetchVariantDistributionData } from '../services/api'
+import React, { useState, useEffect } from 'react';
+import { fetchVariantDistributionData } from '../services/api';
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
-import createPlotlyComponent from 'react-plotly.js/factory'
+import createPlotlyComponent from 'react-plotly.js/factory';
 
-const Plotly = window.Plotly
-const Plot = createPlotlyComponent(Plotly)
+const Plotly = window.Plotly;
+const Plot = createPlotlyComponent(Plotly);
 
 export const VariantInternationalComparisonPlot = ({ data }) => {
-  const [plotData, setPlotData] = useState(null)
-  const [colorMap, setColorMap] = useState(null)
+  const [plotData, setPlotData] = useState(null);
+  const [colorMap, setColorMap] = useState(null);
 
   useEffect(() => {
-    let isSubscribed = true
-    const controller = new AbortController()
-    const signal = controller.signal
+    let isSubscribed = true;
+    const controller = new AbortController();
+    const signal = controller.signal;
     fetchVariantDistributionData(
       'International',
       data.country,
@@ -23,30 +23,30 @@ export const VariantInternationalComparisonPlot = ({ data }) => {
       signal
     ).then(newDistributionData => {
       if (isSubscribed) {
-        const countriesToPlot = new Set(['United Kingdom', 'Denmark', 'Switzerland', data.country])
-        const newPlotData = newDistributionData.filter(d => countriesToPlot.has(d.x.country))
+        const countriesToPlot = new Set(['United Kingdom', 'Denmark', 'Switzerland', data.country]);
+        const newPlotData = newDistributionData.filter(d => countriesToPlot.has(d.x.country));
         // TODO Remove hard-coding..
         const newColorMap = [
           { target: 'United Kingdom', value: { marker: { color: 'black' } } },
           { target: 'Denmark', value: { marker: { color: 'green' } } },
           { target: 'Switzerland', value: { marker: { color: 'red' } } },
-        ]
+        ];
         if (!['United Kingdom', 'Denmark', 'Switzerland'].includes(data.country)) {
           newColorMap.push({
             target: data.country,
             value: { marker: { color: 'blue' } },
-          })
+          });
         }
-        setColorMap(newColorMap)
-        setPlotData(newPlotData)
+        setColorMap(newColorMap);
+        setPlotData(newPlotData);
       }
-    })
+    });
     return () => {
-      isSubscribed = false
-      controller.abort()
-      console.log('Cleanup render for variant age distribution plot')
-    }
-  }, [data])
+      isSubscribed = false;
+      controller.abort();
+      console.log('Cleanup render for variant age distribution plot');
+    };
+  }, [data]);
 
   return (
     <div style={{ height: '100%' }}>
@@ -124,5 +124,5 @@ export const VariantInternationalComparisonPlot = ({ data }) => {
         />
       )}
     </div>
-  )
-}
+  );
+};

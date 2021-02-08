@@ -1,36 +1,36 @@
-import { Alert, Button, Col, Container, Row } from 'react-bootstrap'
-import React, { useState } from 'react'
-import Form from 'react-bootstrap/Form'
-import { useLocation } from 'react-router-dom'
-import { AccountService } from '../services/AccountService'
+import { Alert, Button, Col, Container, Row } from 'react-bootstrap';
+import React, { useState } from 'react';
+import Form from 'react-bootstrap/Form';
+import { useLocation } from 'react-router-dom';
+import { AccountService } from '../services/AccountService';
 
 function useQuery() {
-  return new URLSearchParams(useLocation().search)
+  return new URLSearchParams(useLocation().search);
 }
 
 export function LoginPage() {
-  const query = useQuery()
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [loginFailed, setLoginFailed] = useState(false)
-  const [sessionExpired] = useState(query.get('expired') !== null)
-  const [loggedOut] = useState(query.get('left') !== null)
+  const query = useQuery();
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [loginFailed, setLoginFailed] = useState(false);
+  const [sessionExpired] = useState(query.get('expired') !== null);
+  const [loggedOut] = useState(query.get('left') !== null);
 
   if (AccountService.isLoggedIn()) {
-    window.location.href = '/'
+    window.location.href = '/';
   }
 
   const handleSubmit = async () => {
     if (!username || !password) {
-      return
+      return;
     }
-    const loginSuccessful = await AccountService.login(username, password)
+    const loginSuccessful = await AccountService.login(username, password);
     if (loginSuccessful) {
-      window.location.href = '/'
+      window.location.href = '/';
     } else {
-      setLoginFailed(true)
+      setLoginFailed(true);
     }
-  }
+  };
 
   return (
     <div style={{ marginTop: '20px' }}>
@@ -70,5 +70,5 @@ export function LoginPage() {
         </Row>
       </Container>
     </div>
-  )
+  );
 }

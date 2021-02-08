@@ -1,24 +1,24 @@
-import React from 'react'
-import { BackendService } from '../services/BackendService'
-import Table from 'react-bootstrap/Table'
-import { Utils } from '../services/Utils'
-import { Link } from 'react-router-dom'
-import { Button } from 'react-bootstrap'
-import { VariantInternationalComparisonPlot } from '../widgets/VariantInternationalComparisonPlot'
-import { WidgetWrapper } from './WidgetWrapper'
-import { dataToUrl } from '../helpers/urlConversion'
+import React from 'react';
+import { BackendService } from '../services/BackendService';
+import Table from 'react-bootstrap/Table';
+import { Utils } from '../services/Utils';
+import { Link } from 'react-router-dom';
+import { Button } from 'react-bootstrap';
+import { VariantInternationalComparisonPlot } from '../widgets/VariantInternationalComparisonPlot';
+import { WidgetWrapper } from './WidgetWrapper';
+import { dataToUrl } from '../helpers/urlConversion';
 
 export class InternationalComparison extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       distribution: null,
       req: null,
-    }
+    };
   }
 
   componentDidMount() {
-    this.updateView()
+    this.updateView();
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -28,32 +28,32 @@ export class InternationalComparison extends React.Component {
       prevProps.country !== this.props.country ||
       prevProps.matchPercentage !== this.props.matchPercentage
     ) {
-      this.updateView()
+      this.updateView();
     }
   }
 
   async updateView() {
-    this.loadInternationalTimeDistribution()
+    this.loadInternationalTimeDistribution();
   }
 
   async loadInternationalTimeDistribution() {
-    this.state.req?.cancel()
-    this.setState({ distribution: null })
+    this.state.req?.cancel();
+    this.setState({ distribution: null });
 
-    const mutationsString = this.props.variant.mutations.join(',')
-    const endpoint = '/plot/variant/international-time-distribution'
+    const mutationsString = this.props.variant.mutations.join(',');
+    const endpoint = '/plot/variant/international-time-distribution';
     const req = BackendService.get(
       `${endpoint}?mutations=${mutationsString}` + `&matchPercentage=${this.props.matchPercentage}`
-    )
-    this.setState({ req })
+    );
+    this.setState({ req });
 
-    const distribution = await (await req).json()
-    this.setState({ distribution })
+    const distribution = await (await req).json();
+    this.setState({ distribution });
   }
 
   render() {
-    const aggregated = Utils.groupBy(this.state.distribution, d => d.x.country)
-    const countryData = []
+    const aggregated = Utils.groupBy(this.state.distribution, d => d.x.country);
+    const countryData = [];
     aggregated?.forEach((value, name) => {
       countryData.push(
         value.reduce(
@@ -76,14 +76,14 @@ export class InternationalComparison extends React.Component {
             },
           }
         )
-      )
-    })
+      );
+    });
 
     const plotData = {
       country: this.props.country,
       matchPercentage: this.props.matchPercentage,
       mutations: this.props.variant.mutations,
-    }
+    };
 
     return (
       <>
@@ -155,6 +155,6 @@ export class InternationalComparison extends React.Component {
           </>
         ) : null}
       </>
-    )
+    );
   }
 }

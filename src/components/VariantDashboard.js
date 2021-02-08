@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react';
 
-import { Button, Col, Container, Row } from 'react-bootstrap'
-import { Link } from 'react-router-dom'
-import { VariantTimeDistributionPlot } from '../widgets/VariantTimeDistributionPlot'
-import { WidgetWrapper } from './WidgetWrapper'
-import { VariantAgeDistributionPlot } from '../widgets/VariantAgeDistributionPlot'
-import { dataToUrl } from '../helpers/urlConversion'
+import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { VariantTimeDistributionPlot } from '../widgets/VariantTimeDistributionPlot';
+import { WidgetWrapper } from './WidgetWrapper';
+import { VariantAgeDistributionPlot } from '../widgets/VariantAgeDistributionPlot';
+import { dataToUrl } from '../helpers/urlConversion';
 
 export const VariantDashboard = ({ country, matchPercentage, variant }) => {
-  const [variantDistributionPlotData, setVariantDistributionPlotData] = useState(undefined)
+  const [variantDistributionPlotData, setVariantDistributionPlotData] = useState(undefined);
 
   useEffect(() => {
     setVariantDistributionPlotData({
       country: country,
       matchPercentage: matchPercentage,
       mutations: variant.mutations,
-    })
-  }, [country, matchPercentage, variant])
+    });
+  }, [country, matchPercentage, variant]);
 
   return variantDistributionPlotData !== undefined ? (
     <>
@@ -68,5 +68,5 @@ export const VariantDashboard = ({ country, matchPercentage, variant }) => {
     </>
   ) : (
     <p>Loading...</p>
-  )
-}
+  );
+};

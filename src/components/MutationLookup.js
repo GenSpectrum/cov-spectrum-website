@@ -1,12 +1,12 @@
-import React from 'react'
-import { Button } from 'react-bootstrap'
-import Form from 'react-bootstrap/Form'
-import { Typeahead } from 'react-bootstrap-typeahead'
-import { BackendService } from '../services/BackendService'
+import React from 'react';
+import { Button } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
+import { Typeahead } from 'react-bootstrap-typeahead';
+import { BackendService } from '../services/BackendService';
 
 export class MutationLookup extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
       variants: [],
@@ -16,54 +16,54 @@ export class MutationLookup extends React.Component {
       // This may not be changed right now because the initial default range slider is at 50.
       selectedMatchPercentage: 50,
       countryReq: null,
-    }
+    };
 
-    this.handleCountryFieldChange = this.handleCountryFieldChange.bind(this)
-    this.handleMutationFieldChange = this.handleMutationFieldChange.bind(this)
-    this.handleMatchPercentageFieldChange = this.handleMatchPercentageFieldChange.bind(this)
-    this.handleSearchButtonClick = this.handleSearchButtonClick.bind(this)
+    this.handleCountryFieldChange = this.handleCountryFieldChange.bind(this);
+    this.handleMutationFieldChange = this.handleMutationFieldChange.bind(this);
+    this.handleMatchPercentageFieldChange = this.handleMatchPercentageFieldChange.bind(this);
+    this.handleSearchButtonClick = this.handleSearchButtonClick.bind(this);
   }
 
   async componentDidMount() {
-    this.fetchCountries()
+    this.fetchCountries();
   }
 
   async fetchCountries() {
-    this.state.countryReq?.cancel()
-    const countryReq = BackendService.get('/resource/country')
-    this.setState({ countryReq })
-    const allCountries = await (await countryReq).json()
+    this.state.countryReq?.cancel();
+    const countryReq = BackendService.get('/resource/country');
+    this.setState({ countryReq });
+    const allCountries = await (await countryReq).json();
 
-    this.setState({ allCountries })
+    this.setState({ allCountries });
   }
 
   handleCountryFieldChange(selected) {
-    let selectedCountry = null
+    let selectedCountry = null;
     if (selected.length === 1) {
-      selectedCountry = selected[0]
+      selectedCountry = selected[0];
     }
-    this.setState({ selectedCountry, selectedCountryField: selected })
+    this.setState({ selectedCountry, selectedCountryField: selected });
   }
 
   handleMutationFieldChange(e) {
-    this.setState({ selectedMutations: e.target.value })
+    this.setState({ selectedMutations: e.target.value });
   }
 
   handleMatchPercentageFieldChange(e) {
-    this.setState({ selectedMatchPercentage: e.target.value })
+    this.setState({ selectedMatchPercentage: e.target.value });
   }
 
   handleSearchButtonClick() {
     const variant = {
       mutations: this.state.selectedMutations.split(',').map(m => m.trim()),
-    }
+    };
     this.props.onVariantAndCountrySelect(
       {
         variant,
         country: this.state.selectedCountry,
       },
       this.state.selectedMatchPercentage / 100
-    )
+    );
   }
 
   render() {
@@ -100,6 +100,6 @@ export class MutationLookup extends React.Component {
           </Form>
         )}
       </>
-    )
+    );
   }
 }

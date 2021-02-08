@@ -1,32 +1,32 @@
-import React, { useState, useEffect } from 'react'
-import { fetchVariantDistributionData } from '../services/api'
+import React, { useState, useEffect } from 'react';
+import { fetchVariantDistributionData } from '../services/api';
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
-import createPlotlyComponent from 'react-plotly.js/factory'
+import createPlotlyComponent from 'react-plotly.js/factory';
 
-const Plotly = window.Plotly
-const Plot = createPlotlyComponent(Plotly)
+const Plotly = window.Plotly;
+const Plot = createPlotlyComponent(Plotly);
 
 export const VariantTimeDistributionPlot = ({ data }) => {
-  const [distribution, setDistribution] = useState(null)
+  const [distribution, setDistribution] = useState(null);
 
   useEffect(() => {
-    let isSubscribed = true
-    const controller = new AbortController()
-    const signal = controller.signal
+    let isSubscribed = true;
+    const controller = new AbortController();
+    const signal = controller.signal;
     fetchVariantDistributionData('Time', data.country, data.mutations, data.matchPercentage, signal).then(
       newDistributionData => {
         if (isSubscribed) {
-          setDistribution(newDistributionData)
+          setDistribution(newDistributionData);
         }
       }
-    )
+    );
     return () => {
-      isSubscribed = false
-      controller.abort()
-      console.log('Cleanup render for variant age distribution plot')
-    }
-  }, [data])
+      isSubscribed = false;
+      controller.abort();
+      console.log('Cleanup render for variant age distribution plot');
+    };
+  }, [data]);
 
   return (
     <div style={{ height: '100%' }}>
@@ -69,8 +69,8 @@ export const VariantTimeDistributionPlot = ({ data }) => {
       )}
       {distribution && distribution.error && <p>Error loading data</p>}
     </div>
-  )
-}
+  );
+};
 
 // export class VariantTimeDistributionPlot extends React.Component {
 //   static dataFromUrl(urlSearchParams) {
