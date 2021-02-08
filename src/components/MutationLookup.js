@@ -58,7 +58,6 @@ export const MutationLookup = ({ onVariantAndCountrySelect }) => {
     });
     return () => {
       isSubscribed = false;
-      // controller.abort();
       console.log('TIME Cleanup render for variant age distribution plot');
     };
   }, []);
