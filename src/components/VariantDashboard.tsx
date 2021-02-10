@@ -8,6 +8,8 @@ import { VariantAgeDistributionPlot } from '../widgets/VariantAgeDistributionPlo
 import { dataToUrl } from '../helpers/urlConversion';
 import styled from 'styled-components';
 
+import { Country, Variant, DataDistributionConfiguration } from '../helpers/types';
+
 const RowWrapper = styled(Row)`
   /* height: 100rem; */
 `;
@@ -16,8 +18,16 @@ const ColWrapper = styled(Col)`
   /* height: 100%; */
 `;
 
-export const VariantDashboard = ({ country, matchPercentage, variant }) => {
-  const [variantDistributionPlotData, setVariantDistributionPlotData] = useState(undefined);
+interface Props {
+  country: Country;
+  matchPercentage: number;
+  variant: Variant;
+}
+
+export const VariantDashboard = ({ country, matchPercentage, variant }: Props) => {
+  const [variantDistributionPlotData, setVariantDistributionPlotData] = useState<
+    DataDistributionConfiguration | undefined
+  >(undefined);
 
   useEffect(() => {
     setVariantDistributionPlotData({

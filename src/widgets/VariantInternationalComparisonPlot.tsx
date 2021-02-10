@@ -1,20 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { getVariantDistributionData } from '../services/api';
 
+import { DataDistributionConfiguration } from '../helpers/types';
+
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
 import createPlotlyComponent from 'react-plotly.js/factory';
 
 const Plotly = window.Plotly;
 const Plot = createPlotlyComponent(Plotly);
-
-interface DistributionData {
-  country: string;
-  matchPercentage: number;
-  mutations: string[];
-}
-
 interface Props {
-  data: DistributionData;
+  data: DataDistributionConfiguration;
 }
 export const VariantInternationalComparisonPlot = ({ data }: Props) => {
   const [plotData, setPlotData] = useState<any>(null);

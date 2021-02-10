@@ -26,3 +26,5 @@ yarn-error.log*
 # Editors
 .idea/
 *.iml
+
+.vscode/
