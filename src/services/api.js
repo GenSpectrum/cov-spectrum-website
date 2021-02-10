@@ -52,11 +52,11 @@ export const getVariantDistributionData = (distributionType, country, mutations,
     signal,
   })
     .then(response => {
-      // console.log('Response is', response);
+      // console.log('VDD Response is', response);
       return response.json();
     })
     .then(distributionData => {
-      // console.log('Data for ', distributionType, distributionData);
+      console.log('Data for ', distributionType, distributionData);
       return distributionData;
     })
     .catch(e => {
