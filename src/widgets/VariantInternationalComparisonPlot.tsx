@@ -7,9 +7,18 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 const Plotly = window.Plotly;
 const Plot = createPlotlyComponent(Plotly);
 
-export const VariantInternationalComparisonPlot = ({ data }) => {
-  const [plotData, setPlotData] = useState(null);
-  const [colorMap, setColorMap] = useState(null);
+interface DistributionData {
+  country: string;
+  matchPercentage: number;
+  mutations: string[];
+}
+
+interface Props {
+  data: DistributionData;
+}
+export const VariantInternationalComparisonPlot = ({ data }: Props) => {
+  const [plotData, setPlotData] = useState<any>(null);
+  const [colorMap, setColorMap] = useState<any>(null);
 
   useEffect(() => {
     let isSubscribed = true;
@@ -24,7 +33,7 @@ export const VariantInternationalComparisonPlot = ({ data }) => {
     ).then(newDistributionData => {
       if (isSubscribed) {
         const countriesToPlot = new Set(['United Kingdom', 'Denmark', 'Switzerland', data.country]);
-        const newPlotData = newDistributionData.filter(d => countriesToPlot.has(d.x.country));
+        const newPlotData = newDistributionData.filter((d: any) => countriesToPlot.has(d.x.country));
         // TODO Remove hard-coding..
         const newColorMap = [
           { target: 'United Kingdom', value: { marker: { color: 'black' } } },
@@ -58,12 +67,12 @@ export const VariantInternationalComparisonPlot = ({ data }) => {
             {
               type: 'scatter',
               mode: 'lines+markers',
-              x: plotData.map(d => d.x.week.firstDayInWeek),
-              y: plotData.map(d => (d.y.proportion.value * 100).toFixed(2)),
+              x: plotData.map((d: any) => d.x.week.firstDayInWeek),
+              y: plotData.map((d: any) => (d.y.proportion.value * 100).toFixed(2)),
               transforms: [
                 {
                   type: 'groupby',
-                  groups: plotData.map(d => d.x.country),
+                  groups: plotData.map((d: any) => d.x.country),
                   styles: colorMap,
                 },
               ],
@@ -71,8 +80,8 @@ export const VariantInternationalComparisonPlot = ({ data }) => {
             {
               type: 'scatter',
               mode: 'lines',
-              x: plotData.map(d => d.x.week.firstDayInWeek),
-              y: plotData.map(d => (d.y.proportion.ciLower * 100).toFixed(2)),
+              x: plotData.map((d: any) => d.x.week.firstDayInWeek),
+              y: plotData.map((d: any) => (d.y.proportion.ciLower * 100).toFixed(2)),
               line: {
                 dash: 'dash',
                 width: 2,
@@ -80,7 +89,7 @@ export const VariantInternationalComparisonPlot = ({ data }) => {
               transforms: [
                 {
                   type: 'groupby',
-                  groups: plotData.map(d => d.x.country),
+                  groups: plotData.map((d: any) => d.x.country),
                   styles: colorMap,
                 },
               ],
@@ -89,8 +98,8 @@ export const VariantInternationalComparisonPlot = ({ data }) => {
             {
               type: 'scatter',
               mode: 'lines',
-              x: plotData.map(d => d.x.week.firstDayInWeek),
-              y: plotData.map(d => (d.y.proportion.ciUpper * 100).toFixed(2)),
+              x: plotData.map((d: any) => d.x.week.firstDayInWeek),
+              y: plotData.map((d: any) => (d.y.proportion.ciUpper * 100).toFixed(2)),
               line: {
                 dash: 'dash',
                 width: 2,
@@ -98,7 +107,7 @@ export const VariantInternationalComparisonPlot = ({ data }) => {
               transforms: [
                 {
                   type: 'groupby',
-                  groups: plotData.map(d => d.x.country),
+                  groups: plotData.map((d: any) => d.x.country),
                   styles: colorMap,
                 },
               ],
