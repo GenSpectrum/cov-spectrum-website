@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { SampleTable } from '../components/SampleTable';
 
 function useQuery() {
+  console.log('location is ', useLocation());
   return new URLSearchParams(useLocation().search);
 }
 

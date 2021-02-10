@@ -8,7 +8,15 @@ import { WidgetWrapper } from './WidgetWrapper';
 import { dataToUrl } from '../helpers/urlConversion';
 import { getVariantDistributionData } from '../services/api';
 
-export const InternationalComparison = ({ country, matchPercentage, variant }) => {
+interface Props {
+  country: string;
+  matchPercentage: number;
+  variant: {
+    mutations: string[];
+    name: string;
+  };
+}
+export const InternationalComparison = ({ country, matchPercentage, variant }: Props) => {
   const [distribution, setDistribution] = useState(null);
 
   useEffect(() => {
@@ -33,20 +41,20 @@ export const InternationalComparison = ({ country, matchPercentage, variant }) =
     };
   }, [country, matchPercentage, variant]);
 
-  const [countryData, setCountryData] = useState([]);
+  const [countryData, setCountryData] = useState<any>([]);
 
   useEffect(() => {
     let isSubscribed = true;
-    const aggregated = Utils.groupBy(distribution, d => d.x.country);
-    const newCountryData = [];
+    const aggregated = Utils.groupBy(distribution, (d: any) => d.x.country);
+    const newCountryData: any[] = [];
     aggregated?.forEach((value, name) => {
       newCountryData.push(
         value.reduce(
-          (aggregated, entry) => ({
+          (aggregated: any, entry: any) => ({
             country: aggregated.country,
             count: aggregated.count + entry.y.count,
-            first: Utils.minBy(aggregated.first, entry.x.week, w => w.firstDayInWeek),
-            last: Utils.maxBy(aggregated.last, entry.x.week, w => w.firstDayInWeek),
+            first: Utils.minBy(aggregated.first, entry.x.week, (w: any) => w.firstDayInWeek),
+            last: Utils.maxBy(aggregated.last, entry.x.week, (w: any) => w.firstDayInWeek),
           }),
           {
             country: name,
@@ -110,7 +118,7 @@ export const InternationalComparison = ({ country, matchPercentage, variant }) =
                 </tr>
               </thead>
               <tbody>
-                {countryData.map(c => (
+                {countryData.map((c: any) => (
                   <tr key={c.country}>
                     <td>{c.country}</td>
                     <td>{c.count}</td>
