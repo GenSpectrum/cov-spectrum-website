@@ -17,7 +17,6 @@ export const KnownVariantsList = ({ onVariantAndCountrySelect }) => {
     let isSubscribed = true;
     getCountries().then(countries => {
       if (isSubscribed) {
-        console.log('Countries set to', countries);
         setCountries(countries);
       }
     });
@@ -43,9 +42,7 @@ export const KnownVariantsList = ({ onVariantAndCountrySelect }) => {
     if (selected.length === 1) {
       selectedCountry = selected[0];
     }
-    console.log('Selected', selectedCountry, selected, 'from ', countries);
     setSelectedCountry(selectedCountry);
-    // setSelectedCountryField(selectedCountryField);
   };
 
   return (

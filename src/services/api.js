@@ -56,7 +56,7 @@ export const getVariantDistributionData = (distributionType, country, mutations,
       return response.json();
     })
     .then(distributionData => {
-      console.log('Data for ', distributionType, distributionData);
+      // console.log('Data for ', distributionType, distributionData);
       return distributionData;
     })
     .catch(e => {
