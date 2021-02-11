@@ -65,6 +65,14 @@ export const getVariantDistributionData = (distributionType, country, mutations,
     });
 };
 
+export const getSamples = (mutationsString, matchPercentage, country = null, signal) => {
+  let url = HOST + `/resource/sample/?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
+  if (country) {
+    url += `&country=${country}`;
+  }
+  return fetch(url, { headers: getBaseHeaders(), signal }).then(response => response.json());
+};
+
 export const getGrowingVariants = (year, week, country, signal) => {
   const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${country}`;
   const url = HOST + endpoint;
@@ -78,14 +86,6 @@ export const getVariants = () => {
 
 export const getCurrentWeek = () => {
   const url = HOST + '/utils/current-week';
-  return fetch(url, { headers: getBaseHeaders() }).then(response => response.json());
-};
-
-export const getSample = (mutationsString, matchPercentage, country = null) => {
-  let url = HOST + `/ressource/sample/?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
-  if (country) {
-    url += `&country=${country}`;
-  }
   return fetch(url, { headers: getBaseHeaders() }).then(response => response.json());
 };
 

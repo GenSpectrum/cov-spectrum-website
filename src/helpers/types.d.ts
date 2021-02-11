@@ -10,6 +10,8 @@ export interface Variant {
   name: string;
 }
 
+export interface Mutation {}
+
 export type Country = string;
 
 export type Week = {
