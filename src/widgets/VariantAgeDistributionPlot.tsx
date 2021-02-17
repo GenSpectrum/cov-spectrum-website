@@ -47,6 +47,7 @@ export const VariantAgeDistributionPlot = ({ data }: Props) => {
           style={{ width: '100%', height: '100%' }}
           data={[
             {
+              name: 'Sequences',
               type: 'bar',
               x: distributionData.map(d => d.x),
               y: distributionData.map(d => d.y.count),
@@ -58,10 +59,14 @@ export const VariantAgeDistributionPlot = ({ data }: Props) => {
               mode: 'lines+markers',
               marker: { color: 'red' },
               yaxis: 'y2',
+              hovertemplate: '%{y:.2f}%<extra></extra>',
             },
           ]}
           layout={{
             title: 'Age Distribution',
+            xaxis: {
+              title: 'Age',
+            },
             yaxis: {
               title: 'Number Sequences',
             },
