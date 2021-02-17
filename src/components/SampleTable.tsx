@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Col, Container, OverlayTrigger, Row } from 'react-bootstrap';
+import { OverlayChildren } from 'react-bootstrap/esm/Overlay';
 import Table from 'react-bootstrap/Table';
 
 import { Variant, Country } from '../helpers/types';
@@ -22,6 +23,26 @@ interface Props {
   variant: Variant;
   country: Country | null;
 }
+
+const SampleRowInner = ({ sample }: { sample: Sample }) => {
+  return (
+    <tr key={sample.name}>
+      <td>{sample.name}</td>
+      <td>{sample.date}</td>
+      <td>{sample.country}</td>
+      <td>{sample.mutations.join(', ')}</td>
+    </tr>
+  );
+};
+
+const SampleRow = ({ sample, popover }: { sample: Sample; popover?: OverlayChildren }) => {
+  const inner = <SampleRowInner sample={sample} />;
+  if (popover === undefined) {
+    return inner;
+  }
+  return <OverlayTrigger overlay={popover}>{inner}</OverlayTrigger>;
+};
+
 export const SampleTable = ({ matchPercentage, variant, country = null }: Props) => {
   const [samples, setSamples] = useState<Sample[] | undefined>(undefined);
   const [totalNumber, setTotalNumber] = useState<number | undefined>(undefined);
@@ -45,8 +66,6 @@ export const SampleTable = ({ matchPercentage, variant, country = null }: Props)
       controller.abort();
     };
   }, [matchPercentage, variant.mutations, country]);
-
-  // const [numberOfSamples, setNumberOfSamples] = useState(null);
 
   return (
     <div style={{ marginTop: '20px' }}>
@@ -80,13 +99,8 @@ export const SampleTable = ({ matchPercentage, variant, country = null }: Props)
                     </tr>
                   </thead>
                   <tbody>
-                    {samples.map((sample: Sample) => (
-                      <tr key={sample.name}>
-                        <td>{sample.name}</td>
-                        <td>{sample.date}</td>
-                        <td>{sample.country}</td>
-                        <td>{sample.mutations.join(', ')}</td>
-                      </tr>
+                    {samples.map(sample => (
+                      <SampleRow key={sample.name} sample={sample} />
                     ))}
                   </tbody>
                 </Table>
