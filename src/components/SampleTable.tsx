@@ -44,7 +44,7 @@ export const SampleTable = ({ matchPercentage, variant, country = null }: Props)
       isSubscribed = false;
       controller.abort();
     };
-  }, []);
+  }, [matchPercentage, variant.mutations, country]);
 
   // const [numberOfSamples, setNumberOfSamples] = useState(null);
 

@@ -40,7 +40,7 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }) => {
     getCurrentWeek().then(week => {
       if (isSubscribed) {
         const newWeeks = convertToWeeks(week);
-        console.log('new weeks is ', weeks, 'for', week);
+        console.log('new weeks is ', newWeeks, 'for', week);
         setWeeks(newWeeks);
         setSelectedWeek(newWeeks[0]);
       }

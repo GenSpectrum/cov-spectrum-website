@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SampleTable } from '../components/SampleTable';
 
 import { Variant } from '../helpers/types';
 
 function useQuery() {
-  console.log('location is ', useLocation());
-  return new URLSearchParams(useLocation().search);
+  const location = useLocation();
+  console.log('location is ', location);
+  return useMemo(() => new URLSearchParams(location.search), [location.search]);
 }
 
 //todo convert to actual data types
@@ -25,10 +26,13 @@ export function SamplePage() {
     country: query.get('country'),
   };
 
-  const variant: Variant = {
-    mutations: data.mutations ?? [],
-    name: '',
-  };
+  const variant: Variant = useMemo(
+    () => ({
+      mutations: data.mutations ?? [],
+      name: '',
+    }),
+    [data.mutations]
+  );
 
   return (
     <div>
