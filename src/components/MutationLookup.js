@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import { Typeahead } from 'react-bootstrap-typeahead';
-import { getCountries, getVariants } from '../services/api';
+import { getCountries } from '../services/api';
 
 export const MutationLookup = ({ onVariantAndCountrySelect }) => {
-  const [variants, setVariants] = useState([]);
   const [countries, setCountries] = useState([]);
   const [selectedCountry, setSelectedCountry] = useState('Switzerland');
   const [selectedCountryField, setSelectedCountryField] = useState(['Switzerland']);
@@ -49,11 +48,6 @@ export const MutationLookup = ({ onVariantAndCountrySelect }) => {
     getCountries().then(newCountries => {
       if (isSubscribed) {
         setCountries(newCountries);
-      }
-    });
-    getVariants().then(newVariants => {
-      if (isSubscribed) {
-        setVariants(newVariants);
       }
     });
     return () => {

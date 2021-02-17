@@ -2,7 +2,7 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import { SampleTable } from '../components/SampleTable';
 
-import { DataDistributionConfiguration, Variant } from '../helpers/types';
+import { Variant } from '../helpers/types';
 
 function useQuery() {
   console.log('location is ', useLocation());

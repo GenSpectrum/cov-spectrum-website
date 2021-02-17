@@ -13,7 +13,6 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }) => {
   const [selectedWeek, setSelectedWeek] = useState('2021-1');
 
   const [table, setTable] = useState({ country: 'Switzerland', week: 0 });
-  const [variantDashboard, setVariantDashboard] = useState({ country: null, week: null });
 
   const handleVariantSelect = variant => {
     console.log('new country is ', table.country);

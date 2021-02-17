@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { BackendService } from '../services/BackendService';
 import { Col, Container, Row } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 
-import { Mutation, Variant, Country } from '../helpers/types';
+import { Variant, Country } from '../helpers/types';
 
 import { getSamples } from '../services/api';
 

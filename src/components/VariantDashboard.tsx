@@ -14,10 +14,6 @@ const RowWrapper = styled(Row)`
   /* height: 100rem; */
 `;
 
-const ColWrapper = styled(Col)`
-  /* height: 100%; */
-`;
-
 interface Props {
   country: Country;
   matchPercentage: number;

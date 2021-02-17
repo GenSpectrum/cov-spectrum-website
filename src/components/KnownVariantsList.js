@@ -11,7 +11,6 @@ export const KnownVariantsList = ({ onVariantAndCountrySelect }) => {
   const [variants, setVariants] = useState(null);
 
   const [selectedCountry, setSelectedCountry] = useState('Switzerland');
-  const [selectedCountryField, setSelectedCountryField] = useState(['Switzerland']);
 
   useEffect(() => {
     let isSubscribed = true;
