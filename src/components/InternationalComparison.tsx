@@ -6,7 +6,7 @@ import { Button } from 'react-bootstrap';
 import { VariantInternationalComparisonPlot } from '../widgets/VariantInternationalComparisonPlot';
 import { WidgetWrapper } from './WidgetWrapper';
 import { dataToUrl } from '../helpers/urlConversion';
-import { getVariantDistributionData } from '../services/api';
+import { DistributionType, getVariantDistributionData } from '../services/api';
 
 interface Props {
   country: string;
@@ -23,17 +23,20 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    const mutationsString = variant.mutations.join(',');
-    getVariantDistributionData('International', null, mutationsString, matchPercentage, signal).then(
-      newDistributionData => {
-        if (isSubscribed) {
-          // console.log('TIME SET', newDistributionData);
-          setDistribution(newDistributionData);
-        } else {
-          // console.log('TIME NOT SET');
-        }
+    getVariantDistributionData(
+      DistributionType.International,
+      null,
+      variant.mutations,
+      matchPercentage,
+      signal
+    ).then(newDistributionData => {
+      if (isSubscribed) {
+        // console.log('TIME SET', newDistributionData);
+        setDistribution(newDistributionData);
+      } else {
+        // console.log('TIME NOT SET');
       }
-    );
+    });
     return () => {
       isSubscribed = false;
       controller.abort();

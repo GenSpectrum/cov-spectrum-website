@@ -1,7 +1,7 @@
 export interface DataDistributionConfiguration {
   country: Country;
   matchPercentage: number;
-  mutations?: string[];
+  mutations: string[];
   variant?: string;
 }
 

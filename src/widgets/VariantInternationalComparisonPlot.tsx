@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getVariantDistributionData } from '../services/api';
+import { DistributionType, getVariantDistributionData } from '../services/api';
 
 import { DataDistributionConfiguration, VariantInternationalDistributionDataPoint } from '../helpers/types';
 
@@ -22,7 +22,7 @@ export const VariantInternationalComparisonPlot = ({ data }: Props) => {
     const controller = new AbortController();
     const signal = controller.signal;
     getVariantDistributionData(
-      'International',
+      DistributionType.International,
       data.country,
       data.mutations,
       data.matchPercentage,

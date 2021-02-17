@@ -1,19 +1,26 @@
-import { AccountService } from '../services/AccountService';
+import { AccountService } from './AccountService';
+import { Country } from './api-types';
+
+export enum DistributionType {
+  Age = 'Age',
+  Time = 'Time',
+  International = 'International',
+}
 
 const HOST = process.env.REACT_APP_SERVER_HOST;
 
-const getBaseHeaders = () => {
-  const headers = {
+const getBaseHeaders = (): Headers => {
+  const headers: { [key: string]: string } = {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   };
   if (AccountService.isLoggedIn()) {
     headers['Authorization'] = 'Bearer ' + AccountService.getJwt();
   }
-  return headers;
+  return new Headers(headers);
 };
 
-export const post = (endpoint, body) => {
+export const post = (endpoint: string, body: unknown) => {
   const url = HOST + endpoint;
   return fetch(url, {
     method: 'POST',
@@ -22,7 +29,7 @@ export const post = (endpoint, body) => {
   });
 };
 
-const getVariantEndpoint = distributionType => {
+const getVariantEndpoint = (distributionType: DistributionType) => {
   switch (distributionType) {
     case 'Age':
       return '/plot/variant/age-distribution';
@@ -31,20 +38,32 @@ const getVariantEndpoint = distributionType => {
     case 'International':
       return '/plot/variant/international-time-distribution';
     default:
-      return '/plot/variant/age-distribution';
+      throw new Error(`unknown distributionType ${distributionType}`);
   }
 };
 
-const getVariantRequestUrl = (distributionType, country, mutations, matchPercentage) => {
+const getVariantRequestUrl = (
+  distributionType: DistributionType,
+  country: Country | null | undefined,
+  mutations: string[],
+  matchPercentage: number
+) => {
   const endpoint = getVariantEndpoint(distributionType);
-  if (country !== null) {
-    return `${HOST}${endpoint}?country=${country}&mutations=${mutations}&matchPercentage=${matchPercentage}`;
+  const mutationsString = mutations.join(',');
+  if (country) {
+    return `${HOST}${endpoint}?country=${country}&mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
   } else {
-    return `${HOST}${endpoint}?mutations=${mutations}&matchPercentage=${matchPercentage}`;
+    return `${HOST}${endpoint}?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
   }
 };
 
-export const getVariantDistributionData = (distributionType, country, mutations, matchPercentage, signal) => {
+export const getVariantDistributionData = (
+  distributionType: DistributionType,
+  country: Country | null | undefined,
+  mutations: string[],
+  matchPercentage: number,
+  signal?: AbortSignal
+) => {
   const url = getVariantRequestUrl(distributionType, country, mutations, matchPercentage);
   // console.log('Fetching variant request', url);
   return fetch(url, {
@@ -65,7 +84,12 @@ export const getVariantDistributionData = (distributionType, country, mutations,
     });
 };
 
-export const getSamples = (mutationsString, matchPercentage, country = null, signal) => {
+export const getSamples = (
+  mutationsString: string,
+  matchPercentage: number,
+  country: string | null | undefined,
+  signal?: AbortSignal
+) => {
   let url = HOST + `/resource/sample/?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
   if (country) {
     url += `&country=${country}`;
@@ -73,7 +97,7 @@ export const getSamples = (mutationsString, matchPercentage, country = null, sig
   return fetch(url, { headers: getBaseHeaders(), signal }).then(response => response.json());
 };
 
-export const getGrowingVariants = (year, week, country, signal) => {
+export const getGrowingVariants = (year: number, week: number, country: string, signal?: AbortSignal) => {
   const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${country}`;
   const url = HOST + endpoint;
   return fetch(url, { headers: getBaseHeaders(), signal }).then(response => response.json());
