@@ -29,32 +29,4 @@ export class Utils {
       return element2;
     }
   }
-
-  static deepEqual(obj1, obj2) {
-    // Adopted from https://stackoverflow.com/a/45683145
-    if (obj1 === obj2) {
-      return true;
-    }
-
-    if (Utils._isPrimitive(obj1) && Utils._isPrimitive(obj2)) {
-      return obj1 === obj2;
-    }
-
-    if (Object.keys(obj1).length !== Object.keys(obj2).length) {
-      return false;
-    }
-    for (let key in obj1) {
-      if (!(key in obj2)) {
-        return false;
-      }
-      if (!Utils.deepEqual(obj1[key], obj2[key])) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  static _isPrimitive(obj) {
-    return obj !== Object(obj);
-  }
 }
