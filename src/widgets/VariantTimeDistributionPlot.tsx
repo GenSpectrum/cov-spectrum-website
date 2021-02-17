@@ -3,7 +3,8 @@ import { DistributionType, getVariantDistributionData } from '../services/api';
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
 import createPlotlyComponent from 'react-plotly.js/factory';
-import { VariantTimeDistributionDataPoint, DataDistributionConfiguration } from '../helpers/types';
+import { DataDistributionConfiguration } from '../helpers/types';
+import { TimeDistributionEntry } from '../services/api-types';
 
 const Plotly = window.Plotly;
 const Plot = createPlotlyComponent(Plotly);
@@ -12,7 +13,7 @@ interface Props {
   data: DataDistributionConfiguration;
 }
 export const VariantTimeDistributionPlot = ({ data }: Props) => {
-  const [distribution, setDistribution] = useState<VariantTimeDistributionDataPoint[] | undefined>(undefined);
+  const [distribution, setDistribution] = useState<TimeDistributionEntry[] | undefined>(undefined);
 
   useEffect(() => {
     let isSubscribed = true;

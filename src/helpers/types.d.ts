@@ -30,21 +30,3 @@ type DistributionY = {
     value: number;
   };
 };
-
-export type VariantInternationalDistributionDataPoint = {
-  x: {
-    country: Country;
-    week: Week;
-  };
-  y: DistributionY;
-};
-
-export type VariantTimeDistributionDataPoint = {
-  x: Week;
-  y: DistributionY;
-};
-
-export type VariantAgeDistributionDataPoint = {
-  x: string;
-  y: DistributionY;
-};

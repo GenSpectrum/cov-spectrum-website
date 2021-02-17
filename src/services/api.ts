@@ -1,5 +1,11 @@
+import * as zod from 'zod';
 import { AccountService } from './AccountService';
-import { Country } from './api-types';
+import {
+  AgeDistributionEntrySchema,
+  Country,
+  InternationalTimeDistributionEntrySchema,
+  TimeDistributionEntrySchema,
+} from './api-types';
 
 export enum DistributionType {
   Age = 'Age',
@@ -42,6 +48,14 @@ const getVariantEndpoint = (distributionType: DistributionType) => {
   }
 };
 
+const entrySchemaByDistributionType = {
+  [DistributionType.Age]: AgeDistributionEntrySchema,
+  [DistributionType.Time]: TimeDistributionEntrySchema,
+  [DistributionType.International]: InternationalTimeDistributionEntrySchema,
+};
+
+type EntryType<D extends DistributionType> = zod.infer<typeof entrySchemaByDistributionType[D]>;
+
 const getVariantRequestUrl = (
   distributionType: DistributionType,
   country: Country | null | undefined,
@@ -57,13 +71,13 @@ const getVariantRequestUrl = (
   }
 };
 
-export const getVariantDistributionData = (
-  distributionType: DistributionType,
+export const getVariantDistributionData = <D extends DistributionType>(
+  distributionType: D,
   country: Country | null | undefined,
   mutations: string[],
   matchPercentage: number,
   signal?: AbortSignal
-) => {
+): Promise<EntryType<D>[]> => {
   const url = getVariantRequestUrl(distributionType, country, mutations, matchPercentage);
   // console.log('Fetching variant request', url);
   return fetch(url, {
@@ -71,12 +85,12 @@ export const getVariantDistributionData = (
     signal,
   })
     .then(response => {
-      // console.log('VDD Response is', response);
       return response.json();
     })
     .then(distributionData => {
-      // console.log('Data for ', distributionType, distributionData);
-      return distributionData;
+      return zod
+        .array(entrySchemaByDistributionType[distributionType])
+        .parse(distributionData) as EntryType<D>[];
     })
     .catch(e => {
       console.log('Error fetching', e);

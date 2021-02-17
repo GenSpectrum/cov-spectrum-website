@@ -7,6 +7,7 @@ import { VariantInternationalComparisonPlot } from '../widgets/VariantInternatio
 import { WidgetWrapper } from './WidgetWrapper';
 import { dataToUrl } from '../helpers/urlConversion';
 import { DistributionType, getVariantDistributionData } from '../services/api';
+import { InternationalTimeDistributionEntry } from '../services/api-types';
 
 interface Props {
   country: string;
@@ -17,7 +18,7 @@ interface Props {
   };
 }
 export const InternationalComparison = ({ country, matchPercentage, variant }: Props) => {
-  const [distribution, setDistribution] = useState(null);
+  const [distribution, setDistribution] = useState<InternationalTimeDistributionEntry[] | null>(null);
 
   useEffect(() => {
     let isSubscribed = true;
