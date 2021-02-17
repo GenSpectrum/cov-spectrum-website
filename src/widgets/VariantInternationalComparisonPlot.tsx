@@ -5,13 +5,20 @@ import { DataDistributionConfiguration } from '../helpers/types';
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
 import createPlotlyComponent from 'react-plotly.js/factory';
-import { InternationalTimeDistributionEntry } from '../services/api-types';
+import { InternationalTimeDistributionEntry, ValueWithCI } from '../services/api-types';
 
 const Plotly = window.Plotly;
 const Plot = createPlotlyComponent(Plotly);
+
+const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
+
+const valueAndCIToString = (v: ValueWithCI): string =>
+  `${digitsForPercent(v.value)}% [${digitsForPercent(v.ciLower)}%, ${digitsForPercent(v.ciUpper)}%]`;
+
 interface Props {
   data: DataDistributionConfiguration;
 }
+
 export const VariantInternationalComparisonPlot = ({ data }: Props) => {
   const [plotData, setPlotData] = useState<InternationalTimeDistributionEntry[] | undefined>(undefined);
   const [colorMap, setColorMap] = useState<any>(null);
@@ -53,6 +60,31 @@ export const VariantInternationalComparisonPlot = ({ data }: Props) => {
     };
   }, [data]);
 
+  const makeCIData = (
+    plotData: InternationalTimeDistributionEntry[],
+    getY: (entry: InternationalTimeDistributionEntry) => number
+  ): Plotly.Data => {
+    return {
+      type: 'scatter',
+      mode: 'lines',
+      x: plotData.map(d => d.x.week.firstDayInWeek),
+      y: plotData.map(d => digitsForPercent(getY(d))),
+      line: {
+        dash: 'dash',
+        width: 2,
+      },
+      transforms: [
+        {
+          type: 'groupby',
+          groups: plotData.map(d => d.x.country),
+          styles: colorMap,
+        },
+      ],
+      showlegend: false,
+      hoverinfo: 'x',
+    };
+  };
+
   return (
     <div style={{ height: '100%' }}>
       {!plotData && <p>Loading...</p>}
@@ -64,54 +96,30 @@ export const VariantInternationalComparisonPlot = ({ data }: Props) => {
               type: 'scatter',
               mode: 'lines+markers',
               x: plotData.map(d => d.x.week.firstDayInWeek),
-              y: plotData.map(d => (d.y.proportion.value * 100).toFixed(2)),
+              y: plotData.map(d => digitsForPercent(d.y.proportion.value)),
+              text: plotData.map(d => valueAndCIToString(d.y.proportion)),
               transforms: [
                 {
                   type: 'groupby',
                   groups: plotData.map(d => d.x.country),
                   styles: colorMap,
+                  nameformat: '%{group}',
                 },
               ],
+              hovertemplate: '%{text}',
             },
-            {
-              type: 'scatter',
-              mode: 'lines',
-              x: plotData.map(d => d.x.week.firstDayInWeek),
-              y: plotData.map(d => (d.y.proportion.ciLower * 100).toFixed(2)),
-              line: {
-                dash: 'dash',
-                width: 2,
-              },
-              transforms: [
-                {
-                  type: 'groupby',
-                  groups: plotData.map(d => d.x.country),
-                  styles: colorMap,
-                },
-              ],
-              showlegend: false,
-            },
-            {
-              type: 'scatter',
-              mode: 'lines',
-              x: plotData.map(d => d.x.week.firstDayInWeek),
-              y: plotData.map(d => (d.y.proportion.ciUpper * 100).toFixed(2)),
-              line: {
-                dash: 'dash',
-                width: 2,
-              },
-              transforms: [
-                {
-                  type: 'groupby',
-                  groups: plotData.map((d: any) => d.x.country),
-                  styles: colorMap,
-                },
-              ],
-              showlegend: false,
-            },
+            makeCIData(plotData, d => d.y.proportion.ciLower),
+            makeCIData(plotData, d => d.y.proportion.ciUpper),
           ]}
           layout={{
             title: '',
+            xaxis: {
+              title: 'Week',
+              type: 'date',
+              tickvals: plotData.map(d => d.x.week.firstDayInWeek),
+              tickformat: 'W%-V, %Y',
+              hoverformat: 'Week %-V, %Y (from %d.%m.)',
+            },
             yaxis: {
               title: 'Estimated Percentage',
             },
