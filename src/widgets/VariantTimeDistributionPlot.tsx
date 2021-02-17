@@ -42,6 +42,7 @@ export const VariantTimeDistributionPlot = ({ data }: Props) => {
           style={{ width: '100%', height: '100%' }}
           data={[
             {
+              name: 'Sequences',
               type: 'bar',
               x: distribution.map(d => new Date(d.x.firstDayInWeek)),
               y: distribution.map(d => d.y.count),
@@ -53,6 +54,7 @@ export const VariantTimeDistributionPlot = ({ data }: Props) => {
               mode: 'lines+markers',
               marker: { color: 'red' },
               yaxis: 'y2',
+              hovertemplate: '%{y:.2f}%<extra></extra>',
             },
           ]}
           layout={{
