@@ -1,37 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
-import { Typeahead } from 'react-bootstrap-typeahead';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { NewVariantTable } from './NewVariantTable';
-import { getCountries, getCurrentWeek } from '../services/api';
+import { getCurrentWeek } from '../services/api';
+import { Country, parseYearWeekString, Variant } from '../services/api-types';
+import { CountrySelectionForm } from './CountrySelectionForm';
 
-export const NewVariantLookup = ({ onVariantAndCountrySelect }) => {
-  const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState('Switzerland');
+export interface SelectedVariantAndCountry {
+  variant: Variant;
+  country?: Country;
+}
 
-  const [weeks, setWeeks] = useState([]);
-  const [selectedWeek, setSelectedWeek] = useState('2021-1');
+interface Props {
+  onVariantAndCountrySelect: (selected: SelectedVariantAndCountry) => void;
+}
 
-  const [table, setTable] = useState({ country: 'Switzerland', week: 0 });
+interface TableQuery {
+  country: Country;
+  week: string;
+}
 
-  const handleVariantSelect = variant => {
-    console.log('new country is ', table.country);
-    onVariantAndCountrySelect({
-      variant,
-      country: table.country,
-    });
-  };
+const generateListOfWeeks = (currentIsoWeek: number) => {
+  const weeks = [];
+  for (let i = 40; i <= 53; i++) {
+    weeks.unshift('2020-' + i);
+  }
+  for (let i = 1; i <= currentIsoWeek; i++) {
+    weeks.unshift('2021-' + i);
+  }
+  return weeks;
+};
 
-  const convertToWeeks = currentIsoWeek => {
-    const weeks = [];
-    for (let i = 40; i <= 53; i++) {
-      weeks.unshift('2020-' + i);
+export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
+  const [selectedCountry, setSelectedCountry] = useState<Country | undefined>('Switzerland');
+
+  const [weeks, setWeeks] = useState<string[]>([]);
+  const [selectedWeek, setSelectedWeek] = useState('2021-01');
+
+  const [table, setTable] = useState<TableQuery>();
+  useEffect(() => {
+    if (table && (!selectedCountry || selectedCountry !== table.country || selectedWeek !== table.week)) {
+      setTable(undefined);
     }
-    for (let i = 1; i <= currentIsoWeek; i++) {
-      weeks.unshift('2021-' + i);
-    }
-    return weeks;
-  };
+  }, [table, selectedCountry, selectedWeek]);
 
   useEffect(() => {
     let isSubscribed = true;
@@ -39,15 +50,10 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }) => {
     // const signal = controller.signal;
     getCurrentWeek().then(week => {
       if (isSubscribed) {
-        const newWeeks = convertToWeeks(week);
+        const newWeeks = generateListOfWeeks(week);
         console.log('new weeks is ', newWeeks, 'for', week);
         setWeeks(newWeeks);
         setSelectedWeek(newWeeks[0]);
-      }
-    });
-    getCountries().then(countries => {
-      if (isSubscribed) {
-        setCountries(countries);
       }
     });
     return () => {
@@ -61,25 +67,7 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }) => {
     <Container fluid='md'>
       <Row>
         <Col>
-          {
-            <Form>
-              <Form.Group controlId='countryFieldGroup'>
-                <Form.Label>Country</Form.Label>
-                <Typeahead
-                  id='countryField'
-                  onChange={selected => {
-                    let selectedCountry = null;
-                    if (selected.length === 1) {
-                      selectedCountry = selected[0];
-                    }
-                    console.log('Selected Country is', selected[0]);
-                    setSelectedCountry(selectedCountry);
-                  }}
-                  options={countries}
-                />
-              </Form.Group>
-            </Form>
-          }
+          <CountrySelectionForm onSelect={setSelectedCountry} />
         </Col>
         <Col>
           <Form>
@@ -116,13 +104,13 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }) => {
         </Col>
       </Row>
 
-      {table.country && table.week ? (
+      {table ? (
         <>
           <hr />
           <NewVariantTable
+            {...parseYearWeekString(table.week)}
             country={table.country}
-            yearWeek={table.week}
-            onVariantSelect={handleVariantSelect}
+            onVariantSelect={variant => onVariantAndCountrySelect({ variant, country: table?.country })}
           />
         </>
       ) : null}

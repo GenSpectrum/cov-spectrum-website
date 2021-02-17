@@ -17,6 +17,19 @@ export const CountAndProportionWithCISchema = z.object({
 
 const yearWeekRegex = /^(\d{4})-(\d{1,2})$/;
 export const YearWeekSchema = z.string().regex(yearWeekRegex);
+export function parseYearWeekString(
+  yearWeek: z.infer<typeof YearWeekSchema>
+): { year: number; week: number } {
+  const m = yearWeek.match(yearWeekRegex);
+  if (!m) {
+    throw new Error('invalid YearWeek string');
+  }
+  const parsed = { year: +m[1], week: +m[2] };
+  if (!(parsed.week >= 1 && parsed.week <= 53)) {
+    throw new Error('invalid week in YearWeek string');
+  }
+  return parsed;
+}
 
 export const YearWeekWithDaySchema = z.object({
   yearWeek: YearWeekSchema,

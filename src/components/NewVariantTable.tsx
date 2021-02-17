@@ -2,15 +2,22 @@ import React, { useState, useEffect } from 'react';
 import Table from 'react-bootstrap/Table';
 import { Button } from 'react-bootstrap';
 import { getGrowingVariants } from '../services/api';
+import { Country, GrowingVariant, Variant } from '../services/api-types';
 
-export const NewVariantTable = ({ country, yearWeek, onVariantSelect }) => {
-  const [data, setData] = useState(null);
+interface Props {
+  country: Country;
+  year: number;
+  week: number;
+  onVariantSelect: (variant: Variant) => void;
+}
+
+export const NewVariantTable = ({ country, year, week, onVariantSelect }: Props) => {
+  const [data, setData] = useState<GrowingVariant[]>();
 
   useEffect(() => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    const [year, week] = yearWeek.split('-');
     getGrowingVariants(year, week, country, signal).then(newData => {
       if (isSubscribed) {
         setData(newData);
@@ -21,7 +28,7 @@ export const NewVariantTable = ({ country, yearWeek, onVariantSelect }) => {
       controller.abort();
       console.log('TIME Cleanup render for variant age distribution plot');
     };
-  }, [country, yearWeek, onVariantSelect]);
+  }, [country, year, week, onVariantSelect]);
 
   return (
     <div>

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { NewVariantLookup } from '../components/NewVariantLookup';
 import { Col, Container, Row, Tab, Tabs } from 'react-bootstrap';
 import { VariantDashboard } from '../components/VariantDashboard';
-import { KnownVariantsList } from '../components/KnownVariantsList';
+import { KnownVariantsList, SelectedVariantAndCountry } from '../components/KnownVariantsList';
 import { InternationalComparison } from '../components/InternationalComparison';
 import { MutationLookup } from '../components/MutationLookup';
 
@@ -14,11 +14,6 @@ interface DashboardConfiguration {
   matchPercentage: number;
 }
 
-interface VariantCountry {
-  variant: Variant | undefined;
-  country: Country | undefined;
-}
-
 export const MainPage = () => {
   const [variantDashboard, setVariantDashboard] = useState<DashboardConfiguration>({
     variant: undefined,
@@ -26,7 +21,7 @@ export const MainPage = () => {
     matchPercentage: 0,
   });
 
-  const handleSelect = ({ variant, country }: VariantCountry, matchPercentage: number) => {
+  const handleSelect = ({ variant, country }: SelectedVariantAndCountry, matchPercentage: number) => {
     console.log('Update VDash to ', {
       variant,
       country,
@@ -48,14 +43,12 @@ export const MainPage = () => {
             <Tabs defaultActiveKey='knownVariants' id='variantList' transition={false}>
               <Tab eventKey='knownVariants' title='Known Variants'>
                 <div style={{ marginTop: '20px' }}>
-                  <KnownVariantsList
-                    onVariantAndCountrySelect={(e: VariantCountry) => handleSelect(e, 0.8)}
-                  />
+                  <KnownVariantsList onVariantAndCountrySelect={e => handleSelect(e, 0.8)} />
                 </div>
               </Tab>
               <Tab eventKey='newVariants' title='Find New Variants'>
                 <div style={{ marginTop: '20px' }}>
-                  <NewVariantLookup onVariantAndCountrySelect={(e: VariantCountry) => handleSelect(e, 1)} />
+                  <NewVariantLookup onVariantAndCountrySelect={e => handleSelect(e, 1)} />
                 </div>
               </Tab>
               <Tab eventKey='lookupMutations' title='Lookup Mutations'>
