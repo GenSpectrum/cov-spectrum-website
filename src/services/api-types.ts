@@ -18,7 +18,7 @@ export const CountAndProportionWithCISchema = z.object({
 const yearWeekRegex = /^(\d{4})-(\d{1,2})$/;
 export const YearWeekSchema = z.string().regex(yearWeekRegex);
 
-export const YearWeekWithDay = z.object({
+export const YearWeekWithDaySchema = z.object({
   yearWeek: YearWeekSchema,
   firstDayInWeek: z.string(),
 });
@@ -67,14 +67,14 @@ export const AgeDistributionEntrySchema = z.object({
 });
 
 export const TimeDistributionEntrySchema = z.object({
-  x: YearWeekWithDay,
+  x: YearWeekWithDaySchema,
   y: CountAndProportionWithCISchema,
 });
 
 export const InternationalTimeDistributionEntrySchema = z.object({
   x: z.object({
     country: z.string(),
-    week: YearWeekWithDay,
+    week: YearWeekWithDaySchema,
   }),
   y: CountAndProportionWithCISchema,
 });
@@ -82,7 +82,7 @@ export const InternationalTimeDistributionEntrySchema = z.object({
 export const TimeZipCodeDistributionEntrySchema = z.object({
   x: z
     .object({
-      week: YearWeekWithDay,
+      week: YearWeekWithDaySchema,
       zip_code: z.string(),
     })
     .transform(v => ({ week: v.week, zipCode: v.zip_code })),
