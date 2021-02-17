@@ -4,6 +4,8 @@ import {
   AgeDistributionEntrySchema,
   Country,
   InternationalTimeDistributionEntrySchema,
+  SampleResultList,
+  SampleResultListSchema,
   TimeDistributionEntrySchema,
 } from './api-types';
 
@@ -103,12 +105,14 @@ export const getSamples = (
   matchPercentage: number,
   country: string | null | undefined,
   signal?: AbortSignal
-) => {
+): Promise<SampleResultList> => {
   let url = HOST + `/resource/sample/?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
   if (country) {
     url += `&country=${country}`;
   }
-  return fetch(url, { headers: getBaseHeaders(), signal }).then(response => response.json());
+  return fetch(url, { headers: getBaseHeaders(), signal })
+    .then(response => response.json())
+    .then(data => SampleResultListSchema.parse(data));
 };
 
 export const getGrowingVariants = (year: number, week: number, country: string, signal?: AbortSignal) => {

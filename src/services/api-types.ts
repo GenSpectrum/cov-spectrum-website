@@ -51,6 +51,11 @@ export const SampleSchema = z.object({
     .nullable(),
 });
 
+export const SampleResultListSchema = z.object({
+  total: z.number(),
+  data: z.array(SampleSchema),
+});
+
 export const VariantSchema = z.object({
   name: z.string(),
   mutations: z.array(z.string()),
@@ -102,6 +107,7 @@ export const LoginResponseSchema = z.object({
 
 export type Country = z.infer<typeof CountrySchema>;
 export type Sample = z.infer<typeof SampleSchema>;
+export type SampleResultList = z.infer<typeof SampleResultListSchema>;
 export type Variant = z.infer<typeof VariantSchema>;
 export type AgeDistributionEntry = z.infer<typeof AgeDistributionEntrySchema>;
 export type TimeDistributionEntry = z.infer<typeof TimeDistributionEntrySchema>;
