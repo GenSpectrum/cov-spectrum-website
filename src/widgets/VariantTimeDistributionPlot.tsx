@@ -64,7 +64,7 @@ export const VariantTimeDistributionPlot = ({ data }: Props) => {
               type: 'date',
               tickvals: distribution.map(d => d.x.firstDayInWeek),
               tickformat: 'W%-V, %Y',
-              hoverformat: 'Week %-V, %Y (from %d.%m.)'
+              hoverformat: 'Week %-V, %Y (from %d.%m.)',
             },
             yaxis: {
               title: 'Number Sequences',
