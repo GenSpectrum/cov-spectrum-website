@@ -64,6 +64,9 @@ export const VariantAgeDistributionPlot = ({ data }: Props) => {
           ]}
           layout={{
             title: 'Age Distribution',
+            xaxis: {
+              title: 'Age',
+            },
             yaxis: {
               title: 'Number Sequences',
             },
