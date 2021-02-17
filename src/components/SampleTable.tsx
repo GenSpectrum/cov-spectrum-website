@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Overlay, Popover, Row, Table } from 'react-bootstrap';
 
-import { Variant, Country } from '../helpers/types';
-
+import { Variant, Country } from '../services/api-types';
 import { getSamples } from '../services/api';
 
 interface Sample {

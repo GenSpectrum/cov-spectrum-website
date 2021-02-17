@@ -7,15 +7,12 @@ import { VariantInternationalComparisonPlot } from '../widgets/VariantInternatio
 import { WidgetWrapper } from './WidgetWrapper';
 import { dataToUrl } from '../helpers/urlConversion';
 import { DistributionType, getVariantDistributionData } from '../services/api';
-import { InternationalTimeDistributionEntry } from '../services/api-types';
+import { Country, InternationalTimeDistributionEntry, Variant } from '../services/api-types';
 
 interface Props {
-  country: string;
+  country: Country;
   matchPercentage: number;
-  variant: {
-    mutations: string[];
-    name: string;
-  };
+  variant: Variant;
 }
 export const InternationalComparison = ({ country, matchPercentage, variant }: Props) => {
   const [distribution, setDistribution] = useState<InternationalTimeDistributionEntry[] | null>(null);

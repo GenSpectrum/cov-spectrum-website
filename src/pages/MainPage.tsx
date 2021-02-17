@@ -6,7 +6,7 @@ import { KnownVariantsList } from '../components/KnownVariantsList';
 import { InternationalComparison } from '../components/InternationalComparison';
 import { MutationLookup } from '../components/MutationLookup';
 
-import { Variant, Country } from '../helpers/types';
+import { Variant, Country } from '../services/api-types';
 
 interface DashboardConfiguration {
   variant: Variant | undefined;

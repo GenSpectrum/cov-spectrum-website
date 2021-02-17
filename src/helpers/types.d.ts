@@ -5,15 +5,6 @@ export interface DataDistributionConfiguration {
   variant?: string;
 }
 
-export interface Variant {
-  mutations: string[];
-  name: string;
-}
-
-export interface Mutation {}
-
-export type Country = string;
-
 export type Week = {
   firstDayInWeek: string;
   yearWeek: string;

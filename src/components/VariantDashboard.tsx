@@ -8,7 +8,8 @@ import { VariantAgeDistributionPlot } from '../widgets/VariantAgeDistributionPlo
 import { dataToUrl } from '../helpers/urlConversion';
 import styled from 'styled-components';
 
-import { Country, Variant, DataDistributionConfiguration } from '../helpers/types';
+import { Country, Variant } from '../services/api-types';
+import { DataDistributionConfiguration } from '../helpers/types';
 
 const RowWrapper = styled(Row)`
   /* height: 100rem; */

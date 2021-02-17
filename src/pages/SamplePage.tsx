@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SampleTable } from '../components/SampleTable';
 
-import { Variant } from '../helpers/types';
+import { Variant } from '../services/api-types';
 
 function useQuery() {
   const location = useLocation();
