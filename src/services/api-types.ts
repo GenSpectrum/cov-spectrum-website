@@ -1,109 +1,111 @@
 import * as z from 'zod';
 
-namespace schema {
-  // Small reusable objects that aren't explicitly separate in the API doc
+// Small reusable objects that aren't explicitly separate in the API doc
 
-  export const ValueWithCI = z.object({
-    value: z.number(),
-    ciLower: z.number(),
-    ciUpper: z.number(),
-    confidenceLevel: z.number(),
-  });
+export const ValueWithCISchema = z.object({
+  value: z.number(),
+  ciLower: z.number(),
+  ciUpper: z.number(),
+  confidenceLevel: z.number(),
+});
 
-  export const CountAndProportionWithCI = z.object({
-    count: z.number(),
-    total: z.number(),
-    proportion: ValueWithCI,
-  });
+export const CountAndProportionWithCISchema = z.object({
+  count: z.number(),
+  total: z.number(),
+  proportion: ValueWithCISchema,
+});
 
-  const yearWeekRegex = /^(\d{4})-(\d{2})$/;
-  export const YearWeek = z
-    .string()
-    .regex(yearWeekRegex)
-    .transform(v => {
-      const m = v.match(yearWeekRegex)!;
-      return { year: +m[1], week: +m[2] };
+const yearWeekRegex = /^(\d{4})-(\d{1,2})$/;
+export const YearWeekSchema = z.string().regex(yearWeekRegex);
+
+export const YearWeekWithDay = z.object({
+  yearWeek: YearWeekSchema,
+  firstDayInWeek: z.string(),
+});
+
+// Objects that are explicitly defined in the doc (in the same order)
+
+export const CountrySchema = z.string();
+
+export const SampleSchema = z.object({
+  name: z.string(),
+  country: CountrySchema,
+  date: z.string(),
+  mutations: z.array(z.string()),
+  metadata: z
+    .object({
+      country: z.string(),
+      division: z.string().nullable(),
+      location: z.string().nullable(),
+      zipCode: z.string().nullable(),
+      host: z.string(),
+      age: z
+        .number()
+        .nullable()
+        .transform(v => (v === 0 ? null : v)),
+      sex: z
+        .string()
+        .nullable()
+        .transform(v => (v === '?' ? null : v)),
     })
-    .refine(v => v.week >= 1 && v.week <= 53);
+    .nullable(),
+});
 
-  export const YearWeekWithDay = z.object({
-    yearWeek: YearWeek,
-    firstDayInWeek: z.string().transform(v => new Date()),
-  });
+export const VariantSchema = z.object({
+  name: z.string(),
+  mutations: z.array(z.string()),
+});
 
-  // Objects that are explicitly defined in the doc (in the same order)
+export const AgeDistributionEntrySchema = z.object({
+  x: z.string(),
+  y: CountAndProportionWithCISchema,
+});
 
-  export const Country = z.string();
+export const TimeDistributionEntrySchema = z.object({
+  x: YearWeekWithDay,
+  y: CountAndProportionWithCISchema,
+});
 
-  export const Sample = z.object({
-    name: z.string(),
-    country: Country,
-    date: z.string().transform(v => new Date(v)),
-    mutations: z.array(z.string()),
-    metadata: z
-      .object({
-        country: z.string(),
-        division: z.string().nullable(),
-        location: z.string().nullable(),
-        zipCode: z.string().nullable(),
-        host: z.string(),
-        age: z
-          .number()
-          .nullable()
-          .transform(v => (v === 0 ? null : v)),
-        sex: z
-          .string()
-          .nullable()
-          .transform(v => (v === '?' ? null : v)),
-      })
-      .nullable(),
-  });
+export const InternationalTimeDistributionEntrySchema = z.object({
+  x: z.object({
+    country: z.string(),
+    week: YearWeekWithDay,
+  }),
+  y: CountAndProportionWithCISchema,
+});
 
-  export const Variant = z.object({
-    name: z.string(),
-    mutations: z.array(z.string()),
-  });
+export const TimeZipCodeDistributionEntrySchema = z.object({
+  x: z
+    .object({
+      week: YearWeekWithDay,
+      zip_code: z.string(),
+    })
+    .transform(v => ({ week: v.week, zipCode: v.zip_code })),
+  y: CountAndProportionWithCISchema,
+});
 
-  export const AgeDistributionEntry = z.object({
-    x: z.string(),
-    y: CountAndProportionWithCI,
-  });
+export const GrowingVariantSchema = z.object({
+  variant: VariantSchema,
+  t0Count: z.number(),
+  t1Count: z.number(),
+  t0Proportions: z.number(),
+  t1Proportions: z.number(),
+  absoluteDifferenceProportion: z.number(),
+  relativeDifferenceProportion: z.number(),
+});
 
-  export const TimeDistributionEntry = z.object({
-    x: YearWeekWithDay,
-    y: CountAndProportionWithCI,
-  });
+export const LoginResponseSchema = z.object({
+  token: z.string(),
+});
 
-  export const TimeZipCodeDistributionEntry = z.object({
-    x: z
-      .object({
-        week: YearWeekWithDay,
-        zip_code: z.string(),
-      })
-      .transform(v => ({ week: v.week, zipCode: v.zip_code })),
-    y: CountAndProportionWithCI,
-  });
+// TypeScript types from schemas
 
-  export const GrowingVariant = z.object({
-    variant: Variant,
-    t0Count: z.number(),
-    t1Count: z.number(),
-    t0Proportions: z.number(),
-    t1Proportions: z.number(),
-    absoluteDifferenceProportion: z.number(),
-    relativeDifferenceProportion: z.number(),
-  });
-
-  export const LoginResponse = z.object({
-    token: z.string(),
-  });
-}
-
-export type Country = z.infer<typeof schema.Country>;
-export type Sample = z.infer<typeof schema.Sample>;
-export type Variant = z.infer<typeof schema.Variant>;
-export type AgeDistributionEntry = z.infer<typeof schema.AgeDistributionEntry>;
-export type TimeDistributionEntry = z.infer<typeof schema.TimeDistributionEntry>;
-export type TimeZipCodeDistributionEntry = z.infer<typeof schema.TimeZipCodeDistributionEntry>;
-export type GrowingVariant = z.infer<typeof schema.GrowingVariant>;
-export type LoginResponse = z.infer<typeof schema.LoginResponse>;
+export type Country = z.infer<typeof CountrySchema>;
+export type Sample = z.infer<typeof SampleSchema>;
+export type Variant = z.infer<typeof VariantSchema>;
+export type AgeDistributionEntry = z.infer<typeof AgeDistributionEntrySchema>;
+export type TimeDistributionEntry = z.infer<typeof TimeDistributionEntrySchema>;
+export type InternationalTimeDistributionEntry = z.infer<typeof InternationalTimeDistributionEntrySchema>;
+export type TimeZipCodeDistributionEntry = z.infer<typeof TimeZipCodeDistributionEntrySchema>;
+export type GrowingVariant = z.infer<typeof GrowingVariantSchema>;
+export type LoginResponse = z.infer<typeof LoginResponseSchema>;
