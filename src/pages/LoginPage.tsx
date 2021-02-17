@@ -8,13 +8,13 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-export function LoginPage() {
+export const LoginPage = () => {
   const query = useQuery();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginFailed, setLoginFailed] = useState(false);
-  const [sessionExpired] = useState(query.get('expired') !== null);
-  const [loggedOut] = useState(query.get('left') !== null);
+  const sessionExpired = query.get('expired') !== null;
+  const loggedOut = query.get('left') !== null;
 
   if (AccountService.isLoggedIn()) {
     window.location.href = '/';
@@ -71,4 +71,4 @@ export function LoginPage() {
       </Container>
     </div>
   );
-}
+};
