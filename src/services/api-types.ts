@@ -57,7 +57,7 @@ export const SampleResultListSchema = z.object({
 });
 
 export const VariantSchema = z.object({
-  name: z.string(),
+  name: z.string().nullable(),
   mutations: z.array(z.string()),
 });
 
@@ -93,10 +93,10 @@ export const GrowingVariantSchema = z.object({
   variant: VariantSchema,
   t0Count: z.number(),
   t1Count: z.number(),
-  t0Proportions: z.number(),
-  t1Proportions: z.number(),
+  t0Proportion: z.number(),
+  t1Proportion: z.number(),
   absoluteDifferenceProportion: z.number(),
-  relativeDifferenceProportion: z.number(),
+  relativeDifferenceProportion: z.number().nullable(),
 });
 
 export const LoginResponseSchema = z.object({
