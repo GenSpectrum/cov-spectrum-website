@@ -24,10 +24,11 @@ export const LoginPage = () => {
     if (!username || !password) {
       return;
     }
-    const loginSuccessful = await AccountService.login(username, password);
-    if (loginSuccessful) {
+    try {
+      await AccountService.login(username, password);
       window.location.href = '/';
-    } else {
+    } catch (err) {
+      console.error('login failed', err);
       setLoginFailed(true);
     }
   };

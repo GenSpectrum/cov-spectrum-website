@@ -9,12 +9,20 @@ const Wrapper = styled.div`
   height: ${HEIGHT}px;
 `;
 
-export function WidgetWrapper({ shareUrl, children, isLoading = false }) {
+interface Props {
+  shareUrl?: string;
+  children: React.ReactChild | React.ReactChild[];
+  isLoading?: boolean;
+}
+
+export function WidgetWrapper({ shareUrl, children, isLoading = false }: Props) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const embeddingCode = `<iframe src="${host}/embed/${shareUrl}" width="800" height="${HEIGHT}" frameborder="0"></iframe>`;
+  const embeddingCode =
+    shareUrl &&
+    `<iframe src="${host}/embed/${shareUrl}" width="800" height="${HEIGHT}" frameborder="0"></iframe>`;
 
   return (
     <Wrapper>
@@ -27,7 +35,7 @@ export function WidgetWrapper({ shareUrl, children, isLoading = false }) {
             top: '10px',
           }}
         >
-          {!isLoading && (
+          {!isLoading && embeddingCode && (
             <Button variant='outline-primary' size='sm' onClick={handleShow}>
               Share
             </Button>
