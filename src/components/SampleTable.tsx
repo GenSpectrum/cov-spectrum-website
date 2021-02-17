@@ -1,21 +1,54 @@
 import React, { useState, useEffect } from 'react';
-import { Col, Container, OverlayTrigger, Row } from 'react-bootstrap';
-import { OverlayChildren } from 'react-bootstrap/esm/Overlay';
-import Table from 'react-bootstrap/Table';
+import { Col, Container, Overlay, Popover, Row, Table } from 'react-bootstrap';
 
 import { Variant, Country } from '../helpers/types';
 
 import { getSamples } from '../services/api';
-
-//Get information about a sample
-
-// export class SampleTable extends React.Component {
 
 interface Sample {
   name: string;
   date: string;
   country: string;
   mutations: string[];
+  metadata: SampleMetadata | null;
+}
+
+interface SampleMetadata {
+  age: number; // 0 if unknown
+  country: Country | null;
+  division: string | null;
+  host: string | null;
+  location: string | null;
+  sex: string | null; // is "?" sometimes
+  zipCode: string | null;
+}
+
+interface PopoverTarget {
+  element: HTMLElement;
+  sample: Sample & { metadata: SampleMetadata };
+}
+
+function formatMetadata(
+  sampleDate: string,
+  metadata: SampleMetadata
+): { label: string; value: string | undefined }[] {
+  const rawEntries: [string, string | number | null][] = [
+    ['Date', sampleDate],
+    ['Country', metadata.country],
+    ['Division', metadata.division],
+    ['Location', metadata.location],
+    ['Host', metadata.host],
+    ['Age', metadata.age || null],
+    ['Sex', metadata.sex === '?' ? null : metadata.sex],
+  ];
+  return rawEntries.map(([label, value]) => ({
+    label,
+    value: value === null ? undefined : value.toString(),
+  }));
+}
+
+function sampleHasMetadata(sample: Sample): sample is Sample & { metadata: SampleMetadata } {
+  return sample.metadata !== null;
 }
 
 interface Props {
@@ -24,25 +57,7 @@ interface Props {
   country: Country | null;
 }
 
-const SampleRowInner = ({ sample }: { sample: Sample }) => {
-  return (
-    <tr key={sample.name}>
-      <td>{sample.name}</td>
-      <td>{sample.date}</td>
-      <td>{sample.country}</td>
-      <td>{sample.mutations.join(', ')}</td>
-    </tr>
-  );
-};
-
-const SampleRow = ({ sample, popover }: { sample: Sample; popover?: OverlayChildren }) => {
-  const inner = <SampleRowInner sample={sample} />;
-  if (popover === undefined) {
-    return inner;
-  }
-  return <OverlayTrigger overlay={popover}>{inner}</OverlayTrigger>;
-};
-
+// SampleTable shows detailed information about individual samples from GISAID
 export const SampleTable = ({ matchPercentage, variant, country = null }: Props) => {
   const [samples, setSamples] = useState<Sample[] | undefined>(undefined);
   const [totalNumber, setTotalNumber] = useState<number | undefined>(undefined);
@@ -67,6 +82,13 @@ export const SampleTable = ({ matchPercentage, variant, country = null }: Props)
     };
   }, [matchPercentage, variant.mutations, country]);
 
+  const [popoverTarget, setPopoverTarget] = useState<PopoverTarget>();
+  useEffect(() => {
+    if (popoverTarget && !samples?.includes(popoverTarget.sample)) {
+      setPopoverTarget(undefined);
+    }
+  }, [samples, popoverTarget]);
+
   return (
     <div style={{ marginTop: '20px' }}>
       <Container fluid='md'>
@@ -77,6 +99,23 @@ export const SampleTable = ({ matchPercentage, variant, country = null }: Props)
             <p>
               <b>Mutations:</b> {variant.mutations.join(', ')}
             </p>
+
+            {popoverTarget && (
+              <Overlay show target={popoverTarget.element} placement='right' transition={false}>
+                <Popover id='sample-metadata-popover'>
+                  <Popover.Title>{popoverTarget.sample.name}</Popover.Title>
+                  <Popover.Content>
+                    {formatMetadata(popoverTarget.sample.date, popoverTarget.sample.metadata).map(
+                      ({ label, value }) => (
+                        <div key={label}>
+                          <b>{label}:</b> {value ?? <i className='text-muted'>unknown</i>}
+                        </div>
+                      )
+                    )}
+                  </Popover.Content>
+                </Popover>
+              </Overlay>
+            )}
 
             {samples && (
               <>
@@ -100,7 +139,21 @@ export const SampleTable = ({ matchPercentage, variant, country = null }: Props)
                   </thead>
                   <tbody>
                     {samples.map(sample => (
-                      <SampleRow key={sample.name} sample={sample} />
+                      <tr key={sample.name}>
+                        <td
+                          onMouseEnter={ev =>
+                            setPopoverTarget(
+                              sampleHasMetadata(sample) ? { element: ev.currentTarget, sample } : undefined
+                            )
+                          }
+                          onMouseLeave={() => setPopoverTarget(undefined)}
+                        >
+                          {sample.name}
+                        </td>
+                        <td>{sample.date}</td>
+                        <td>{sample.country}</td>
+                        <td>{sample.mutations.join(', ')}</td>
+                      </tr>
                     ))}
                   </tbody>
                 </Table>
