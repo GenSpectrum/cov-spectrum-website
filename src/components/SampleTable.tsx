@@ -1,27 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Col, Container, Overlay, Popover, Row, Table } from 'react-bootstrap';
 
-import { Variant, Country } from '../helpers/types';
-
+import { Variant, Country, Sample } from '../services/api-types';
 import { getSamples } from '../services/api';
 
-interface Sample {
-  name: string;
-  date: string;
-  country: string;
-  mutations: string[];
-  metadata: SampleMetadata | null;
-}
-
-interface SampleMetadata {
-  age: number; // 0 if unknown
-  country: Country | null;
-  division: string | null;
-  host: string | null;
-  location: string | null;
-  sex: string | null; // is "?" sometimes
-  zipCode: string | null;
-}
+type SampleMetadata = NonNullable<Sample['metadata']>;
 
 interface PopoverTarget {
   element: HTMLElement;

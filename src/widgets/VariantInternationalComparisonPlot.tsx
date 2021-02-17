@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { getVariantDistributionData } from '../services/api';
+import { DistributionType, getVariantDistributionData } from '../services/api';
 
-import { DataDistributionConfiguration, VariantInternationalDistributionDataPoint } from '../helpers/types';
+import { DataDistributionConfiguration } from '../helpers/types';
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
 import createPlotlyComponent from 'react-plotly.js/factory';
+import { InternationalTimeDistributionEntry } from '../services/api-types';
 
 const Plotly = window.Plotly;
 const Plot = createPlotlyComponent(Plotly);
@@ -12,9 +13,7 @@ interface Props {
   data: DataDistributionConfiguration;
 }
 export const VariantInternationalComparisonPlot = ({ data }: Props) => {
-  const [plotData, setPlotData] = useState<VariantInternationalDistributionDataPoint[] | undefined>(
-    undefined
-  );
+  const [plotData, setPlotData] = useState<InternationalTimeDistributionEntry[] | undefined>(undefined);
   const [colorMap, setColorMap] = useState<any>(null);
 
   useEffect(() => {
@@ -22,7 +21,7 @@ export const VariantInternationalComparisonPlot = ({ data }: Props) => {
     const controller = new AbortController();
     const signal = controller.signal;
     getVariantDistributionData(
-      'International',
+      DistributionType.International,
       data.country,
       data.mutations,
       data.matchPercentage,

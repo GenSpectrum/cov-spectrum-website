@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { getVariantDistributionData } from '../services/api';
+import { DistributionType, getVariantDistributionData } from '../services/api';
 
 // See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
 import createPlotlyComponent from 'react-plotly.js/factory';
-import { VariantTimeDistributionDataPoint, DataDistributionConfiguration } from '../helpers/types';
+import { DataDistributionConfiguration } from '../helpers/types';
+import { TimeDistributionEntry } from '../services/api-types';
 
 const Plotly = window.Plotly;
 const Plot = createPlotlyComponent(Plotly);
@@ -12,22 +13,26 @@ interface Props {
   data: DataDistributionConfiguration;
 }
 export const VariantTimeDistributionPlot = ({ data }: Props) => {
-  const [distribution, setDistribution] = useState<VariantTimeDistributionDataPoint[] | undefined>(undefined);
+  const [distribution, setDistribution] = useState<TimeDistributionEntry[] | undefined>(undefined);
 
   useEffect(() => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    getVariantDistributionData('Time', data.country, data.mutations, data.matchPercentage, signal).then(
-      newDistributionData => {
-        if (isSubscribed) {
-          console.log('TIME SET', newDistributionData);
-          setDistribution(newDistributionData);
-        } else {
-          console.log('TIME NOT SET');
-        }
+    getVariantDistributionData(
+      DistributionType.Time,
+      data.country,
+      data.mutations,
+      data.matchPercentage,
+      signal
+    ).then(newDistributionData => {
+      if (isSubscribed) {
+        console.log('TIME SET', newDistributionData);
+        setDistribution(newDistributionData);
+      } else {
+        console.log('TIME NOT SET');
       }
-    );
+    });
     return () => {
       isSubscribed = false;
       controller.abort();
