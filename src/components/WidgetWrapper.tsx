@@ -42,7 +42,7 @@ export function WidgetWrapper({ shareUrl, children, toolbarChildren }: Props) {
   return (
     <>
       <div style={{ position: 'relative' }}>
-        <ButtonToolbar>
+        <ButtonToolbar className='mb-1'>
           <Button variant='outline-primary' size='sm' onClick={handleShow}>
             Share
           </Button>

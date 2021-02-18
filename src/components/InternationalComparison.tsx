@@ -98,7 +98,7 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
           mutations={variant.mutations}
           logScale={logScale}
           toolbarChildren={
-            <Button variant='outline-primary' onClick={() => setLogScale(v => !v)}>
+            <Button variant='outline-primary' size='sm' className='ml-1' onClick={() => setLogScale(v => !v)}>
               Toggle log scale
             </Button>
           }
