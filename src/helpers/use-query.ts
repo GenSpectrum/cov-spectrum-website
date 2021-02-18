@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
-import { QueryEncoder, ZodQueryEncoder } from './query';
+import { QueryEncoder, ZodQueryEncoder } from './query-encoder';
 import * as zod from 'zod';
 
 export function useQueryWithEncoder<T>(encoder: QueryEncoder<T> | undefined): T | undefined {

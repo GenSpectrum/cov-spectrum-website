@@ -5,7 +5,7 @@ import { InternationalTimeDistributionEntry, ValueWithCI } from '../services/api
 import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
-import { ZodQueryEncoder } from '../helpers/query';
+import { ZodQueryEncoder } from '../helpers/query-encoder';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 

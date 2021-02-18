@@ -5,7 +5,7 @@ import { Plot } from '../components/Plot';
 import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
-import { ZodQueryEncoder } from '../helpers/query';
+import { ZodQueryEncoder } from '../helpers/query-encoder';
 
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;

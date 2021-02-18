@@ -1,6 +1,6 @@
 import React from 'react';
 import { WidgetWrapper } from '../components/WidgetWrapper';
-import { QueryEncoder } from '../helpers/query';
+import { QueryEncoder } from '../helpers/query-encoder';
 
 export class Widget<
   E extends QueryEncoder<any>,
