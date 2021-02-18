@@ -2,10 +2,8 @@ import React, { useState, useEffect } from 'react';
 
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { VariantTimeDistributionPlot } from '../widgets/VariantTimeDistributionPlot';
-import { WidgetWrapper } from './WidgetWrapper';
-import { VariantAgeDistributionPlot } from '../widgets/VariantAgeDistributionPlot';
-import { dataToUrl } from '../helpers/urlConversion';
+import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
+import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 
 import { Country, Variant } from '../services/api-types';
 import { DataDistributionConfiguration } from '../helpers/types';
@@ -65,14 +63,10 @@ export const VariantDashboard = ({ country, matchPercentage, variant }: Props) =
       <Container fluid='md'>
         <Row>
           <Col md={7}>
-            <WidgetWrapper shareUrl={dataToUrl(variantDistributionPlotData, 'VariantTimeDistribution')}>
-              <VariantTimeDistributionPlot data={variantDistributionPlotData} />
-            </WidgetWrapper>
+            <VariantTimeDistributionPlotWidget.ShareableComponent {...variantDistributionPlotData} />
           </Col>
           <Col md={5}>
-            <WidgetWrapper shareUrl={dataToUrl(variantDistributionPlotData, 'VariantAgeDistribution')}>
-              <VariantAgeDistributionPlot data={variantDistributionPlotData} />
-            </WidgetWrapper>
+            <VariantAgeDistributionPlotWidget.ShareableComponent {...variantDistributionPlotData} />
           </Col>
         </Row>
       </Container>

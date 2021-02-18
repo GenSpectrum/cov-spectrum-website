@@ -1,27 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { DistributionType, getVariantDistributionData } from '../services/api';
-import { DataDistributionConfiguration } from '../helpers/types';
 import { AgeDistributionEntry } from '../services/api-types';
 import { Plot } from '../components/Plot';
+import { sampleSelectorEncoder } from '../helpers/sample-selector';
+import { Widget } from './Widget';
 
-interface Props {
-  data: DataDistributionConfiguration;
-}
+const propsEncoder = sampleSelectorEncoder;
+type Props = typeof propsEncoder['_decodedType'];
 
-export const VariantAgeDistributionPlot = ({ data }: Props) => {
+const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Props) => {
   const [distributionData, setDistributionData] = useState<AgeDistributionEntry[] | undefined>(undefined);
 
   useEffect(() => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    getVariantDistributionData(
-      DistributionType.Age,
-      data.country,
-      data.mutations,
-      data.matchPercentage,
-      signal
-    )
+    getVariantDistributionData(DistributionType.Age, country, mutations, matchPercentage, signal)
       .then(newDistributionData => {
         if (isSubscribed) {
           setDistributionData(newDistributionData);
@@ -34,7 +28,7 @@ export const VariantAgeDistributionPlot = ({ data }: Props) => {
       isSubscribed = false;
       controller.abort();
     };
-  }, [data]);
+  }, [country, mutations, matchPercentage]);
 
   return (
     <div style={{ height: '100%' }}>
@@ -83,3 +77,9 @@ export const VariantAgeDistributionPlot = ({ data }: Props) => {
     </div>
   );
 };
+
+export const VariantAgeDistributionPlotWidget = new Widget(
+  propsEncoder,
+  VariantAgeDistributionPlot,
+  'variant_age-distribution'
+);

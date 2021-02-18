@@ -1,36 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { DistributionType, getVariantDistributionData } from '../services/api';
-import { DataDistributionConfiguration } from '../helpers/types';
 import { TimeDistributionEntry } from '../services/api-types';
 import { Plot } from '../components/Plot';
+import { sampleSelectorEncoder } from '../helpers/sample-selector';
+import { Widget } from './Widget';
 
-interface Props {
-  data: DataDistributionConfiguration;
-}
-export const VariantTimeDistributionPlot = ({ data }: Props) => {
+const propsEncoder = sampleSelectorEncoder;
+type Props = typeof propsEncoder['_decodedType'];
+
+export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentage }: Props) => {
   const [distribution, setDistribution] = useState<TimeDistributionEntry[] | undefined>(undefined);
 
   useEffect(() => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    getVariantDistributionData(
-      DistributionType.Time,
-      data.country,
-      data.mutations,
-      data.matchPercentage,
-      signal
-    ).then(newDistributionData => {
-      if (isSubscribed) {
-        setDistribution(newDistributionData);
-      } else {
+    getVariantDistributionData(DistributionType.Time, country, mutations, matchPercentage, signal).then(
+      newDistributionData => {
+        if (isSubscribed) {
+          setDistribution(newDistributionData);
+        } else {
+        }
       }
-    });
+    );
     return () => {
       isSubscribed = false;
       controller.abort();
     };
-  }, [data]);
+  }, [country, mutations, matchPercentage]);
 
   return (
     <div style={{ height: '100%' }}>
@@ -83,3 +80,9 @@ export const VariantTimeDistributionPlot = ({ data }: Props) => {
     </div>
   );
 };
+
+export const VariantTimeDistributionPlotWidget = new Widget(
+  propsEncoder,
+  VariantTimeDistributionPlot,
+  'variant_time-distribution'
+);

@@ -3,9 +3,7 @@ import Table from 'react-bootstrap/Table';
 import { Utils } from '../services/Utils';
 import { Link } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
-import { VariantInternationalComparisonPlot } from '../widgets/VariantInternationalComparisonPlot';
-import { WidgetWrapper } from './WidgetWrapper';
-import { dataToUrl } from '../helpers/urlConversion';
+import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
 import { DistributionType, getVariantDistributionData } from '../services/api';
 import { Country, InternationalTimeDistributionEntry, Variant } from '../services/api-types';
 
@@ -99,9 +97,7 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
         </div>
       </div>
       <div style={{ height: '500px' }}>
-        <WidgetWrapper shareUrl={dataToUrl(plotData, 'VariantInternationalComparison')}>
-          <VariantInternationalComparisonPlot data={plotData} />
-        </WidgetWrapper>
+        <VariantInternationalComparisonPlotWidget.ShareableComponent {...plotData} />
       </div>
       {countryData ? (
         <>

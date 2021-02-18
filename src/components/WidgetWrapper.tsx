@@ -50,7 +50,7 @@ export function WidgetWrapper({ shareUrl, children, isLoading = false }: Props) 
         </Modal.Header>
         <Modal.Body>
           <p>Copy the following code into your website to embed the widget.</p>
-          <Form.Control as='textarea' value={embeddingCode} rows={7} />
+          <Form.Control as='textarea' value={embeddingCode} rows={7} readOnly />
         </Modal.Body>
       </Modal>
     </Wrapper>

@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { DistributionType, getVariantDistributionData } from '../services/api';
-import { DataDistributionConfiguration } from '../helpers/types';
 import { Plot } from '../components/Plot';
 import { InternationalTimeDistributionEntry, ValueWithCI } from '../services/api-types';
+import { sampleSelectorEncoder } from '../helpers/sample-selector';
+import { Widget } from './Widget';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
 const valueAndCIToString = (v: ValueWithCI): string =>
   `${digitsForPercent(v.value)}% [${digitsForPercent(v.ciLower)}%, ${digitsForPercent(v.ciUpper)}%]`;
 
-interface Props {
-  data: DataDistributionConfiguration;
-}
+const propsEncoder = sampleSelectorEncoder;
+type Props = typeof propsEncoder['_decodedType'];
 
-export const VariantInternationalComparisonPlot = ({ data }: Props) => {
+const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentage }: Props) => {
   const [plotData, setPlotData] = useState<InternationalTimeDistributionEntry[] | undefined>(undefined);
   const [colorMap, setColorMap] = useState<any>(null);
 
@@ -23,13 +23,13 @@ export const VariantInternationalComparisonPlot = ({ data }: Props) => {
     const signal = controller.signal;
     getVariantDistributionData(
       DistributionType.International,
-      data.country,
-      data.mutations,
-      data.matchPercentage,
+      country,
+      mutations,
+      matchPercentage,
       signal
     ).then(newDistributionData => {
       if (isSubscribed) {
-        const countriesToPlot = new Set(['United Kingdom', 'Denmark', 'Switzerland', data.country]);
+        const countriesToPlot = new Set(['United Kingdom', 'Denmark', 'Switzerland', country]);
         const newPlotData = newDistributionData.filter((d: any) => countriesToPlot.has(d.x.country));
         // TODO Remove hard-coding..
         const newColorMap = [
@@ -37,9 +37,9 @@ export const VariantInternationalComparisonPlot = ({ data }: Props) => {
           { target: 'Denmark', value: { marker: { color: 'green' } } },
           { target: 'Switzerland', value: { marker: { color: 'red' } } },
         ];
-        if (!['United Kingdom', 'Denmark', 'Switzerland'].includes(data.country)) {
+        if (!['United Kingdom', 'Denmark', 'Switzerland'].includes(country)) {
           newColorMap.push({
-            target: data.country,
+            target: country,
             value: { marker: { color: 'blue' } },
           });
         }
@@ -51,7 +51,7 @@ export const VariantInternationalComparisonPlot = ({ data }: Props) => {
       isSubscribed = false;
       controller.abort();
     };
-  }, [data]);
+  }, [country, mutations, matchPercentage]);
 
   const makeCIData = (
     plotData: InternationalTimeDistributionEntry[],
@@ -132,3 +132,9 @@ export const VariantInternationalComparisonPlot = ({ data }: Props) => {
     </div>
   );
 };
+
+export const VariantInternationalComparisonPlotWidget = new Widget(
+  propsEncoder,
+  VariantInternationalComparisonPlot,
+  'variant_international-comparison'
+);

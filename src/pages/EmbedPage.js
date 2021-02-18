@@ -1,8 +1,8 @@
 import React from 'react';
 import { useLocation, useParams } from 'react-router-dom';
-import { VariantTimeDistributionPlot } from '../widgets/VariantTimeDistributionPlot';
-import { VariantAgeDistributionPlot } from '../widgets/VariantAgeDistributionPlot';
-import { VariantInternationalComparisonPlot } from '../widgets/VariantInternationalComparisonPlot';
+import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
+import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
+import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
 import { dataFromUrl } from '../helpers/urlConversion';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
@@ -25,15 +25,15 @@ export function EmbedPage() {
   switch (widget) {
     case 'variant_age-distribution':
       data = dataFromUrl(query, 'VariantAgeDistribution');
-      widgetEl = <VariantAgeDistributionPlot data={data} />;
+      widgetEl = <VariantAgeDistributionPlotWidget.Component {...data} />;
       break;
     case 'variant_international-comparison':
       data = dataFromUrl(query, 'VariantInternationalComparison');
-      widgetEl = <VariantInternationalComparisonPlot data={data} />;
+      widgetEl = <VariantInternationalComparisonPlotWidget.Component {...data} />;
       break;
     case 'variant_time-distribution':
       data = dataFromUrl(query, 'VariantTimeDistribution');
-      widgetEl = <VariantTimeDistributionPlot data={data} />;
+      widgetEl = <VariantTimeDistributionPlotWidget.Component {...data} />;
       break;
     default:
       throw new Error('Unknown widget.'); // TODO Redirect to a 404 page
