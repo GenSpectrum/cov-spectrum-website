@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Form } from 'react-bootstrap';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import { getCountries } from '../services/api';
 import { Country } from '../services/api-types';
 
 interface Props {
+  id?: string;
   onSelect: (country: Country | undefined) => void;
 }
 
-export const CountryFormGroup = ({ onSelect }: Props) => {
+export const CountrySelect = ({ id, onSelect }: Props) => {
   const [countries, setCountries] = useState<Country[]>([]);
 
   useEffect(() => {
@@ -24,14 +24,11 @@ export const CountryFormGroup = ({ onSelect }: Props) => {
   }, []);
 
   return (
-    <Form.Group controlId='countryFieldGroup'>
-      <Form.Label>Country</Form.Label>
-      <Typeahead
-        id='countryField'
-        placeholder='Select a country'
-        onChange={selected => onSelect(selected.length === 1 ? selected[0] : undefined)}
-        options={countries}
-      />
-    </Form.Group>
+    <Typeahead
+      id={id}
+      placeholder='Select a country'
+      onChange={selected => onSelect(selected.length === 1 ? selected[0] : undefined)}
+      options={countries}
+    />
   );
 };

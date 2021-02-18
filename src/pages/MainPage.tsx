@@ -40,7 +40,7 @@ export const MainPage = () => {
       <Container fluid='md'>
         <Row>
           <Col>
-            <Tabs defaultActiveKey='knownVariants' id='variantList' transition={false}>
+            <Tabs defaultActiveKey='knownVariants' id='variantList' transition={false} unmountOnExit>
               <Tab eventKey='knownVariants' title='Known Variants'>
                 <div style={{ marginTop: '20px' }}>
                   <KnownVariantsList onVariantAndCountrySelect={e => handleSelect(e, 0.8)} />

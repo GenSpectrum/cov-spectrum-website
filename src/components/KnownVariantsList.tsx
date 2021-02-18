@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button, Form, Table } from 'react-bootstrap';
 import { getVariants } from '../services/api';
 import { Variant, Country } from '../services/api-types';
-import { CountryFormGroup } from './CountryFormGroup';
+import { CountrySelect } from './CountrySelect';
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -39,7 +39,10 @@ export const KnownVariantsList = ({ onVariantAndCountrySelect }: Props) => {
   return (
     <>
       <Form>
-        <CountryFormGroup onSelect={setSelectedCountry} />
+        <Form.Group controlId='countryField'>
+          <Form.Label>Country</Form.Label>
+          <CountrySelect id='countryField' onSelect={setSelectedCountry} />
+        </Form.Group>
       </Form>
       {variants ? (
         <Table striped bordered hover>
