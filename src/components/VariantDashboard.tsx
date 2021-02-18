@@ -1,12 +1,9 @@
-import React, { useState, useEffect } from 'react';
-
+import React from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
-import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
-
 import { Country, Variant } from '../services/api-types';
-import { DataDistributionConfiguration } from '../helpers/types';
+import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
+import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 
 interface Props {
   country: Country;
@@ -15,19 +12,7 @@ interface Props {
 }
 
 export const VariantDashboard = ({ country, matchPercentage, variant }: Props) => {
-  const [variantDistributionPlotData, setVariantDistributionPlotData] = useState<
-    DataDistributionConfiguration | undefined
-  >(undefined);
-
-  useEffect(() => {
-    setVariantDistributionPlotData({
-      country: country,
-      matchPercentage: matchPercentage,
-      mutations: variant.mutations,
-    });
-  }, [country, matchPercentage, variant]);
-
-  return variantDistributionPlotData !== undefined ? (
+  return (
     <>
       <div style={{ display: 'flex' }}>
         <h3 style={{ flexGrow: 1 }}>
@@ -63,15 +48,21 @@ export const VariantDashboard = ({ country, matchPercentage, variant }: Props) =
       <Container fluid='md'>
         <Row>
           <Col md={7}>
-            <VariantTimeDistributionPlotWidget.ShareableComponent {...variantDistributionPlotData} />
+            <VariantTimeDistributionPlotWidget.ShareableComponent
+              country={country}
+              matchPercentage={matchPercentage}
+              mutations={variant.mutations}
+            />
           </Col>
           <Col md={5}>
-            <VariantAgeDistributionPlotWidget.ShareableComponent {...variantDistributionPlotData} />
+            <VariantAgeDistributionPlotWidget.ShareableComponent
+              country={country}
+              matchPercentage={matchPercentage}
+              mutations={variant.mutations}
+            />
           </Col>
         </Row>
       </Container>
     </>
-  ) : (
-    <h1>Loading...</h1>
   );
 };
