@@ -18,7 +18,7 @@ function getOnlyElement<T>(values: T[]): T {
 }
 
 export class StringEncoder implements QueryValueEncoder<string> {
-  _decodedType: string;
+  _decodedType!: string;
 
   encode(decoded: string): string[] {
     return [encodeURIComponent(decoded)];
@@ -30,7 +30,7 @@ export class StringEncoder implements QueryValueEncoder<string> {
 }
 
 export class FiniteFloatEncoder implements QueryValueEncoder<number> {
-  _decodedType: number;
+  _decodedType!: number;
 
   private static stringEncoder = new StringEncoder();
 
@@ -53,7 +53,7 @@ export class FiniteFloatEncoder implements QueryValueEncoder<number> {
 }
 
 export class CommaSeparatedArrayEncoder<T> implements QueryValueEncoder<T[]> {
-  _decodedType: T[];
+  _decodedType!: T[];
 
   constructor(private elementEncoder: QueryValueEncoder<T>) {}
 
@@ -78,7 +78,7 @@ type FieldEncoders<T> = { [K in keyof T]: QueryValueEncoder<T[K]> };
 type DecodedObject<E extends FieldEncoders<any>> = { [K in keyof E]: E[K]['_decodedType'] };
 export class ObjectEncoder<E extends FieldEncoders<any>, T extends DecodedObject<E>>
   implements QueryEncoder<T> {
-  _decodedType: T;
+  _decodedType!: T;
 
   constructor(private fieldEncoders: E) {}
 
@@ -100,11 +100,3 @@ export class ObjectEncoder<E extends FieldEncoders<any>, T extends DecodedObject
     return decoded as T;
   }
 }
-
-export const distributionConfigurationEncoder = new ObjectEncoder({
-  country: new StringEncoder(),
-  matchPercentage: new FiniteFloatEncoder(),
-  mutations: new CommaSeparatedArrayEncoder(new StringEncoder()),
-});
-
-export type DistributionConfiguration = typeof distributionConfigurationEncoder['_decodedType'];
