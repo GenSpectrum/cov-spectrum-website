@@ -92,12 +92,16 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
         </div>
       </div>
       <div style={{ height: '500px' }}>
-        <Button onClick={() => setLogScale(v => !v)}>Toggle log scale</Button>
         <VariantInternationalComparisonPlotWidget.ShareableComponent
           country={country}
           matchPercentage={matchPercentage}
           mutations={variant.mutations}
           logScale={logScale}
+          toolbarChildren={
+            <Button variant='outline-primary' onClick={() => setLogScale(v => !v)}>
+              Toggle log scale
+            </Button>
+          }
         />
       </div>
       {countryData ? (
