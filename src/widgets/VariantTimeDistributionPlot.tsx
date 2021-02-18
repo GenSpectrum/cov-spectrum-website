@@ -6,7 +6,6 @@ import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
-import { ShareButton } from '../components/ShareButton';
 
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
@@ -32,57 +31,54 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
     };
   }, [country, mutations, matchPercentage]);
 
-  if (!distribution) {
-    return <div>Loading</div>;
-  }
-
   return (
     <div style={{ height: '100%' }}>
-      <ShareButton />
-      <Plot
-        style={{ height: '100%' }}
-        data={[
-          {
-            name: 'Sequences',
-            type: 'bar',
-            x: distribution.map(d => new Date(d.x.firstDayInWeek)),
-            y: distribution.map(d => d.y.count),
-          },
-          {
-            x: distribution.map(d => new Date(d.x.firstDayInWeek)),
-            y: distribution.map(d => d.y.proportion.value * 100),
-            type: 'scatter',
-            mode: 'lines+markers',
-            marker: { color: 'red' },
-            yaxis: 'y2',
-            hovertemplate: '%{y:.2f}%<extra></extra>',
-          },
-        ]}
-        layout={{
-          title: 'Time Distribution',
-          xaxis: {
-            title: 'Week',
-            type: 'date',
-            tickvals: distribution.map(d => d.x.firstDayInWeek),
-            tickformat: 'W%-V, %Y',
-            hoverformat: 'Week %-V, %Y (from %d.%m.)',
-          },
-          yaxis: {
-            title: 'Number Sequences',
-          },
-          yaxis2: {
-            title: 'Estimated Percentage',
-            overlaying: 'y',
-            side: 'right',
-          },
-          showlegend: false,
-        }}
-        config={{
-          displaylogo: false,
-          modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
-          responsive: true,
-        }}
-      />
+      {distribution != null && (
+        <Plot
+          style={{ width: '100%', height: '100%' }}
+          data={[
+            {
+              name: 'Sequences',
+              type: 'bar',
+              x: distribution.map(d => new Date(d.x.firstDayInWeek)),
+              y: distribution.map(d => d.y.count),
+            },
+            {
+              x: distribution.map(d => new Date(d.x.firstDayInWeek)),
+              y: distribution.map(d => d.y.proportion.value * 100),
+              type: 'scatter',
+              mode: 'lines+markers',
+              marker: { color: 'red' },
+              yaxis: 'y2',
+              hovertemplate: '%{y:.2f}%<extra></extra>',
+            },
+          ]}
+          layout={{
+            title: 'Time Distribution',
+            xaxis: {
+              title: 'Week',
+              type: 'date',
+              tickvals: distribution.map(d => d.x.firstDayInWeek),
+              tickformat: 'W%-V, %Y',
+              hoverformat: 'Week %-V, %Y (from %d.%m.)',
+            },
+            yaxis: {
+              title: 'Number Sequences',
+            },
+            yaxis2: {
+              title: 'Estimated Percentage',
+              overlaying: 'y',
+              side: 'right',
+            },
+            showlegend: false,
+          }}
+          config={{
+            displaylogo: false,
+            modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
+            responsive: true,
+          }}
+        />
+      )}
     </div>
   );
 };

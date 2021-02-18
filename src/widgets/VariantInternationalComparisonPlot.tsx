@@ -6,7 +6,6 @@ import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
-import { ShareButton } from '../components/ShareButton';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
@@ -85,60 +84,58 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
     };
   };
 
-  if (!plotData) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div style={{ height: '100%' }}>
-      <ShareButton />
-      <Plot
-        style={{ height: '100%' }}
-        data={[
-          {
-            type: 'scatter',
-            mode: 'lines+markers',
-            x: plotData.map(d => d.x.week.firstDayInWeek),
-            y: plotData.map(d => digitsForPercent(d.y.proportion.value)),
-            text: plotData.map(d => valueAndCIToString(d.y.proportion)),
-            transforms: [
-              {
-                type: 'groupby',
-                groups: plotData.map(d => d.x.country),
-                styles: colorMap,
-                nameformat: '%{group}',
-              },
-            ],
-            hovertemplate: '%{text}',
-          },
-          makeCIData(plotData, d => d.y.proportion.ciLower),
-          makeCIData(plotData, d => d.y.proportion.ciUpper),
-        ]}
-        layout={{
-          title: '',
-          xaxis: {
-            title: 'Week',
-            type: 'date',
-            tickvals: plotData.map(d => d.x.week.firstDayInWeek),
-            tickformat: 'W%-V, %Y',
-            hoverformat: 'Week %-V, %Y (from %d.%m.)',
-          },
-          yaxis: {
-            title: 'Estimated Percentage',
-            type: logScale ? 'log' : 'linear',
-          },
-          legend: {
-            x: 0,
-            xanchor: 'left',
-            y: 1,
-          },
-        }}
-        config={{
-          displaylogo: false,
-          modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
-          responsive: true,
-        }}
-      />
+      {!plotData && <p>Loading...</p>}
+      {plotData && (
+        <Plot
+          style={{ width: '100%', height: '100%' }}
+          data={[
+            {
+              type: 'scatter',
+              mode: 'lines+markers',
+              x: plotData.map(d => d.x.week.firstDayInWeek),
+              y: plotData.map(d => digitsForPercent(d.y.proportion.value)),
+              text: plotData.map(d => valueAndCIToString(d.y.proportion)),
+              transforms: [
+                {
+                  type: 'groupby',
+                  groups: plotData.map(d => d.x.country),
+                  styles: colorMap,
+                  nameformat: '%{group}',
+                },
+              ],
+              hovertemplate: '%{text}',
+            },
+            makeCIData(plotData, d => d.y.proportion.ciLower),
+            makeCIData(plotData, d => d.y.proportion.ciUpper),
+          ]}
+          layout={{
+            title: '',
+            xaxis: {
+              title: 'Week',
+              type: 'date',
+              tickvals: plotData.map(d => d.x.week.firstDayInWeek),
+              tickformat: 'W%-V, %Y',
+              hoverformat: 'Week %-V, %Y (from %d.%m.)',
+            },
+            yaxis: {
+              title: 'Estimated Percentage',
+              type: logScale ? 'log' : 'linear',
+            },
+            legend: {
+              x: 0,
+              xanchor: 'left',
+              y: 1,
+            },
+          }}
+          config={{
+            displaylogo: false,
+            modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
+            responsive: true,
+          }}
+        />
+      )}
     </div>
   );
 };

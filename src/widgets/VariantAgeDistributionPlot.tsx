@@ -6,7 +6,6 @@ import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
-import { ShareButton } from '../components/ShareButton';
 
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
@@ -33,53 +32,50 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Pro
     };
   }, [country, mutations, matchPercentage]);
 
-  if (!distributionData) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <div style={{ height: '100%' }}>
-      <ShareButton />
-      <Plot
-        style={{ height: '100%' }}
-        data={[
-          {
-            name: 'Sequences',
-            type: 'bar',
-            x: distributionData.map(d => d.x),
-            y: distributionData.map(d => d.y.count),
-          },
-          {
-            x: distributionData.map(d => d.x),
-            y: distributionData.map(d => d.y.proportion.value * 100),
-            type: 'scatter',
-            mode: 'lines+markers',
-            marker: { color: 'red' },
-            yaxis: 'y2',
-            hovertemplate: '%{y:.2f}%<extra></extra>',
-          },
-        ]}
-        layout={{
-          title: 'Age Distribution',
-          xaxis: {
-            title: 'Age',
-          },
-          yaxis: {
-            title: 'Number Sequences',
-          },
-          yaxis2: {
-            title: 'Estimated Percentage',
-            overlaying: 'y',
-            side: 'right',
-          },
-          showlegend: false,
-        }}
-        config={{
-          displaylogo: false,
-          modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
-          responsive: true,
-        }}
-      />
+      {distributionData !== undefined && (
+        <Plot
+          style={{ width: '100%', height: '100%' }}
+          data={[
+            {
+              name: 'Sequences',
+              type: 'bar',
+              x: distributionData.map(d => d.x),
+              y: distributionData.map(d => d.y.count),
+            },
+            {
+              x: distributionData.map(d => d.x),
+              y: distributionData.map(d => d.y.proportion.value * 100),
+              type: 'scatter',
+              mode: 'lines+markers',
+              marker: { color: 'red' },
+              yaxis: 'y2',
+              hovertemplate: '%{y:.2f}%<extra></extra>',
+            },
+          ]}
+          layout={{
+            title: 'Age Distribution',
+            xaxis: {
+              title: 'Age',
+            },
+            yaxis: {
+              title: 'Number Sequences',
+            },
+            yaxis2: {
+              title: 'Estimated Percentage',
+              overlaying: 'y',
+              side: 'right',
+            },
+            showlegend: false,
+          }}
+          config={{
+            displaylogo: false,
+            modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
+            responsive: true,
+          }}
+        />
+      )}
     </div>
   );
 };

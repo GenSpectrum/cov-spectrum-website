@@ -1,5 +1,5 @@
-import { Modal, Form } from 'react-bootstrap';
-import React, { useMemo, useState } from 'react';
+import { Button, Modal, Form } from 'react-bootstrap';
+import { useState } from 'react';
 import styled from 'styled-components';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
@@ -10,28 +10,41 @@ const Wrapper = styled.div`
 `;
 
 interface Props {
-  shareUrl: string;
+  shareUrl?: string;
   children: React.ReactChild | React.ReactChild[];
+  isLoading?: boolean;
 }
 
-interface ShareButtonContextValue {
-  onShare?: () => void;
-}
-
-export const ShareButtonContext = React.createContext<ShareButtonContextValue>({});
-
-export function WidgetWrapper({ shareUrl, children }: Props) {
+export function WidgetWrapper({ shareUrl, children, isLoading = false }: Props) {
   const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
 
-  const shareButtonContextValue = useMemo(() => ({ onShare: () => setShow(true) }), [setShow]);
-
-  const embeddingCode = `<iframe src="${host}/embed/${shareUrl}" width="800" height="${HEIGHT}" frameborder="0"></iframe>`;
+  const embeddingCode =
+    shareUrl &&
+    `<iframe src="${host}/embed/${shareUrl}" width="800" height="${HEIGHT}" frameborder="0"></iframe>`;
 
   return (
     <Wrapper>
-      <ShareButtonContext.Provider value={shareButtonContextValue}>{children}</ShareButtonContext.Provider>
+      <div style={{ position: 'relative' }}>
+        <div
+          style={{
+            position: 'absolute',
+            zIndex: 500,
+            left: '10px',
+            top: '10px',
+          }}
+        >
+          {!isLoading && embeddingCode && (
+            <Button variant='outline-primary' size='sm' onClick={handleShow}>
+              Share
+            </Button>
+          )}
+        </div>
+        {children}
+      </div>
 
-      <Modal size='lg' show={show} onHide={() => setShow(false)}>
+      <Modal size='lg' show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Embed widget on your website</Modal.Title>
         </Modal.Header>
