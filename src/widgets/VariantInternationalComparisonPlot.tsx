@@ -50,7 +50,6 @@ export const VariantInternationalComparisonPlot = ({ data }: Props) => {
     return () => {
       isSubscribed = false;
       controller.abort();
-      console.log('Cleanup render for variant age distribution plot');
     };
   }, [data]);
 

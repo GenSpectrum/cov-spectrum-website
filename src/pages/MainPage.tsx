@@ -22,12 +22,6 @@ export const MainPage = () => {
   });
 
   const handleSelect = ({ variant, country }: SelectedVariantAndCountry, matchPercentage: number) => {
-    console.log('Update VDash to ', {
-      variant,
-      country,
-      matchPercentage,
-    });
-
     setVariantDashboard({
       variant,
       country,

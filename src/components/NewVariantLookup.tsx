@@ -51,7 +51,6 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
     getCurrentWeek().then(week => {
       if (isSubscribed) {
         const newWeeks = generateListOfWeeks(week);
-        console.log('new weeks is ', newWeeks, 'for', week);
         setWeeks(newWeeks);
         setSelectedWeek(newWeeks[0]);
       }
@@ -59,7 +58,6 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
     return () => {
       isSubscribed = false;
       // controller.abort();
-      console.log('TIME Cleanup render for variant age distribution plot');
     };
   }, []);
 

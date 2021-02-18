@@ -26,7 +26,6 @@ export const NewVariantTable = ({ country, year, week, onVariantSelect }: Props)
     return () => {
       isSubscribed = false;
       controller.abort();
-      console.log('TIME Cleanup render for variant age distribution plot');
     };
   }, [country, year, week, onVariantSelect]);
 

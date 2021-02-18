@@ -6,7 +6,6 @@ import { Variant } from '../services/api-types';
 
 function useQuery() {
   const location = useLocation();
-  console.log('location is ', location);
   return useMemo(() => new URLSearchParams(location.search), [location.search]);
 }
 

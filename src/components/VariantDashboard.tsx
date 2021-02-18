@@ -34,10 +34,6 @@ export const VariantDashboard = ({ country, matchPercentage, variant }: Props) =
     });
   }, [country, matchPercentage, variant]);
 
-  useEffect(() => {
-    console.log('Variant data updated to', variantDistributionPlotData);
-  }, [variantDistributionPlotData]);
-
   return variantDistributionPlotData !== undefined ? (
     <>
       <div style={{ display: 'flex' }}>

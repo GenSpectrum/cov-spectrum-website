@@ -24,10 +24,7 @@ export const VariantAgeDistributionPlot = ({ data }: Props) => {
     )
       .then(newDistributionData => {
         if (isSubscribed) {
-          console.log('AGE SET', newDistributionData);
           setDistributionData(newDistributionData);
-        } else {
-          console.log('AGE NOT SET');
         }
       })
       .catch(e => {
@@ -36,7 +33,6 @@ export const VariantAgeDistributionPlot = ({ data }: Props) => {
     return () => {
       isSubscribed = false;
       controller.abort();
-      console.log('AGE Cleanup render for variant age distribution plot');
     };
   }, [data]);
 

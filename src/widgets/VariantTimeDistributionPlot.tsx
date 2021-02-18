@@ -22,16 +22,13 @@ export const VariantTimeDistributionPlot = ({ data }: Props) => {
       signal
     ).then(newDistributionData => {
       if (isSubscribed) {
-        console.log('TIME SET', newDistributionData);
         setDistribution(newDistributionData);
       } else {
-        console.log('TIME NOT SET');
       }
     });
     return () => {
       isSubscribed = false;
       controller.abort();
-      console.log('TIME Cleanup render for variant age distribution plot');
     };
   }, [data]);
 
