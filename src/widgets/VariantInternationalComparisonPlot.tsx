@@ -2,16 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { DistributionType, getVariantDistributionData } from '../services/api';
 import { Plot } from '../components/Plot';
 import { InternationalTimeDistributionEntry, ValueWithCI } from '../services/api-types';
-import { sampleSelectorEncoder } from '../helpers/sample-selector';
+import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
+import * as zod from 'zod';
+import { ZodQueryEncoder } from '../helpers/query';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
 const valueAndCIToString = (v: ValueWithCI): string =>
   `${digitsForPercent(v.value)}% [${digitsForPercent(v.ciLower)}%, ${digitsForPercent(v.ciUpper)}%]`;
 
-const propsEncoder = sampleSelectorEncoder;
-type Props = typeof propsEncoder['_decodedType'];
+const PropsSchema = SampleSelectorSchema;
+type Props = zod.infer<typeof PropsSchema>;
 
 const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentage }: Props) => {
   const [plotData, setPlotData] = useState<InternationalTimeDistributionEntry[] | undefined>(undefined);
@@ -134,7 +136,7 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
 };
 
 export const VariantInternationalComparisonPlotWidget = new Widget(
-  propsEncoder,
+  new ZodQueryEncoder(PropsSchema),
   VariantInternationalComparisonPlot,
   'variant_international-comparison'
 );

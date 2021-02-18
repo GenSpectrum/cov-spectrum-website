@@ -2,11 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { DistributionType, getVariantDistributionData } from '../services/api';
 import { AgeDistributionEntry } from '../services/api-types';
 import { Plot } from '../components/Plot';
-import { sampleSelectorEncoder } from '../helpers/sample-selector';
+import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
+import * as zod from 'zod';
+import { ZodQueryEncoder } from '../helpers/query';
 
-const propsEncoder = sampleSelectorEncoder;
-type Props = typeof propsEncoder['_decodedType'];
+const PropsSchema = SampleSelectorSchema;
+type Props = zod.infer<typeof PropsSchema>;
 
 const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Props) => {
   const [distributionData, setDistributionData] = useState<AgeDistributionEntry[] | undefined>(undefined);
@@ -79,7 +81,7 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Pro
 };
 
 export const VariantAgeDistributionPlotWidget = new Widget(
-  propsEncoder,
+  new ZodQueryEncoder(PropsSchema),
   VariantAgeDistributionPlot,
   'variant_age-distribution'
 );

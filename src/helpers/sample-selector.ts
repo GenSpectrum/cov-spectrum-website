@@ -1,9 +1,8 @@
-import { ObjectEncoder, StringEncoder, FiniteFloatEncoder, CommaSeparatedArrayEncoder } from './query';
+import { CountrySchema } from '../services/api-types';
+import * as zod from 'zod';
 
-export const sampleSelectorEncoder = new ObjectEncoder({
-  country: new StringEncoder(),
-  matchPercentage: new FiniteFloatEncoder(),
-  mutations: new CommaSeparatedArrayEncoder(new StringEncoder()),
+export const SampleSelectorSchema = zod.object({
+  country: CountrySchema,
+  matchPercentage: zod.number(),
+  mutations: zod.array(zod.string()),
 });
-
-export type SampleSelector = typeof sampleSelectorEncoder['_decodedType'];

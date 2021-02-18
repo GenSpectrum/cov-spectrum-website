@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import { SampleTable } from '../components/SampleTable';
 import { Variant } from '../services/api-types';
-import { useQuerySafe } from '../helpers/use-query';
-import { sampleSelectorEncoder } from '../helpers/sample-selector';
+import { useQueryWithSchema } from '../helpers/use-query';
+import { SampleSelectorSchema } from '../helpers/sample-selector';
 
 export function SamplePage() {
-  const data = useQuerySafe(sampleSelectorEncoder);
+  const data = useQueryWithSchema(SampleSelectorSchema);
 
   const variant: Variant | undefined = useMemo(
     () =>

@@ -1,14 +1,14 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { allWidgets } from '../widgets';
-import { useQuerySafe } from '../helpers/use-query';
+import { useQueryWithEncoder } from '../helpers/use-query';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 
 export function EmbedPage() {
   const widgetUrlName = (useParams() as any).widget as string; // TODO(voinovp) use add types for react-router params
   const widget = allWidgets.find(w => w.urlName === widgetUrlName);
-  const widgetProps = useQuerySafe(widget?.propsEncoder);
+  const widgetProps = useQueryWithEncoder(widget?.propsEncoder);
 
   if (!widget || !widgetProps) {
     // TODO Redirect to a 404 page

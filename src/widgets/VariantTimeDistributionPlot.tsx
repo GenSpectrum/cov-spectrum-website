@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { DistributionType, getVariantDistributionData } from '../services/api';
 import { TimeDistributionEntry } from '../services/api-types';
 import { Plot } from '../components/Plot';
-import { sampleSelectorEncoder } from '../helpers/sample-selector';
+import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
+import * as zod from 'zod';
+import { ZodQueryEncoder } from '../helpers/query';
 
-const propsEncoder = sampleSelectorEncoder;
-type Props = typeof propsEncoder['_decodedType'];
+const PropsSchema = SampleSelectorSchema;
+type Props = zod.infer<typeof PropsSchema>;
 
 export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentage }: Props) => {
   const [distribution, setDistribution] = useState<TimeDistributionEntry[] | undefined>(undefined);
@@ -82,7 +84,7 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
 };
 
 export const VariantTimeDistributionPlotWidget = new Widget(
-  propsEncoder,
+  new ZodQueryEncoder(PropsSchema),
   VariantTimeDistributionPlot,
   'variant_time-distribution'
 );
