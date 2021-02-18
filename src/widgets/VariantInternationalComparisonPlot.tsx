@@ -12,10 +12,14 @@ const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 const valueAndCIToString = (v: ValueWithCI): string =>
   `${digitsForPercent(v.value)}% [${digitsForPercent(v.ciLower)}%, ${digitsForPercent(v.ciUpper)}%]`;
 
-const PropsSchema = SampleSelectorSchema;
+const PropsSchema = SampleSelectorSchema.merge(
+  zod.object({
+    logScale: zod.boolean().optional(),
+  })
+);
 type Props = zod.infer<typeof PropsSchema>;
 
-const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentage }: Props) => {
+const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentage, logScale }: Props) => {
   const [plotData, setPlotData] = useState<InternationalTimeDistributionEntry[] | undefined>(undefined);
   const [colorMap, setColorMap] = useState<any>(null);
 
@@ -117,6 +121,7 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
             },
             yaxis: {
               title: 'Estimated Percentage',
+              type: logScale ? 'log' : 'linear',
             },
             legend: {
               x: 0,
