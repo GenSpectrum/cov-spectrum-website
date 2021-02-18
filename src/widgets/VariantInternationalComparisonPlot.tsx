@@ -138,5 +138,5 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
 export const VariantInternationalComparisonPlotWidget = new Widget(
   new ZodQueryEncoder(PropsSchema),
   VariantInternationalComparisonPlot,
-  'variant_international-comparison'
+  'VariantInternationalComparisonPlot'
 );

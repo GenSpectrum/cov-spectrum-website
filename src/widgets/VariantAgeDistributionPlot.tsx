@@ -83,5 +83,5 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Pro
 export const VariantAgeDistributionPlotWidget = new Widget(
   new ZodQueryEncoder(PropsSchema),
   VariantAgeDistributionPlot,
-  'variant_age-distribution'
+  'VariantAgeDistributionPlot'
 );

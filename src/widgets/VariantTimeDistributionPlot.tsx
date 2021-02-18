@@ -86,5 +86,5 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
 export const VariantTimeDistributionPlotWidget = new Widget(
   new ZodQueryEncoder(PropsSchema),
   VariantTimeDistributionPlot,
-  'variant_time-distribution'
+  'VariantTimeDistributionPlot'
 );
