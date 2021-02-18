@@ -64,50 +64,44 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
   }, []);
 
   return (
-    <Container fluid='md'>
-      <Row>
-        <Col>
-          <Form>
-            <Form.Group controlId='countryField'>
-              <Form.Label>Country</Form.Label>
-              <CountrySelect id='countryField' onSelect={setSelectedCountry} />
-            </Form.Group>
-          </Form>
-        </Col>
-        <Col>
-          <Form>
-            <Form.Group controlId='weekField'>
-              <Form.Label>Week</Form.Label>
-              <Form.Control
-                value={selectedWeek}
-                as='select'
-                onChange={e => {
-                  setSelectedWeek(e.target.value);
-                }}
-              >
-                {weeks.map(week => (
-                  <option key={week}>{week}</option>
-                ))}
-              </Form.Control>
-            </Form.Group>
-          </Form>
-        </Col>
-        <Col>
-          <Button
-            onClick={e => {
-              if (selectedCountry && selectedWeek) {
-                setTable({
-                  country: selectedCountry,
-                  week: selectedWeek,
-                });
-              }
-            }}
-            style={{ marginTop: '30px', width: '100%' }}
-          >
-            Lookup
-          </Button>
-        </Col>
-      </Row>
+    <>
+      <Form
+        onSubmit={e => {
+          e.preventDefault();
+          if (selectedCountry && selectedWeek) {
+            setTable({
+              country: selectedCountry,
+              week: selectedWeek,
+            });
+          }
+        }}
+      >
+        <Form.Row>
+          <Form.Group as={Col} controlId='countryField'>
+            <Form.Label>Country</Form.Label>
+            <CountrySelect id='countryField' onSelect={setSelectedCountry} />
+          </Form.Group>
+          <Form.Group as={Col} controlId='weekField'>
+            <Form.Label>Week</Form.Label>
+            <Form.Control
+              value={selectedWeek}
+              as='select'
+              onChange={e => {
+                setSelectedWeek(e.target.value);
+              }}
+            >
+              {weeks.map(week => (
+                <option key={week}>{week}</option>
+              ))}
+            </Form.Control>
+          </Form.Group>
+          <Col>
+            <Button type='submit' style={{ marginTop: '30px', width: '100%' }}>
+              Lookup
+            </Button>
+          </Col>
+        </Form.Row>
+      </Form>
 
       {table ? (
         <>
@@ -119,7 +113,7 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
           />
         </>
       ) : null}
-    </Container>
+    </>
   );
   // }
 };
