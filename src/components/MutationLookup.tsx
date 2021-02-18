@@ -35,7 +35,7 @@ export const MutationLookup = ({ onVariantAndCountrySelect }: Props) => {
     <Form>
       <Form.Group controlId='countryFieldGroup'>
         <Form.Label>Country</Form.Label>
-        <CountrySelect id='countryFieldGroup' onSelect={setSelectedCountry} />
+        <CountrySelect id='countryFieldGroup' selected={selectedCountry} onSelect={setSelectedCountry} />
       </Form.Group>
       <Form.Group controlId='mutationsFieldGroup'>
         <Form.Label>Mutations (comma-separated and case-sensitive)</Form.Label>

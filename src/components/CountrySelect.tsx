@@ -5,10 +5,11 @@ import { Country } from '../services/api-types';
 
 interface Props {
   id?: string;
+  selected: Country | undefined;
   onSelect: (country: Country | undefined) => void;
 }
 
-export const CountrySelect = ({ id, onSelect }: Props) => {
+export const CountrySelect = ({ id, selected, onSelect }: Props) => {
   const [countries, setCountries] = useState<Country[]>([]);
 
   useEffect(() => {
@@ -26,6 +27,7 @@ export const CountrySelect = ({ id, onSelect }: Props) => {
   return (
     <Typeahead
       id={id}
+      selected={selected ? [selected] : undefined}
       placeholder='Select a country'
       onChange={selected => onSelect(selected.length === 1 ? selected[0] : undefined)}
       options={countries}

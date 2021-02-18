@@ -41,7 +41,7 @@ export const KnownVariantsList = ({ onVariantAndCountrySelect }: Props) => {
       <Form>
         <Form.Group controlId='countryField'>
           <Form.Label>Country</Form.Label>
-          <CountrySelect id='countryField' onSelect={setSelectedCountry} />
+          <CountrySelect id='countryField' selected={selectedCountry} onSelect={setSelectedCountry} />
         </Form.Group>
       </Form>
       {variants ? (

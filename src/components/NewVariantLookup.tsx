@@ -74,7 +74,7 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
         <Form.Row>
           <Form.Group as={Col} controlId='countryField'>
             <Form.Label>Country</Form.Label>
-            <CountrySelect id='countryField' onSelect={setSelectedCountry} />
+            <CountrySelect id='countryField' selected={selectedCountry} onSelect={setSelectedCountry} />
           </Form.Group>
           <Form.Group as={Col} controlId='weekField'>
             <Form.Label>Week</Form.Label>
