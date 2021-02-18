@@ -128,6 +128,7 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
               xanchor: 'left',
               y: 1,
             },
+            margin: { t: 10 },
           }}
           config={{
             displaylogo: false,
