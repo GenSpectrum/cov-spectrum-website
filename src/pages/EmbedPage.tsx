@@ -1,42 +1,18 @@
 import React from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
-import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
-import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
-import { dataFromUrl } from '../helpers/urlConversion';
+import { useParams } from 'react-router-dom';
+import { allWidgets } from '../widgets';
+import { useQuerySafe } from '../helpers/use-query';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
-}
-
 export function EmbedPage() {
-  const widget = useParams().widget;
-  const query = useQuery();
+  const widgetUrlName = (useParams() as any).widget as string; // TODO(voinovp) use add types for react-router params
+  const widget = allWidgets.find(w => w.urlName === widgetUrlName);
+  const widgetProps = useQuerySafe(widget?.propsEncoder);
 
-  if (!widget) {
-    throw new Error('Widget is unspecified.'); // TODO Redirect to a 404 page
-  }
-
-  let widgetEl;
-  let data;
-
-  switch (widget) {
-    case 'variant_age-distribution':
-      data = dataFromUrl(query, 'VariantAgeDistribution');
-      widgetEl = <VariantAgeDistributionPlotWidget.Component {...data} />;
-      break;
-    case 'variant_international-comparison':
-      data = dataFromUrl(query, 'VariantInternationalComparison');
-      widgetEl = <VariantInternationalComparisonPlotWidget.Component {...data} />;
-      break;
-    case 'variant_time-distribution':
-      data = dataFromUrl(query, 'VariantTimeDistribution');
-      widgetEl = <VariantTimeDistributionPlotWidget.Component {...data} />;
-      break;
-    default:
-      throw new Error('Unknown widget.'); // TODO Redirect to a 404 page
+  if (!widget || !widgetProps) {
+    // TODO Redirect to a 404 page
+    return <div>Widget is unspecified, unsupported, or has invalid parameters</div>;
   }
 
   return (
@@ -48,7 +24,9 @@ export function EmbedPage() {
         </a>
         .
       </div>
-      <div style={{ flexGrow: 1 }}>{widgetEl}</div>
+      <div style={{ flexGrow: 1 }}>
+        <widget.Component {...widgetProps} />
+      </div>
     </div>
   );
 }
