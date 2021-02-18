@@ -70,7 +70,11 @@ export const SampleResultListSchema = z.object({
 });
 
 export const VariantSchema = z.object({
-  name: z.string().nullable(),
+  name: z
+    .string()
+    .nullable()
+    .transform(v => v || undefined)
+    .optional(),
   mutations: z.array(z.string()),
 });
 

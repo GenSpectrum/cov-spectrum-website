@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Form from 'react-bootstrap/Form';
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Button, Col } from 'react-bootstrap';
 import { NewVariantTable } from './NewVariantTable';
 import { getCurrentWeek } from '../services/api';
 import { Country, parseYearWeekString, Variant } from '../services/api-types';
