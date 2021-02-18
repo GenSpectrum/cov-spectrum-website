@@ -118,6 +118,7 @@ export const LoginResponseSchema = z.object({
 
 // TypeScript types from schemas
 
+export type ValueWithCI = z.infer<typeof ValueWithCISchema>;
 export type Country = z.infer<typeof CountrySchema>;
 export type Sample = z.infer<typeof SampleSchema>;
 export type SampleResultList = z.infer<typeof SampleResultListSchema>;
