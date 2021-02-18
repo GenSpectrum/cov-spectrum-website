@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Table } from 'react-bootstrap';
+import { Button, Form, Table } from 'react-bootstrap';
 import { getVariants } from '../services/api';
 import { Variant, Country } from '../services/api-types';
-import { CountrySelectionForm } from './CountrySelectionForm';
+import { CountryFormGroup } from './CountryFormGroup';
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -38,7 +38,9 @@ export const KnownVariantsList = ({ onVariantAndCountrySelect }: Props) => {
 
   return (
     <>
-      <CountrySelectionForm onSelect={setSelectedCountry} />
+      <Form>
+        <CountryFormGroup onSelect={setSelectedCountry} />
+      </Form>
       {variants ? (
         <Table striped bordered hover>
           <thead>

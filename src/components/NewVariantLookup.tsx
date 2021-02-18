@@ -4,7 +4,7 @@ import { Button, Col, Container, Row } from 'react-bootstrap';
 import { NewVariantTable } from './NewVariantTable';
 import { getCurrentWeek } from '../services/api';
 import { Country, parseYearWeekString, Variant } from '../services/api-types';
-import { CountrySelectionForm } from './CountrySelectionForm';
+import { CountryFormGroup } from './CountryFormGroup';
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -67,7 +67,9 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
     <Container fluid='md'>
       <Row>
         <Col>
-          <CountrySelectionForm onSelect={setSelectedCountry} />
+          <Form>
+            <CountryFormGroup onSelect={setSelectedCountry} />
+          </Form>
         </Col>
         <Col>
           <Form>

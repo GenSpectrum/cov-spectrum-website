@@ -8,7 +8,7 @@ interface Props {
   onSelect: (country: Country | undefined) => void;
 }
 
-export const CountrySelectionForm = ({ onSelect }: Props) => {
+export const CountryFormGroup = ({ onSelect }: Props) => {
   const [countries, setCountries] = useState<Country[]>([]);
 
   useEffect(() => {
@@ -24,16 +24,14 @@ export const CountrySelectionForm = ({ onSelect }: Props) => {
   }, []);
 
   return (
-    <Form>
-      <Form.Group controlId='countryFieldGroup'>
-        <Form.Label>Country</Form.Label>
-        <Typeahead
-          id='countryField'
-          placeholder='Select a country'
-          onChange={selected => onSelect(selected.length === 1 ? selected[0] : undefined)}
-          options={countries}
-        />
-      </Form.Group>
-    </Form>
+    <Form.Group controlId='countryFieldGroup'>
+      <Form.Label>Country</Form.Label>
+      <Typeahead
+        id='countryField'
+        placeholder='Select a country'
+        onChange={selected => onSelect(selected.length === 1 ? selected[0] : undefined)}
+        options={countries}
+      />
+    </Form.Group>
   );
 };
