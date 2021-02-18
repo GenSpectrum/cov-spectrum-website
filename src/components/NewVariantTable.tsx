@@ -72,5 +72,4 @@ export const NewVariantTable = ({ country, year, week, onVariantSelect }: Props)
       )}
     </div>
   );
-  // }
 };

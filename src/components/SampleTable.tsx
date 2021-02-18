@@ -147,5 +147,4 @@ export const SampleTable = ({ matchPercentage, variant, country = null }: Props)
       </Container>
     </div>
   );
-  // }
 };

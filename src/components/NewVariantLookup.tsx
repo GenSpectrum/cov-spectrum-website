@@ -46,8 +46,6 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
 
   useEffect(() => {
     let isSubscribed = true;
-    // const controller = new AbortController();
-    // const signal = controller.signal;
     getCurrentWeek().then(week => {
       if (isSubscribed) {
         const newWeeks = generateListOfWeeks(week);
@@ -57,7 +55,6 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
     });
     return () => {
       isSubscribed = false;
-      // controller.abort();
     };
   }, []);
 
@@ -113,5 +110,4 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
       ) : null}
     </>
   );
-  // }
 };
