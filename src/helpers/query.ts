@@ -35,7 +35,7 @@ export class FiniteFloatEncoder implements QueryValueEncoder<number> {
   private static stringEncoder = new StringEncoder();
 
   private static assertFinite(v: number) {
-    if (Number.isFinite(v)) {
+    if (!Number.isFinite(v)) {
       throw new Error(`number was not finite: ${v}`);
     }
   }

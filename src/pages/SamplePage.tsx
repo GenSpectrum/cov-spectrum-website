@@ -1,41 +1,27 @@
 import React, { useMemo } from 'react';
-import { useLocation } from 'react-router-dom';
 import { SampleTable } from '../components/SampleTable';
-
 import { Variant } from '../services/api-types';
-
-function useQuery() {
-  const location = useLocation();
-  return useMemo(() => new URLSearchParams(location.search), [location.search]);
-}
-
-//todo convert to actual data types
-interface DataLocal {
-  mutations: any;
-  matchPercentage: any;
-  country: any;
-}
+import { useQuerySafe } from '../helpers/use-query';
+import { distributionConfigurationEncoder } from '../helpers/query';
 
 export function SamplePage() {
-  const query = useQuery();
+  const data = useQuerySafe(distributionConfigurationEncoder);
 
-  const data: DataLocal = {
-    mutations: query.get('mutations')!.split(','),
-    matchPercentage: query.get('matchPercentage'),
-    country: query.get('country'),
-  };
-
-  const variant: Variant = useMemo(
-    () => ({
-      mutations: data.mutations ?? [],
-      name: '',
-    }),
-    [data.mutations]
+  const variant: Variant | undefined = useMemo(
+    () =>
+      data && {
+        mutations: data.mutations,
+        name: '',
+      },
+    [data]
   );
+
+  if (!data || !variant) {
+    return <div>Invalid query parameters</div>;
+  }
 
   return (
     <div>
-      {}
       <SampleTable variant={variant} matchPercentage={data.matchPercentage} country={data.country} />
     </div>
   );
