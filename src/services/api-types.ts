@@ -1,24 +1,24 @@
-import * as z from 'zod';
+import * as zod from 'zod';
 
 // Small reusable objects that aren't explicitly separate in the API doc
 
-export const ValueWithCISchema = z.object({
-  value: z.number(),
-  ciLower: z.number(),
-  ciUpper: z.number(),
-  confidenceLevel: z.number(),
+export const ValueWithCISchema = zod.object({
+  value: zod.number(),
+  ciLower: zod.number(),
+  ciUpper: zod.number(),
+  confidenceLevel: zod.number(),
 });
 
-export const CountAndProportionWithCISchema = z.object({
-  count: z.number(),
-  total: z.number(),
+export const CountAndProportionWithCISchema = zod.object({
+  count: zod.number(),
+  total: zod.number(),
   proportion: ValueWithCISchema,
 });
 
 const yearWeekRegex = /^(\d{4})-(\d{1,2})$/;
-export const YearWeekSchema = z.string().regex(yearWeekRegex);
+export const YearWeekSchema = zod.string().regex(yearWeekRegex);
 export function parseYearWeekString(
-  yearWeek: z.infer<typeof YearWeekSchema>
+  yearWeek: zod.infer<typeof YearWeekSchema>
 ): { year: number; week: number } {
   const m = yearWeek.match(yearWeekRegex);
   if (!m) {
@@ -31,32 +31,32 @@ export function parseYearWeekString(
   return parsed;
 }
 
-export const YearWeekWithDaySchema = z.object({
+export const YearWeekWithDaySchema = zod.object({
   yearWeek: YearWeekSchema,
-  firstDayInWeek: z.string(),
+  firstDayInWeek: zod.string(),
 });
 
 // Objects that are explicitly defined in the doc (in the same order)
 
-export const CountrySchema = z.string();
+export const CountrySchema = zod.string();
 
-export const SampleSchema = z.object({
-  name: z.string(),
+export const SampleSchema = zod.object({
+  name: zod.string(),
   country: CountrySchema,
-  date: z.string().nullable(),
-  mutations: z.array(z.string()),
-  metadata: z
+  date: zod.string().nullable(),
+  mutations: zod.array(zod.string()),
+  metadata: zod
     .object({
-      country: z.string(),
-      division: z.string().nullable(),
-      location: z.string().nullable(),
-      zipCode: z.string().nullable(),
-      host: z.string(),
-      age: z
+      country: zod.string(),
+      division: zod.string().nullable(),
+      location: zod.string().nullable(),
+      zipCode: zod.string().nullable(),
+      host: zod.string(),
+      age: zod
         .number()
         .nullable()
         .transform(v => (v === 0 ? null : v)),
-      sex: z
+      sex: zod
         .string()
         .nullable()
         .transform(v => (v === '?' ? null : v)),
@@ -64,72 +64,72 @@ export const SampleSchema = z.object({
     .nullable(),
 });
 
-export const SampleResultListSchema = z.object({
-  total: z.number(),
-  data: z.array(SampleSchema),
+export const SampleResultListSchema = zod.object({
+  total: zod.number(),
+  data: zod.array(SampleSchema),
 });
 
-export const VariantSchema = z.object({
-  name: z
+export const VariantSchema = zod.object({
+  name: zod
     .string()
     .nullable()
     .transform(v => v || undefined)
     .optional(),
-  mutations: z.array(z.string()),
+  mutations: zod.array(zod.string()),
 });
 
-export const AgeDistributionEntrySchema = z.object({
-  x: z.string(),
+export const AgeDistributionEntrySchema = zod.object({
+  x: zod.string(),
   y: CountAndProportionWithCISchema,
 });
 
-export const TimeDistributionEntrySchema = z.object({
+export const TimeDistributionEntrySchema = zod.object({
   x: YearWeekWithDaySchema,
   y: CountAndProportionWithCISchema,
 });
 
-export const InternationalTimeDistributionEntrySchema = z.object({
-  x: z.object({
-    country: z.string(),
+export const InternationalTimeDistributionEntrySchema = zod.object({
+  x: zod.object({
+    country: zod.string(),
     week: YearWeekWithDaySchema,
   }),
   y: CountAndProportionWithCISchema,
 });
 
-export const TimeZipCodeDistributionEntrySchema = z.object({
-  x: z
+export const TimeZipCodeDistributionEntrySchema = zod.object({
+  x: zod
     .object({
       week: YearWeekWithDaySchema,
-      zip_code: z.string(),
+      zip_code: zod.string(),
     })
     .transform(v => ({ week: v.week, zipCode: v.zip_code })),
   y: CountAndProportionWithCISchema,
 });
 
-export const GrowingVariantSchema = z.object({
+export const GrowingVariantSchema = zod.object({
   variant: VariantSchema,
-  t0Count: z.number(),
-  t1Count: z.number(),
-  t0Proportion: z.number(),
-  t1Proportion: z.number(),
-  absoluteDifferenceProportion: z.number(),
-  relativeDifferenceProportion: z.number().nullable(),
+  t0Count: zod.number(),
+  t1Count: zod.number(),
+  t0Proportion: zod.number(),
+  t1Proportion: zod.number(),
+  absoluteDifferenceProportion: zod.number(),
+  relativeDifferenceProportion: zod.number().nullable(),
 });
 
-export const LoginResponseSchema = z.object({
-  token: z.string(),
+export const LoginResponseSchema = zod.object({
+  token: zod.string(),
 });
 
 // TypeScript types from schemas
 
-export type ValueWithCI = z.infer<typeof ValueWithCISchema>;
-export type Country = z.infer<typeof CountrySchema>;
-export type Sample = z.infer<typeof SampleSchema>;
-export type SampleResultList = z.infer<typeof SampleResultListSchema>;
-export type Variant = z.infer<typeof VariantSchema>;
-export type AgeDistributionEntry = z.infer<typeof AgeDistributionEntrySchema>;
-export type TimeDistributionEntry = z.infer<typeof TimeDistributionEntrySchema>;
-export type InternationalTimeDistributionEntry = z.infer<typeof InternationalTimeDistributionEntrySchema>;
-export type TimeZipCodeDistributionEntry = z.infer<typeof TimeZipCodeDistributionEntrySchema>;
-export type GrowingVariant = z.infer<typeof GrowingVariantSchema>;
-export type LoginResponse = z.infer<typeof LoginResponseSchema>;
+export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
+export type Country = zod.infer<typeof CountrySchema>;
+export type Sample = zod.infer<typeof SampleSchema>;
+export type SampleResultList = zod.infer<typeof SampleResultListSchema>;
+export type Variant = zod.infer<typeof VariantSchema>;
+export type AgeDistributionEntry = zod.infer<typeof AgeDistributionEntrySchema>;
+export type TimeDistributionEntry = zod.infer<typeof TimeDistributionEntrySchema>;
+export type InternationalTimeDistributionEntry = zod.infer<typeof InternationalTimeDistributionEntrySchema>;
+export type TimeZipCodeDistributionEntry = zod.infer<typeof TimeZipCodeDistributionEntrySchema>;
+export type GrowingVariant = zod.infer<typeof GrowingVariantSchema>;
+export type LoginResponse = zod.infer<typeof LoginResponseSchema>;
