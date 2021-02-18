@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { DistributionType, getVariantDistributionData } from '../services/api';
-
-// See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
-import createPlotlyComponent from 'react-plotly.js/factory';
 import { DataDistributionConfiguration } from '../helpers/types';
 import { TimeDistributionEntry } from '../services/api-types';
-
-const Plotly = window.Plotly;
-const Plot = createPlotlyComponent(Plotly);
+import { Plot } from '../components/Plot';
 
 interface Props {
   data: DataDistributionConfiguration;

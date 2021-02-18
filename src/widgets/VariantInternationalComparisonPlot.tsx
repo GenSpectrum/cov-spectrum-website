@@ -1,14 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { DistributionType, getVariantDistributionData } from '../services/api';
-
 import { DataDistributionConfiguration } from '../helpers/types';
-
-// See https://github.com/plotly/react-plotly.js/issues/135#issuecomment-500399098
-import createPlotlyComponent from 'react-plotly.js/factory';
+import { Plot } from '../components/Plot';
 import { InternationalTimeDistributionEntry, ValueWithCI } from '../services/api-types';
-
-const Plotly = window.Plotly;
-const Plot = createPlotlyComponent(Plotly);
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
