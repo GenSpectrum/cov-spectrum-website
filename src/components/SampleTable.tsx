@@ -12,7 +12,7 @@ interface PopoverTarget {
 }
 
 function formatMetadata(
-  sampleDate: string,
+  sampleDate: string | null,
   metadata: SampleMetadata
 ): { label: string; value: string | undefined }[] {
   const rawEntries: [string, string | number | null][] = [

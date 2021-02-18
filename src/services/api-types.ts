@@ -43,7 +43,7 @@ export const CountrySchema = z.string();
 export const SampleSchema = z.object({
   name: z.string(),
   country: CountrySchema,
-  date: z.string(),
+  date: z.string().nullable(),
   mutations: z.array(z.string()),
   metadata: z
     .object({
