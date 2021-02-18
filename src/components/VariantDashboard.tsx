@@ -38,7 +38,7 @@ export const VariantDashboard = ({ country, matchPercentage, variant }: Props) =
       </p>
 
       <Container fluid='md'>
-        <Row>
+        <Row style={{ height: '500px' }}>
           <Col md={7}>
             <VariantTimeDistributionPlotWidget.ShareableComponent
               country={country}
