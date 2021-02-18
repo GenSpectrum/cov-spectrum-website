@@ -46,32 +46,34 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
 
   useEffect(() => {
     let isSubscribed = true;
-    const aggregated = Utils.groupBy(distribution, (d: any) => d.x.country);
     const newCountryData: any[] = [];
-    aggregated?.forEach((value, name) => {
-      newCountryData.push(
-        value.reduce(
-          (aggregated: any, entry: any) => ({
-            country: aggregated.country,
-            count: aggregated.count + entry.y.count,
-            first: Utils.minBy(aggregated.first, entry.x.week, (w: any) => w.firstDayInWeek),
-            last: Utils.maxBy(aggregated.last, entry.x.week, (w: any) => w.firstDayInWeek),
-          }),
-          {
-            country: name,
-            count: 0,
-            first: {
-              firstDayInWeek: Infinity,
-              yearWeek: 'XXXX-XX',
-            },
-            last: {
-              firstDayInWeek: -Infinity,
-              yearWeek: 'XXXX-XX',
-            },
-          }
-        )
-      );
-    });
+    if (distribution) {
+      const aggregated = Utils.groupBy(distribution, (d: any) => d.x.country);
+      aggregated?.forEach((value, name) => {
+        newCountryData.push(
+          value.reduce(
+            (aggregated: any, entry: any) => ({
+              country: aggregated.country,
+              count: aggregated.count + entry.y.count,
+              first: Utils.minBy(aggregated.first, entry.x.week, (w: any) => w.firstDayInWeek),
+              last: Utils.maxBy(aggregated.last, entry.x.week, (w: any) => w.firstDayInWeek),
+            }),
+            {
+              country: name,
+              count: 0,
+              first: {
+                firstDayInWeek: Infinity,
+                yearWeek: 'XXXX-XX',
+              },
+              last: {
+                firstDayInWeek: -Infinity,
+                yearWeek: 'XXXX-XX',
+              },
+            }
+          )
+        );
+      });
+    }
     if (isSubscribed === true) {
       setCountryData(newCountryData);
     }

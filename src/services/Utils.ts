@@ -1,8 +1,5 @@
 export class Utils {
-  static groupBy(arr, keyFunc) {
-    if (!arr) {
-      return null;
-    }
+  static groupBy<T, K>(arr: T[], keyFunc: (arrayElement: T) => K): Map<K, T[]> {
     const grouped = new Map();
     for (const el of arr) {
       const key = keyFunc(el);
@@ -14,7 +11,7 @@ export class Utils {
     return grouped;
   }
 
-  static minBy(element1, element2, byFunc) {
+  static minBy<T>(element1: T, element2: T, byFunc: (element: T) => number) {
     if (byFunc(element1) < byFunc(element2)) {
       return element1;
     } else {
@@ -22,7 +19,7 @@ export class Utils {
     }
   }
 
-  static maxBy(element1, element2, byFunc) {
+  static maxBy<T>(element1: T, element2: T, byFunc: (element: T) => number) {
     if (byFunc(element1) > byFunc(element2)) {
       return element1;
     } else {
