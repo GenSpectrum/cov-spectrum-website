@@ -6,12 +6,14 @@ import { Button } from 'react-bootstrap';
 import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
 import { DistributionType, getVariantDistributionData } from '../services/api';
 import { Country, InternationalTimeDistributionEntry, Variant } from '../services/api-types';
+import { getSamplePageLink } from '../pages/SamplePage';
 
 interface Props {
-  country: Country;
+  country?: Country;
   matchPercentage: number;
   variant: Variant;
 }
+
 export const InternationalComparison = ({ country, matchPercentage, variant }: Props) => {
   const [distribution, setDistribution] = useState<InternationalTimeDistributionEntry[] | null>(null);
 
@@ -34,7 +36,7 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
       isSubscribed = false;
       controller.abort();
     };
-  }, [country, matchPercentage, variant]);
+  }, [matchPercentage, variant]);
 
   const [countryData, setCountryData] = useState<any>([]);
 
@@ -76,20 +78,12 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
     };
   }, [distribution]);
 
-  const plotData = {
-    country: country,
-    matchPercentage: matchPercentage,
-    mutations: variant.mutations,
-  };
-
   return (
     <>
       <div style={{ display: 'flex' }}>
         <h3 style={{ flexGrow: 1 }}>{variant.name ?? 'Unnamed Variant'} - International Comparison</h3>
         <div>
-          <Link
-            to={'/sample?mutations=' + variant.mutations.join(',') + '&matchPercentage=' + matchPercentage}
-          >
+          <Link to={getSamplePageLink({ mutations: variant.mutations, matchPercentage })}>
             <Button variant='outline-dark' size='sm'>
               Show all samples
             </Button>
@@ -97,7 +91,11 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
         </div>
       </div>
       <div style={{ height: '500px' }}>
-        <VariantInternationalComparisonPlotWidget.ShareableComponent {...plotData} />
+        <VariantInternationalComparisonPlotWidget.ShareableComponent
+          country={country}
+          matchPercentage={matchPercentage}
+          mutations={variant.mutations}
+        />
       </div>
       {countryData ? (
         <>
@@ -121,14 +119,11 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
                     <td>{c.last.yearWeek}</td>
                     <td>
                       <Link
-                        to={
-                          '/sample?mutations=' +
-                          variant.mutations.join(',') +
-                          '&country=' +
-                          c.country +
-                          '&matchPercentage=' +
-                          matchPercentage
-                        }
+                        to={getSamplePageLink({
+                          mutations: variant.mutations,
+                          matchPercentage,
+                          country: c.country,
+                        })}
                       >
                         <Button variant='outline-dark' size='sm'>
                           Show samples

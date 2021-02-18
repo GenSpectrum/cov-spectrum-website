@@ -37,11 +37,11 @@ function sampleHasMetadata(sample: Sample): sample is Sample & { metadata: Sampl
 interface Props {
   matchPercentage: number;
   variant: Variant;
-  country: Country | null;
+  country?: Country;
 }
 
 // SampleTable shows detailed information about individual samples from GISAID
-export const SampleTable = ({ matchPercentage, variant, country = null }: Props) => {
+export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
   const [samples, setSamples] = useState<Sample[] | undefined>(undefined);
   const [totalNumber, setTotalNumber] = useState<number | undefined>(undefined);
 

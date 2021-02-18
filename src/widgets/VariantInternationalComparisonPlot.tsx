@@ -39,7 +39,7 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
           { target: 'Denmark', value: { marker: { color: 'green' } } },
           { target: 'Switzerland', value: { marker: { color: 'red' } } },
         ];
-        if (!['United Kingdom', 'Denmark', 'Switzerland'].includes(country)) {
+        if (country && !['United Kingdom', 'Denmark', 'Switzerland'].includes(country)) {
           newColorMap.push({
             target: country,
             value: { marker: { color: 'blue' } },

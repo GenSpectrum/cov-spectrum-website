@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { getSamplePageLink } from '../pages/SamplePage';
 import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
@@ -19,16 +20,7 @@ export const VariantDashboard = ({ country, matchPercentage, variant }: Props) =
           {variant.name ?? 'Unnamed Variant'} in {country}
         </h3>
         <div>
-          <Link
-            to={
-              '/sample?mutations=' +
-              variant.mutations.join(',') +
-              '&country=' +
-              country +
-              '&matchPercentage=' +
-              matchPercentage
-            }
-          >
+          <Link to={getSamplePageLink({ mutations: variant.mutations, country, matchPercentage })}>
             <Button variant='outline-dark' size='sm'>
               Show samples
             </Button>
