@@ -68,6 +68,7 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Pro
               side: 'right',
             },
             showlegend: false,
+            margin: { t: 50 },
           }}
           config={{
             displaylogo: false,

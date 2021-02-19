@@ -16,6 +16,7 @@ interface Props {
 
 export const InternationalComparison = ({ country, matchPercentage, variant }: Props) => {
   const [distribution, setDistribution] = useState<InternationalTimeDistributionEntry[] | null>(null);
+  const [logScale, setLogScale] = useState<boolean>(false);
 
   useEffect(() => {
     let isSubscribed = true;
@@ -95,6 +96,12 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
           country={country}
           matchPercentage={matchPercentage}
           mutations={variant.mutations}
+          logScale={logScale}
+          toolbarChildren={
+            <Button variant='outline-primary' size='sm' className='ml-1' onClick={() => setLogScale(v => !v)}>
+              Toggle log scale
+            </Button>
+          }
         />
       </div>
       {countryData ? (

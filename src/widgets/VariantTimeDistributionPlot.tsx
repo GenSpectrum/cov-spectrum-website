@@ -71,6 +71,7 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
               side: 'right',
             },
             showlegend: false,
+            margin: { t: 50 },
           }}
           config={{
             displaylogo: false,
