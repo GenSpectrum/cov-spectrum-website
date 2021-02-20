@@ -14,7 +14,7 @@ COPY . .
 RUN npm set progress=false && \
     npm config set depth 0 && \
     export REACT_APP_WEBSITE_HOST=http://bs-stadler05.ethz.ch && \
-    export REACT_APP_SERVER_HOST=/api && \
+    export REACT_APP_SERVER_HOST=http://bs-stadler05.ethz.ch/api && \
     npm --quiet run build
 
 
