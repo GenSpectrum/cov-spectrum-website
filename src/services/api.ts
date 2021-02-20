@@ -119,6 +119,18 @@ export const getSamples = (
     .then(data => SampleResultListSchema.parse(data));
 };
 
+export const getSampleFastaUrl = (
+  mutationsString: string,
+  matchPercentage: number,
+  country: string | null | undefined
+): string => {
+  let url = HOST + `/resource/sample-fasta?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
+  if (country) {
+    url += `&country=${country}`;
+  }
+  return url;
+};
+
 export const getGrowingVariants = (
   year: number,
   week: number,

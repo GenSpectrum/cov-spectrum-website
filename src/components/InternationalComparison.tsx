@@ -7,6 +7,8 @@ import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInte
 import { DistributionType, getVariantDistributionData } from '../services/api';
 import { Country, InternationalTimeDistributionEntry, Variant } from '../services/api-types';
 import { getSamplePageLink } from '../pages/SamplePage';
+import { AccountService } from '../services/AccountService';
+import { NextcladeService } from '../services/NextcladeService';
 
 interface Props {
   country?: Country;
@@ -84,6 +86,16 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
       <div style={{ display: 'flex' }}>
         <h3 style={{ flexGrow: 1 }}>{variant.name ?? 'Unnamed Variant'} - International Comparison</h3>
         <div>
+          {AccountService.isLoggedIn() && (
+            <Button
+              onClick={() => NextcladeService.showVariantOnNextclade(variant, matchPercentage, undefined)}
+              variant='outline-dark'
+              size='sm'
+              className='mr-2'
+            >
+              Show on Nextclade
+            </Button>
+          )}
           <Link to={getSamplePageLink({ mutations: variant.mutations, matchPercentage })}>
             <Button variant='outline-dark' size='sm'>
               Show all samples
@@ -125,6 +137,18 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
                     <td>{c.first.yearWeek}</td>
                     <td>{c.last.yearWeek}</td>
                     <td>
+                      {AccountService.isLoggedIn() && (
+                        <Button
+                          onClick={() =>
+                            NextcladeService.showVariantOnNextclade(variant, matchPercentage, c.country)
+                          }
+                          variant='outline-dark'
+                          size='sm'
+                          className='mr-2'
+                        >
+                          Show on Nextclade
+                        </Button>
+                      )}
                       <Link
                         to={getSamplePageLink({
                           mutations: variant.mutations,
