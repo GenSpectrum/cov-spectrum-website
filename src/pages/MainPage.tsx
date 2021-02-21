@@ -59,11 +59,11 @@ export const MainPage = () => {
             </Tabs>
           </Col>
         </Row>
-
+        <Switzerland></Switzerland>
         {variantDashboard.country && variantDashboard.variant ? (
           <>
             <hr />
-            {variantDashboard.country === 'Switzerland' && <Switzerland></Switzerland>}
+            {/* {variantDashboard.country === 'Switzerland' && <Switzerland></Switzerland>} */}
             <VariantDashboard
               country={variantDashboard.country}
               variant={variantDashboard.variant}
