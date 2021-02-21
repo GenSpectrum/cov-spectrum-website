@@ -5,6 +5,7 @@ import { VariantDashboard } from '../components/VariantDashboard';
 import { KnownVariantsList, SelectedVariantAndCountry } from '../components/KnownVariantsList';
 import { InternationalComparison } from '../components/InternationalComparison';
 import { MutationLookup } from '../components/MutationLookup';
+import Switzerland from '../components/Switzerland';
 
 import { Variant, Country } from '../services/api-types';
 
@@ -62,6 +63,7 @@ export const MainPage = () => {
         {variantDashboard.country && variantDashboard.variant ? (
           <>
             <hr />
+            {variantDashboard.country === 'Switzerland' && <Switzerland></Switzerland>}
             <VariantDashboard
               country={variantDashboard.country}
               variant={variantDashboard.variant}
