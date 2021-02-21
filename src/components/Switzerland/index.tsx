@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { ComposableMap, Geographies, Geography, ZoomableGroup } from 'react-simple-maps';
 import { scaleQuantize } from 'd3-scale';
 import { csv } from 'd3-fetch';
-import geoData from './swiss-maps1.json';
+// import geoData from './swiss-maps1.json';
+import geoData from './ch-plz.json';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/us-atlas@3/counties-10m.json';
 
@@ -36,13 +37,23 @@ const MapChart = () => {
         }}
       >
         {/* <ZoomableGroup center={[0, 60]}> */}
-        <ZoomableGroup center={[8, 47]} zoom={15} disablePanning>
+        <ZoomableGroup center={[8, 47]} zoom={1} disablePanning>
           <Geographies geography={geoData}>
             {({ geographies }) =>
               geographies.map((geo: any) => {
-                const cur: any = data.find((s: any) => s.id === geo.id);
-                console.log('cur is ', cur);
-                return <Geography key={geo.rsmKey} geography={geo} fill={'#2ecc71'} />;
+                // const cur: any = data.find((s: any) => s.id === geo.id);
+                console.log('plz', geo.id);
+                // console.log('cur is ', cur);
+                // return <Geography key={geo.rsmKey} geography={geo} fill={'#2ecc71'} />;
+                return (
+                  <Geography
+                    key={geo.rsmKey}
+                    geography={geo}
+                    stroke={'blue'}
+                    fill={'#ffffff80'}
+                    strokeWidth={1}
+                  />
+                );
               })
             }
           </Geographies>
