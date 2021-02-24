@@ -7,7 +7,11 @@ import bbox from "@turf/bbox";
 import relief from "./relief.jpg";
 import geoJson from "./PLZ10.json";
 
-const SwissMap = ({ data = [], width = 1000 }) => {
+type Props = {
+  width: number
+}
+
+const Switzerland = ({width = 1000 } : Props) => {
   const [minX, minY, maxX, maxY] = bbox(geoJson);
 
   useEffect(() => {
@@ -20,6 +24,7 @@ const SwissMap = ({ data = [], width = 1000 }) => {
   // this is possible as the swiss coordinate system
   // is linear and 1 x/y unit equals 1 meter
   const x = scaleLinear().range([0, width]).domain([minX, maxX]);
+
   const y = scaleLinear().range([0, height]).domain([maxY, minY]);
 
   // Custom cartesisian projection
@@ -48,7 +53,6 @@ const SwissMap = ({ data = [], width = 1000 }) => {
           alt=""
         />
         <svg
-          // data-tip="hello world"
           width={width}
           height={height}
           style={{ position: "absolute", top: 0, left: 0 }}
@@ -62,7 +66,7 @@ const SwissMap = ({ data = [], width = 1000 }) => {
                 key={`path-${feature.properties.bfsId}`}
                 stroke="white"
                 strokeWidth={0.25}
-                d={path(feature)}
+                d={path(feature) ?? undefined}
                 fill={feature.properties.PLZ < 5000 ? "red" : "blue"}
                 />
             );
@@ -74,7 +78,7 @@ const SwissMap = ({ data = [], width = 1000 }) => {
   );
 };
 
-export const widthEqual = (prevProps, nextProps) =>
+export const widthEqual = (prevProps: Props, nextProps: Props) =>
   prevProps.width === nextProps.width;
 
-export default React.memo(SwissMap, widthEqual);
+export default React.memo(Switzerland, widthEqual);

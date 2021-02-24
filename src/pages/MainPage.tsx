@@ -59,7 +59,7 @@ export const MainPage = () => {
             </Tabs>
           </Col>
         </Row>
-        <Switzerland></Switzerland>
+        <Switzerland width={1000}></Switzerland>
         {variantDashboard.country && variantDashboard.variant ? (
           <>
             <hr />
