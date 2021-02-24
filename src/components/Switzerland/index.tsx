@@ -7,7 +7,7 @@ import { TimeZipCodeDistributionEntry } from '../../services/api-types';
 import { AccountService } from '../../services/AccountService';
 import * as zod from 'zod';
 import { SampleSelectorSchema } from '../../helpers/sample-selector';
-import { scaleQuantile } from 'd3-scale';
+import { scaleQuantile, ScaleQuantile } from 'd3-scale';
 
 import bbox from '@turf/bbox';
 import relief from './relief.jpg';
@@ -42,21 +42,7 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
 
   // svg paths from geoJson feature
   const path = geoPath().projection(projection);
-
-  // const colorScale = scaleQuantile()
-  // .domain(data.map(d => d.unemployment_rate))
-  // .range([
-  //   "#ffedea",
-  //   "#ffcec5",
-  //   "#ffad9f",
-  //   "#ff8a75",
-  //   "#ff5533",
-  //   "#e2492d",
-  //   "#be3d26",
-  //   "#9a311f",
-  //   "#782618"
-  // ]);
-  const [colorScale, setColorScale] = useState(undefined);
+  const [colorScale, setColorScale] = useState<undefined | ScaleQuantile<string, number>>(undefined);
 
   useEffect(() => {
     if (distributionData !== undefined) {
