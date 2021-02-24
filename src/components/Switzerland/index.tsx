@@ -7,6 +7,7 @@ import { TimeZipCodeDistributionEntry } from '../../services/api-types';
 import { AccountService } from '../../services/AccountService';
 import * as zod from 'zod';
 import { SampleSelectorSchema } from '../../helpers/sample-selector';
+import { scaleQuantile } from 'd3-scale';
 
 import bbox from '@turf/bbox';
 import relief from './relief.jpg';
@@ -42,10 +43,39 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
   // svg paths from geoJson feature
   const path = geoPath().projection(projection);
 
+  // const colorScale = scaleQuantile()
+  // .domain(data.map(d => d.unemployment_rate))
+  // .range([
+  //   "#ffedea",
+  //   "#ffcec5",
+  //   "#ffad9f",
+  //   "#ff8a75",
+  //   "#ff5533",
+  //   "#e2492d",
+  //   "#be3d26",
+  //   "#9a311f",
+  //   "#782618"
+  // ]);
+  const [colorScale, setColorScale] = useState(undefined);
+
   useEffect(() => {
-    console.log('Rebuilding tooltip...');
-    ReactTooltip.rebuild();
-  }, []);
+    if (distributionData !== undefined) {
+      const newScale = scaleQuantile<string, number>()
+        .domain(distributionData.map((d: TimeZipCodeDistributionEntry) => d.y.count))
+        .range([
+          '#ffedea',
+          '#ffcec5',
+          '#ffad9f',
+          '#ff8a75',
+          '#ff5533',
+          '#e2492d',
+          '#be3d26',
+          '#9a311f',
+          '#782618',
+        ]);
+      setColorScale(newScale);
+    }
+  }, [distributionData]);
 
   useEffect(() => {
     let isSubscribed = true;
@@ -67,7 +97,7 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
     };
   }, [country, mutations, matchPercentage]);
 
-  return loggedIn && distributionData != undefined ? (
+  return loggedIn && distributionData !== undefined ? (
     <div>
       <h1>Number of cases by postal code</h1>
       <div style={{ position: 'relative', width, height }}>
@@ -79,16 +109,14 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
               (s: TimeZipCodeDistributionEntry) => s.x.zipCode == plz.toString()
             );
             return (
-              cur && (
-                <path
-                  data-tip={`${plz} - ${cur != undefined && cur.y.count}`}
-                  key={`path-${plz}-${feature.properties.UUID}`}
-                  stroke='white'
-                  strokeWidth={0.25}
-                  d={path(feature) ?? undefined}
-                  fill={cur ? (plz < 5000 ? 'red' : 'blue') : ''}
-                />
-              )
+              <path
+                data-tip={`${cur != undefined ? cur.y.count : 0} (PLZ ${plz})`}
+                key={`path-${plz}-${feature.properties.UUID}`}
+                stroke='#95a5a6'
+                strokeWidth={0.25}
+                d={path(feature) ?? undefined}
+                fill={cur ? (plz < 5000 ? 'red' : 'blue') : '#ffffff00'}
+              />
             );
           })}
         </svg>
