@@ -60,6 +60,8 @@ export const SampleSchema = zod.object({
         .string()
         .nullable()
         .transform(v => (v === '?' ? null : v)),
+      submittingLab: zod.string().nullable(),
+      originatingLab: zod.string().nullable(),
     })
     .nullable(),
 });
