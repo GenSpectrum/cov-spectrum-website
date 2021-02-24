@@ -56,6 +56,7 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
         if (isSubscribed) {
           setDistributionData(newDistributionData);
         }
+        console.log('new distribution data is', newDistributionData);
       })
       .catch(e => {
         console.log('Called fetch data error', e);
@@ -66,22 +67,28 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
     };
   }, [country, mutations, matchPercentage]);
 
-  return loggedIn ? (
+  return loggedIn && distributionData != undefined ? (
     <div>
       <h1>Number of cases by postal code</h1>
       <div style={{ position: 'relative', width, height }}>
         <img src={relief} style={{ opacity: 0.4, width: '100%', height: 'auto' }} alt='' />
         <svg width={width} height={height} style={{ position: 'absolute', top: 0, left: 0 }}>
           {geoJson.features.map(feature => {
+            const plz = feature.properties.PLZ;
+            const cur = distributionData.find(
+              (s: TimeZipCodeDistributionEntry) => s.x.zipCode == plz.toString()
+            );
             return (
-              <path
-                data-tip={`${feature.properties.PLZ} - X`}
-                key={`path-${feature.properties.bfsId}`}
-                stroke='white'
-                strokeWidth={0.25}
-                d={path(feature) ?? undefined}
-                fill={feature.properties.PLZ < 5000 ? 'red' : 'blue'}
-              />
+              cur && (
+                <path
+                  data-tip={`${plz} - ${cur != undefined && cur.y.count}`}
+                  key={`path-${plz}-${feature.properties.UUID}`}
+                  stroke='white'
+                  strokeWidth={0.25}
+                  d={path(feature) ?? undefined}
+                  fill={cur ? (plz < 5000 ? 'red' : 'blue') : ''}
+                />
+              )
             );
           })}
         </svg>
