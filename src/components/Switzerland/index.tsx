@@ -1,30 +1,34 @@
-import React, { Fragment, useEffect } from "react";
-import { geoPath, geoTransform } from "d3-geo";
-import { scaleLinear, scaleThreshold, scaleOrdinal } from "d3-scale";
-import ReactTooltip from "react-tooltip"
+import React, { Fragment, useEffect, useState } from 'react';
+import { geoPath, geoTransform } from 'd3-geo';
+import { scaleLinear, scaleThreshold, scaleOrdinal } from 'd3-scale';
+import ReactTooltip from 'react-tooltip';
+import { DistributionType, getVariantDistributionData } from '../../services/api';
+import { TimeZipCodeDistributionEntry } from '../../services/api-types';
+import { AccountService } from '../../services/AccountService';
+import * as zod from 'zod';
+import { SampleSelectorSchema } from '../../helpers/sample-selector';
 
-import bbox from "@turf/bbox";
-import relief from "./relief.jpg";
-import geoJson from "./PLZ10.json";
+import bbox from '@turf/bbox';
+import relief from './relief.jpg';
+import geoJson from './PLZ10.json';
 
-type Props = {
-  width: number
-}
+const PropsSchema = SampleSelectorSchema;
+type Props = zod.infer<typeof PropsSchema> & { width: number };
 
-const Switzerland = ({width = 1000 } : Props) => {
+const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Props) => {
   const [minX, minY, maxX, maxY] = bbox(geoJson);
+  const [distributionData, setDistributionData] = useState<TimeZipCodeDistributionEntry[] | undefined>(
+    undefined
+  );
+
+  const loggedIn = AccountService.isLoggedIn();
 
   useEffect(() => {
-    console.log("started...");
+    console.log('started...');
   }, []);
-  
-  const height = ((maxY - minY) / (maxX - minX)) * width;
-  
-  // create plain old linear x and y scales
-  // this is possible as the swiss coordinate system
-  // is linear and 1 x/y unit equals 1 meter
-  const x = scaleLinear().range([0, width]).domain([minX, maxX]);
 
+  const height = ((maxY - minY) / (maxX - minX)) * width;
+  const x = scaleLinear().range([0, width]).domain([minX, maxX]);
   const y = scaleLinear().range([0, height]).domain([maxY, minY]);
 
   // Custom cartesisian projection
@@ -39,46 +43,56 @@ const Switzerland = ({width = 1000 } : Props) => {
   const path = geoPath().projection(projection);
 
   useEffect(() => {
-    console.log("Rebuilding tooltip...")
+    console.log('Rebuilding tooltip...');
     ReactTooltip.rebuild();
   }, []);
 
-  return (
+  useEffect(() => {
+    let isSubscribed = true;
+    const controller = new AbortController();
+    const signal = controller.signal;
+    getVariantDistributionData(DistributionType.TimeZipCode, country, mutations, matchPercentage, signal)
+      .then(newDistributionData => {
+        if (isSubscribed) {
+          setDistributionData(newDistributionData);
+        }
+      })
+      .catch(e => {
+        console.log('Called fetch data error', e);
+      });
+    return () => {
+      isSubscribed = false;
+      controller.abort();
+    };
+  }, [country, mutations, matchPercentage]);
+
+  return loggedIn ? (
     <div>
       <h1>Number of cases by postal code</h1>
-      <div style={{ position: "relative", width, height }}>
-        <img
-          src={relief}
-          style={{ opacity: 0.4, width: "100%", height: "auto" }}
-          alt=""
-        />
-        <svg
-          width={width}
-          height={height}
-          style={{ position: "absolute", top: 0, left: 0 }}
-        >
-          {geoJson.features.map((feature) => {
-            console.log("PLZ...");
-            console.log("PLZ is ", feature.properties.PLZ);
+      <div style={{ position: 'relative', width, height }}>
+        <img src={relief} style={{ opacity: 0.4, width: '100%', height: 'auto' }} alt='' />
+        <svg width={width} height={height} style={{ position: 'absolute', top: 0, left: 0 }}>
+          {geoJson.features.map(feature => {
             return (
               <path
                 data-tip={`${feature.properties.PLZ} - X`}
                 key={`path-${feature.properties.bfsId}`}
-                stroke="white"
+                stroke='white'
                 strokeWidth={0.25}
                 d={path(feature) ?? undefined}
-                fill={feature.properties.PLZ < 5000 ? "red" : "blue"}
-                />
+                fill={feature.properties.PLZ < 5000 ? 'red' : 'blue'}
+              />
             );
           })}
         </svg>
       </div>
-      <ReactTooltip/>
+      <ReactTooltip />
     </div>
+  ) : (
+    <div></div>
   );
 };
 
-export const widthEqual = (prevProps: Props, nextProps: Props) =>
-  prevProps.width === nextProps.width;
+export const widthEqual = (prevProps: Props, nextProps: Props) => prevProps.width === nextProps.width;
 
 export default React.memo(Switzerland, widthEqual);

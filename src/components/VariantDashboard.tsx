@@ -5,6 +5,7 @@ import { getSamplePageLink } from '../pages/SamplePage';
 import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
+import Switzerland from '../components/Switzerland';
 
 interface Props {
   country: Country;
@@ -36,6 +37,12 @@ export const VariantDashboard = ({ country, matchPercentage, variant }: Props) =
         The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
         mutations.
       </p>
+      <Switzerland
+        country={country}
+        mutations={variant.mutations}
+        matchPercentage={matchPercentage}
+        width={1000}
+      />
 
       <Container fluid='md'>
         <Row style={{ height: '500px' }}>
