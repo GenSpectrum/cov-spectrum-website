@@ -23,8 +23,6 @@ jobs:
         run: echo ${{ secrets.CR_PAT }} | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
       - name: Add tags and push
         run: |
-          docker tag new_image ${{ env.IMAGE_NAME }}:co-${{ github.sha }}
-          docker push ${{ env.IMAGE_NAME }}:co-${{ github.sha }}
           docker tag new_image ${{ env.IMAGE_NAME }}:br-${{ env.BRANCH }}
           docker push ${{ env.IMAGE_NAME }}:br-${{ env.BRANCH }}
           docker tag new_image ${{ env.IMAGE_NAME }}:latest
