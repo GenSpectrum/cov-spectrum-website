@@ -23,6 +23,8 @@ function formatMetadata(
     ['Host', metadata.host],
     ['Age', metadata.age || null],
     ['Sex', metadata.sex === '?' ? null : metadata.sex],
+    ['Submitting Lab', metadata.submittingLab],
+    ['Originating Lab', metadata.originatingLab],
   ];
   return rawEntries.map(([label, value]) => ({
     label,

@@ -48,6 +48,16 @@ export class AccountService {
     return AccountService.getAuth()?.data.sub;
   }
 
+  static async createTemporaryJwt(endpoint: string): Promise<string> {
+    if (!this.isLoggedIn()) {
+      throw new Error('A temporary JWT token cannot be created when the user is not logged-in.');
+    }
+    const response = LoginResponseSchema.parse(
+      await (await post('/internal/create-temporary-jwt?restrictionEndpoint=' + endpoint, {})).json()
+    );
+    return response.token;
+  }
+
   private static getAuth(): { token: string; data: JwtData } | undefined {
     const token = localStorage.getItem(localStorageKey);
     return token ? { token, data: this.parseJwt(token) } : undefined;

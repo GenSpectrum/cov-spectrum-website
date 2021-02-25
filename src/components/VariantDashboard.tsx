@@ -6,6 +6,8 @@ import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import Switzerland from '../components/Switzerland';
+import { AccountService } from '../services/AccountService';
+import { NextcladeService } from '../services/NextcladeService';
 
 interface Props {
   country: Country;
@@ -21,6 +23,16 @@ export const VariantDashboard = ({ country, matchPercentage, variant }: Props) =
           {variant.name ?? 'Unnamed Variant'} in {country}
         </h3>
         <div>
+          {AccountService.isLoggedIn() && (
+            <Button
+              onClick={() => NextcladeService.showVariantOnNextclade(variant, matchPercentage, country)}
+              variant='outline-dark'
+              size='sm'
+              className='mr-2'
+            >
+              Show on Nextclade
+            </Button>
+          )}
           <Link to={getSamplePageLink({ mutations: variant.mutations, country, matchPercentage })}>
             <Button variant='outline-dark' size='sm'>
               Show samples
