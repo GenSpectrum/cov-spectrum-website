@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import { SampleTable } from '../components/SampleTable';
-import { Variant } from '../services/api-types';
+import { CountrySchema, Variant } from '../services/api-types';
 import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { useQueryWithEncoder } from '../helpers/use-query';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 
-const queryEncoder = new ZodQueryEncoder(SampleSelectorSchema);
+const queryEncoder = new ZodQueryEncoder(SampleSelectorSchema.extend({ country: CountrySchema.optional() }));
 
 export function getSamplePageLink(params: typeof queryEncoder['_decodedType']): string {
   return `/sample?${queryEncoder.encode(params).toString()}`;

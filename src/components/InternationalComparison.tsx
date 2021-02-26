@@ -11,7 +11,7 @@ import { AccountService } from '../services/AccountService';
 import { NextcladeService } from '../services/NextcladeService';
 
 interface Props {
-  country?: Country;
+  country: Country;
   matchPercentage: number;
   variant: Variant;
 }

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { DistributionType, getVariantDistributionData } from '../services/api';
-import { CountrySchema, TimeDistributionEntry } from '../services/api-types';
+import { TimeDistributionEntry } from '../services/api-types';
 import { Plot } from '../components/Plot';
 import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 
-const PropsSchema = SampleSelectorSchema.extend({ country: CountrySchema });
+const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
 
 export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentage }: Props) => {
