@@ -13,6 +13,9 @@ export const FocusPage = (props: Props) => {
       <VariantDashboard {...props} />
       <hr />
       <InternationalComparison {...props} />
+      <hr />
+      <h3>Geography</h3>
+      <p>Variant map goes here</p>
     </>
   );
 };

@@ -38,11 +38,6 @@ export const ExplorePage = ({ country, onVariantSelect }: Props) => {
                   <MutationLookup onVariantSelect={onVariantSelect} />
                 </div>
               </Tab>
-              <Tab eventKey='variantMap' title='Map of Variants'>
-                <div style={{ marginTop: '20px' }}>
-                  <p>Variant map goes here</p>
-                </div>
-              </Tab>
             </Tabs>
           </Col>
         </Row>
