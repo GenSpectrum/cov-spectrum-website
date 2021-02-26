@@ -5,7 +5,7 @@ import {
   RequiredCountrySelect,
   Props as RequiredCountrySelectProps,
 } from './components/RequiredCountrySelect';
-import { Route } from 'react-router-dom';
+import { Link, Route } from 'react-router-dom';
 
 interface Props {
   countryProps: Omit<RequiredCountrySelectProps, 'id'>;
@@ -20,7 +20,9 @@ export const Header = ({ countryProps }: Props) => {
 
   return (
     <Navbar bg='light' expand='md' style={{ height: '100%' }}>
-      <Navbar.Brand href='/variant'>CoV-Spectrum</Navbar.Brand>
+      <Navbar.Brand as={Link} to='/variant'>
+        CoV-Spectrum
+      </Navbar.Brand>
       <Navbar.Toggle aria-controls='basic-navbar-nav' />
       <Navbar.Collapse>
         <Nav className='ml-4 mr-auto'>
