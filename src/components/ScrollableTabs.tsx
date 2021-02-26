@@ -9,7 +9,13 @@ const TabsWrapper = styled.div`
   height: 100%;
 `;
 
-const TabContentWrapper = styled.div`
+const StyledNav = styled.div`
+  padding-top: 5px;
+  padding-left: 15px;
+  background: var(--light);
+`;
+
+const StyledTabContent = styled.div`
   height: 100px;
   flex-grow: 1;
 `;
@@ -32,14 +38,14 @@ export const ScrollableTabs = ({ tabs }: Props) => {
   return (
     <Tab.Container defaultActiveKey='explore' id='variantList' transition={false} unmountOnExit>
       <TabsWrapper>
-        <Nav variant='tabs'>
+        <Nav as={StyledNav} variant='tabs'>
           {tabs.map(tab => (
             <Nav.Item key={tab.key}>
               <Nav.Link eventKey={tab.key}>{tab.title}</Nav.Link>
             </Nav.Item>
           ))}
         </Nav>
-        <Tab.Content as={TabContentWrapper}>
+        <Tab.Content as={StyledTabContent}>
           {tabs.map(tab => (
             <Tab.Pane as={ScrollableTabPane} key={tab.key} eventKey={tab.key}>
               {tab.content}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { ExplorePage } from './pages/ExplorePage';
 import { Header } from './Header';
-import Footer from './Footer';
+import { Footer } from './Footer';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { SamplePage } from './pages/SamplePage';
 import { LoginPage } from './pages/LoginPage';
@@ -28,9 +28,11 @@ export const OuterWrapper = styled.div`
 
 export const HeaderWrapper = styled.div`
   grid-area: header;
+  border-bottom: 1px solid #dee2e6;
 `;
 
 export const FooterWrapper = styled.div`
+  border-top: 1px solid #dee2e6;
   grid-area: footer;
 `;
 
@@ -55,6 +57,7 @@ export const LoginWrapper = styled.div`
 export const ExploreWrapper = styled.div`
   grid-area: left;
   overflow: hidden;
+  border-right: 1px solid #dee2e6;
 `;
 
 export const FocusWrapper = styled.div`
