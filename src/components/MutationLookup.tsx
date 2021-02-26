@@ -11,7 +11,9 @@ export const MutationLookup = ({ onVariantSelect }: Props) => {
   const [selectedMutations, setSelectedMutations] = useState('');
   const [selectedMatchPercentage, setSelectedMatchPercentage] = useState(50);
 
-  const handleSearchButtonClick = () => {
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
     const variant = {
       mutations: selectedMutations.split(',').map(m => m.trim()),
     };
@@ -22,7 +24,7 @@ export const MutationLookup = ({ onVariantSelect }: Props) => {
   };
 
   return (
-    <Form>
+    <Form onSubmit={onSubmit}>
       <Form.Group controlId='mutationsFieldGroup'>
         <Form.Label>Mutations (comma-separated and case-sensitive)</Form.Label>
         <Form.Control
@@ -37,7 +39,7 @@ export const MutationLookup = ({ onVariantSelect }: Props) => {
         <span style={{ marginLeft: '30px' }}>{selectedMatchPercentage}%</span>
         <Form.Control type='range' onChange={ev => setSelectedMatchPercentage(+ev.target.value)} />
       </Form.Group>
-      <Button variant='primary' onClick={handleSearchButtonClick}>
+      <Button type='submit' variant='primary'>
         Search
       </Button>
     </Form>
