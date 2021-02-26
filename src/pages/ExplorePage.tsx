@@ -1,6 +1,6 @@
 import React from 'react';
 import { Col, Container, Row, Tab, Tabs } from 'react-bootstrap';
-import { KnownVariantsList, SelectedVariantAndCountry } from '../components/KnownVariantsList';
+import { KnownVariantsList } from '../components/KnownVariantsList';
 import { MutationLookup } from '../components/MutationLookup';
 import { NewVariantLookup } from '../components/NewVariantLookup';
 import { Country, Variant } from '../services/api-types';
@@ -11,11 +11,6 @@ interface Props {
 }
 
 export const ExplorePage = ({ country, onVariantSelect }: Props) => {
-  const handleSelect = ({ variant }: SelectedVariantAndCountry, matchPercentage: number) => {
-    // TODO(voinovp) remove country and this wrapper function
-    onVariantSelect({ variant, matchPercentage });
-  };
-
   return (
     <div style={{ marginTop: '20px' }}>
       <Container fluid='md'>
@@ -40,7 +35,7 @@ export const ExplorePage = ({ country, onVariantSelect }: Props) => {
               </Tab>
               <Tab eventKey='lookupMutations' title='Lookup Mutations'>
                 <div style={{ marginTop: '20px' }}>
-                  <MutationLookup onVariantAndCountrySelect={handleSelect} />
+                  <MutationLookup onVariantSelect={onVariantSelect} />
                 </div>
               </Tab>
               <Tab eventKey='variantMap' title='Map of Variants'>
