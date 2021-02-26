@@ -12,12 +12,13 @@ export interface InternalProps {
 // ExternalProps are passed by users of Widget.ShareableComponent
 export interface ExternalProps {
   toolbarChildren?: React.ReactChild | React.ReactChild[];
+  height: number;
 }
-const externalPropsKeys: (keyof ExternalProps)[] = ['toolbarChildren'];
+const externalPropsKeys: (keyof ExternalProps)[] = ['toolbarChildren', 'height'];
 
 export function pickExternalProps<T extends { [K in keyof ExternalProps]?: never }>(
   allProps: T
-): { external: Partial<ExternalProps>; remaining: T } {
+): { external: ExternalProps; remaining: T } {
   const external: { [key: string]: unknown } = {};
   const remaining: { [key: string]: unknown } = {};
   for (const [k, v] of Object.entries(allProps)) {
@@ -27,12 +28,12 @@ export function pickExternalProps<T extends { [K in keyof ExternalProps]?: never
       remaining[k] = v;
     }
   }
-  return { external, remaining: remaining as any };
+  return { external: (external as any) as ExternalProps, remaining: remaining as any };
 }
 
 type Props = InternalProps & ExternalProps;
 
-export function WidgetWrapper({ shareUrl, children, toolbarChildren }: Props) {
+export function WidgetWrapper({ shareUrl, children, toolbarChildren, height }: Props) {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -48,7 +49,7 @@ export function WidgetWrapper({ shareUrl, children, toolbarChildren }: Props) {
           </Button>
           {toolbarChildren}
         </ButtonToolbar>
-        {children}
+        <div style={{ height }}>{children}</div>
       </div>
 
       <Modal size='lg' show={show} onHide={handleClose}>

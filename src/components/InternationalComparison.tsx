@@ -83,41 +83,36 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
 
   return (
     <>
-      <div style={{ height: '500px' }}>
-        <VariantInternationalComparisonPlotWidget.ShareableComponent
-          country={country}
-          matchPercentage={matchPercentage}
-          mutations={variant.mutations}
-          logScale={logScale}
-          toolbarChildren={
-            <>
+      <VariantInternationalComparisonPlotWidget.ShareableComponent
+        height={500}
+        country={country}
+        matchPercentage={matchPercentage}
+        mutations={variant.mutations}
+        logScale={logScale}
+        toolbarChildren={
+          <>
+            <Button variant='outline-primary' size='sm' className='ml-1' onClick={() => setLogScale(v => !v)}>
+              Toggle log scale
+            </Button>
+            {AccountService.isLoggedIn() && (
               <Button
                 variant='outline-primary'
                 size='sm'
                 className='ml-1'
-                onClick={() => setLogScale(v => !v)}
+                onClick={() => NextcladeService.showVariantOnNextclade(variant, matchPercentage, undefined)}
               >
-                Toggle log scale
+                Show on Nextclade
               </Button>
-              {AccountService.isLoggedIn() && (
-                <Button
-                  variant='outline-primary'
-                  size='sm'
-                  className='ml-1'
-                  onClick={() => NextcladeService.showVariantOnNextclade(variant, matchPercentage, undefined)}
-                >
-                  Show on Nextclade
-                </Button>
-              )}
-              <Link to={getSamplePageLink({ mutations: variant.mutations, matchPercentage })}>
-                <Button variant='outline-primary' size='sm' className='ml-1'>
-                  Show all samples
-                </Button>
-              </Link>
-            </>
-          }
-        />
-      </div>
+            )}
+            <Link to={getSamplePageLink({ mutations: variant.mutations, matchPercentage })}>
+              <Button variant='outline-primary' size='sm' className='ml-1'>
+                Show all samples
+              </Button>
+            </Link>
+          </>
+        }
+      />
+
       {countryData ? (
         <>
           <div style={{ maxHeight: '400px', overflow: 'auto' }}>

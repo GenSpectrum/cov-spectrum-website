@@ -22,10 +22,10 @@ export const FocusPage = (props: Props) => {
     <>
       <VariantHeader {...props} />
       <NamedSection title='Sequences over time'>
-        <VariantTimeDistributionPlotWidget.ShareableComponent {...plotProps} />
+        <VariantTimeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
       </NamedSection>
       <NamedSection title='Demographics'>
-        <VariantAgeDistributionPlotWidget.ShareableComponent {...plotProps} />
+        <VariantAgeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
       </NamedSection>
       <NamedSection title='International comparison'>
         <InternationalComparison {...props} />
