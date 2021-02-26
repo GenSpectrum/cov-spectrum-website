@@ -14,7 +14,7 @@ interface DashboardConfiguration {
   matchPercentage: number;
 }
 
-export const MainPage = () => {
+export const ExplorePage = () => {
   const [variantDashboard, setVariantDashboard] = useState<DashboardConfiguration>({
     variant: undefined,
     country: undefined,
