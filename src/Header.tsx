@@ -1,5 +1,5 @@
 import React from 'react';
-import { Nav, Navbar } from 'react-bootstrap';
+import { Form, Nav, Navbar } from 'react-bootstrap';
 import { AccountService } from './services/AccountService';
 import {
   RequiredCountrySelect,
@@ -22,8 +22,13 @@ export const Header = ({ countryProps }: Props) => {
       <Navbar.Brand href='/variant'>CoV-Spectrum</Navbar.Brand>
       <Navbar.Toggle aria-controls='basic-navbar-nav' />
       <Navbar.Collapse>
-        <Nav className='mr-auto'>
-          <RequiredCountrySelect {...countryProps} id='countrySelect' />
+        <Nav className='ml-4 mr-auto'>
+          <Form inline>
+            <Form.Label htmlFor='countrySelect' className='mr-2'>
+              Country
+            </Form.Label>
+            <RequiredCountrySelect {...countryProps} id='countrySelect' />
+          </Form>
         </Nav>
         <Nav>
           {loggedIn ? (
