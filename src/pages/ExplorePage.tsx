@@ -3,13 +3,14 @@ import { Col, Container, Row, Tab, Tabs } from 'react-bootstrap';
 import { KnownVariantsList, SelectedVariantAndCountry } from '../components/KnownVariantsList';
 import { MutationLookup } from '../components/MutationLookup';
 import { NewVariantLookup } from '../components/NewVariantLookup';
-import { Variant } from '../services/api-types';
+import { Country, Variant } from '../services/api-types';
 
 interface Props {
+  country: Country;
   onSelectVariant: (selection: { variant: Variant; matchPercentage: number }) => void;
 }
 
-export const ExplorePage = ({ onSelectVariant }: Props) => {
+export const ExplorePage = ({ country, onSelectVariant }: Props) => {
   const handleSelect = ({ variant }: SelectedVariantAndCountry, matchPercentage: number) => {
     // TODO(voinovp) remove country and this wrapper function
     onSelectVariant({ variant, matchPercentage });
@@ -23,7 +24,10 @@ export const ExplorePage = ({ onSelectVariant }: Props) => {
             <Tabs defaultActiveKey='knownVariants' id='variantList' transition={false} unmountOnExit>
               <Tab eventKey='knownVariants' title='Known Variants'>
                 <div style={{ marginTop: '20px' }}>
-                  <KnownVariantsList onVariantAndCountrySelect={e => handleSelect(e, 0.8)} />
+                  <KnownVariantsList
+                    country={country}
+                    onVariantSelect={variant => onSelectVariant({ variant, matchPercentage: 0.8 })}
+                  />
                 </div>
               </Tab>
               <Tab eventKey='newVariants' title='Find New Variants'>
