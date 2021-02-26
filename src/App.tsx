@@ -37,7 +37,6 @@ export const FooterWrapper = styled.div`
 export const fullGridStyle = css`
   grid-row: 2;
   grid-column: left / right;
-  overflow: hidden;
 `;
 
 export const FullContentWrapper = styled.div`
