@@ -5,6 +5,7 @@ import {
   RequiredCountrySelect,
   Props as RequiredCountrySelectProps,
 } from './components/RequiredCountrySelect';
+import { Route } from 'react-router-dom';
 
 interface Props {
   countryProps: Omit<RequiredCountrySelectProps, 'id'>;
@@ -23,12 +24,14 @@ export const Header = ({ countryProps }: Props) => {
       <Navbar.Toggle aria-controls='basic-navbar-nav' />
       <Navbar.Collapse>
         <Nav className='ml-4 mr-auto'>
-          <Form inline>
-            <Form.Label htmlFor='countrySelect' className='mr-2'>
-              Country
-            </Form.Label>
-            <RequiredCountrySelect {...countryProps} id='countrySelect' />
-          </Form>
+          <Route path='/variant'>
+            <Form inline>
+              <Form.Label htmlFor='countrySelect' className='mr-2'>
+                Country
+              </Form.Label>
+              <RequiredCountrySelect {...countryProps} id='countrySelect' />
+            </Form>
+          </Route>
         </Nav>
         <Nav>
           {loggedIn ? (
