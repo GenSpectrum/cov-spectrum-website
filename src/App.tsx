@@ -37,7 +37,7 @@ export const App = () => {
           <Container fluid>
             <Row>
               <Col>
-                <ExplorePage country={country} onSelectVariant={setSelection} />
+                <ExplorePage country={country} onVariantSelect={setSelection} />
               </Col>
               <Col>{selection && <FocusPage {...selection} country={country} />} </Col>
             </Row>

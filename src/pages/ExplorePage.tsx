@@ -7,13 +7,13 @@ import { Country, Variant } from '../services/api-types';
 
 interface Props {
   country: Country;
-  onSelectVariant: (selection: { variant: Variant; matchPercentage: number }) => void;
+  onVariantSelect: (selection: { variant: Variant; matchPercentage: number }) => void;
 }
 
-export const ExplorePage = ({ country, onSelectVariant }: Props) => {
+export const ExplorePage = ({ country, onVariantSelect }: Props) => {
   const handleSelect = ({ variant }: SelectedVariantAndCountry, matchPercentage: number) => {
     // TODO(voinovp) remove country and this wrapper function
-    onSelectVariant({ variant, matchPercentage });
+    onVariantSelect({ variant, matchPercentage });
   };
 
   return (
@@ -26,7 +26,7 @@ export const ExplorePage = ({ country, onSelectVariant }: Props) => {
                 <div style={{ marginTop: '20px' }}>
                   <KnownVariantsList
                     country={country}
-                    onVariantSelect={variant => onSelectVariant({ variant, matchPercentage: 0.8 })}
+                    onVariantSelect={variant => onVariantSelect({ variant, matchPercentage: 0.8 })}
                   />
                 </div>
               </Tab>
