@@ -34,6 +34,9 @@ export const Header = ({ countryProps }: Props) => {
               <RequiredCountrySelect {...countryProps} id='countrySelect' />
             </Form>
           </Route>
+          <Nav.Link href='/about' style={{marginLeft: '20px', textDecoration: 'underline'}}>
+            What is this website?
+          </Nav.Link>
         </Nav>
         <Nav>
           {loggedIn ? (
@@ -56,7 +59,7 @@ export const Header = ({ countryProps }: Props) => {
               </Nav.Link>
             </>
           ) : (
-            <Nav.Link href='/login'>Login</Nav.Link>
+            <Nav.Link href='/login'>Private Switzerland Login</Nav.Link>
           )}
         </Nav>
       </Navbar.Collapse>

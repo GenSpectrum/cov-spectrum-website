@@ -8,6 +8,7 @@ import { SamplePage } from './pages/SamplePage';
 import { LoginPage } from './pages/LoginPage';
 import { Country, Variant } from './services/api-types';
 import { FocusPage } from './pages/FocusPage';
+import { AboutPage } from './pages/AboutPage';
 import { scrollableContainerStyle } from './helpers/scrollable-container';
 
 interface Selection {
@@ -99,6 +100,11 @@ export const App = () => {
         <Route path='/sample'>
           <FullContentWrapper>
             <SamplePage />
+          </FullContentWrapper>
+        </Route>
+        <Route path='/about'>
+          <FullContentWrapper>
+            <AboutPage />
           </FullContentWrapper>
         </Route>
       </Switch>
