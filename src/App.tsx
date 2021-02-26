@@ -20,7 +20,12 @@ export const App = () => {
 
   return (
     <>
-      <Header />
+      <Header
+        countryProps={{
+          selected: country,
+          onSelect: setCountry,
+        }}
+      />
       <Switch>
         <Route exact path='/'>
           <Redirect to='/variant' />

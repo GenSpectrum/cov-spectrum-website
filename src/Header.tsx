@@ -1,8 +1,16 @@
 import React from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
 import { AccountService } from './services/AccountService';
+import {
+  RequiredCountrySelect,
+  Props as RequiredCountrySelectProps,
+} from './components/RequiredCountrySelect';
 
-export const Header = () => {
+interface Props {
+  countryProps: Omit<RequiredCountrySelectProps, 'id'>;
+}
+
+export const Header = ({ countryProps }: Props) => {
   const loggedIn = AccountService.isLoggedIn();
   let username = null;
   if (loggedIn) {
@@ -14,7 +22,9 @@ export const Header = () => {
       <Navbar.Brand href='/variant'>CoV-Spectrum</Navbar.Brand>
       <Navbar.Toggle aria-controls='basic-navbar-nav' />
       <Navbar.Collapse>
-        <Nav className='mr-auto'></Nav>
+        <Nav className='mr-auto'>
+          <RequiredCountrySelect {...countryProps} id='countrySelect' />
+        </Nav>
         <Nav>
           {loggedIn ? (
             <>
