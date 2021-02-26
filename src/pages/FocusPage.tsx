@@ -27,11 +27,12 @@ export const FocusPage = (props: Props) => {
       <NamedSection title='Demographics'>
         <VariantAgeDistributionPlotWidget.ShareableComponent {...plotProps} />
       </NamedSection>
-      <hr />
-      <InternationalComparison {...props} />
-      <hr />
-      <h3>Geography</h3>
-      <p>Variant map goes here</p>
+      <NamedSection title='International comparison'>
+        <InternationalComparison {...props} />
+      </NamedSection>
+      <NamedSection title='Geography'>
+        <p>Variant map goes here</p>
+      </NamedSection>
     </>
   );
 };
