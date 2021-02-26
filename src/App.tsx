@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { ExplorePage } from './pages/ExplorePage';
 import { Header } from './Header';
 import Footer from './Footer';
@@ -8,6 +8,7 @@ import { SamplePage } from './pages/SamplePage';
 import { LoginPage } from './pages/LoginPage';
 import { Country, Variant } from './services/api-types';
 import { FocusPage } from './pages/FocusPage';
+import { scrollableContainerStyle } from './helpers/scrollable-container';
 
 interface Selection {
   variant: Variant;
@@ -25,36 +26,40 @@ export const OuterWrapper = styled.div`
     'footer footer';
 `;
 
-export const GridHeader = styled.div`
+export const HeaderWrapper = styled.div`
   grid-area: header;
 `;
 
-export const GridLeft = styled.div`
-  grid-area: left;
-  overflow: hidden;
+export const FooterWrapper = styled.div`
+  grid-area: footer;
 `;
 
-export const GridRight = styled.div`
-  grid-area: right;
-  overflow: hidden;
-`;
-
-export const GridFull = styled.div`
+export const fullGridStyle = css`
   grid-row: 2;
   grid-column: left / right;
   overflow: hidden;
 `;
 
-export const GridFooter = styled.div`
-  grid-area: footer;
+export const FullContentWrapper = styled.div`
+  ${scrollableContainerStyle}
+  ${fullGridStyle}
 `;
 
-export const ScrollableContainer = styled.div`
-  height: 100%;
-  box-sizing: border-box;
-  padding: 15px;
-  overflow-x: hidden;
-  overflow-y: scroll;
+export const CenteredContentWrapper = styled.div`
+  ${scrollableContainerStyle}
+  ${fullGridStyle}
+  max-width: 500px;
+  margin: 0 auto;
+`;
+
+export const ExploreWrapper = styled.div`
+  grid-area: left;
+  overflow: hidden;
+`;
+
+export const FocusWrapper = styled.div`
+  ${scrollableContainerStyle}
+  grid-area: right;
 `;
 
 export const App = () => {
@@ -63,48 +68,40 @@ export const App = () => {
 
   return (
     <OuterWrapper>
-      <GridHeader>
+      <HeaderWrapper>
         <Header
           countryProps={{
             selected: country,
             onSelect: setCountry,
           }}
         />
-      </GridHeader>
+      </HeaderWrapper>
 
       <Switch>
         <Route exact path='/'>
           <Redirect to='/variant' />
         </Route>
         <Route path='/login'>
-          <GridFull>
-            <ScrollableContainer>
-              <LoginPage />
-            </ScrollableContainer>
-          </GridFull>
+          <CenteredContentWrapper>
+            <LoginPage />
+          </CenteredContentWrapper>
         </Route>
         <Route path='/variant'>
-          <GridLeft>
+          <ExploreWrapper>
             <ExplorePage country={country} onVariantSelect={setSelection} />
-          </GridLeft>
-          <GridRight>
-            <ScrollableContainer>
-              {selection && <FocusPage {...selection} country={country} />}
-            </ScrollableContainer>
-          </GridRight>
+          </ExploreWrapper>
+          <FocusWrapper>{selection && <FocusPage {...selection} country={country} />}</FocusWrapper>
         </Route>
         <Route path='/sample'>
-          <GridFull>
-            <ScrollableContainer>
-              <SamplePage />
-            </ScrollableContainer>
-          </GridFull>
+          <FullContentWrapper>
+            <SamplePage />
+          </FullContentWrapper>
         </Route>
       </Switch>
 
-      <GridFooter>
+      <FooterWrapper>
         <Footer />
-      </GridFooter>
+      </FooterWrapper>
     </OuterWrapper>
   );
 };
