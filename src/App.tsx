@@ -8,6 +8,7 @@ import { LoginPage } from './pages/LoginPage';
 import { Col, Container, Row } from 'react-bootstrap';
 import { Country, Variant } from './services/api-types';
 import { FocusPage } from './pages/FocusPage';
+import { ScrollableContainer } from './components/ScrollableContainer';
 
 interface Selection {
   variant: Variant;
@@ -19,35 +20,43 @@ export const App = () => {
   const [country, setCountry] = useState<Country>('Switzerland');
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
       <Header
         countryProps={{
           selected: country,
           onSelect: setCountry,
         }}
       />
-      <Switch>
-        <Route exact path='/'>
-          <Redirect to='/variant' />
-        </Route>
-        <Route path='/login'>
-          <LoginPage />
-        </Route>
-        <Route path='/variant'>
-          <Container fluid>
-            <Row>
-              <Col>
-                <ExplorePage country={country} onVariantSelect={setSelection} />
-              </Col>
-              <Col>{selection && <FocusPage {...selection} country={country} />} </Col>
-            </Row>
-          </Container>
-        </Route>
-        <Route path='/sample'>
-          <SamplePage />
-        </Route>
-      </Switch>
+      <div style={{ height: '80vh', flexGrow: 1 }}>
+        <Switch>
+          <Route exact path='/'>
+            <Redirect to='/variant' />
+          </Route>
+          <Route path='/login'>
+            <ScrollableContainer>
+              <LoginPage />
+            </ScrollableContainer>
+          </Route>
+          <Route path='/variant'>
+            <Container fluid style={{ height: '100%' }}>
+              <Row style={{ height: '100%' }}>
+                <Col as={ScrollableContainer}>
+                  <ExplorePage country={country} onVariantSelect={setSelection} />
+                </Col>
+                <Col as={ScrollableContainer}>
+                  {selection && <FocusPage {...selection} country={country} />}{' '}
+                </Col>
+              </Row>
+            </Container>
+          </Route>
+          <Route path='/sample'>
+            <ScrollableContainer>
+              <SamplePage />
+            </ScrollableContainer>
+          </Route>
+        </Switch>
+      </div>
       <Footer />
-    </>
+    </div>
   );
 };
