@@ -32,7 +32,10 @@ export const ExplorePage = ({ country, onVariantSelect }: Props) => {
               </Tab>
               <Tab eventKey='newVariants' title='Find New Variants'>
                 <div style={{ marginTop: '20px' }}>
-                  <NewVariantLookup onVariantAndCountrySelect={e => handleSelect(e, 1)} />
+                  <NewVariantLookup
+                    country={country}
+                    onVariantSelect={variant => onVariantSelect({ variant, matchPercentage: 1 })}
+                  />
                 </div>
               </Tab>
               <Tab eventKey='lookupMutations' title='Lookup Mutations'>
