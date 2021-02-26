@@ -27,9 +27,5 @@ export function SamplePage() {
     return <div>Invalid query parameters</div>;
   }
 
-  return (
-    <div>
-      <SampleTable variant={variant} matchPercentage={data.matchPercentage} country={data.country} />
-    </div>
-  );
+  return <SampleTable variant={variant} matchPercentage={data.matchPercentage} country={data.country} />;
 }

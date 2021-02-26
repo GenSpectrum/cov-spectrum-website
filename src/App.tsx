@@ -52,7 +52,7 @@ export const GridFooter = styled.div`
 export const ScrollableContainer = styled.div`
   height: 100%;
   box-sizing: border-box;
-  padding-top: 20px;
+  padding: 15px;
   overflow-x: hidden;
   overflow-y: scroll;
 `;
