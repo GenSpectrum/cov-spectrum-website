@@ -34,7 +34,7 @@ export const Header = ({ countryProps }: Props) => {
               <RequiredCountrySelect {...countryProps} id='countrySelect' />
             </Form>
           </Route>
-          <Nav.Link href='/about' style={{marginLeft: '20px', textDecoration: 'underline'}}>
+          <Nav.Link href='/about' style={{ marginLeft: '20px', textDecoration: 'underline' }}>
             What is this website?
           </Nav.Link>
         </Nav>
