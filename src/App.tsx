@@ -52,6 +52,7 @@ export const LoginWrapper = styled.div`
   width: 100%;
   max-width: 600px;
   margin: 0 auto;
+  overflow-y: auto;
 `;
 
 export const ExploreWrapper = styled.div`
