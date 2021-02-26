@@ -45,10 +45,11 @@ export const FullContentWrapper = styled.div`
   ${fullGridStyle}
 `;
 
-export const CenteredContentWrapper = styled.div`
+export const LoginWrapper = styled.div`
   ${scrollableContainerStyle}
   ${fullGridStyle}
-  max-width: 500px;
+  width: 100%;
+  max-width: 600px;
   margin: 0 auto;
 `;
 
@@ -82,9 +83,9 @@ export const App = () => {
           <Redirect to='/variant' />
         </Route>
         <Route path='/login'>
-          <CenteredContentWrapper>
+          <LoginWrapper>
             <LoginPage />
-          </CenteredContentWrapper>
+          </LoginWrapper>
         </Route>
         <Route path='/variant'>
           <ExploreWrapper>
