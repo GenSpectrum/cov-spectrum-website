@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Col, Container, Overlay, Popover, Row, Table } from 'react-bootstrap';
-
-import { Variant, Country, Sample } from '../services/api-types';
+import React, { useEffect, useState } from 'react';
+import { Overlay, Popover, Table } from 'react-bootstrap';
 import { getSamples } from '../services/api';
+import { Country, Sample, Variant } from '../services/api-types';
 
 type SampleMetadata = NonNullable<Sample['metadata']>;
 
