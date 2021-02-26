@@ -1,54 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ExplorePage } from './pages/ExplorePage';
 import { Header } from './Header';
 import Footer from './Footer';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { SamplePage } from './pages/SamplePage';
-import { EmbedPage } from './pages/EmbedPage';
 import { LoginPage } from './pages/LoginPage';
 import { Col, Container, Row } from 'react-bootstrap';
+import { Country, Variant } from './services/api-types';
+import { FocusPage } from './pages/FocusPage';
 
-function App() {
-  return (
-    <Switch>
-      <Route path='/embed/:widget'>
-        <EmbedPage />
-      </Route>
-      <Route path='/'>
-        <MainApp />
-      </Route>
-    </Switch>
-  );
+interface Selection {
+  variant: Variant;
+  matchPercentage: number;
 }
 
-function MainApp() {
+export const App = () => {
+  const [selection, setSelection] = useState<Selection>();
+  const [country, setCountry] = useState<Country>('Switzerland');
+
   return (
     <>
       <Header />
-      <Container fluid>
-        <Row>
-          <Col>
-            <Switch>
-              <Route exact path='/'>
-                <Redirect to='/variant' />
-              </Route>
-              <Route path='/login'>
-                <LoginPage />
-              </Route>
-              <Route path='/variant'>
-                <ExplorePage />
-              </Route>
-              <Route path='/sample'>
-                <SamplePage />
-              </Route>
-            </Switch>
-          </Col>
-          <Col></Col>
-        </Row>
-      </Container>
+      <Switch>
+        <Route exact path='/'>
+          <Redirect to='/variant' />
+        </Route>
+        <Route path='/login'>
+          <LoginPage />
+        </Route>
+        <Route path='/variant'>
+          <Container fluid>
+            <Row>
+              <Col>
+                <ExplorePage onSelectVariant={setSelection} />
+              </Col>
+              <Col>{selection && <FocusPage {...selection} country={country} />} </Col>
+            </Row>
+          </Container>
+        </Route>
+        <Route path='/sample'>
+          <SamplePage />
+        </Route>
+      </Switch>
       <Footer />
     </>
   );
-}
-
-export default App;
+};

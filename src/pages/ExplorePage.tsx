@@ -1,32 +1,18 @@
-import React, { useState } from 'react';
-import { NewVariantLookup } from '../components/NewVariantLookup';
+import React from 'react';
 import { Col, Container, Row, Tab, Tabs } from 'react-bootstrap';
-import { VariantDashboard } from '../components/VariantDashboard';
 import { KnownVariantsList, SelectedVariantAndCountry } from '../components/KnownVariantsList';
-import { InternationalComparison } from '../components/InternationalComparison';
 import { MutationLookup } from '../components/MutationLookup';
+import { NewVariantLookup } from '../components/NewVariantLookup';
+import { Variant } from '../services/api-types';
 
-import { Variant, Country } from '../services/api-types';
-
-interface DashboardConfiguration {
-  variant: Variant | undefined;
-  country: Country | undefined;
-  matchPercentage: number;
+interface Props {
+  onSelectVariant: (selection: { variant: Variant; matchPercentage: number }) => void;
 }
 
-export const ExplorePage = () => {
-  const [variantDashboard, setVariantDashboard] = useState<DashboardConfiguration>({
-    variant: undefined,
-    country: undefined,
-    matchPercentage: 0,
-  });
-
-  const handleSelect = ({ variant, country }: SelectedVariantAndCountry, matchPercentage: number) => {
-    setVariantDashboard({
-      variant,
-      country,
-      matchPercentage,
-    });
+export const ExplorePage = ({ onSelectVariant }: Props) => {
+  const handleSelect = ({ variant }: SelectedVariantAndCountry, matchPercentage: number) => {
+    // TODO(voinovp) remove country and this wrapper function
+    onSelectVariant({ variant, matchPercentage });
   };
 
   return (
@@ -58,23 +44,6 @@ export const ExplorePage = () => {
             </Tabs>
           </Col>
         </Row>
-
-        {variantDashboard.country && variantDashboard.variant ? (
-          <>
-            <hr />
-            <VariantDashboard
-              country={variantDashboard.country}
-              variant={variantDashboard.variant}
-              matchPercentage={variantDashboard.matchPercentage}
-            />
-            <hr />
-            <InternationalComparison
-              country={variantDashboard.country}
-              variant={variantDashboard.variant}
-              matchPercentage={variantDashboard.matchPercentage}
-            />
-          </>
-        ) : null}
       </Container>
     </div>
   );

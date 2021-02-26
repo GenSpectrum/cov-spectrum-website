@@ -10,7 +10,7 @@ import { getSamplePageLink } from '../pages/SamplePage';
 import { AccountService } from '../services/AccountService';
 import { NextcladeService } from '../services/NextcladeService';
 
-interface Props {
+export interface Props {
   country?: Country;
   matchPercentage: number;
   variant: Variant;
