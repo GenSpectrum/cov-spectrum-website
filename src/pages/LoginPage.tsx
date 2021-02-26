@@ -34,42 +34,40 @@ export const LoginPage = () => {
   };
 
   return (
-    <div style={{ marginTop: '20px' }}>
-      <Container fluid='md'>
-        <Row>
-          <Col>
-            <h1>Login</h1>
-            <Form>
-              <Form.Group controlId='loginUsername'>
-                <Form.Label>Username</Form.Label>
-                <Form.Control required type='text' onChange={e => setUsername(e.target.value)} />
-              </Form.Group>
-              <Form.Group controlId='loginPassword'>
-                <Form.Label>Password</Form.Label>
-                <Form.Control required type='password' onChange={e => setPassword(e.target.value)} />
-              </Form.Group>
-              <Button variant='primary' onClick={handleSubmit}>
-                Login
-              </Button>
-            </Form>
-            {loginFailed && (
-              <Alert variant='info' style={{ marginTop: '20px' }}>
-                The login attempt was not successful.
-              </Alert>
-            )}
-            {sessionExpired && (
-              <Alert variant='info' style={{ marginTop: '20px' }}>
-                The session has expired. Please login again.
-              </Alert>
-            )}
-            {loggedOut && (
-              <Alert variant='info' style={{ marginTop: '20px' }}>
-                You logged out.
-              </Alert>
-            )}
-          </Col>
-        </Row>
-      </Container>
-    </div>
+    <Container fluid='md'>
+      <Row>
+        <Col>
+          <h1>Login</h1>
+          <Form>
+            <Form.Group controlId='loginUsername'>
+              <Form.Label>Username</Form.Label>
+              <Form.Control required type='text' onChange={e => setUsername(e.target.value)} />
+            </Form.Group>
+            <Form.Group controlId='loginPassword'>
+              <Form.Label>Password</Form.Label>
+              <Form.Control required type='password' onChange={e => setPassword(e.target.value)} />
+            </Form.Group>
+            <Button variant='primary' onClick={handleSubmit}>
+              Login
+            </Button>
+          </Form>
+          {loginFailed && (
+            <Alert variant='info' style={{ marginTop: '20px' }}>
+              The login attempt was not successful.
+            </Alert>
+          )}
+          {sessionExpired && (
+            <Alert variant='info' style={{ marginTop: '20px' }}>
+              The session has expired. Please login again.
+            </Alert>
+          )}
+          {loggedOut && (
+            <Alert variant='info' style={{ marginTop: '20px' }}>
+              You logged out.
+            </Alert>
+          )}
+        </Col>
+      </Row>
+    </Container>
   );
 };

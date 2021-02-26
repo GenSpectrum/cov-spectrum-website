@@ -18,7 +18,7 @@ export const Header = ({ countryProps }: Props) => {
   }
 
   return (
-    <Navbar bg='light' expand='md'>
+    <Navbar bg='light' expand='md' style={{ height: '100%' }}>
       <Navbar.Brand href='/variant'>CoV-Spectrum</Navbar.Brand>
       <Navbar.Toggle aria-controls='basic-navbar-nav' />
       <Navbar.Collapse>

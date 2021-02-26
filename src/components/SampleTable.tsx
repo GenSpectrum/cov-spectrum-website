@@ -75,78 +75,76 @@ export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
   }, [samples, popoverTarget]);
 
   return (
-    <div style={{ marginTop: '20px' }}>
-      <Container fluid='md'>
-        <Row>
-          <Col>
-            <h3>Samples {country && 'in ' + country}</h3>
+    <Container fluid='md'>
+      <Row>
+        <Col>
+          <h3>Samples {country && 'in ' + country}</h3>
 
-            <p>
-              <b>Mutations:</b> {variant.mutations.join(', ')}
-            </p>
+          <p>
+            <b>Mutations:</b> {variant.mutations.join(', ')}
+          </p>
 
-            {popoverTarget && (
-              <Overlay show target={popoverTarget.element} placement='right' transition={false}>
-                <Popover id='sample-metadata-popover'>
-                  <Popover.Title>{popoverTarget.sample.name}</Popover.Title>
-                  <Popover.Content>
-                    {formatMetadata(popoverTarget.sample.date, popoverTarget.sample.metadata).map(
-                      ({ label, value }) => (
-                        <div key={label}>
-                          <b>{label}:</b> {value ?? <i className='text-muted'>unknown</i>}
-                        </div>
-                      )
-                    )}
-                  </Popover.Content>
-                </Popover>
-              </Overlay>
-            )}
+          {popoverTarget && (
+            <Overlay show target={popoverTarget.element} placement='right' transition={false}>
+              <Popover id='sample-metadata-popover'>
+                <Popover.Title>{popoverTarget.sample.name}</Popover.Title>
+                <Popover.Content>
+                  {formatMetadata(popoverTarget.sample.date, popoverTarget.sample.metadata).map(
+                    ({ label, value }) => (
+                      <div key={label}>
+                        <b>{label}:</b> {value ?? <i className='text-muted'>unknown</i>}
+                      </div>
+                    )
+                  )}
+                </Popover.Content>
+              </Popover>
+            </Overlay>
+          )}
 
-            {samples && (
-              <>
-                <p>
-                  {totalNumber} samples have at least <b>{Math.round(matchPercentage * 100)}%</b> of the
-                  mutations.{' '}
-                  {samples &&
-                    totalNumber &&
-                    samples.length < totalNumber &&
-                    samples.length + ' will be displayed.'}
-                </p>
+          {samples && (
+            <>
+              <p>
+                {totalNumber} samples have at least <b>{Math.round(matchPercentage * 100)}%</b> of the
+                mutations.{' '}
+                {samples &&
+                  totalNumber &&
+                  samples.length < totalNumber &&
+                  samples.length + ' will be displayed.'}
+              </p>
 
-                <Table striped bordered hover>
-                  <thead>
-                    <tr>
-                      <th>GISAID ID</th>
-                      <th>Date</th>
-                      <th>Country</th>
-                      <th>Mutations</th>
+              <Table striped bordered hover>
+                <thead>
+                  <tr>
+                    <th>GISAID ID</th>
+                    <th>Date</th>
+                    <th>Country</th>
+                    <th>Mutations</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {samples.map(sample => (
+                    <tr key={sample.name}>
+                      <td
+                        onMouseEnter={ev =>
+                          setPopoverTarget(
+                            sampleHasMetadata(sample) ? { element: ev.currentTarget, sample } : undefined
+                          )
+                        }
+                        onMouseLeave={() => setPopoverTarget(undefined)}
+                      >
+                        {sample.name}
+                      </td>
+                      <td>{sample.date}</td>
+                      <td>{sample.country}</td>
+                      <td>{sample.mutations.join(', ')}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {samples.map(sample => (
-                      <tr key={sample.name}>
-                        <td
-                          onMouseEnter={ev =>
-                            setPopoverTarget(
-                              sampleHasMetadata(sample) ? { element: ev.currentTarget, sample } : undefined
-                            )
-                          }
-                          onMouseLeave={() => setPopoverTarget(undefined)}
-                        >
-                          {sample.name}
-                        </td>
-                        <td>{sample.date}</td>
-                        <td>{sample.country}</td>
-                        <td>{sample.mutations.join(', ')}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </>
-            )}
-          </Col>
-        </Row>
-      </Container>
-    </div>
+                  ))}
+                </tbody>
+              </Table>
+            </>
+          )}
+        </Col>
+      </Row>
+    </Container>
   );
 };

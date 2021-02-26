@@ -6,7 +6,6 @@ import Footer from './Footer';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { SamplePage } from './pages/SamplePage';
 import { LoginPage } from './pages/LoginPage';
-import { Col, Container, Row } from 'react-bootstrap';
 import { Country, Variant } from './services/api-types';
 import { FocusPage } from './pages/FocusPage';
 
@@ -16,14 +15,38 @@ interface Selection {
 }
 
 export const OuterWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
+  display: grid;
   height: 100vh;
+  grid-template-columns: 50% 50%;
+  grid-template-rows: 60px auto 60px;
+  grid-template-areas:
+    'header header'
+    'left right'
+    'footer footer';
 `;
 
-export const ContentWrapper = styled.div`
-  height: 80vh;
-  flex-grow: 1;
+export const GridHeader = styled.div`
+  grid-area: header;
+`;
+
+export const GridLeft = styled.div`
+  grid-area: left;
+  overflow: hidden;
+`;
+
+export const GridRight = styled.div`
+  grid-area: right;
+  overflow: hidden;
+`;
+
+export const GridFull = styled.div`
+  grid-row: 2;
+  grid-column: left / right;
+  overflow: hidden;
+`;
+
+export const GridFooter = styled.div`
+  grid-area: footer;
 `;
 
 export const ScrollableContainer = styled.div`
@@ -40,42 +63,48 @@ export const App = () => {
 
   return (
     <OuterWrapper>
-      <Header
-        countryProps={{
-          selected: country,
-          onSelect: setCountry,
-        }}
-      />
-      <ContentWrapper>
-        <Switch>
-          <Route exact path='/'>
-            <Redirect to='/variant' />
-          </Route>
-          <Route path='/login'>
+      <GridHeader>
+        <Header
+          countryProps={{
+            selected: country,
+            onSelect: setCountry,
+          }}
+        />
+      </GridHeader>
+
+      <Switch>
+        <Route exact path='/'>
+          <Redirect to='/variant' />
+        </Route>
+        <Route path='/login'>
+          <GridFull>
             <ScrollableContainer>
               <LoginPage />
             </ScrollableContainer>
-          </Route>
-          <Route path='/variant'>
-            <Container fluid style={{ height: '100%' }}>
-              <Row style={{ height: '100%' }}>
-                <Col as={ScrollableContainer}>
-                  <ExplorePage country={country} onVariantSelect={setSelection} />
-                </Col>
-                <Col as={ScrollableContainer}>
-                  {selection && <FocusPage {...selection} country={country} />}{' '}
-                </Col>
-              </Row>
-            </Container>
-          </Route>
-          <Route path='/sample'>
+          </GridFull>
+        </Route>
+        <Route path='/variant'>
+          <GridLeft>
+            <ExplorePage country={country} onVariantSelect={setSelection} />
+          </GridLeft>
+          <GridRight>
+            <ScrollableContainer>
+              {selection && <FocusPage {...selection} country={country} />}
+            </ScrollableContainer>
+          </GridRight>
+        </Route>
+        <Route path='/sample'>
+          <GridFull>
             <ScrollableContainer>
               <SamplePage />
             </ScrollableContainer>
-          </Route>
-        </Switch>
-      </ContentWrapper>
-      <Footer />
+          </GridFull>
+        </Route>
+      </Switch>
+
+      <GridFooter>
+        <Footer />
+      </GridFooter>
     </OuterWrapper>
   );
 };
