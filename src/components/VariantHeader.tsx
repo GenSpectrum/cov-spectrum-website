@@ -1,26 +1,22 @@
 import React from 'react';
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { getSamplePageLink } from '../pages/SamplePage';
-import { Country, Variant } from '../services/api-types';
-import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
-import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { AccountService } from '../services/AccountService';
+import { Country, Variant } from '../services/api-types';
 import { NextcladeService } from '../services/NextcladeService';
 
-interface Props {
+export interface Props {
   country: Country;
   matchPercentage: number;
   variant: Variant;
 }
 
-export const VariantDashboard = ({ country, matchPercentage, variant }: Props) => {
+export const VariantHeader = ({ country, matchPercentage, variant }: Props) => {
   return (
     <>
       <div style={{ display: 'flex' }}>
-        <h3 style={{ flexGrow: 1 }}>
-          {variant.name ?? 'Unnamed Variant'} in {country}
-        </h3>
+        <h1 style={{ flexGrow: 1 }}>{variant.name ?? 'Unnamed Variant'}</h1>
         <div>
           {AccountService.isLoggedIn() && (
             <Button
@@ -44,29 +40,10 @@ export const VariantDashboard = ({ country, matchPercentage, variant }: Props) =
         <b>Mutations:</b> {variant.mutations.join(', ')}
       </p>
 
-      <p>
+      <p style={{ marginBottom: '30px' }}>
         The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
         mutations.
       </p>
-
-      <Container fluid='md'>
-        <Row style={{ height: '500px' }}>
-          <Col md={7}>
-            <VariantTimeDistributionPlotWidget.ShareableComponent
-              country={country}
-              matchPercentage={matchPercentage}
-              mutations={variant.mutations}
-            />
-          </Col>
-          <Col md={5}>
-            <VariantAgeDistributionPlotWidget.ShareableComponent
-              country={country}
-              matchPercentage={matchPercentage}
-              mutations={variant.mutations}
-            />
-          </Col>
-        </Row>
-      </Container>
     </>
   );
 };

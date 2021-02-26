@@ -55,7 +55,7 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Pro
             },
           ]}
           layout={{
-            title: 'Age Distribution',
+            title: '',
             xaxis: {
               title: 'Age',
             },
@@ -68,7 +68,7 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Pro
               side: 'right',
             },
             showlegend: false,
-            margin: { t: 50 },
+            margin: { t: 10 },
           }}
           config={{
             displaylogo: false,

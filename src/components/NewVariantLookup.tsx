@@ -1,18 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import Form from 'react-bootstrap/Form';
+import React, { useEffect, useState } from 'react';
 import { Button, Col } from 'react-bootstrap';
-import { NewVariantTable } from './NewVariantTable';
+import Form from 'react-bootstrap/Form';
 import { getCurrentWeek } from '../services/api';
 import { Country, parseYearWeekString, Variant } from '../services/api-types';
-import { CountrySelect } from './CountrySelect';
-
-export interface SelectedVariantAndCountry {
-  variant: Variant;
-  country?: Country;
-}
+import { NewVariantTable } from './NewVariantTable';
 
 interface Props {
-  onVariantAndCountrySelect: (selected: SelectedVariantAndCountry) => void;
+  country: Country;
+  onVariantSelect: (variant: Variant) => void;
 }
 
 interface TableQuery {
@@ -31,18 +26,16 @@ const generateListOfWeeks = (currentIsoWeek: number) => {
   return weeks;
 };
 
-export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
-  const [selectedCountry, setSelectedCountry] = useState<Country | undefined>('Switzerland');
-
+export const NewVariantLookup = ({ country, onVariantSelect }: Props) => {
   const [weeks, setWeeks] = useState<string[]>([]);
   const [selectedWeek, setSelectedWeek] = useState('2021-01');
 
   const [table, setTable] = useState<TableQuery>();
   useEffect(() => {
-    if (table && (!selectedCountry || selectedCountry !== table.country || selectedWeek !== table.week)) {
+    if (table && (!country || country !== table.country || selectedWeek !== table.week)) {
       setTable(undefined);
     }
-  }, [table, selectedCountry, selectedWeek]);
+  }, [table, country, selectedWeek]);
 
   useEffect(() => {
     let isSubscribed = true;
@@ -63,19 +56,15 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
       <Form
         onSubmit={e => {
           e.preventDefault();
-          if (selectedCountry && selectedWeek) {
+          if (country && selectedWeek) {
             setTable({
-              country: selectedCountry,
+              country: country,
               week: selectedWeek,
             });
           }
         }}
       >
         <Form.Row>
-          <Form.Group as={Col} controlId='countryField'>
-            <Form.Label>Country</Form.Label>
-            <CountrySelect id='countryField' selected={selectedCountry} onSelect={setSelectedCountry} />
-          </Form.Group>
           <Form.Group as={Col} controlId='weekField'>
             <Form.Label>Week</Form.Label>
             <Form.Control
@@ -104,7 +93,7 @@ export const NewVariantLookup = ({ onVariantAndCountrySelect }: Props) => {
           <NewVariantTable
             {...parseYearWeekString(table.week)}
             country={table.country}
-            onVariantSelect={variant => onVariantAndCountrySelect({ variant, country: table?.country })}
+            onVariantSelect={onVariantSelect}
           />
         </>
       ) : null}
