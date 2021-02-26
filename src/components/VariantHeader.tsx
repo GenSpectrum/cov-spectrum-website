@@ -40,7 +40,7 @@ export const VariantHeader = ({ country, matchPercentage, variant }: Props) => {
         <b>Mutations:</b> {variant.mutations.join(', ')}
       </p>
 
-      <p>
+      <p style={{ marginBottom: '30px' }}>
         The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
         mutations.
       </p>
