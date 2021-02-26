@@ -16,9 +16,7 @@ export const VariantHeader = ({ country, matchPercentage, variant }: Props) => {
   return (
     <>
       <div style={{ display: 'flex' }}>
-        <h3 style={{ flexGrow: 1 }}>
-          {variant.name ?? 'Unnamed Variant'} in {country}
-        </h3>
+        <h1 style={{ flexGrow: 1 }}>{variant.name ?? 'Unnamed Variant'}</h1>
         <div>
           {AccountService.isLoggedIn() && (
             <Button
