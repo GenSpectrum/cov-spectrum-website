@@ -54,7 +54,7 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
             },
           ]}
           layout={{
-            title: 'Time Distribution',
+            title: '',
             xaxis: {
               title: 'Week',
               type: 'date',
@@ -71,7 +71,7 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
               side: 'right',
             },
             showlegend: false,
-            margin: { t: 50 },
+            margin: { t: 10 },
           }}
           config={{
             displaylogo: false,
