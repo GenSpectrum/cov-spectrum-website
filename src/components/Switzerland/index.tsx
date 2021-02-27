@@ -29,8 +29,9 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
   const loggedIn = AccountService.isLoggedIn();
 
   useEffect(() => {
-    console.log('started...');
-  }, []);
+    console.log('distribution data updated...');
+  }, [distributionData]);
+
   const height = ((maxY - minY) / (maxX - minX)) * width;
   const x = scaleLinear().range([0, width]).domain([minX, maxX]);
   const y = scaleLinear().range([0, height]).domain([maxY, minY]);
@@ -65,7 +66,6 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
         if (isSubscribed) {
           setDistributionData(newDistributionData);
         }
-        // console.log('new distribution data is', newDistributionData);
       })
       .catch(e => {
         // console.log('Called fetch data error', e);
@@ -116,4 +116,6 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
 
 export const widthEqual = (prevProps: Props, nextProps: Props) => prevProps.width === nextProps.width;
 
-export default React.memo(Switzerland, widthEqual);
+// export default React.memo(Switzerland, widthEqual);
+// export default Switzerland;
+export default Switzerland;
