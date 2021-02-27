@@ -10,6 +10,7 @@ import { Country, Variant } from './services/api-types';
 import { FocusPage } from './pages/FocusPage';
 import { AboutPage } from './pages/AboutPage';
 import { scrollableContainerStyle } from './helpers/scrollable-container';
+import { FocusEmptyPage } from './pages/FocusEmptyPage';
 
 interface Selection {
   variant: Variant;
@@ -95,7 +96,10 @@ export const App = () => {
           <ExploreWrapper>
             <ExplorePage country={country} onVariantSelect={setSelection} />
           </ExploreWrapper>
-          <FocusWrapper>{selection && <FocusPage {...selection} country={country} />}</FocusWrapper>
+          <FocusWrapper>
+            {selection && <FocusPage {...selection} country={country} />}
+            {!selection && <FocusEmptyPage />}
+          </FocusWrapper>
         </Route>
         <Route path='/sample'>
           <FullContentWrapper>
