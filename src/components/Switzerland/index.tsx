@@ -1,13 +1,13 @@
-import React, { Fragment, useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef} from 'react';
 import { geoPath, geoTransform } from 'd3-geo';
-import { scaleLinear, scaleThreshold, scaleOrdinal } from 'd3-scale';
+import { scaleLinear } from 'd3-scale';
 import ReactTooltip from 'react-tooltip';
 import { DistributionType, getVariantDistributionData } from '../../services/api';
 import { TimeZipCodeDistributionEntry } from '../../services/api-types';
 import { AccountService } from '../../services/AccountService';
 import * as zod from 'zod';
 import { SampleSelectorSchema } from '../../helpers/sample-selector';
-import { scaleQuantile, ScaleQuantile } from 'd3-scale';
+import { scaleQuantile } from 'd3-scale';
 
 import styled from 'styled-components';
 
@@ -16,16 +16,15 @@ import relief from './relief.jpg';
 import geoJson from './PLZ10.json';
 
 const PropsSchema = SampleSelectorSchema;
-type Props = zod.infer<typeof PropsSchema> & { width: number };
+type Props = zod.infer<typeof PropsSchema> & {width?: number};
 
 const Wrapper = styled.div`
   padding: 1rem 1rem 1rem 1rem;
 `;
 
-const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Props) => {
+const Switzerland = ({ country, mutations, matchPercentage, width = 800}: Props) => {
   const [minX, minY, maxX, maxY] = bbox(geoJson);
   const [distributionData, setDistributionData] = useState<TimeZipCodeDistributionEntry[]>([]);
-
   const loggedIn = AccountService.isLoggedIn();
 
   useEffect(() => {
@@ -68,7 +67,7 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
         }
       })
       .catch(e => {
-        // console.log('Called fetch data error', e);
+        console.log('Called fetch data error', e);
       });
     return () => {
       isSubscribed = false;
@@ -99,7 +98,6 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
                   stroke='#95a5a6'
                   strokeWidth={0.25}
                   d={path(feature) ?? undefined}
-                  // fill={cur ? (plz < 5000 ? 'red' : 'blue') : '#ffffff00'}
                   fill={cur ? colorScale(caseCount) : '#ffffff00'}
                 />
               );
@@ -113,9 +111,4 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
     <div></div>
   );
 };
-
-export const widthEqual = (prevProps: Props, nextProps: Props) => prevProps.width === nextProps.width;
-
-// export default React.memo(Switzerland, widthEqual);
-// export default Switzerland;
 export default Switzerland;

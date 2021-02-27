@@ -53,7 +53,6 @@ export const VariantDashboard = ({ country, matchPercentage, variant }: Props) =
         country={country}
         mutations={variant.mutations}
         matchPercentage={matchPercentage}
-        width={1000}
       />
 
       <Container fluid='md'>
