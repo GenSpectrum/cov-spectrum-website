@@ -31,11 +31,9 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
   useEffect(() => {
     console.log('started...');
   }, []);
-
   const height = ((maxY - minY) / (maxX - minX)) * width;
   const x = scaleLinear().range([0, width]).domain([minX, maxX]);
   const y = scaleLinear().range([0, height]).domain([maxY, minY]);
-
   // Custom cartesisian projection
   // https://bl.ocks.org/mbostock/6216797
   const projection = geoTransform({
@@ -43,31 +41,7 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
       this.stream.point(x(px), y(py));
     },
   });
-
-  // svg paths from geoJson feature
   const path = geoPath().projection(projection);
-  // const [colorScale, setColorScale] = useState<undefined | ScaleQuantile<string>>(undefined);
-
-  // useEffect(() => {
-  //   if (distributionData !== undefined) {
-  //     const newScale = scaleQuantile<string>()
-  //       .domain(distributionData.map((d: TimeZipCodeDistributionEntry) => d.y.count))
-  //       .range([
-  //         '#ffedea',
-  //         '#ffcec5',
-  //         '#ffad9f',
-  //         '#ff8a75',
-  //         '#ff5533',
-  //         '#e2492d',
-  //         '#be3d26',
-  //         '#9a311f',
-  //         '#782618',
-  //       ]);
-  //     setColorScale(newScale);
-  //     console.log('updated color scale to ', newScale);
-  //   }
-  // }, [distributionData]);
-
   const colorScale = scaleQuantile<string>()
     .domain(distributionData.map((d: TimeZipCodeDistributionEntry) => d.y.count))
     .range([
@@ -103,37 +77,38 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
   }, [country, mutations, matchPercentage]);
 
   return loggedIn && distributionData !== undefined ? (
-    <Wrapper>
+    <>
       <h2>Number of cases by postal code in Switzerland</h2>
-      <div style={{ position: 'relative', width, height }}>
-        <img src={relief} style={{ opacity: 0.4, width: '100%', height: 'auto' }} alt='' />
-        <svg width={width} height={height} style={{ position: 'absolute', top: 0, left: 0 }}>
-          {geoJson.features.map(feature => {
-            const plz = feature.properties.PLZ;
-            const cur = distributionData.find(
-              (s: TimeZipCodeDistributionEntry) => s.x.zipCode == plz.toString()
-            );
-            let color: string = '#ffffff00';
-            let caseCount: number = 0;
-            if (cur !== undefined) {
-              caseCount = cur.y.count;
-            }
-            return (
-              <path
-                data-tip={`${caseCount} (PLZ ${plz})`}
-                key={`path-${plz}-${feature.properties.UUID}`}
-                stroke='#95a5a6'
-                strokeWidth={0.25}
-                d={path(feature) ?? undefined}
-                // fill={cur ? (plz < 5000 ? 'red' : 'blue') : '#ffffff00'}
-                fill={cur ? colorScale(caseCount) : '#ffffff00'}
-              />
-            );
-          })}
-        </svg>
-      </div>
-      <ReactTooltip />
-    </Wrapper>
+      <Wrapper>
+        <div style={{ position: 'relative', width, height }}>
+          <img src={relief} style={{ opacity: 0.4, width: '100%', height: 'auto' }} alt='' />
+          <svg width={width} height={height} style={{ position: 'absolute', top: 0, left: 0 }}>
+            {geoJson.features.map(feature => {
+              const plz = feature.properties.PLZ;
+              const cur = distributionData.find(
+                (s: TimeZipCodeDistributionEntry) => s.x.zipCode == plz.toString()
+              );
+              let caseCount: number = 0;
+              if (cur !== undefined) {
+                caseCount = cur.y.count;
+              }
+              return (
+                <path
+                  data-tip={`${caseCount} (PLZ ${plz})`}
+                  key={`path-${plz}-${feature.properties.UUID}`}
+                  stroke='#95a5a6'
+                  strokeWidth={0.25}
+                  d={path(feature) ?? undefined}
+                  // fill={cur ? (plz < 5000 ? 'red' : 'blue') : '#ffffff00'}
+                  fill={cur ? colorScale(caseCount) : '#ffffff00'}
+                />
+              );
+            })}
+          </svg>
+        </div>
+        <ReactTooltip />
+      </Wrapper>
+    </>
   ) : (
     <div></div>
   );
