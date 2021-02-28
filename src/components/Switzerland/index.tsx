@@ -10,9 +10,19 @@ import Map from './Map';
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema> & { width?: number };
 
-const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Props) => {
+const Switzerland = ({ country, mutations, matchPercentage }: Props) => {
   const [distributionData, setDistributionData] = useState<TimeZipCodeDistributionEntry[]>([]);
   const loggedIn = AccountService.isLoggedIn();
+
+  const mapWrapperRef = useRef<HTMLDivElement>(null);
+  const [mapWidth, setMapWidth] = useState<number>(800);
+
+  useEffect(() => {
+    if (mapWrapperRef.current) {
+      console.log('Width is ', mapWrapperRef.current.offsetWidth);
+      setMapWidth(mapWrapperRef.current.offsetWidth);
+    }
+  }, [mapWrapperRef]);
 
   useEffect(() => {}, [distributionData]);
 
@@ -38,7 +48,9 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
   return loggedIn && distributionData !== undefined ? (
     <>
       <h2>Number of cases by postal code in Switzerland</h2>
-      <Map width={width} distributionData={distributionData} />
+      <div ref={mapWrapperRef}>
+        <Map width={mapWidth} distributionData={distributionData} />
+      </div>
     </>
   ) : (
     <div></div>
