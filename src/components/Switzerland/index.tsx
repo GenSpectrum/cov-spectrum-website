@@ -14,9 +14,7 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000 }: Prop
   const [distributionData, setDistributionData] = useState<TimeZipCodeDistributionEntry[]>([]);
   const loggedIn = AccountService.isLoggedIn();
 
-  useEffect(() => {
-    console.log('distribution data updated...');
-  }, [distributionData]);
+  useEffect(() => {}, [distributionData]);
 
   useEffect(() => {
     let isSubscribed = true;
