@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import { SampleTable } from '../components/SampleTable';
-import { Variant } from '../services/api-types';
+import { CountrySchema, Variant } from '../services/api-types';
 import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { useQueryWithEncoder } from '../helpers/use-query';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 
-const queryEncoder = new ZodQueryEncoder(SampleSelectorSchema);
+const queryEncoder = new ZodQueryEncoder(SampleSelectorSchema.extend({ country: CountrySchema.optional() }));
 
 export function getSamplePageLink(params: typeof queryEncoder['_decodedType']): string {
   return `/sample?${queryEncoder.encode(params).toString()}`;
@@ -27,9 +27,5 @@ export function SamplePage() {
     return <div>Invalid query parameters</div>;
   }
 
-  return (
-    <div>
-      <SampleTable variant={variant} matchPercentage={data.matchPercentage} country={data.country} />
-    </div>
-  );
+  return <SampleTable variant={variant} matchPercentage={data.matchPercentage} country={data.country} />;
 }

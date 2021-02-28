@@ -9,8 +9,7 @@ import { ZodQueryEncoder } from '../helpers/query-encoder';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
-const valueAndCIToString = (v: ValueWithCI): string =>
-  `${digitsForPercent(v.value)}% [${digitsForPercent(v.ciLower)}%, ${digitsForPercent(v.ciUpper)}%]`;
+const valueToString = (v: ValueWithCI): string => `${digitsForPercent(v.value)}%`;
 
 const PropsSchema = SampleSelectorSchema.merge(
   zod.object({
@@ -59,31 +58,6 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
     };
   }, [country, mutations, matchPercentage]);
 
-  const makeCIData = (
-    plotData: InternationalTimeDistributionEntry[],
-    getY: (entry: InternationalTimeDistributionEntry) => number
-  ): Plotly.Data => {
-    return {
-      type: 'scatter',
-      mode: 'lines',
-      x: plotData.map(d => d.x.week.firstDayInWeek),
-      y: plotData.map(d => digitsForPercent(getY(d))),
-      line: {
-        dash: 'dash',
-        width: 2,
-      },
-      transforms: [
-        {
-          type: 'groupby',
-          groups: plotData.map(d => d.x.country),
-          styles: colorMap,
-        },
-      ],
-      showlegend: false,
-      hoverinfo: 'x',
-    };
-  };
-
   return (
     <div style={{ height: '100%' }}>
       {!plotData && <p>Loading...</p>}
@@ -96,7 +70,7 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
               mode: 'lines+markers',
               x: plotData.map(d => d.x.week.firstDayInWeek),
               y: plotData.map(d => digitsForPercent(d.y.proportion.value)),
-              text: plotData.map(d => valueAndCIToString(d.y.proportion)),
+              text: plotData.map(d => valueToString(d.y.proportion)),
               transforms: [
                 {
                   type: 'groupby',
@@ -107,8 +81,6 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
               ],
               hovertemplate: '%{text}',
             },
-            makeCIData(plotData, d => d.y.proportion.ciLower),
-            makeCIData(plotData, d => d.y.proportion.ciUpper),
           ]}
           layout={{
             title: '',

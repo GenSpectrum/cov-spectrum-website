@@ -1,42 +1,30 @@
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
-import { Country, Variant } from '../services/api-types';
-import { CountrySelect } from './CountrySelect';
-
-export interface SelectedVariantAndCountry {
-  variant: Variant;
-  country?: Country;
-}
+import { Variant } from '../services/api-types';
 
 interface Props {
-  onVariantAndCountrySelect: (selected: SelectedVariantAndCountry, matchRatio: number) => void;
+  onVariantSelect: (selection: { variant: Variant; matchPercentage: number }) => void;
 }
 
-export const MutationLookup = ({ onVariantAndCountrySelect }: Props) => {
-  const [selectedCountry, setSelectedCountry] = useState<Country | undefined>('Switzerland');
+export const MutationLookup = ({ onVariantSelect }: Props) => {
   const [selectedMutations, setSelectedMutations] = useState('');
   const [selectedMatchPercentage, setSelectedMatchPercentage] = useState(50);
 
-  const handleSearchButtonClick = () => {
+  const onSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
     const variant = {
       mutations: selectedMutations.split(',').map(m => m.trim()),
     };
-    onVariantAndCountrySelect(
-      {
-        variant,
-        country: selectedCountry,
-      },
-      selectedMatchPercentage / 100
-    );
+    onVariantSelect({
+      variant,
+      matchPercentage: selectedMatchPercentage / 100,
+    });
   };
 
   return (
-    <Form>
-      <Form.Group controlId='countryFieldGroup'>
-        <Form.Label>Country</Form.Label>
-        <CountrySelect id='countryFieldGroup' selected={selectedCountry} onSelect={setSelectedCountry} />
-      </Form.Group>
+    <Form onSubmit={onSubmit}>
       <Form.Group controlId='mutationsFieldGroup'>
         <Form.Label>Mutations (comma-separated and case-sensitive)</Form.Label>
         <Form.Control
@@ -51,7 +39,7 @@ export const MutationLookup = ({ onVariantAndCountrySelect }: Props) => {
         <span style={{ marginLeft: '30px' }}>{selectedMatchPercentage}%</span>
         <Form.Control type='range' onChange={ev => setSelectedMatchPercentage(+ev.target.value)} />
       </Form.Group>
-      <Button variant='primary' onClick={handleSearchButtonClick}>
+      <Button type='submit' variant='primary'>
         Search
       </Button>
     </Form>

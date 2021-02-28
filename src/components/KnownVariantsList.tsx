@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Form, Table } from 'react-bootstrap';
+import React, { useEffect, useState } from 'react';
+import { Button, Table } from 'react-bootstrap';
 import { getVariants } from '../services/api';
-import { Variant, Country } from '../services/api-types';
-import { CountrySelect } from './CountrySelect';
+import { Country, Variant } from '../services/api-types';
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -10,12 +9,12 @@ export interface SelectedVariantAndCountry {
 }
 
 interface Props {
-  onVariantAndCountrySelect: (selected: SelectedVariantAndCountry) => void;
+  country: Country;
+  onVariantSelect: (variant: Variant) => void;
 }
 
-export const KnownVariantsList = ({ onVariantAndCountrySelect }: Props) => {
+export const KnownVariantsList = ({ country, onVariantSelect }: Props) => {
   const [variants, setVariants] = useState<Variant[]>();
-  const [selectedCountry, setSelectedCountry] = useState<Country | undefined>('Switzerland');
 
   useEffect(() => {
     let isSubscribed = true;
@@ -29,51 +28,36 @@ export const KnownVariantsList = ({ onVariantAndCountrySelect }: Props) => {
     };
   }, []);
 
-  const handleVariantSelect = (variant: Variant) => {
-    onVariantAndCountrySelect({
-      variant,
-      country: selectedCountry,
-    });
-  };
+  if (!variants) {
+    return <p>Loading...</p>;
+  }
 
   return (
-    <>
-      <Form>
-        <Form.Group controlId='countryField'>
-          <Form.Label>Country</Form.Label>
-          <CountrySelect id='countryField' selected={selectedCountry} onSelect={setSelectedCountry} />
-        </Form.Group>
-      </Form>
-      {variants ? (
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Variant</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {variants.map(d => (
-              <tr key={d.name}>
-                <td>{d.name}</td>
-                <td>
-                  <Button
-                    onClick={() => {
-                      handleVariantSelect(d);
-                    }}
-                    variant='outline-secondary'
-                    size='sm'
-                  >
-                    Show Details
-                  </Button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      ) : (
-        <p>Loading...</p>
-      )}
-    </>
+    <Table striped bordered hover>
+      <thead>
+        <tr>
+          <th>Variant</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {variants.map(d => (
+          <tr key={d.name}>
+            <td>{d.name}</td>
+            <td>
+              <Button
+                onClick={() => {
+                  onVariantSelect(d);
+                }}
+                variant='outline-secondary'
+                size='sm'
+              >
+                Show Details
+              </Button>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
   );
 };
