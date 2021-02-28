@@ -15,11 +15,16 @@ import bbox from '@turf/bbox';
 import relief from './relief.jpg';
 import geoJson from './PLZ10.json';
 
+
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema> & {width?: number};
 
+//adjust based on the wrapper padding
+const PADDING_SCALE = 1;
+// const WIDTH_ADJUST = 0;
+const WIDTH_ADJUST = 16 * 2 * PADDING_SCALE;
 const Wrapper = styled.div`
-  padding: 1rem 1rem 1rem 1rem;
+  padding: ${PADDING_SCALE}rem ${PADDING_SCALE}rem ${PADDING_SCALE}rem 1rem;
 `;
 
 const Switzerland = ({ country, mutations, matchPercentage, width = 1000}: Props) => {
@@ -31,8 +36,8 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000}: Props
     console.log('distribution data updated...');
   }, [distributionData]);
 
-  const height = ((maxY - minY) / (maxX - minX)) * width;
-  const x = scaleLinear().range([0, width]).domain([minX, maxX]);
+  const height = ((maxY - minY) / (maxX - minX)) * (width - WIDTH_ADJUST);
+  const x = scaleLinear().range([0, (width - WIDTH_ADJUST)]).domain([minX, maxX]);
   const y = scaleLinear().range([0, height]).domain([maxY, minY]);
   // Custom cartesisian projection
   // https://bl.ocks.org/mbostock/6216797
@@ -80,7 +85,7 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 1000}: Props
     <>
       <h2>Number of cases by postal code in Switzerland</h2>
       <Wrapper>
-        <div style={{ position: 'relative', width, height }}>
+        <div style={{ position: 'relative', width: width - WIDTH_ADJUST, height }}>
           <img src={relief} style={{ opacity: 0.4, width: '100%', height: 'auto' }} alt='' />
           <svg width={width} height={height} style={{ position: 'absolute', top: 0, left: 0 }}>
             {geoJson.features.map(feature => {
