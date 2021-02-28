@@ -47,7 +47,7 @@ const Switzerland = ({ country, mutations, matchPercentage }: Props) => {
 
   return loggedIn && distributionData !== undefined ? (
     <>
-      <h2>Number of cases by postal code in Switzerland</h2>
+      {/* <h4>Number of cases by postal code</h4> */}
       <div ref={mapWrapperRef}>
         <Map width={mapWidth} distributionData={distributionData} />
       </div>

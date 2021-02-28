@@ -5,6 +5,7 @@ import { VariantHeader } from '../components/VariantHeader';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { NamedSection } from '../components/NamedSection';
+import Switzerland from '../components/Switzerland';
 
 interface Props {
   country: Country;
@@ -30,9 +31,12 @@ export const FocusPage = (props: Props) => {
       <NamedSection title='International comparison'>
         <InternationalComparison {...props} />
       </NamedSection>
-      <NamedSection title='Geography'>
-        <p>Variant map goes here</p>
-      </NamedSection>
+      {props.country === 'Switzerland' && (
+        <NamedSection title='Geography'>
+          <p>Number of cases by postal code</p>
+          <Switzerland {...plotProps} />
+        </NamedSection>
+      )}
     </>
   );
 };
