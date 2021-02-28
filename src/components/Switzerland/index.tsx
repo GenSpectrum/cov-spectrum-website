@@ -4,6 +4,7 @@ import { TimeZipCodeDistributionEntry } from '../../services/api-types';
 import { AccountService } from '../../services/AccountService';
 import * as zod from 'zod';
 import { SampleSelectorSchema } from '../../helpers/sample-selector';
+import { useResizeDetector } from 'react-resize-detector';
 
 import Map from './Map';
 
@@ -13,16 +14,7 @@ type Props = zod.infer<typeof PropsSchema> & { width?: number };
 const Switzerland = ({ country, mutations, matchPercentage }: Props) => {
   const [distributionData, setDistributionData] = useState<TimeZipCodeDistributionEntry[]>([]);
   const loggedIn = AccountService.isLoggedIn();
-
-  const mapWrapperRef = useRef<HTMLDivElement>(null);
-  const [mapWidth, setMapWidth] = useState<number>(800);
-
-  useEffect(() => {
-    if (mapWrapperRef.current) {
-      console.log('Width is ', mapWrapperRef.current.offsetWidth);
-      setMapWidth(mapWrapperRef.current.offsetWidth);
-    }
-  }, [mapWrapperRef]);
+  const { width, height, ref } = useResizeDetector();
 
   useEffect(() => {}, [distributionData]);
 
@@ -47,13 +39,13 @@ const Switzerland = ({ country, mutations, matchPercentage }: Props) => {
 
   return loggedIn && distributionData !== undefined ? (
     <>
-      {/* <h4>Number of cases by postal code</h4> */}
-      <div ref={mapWrapperRef}>
-        <Map width={mapWidth} distributionData={distributionData} />
+      <div ref={ref as React.MutableRefObject<HTMLInputElement>}>
+        {/* <h4>Number of cases by postal code</h4> */}
+        <Map width={width ?? 1000} distributionData={distributionData} />
       </div>
     </>
   ) : (
-    <div></div>
+    <div>Please log in to view the geographical distribution of cases.</div>
   );
 };
 export default Switzerland;
