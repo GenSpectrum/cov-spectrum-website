@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { getVariants } from '../services/api';
 import { Country, Variant, Selection } from '../services/api-types';
-import styled from 'styled-components';
 
 export interface SelectedVariantAndCountry {
   variant: Variant;

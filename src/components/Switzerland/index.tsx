@@ -16,8 +16,6 @@ const Switzerland = ({ country, mutations, matchPercentage }: Props) => {
   const loggedIn = AccountService.isLoggedIn();
   const { width, height, ref } = useResizeDetector();
 
-  useEffect(() => {}, [distributionData]);
-
   useEffect(() => {
     let isSubscribed = true;
     const controller = new AbortController();
@@ -29,7 +27,7 @@ const Switzerland = ({ country, mutations, matchPercentage }: Props) => {
         }
       })
       .catch(e => {
-        console.log('Called fetch data error', e);
+        console.log('Error fetching data in Switzerland map');
       });
     return () => {
       isSubscribed = false;

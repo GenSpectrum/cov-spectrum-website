@@ -4,7 +4,6 @@ import { scaleLinear } from 'd3-scale';
 import ReactTooltip from 'react-tooltip';
 import { TimeZipCodeDistributionEntry } from '../../services/api-types';
 import { scaleQuantile } from 'd3-scale';
-
 import styled from 'styled-components';
 
 import bbox from '@turf/bbox';
@@ -31,7 +30,6 @@ const Map = ({ width, distributionData }: Props) => {
     .range([0, width - WIDTH_ADJUST])
     .domain([minX, maxX]);
   const y = scaleLinear().range([0, height]).domain([maxY, minY]);
-  // Custom cartesisian projection
   // https://bl.ocks.org/mbostock/6216797
   const projection = geoTransform({
     point: function (px, py) {
