@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useRef, useState, useEffect} from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { getSamplePageLink } from '../pages/SamplePage';
@@ -16,6 +16,16 @@ interface Props {
 }
 
 export const VariantDashboard = ({ country, matchPercentage, variant }: Props) => {
+  const mapWrapperRef = useRef<HTMLDivElement>(null);
+  const [mapWidth, setMapWidth] = useState<number>(800)
+
+  useEffect(() => {
+    if (mapWrapperRef != null && mapWrapperRef.current) {
+      console.log("Width is ", mapWrapperRef.current.offsetWidth)
+      setMapWidth(mapWrapperRef.current.offsetWidth)
+    }
+  }, [mapWrapperRef])
+
   return (
     <>
       <div style={{ display: 'flex' }}>
@@ -49,11 +59,17 @@ export const VariantDashboard = ({ country, matchPercentage, variant }: Props) =
         The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
         mutations.
       </p>
-      <Switzerland
-        country={country}
-        mutations={variant.mutations}
-        matchPercentage={matchPercentage}
-      />
+      <div ref={mapWrapperRef}>
+        {
+          mapWidth && 
+          <Switzerland
+            country={country}
+            mutations={variant.mutations}
+            matchPercentage={matchPercentage}
+            width={mapWidth}
+          />
+        }
+      </div>
 
       <Container fluid='md'>
         <Row style={{ height: '500px' }}>

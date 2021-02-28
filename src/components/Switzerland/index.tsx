@@ -22,7 +22,7 @@ const Wrapper = styled.div`
   padding: 1rem 1rem 1rem 1rem;
 `;
 
-const Switzerland = ({ country, mutations, matchPercentage, width = 800}: Props) => {
+const Switzerland = ({ country, mutations, matchPercentage, width = 1000}: Props) => {
   const [minX, minY, maxX, maxY] = bbox(geoJson);
   const [distributionData, setDistributionData] = useState<TimeZipCodeDistributionEntry[]>([]);
   const loggedIn = AccountService.isLoggedIn();
@@ -74,6 +74,7 @@ const Switzerland = ({ country, mutations, matchPercentage, width = 800}: Props)
       controller.abort();
     };
   }, [country, mutations, matchPercentage]);
+
 
   return loggedIn && distributionData !== undefined ? (
     <>
