@@ -33,7 +33,6 @@ export const FocusPage = (props: Props) => {
       </NamedSection>
       {props.country === 'Switzerland' && (
         <NamedSection title='Geography'>
-          <p>Number of cases by postal code</p>
           <Switzerland {...plotProps} />
         </NamedSection>
       )}

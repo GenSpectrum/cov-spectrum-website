@@ -6,16 +6,11 @@ import { Footer } from './Footer';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { SamplePage } from './pages/SamplePage';
 import { LoginPage } from './pages/LoginPage';
-import { Country, Variant } from './services/api-types';
+import { Country, Selection } from './services/api-types';
 import { FocusPage } from './pages/FocusPage';
 import { AboutPage } from './pages/AboutPage';
 import { scrollableContainerStyle } from './helpers/scrollable-container';
 import { FocusEmptyPage } from './pages/FocusEmptyPage';
-
-interface Selection {
-  variant: Variant;
-  matchPercentage: number;
-}
 
 export const OuterWrapper = styled.div`
   display: grid;
@@ -69,7 +64,7 @@ export const FocusWrapper = styled.div`
 `;
 
 export const App = () => {
-  const [selection, setSelection] = useState<Selection>();
+  const [selection, setSelection] = useState<Selection | undefined>(undefined);
   const [country, setCountry] = useState<Country>('Switzerland');
 
   return (
@@ -94,7 +89,7 @@ export const App = () => {
         </Route>
         <Route path='/variant'>
           <ExploreWrapper>
-            <ExplorePage country={country} onVariantSelect={setSelection} />
+            <ExplorePage country={country} onVariantSelect={setSelection} selection={selection} />
           </ExploreWrapper>
           <FocusWrapper>
             {selection && <FocusPage {...selection} country={country} />}

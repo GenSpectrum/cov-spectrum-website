@@ -40,7 +40,7 @@ const Switzerland = ({ country, mutations, matchPercentage }: Props) => {
   return loggedIn && distributionData !== undefined ? (
     <>
       <div ref={ref as React.MutableRefObject<HTMLInputElement>}>
-        {/* <h4>Number of cases by postal code</h4> */}
+        <p>Number of cases by postal code (PLZ)</p>
         <Map width={width ?? 1000} distributionData={distributionData} />
       </div>
     </>
