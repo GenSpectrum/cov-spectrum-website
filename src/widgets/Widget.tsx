@@ -21,7 +21,10 @@ export class Widget<
     this.ShareableComponent = props => {
       const { external: wrapperProps, remaining: componentProps } = pickExternalProps<P>(props);
       return (
-        <WidgetWrapper {...wrapperProps} shareUrl={`${this.urlName}?${this.propsEncoder.encode(props)}`}>
+        <WidgetWrapper
+          {...wrapperProps}
+          getShareUrl={() => `${this.urlName}?${this.propsEncoder.encode(props)}`}
+        >
           <this.Component {...componentProps} />
         </WidgetWrapper>
       );

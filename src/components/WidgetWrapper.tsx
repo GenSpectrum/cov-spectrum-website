@@ -5,7 +5,7 @@ const host = process.env.REACT_APP_WEBSITE_HOST;
 
 // InternalProps are passed by Widget
 export interface InternalProps {
-  shareUrl: string;
+  getShareUrl: () => string;
   children: React.ReactChild | React.ReactChild[];
 }
 
@@ -33,18 +33,19 @@ export function pickExternalProps<T extends { [K in keyof ExternalProps]?: never
 
 type Props = InternalProps & ExternalProps;
 
-export function WidgetWrapper({ shareUrl, children, toolbarChildren, height }: Props) {
-  const [show, setShow] = useState(false);
-  const handleClose = () => setShow(false);
-  const handleShow = () => setShow(true);
+export function WidgetWrapper({ getShareUrl, children, toolbarChildren, height }: Props) {
+  const [shownEmbeddingCode, setShownEmbeddingCode] = useState<string>();
 
-  const embeddingCode = `<iframe src="${host}/embed/${shareUrl}" width="800" height="500" frameborder="0"></iframe>`;
+  const onShareClick = () => {
+    const embeddingCode = `<iframe src="${host}/embed/${getShareUrl()}" width="800" height="500" frameborder="0"></iframe>`;
+    setShownEmbeddingCode(embeddingCode);
+  };
 
   return (
     <>
       <div style={{ position: 'relative' }}>
         <ButtonToolbar className='mb-1'>
-          <Button variant='outline-primary' size='sm' onClick={handleShow}>
+          <Button variant='outline-primary' size='sm' onClick={onShareClick}>
             Share
           </Button>
           {toolbarChildren}
@@ -52,13 +53,13 @@ export function WidgetWrapper({ shareUrl, children, toolbarChildren, height }: P
         <div style={{ height }}>{children}</div>
       </div>
 
-      <Modal size='lg' show={show} onHide={handleClose}>
+      <Modal size='lg' show={!!shownEmbeddingCode} onHide={() => setShownEmbeddingCode(undefined)}>
         <Modal.Header closeButton>
           <Modal.Title>Embed widget on your website</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <p>Copy the following code into your website to embed the widget.</p>
-          <Form.Control as='textarea' value={embeddingCode} rows={7} readOnly />
+          <Form.Control as='textarea' value={shownEmbeddingCode} rows={7} readOnly />
         </Modal.Body>
       </Modal>
     </>
