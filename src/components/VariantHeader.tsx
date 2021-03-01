@@ -1,7 +1,5 @@
 import React from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { getSamplePageLink } from '../pages/SamplePage';
 import { AccountService } from '../services/AccountService';
 import { Country, Variant } from '../services/api-types';
 import { NextcladeService } from '../services/NextcladeService';
