@@ -10,6 +10,7 @@ import {
   SampleResultList,
   SampleResultListSchema,
   TimeDistributionEntrySchema,
+  TimeZipCodeDistributionEntrySchema,
   Variant,
   VariantSchema,
 } from './api-types';
@@ -18,6 +19,7 @@ export enum DistributionType {
   Age = 'Age',
   Time = 'Time',
   International = 'International',
+  TimeZipCode = 'TimeZipCode',
 }
 
 const HOST = process.env.REACT_APP_SERVER_HOST;
@@ -50,6 +52,8 @@ const getVariantEndpoint = (distributionType: DistributionType) => {
       return '/plot/variant/time-distribution';
     case 'International':
       return '/plot/variant/international-time-distribution';
+    case DistributionType.TimeZipCode:
+      return '/plot/variant/time-zip-code-distribution';
     default:
       throw new Error(`unknown distributionType ${distributionType}`);
   }
@@ -59,6 +63,7 @@ const entrySchemaByDistributionType = {
   [DistributionType.Age]: AgeDistributionEntrySchema,
   [DistributionType.Time]: TimeDistributionEntrySchema,
   [DistributionType.International]: InternationalTimeDistributionEntrySchema,
+  [DistributionType.TimeZipCode]: TimeZipCodeDistributionEntrySchema,
 };
 
 type EntryType<D extends DistributionType> = zod.infer<typeof entrySchemaByDistributionType[D]>;
@@ -164,4 +169,5 @@ export const getCountries = (): Promise<Country[]> => {
     .then(response => response.json())
     .then(data => zod.array(CountrySchema).parse(data));
 };
+
 export const fetchTimeDistributionData = () => {};

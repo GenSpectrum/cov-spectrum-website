@@ -99,13 +99,13 @@ export const InternationalTimeDistributionEntrySchema = zod.object({
 });
 
 export const TimeZipCodeDistributionEntrySchema = zod.object({
-  x: zod
-    .object({
-      week: YearWeekWithDaySchema,
-      zip_code: zod.string(),
-    })
-    .transform(v => ({ week: v.week, zipCode: v.zip_code })),
-  y: CountAndProportionWithCISchema,
+  x: zod.object({
+    week: YearWeekWithDaySchema,
+    zipCode: zod.string(),
+  }),
+  y: zod.object({
+    count: zod.number(),
+  }),
 });
 
 export const GrowingVariantSchema = zod.object({
@@ -121,7 +121,10 @@ export const GrowingVariantSchema = zod.object({
 export const LoginResponseSchema = zod.object({
   token: zod.string(),
 });
-
+export interface Selection {
+  variant: Variant;
+  matchPercentage: number;
+}
 // TypeScript types from schemas
 
 export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { getVariants } from '../services/api';
-import { Country, Variant } from '../services/api-types';
+import { Country, Variant, Selection } from '../services/api-types';
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -11,9 +11,10 @@ export interface SelectedVariantAndCountry {
 interface Props {
   country: Country;
   onVariantSelect: (variant: Variant) => void;
+  selection: Selection | undefined;
 }
 
-export const KnownVariantsList = ({ country, onVariantSelect }: Props) => {
+export const KnownVariantsList = ({ country, onVariantSelect, selection }: Props) => {
   const [variants, setVariants] = useState<Variant[]>();
 
   useEffect(() => {
@@ -43,18 +44,29 @@ export const KnownVariantsList = ({ country, onVariantSelect }: Props) => {
       <tbody>
         {variants.map(d => (
           <tr key={d.name}>
-            <td>{d.name}</td>
-            <td>
-              <Button
-                onClick={() => {
-                  onVariantSelect(d);
-                }}
-                variant='outline-secondary'
-                size='sm'
-              >
-                Show Details
-              </Button>
-            </td>
+            {selection !== undefined && selection.variant.name === d.name ? (
+              <>
+                <td>
+                  <b>{d.name}</b>
+                </td>
+                <td></td>
+              </>
+            ) : (
+              <>
+                <td>{d.name}</td>
+                <td>
+                  <Button
+                    onClick={() => {
+                      onVariantSelect(d);
+                    }}
+                    variant='outline-secondary'
+                    size='sm'
+                  >
+                    Show Details
+                  </Button>
+                </td>
+              </>
+            )}
           </tr>
         ))}
       </tbody>

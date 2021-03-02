@@ -3,15 +3,15 @@ import { KnownVariantsList } from '../components/KnownVariantsList';
 import { MutationLookup } from '../components/MutationLookup';
 import { NamedSection } from '../components/NamedSection';
 import { NewVariantLookup } from '../components/NewVariantLookup';
-import { Country, Variant } from '../services/api-types';
+import { Country, Variant, Selection } from '../services/api-types';
 import { ScrollableTabs } from '../components/ScrollableTabs';
-
 interface Props {
   country: Country;
   onVariantSelect: (selection: { variant: Variant; matchPercentage: number }) => void;
+  selection: Selection | undefined;
 }
 
-export const ExplorePage = ({ country, onVariantSelect }: Props) => {
+export const ExplorePage = ({ country, onVariantSelect, selection }: Props) => {
   return (
     <ScrollableTabs
       tabs={[
@@ -24,6 +24,7 @@ export const ExplorePage = ({ country, onVariantSelect }: Props) => {
                 <KnownVariantsList
                   country={country}
                   onVariantSelect={variant => onVariantSelect({ variant, matchPercentage: 0.8 })}
+                  selection={selection}
                 />
               </NamedSection>
               <NamedSection title='Potential new variants'>
