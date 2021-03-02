@@ -10,13 +10,6 @@ import bbox from '@turf/bbox';
 import relief from './relief.jpg';
 import geoJson from './PLZ10.json';
 
-const PADDING_SCALE = 1;
-const WIDTH_ADJUST = 16 * 2 * PADDING_SCALE;
-
-const Wrapper = styled.div`
-  padding: ${PADDING_SCALE}rem ${PADDING_SCALE}rem ${PADDING_SCALE}rem 1rem;
-`;
-
 type Props = {
   width: number | undefined;
   distributionData: TimeZipCodeDistributionEntry[];
@@ -25,10 +18,8 @@ type Props = {
 const Map = ({ width, distributionData }: Props) => {
   const activeWidth = width !== undefined ? width : 0;
   const [minX, minY, maxX, maxY] = bbox(geoJson);
-  const height = ((maxY - minY) / (maxX - minX)) * (activeWidth - WIDTH_ADJUST);
-  const x = scaleLinear()
-    .range([0, activeWidth - WIDTH_ADJUST])
-    .domain([minX, maxX]);
+  const height = ((maxY - minY) / (maxX - minX)) * activeWidth;
+  const x = scaleLinear().range([0, activeWidth]).domain([minX, maxX]);
   const y = scaleLinear().range([0, height]).domain([maxY, minY]);
   // https://bl.ocks.org/mbostock/6216797
   const projection = geoTransform({
@@ -52,14 +43,14 @@ const Map = ({ width, distributionData }: Props) => {
     ]);
 
   return width !== undefined ? (
-    <Wrapper>
-      <div style={{ position: 'relative', width: width - WIDTH_ADJUST, height }}>
+    <div>
+      <div style={{ position: 'relative', width: width, height }}>
         <img src={relief} style={{ opacity: 0.4, width: '100%', height: 'auto' }} alt='' />
         <svg width={width} height={height} style={{ position: 'absolute', top: 0, left: 0 }}>
           {geoJson.features.map(feature => {
             const plz = feature.properties.PLZ;
             const cur = distributionData.find(
-              (s: TimeZipCodeDistributionEntry) => s.x.zipCode == plz.toString()
+              (s: TimeZipCodeDistributionEntry) => s.x.zipCode === plz.toString()
             );
             let caseCount: number = 0;
             if (cur !== undefined) {
@@ -79,7 +70,7 @@ const Map = ({ width, distributionData }: Props) => {
         </svg>
       </div>
       <ReactTooltip />
-    </Wrapper>
+    </div>
   ) : (
     <></>
   );
