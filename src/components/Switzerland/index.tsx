@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DistributionType, getVariantDistributionData } from '../../services/api';
 import { TimeZipCodeDistributionEntry } from '../../services/api-types';
 import { AccountService } from '../../services/AccountService';
@@ -21,7 +21,7 @@ type Props = zod.infer<typeof PropsSchema>;
 const Switzerland = ({ country, mutations, matchPercentage }: Props) => {
   const [distributionData, setDistributionData] = useState<TimeZipCodeDistributionEntry[]>([]);
   const loggedIn = AccountService.isLoggedIn();
-  const { width, height, ref } = useResizeDetector();
+  const { width, ref } = useResizeDetector();
 
   useEffect(() => {
     let isSubscribed = true;

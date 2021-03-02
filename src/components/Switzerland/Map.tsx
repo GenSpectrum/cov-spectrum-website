@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React from 'react';
 import { geoPath, geoTransform } from 'd3-geo';
 import { scaleLinear } from 'd3-scale';
 import ReactTooltip from 'react-tooltip';
 import { TimeZipCodeDistributionEntry } from '../../services/api-types';
 import { scaleQuantile } from 'd3-scale';
-import styled from 'styled-components';
 
 import bbox from '@turf/bbox';
 import relief from './relief.jpg';
