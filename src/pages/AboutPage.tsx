@@ -54,6 +54,21 @@ export const AboutPage = () => {
       You can embed all the interactive plots of CoV-Spectrum on your own website. Just click on the "Share"
       button and copy and paste the code to your page. The plots will be automatically updated whenever new
       data arrives.
+      <Question>Can I get the numbers behind the plots in a machine-readable format?</Question>
+      <p>
+        Yes! We offer an open API and will try to make as much data public and easily accessible as we are
+        allowed to. A documentation will be released soon. Please contact us if you would like to use it in
+        the meantime.
+      </p>
+      <h2>Contact</h2>
+      <p>
+        This project is developed by the{' '}
+        <a href='https://bsse.ethz.ch/cevo' target='_blank' rel='noreferrer'>
+          Computational Evolution group
+        </a>{' '}
+        at ETH Zurich. Please contact Chaoran Chen (
+        <a href='mailto:chaoran.chen@bsse.ethz.ch'>chaoran.chen@bsse.ethz.ch</a>) for any questions.
+      </p>
     </Wrapper>
   );
 };
