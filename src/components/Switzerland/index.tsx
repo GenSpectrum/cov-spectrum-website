@@ -5,11 +5,18 @@ import { AccountService } from '../../services/AccountService';
 import * as zod from 'zod';
 import { SampleSelectorSchema } from '../../helpers/sample-selector';
 import { useResizeDetector } from 'react-resize-detector';
+import styled from 'styled-components';
 
 import Map from './Map';
 
+const MAP_SIDE_PADDING = 2;
+
+const MapWrapper = styled.div`
+  padding: 1rem ${MAP_SIDE_PADDING}rem 1rem ${MAP_SIDE_PADDING}rem;
+`;
+
 const PropsSchema = SampleSelectorSchema;
-type Props = zod.infer<typeof PropsSchema> & { width?: number };
+type Props = zod.infer<typeof PropsSchema>;
 
 const Switzerland = ({ country, mutations, matchPercentage }: Props) => {
   const [distributionData, setDistributionData] = useState<TimeZipCodeDistributionEntry[]>([]);
@@ -37,9 +44,11 @@ const Switzerland = ({ country, mutations, matchPercentage }: Props) => {
 
   return loggedIn && distributionData !== undefined ? (
     <>
-      <div ref={ref as React.MutableRefObject<HTMLInputElement>}>
+      <div>
         <p>Number of cases by postal code (PLZ)</p>
-        <Map width={width} distributionData={distributionData} />
+        <MapWrapper ref={ref as React.MutableRefObject<HTMLInputElement>}>
+          <Map width={width} distributionData={distributionData} />
+        </MapWrapper>
       </div>
     </>
   ) : (
