@@ -7,7 +7,10 @@ import { ZodQueryEncoder } from '../helpers/query-encoder';
 
 const queryEncoder = new ZodQueryEncoder(SampleSelectorSchema.extend({ country: CountrySchema.optional() }));
 
-export function getSamplePageLink(params: typeof queryEncoder['_decodedType']): string {
+export type SamplePageQuery = typeof queryEncoder['_decodedType'];
+
+export function getSamplePageLink(params: SamplePageQuery): string {
+  debugger;
   return `/sample?${queryEncoder.encode(params).toString()}`;
 }
 

@@ -1,10 +1,9 @@
 import React from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { getSamplePageLink } from '../pages/SamplePage';
 import { AccountService } from '../services/AccountService';
 import { Country, Variant } from '../services/api-types';
 import { NextcladeService } from '../services/NextcladeService';
+import { LazySampleButton } from './LazySampleButton';
 
 export interface Props {
   country: Country;
@@ -43,11 +42,13 @@ export const VariantHeader = ({ country, matchPercentage, variant }: Props) => {
               {nextcladeButton}
             </OverlayTrigger>
           )}
-          <Link to={getSamplePageLink({ mutations: variant.mutations, country, matchPercentage })}>
-            <Button variant='outline-dark' size='sm'>
-              Show samples
-            </Button>
-          </Link>
+          <LazySampleButton
+            query={{ mutations: variant.mutations, country, matchPercentage }}
+            variant='outline-dark'
+            size='sm'
+          >
+            Show samples
+          </LazySampleButton>
         </div>
       </div>
 

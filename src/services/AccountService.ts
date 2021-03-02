@@ -12,7 +12,14 @@ export type JwtData = zod.infer<typeof JwtDataSchema>;
 
 const localStorageKey = 'cov-spectrum-auth';
 
+interface Auth {
+  token: string;
+  data: JwtData;
+}
+
 export class AccountService {
+  private static cachedAuth: Auth | undefined;
+
   static async login(username: string, password: string): Promise<void> {
     const response = LoginResponseSchema.parse(
       await (
@@ -22,16 +29,18 @@ export class AccountService {
         })
       ).json()
     );
-    console.log('Login response is ', response);
+
     localStorage.setItem(localStorageKey, response.token);
+    this.updateCachedAuth();
   }
 
   static logout() {
     localStorage.removeItem(localStorageKey);
+    this.updateCachedAuth();
   }
 
   static getJwt(): string | undefined {
-    const auth = AccountService.getAuth();
+    const auth = AccountService.cachedAuth;
     if (auth && auth.data.exp <= new Date()) {
       AccountService.logout();
       window.location.href = '/login?expired';
@@ -45,7 +54,7 @@ export class AccountService {
   }
 
   static getUsername(): string | undefined {
-    return AccountService.getAuth()?.data.sub;
+    return AccountService.cachedAuth?.data.sub;
   }
 
   static async createTemporaryJwt(endpoint: string): Promise<string> {
@@ -58,9 +67,9 @@ export class AccountService {
     return response.token;
   }
 
-  private static getAuth(): { token: string; data: JwtData } | undefined {
+  static updateCachedAuth() {
     const token = localStorage.getItem(localStorageKey);
-    return token ? { token, data: this.parseJwt(token) } : undefined;
+    this.cachedAuth = token ? { token, data: this.parseJwt(token) } : undefined;
   }
 
   private static parseJwt(token: string): JwtData {
@@ -76,3 +85,5 @@ export class AccountService {
     return JwtDataSchema.parse(JSON.parse(jsonPayload));
   }
 }
+
+AccountService.updateCachedAuth();

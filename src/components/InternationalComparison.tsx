@@ -1,14 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import Table from 'react-bootstrap/Table';
-import { Utils } from '../services/Utils';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
+import Table from 'react-bootstrap/Table';
+import { AccountService } from '../services/AccountService';
 import { DistributionType, getVariantDistributionData } from '../services/api';
 import { Country, InternationalTimeDistributionEntry, Variant } from '../services/api-types';
-import { getSamplePageLink } from '../pages/SamplePage';
-import { AccountService } from '../services/AccountService';
 import { NextcladeService } from '../services/NextcladeService';
+import { Utils } from '../services/Utils';
+import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
+import { LazySampleButton } from './LazySampleButton';
 
 interface Props {
   country: Country;
@@ -104,11 +103,14 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
                 Show on Nextclade
               </Button>
             )}
-            <Link to={getSamplePageLink({ mutations: variant.mutations, matchPercentage })}>
-              <Button variant='outline-primary' size='sm' className='ml-1'>
-                Show all samples
-              </Button>
-            </Link>
+            <LazySampleButton
+              query={{ mutations: variant.mutations, matchPercentage }}
+              variant='outline-primary'
+              size='sm'
+              className='ml-1'
+            >
+              Show all samples
+            </LazySampleButton>
           </>
         }
       />
@@ -146,17 +148,17 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
                           Show on Nextclade
                         </Button>
                       )}
-                      <Link
-                        to={getSamplePageLink({
+                      <LazySampleButton
+                        query={{
                           mutations: variant.mutations,
                           matchPercentage,
                           country: c.country,
-                        })}
+                        }}
+                        variant='outline-dark'
+                        size='sm'
                       >
-                        <Button variant='outline-dark' size='sm'>
-                          Show samples
-                        </Button>
-                      </Link>
+                        Show samples
+                      </LazySampleButton>
                     </td>
                   </tr>
                 ))}
