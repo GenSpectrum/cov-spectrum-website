@@ -27,7 +27,7 @@ export const ExplorePage = ({ country, onVariantSelect, selection }: Props) => {
                   selection={selection}
                 />
               </NamedSection>
-              <NamedSection title='Potential new variants'>
+              <NamedSection title='Potential interesting variants'>
                 <NewVariantLookup
                   country={country}
                   onVariantSelect={variant => onVariantSelect({ variant, matchPercentage: 1 })}
