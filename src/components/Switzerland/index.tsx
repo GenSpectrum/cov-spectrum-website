@@ -39,7 +39,7 @@ const Switzerland = ({ country, mutations, matchPercentage }: Props) => {
     <>
       <div ref={ref as React.MutableRefObject<HTMLInputElement>}>
         <p>Number of cases by postal code (PLZ)</p>
-        <Map width={width ?? 1000} distributionData={distributionData} />
+        <Map width={width} distributionData={distributionData} />
       </div>
     </>
   ) : (

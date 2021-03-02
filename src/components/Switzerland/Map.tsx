@@ -18,16 +18,16 @@ const Wrapper = styled.div`
 `;
 
 type Props = {
-  width: number;
+  width: number | undefined;
   distributionData: TimeZipCodeDistributionEntry[];
 };
 
 const Map = ({ width, distributionData }: Props) => {
+  const activeWidth = width !== undefined ? width : 0;
   const [minX, minY, maxX, maxY] = bbox(geoJson);
-  const height = ((maxY - minY) / (maxX - minX)) * (width - WIDTH_ADJUST);
-
+  const height = ((maxY - minY) / (maxX - minX)) * (activeWidth - WIDTH_ADJUST);
   const x = scaleLinear()
-    .range([0, width - WIDTH_ADJUST])
+    .range([0, activeWidth - WIDTH_ADJUST])
     .domain([minX, maxX]);
   const y = scaleLinear().range([0, height]).domain([maxY, minY]);
   // https://bl.ocks.org/mbostock/6216797
@@ -51,7 +51,7 @@ const Map = ({ width, distributionData }: Props) => {
       '#782618',
     ]);
 
-  return (
+  return width !== undefined ? (
     <Wrapper>
       <div style={{ position: 'relative', width: width - WIDTH_ADJUST, height }}>
         <img src={relief} style={{ opacity: 0.4, width: '100%', height: 'auto' }} alt='' />
@@ -80,10 +80,9 @@ const Map = ({ width, distributionData }: Props) => {
       </div>
       <ReactTooltip />
     </Wrapper>
+  ) : (
+    <></>
   );
 };
 
-export const isEqual = (prevProps: Props, nextProps: Props) =>
-  prevProps.width === nextProps.width && prevProps.distributionData === nextProps.distributionData;
-
-export default React.memo(Map, isEqual);
+export default React.memo(Map);
