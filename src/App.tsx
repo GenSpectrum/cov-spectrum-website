@@ -80,14 +80,14 @@ export const App = () => {
 
       <Switch>
         <Route exact path='/'>
-          <Redirect to='/variant' />
+          <Redirect to='/explore' />
         </Route>
         <Route path='/login'>
           <LoginWrapper>
             <LoginPage />
           </LoginWrapper>
         </Route>
-        <Route path='/variant'>
+        <Route path='/explore'>
           <ExploreWrapper>
             <ExplorePage country={country} onVariantSelect={setSelection} selection={selection} />
           </ExploreWrapper>

@@ -20,13 +20,13 @@ export const Header = ({ countryProps }: Props) => {
 
   return (
     <Navbar bg='light' expand='md' style={{ height: '100%' }}>
-      <Navbar.Brand as={Link} to='/variant'>
+      <Navbar.Brand as={Link} to='/'>
         CoV-Spectrum
       </Navbar.Brand>
       <Navbar.Toggle aria-controls='basic-navbar-nav' />
       <Navbar.Collapse>
         <Nav className='ml-4 mr-auto'>
-          <Route path='/variant'>
+          <Route path='/explore'>
             <Form inline>
               <Form.Label htmlFor='countrySelect' className='mr-2'>
                 Country
