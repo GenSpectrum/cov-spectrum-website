@@ -27,7 +27,11 @@ export const fullGridStyle = css`
   grid-column: left / right;
 `;
 
-export const FullContentWrapper = styled.div`
+export const RawFullContentWrapper = styled.div`
+  ${fullGridStyle}
+`;
+
+export const ScrollableFullContentWrapper = styled.div`
   ${scrollableContainerStyle}
   ${fullGridStyle}
 `;

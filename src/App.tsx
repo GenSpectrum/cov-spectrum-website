@@ -4,7 +4,7 @@ import { Footer } from './Footer';
 import { Header } from './Header';
 import {
   FooterWrapper,
-  FullContentWrapper,
+  ScrollableFullContentWrapper,
   HeaderWrapper,
   LoginWrapper,
   OuterWrapper,
@@ -34,14 +34,14 @@ export const App = () => {
           <ExploreFocusSplit />
         </Route>
         <Route path='/sample'>
-          <FullContentWrapper>
+          <ScrollableFullContentWrapper>
             <SamplePage />
-          </FullContentWrapper>
+          </ScrollableFullContentWrapper>
         </Route>
         <Route path='/about'>
-          <FullContentWrapper>
+          <ScrollableFullContentWrapper>
             <AboutPage />
-          </FullContentWrapper>
+          </ScrollableFullContentWrapper>
         </Route>
       </Switch>
 
