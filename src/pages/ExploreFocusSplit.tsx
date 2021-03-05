@@ -20,7 +20,6 @@ export const FocusWrapper = styled.div`
 
 export const ExploreFocusSplit = () => {
   const { country } = useParams<{ country: string }>();
-  console.log('DEBUG ExploreFocusSplit country', country);
 
   const [selection, setSelection] = useState<Selection | undefined>(undefined);
 
