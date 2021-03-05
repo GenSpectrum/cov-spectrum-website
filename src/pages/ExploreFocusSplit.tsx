@@ -7,17 +7,7 @@ import { scrollableContainerStyle } from '../helpers/scrollable-container';
 import { ExplorePage } from '../pages/ExplorePage';
 import { FocusEmptyPage } from '../pages/FocusEmptyPage';
 import { FocusPage } from '../pages/FocusPage';
-
-export const ExploreWrapper = styled.div`
-  grid-area: left;
-  overflow: hidden;
-  border-right: 1px solid #dee2e6;
-`;
-
-export const FocusWrapper = styled.div`
-  ${scrollableContainerStyle}
-  grid-area: right;
-`;
+import { ExploreWrapper, FocusWrapper } from '../helpers/app-layout';
 
 const queryEncoder = new ZodQueryEncoder(VariantSelectorSchema);
 
