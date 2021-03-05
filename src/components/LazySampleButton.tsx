@@ -1,19 +1,33 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
 import { Button, ButtonProps } from 'react-bootstrap';
-import { getSamplePageLink, SamplePageQuery } from '../pages/GlobalSamplePage';
+import { useHistory } from 'react-router-dom';
+import { VariantSelector } from '../helpers/sample-selector';
+import { getFocusPageLink } from '../pages/ExploreFocusSplit';
+import { getGlobalSamplePageLink } from '../pages/GlobalSamplePage';
+import { Country } from '../services/api-types';
 
 interface Props extends ButtonProps {
-  query: SamplePageQuery;
+  query: {
+    variantSelector: VariantSelector;
+    country: Country | undefined;
+  };
 }
 
-export const LazySampleButton = ({ query, onClick: onClickFromProps, ...buttonProps }: Props) => {
+export const LazySampleButton = ({
+  query: { variantSelector, country },
+  onClick: onClickFromProps,
+  ...buttonProps
+}: Props) => {
   const history = useHistory();
   return (
     <Button
       {...buttonProps}
       onClick={ev => {
-        history.push(getSamplePageLink(query));
+        if (country) {
+          history.push(getFocusPageLink(variantSelector, country, '/samples'));
+        } else {
+          history.push(getGlobalSamplePageLink(variantSelector));
+        }
         onClickFromProps?.(ev);
       }}
     />

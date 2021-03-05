@@ -7,13 +7,26 @@ import { DeepFocusPage } from '../pages/DeepFocusPage';
 import { ExplorePage } from '../pages/ExplorePage';
 import { FocusEmptyPage } from '../pages/FocusEmptyPage';
 import { FocusPage } from '../pages/FocusPage';
+import { Country } from '../services/api-types';
 
 const queryEncoder = new ZodQueryEncoder(VariantSelectorSchema);
+
+export function getFocusPageLink(
+  variantSelector: VariantSelector,
+  country: Country,
+  deepFocusPath: string = ''
+) {
+  return (
+    generatePath(`/explore/${country}/variants/:variantSelector`, {
+      variantSelector: queryEncoder.encode(variantSelector).toString(),
+    }) + deepFocusPath
+  );
+}
 
 export const ExploreFocusSplit = () => {
   const { country } = useParams<{ country: string }>();
 
-  const { path, url } = useRouteMatch();
+  const { path } = useRouteMatch();
   const variantRouteMatch = useRouteMatch<{ variantSelector: string }>(`${path}/variants/:variantSelector`);
   const encodedVariantSelector = variantRouteMatch?.params.variantSelector;
   const variantSelector = useMemo(() => {
@@ -28,17 +41,13 @@ export const ExploreFocusSplit = () => {
 
   const history = useHistory();
 
-  const onVariantSelect = (variantSelector: VariantSelector) => {
-    history.push(
-      generatePath(`${url}/variants/:variantSelector`, {
-        variantSelector: queryEncoder.encode(variantSelector).toString(),
-      })
-    );
-  };
-
   const explorePage = (
     <ExploreWrapper>
-      <ExplorePage country={country} onVariantSelect={onVariantSelect} selection={variantSelector} />
+      <ExplorePage
+        country={country}
+        onVariantSelect={variant => history.push(getFocusPageLink(variant, country))}
+        selection={variantSelector}
+      />
     </ExploreWrapper>
   );
 

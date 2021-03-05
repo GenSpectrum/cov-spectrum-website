@@ -104,12 +104,12 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
               </Button>
             )}
             <LazySampleButton
-              query={{ mutations: variant.mutations, matchPercentage }}
+              query={{ variantSelector: { variant, matchPercentage }, country: undefined }}
               variant='outline-primary'
               size='sm'
               className='ml-1'
             >
-              Show all samples
+              Show worldwide samples
             </LazySampleButton>
           </>
         }
@@ -149,11 +149,7 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
                         </Button>
                       )}
                       <LazySampleButton
-                        query={{
-                          mutations: variant.mutations,
-                          matchPercentage,
-                          country: c.country,
-                        }}
+                        query={{ variantSelector: { variant, matchPercentage }, country: c.country }}
                         variant='outline-dark'
                         size='sm'
                       >
