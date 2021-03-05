@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Overlay, Popover, Table, Tooltip } from 'react-bootstrap';
+import { Overlay, Popover, Table } from 'react-bootstrap';
 import { getSamples } from '../services/api';
 import { Country, Sample, Variant } from '../services/api-types';
 
