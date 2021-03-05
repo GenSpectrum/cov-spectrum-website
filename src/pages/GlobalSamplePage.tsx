@@ -10,10 +10,10 @@ const queryEncoder = new ZodQueryEncoder(SampleSelectorSchema.extend({ country: 
 export type SamplePageQuery = typeof queryEncoder['_decodedType'];
 
 export function getSamplePageLink(params: SamplePageQuery): string {
-  return `/sample?${queryEncoder.encode(params).toString()}`;
+  return `/global-samples?${queryEncoder.encode(params).toString()}`;
 }
 
-export function SamplePage() {
+export const GlobalSamplePage = () => {
   const data = useQueryWithEncoder(queryEncoder);
 
   const variant: Variant | undefined = useMemo(
@@ -38,4 +38,4 @@ export function SamplePage() {
       <SampleTable variant={variant} matchPercentage={data.matchPercentage} country={data.country} />
     </>
   );
-}
+};

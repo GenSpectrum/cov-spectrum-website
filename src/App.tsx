@@ -12,7 +12,7 @@ import {
 import { AboutPage } from './pages/AboutPage';
 import { ExploreFocusSplit } from './pages/ExploreFocusSplit';
 import { LoginPage } from './pages/LoginPage';
-import { SamplePage } from './pages/SamplePage';
+import { GlobalSamplePage } from './pages/GlobalSamplePage';
 
 export const App = () => {
   return (
@@ -33,9 +33,9 @@ export const App = () => {
         <Route path='/explore/:country'>
           <ExploreFocusSplit />
         </Route>
-        <Route path='/sample'>
+        <Route path='/global-samples'>
           <ScrollableFullContentWrapper>
-            <SamplePage />
+            <GlobalSamplePage />
           </ScrollableFullContentWrapper>
         </Route>
         <Route path='/about'>

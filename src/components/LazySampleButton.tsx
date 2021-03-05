@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Button, ButtonProps } from 'react-bootstrap';
-import { getSamplePageLink, SamplePageQuery } from '../pages/SamplePage';
+import { getSamplePageLink, SamplePageQuery } from '../pages/GlobalSamplePage';
 
 interface Props extends ButtonProps {
   query: SamplePageQuery;
