@@ -29,5 +29,13 @@ export function SamplePage() {
     return <div>Invalid query parameters</div>;
   }
 
-  return <SampleTable variant={variant} matchPercentage={data.matchPercentage} country={data.country} />;
+  return (
+    <>
+      <h3>Samples {data.country && 'in ' + data.country}</h3>
+      <p>
+        <b>Mutations:</b> {variant.mutations.join(', ')}
+      </p>
+      <SampleTable variant={variant} matchPercentage={data.matchPercentage} country={data.country} />
+    </>
+  );
 }

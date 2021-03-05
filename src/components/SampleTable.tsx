@@ -88,12 +88,6 @@ export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
 
   return (
     <>
-      <h3>Samples {country && 'in ' + country}</h3>
-
-      <p>
-        <b>Mutations:</b> {variant.mutations.join(', ')}
-      </p>
-
       {popoverTarget && (
         <Overlay show target={popoverTarget.element} placement='right' transition={false}>
           <Popover id='sample-metadata-popover'>
