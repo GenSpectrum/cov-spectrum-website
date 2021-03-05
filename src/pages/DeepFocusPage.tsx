@@ -37,6 +37,14 @@ export const DeepFocusPage = (props: Props) => {
 
   const { path, url } = useRouteMatch();
 
+  const routes = [
+    {
+      key: 'samples',
+      title: 'Samples',
+      content: <SampleTable {...props} />,
+    },
+  ];
+
   return (
     <OuterWrapper>
       <HeaderWrapper>
@@ -47,13 +55,20 @@ export const DeepFocusPage = (props: Props) => {
               Back to overview
             </Button>
           }
+          titleSuffix={routes.map(route => (
+            <Route key={route.key} path={`${path}/${route.key}`}>
+              {route.title}
+            </Route>
+          ))}
         />
       </HeaderWrapper>
       <ContentWrapper>
         <Switch>
-          <Route path={`${path}/samples`}>
-            <SampleTable {...props} />
-          </Route>
+          {routes.map(route => (
+            <Route key={route.key} path={`${path}/${route.key}`}>
+              {route.content}
+            </Route>
+          ))}
         </Switch>
       </ContentWrapper>
     </OuterWrapper>

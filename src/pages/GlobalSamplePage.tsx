@@ -22,7 +22,7 @@ export const GlobalSamplePage = () => {
 
   return (
     <>
-      <VariantHeader variant={variant} />
+      <VariantHeader variant={variant} titleSuffix='Worldwide samples' />
       <SampleTable variant={variant} matchPercentage={matchPercentage} />
     </>
   );

@@ -3,14 +3,19 @@ import { Variant } from '../services/api-types';
 
 export interface Props {
   variant: Variant;
+  titleSuffix?: React.ReactChild | React.ReactChild[];
   controls?: React.ReactChild | React.ReactChild[];
 }
 
-export const VariantHeader = ({ variant, controls }: Props) => {
+export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
   return (
     <>
       <div style={{ display: 'flex' }}>
-        <h1 style={{ flexGrow: 1 }}>{variant.name ?? 'Unnamed Variant'}</h1>
+        <h1 style={{ flexGrow: 1 }}>
+          {variant.name ?? 'Unnamed Variant'}
+          {!!titleSuffix && ' - '}
+          {titleSuffix}
+        </h1>
         <div>{controls}</div>
       </div>
       <p>
