@@ -1,13 +1,12 @@
 import React, { useMemo } from 'react';
-import { generatePath, useHistory, useParams, useRouteMatch } from 'react-router';
-import styled from 'styled-components';
+import { generatePath, Route, Switch, useHistory, useParams, useRouteMatch } from 'react-router';
+import { ExploreWrapper, FocusWrapper, RawFullContentWrapper } from '../helpers/app-layout';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 import { VariantSelector, VariantSelectorSchema } from '../helpers/sample-selector';
-import { scrollableContainerStyle } from '../helpers/scrollable-container';
+import { DeepFocusPage } from '../pages/DeepFocusPage';
 import { ExplorePage } from '../pages/ExplorePage';
 import { FocusEmptyPage } from '../pages/FocusEmptyPage';
 import { FocusPage } from '../pages/FocusPage';
-import { ExploreWrapper, FocusWrapper } from '../helpers/app-layout';
 
 const queryEncoder = new ZodQueryEncoder(VariantSelectorSchema);
 
@@ -37,14 +36,33 @@ export const ExploreFocusSplit = () => {
     );
   };
 
+  const explorePage = (
+    <ExploreWrapper>
+      <ExplorePage country={country} onVariantSelect={onVariantSelect} selection={variantSelector} />
+    </ExploreWrapper>
+  );
+
   return (
     <>
-      <ExploreWrapper>
-        <ExplorePage country={country} onVariantSelect={onVariantSelect} selection={variantSelector} />
-      </ExploreWrapper>
-      <FocusWrapper>
-        {variantSelector ? <FocusPage {...variantSelector} country={country} /> : <FocusEmptyPage />}
-      </FocusWrapper>
+      <Switch>
+        <Route exact path={`${path}`}>
+          {explorePage}
+          <FocusWrapper>
+            <FocusEmptyPage />
+          </FocusWrapper>
+        </Route>
+        <Route exact path={`${path}/variants/:variantSelector`}>
+          {explorePage}
+          <FocusWrapper>
+            {variantSelector && <FocusPage {...variantSelector} country={country} />}
+          </FocusWrapper>
+        </Route>
+        <Route path={`${path}/variants/:variantSelector`}>
+          <RawFullContentWrapper>
+            {variantSelector && <DeepFocusPage {...variantSelector} country={country} />}
+          </RawFullContentWrapper>
+        </Route>
+      </Switch>
     </>
   );
 };
