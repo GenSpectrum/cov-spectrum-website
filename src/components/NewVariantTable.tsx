@@ -3,6 +3,7 @@ import Table from 'react-bootstrap/Table';
 import { Button } from 'react-bootstrap';
 import { getGrowingVariants } from '../services/api';
 import { Country, GrowingVariant, Variant } from '../services/api-types';
+import { MutationList } from './MutationList';
 
 interface Props {
   country: Country;
@@ -46,7 +47,9 @@ export const NewVariantTable = ({ country, year, week, onVariantSelect }: Props)
             <tbody>
               {data.map(d => (
                 <tr key={d.variant.mutations.join(',')}>
-                  <td style={{ maxWidth: '400px', lineBreak: 'auto' }}>{d.variant.mutations.join(', ')}</td>
+                  <td style={{ maxWidth: '400px', lineBreak: 'auto' }}>
+                    <MutationList mutations={d.variant.mutations} />
+                  </td>
                   <td>{d.t1Count}</td>
                   <td>
                     {d.t1Proportion.toFixed(4)} (+
