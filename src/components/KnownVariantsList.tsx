@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
+import { VariantSelection } from '../helpers/sample-selector';
 import { getVariants } from '../services/api';
-import { Country, Variant, Selection } from '../services/api-types';
+import { Country, Variant } from '../services/api-types';
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -11,7 +12,7 @@ export interface SelectedVariantAndCountry {
 interface Props {
   country: Country;
   onVariantSelect: (variant: Variant) => void;
-  selection: Selection | undefined;
+  selection: VariantSelection | undefined;
 }
 
 export const KnownVariantsList = ({ country, onVariantSelect, selection }: Props) => {

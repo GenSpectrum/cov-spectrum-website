@@ -121,12 +121,8 @@ export const GrowingVariantSchema = zod.object({
 export const LoginResponseSchema = zod.object({
   token: zod.string(),
 });
-export interface Selection {
-  variant: Variant;
-  matchPercentage: number;
-}
-// TypeScript types from schemas
 
+// TypeScript types from schemas
 export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
 export type Country = zod.infer<typeof CountrySchema>;
 export type Sample = zod.infer<typeof SampleSchema>;

@@ -3,12 +3,14 @@ import { KnownVariantsList } from '../components/KnownVariantsList';
 import { MutationLookup } from '../components/MutationLookup';
 import { NamedSection } from '../components/NamedSection';
 import { NewVariantLookup } from '../components/NewVariantLookup';
-import { Country, Variant, Selection } from '../services/api-types';
+import { Country } from '../services/api-types';
 import { ScrollableTabs } from '../components/ScrollableTabs';
+import { VariantSelection } from '../helpers/sample-selector';
+
 interface Props {
   country: Country;
-  onVariantSelect: (selection: { variant: Variant; matchPercentage: number }) => void;
-  selection: Selection | undefined;
+  onVariantSelect: (selection: VariantSelection) => void;
+  selection: VariantSelection | undefined;
 }
 
 export const ExplorePage = ({ country, onVariantSelect, selection }: Props) => {
