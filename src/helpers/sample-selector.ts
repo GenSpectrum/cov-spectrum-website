@@ -12,4 +12,4 @@ export const SampleSelectorSchema = zod.object({
   mutations: zod.array(zod.string()),
 });
 
-export type VariantSelection = zod.infer<typeof VariantSelectorSchema>;
+export type VariantSelector = zod.infer<typeof VariantSelectorSchema>;

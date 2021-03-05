@@ -5,12 +5,12 @@ import { NamedSection } from '../components/NamedSection';
 import { NewVariantLookup } from '../components/NewVariantLookup';
 import { Country } from '../services/api-types';
 import { ScrollableTabs } from '../components/ScrollableTabs';
-import { VariantSelection } from '../helpers/sample-selector';
+import { VariantSelector } from '../helpers/sample-selector';
 
 interface Props {
   country: Country;
-  onVariantSelect: (selection: VariantSelection) => void;
-  selection: VariantSelection | undefined;
+  onVariantSelect: (selection: VariantSelector) => void;
+  selection: VariantSelector | undefined;
 }
 
 export const ExplorePage = ({ country, onVariantSelect, selection }: Props) => {

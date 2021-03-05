@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useParams } from 'react-router';
 import styled from 'styled-components';
 import { VariantSelection } from '../helpers/sample-selector';
+import { VariantSelector, VariantSelectorSchema } from '../helpers/sample-selector';
 import { scrollableContainerStyle } from '../helpers/scrollable-container';
 import { ExplorePage } from '../pages/ExplorePage';
 import { FocusEmptyPage } from '../pages/FocusEmptyPage';
@@ -21,7 +22,7 @@ export const FocusWrapper = styled.div`
 export const ExploreFocusSplit = () => {
   const { country } = useParams<{ country: string }>();
 
-  const [selection, setSelection] = useState<VariantSelection | undefined>(undefined);
+  const [selection, setSelection] = useState<VariantSelector | undefined>(undefined);
 
   return (
     <>
