@@ -1,16 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import styled, { css } from 'styled-components';
-import { ExplorePage } from './pages/ExplorePage';
-import { Header } from './Header';
 import { Footer } from './Footer';
-import { Route, Switch, Redirect } from 'react-router-dom';
-import { SamplePage } from './pages/SamplePage';
-import { LoginPage } from './pages/LoginPage';
-import { Country, Selection } from './services/api-types';
-import { FocusPage } from './pages/FocusPage';
-import { AboutPage } from './pages/AboutPage';
+import { Header } from './Header';
 import { scrollableContainerStyle } from './helpers/scrollable-container';
-import { FocusEmptyPage } from './pages/FocusEmptyPage';
+import { AboutPage } from './pages/AboutPage';
+import { ExploreFocusSplit } from './pages/ExploreFocusSplit';
+import { LoginPage } from './pages/LoginPage';
+import { SamplePage } from './pages/SamplePage';
 
 export const OuterWrapper = styled.div`
   display: grid;
@@ -52,49 +49,24 @@ export const LoginWrapper = styled.div`
   overflow-y: auto;
 `;
 
-export const ExploreWrapper = styled.div`
-  grid-area: left;
-  overflow: hidden;
-  border-right: 1px solid #dee2e6;
-`;
-
-export const FocusWrapper = styled.div`
-  ${scrollableContainerStyle}
-  grid-area: right;
-`;
-
 export const App = () => {
-  const [selection, setSelection] = useState<Selection | undefined>(undefined);
-  const [country, setCountry] = useState<Country>('Switzerland');
-
   return (
     <OuterWrapper>
       <HeaderWrapper>
-        <Header
-          countryProps={{
-            selected: country,
-            onSelect: setCountry,
-          }}
-        />
+        <Header />
       </HeaderWrapper>
 
       <Switch>
         <Route exact path='/'>
-          <Redirect to='/explore' />
+          <Redirect to='/explore/Switzerland' />
         </Route>
         <Route path='/login'>
           <LoginWrapper>
             <LoginPage />
           </LoginWrapper>
         </Route>
-        <Route path='/explore'>
-          <ExploreWrapper>
-            <ExplorePage country={country} onVariantSelect={setSelection} selection={selection} />
-          </ExploreWrapper>
-          <FocusWrapper>
-            {selection && <FocusPage {...selection} country={country} />}
-            {!selection && <FocusEmptyPage />}
-          </FocusWrapper>
+        <Route path='/explore/:country'>
+          <ExploreFocusSplit />
         </Route>
         <Route path='/sample'>
           <FullContentWrapper>
