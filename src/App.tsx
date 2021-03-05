@@ -25,6 +25,10 @@ export const App = () => {
         <Route exact path='/'>
           <Redirect to='/explore/Switzerland' />
         </Route>
+        <Route path='/variant'>
+          {/* This is so that we don't break old bookmarked links */}
+          <Redirect to='/' />
+        </Route>
         <Route path='/login'>
           <LoginWrapper>
             <LoginPage />
