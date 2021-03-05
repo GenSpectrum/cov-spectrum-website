@@ -44,7 +44,7 @@ export const SampleSchema = zod.object({
   name: zod.string(),
   country: CountrySchema,
   date: zod.string().nullable(),
-  mutations: zod.array(zod.string()),
+  mutations: zod.array(zod.string()).nullable(),
   metadata: zod
     .object({
       country: zod.string(),

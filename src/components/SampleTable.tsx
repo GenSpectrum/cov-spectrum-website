@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Overlay, Popover, Table } from 'react-bootstrap';
+import { Overlay, Popover, Table, Tooltip } from 'react-bootstrap';
 import { getSamples } from '../services/api';
 import { Country, Sample, Variant } from '../services/api-types';
 
@@ -33,6 +33,19 @@ function formatMetadata(
 
 function sampleHasMetadata(sample: Sample): sample is Sample & { metadata: SampleMetadata } {
   return sample.metadata !== null;
+}
+
+function formatMutations(sample: Sample): JSX.Element {
+  if (sample.mutations) {
+    return <>{sample.mutations.join(', ')}</>;
+  } else {
+    return (
+      <i className='text-muted'>
+        Hidden - due to licensing reasons, we can currently only provide sequences submitted by the D-BSSE,
+        ETHZ.
+      </i>
+    );
+  }
 }
 
 interface Props {
@@ -129,7 +142,7 @@ export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
                   </td>
                   <td>{sample.date}</td>
                   <td>{sample.country}</td>
-                  <td>{sample.mutations.join(', ')}</td>
+                  <td>{formatMutations(sample)}</td>
                 </tr>
               ))}
             </tbody>
