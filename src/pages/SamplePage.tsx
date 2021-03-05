@@ -10,7 +10,6 @@ const queryEncoder = new ZodQueryEncoder(SampleSelectorSchema.extend({ country: 
 export type SamplePageQuery = typeof queryEncoder['_decodedType'];
 
 export function getSamplePageLink(params: SamplePageQuery): string {
-  debugger;
   return `/sample?${queryEncoder.encode(params).toString()}`;
 }
 
