@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router';
+import React, { useMemo } from 'react';
+import { generatePath, useHistory, useParams, useRouteMatch } from 'react-router';
 import styled from 'styled-components';
-import { VariantSelection } from '../helpers/sample-selector';
+import { ZodQueryEncoder } from '../helpers/query-encoder';
 import { VariantSelector, VariantSelectorSchema } from '../helpers/sample-selector';
 import { scrollableContainerStyle } from '../helpers/scrollable-container';
 import { ExplorePage } from '../pages/ExplorePage';
@@ -19,19 +19,41 @@ export const FocusWrapper = styled.div`
   grid-area: right;
 `;
 
+const queryEncoder = new ZodQueryEncoder(VariantSelectorSchema);
+
 export const ExploreFocusSplit = () => {
   const { country } = useParams<{ country: string }>();
 
-  const [selection, setSelection] = useState<VariantSelector | undefined>(undefined);
+  const { path, url } = useRouteMatch();
+  const variantRouteMatch = useRouteMatch<{ variantSelector: string }>(`${path}/variants/:variantSelector`);
+  const encodedVariantSelector = variantRouteMatch?.params.variantSelector;
+  const variantSelector = useMemo(() => {
+    try {
+      if (encodedVariantSelector) {
+        return queryEncoder.decode(new URLSearchParams(encodedVariantSelector));
+      }
+    } catch (err) {
+      console.error('could not decode variant selector', encodedVariantSelector);
+    }
+  }, [encodedVariantSelector]);
+
+  const history = useHistory();
+
+  const onVariantSelect = (variantSelector: VariantSelector) => {
+    history.push(
+      generatePath(`${url}/variants/:variantSelector`, {
+        variantSelector: queryEncoder.encode(variantSelector).toString(),
+      })
+    );
+  };
 
   return (
     <>
       <ExploreWrapper>
-        <ExplorePage country={country} onVariantSelect={setSelection} selection={selection} />
+        <ExplorePage country={country} onVariantSelect={onVariantSelect} selection={variantSelector} />
       </ExploreWrapper>
       <FocusWrapper>
-        {selection && <FocusPage {...selection} country={country} />}
-        {!selection && <FocusEmptyPage />}
+        {variantSelector ? <FocusPage {...variantSelector} country={country} /> : <FocusEmptyPage />}
       </FocusWrapper>
     </>
   );
