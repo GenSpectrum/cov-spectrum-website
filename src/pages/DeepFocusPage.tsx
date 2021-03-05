@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button } from 'react-bootstrap';
 import { Route, useRouteMatch, Switch } from 'react-router';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { SampleTable } from '../components/SampleTable';
 import { VariantHeader } from '../components/VariantHeader';
@@ -34,14 +35,18 @@ const ContentWrapper = styled.div`
 export const DeepFocusPage = (props: Props) => {
   const { variant } = props;
 
-  const { path } = useRouteMatch();
+  const { path, url } = useRouteMatch();
 
   return (
     <OuterWrapper>
       <HeaderWrapper>
         <VariantHeader
           variant={variant}
-          controls={<Button variant='outline-secondary'>Back to overview</Button>}
+          controls={
+            <Button variant='outline-secondary' as={Link} to={url}>
+              Back to overview
+            </Button>
+          }
         />
       </HeaderWrapper>
       <ContentWrapper>
