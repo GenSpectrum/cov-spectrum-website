@@ -15,20 +15,16 @@ interface RangeFiller<T> {
 
 function fillMissingData<X, Y, FK>(
   unsortedOriginalData: { x: X; y: Y }[],
-  Filler: { new (min: FK, max: FK): RangeFiller<FK> },
+  getFiller: (sortedFillerKeys: FK[]) => RangeFiller<FK>,
   getFillerKey: (x: X) => FK,
   sortKeyGetters: Array<(fillerKey: FK) => unknown>,
   makeFillerElement: (fillerKey: FK) => { x: X; y: Y }
 ): { x: X; y: Y }[] {
-  if (!unsortedOriginalData.length) {
-    return [];
-  }
-
   const sortedOriginalData = sortBy(
     unsortedOriginalData,
     sortKeyGetters.map(getter => ({ x }: { x: X }) => getter(getFillerKey(x)))
   );
-  const filler = new Filler(getFillerKey(sortedOriginalData[0].x), getFillerKey(last(sortedOriginalData)!.x));
+  const filler = getFiller(sortedOriginalData.map(({ x }) => getFillerKey(x)));
 
   const output = [];
   for (const original of sortedOriginalData) {
@@ -56,6 +52,12 @@ function fillMissingData<X, Y, FK>(
     output.push(makeFillerElement(next.fill));
   }
   return output;
+}
+
+class NoopFiller<T> implements RangeFiller<T> {
+  next(nextOriginal: T | undefined): RangeFillerOutput<T> {
+    return nextOriginal === undefined ? undefined : { useOriginal: true };
+  }
 }
 
 class IsoWeekFiller implements RangeFiller<Dayjs> {
@@ -102,7 +104,10 @@ export function fillWeeklyApiData<Y>(
 ): { x: YearWeekWithDay; y: Y }[] {
   return fillMissingData(
     unsortedOriginalData,
-    IsoWeekFiller,
+    sortedFillerKeys =>
+      sortedFillerKeys.length
+        ? new IsoWeekFiller(sortedFillerKeys[0], last(sortedFillerKeys)!)
+        : new NoopFiller<Dayjs>(),
     yearWeekWithDayToDayjs,
     [v => v.isoWeekYear(), v => v.isoWeek()],
     v => ({ x: dayjsToYearWeekWithDay(v), y: fillerY })
@@ -137,5 +142,40 @@ export function fillGroupedWeeklyApiData<X extends { week: YearWeekWithDay }, Y,
         x: { week: x, [groupByKey]: groupKeyValue } as Pick<X, K> & { week: YearWeekWithDay },
         y,
       }))
+  );
+}
+
+class FixedValuesFiller<T> implements RangeFiller<T> {
+  private i = 0;
+
+  constructor(private sortedValues: T[]) {}
+
+  next(nextOriginal: T | undefined): RangeFillerOutput<T> {
+    if (this.i >= this.sortedValues.length) {
+      assert.strictEqual(nextOriginal, undefined);
+      return undefined;
+    }
+
+    const output = this.sortedValues[this.i];
+    this.i++;
+    if (nextOriginal === output) {
+      return { useOriginal: true };
+    } else {
+      return { useOriginal: false, fill: output };
+    }
+  }
+}
+
+export function fillAgeKeyedApiData<Y>(
+  unsortedOriginalData: { x: string; y: Y }[],
+  fillerY: Y
+): { x: string; y: Y }[] {
+  const possibleAges = ['0-9', '10-19', '20-29', '30-39', '40-49', '50-59', '60-69', '70-79', '80+'];
+  return fillMissingData(
+    unsortedOriginalData,
+    () => new FixedValuesFiller(possibleAges),
+    x => x,
+    [x => x],
+    x => ({ x, y: fillerY })
   );
 }

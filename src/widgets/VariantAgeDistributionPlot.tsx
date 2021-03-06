@@ -6,12 +6,21 @@ import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
+import { fillAgeKeyedApiData } from '../helpers/fill-missing';
 
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
 
+interface EntryWithoutCI {
+  x: AgeDistributionEntry['x'];
+  y: {
+    count: number;
+    proportion: number;
+  };
+}
+
 const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Props) => {
-  const [distributionData, setDistributionData] = useState<AgeDistributionEntry[] | undefined>(undefined);
+  const [distributionData, setDistributionData] = useState<EntryWithoutCI[] | undefined>(undefined);
 
   useEffect(() => {
     let isSubscribed = true;
@@ -20,7 +29,15 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Pro
     getVariantDistributionData(DistributionType.Age, country, mutations, matchPercentage, signal)
       .then(newDistributionData => {
         if (isSubscribed) {
-          setDistributionData(newDistributionData);
+          setDistributionData(
+            fillAgeKeyedApiData(
+              newDistributionData.map(({ x, y }) => ({
+                x,
+                y: { count: y.count, proportion: y.proportion.value },
+              })),
+              { count: 0, proportion: 0 }
+            )
+          );
         }
       })
       .catch(e => {
@@ -46,7 +63,7 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Pro
             },
             {
               x: distributionData.map(d => d.x),
-              y: distributionData.map(d => d.y.proportion.value * 100),
+              y: distributionData.map(d => d.y.proportion * 100),
               type: 'scatter',
               mode: 'lines+markers',
               marker: { color: 'red' },

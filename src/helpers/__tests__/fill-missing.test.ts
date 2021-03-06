@@ -1,5 +1,5 @@
 import { shuffle, sortBy } from 'lodash';
-import { fillGroupedWeeklyApiData, fillWeeklyApiData } from '../fill-missing';
+import { fillAgeKeyedApiData, fillGroupedWeeklyApiData, fillWeeklyApiData } from '../fill-missing';
 import { addDayToYearWeek } from '../week';
 
 describe('fillWeeklyApiData', () => {
@@ -127,5 +127,64 @@ describe('fillGroupedWeeklyApiData', () => {
       { x: { country: 'Germany', week: addDayToYearWeek('2020-27') }, y: 60 },
       { x: { country: 'Switzerland', week: addDayToYearWeek('2020-18') }, y: 123 },
     ]);
+  }
+});
+
+describe('fillAgeKeyedApiData', () => {
+  interface Case {
+    label: string;
+    input: [string, number][];
+    fillValue: number;
+    output: [string, number][];
+  }
+  const cases: Case[] = [
+    {
+      label: 'empty input',
+      input: [],
+      fillValue: 123,
+      output: [
+        ['0-9', 123],
+        ['10-19', 123],
+        ['20-29', 123],
+        ['30-39', 123],
+        ['40-49', 123],
+        ['50-59', 123],
+        ['60-69', 123],
+        ['70-79', 123],
+        ['80+', 123],
+      ],
+    },
+    {
+      label: 'input with some ages',
+      input: [
+        ['20-29', 18],
+        ['50-59', 30],
+      ],
+      fillValue: 123,
+      output: [
+        ['0-9', 123],
+        ['10-19', 123],
+        ['20-29', 18],
+        ['30-39', 123],
+        ['40-49', 123],
+        ['50-59', 30],
+        ['60-69', 123],
+        ['70-79', 123],
+        ['80+', 123],
+      ],
+    },
+  ];
+
+  const fromTemplate = (template: [string, number][]) => template.map(([x, y]) => ({ x, y }));
+
+  for (const c of cases) {
+    // eslint-disable-next-line jest/valid-title
+    test(c.label, () => {
+      const expectedOutput = fromTemplate(c.output);
+      for (let i = 0; i < 5; i++) {
+        const shuffledInput = shuffle(fromTemplate(c.input));
+        expect(fillAgeKeyedApiData(shuffledInput, c.fillValue)).toEqual(expectedOutput);
+      }
+    });
   }
 });
