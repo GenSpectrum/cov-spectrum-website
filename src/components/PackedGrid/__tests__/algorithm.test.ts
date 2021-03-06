@@ -1,4 +1,4 @@
-import { GridCellRequest, PlacedGridCell, placeGridCells } from '../PackedGrid';
+import { GridCellRequest, PlacedGridCell, placeGridCells } from '../algorithm';
 
 describe('placeGridCells', () => {
   interface Case {
