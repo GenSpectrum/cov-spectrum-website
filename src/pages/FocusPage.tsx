@@ -24,24 +24,24 @@ export const FocusPage = (props: Props) => {
     <>
       <VariantHeader {...props} />
       <PackedGrid>
-        <GridCell minWidth={400} maxWidth={1000} minHeight={300}>
+        <GridCell minWidth={400} maxWidth={1000}>
           <NamedSection title='Sequences over time'>
             <VariantTimeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
           </NamedSection>
         </GridCell>
-        <GridCell minWidth={300} maxWidth={500} minHeight={300}>
+        <GridCell minWidth={300} maxWidth={500}>
           <NamedSection title='Demographics'>
             <VariantAgeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
           </NamedSection>
         </GridCell>
         {props.country === 'Switzerland' && (
-          <GridCell minWidth={600} maxWidth={1000} minHeight={300}>
+          <GridCell minWidth={600} maxWidth={1000}>
             <NamedSection title='Geography'>
               <Switzerland {...plotProps} />
             </NamedSection>
           </GridCell>
         )}
-        <GridCell minWidth={800} maxWidth={1000} minHeight={300}>
+        <GridCell minWidth={800} maxWidth={1000}>
           <NamedSection title='International comparison'>
             <InternationalComparison {...props} />
           </NamedSection>

@@ -3,13 +3,11 @@ import assert from 'assert';
 export interface GridCellRequest {
   minWidth: number;
   maxWidth: number;
-  minHeight: number;
 }
 
 export interface PlacedGridCell {
   index: number;
   width: number;
-  height: number;
 }
 
 export function placeGridCells(requests: GridCellRequest[], parentWidth: number): PlacedGridCell[][] {
@@ -21,9 +19,7 @@ export function placeGridCells(requests: GridCellRequest[], parentWidth: number)
         request.minWidth > 0 &&
         Number.isSafeInteger(request.maxWidth) &&
         request.maxWidth > 0 &&
-        request.minWidth <= request.maxWidth &&
-        Number.isSafeInteger(request.minHeight) &&
-        request.minHeight > 0
+        request.minWidth <= request.maxWidth
     )
   );
 
@@ -32,15 +28,14 @@ export function placeGridCells(requests: GridCellRequest[], parentWidth: number)
   }
 
   const rows: GridCellRequest[][] = [];
-  let currentRow = { items: [] as GridCellRequest[], width: 0, height: 0 };
+  let currentRow = { items: [] as GridCellRequest[], width: 0 };
   for (const request of requests) {
     if (currentRow.items.length && currentRow.width + request.minWidth > parentWidth) {
       rows.push(currentRow.items);
-      currentRow = { items: [], width: 0, height: 0 };
+      currentRow = { items: [], width: 0 };
     }
     currentRow.items.push(request);
     currentRow.width += request.minWidth;
-    currentRow.height = Math.max(currentRow.height, request.minHeight);
   }
   if (currentRow.items) {
     rows.push(currentRow.items);
@@ -48,11 +43,9 @@ export function placeGridCells(requests: GridCellRequest[], parentWidth: number)
 
   let nextOutputIndex = 0;
   return rows.map(rowRequests => {
-    const rowHeight = rowRequests.reduce((a, c) => Math.max(a, c.minHeight), 0);
-
     const rowOutput = rowRequests.map(request => {
       const index = nextOutputIndex++;
-      return { index, width: request.minWidth, height: rowHeight };
+      return { index, width: request.minWidth };
     });
 
     const getRowWidth = () => rowOutput.reduce((a, c) => a + c.width, 0);

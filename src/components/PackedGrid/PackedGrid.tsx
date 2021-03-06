@@ -17,6 +17,7 @@ function childIsGridCell(
 
 const Row = styled.div`
   display: flex;
+  align-items: stretch;
 `;
 
 export const PackedGrid = ({ children }: Props) => {
@@ -41,7 +42,7 @@ export const PackedGrid = ({ children }: Props) => {
       placedGridCells = placeGridCells(requests, Math.floor(width));
     } catch (err) {
       console.error('placeGridCells failed', err);
-      placedGridCells = requests.map((v, i) => [{ index: i, width: v.minWidth, height: v.minHeight }]);
+      placedGridCells = requests.map((v, i) => [{ index: i, width: v.minWidth }]);
     }
   }
 
@@ -66,13 +67,11 @@ export const PackedGrid = ({ children }: Props) => {
         row.map(cell => {
           const child = gridCellChildren[cell.index];
           return (
-            <InPortal node={portalNodes[cell.index]}>
-              <div
-                key={child.key === null ? `child-${cell.index}` : `child-around-${child.key}`}
-                style={{ width: cell.width, minHeight: cell.height, overflow: 'hidden' }}
-              >
-                {child.props.children}
-              </div>
+            <InPortal
+              key={child.key === null ? `child-${cell.index}` : `child-around-${child.key}`}
+              node={portalNodes[cell.index]}
+            >
+              <div style={{ width: cell.width, overflow: 'hidden' }}>{child.props.children}</div>
             </InPortal>
           );
         })
