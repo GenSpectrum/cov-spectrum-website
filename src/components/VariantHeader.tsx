@@ -4,6 +4,7 @@ import { AccountService } from '../services/AccountService';
 import { Country, Variant } from '../services/api-types';
 import { NextcladeService } from '../services/NextcladeService';
 import { LazySampleButton } from './LazySampleButton';
+import { MutationList } from './MutationList';
 
 export interface Props {
   country: Country;
@@ -53,7 +54,7 @@ export const VariantHeader = ({ country, matchPercentage, variant }: Props) => {
       </div>
 
       <p>
-        <b>Mutations:</b> {variant.mutations.join(', ')}
+        <b>Mutations:</b> <MutationList mutations={variant.mutations} />
       </p>
 
       <p style={{ marginBottom: '30px' }}>

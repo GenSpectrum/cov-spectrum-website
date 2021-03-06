@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Overlay, Popover, Table } from 'react-bootstrap';
 import { getSamples } from '../services/api';
 import { Country, Sample, Variant } from '../services/api-types';
+import { MutationList } from './MutationList';
 
 type SampleMetadata = NonNullable<Sample['metadata']>;
 
@@ -37,7 +38,7 @@ function sampleHasMetadata(sample: Sample): sample is Sample & { metadata: Sampl
 
 function formatMutations(sample: Sample): JSX.Element {
   if (sample.mutations) {
-    return <>{sample.mutations.join(', ')}</>;
+    return <MutationList mutations={sample.mutations} />;
   } else {
     return (
       <i className='text-muted'>
@@ -91,7 +92,7 @@ export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
       <h3>Samples {country && 'in ' + country}</h3>
 
       <p>
-        <b>Mutations:</b> {variant.mutations.join(', ')}
+        <b>Mutations:</b> <MutationList mutations={variant.mutations} />
       </p>
 
       {popoverTarget && (
