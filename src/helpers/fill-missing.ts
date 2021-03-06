@@ -1,8 +1,8 @@
 import assert from 'assert';
 import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
-import { last, sortBy } from 'lodash';
-import { YearWeekWithDay } from '../services/api-types';
+import { last, sortBy, groupBy } from 'lodash';
+import { YearWeekWithDay, YearWeekWithDaySchema } from '../services/api-types';
 import { dayjsToYearWeekWithDay, yearWeekWithDayToDayjs } from './week';
 
 dayjs.extend(isoWeek);
@@ -106,5 +106,36 @@ export function fillWeeklyApiData<Y>(
     yearWeekWithDayToDayjs,
     [v => v.isoWeekYear(), v => v.isoWeek()],
     v => ({ x: dayjsToYearWeekWithDay(v), y: fillerY })
+  );
+}
+
+function mapApiDataGroups<X, Y, K extends keyof X>(
+  data: { x: X; y: Y }[],
+  groupByKey: K,
+  mapGroup: (groupData: { x: X; y: Y }[], groupKeyValue: X[K]) => { x: X; y: Y }[]
+): { x: X; y: Y }[] {
+  const grouped = groupBy(data, v => v.x[groupByKey]);
+  for (const k of Object.keys(grouped)) {
+    grouped[k] = mapGroup(grouped[k], (k as unknown) as X[K]);
+  }
+  return [...Object.values(grouped)].flatMap(v => v);
+}
+
+export function fillGroupedWeeklyApiData<X extends { week: YearWeekWithDay }, Y, K extends keyof X>(
+  unsortedOriginalData: { x: X; y: Y }[],
+  groupByKey: K,
+  fillerY: Y
+): { x: Pick<X, K> & { week: YearWeekWithDay }; y: Y }[] {
+  return mapApiDataGroups<Pick<X, K> & { week: YearWeekWithDay }, Y, K>(
+    unsortedOriginalData,
+    groupByKey,
+    (groupData, groupKeyValue) =>
+      fillWeeklyApiData(
+        groupData.map(({ x, y }) => ({ x: x.week, y })),
+        fillerY
+      ).map(({ x, y }) => ({
+        x: { week: x, [groupByKey]: groupKeyValue } as Pick<X, K> & { week: YearWeekWithDay },
+        y,
+      }))
   );
 }

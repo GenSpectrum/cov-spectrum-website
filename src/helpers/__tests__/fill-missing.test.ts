@@ -1,5 +1,5 @@
-import { shuffle } from 'lodash';
-import { fillWeeklyApiData } from '../fill-missing';
+import { shuffle, sortBy } from 'lodash';
+import { fillGroupedWeeklyApiData, fillWeeklyApiData } from '../fill-missing';
 import { addDayToYearWeek } from '../week';
 
 describe('fillWeeklyApiData', () => {
@@ -102,10 +102,30 @@ describe('fillWeeklyApiData', () => {
     // eslint-disable-next-line jest/valid-title
     test(c.label, () => {
       const expectedOutput = fromTemplate(c.output);
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 5; i++) {
         const shuffledInput = shuffle(fromTemplate(c.input));
         expect(fillWeeklyApiData<number>(shuffledInput, c.fillValue)).toEqual(expectedOutput);
       }
     });
+  }
+});
+
+describe('fillGroupedWeeklyApiData', () => {
+  for (let i = 0; i < 5; i++) {
+    const shuffledInput = shuffle([
+      { x: { country: 'Germany', week: addDayToYearWeek('2020-25') }, y: 50 },
+      { x: { country: 'Switzerland', week: addDayToYearWeek('2020-18') }, y: 123 },
+      { x: { country: 'Germany', week: addDayToYearWeek('2020-27') }, y: 60 },
+    ]);
+    const actualSortedOutput = sortBy(fillGroupedWeeklyApiData(shuffledInput, 'country', 0), [
+      v => v.x.country,
+      v => v.x.week.firstDayInWeek,
+    ]);
+    expect(actualSortedOutput).toEqual([
+      { x: { country: 'Germany', week: addDayToYearWeek('2020-25') }, y: 50 },
+      { x: { country: 'Germany', week: addDayToYearWeek('2020-26') }, y: 0 },
+      { x: { country: 'Germany', week: addDayToYearWeek('2020-27') }, y: 60 },
+      { x: { country: 'Switzerland', week: addDayToYearWeek('2020-18') }, y: 123 },
+    ]);
   }
 });
