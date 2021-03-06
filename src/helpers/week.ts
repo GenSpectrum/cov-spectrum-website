@@ -43,3 +43,7 @@ export function dayjsToYearWeekWithDay(yearWeek: Dayjs): YearWeekWithDay {
     firstDayInWeek: yearWeek.startOf('isoWeek').format('YYYY-MM-DD'),
   };
 }
+
+export function addDayToYearWeek(yearWeek: string): YearWeekWithDay {
+  return dayjsToYearWeekWithDay(yearWeekStringToDayjs(yearWeek));
+}
