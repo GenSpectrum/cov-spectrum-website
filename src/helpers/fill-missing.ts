@@ -1,8 +1,8 @@
 import assert from 'assert';
 import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
-import { last, sortBy, groupBy } from 'lodash';
-import { YearWeekWithDay, YearWeekWithDaySchema } from '../services/api-types';
+import { groupBy, last, sortBy } from 'lodash';
+import { YearWeekWithDay } from '../services/api-types';
 import { dayjsToYearWeekWithDay, yearWeekWithDayToDayjs } from './week';
 
 dayjs.extend(isoWeek);

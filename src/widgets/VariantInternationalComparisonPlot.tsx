@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { DistributionType, getVariantDistributionData } from '../services/api';
-import { Plot } from '../components/Plot';
-import { InternationalTimeDistributionEntry, ValueWithCI } from '../services/api-types';
-import { SampleSelectorSchema } from '../helpers/sample-selector';
-import { Widget } from './Widget';
+import React, { useEffect, useState } from 'react';
 import * as zod from 'zod';
+import { Plot } from '../components/Plot';
+import { fillGroupedWeeklyApiData } from '../helpers/fill-missing';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
+import { SampleSelectorSchema } from '../helpers/sample-selector';
+import { DistributionType, getVariantDistributionData } from '../services/api';
+import { InternationalTimeDistributionEntry } from '../services/api-types';
+import { Widget } from './Widget';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
-
-const valueToString = (v: ValueWithCI): string => `${digitsForPercent(v.value)}%`;
 
 const PropsSchema = SampleSelectorSchema.merge(
   zod.object({
@@ -18,8 +17,16 @@ const PropsSchema = SampleSelectorSchema.merge(
 );
 type Props = zod.infer<typeof PropsSchema>;
 
+interface EntryWithoutCI {
+  x: InternationalTimeDistributionEntry['x'];
+  y: {
+    count: number;
+    proportion: number;
+  };
+}
+
 const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentage, logScale }: Props) => {
-  const [plotData, setPlotData] = useState<InternationalTimeDistributionEntry[] | undefined>(undefined);
+  const [plotData, setPlotData] = useState<EntryWithoutCI[] | undefined>(undefined);
   const [colorMap, setColorMap] = useState<any>(null);
 
   useEffect(() => {
@@ -49,7 +56,13 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
           });
         }
         setColorMap(newColorMap);
-        setPlotData(newPlotData);
+        setPlotData(
+          fillGroupedWeeklyApiData(
+            newPlotData.map(({ x, y }) => ({ x, y: { count: y.count, proportion: y.proportion.value } })),
+            'country',
+            { count: 0, proportion: 0 }
+          )
+        );
       }
     });
     return () => {
@@ -69,8 +82,8 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
               type: 'scatter',
               mode: 'lines+markers',
               x: plotData.map(d => d.x.week.firstDayInWeek),
-              y: plotData.map(d => digitsForPercent(d.y.proportion.value)),
-              text: plotData.map(d => valueToString(d.y.proportion)),
+              y: plotData.map(d => digitsForPercent(d.y.proportion)),
+              text: plotData.map(d => `${digitsForPercent(d.y.proportion)}%`),
               transforms: [
                 {
                   type: 'groupby',
