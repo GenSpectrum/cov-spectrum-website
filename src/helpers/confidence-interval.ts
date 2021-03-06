@@ -1,4 +1,3 @@
-import { any } from 'zod';
 import { CountAndProportionWithCI } from '../services/api-types';
 
 export type EntryWithoutCI<T extends { y: CountAndProportionWithCI }> = Omit<T, 'y'> & {
