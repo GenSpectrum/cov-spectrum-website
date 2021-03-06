@@ -5,7 +5,7 @@ import { GridCellRequest, PlacedGridCell, placeGridCells } from './algorithm';
 import { GridCell, Props as GridCellProps } from './GridCell';
 
 interface Props {
-  children: React.ReactChild | React.ReactChild[];
+  children: React.ReactNode;
 }
 
 function childIsGridCell(
@@ -53,7 +53,7 @@ export const PackedGrid = ({ children }: Props) => {
             return (
               <div
                 key={child.key === null ? `child-${cell.index}` : `child-around-${child.key}`}
-                style={{ width: cell.width, minHeight: cell.height }}
+                style={{ width: cell.width, minHeight: cell.height, overflow: 'hidden' }}
               >
                 {child.props.children}
               </div>
