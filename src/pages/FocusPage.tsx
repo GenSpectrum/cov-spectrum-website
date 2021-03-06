@@ -6,6 +6,7 @@ import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistribut
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { NamedSection } from '../components/NamedSection';
 import Switzerland from '../components/Switzerland';
+import { GridCell, PackedGrid } from '../components/PackedGrid';
 
 interface Props {
   country: Country;
@@ -22,6 +23,14 @@ export const FocusPage = (props: Props) => {
   return (
     <>
       <VariantHeader {...props} />
+      <PackedGrid>
+        <GridCell minWidth={400} maxWidth={500} minHeight={200}>
+          Test A
+        </GridCell>
+        <GridCell minWidth={400} maxWidth={500} minHeight={300}>
+          Test B
+        </GridCell>
+      </PackedGrid>
       <NamedSection title='Sequences over time'>
         <VariantTimeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
       </NamedSection>
