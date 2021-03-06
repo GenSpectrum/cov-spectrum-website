@@ -7,20 +7,13 @@ import { Widget } from './Widget';
 import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 import { fillAgeKeyedApiData } from '../helpers/fill-missing';
+import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
 
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
 
-interface EntryWithoutCI {
-  x: AgeDistributionEntry['x'];
-  y: {
-    count: number;
-    proportion: number;
-  };
-}
-
 const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Props) => {
-  const [distributionData, setDistributionData] = useState<EntryWithoutCI[] | undefined>(undefined);
+  const [distributionData, setDistributionData] = useState<EntryWithoutCI<AgeDistributionEntry>[]>();
 
   useEffect(() => {
     let isSubscribed = true;
@@ -30,13 +23,7 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Pro
       .then(newDistributionData => {
         if (isSubscribed) {
           setDistributionData(
-            fillAgeKeyedApiData(
-              newDistributionData.map(({ x, y }) => ({
-                x,
-                y: { count: y.count, proportion: y.proportion.value },
-              })),
-              { count: 0, proportion: 0 }
-            )
+            fillAgeKeyedApiData(newDistributionData.map(removeCIFromEntry), { count: 0, proportion: 0 })
           );
         }
       })

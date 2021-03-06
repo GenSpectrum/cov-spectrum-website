@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import * as zod from 'zod';
 import { Plot } from '../components/Plot';
+import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
 import { fillGroupedWeeklyApiData } from '../helpers/fill-missing';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 import { SampleSelectorSchema } from '../helpers/sample-selector';
@@ -17,16 +18,10 @@ const PropsSchema = SampleSelectorSchema.merge(
 );
 type Props = zod.infer<typeof PropsSchema>;
 
-interface EntryWithoutCI {
-  x: InternationalTimeDistributionEntry['x'];
-  y: {
-    count: number;
-    proportion: number;
-  };
-}
-
 const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentage, logScale }: Props) => {
-  const [plotData, setPlotData] = useState<EntryWithoutCI[] | undefined>(undefined);
+  const [plotData, setPlotData] = useState<EntryWithoutCI<InternationalTimeDistributionEntry>[] | undefined>(
+    undefined
+  );
   const [colorMap, setColorMap] = useState<any>(null);
 
   useEffect(() => {
@@ -57,11 +52,7 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
         }
         setColorMap(newColorMap);
         setPlotData(
-          fillGroupedWeeklyApiData(
-            newPlotData.map(({ x, y }) => ({ x, y: { count: y.count, proportion: y.proportion.value } })),
-            'country',
-            { count: 0, proportion: 0 }
-          )
+          fillGroupedWeeklyApiData(newPlotData.map(removeCIFromEntry), 'country', { count: 0, proportion: 0 })
         );
       }
     });

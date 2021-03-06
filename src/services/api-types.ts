@@ -115,6 +115,7 @@ export interface Selection {
 // TypeScript types from schemas
 
 export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
+export type CountAndProportionWithCI = zod.infer<typeof CountAndProportionWithCISchema>;
 export type YearWeekWithDay = zod.infer<typeof YearWeekWithDaySchema>;
 export type Country = zod.infer<typeof CountrySchema>;
 export type Sample = zod.infer<typeof SampleSchema>;
