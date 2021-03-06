@@ -1,4 +1,3 @@
-import React from 'react';
 import assert from 'assert';
 
 export interface GridCellRequest {
@@ -33,7 +32,7 @@ export function placeGridCells(requests: GridCellRequest[], parentWidth: number)
   }
 
   const rows: GridCellRequest[][] = [];
-  let currentRow = { items: [], width: 0, height: 0 };
+  let currentRow = { items: [] as GridCellRequest[], width: 0, height: 0 };
   for (const request of requests) {
     if (currentRow.items.length && currentRow.width + request.minWidth > parentWidth) {
       rows.push(currentRow.items);
