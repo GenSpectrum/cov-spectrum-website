@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useRef } from 'react';
+import { createHtmlPortalNode, HtmlPortalNode, InPortal, OutPortal } from 'react-reverse-portal';
 import { useResizeDetector } from 'react-resize-detector';
 import styled from 'styled-components';
 import { GridCellRequest, PlacedGridCell, placeGridCells } from './algorithm';
@@ -44,23 +45,38 @@ export const PackedGrid = ({ children }: Props) => {
     }
   }
 
+  const lastPortalNodesByKey = useRef(new Map<unknown, HtmlPortalNode>());
+  const portalNodes = gridCellChildren.map(c => {
+    if (!lastPortalNodesByKey.current.has(c.key)) {
+      lastPortalNodesByKey.current.set(c.key, createHtmlPortalNode());
+    }
+    return lastPortalNodesByKey.current.get(c.key)!;
+  });
+
   return (
     <div ref={ref}>
       {placedGridCells.map((row, i) => (
         <Row key={i}>
-          {row.map(cell => {
-            const child = gridCellChildren[cell.index];
-            return (
+          {row.map((cell, j) => (
+            <OutPortal key={j} node={portalNodes[cell.index]} />
+          ))}
+        </Row>
+      ))}
+      {placedGridCells.flatMap(row =>
+        row.map(cell => {
+          const child = gridCellChildren[cell.index];
+          return (
+            <InPortal node={portalNodes[cell.index]}>
               <div
                 key={child.key === null ? `child-${cell.index}` : `child-around-${child.key}`}
                 style={{ width: cell.width, minHeight: cell.height, overflow: 'hidden' }}
               >
                 {child.props.children}
               </div>
-            );
-          })}
-        </Row>
-      ))}
+            </InPortal>
+          );
+        })
+      )}
     </div>
   );
 };
