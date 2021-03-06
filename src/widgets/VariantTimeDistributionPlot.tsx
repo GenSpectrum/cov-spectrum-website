@@ -7,6 +7,9 @@ import { Widget } from './Widget';
 import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 
+import { BarChart, XAxis, YAxis, Line, Bar, Cell, LineChart, ResponsiveContainer } from 'recharts';
+import styled from 'styled-components';
+
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
 
