@@ -63,7 +63,7 @@ class NoopFiller<T> implements RangeFiller<T> {
 class IsoWeekFiller implements RangeFiller<Dayjs> {
   private current: Dayjs;
 
-  constructor(private min: Dayjs, private max: Dayjs) {
+  constructor(min: Dayjs, private max: Dayjs) {
     assert(min.startOf('isoWeek').isSame(min));
     assert(max.startOf('isoWeek').isSame(max));
     if (!(min.isBefore(max) || min.isSame(max))) {
