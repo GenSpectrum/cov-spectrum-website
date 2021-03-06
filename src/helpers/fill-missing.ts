@@ -17,14 +17,17 @@ function fillMissingData<X, Y, FK>(
   unsortedOriginalData: { x: X; y: Y }[],
   Filler: { new (min: FK, max: FK): RangeFiller<FK> },
   getFillerKey: (x: X) => FK,
-  getSortKey: (fillerKey: FK) => unknown,
+  sortKeyGetters: Array<(fillerKey: FK) => unknown>,
   makeFillerElement: (fillerKey: FK) => { x: X; y: Y }
 ): { x: X; y: Y }[] {
   if (!unsortedOriginalData.length) {
     return [];
   }
 
-  const sortedOriginalData = sortBy(unsortedOriginalData, ({ x }) => getSortKey(getFillerKey(x)));
+  const sortedOriginalData = sortBy(
+    unsortedOriginalData,
+    sortKeyGetters.map(getter => ({ x }: { x: X }) => getter(getFillerKey(x)))
+  );
   const filler = new Filler(getFillerKey(sortedOriginalData[0].x), getFillerKey(last(sortedOriginalData)!.x));
 
   const output = [];
@@ -61,6 +64,9 @@ class IsoWeekFiller implements RangeFiller<Dayjs> {
   constructor(private min: Dayjs, private max: Dayjs) {
     assert(min.startOf('isoWeek').isSame(min));
     assert(max.startOf('isoWeek').isSame(max));
+    if (!(min.isBefore(max) || min.isSame(max))) {
+      console.log('DEBUG min', min.format(), 'max', max.format());
+    }
     assert(min.isBefore(max) || min.isSame(max));
     this.current = min;
   }
@@ -73,15 +79,15 @@ class IsoWeekFiller implements RangeFiller<Dayjs> {
     if (this.current.isAfter(this.max)) {
       return undefined;
     } else if (nextOriginal && (nextOriginal.isBefore(this.current) || nextOriginal.isSame(this.current))) {
-      advanceCurrent = nextOriginal.isSame(this.current);
       output = { useOriginal: true };
+      advanceCurrent = nextOriginal.isSame(this.current);
     } else {
       output = { useOriginal: false, fill: this.current };
       advanceCurrent = true;
     }
 
     if (advanceCurrent) {
-      const next = this.current.endOf('isoWeek').add(1, 'day');
+      const next = this.current.endOf('isoWeek').add(1, 'day').startOf('isoWeek');
       assert(next.isoWeek() !== this.current.isoWeek());
       this.current = next;
     }
@@ -98,7 +104,7 @@ export function fillWeeklyApiData<Y>(
     unsortedOriginalData,
     IsoWeekFiller,
     yearWeekWithDayToDayjs,
-    v => [v.isoWeekYear(), v.isoWeek()],
+    [v => v.isoWeekYear(), v => v.isoWeek()],
     v => ({ x: dayjsToYearWeekWithDay(v), y: fillerY })
   );
 }
