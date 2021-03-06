@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import * as zod from 'zod';
 import { Plot } from '../components/Plot';
 import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
@@ -62,23 +62,28 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
     };
   }, [country, mutations, matchPercentage]);
 
+  const filteredPlotData = useMemo(() => plotData?.filter(v => !logScale || v.y.proportion > 0), [
+    plotData,
+    logScale,
+  ]);
+
   return (
     <div style={{ height: '100%' }}>
-      {!plotData && <p>Loading...</p>}
-      {plotData && (
+      {!filteredPlotData && <p>Loading...</p>}
+      {filteredPlotData && (
         <Plot
           style={{ width: '100%', height: '100%' }}
           data={[
             {
               type: 'scatter',
               mode: 'lines+markers',
-              x: plotData.map(d => d.x.week.firstDayInWeek),
-              y: plotData.map(d => digitsForPercent(d.y.proportion)),
-              text: plotData.map(d => `${digitsForPercent(d.y.proportion)}%`),
+              x: filteredPlotData.map(d => d.x.week.firstDayInWeek),
+              y: filteredPlotData.map(d => digitsForPercent(d.y.proportion)),
+              text: filteredPlotData.map(d => `${digitsForPercent(d.y.proportion)}%`),
               transforms: [
                 {
                   type: 'groupby',
-                  groups: plotData.map(d => d.x.country),
+                  groups: filteredPlotData.map(d => d.x.country),
                   styles: colorMap,
                   nameformat: '%{group}',
                 },
@@ -91,7 +96,7 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
             xaxis: {
               title: 'Week',
               type: 'date',
-              tickvals: plotData.map(d => d.x.week.firstDayInWeek),
+              tickvals: filteredPlotData.map(d => d.x.week.firstDayInWeek),
               tickformat: 'W%-V, %Y',
               hoverformat: 'Week %-V, %Y (from %d.%m.)',
             },
