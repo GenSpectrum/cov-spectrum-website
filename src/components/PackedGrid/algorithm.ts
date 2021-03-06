@@ -51,7 +51,7 @@ export function placeGridCells(requests: GridCellRequest[], parentWidth: number)
     const getRowWidth = () => rowOutput.reduce((a, c) => a + c.width, 0);
 
     for (let iteration = 0; ; iteration++) {
-      if (iteration === 1000) {
+      if (iteration === 50) {
         console.warn('max number of iterations reached');
         break;
       }
