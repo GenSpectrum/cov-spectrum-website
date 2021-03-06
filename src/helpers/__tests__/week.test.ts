@@ -42,38 +42,42 @@ describe('parseYearWeekString', () => {
 });
 
 describe('conversions between year-week strings and dayjs', () => {
-  interface EquivalenceClass {
+  interface Case {
+    label: string;
     firstDayInWeek: string;
     yearWeekStrings: string[];
   }
-  const equivalenceClasses: EquivalenceClass[] = [
+  const cases: Case[] = [
     {
+      label: 'typical case',
       firstDayInWeek: '2021-03-29',
       yearWeekStrings: ['2021-13'],
     },
     {
+      label: 'getting the 1st week of a year',
       firstDayInWeek: '2021-01-04',
       yearWeekStrings: ['2021-01', '2021-1'],
     },
     {
-      // Year of ISO week and year of start day don't match
+      label: "year of ISO week and year of start day don't match",
       firstDayInWeek: '2018-12-31',
       yearWeekStrings: ['2019-01', '2019-1'],
     },
     {
-      // Getting 53rd week of a year with 53 weeks
+      label: 'getting the 53rd week of a year with 53 weeks',
       firstDayInWeek: '2020-12-28',
       yearWeekStrings: ['2020-53'],
     },
     {
-      // Getting 52nd week of a year with 52 weeks
+      label: 'getting the 52nd week of a year with 52 weeks',
       firstDayInWeek: '2019-12-23',
       yearWeekStrings: ['2019-52'],
     },
   ];
 
-  for (const c of equivalenceClasses) {
-    test(`convert between formats of week starting on ${c.firstDayInWeek}`, () => {
+  for (const c of cases) {
+    // eslint-disable-next-line jest/valid-title
+    test(c.label, () => {
       for (const yearWeekString of c.yearWeekStrings) {
         const resultDayjs = yearWeekWithDayToDayjs({
           yearWeek: yearWeekString,
