@@ -5,6 +5,8 @@ import { yearWeekRegex, YearWeekWithDay } from '../services/api-types';
 
 dayjs.extend(isoWeek);
 
+// parseYearWeekString extracts the ISO week and year from a string.
+// It will **not check** whether there is actually a week 53 in the specified year.
 export function parseYearWeekString(yearWeek: string): { year: number; week: number } {
   const m = yearWeek.match(yearWeekRegex);
   if (!m) {
@@ -27,7 +29,7 @@ export function yearWeekStringToDayjs(yearWeek: string): Dayjs {
 
 export function yearWeekWithDayToDayjs(input: YearWeekWithDay): Dayjs {
   const output = yearWeekStringToDayjs(input.yearWeek);
-  assert(dayjsToYearWeekWithDay(output).firstDayInWeek === input.firstDayInWeek);
+  assert.strictEqual(dayjsToYearWeekWithDay(output).firstDayInWeek, input.firstDayInWeek);
   return output;
 }
 
