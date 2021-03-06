@@ -187,4 +187,16 @@ describe('fillAgeKeyedApiData', () => {
       }
     });
   }
+
+  test('throws on bad age values', () => {
+    expect(() =>
+      fillAgeKeyedApiData(
+        fromTemplate([
+          ['10-19', 100],
+          ['25-28', 50],
+        ]),
+        0
+      )
+    ).toThrow();
+  });
 });
