@@ -41,7 +41,7 @@ export const FocusPage = (props: Props) => {
             </NamedSection>
           </GridCell>
         )}
-        <GridCell minWidth={800} maxWidth={1000}>
+        <GridCell minWidth={800}>
           <NamedSection title='International comparison'>
             <InternationalComparison {...props} />
           </NamedSection>

@@ -2,7 +2,7 @@ import assert from 'assert';
 
 export interface GridCellRequest {
   minWidth: number;
-  maxWidth: number;
+  maxWidth?: number;
 }
 
 export interface PlacedGridCell {
@@ -17,9 +17,10 @@ export function placeGridCells(requests: GridCellRequest[], parentWidth: number)
       request =>
         Number.isSafeInteger(request.minWidth) &&
         request.minWidth > 0 &&
-        Number.isSafeInteger(request.maxWidth) &&
-        request.maxWidth > 0 &&
-        request.minWidth <= request.maxWidth
+        (request.maxWidth === undefined ||
+          (Number.isSafeInteger(request.maxWidth) &&
+            request.maxWidth > 0 &&
+            request.minWidth <= request.maxWidth))
     )
   );
 
@@ -67,17 +68,20 @@ export function placeGridCells(requests: GridCellRequest[], parentWidth: number)
       } else {
         const remainingWidth = parentWidth - oldRowWidth;
         const sumOfGrowableMinWidths = rowRequests
-          .filter((v, i) => rowOutput[i].width < v.maxWidth)
+          .filter((v, i) => v.maxWidth === undefined || rowOutput[i].width < v.maxWidth)
           .reduce((a, c) => a + c.minWidth, 0);
         const addedWidths = rowRequests.map((v, i) => {
           const proportionalAddition = Math.floor((v.minWidth / sumOfGrowableMinWidths) * remainingWidth);
-          return Math.min(proportionalAddition, v.maxWidth - rowOutput[i].width);
+          return v.maxWidth === undefined
+            ? proportionalAddition
+            : Math.min(proportionalAddition, v.maxWidth - rowOutput[i].width);
         });
         assert(addedWidths.every(w => w >= 0 && Number.isSafeInteger(w)));
         if (addedWidths.every(w => w === 0)) {
           // Finish of last few pixels if all addedWidths got rounded down
           for (let i = 0; i < rowOutput.length && i < remainingWidth; i++) {
-            if (rowOutput[i].width < rowRequests[i].maxWidth) {
+            const maxWidth = rowRequests[i].maxWidth;
+            if (maxWidth === undefined || rowOutput[i].width < maxWidth) {
               rowOutput[i].width++;
             }
           }

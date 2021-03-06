@@ -27,6 +27,12 @@ describe('placeGridCells', () => {
       result: [[{ index: 0, width: 300 }]],
     },
     {
+      label: '1 grid cell (unlimited maxWidth)',
+      requests: [{ minWidth: 200 }],
+      parentWidth: 300,
+      result: [[{ index: 0, width: 300 }]],
+    },
+    {
       label: '1 grid cell (growing, but smaller than parentWidth)',
       requests: [{ minWidth: 200, maxWidth: 250 }],
       parentWidth: 300,
@@ -141,7 +147,7 @@ describe('placeGridCells', () => {
         { minWidth: 50, maxWidth: 120 },
         { minWidth: 80, maxWidth: 100 },
         { minWidth: 90, maxWidth: 130 },
-        { minWidth: 20, maxWidth: 200 },
+        { minWidth: 20, maxWidth: undefined },
         { minWidth: 95, maxWidth: 150 },
         { minWidth: 25, maxWidth: 150 },
         { minWidth: 90, maxWidth: 110 },
