@@ -10,7 +10,9 @@ import ReactTooltip from 'react-tooltip';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
 import styled from 'styled-components';
 
-const CHART_HEIGHT = 280;
+import { BiHelpCircle } from 'react-icons/bi';
+
+const CHART_HEIGHT = 290;
 const CHART_MARGIN_RIGHT = 15;
 const METRIC_RIGHT_PADDING = '3rem';
 const METRIC_WIDTH = '12rem';
@@ -70,8 +72,8 @@ const Wrapper = styled.div`
   flex: 1;
 `;
 const TitleWrapper = styled.div`
-  padding: 0.5rem 0rem 0.5rem 0rem;
-  font-size: 1.5rem;
+  padding: 0.5rem 0rem 1rem 0rem;
+  font-size: 1.2rem;
   line-height: 1.3;
   color: ${colors.secondary};
 `;
@@ -114,6 +116,8 @@ const ChartWrapper = styled.div`
   width: 10rem;
 `;
 const IconWrapper = styled.div`
+display: flex;
+align-items: center;
   padding-left: 0.2rem;
   flex-grow: 1;
 `;
@@ -137,8 +141,8 @@ export const Metric = ({ percent = false, value, title, color, helpText }: Metri
         </ValueWrapper>
         <MetricTitleWrapper id='metric-title'>
           {title + ' '}
-          <IconWrapper>
-            <p>(?)</p>
+          <IconWrapper id='info-wrapper'>
+            <BiHelpCircle />
           </IconWrapper>
         </MetricTitleWrapper>
       </div>
@@ -157,6 +161,20 @@ type CustomTickProps = {
   currentValue: string;
 };
 
+const getTickText = (value: string, dataLength: number, isActive: boolean) => {
+  if (dataLength > 10) {
+    return (value.slice(5))
+  }
+  else if (dataLength > 5)
+  {
+    return (value.slice(2))
+  }
+  else
+  {
+    return (value)
+  }
+}
+
 const CustomTick = ({
   x,
   y,
@@ -165,17 +183,11 @@ const CustomTick = ({
   dataLength,
   currentValue,
 }: CustomTickProps): JSX.Element => {
-  const MARGIN_PROPORTION = 8;
-  const X_SHIFT = 0.5;
-  const margin = Math.floor(dataLength / MARGIN_PROPORTION);
-  const anchor = activeIndex < margin ? 'start' : activeIndex >= dataLength - margin ? 'end' : 'middle';
-  const shift = X_SHIFT * (30 / dataLength) + 'rem';
-  const dx = activeIndex < margin ? '-' + shift : activeIndex >= dataLength - margin ? shift : 0;
   return (
     <g transform={`translate(${x},${y})`}>
-      {payload && payload.value === currentValue ? (
-        <text x={0} y={0} dx={dx} dy={10} textAnchor={anchor} fill={colors.active}>
-          {payload.value}
+      {payload ? (
+        <text x={0} y={0} dx={0} dy={10} textAnchor="middle" fill={payload.value === currentValue ? colors.active : colors.inactive}>
+          {getTickText(payload.value, dataLength, payload.value === currentValue)}
         </text>
       ) : (
         <></>
@@ -254,7 +266,9 @@ export const TimeGraph = React.memo(
       <Wrapper>
         <ChartWrapper>
           <TitleWrapper>
-            % all samples on week of {currentData.firstDayInWeek} ({currentData.yearWeek})
+            Proportion of the variant on week {currentData.yearWeek.split('-')[1]}{', '}
+            {currentData.yearWeek.split('-')[0] + ' '}
+             (Starting on {currentData.firstDayInWeek})
           </TitleWrapper>
           <ResponsiveContainer height={height}>
             <BarChart
@@ -294,7 +308,7 @@ export const TimeGraph = React.memo(
           <Spacing />
           <Metric
             value={currentData.percent.toFixed(2)}
-            title='Of all samples'
+            title='Proportion'
             color={colors.active}
             helpText='Estimated proportion relative to all samples collected.'
             percent={true}
