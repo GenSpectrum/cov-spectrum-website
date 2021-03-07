@@ -21,15 +21,15 @@ export const Header = ({ countryProps }: Props) => {
   return (
     <Navbar bg='light' expand='md' style={{ height: '100%' }}>
       <Navbar.Brand as={Link} to='/variant'>
-        <span style={{color: 'darkgray', fontWeight: 'bold'}}>cov</span>
-        <span style={{color: '#0D4A70', fontWeight: 'bold'}}>S</span>
-        <span style={{color: '#245C70', fontWeight: 'bold'}}>P</span>
-        <span style={{color: '#3A6E6F', fontWeight: 'bold'}}>E</span>
-        <span style={{color: '#67916E', fontWeight: 'bold'}}>C</span>
-        <span style={{color: '#AC8D3A', fontWeight: 'bold'}}>T</span>
-        <span style={{color: '#CF8B20', fontWeight: 'bold'}}>R</span>
-        <span style={{color: '#E08A13', fontWeight: 'bold'}}>U</span>
-        <span style={{color: '#F18805', fontWeight: 'bold'}}>M</span>
+        <span style={{ color: 'darkgray', fontWeight: 'bold' }}>cov</span>
+        <span style={{ color: '#0D4A70', fontWeight: 'bold' }}>S</span>
+        <span style={{ color: '#245C70', fontWeight: 'bold' }}>P</span>
+        <span style={{ color: '#3A6E6F', fontWeight: 'bold' }}>E</span>
+        <span style={{ color: '#67916E', fontWeight: 'bold' }}>C</span>
+        <span style={{ color: '#AC8D3A', fontWeight: 'bold' }}>T</span>
+        <span style={{ color: '#CF8B20', fontWeight: 'bold' }}>R</span>
+        <span style={{ color: '#E08A13', fontWeight: 'bold' }}>U</span>
+        <span style={{ color: '#F18805', fontWeight: 'bold' }}>M</span>
       </Navbar.Brand>
       <Navbar.Toggle aria-controls='basic-navbar-nav' />
       <Navbar.Collapse>
