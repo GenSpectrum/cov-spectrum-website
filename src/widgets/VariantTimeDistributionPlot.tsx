@@ -7,7 +7,7 @@ import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 import ReactTooltip from 'react-tooltip';
 
-import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer } from 'recharts';
+import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
 import styled from 'styled-components';
 
 const CHART_HEIGHT = 280;
@@ -253,12 +253,14 @@ export const TimeGraph = React.memo(
     return ready && currentData ? (
       <Wrapper>
         <ChartWrapper>
-          <TitleWrapper>Week of {currentData.firstDayInWeek} ({currentData.yearWeek})</TitleWrapper>
+          <TitleWrapper>
+            % all samples on week of {currentData.firstDayInWeek} ({currentData.yearWeek})
+          </TitleWrapper>
           <ResponsiveContainer height={height}>
             <BarChart
               data={data}
               barCategoryGap='5%'
-              margin={{ top: 0, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
+              margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
               onMouseLeave={handleMouseLeave}
             >
               <XAxis
@@ -274,7 +276,16 @@ export const TimeGraph = React.memo(
                   />
                 }
               />
-              <YAxis interval={1} allowDecimals={false} hide={true} domain={[0, 'dataMax']} />
+              <YAxis
+                dataKey='percent'
+                interval={1}
+                axisLine={false}
+                tickLine={false}
+                allowDecimals={true}
+                hide={false}
+                domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
+              />
+              <CartesianGrid vertical={false} />
               {bars}
             </BarChart>
           </ResponsiveContainer>
