@@ -69,7 +69,7 @@ export const AboutPage = () => {
         at ETH Zurich. Please contact Chaoran Chen (
         <a href='mailto:chaoran.chen@bsse.ethz.ch'>chaoran.chen@bsse.ethz.ch</a>) for any questions.
       </p>
-      <Support/>
+      <Support />
     </Wrapper>
   );
 };

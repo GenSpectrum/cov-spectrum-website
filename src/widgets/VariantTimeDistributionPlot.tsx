@@ -121,8 +121,8 @@ const ChartWrapper = styled.div`
   width: 10rem;
 `;
 const IconWrapper = styled.div`
-display: flex;
-align-items: center;
+  display: flex;
+  align-items: center;
   padding-left: 0.2rem;
   flex-grow: 1;
 `;
@@ -168,17 +168,13 @@ type CustomTickProps = {
 
 const getTickText = (value: string, dataLength: number, isActive: boolean) => {
   if (dataLength > 10) {
-    return (value.slice(5))
+    return value.slice(5);
+  } else if (dataLength > 5) {
+    return value.slice(2);
+  } else {
+    return value;
   }
-  else if (dataLength > 5)
-  {
-    return (value.slice(2))
-  }
-  else
-  {
-    return (value)
-  }
-}
+};
 
 const CustomTick = ({
   x,
@@ -191,7 +187,14 @@ const CustomTick = ({
   return (
     <g transform={`translate(${x},${y})`}>
       {payload ? (
-        <text x={0} y={0} dx={0} dy={10} textAnchor="middle" fill={payload.value === currentValue ? colors.active : colors.inactive}>
+        <text
+          x={0}
+          y={0}
+          dx={0}
+          dy={10}
+          textAnchor='middle'
+          fill={payload.value === currentValue ? colors.active : colors.inactive}
+        >
           {getTickText(payload.value, dataLength, payload.value === currentValue)}
         </text>
       ) : (
@@ -271,9 +274,9 @@ export const TimeGraph = React.memo(
       <Wrapper>
         <ChartWrapper>
           <TitleWrapper>
-            Proportion of the variant on week {currentData.yearWeek.split('-')[1]}{', '}
-            {currentData.yearWeek.split('-')[0] + ' '}
-             ({currentData.firstDayInWeek})
+            Proportion of the variant on week {currentData.yearWeek.split('-')[1]}
+            {', '}
+            {currentData.yearWeek.split('-')[0] + ' '}({currentData.firstDayInWeek})
           </TitleWrapper>
           <ResponsiveContainer height={height}>
             <BarChart
