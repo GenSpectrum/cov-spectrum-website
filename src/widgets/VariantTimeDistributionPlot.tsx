@@ -154,7 +154,7 @@ type CustomTickProps = {
   payload?: { value: string };
   activeIndex: number;
   dataLength: number;
-  currentDate: string;
+  currentValue: string;
 };
 
 const CustomTick = ({
@@ -163,7 +163,7 @@ const CustomTick = ({
   payload,
   activeIndex,
   dataLength,
-  currentDate,
+  currentValue,
 }: CustomTickProps): JSX.Element => {
   const MARGIN_PROPORTION = 8;
   const X_SHIFT = 0.5;
@@ -173,7 +173,7 @@ const CustomTick = ({
   const dx = activeIndex < margin ? '-' + shift : activeIndex >= dataLength - margin ? shift : 0;
   return (
     <g transform={`translate(${x},${y})`}>
-      {payload && payload.value === currentDate ? (
+      {payload && payload.value === currentValue ? (
         <text x={0} y={0} dx={dx} dy={10} textAnchor={anchor} fill={colors.active}>
           {payload.value}
         </text>
@@ -253,7 +253,7 @@ export const TimeGraph = React.memo(
     return ready && currentData ? (
       <Wrapper>
         <ChartWrapper>
-          <TitleWrapper>Week of {currentData.firstDayInWeek}</TitleWrapper>
+          <TitleWrapper>Week of {currentData.firstDayInWeek} ({currentData.yearWeek})</TitleWrapper>
           <ResponsiveContainer height={height}>
             <BarChart
               data={data}
@@ -262,7 +262,7 @@ export const TimeGraph = React.memo(
               onMouseLeave={handleMouseLeave}
             >
               <XAxis
-                dataKey='firstDayInWeek'
+                dataKey='yearWeek'
                 axisLine={false}
                 tickLine={false}
                 interval={0}
@@ -270,7 +270,7 @@ export const TimeGraph = React.memo(
                   <CustomTick
                     activeIndex={activeIndex}
                     dataLength={data.length}
-                    currentDate={currentData.firstDayInWeek}
+                    currentValue={currentData.yearWeek}
                   />
                 }
               />
@@ -290,7 +290,7 @@ export const TimeGraph = React.memo(
           />
           <Metric
             value={currentData.quantity}
-            title='# Samples'
+            title='Samples'
             color={colors.secondary}
             helpText='Number of samples collected in this time frame.'
           />
