@@ -273,7 +273,7 @@ export const TimeGraph = React.memo(
           <TitleWrapper>
             Proportion of the variant on week {currentData.yearWeek.split('-')[1]}{', '}
             {currentData.yearWeek.split('-')[0] + ' '}
-             (Starting on {currentData.firstDayInWeek})
+             ({currentData.firstDayInWeek})
           </TitleWrapper>
           <ResponsiveContainer height={height}>
             <BarChart
