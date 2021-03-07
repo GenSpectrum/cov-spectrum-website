@@ -11,6 +11,8 @@ import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid }
 import styled from 'styled-components';
 
 import { BiHelpCircle } from 'react-icons/bi';
+import { fillWeeklyApiData } from '../helpers/fill-missing';
+import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
 
 const CHART_HEIGHT = 290;
 const CHART_MARGIN_RIGHT = 15;
@@ -28,7 +30,9 @@ export const colors = {
 };
 
 export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentage }: Props) => {
-  const [distribution, setDistribution] = useState<TimeDistributionEntry[] | undefined>(undefined);
+  const [distribution, setDistribution] = useState<EntryWithoutCI<TimeDistributionEntry>[] | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     let isSubscribed = true;
@@ -37,8 +41,9 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
     getVariantDistributionData(DistributionType.Time, country, mutations, matchPercentage, signal).then(
       newDistributionData => {
         if (isSubscribed) {
-          setDistribution(newDistributionData);
-        } else {
+          setDistribution(
+            fillWeeklyApiData(newDistributionData.map(removeCIFromEntry), { count: 0, proportion: 0 })
+          );
         }
       }
     );
@@ -52,7 +57,7 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
     ? distribution.map(d => ({
         firstDayInWeek: d.x.firstDayInWeek,
         yearWeek: d.x.yearWeek,
-        percent: d.y.proportion.value * 100,
+        percent: d.y.proportion * 100,
         quantity: d.y.count,
       }))
     : undefined;

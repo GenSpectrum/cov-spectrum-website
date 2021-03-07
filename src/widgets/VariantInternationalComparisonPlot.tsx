@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { DistributionType, getVariantDistributionData } from '../services/api';
-import { Plot } from '../components/Plot';
-import { InternationalTimeDistributionEntry, ValueWithCI } from '../services/api-types';
-import { SampleSelectorSchema } from '../helpers/sample-selector';
-import { Widget } from './Widget';
+import React, { useEffect, useMemo, useState } from 'react';
 import * as zod from 'zod';
+import { Plot } from '../components/Plot';
+import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
+import { fillGroupedWeeklyApiData } from '../helpers/fill-missing';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
+import { SampleSelectorSchema } from '../helpers/sample-selector';
+import { DistributionType, getVariantDistributionData } from '../services/api';
+import { InternationalTimeDistributionEntry } from '../services/api-types';
+import { Widget } from './Widget';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
-
-const valueToString = (v: ValueWithCI): string => `${digitsForPercent(v.value)}%`;
 
 const PropsSchema = SampleSelectorSchema.merge(
   zod.object({
@@ -19,7 +19,9 @@ const PropsSchema = SampleSelectorSchema.merge(
 type Props = zod.infer<typeof PropsSchema>;
 
 const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentage, logScale }: Props) => {
-  const [plotData, setPlotData] = useState<InternationalTimeDistributionEntry[] | undefined>(undefined);
+  const [plotData, setPlotData] = useState<EntryWithoutCI<InternationalTimeDistributionEntry>[] | undefined>(
+    undefined
+  );
   const [colorMap, setColorMap] = useState<any>(null);
 
   useEffect(() => {
@@ -49,7 +51,9 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
           });
         }
         setColorMap(newColorMap);
-        setPlotData(newPlotData);
+        setPlotData(
+          fillGroupedWeeklyApiData(newPlotData.map(removeCIFromEntry), 'country', { count: 0, proportion: 0 })
+        );
       }
     });
     return () => {
@@ -58,23 +62,28 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
     };
   }, [country, mutations, matchPercentage]);
 
+  const filteredPlotData = useMemo(() => plotData?.filter(v => !logScale || v.y.proportion > 0), [
+    plotData,
+    logScale,
+  ]);
+
   return (
     <div style={{ height: '100%' }}>
-      {!plotData && <p>Loading...</p>}
-      {plotData && (
+      {!filteredPlotData && <p>Loading...</p>}
+      {filteredPlotData && (
         <Plot
           style={{ width: '100%', height: '100%' }}
           data={[
             {
               type: 'scatter',
               mode: 'lines+markers',
-              x: plotData.map(d => d.x.week.firstDayInWeek),
-              y: plotData.map(d => digitsForPercent(d.y.proportion.value)),
-              text: plotData.map(d => valueToString(d.y.proportion)),
+              x: filteredPlotData.map(d => d.x.week.firstDayInWeek),
+              y: filteredPlotData.map(d => digitsForPercent(d.y.proportion)),
+              text: filteredPlotData.map(d => `${digitsForPercent(d.y.proportion)}%`),
               transforms: [
                 {
                   type: 'groupby',
-                  groups: plotData.map(d => d.x.country),
+                  groups: filteredPlotData.map(d => d.x.country),
                   styles: colorMap,
                   nameformat: '%{group}',
                 },
@@ -87,7 +96,7 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
             xaxis: {
               title: 'Week',
               type: 'date',
-              tickvals: plotData.map(d => d.x.week.firstDayInWeek),
+              tickvals: filteredPlotData.map(d => d.x.week.firstDayInWeek),
               tickformat: 'W%-V, %Y',
               hoverformat: 'Week %-V, %Y (from %d.%m.)',
             },
