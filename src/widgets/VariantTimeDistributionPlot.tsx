@@ -6,12 +6,16 @@ import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
+import { fillWeeklyApiData } from '../helpers/fill-missing';
+import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
 
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
 
 export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentage }: Props) => {
-  const [distribution, setDistribution] = useState<TimeDistributionEntry[] | undefined>(undefined);
+  const [distribution, setDistribution] = useState<EntryWithoutCI<TimeDistributionEntry>[] | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     let isSubscribed = true;
@@ -20,8 +24,9 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
     getVariantDistributionData(DistributionType.Time, country, mutations, matchPercentage, signal).then(
       newDistributionData => {
         if (isSubscribed) {
-          setDistribution(newDistributionData);
-        } else {
+          setDistribution(
+            fillWeeklyApiData(newDistributionData.map(removeCIFromEntry), { count: 0, proportion: 0 })
+          );
         }
       }
     );
@@ -45,7 +50,7 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
             },
             {
               x: distribution.map(d => new Date(d.x.firstDayInWeek)),
-              y: distribution.map(d => d.y.proportion.value * 100),
+              y: distribution.map(d => d.y.proportion * 100),
               type: 'scatter',
               mode: 'lines+markers',
               marker: { color: 'red' },

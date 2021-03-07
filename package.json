@@ -23,6 +23,8 @@
     "@types/topojson-client": "^3.0.0",
     "bootstrap": "^4.5.3",
     "d3": "^6.5.0",
+    "dayjs": "^1.10.4",
+    "lodash": "^4.17.21",
     "plotly.js": "^1.58.4",
     "react": "^17.0.1",
     "react-bootstrap": "^1.4.3",
@@ -68,6 +70,7 @@
     ]
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.168",
     "@types/react-bootstrap-typeahead": "^5.1.2",
     "@types/react-plotly.js": "^2.2.4",
     "prettier": "^2.2.1"
