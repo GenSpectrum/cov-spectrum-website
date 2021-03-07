@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
 import { ExplorePage } from './pages/ExplorePage';
 import { Header } from './Header';
-import { Footer } from './Footer';
 import { Route, Switch, Redirect } from 'react-router-dom';
 import { SamplePage } from './pages/SamplePage';
 import { LoginPage } from './pages/LoginPage';
@@ -16,21 +15,15 @@ export const OuterWrapper = styled.div`
   display: grid;
   height: 100vh;
   grid-template-columns: minmax(auto, 700px) auto;
-  grid-template-rows: 60px auto 60px;
+  grid-template-rows: 60px auto;
   grid-template-areas:
     'header header'
-    'left right'
-    'footer footer';
+    'left right';
 `;
 
 export const HeaderWrapper = styled.div`
   grid-area: header;
   border-bottom: 1px solid #dee2e6;
-`;
-
-export const FooterWrapper = styled.div`
-  border-top: 1px solid #dee2e6;
-  grid-area: footer;
 `;
 
 export const fullGridStyle = css`
@@ -107,10 +100,6 @@ export const App = () => {
           </FullContentWrapper>
         </Route>
       </Switch>
-
-      <FooterWrapper>
-        <Footer />
-      </FooterWrapper>
     </OuterWrapper>
   );
 };
