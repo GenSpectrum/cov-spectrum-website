@@ -15,7 +15,7 @@ import { FocusEmptyPage } from './pages/FocusEmptyPage';
 export const OuterWrapper = styled.div`
   display: grid;
   height: 100vh;
-  grid-template-columns: 50% 50%;
+  grid-template-columns: minmax(auto, 700px) auto;
   grid-template-rows: 60px auto 60px;
   grid-template-areas:
     'header header'
