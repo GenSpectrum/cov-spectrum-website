@@ -43,7 +43,8 @@ function formatMutations(sample: Sample): JSX.Element {
     return (
       <i className='text-muted'>
         Hidden - due to licensing reasons, we can currently only provide sequences submitted by the D-BSSE,
-        ETHZ.
+        ETHZ. If you are a submitter to GISAID and are happy to give us the right to show your sequences here,
+        please contact us!
       </i>
     );
   }

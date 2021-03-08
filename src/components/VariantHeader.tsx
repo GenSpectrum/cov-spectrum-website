@@ -36,7 +36,8 @@ export const VariantHeader = ({ country, matchPercentage, variant }: Props) => {
               overlay={
                 <Tooltip id='tooltip-show-on-nextclade'>
                   Due to licensing reasons, we can currently only provide sequences submitted by the D-BSSE,
-                  ETHZ for an analysis on Nextclade.
+                  ETHZ for an analysis on Nextclade. If you are a submitter to GISAID and are happy to give us
+                  the right to show your sequences here, please contact us!
                 </Tooltip>
               }
             >
