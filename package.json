@@ -78,6 +78,5 @@
     "@types/react-bootstrap-typeahead": "^5.1.2",
     "@types/react-plotly.js": "^2.2.4",
     "prettier": "^2.2.1"
-  },
-  "homepage": "."
+  }
 }
