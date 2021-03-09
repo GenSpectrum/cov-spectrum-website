@@ -30,12 +30,12 @@ export const FocusPage = (props: Props) => {
         mutations.
       </p>
       <PackedGrid>
-        <GridCell minWidth={400} maxWidth={1000}>
+        <GridCell minWidth={800}>
           <NamedSection title='Sequences over time'>
             <VariantTimeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
           </NamedSection>
         </GridCell>
-        <GridCell minWidth={300} maxWidth={500}>
+        <GridCell minWidth={400}>
           <NamedSection title='Demographics'>
             <VariantAgeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
           </NamedSection>
