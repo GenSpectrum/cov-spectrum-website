@@ -41,13 +41,13 @@ export const FocusPage = (props: Props) => {
           </NamedSection>
         </GridCell>
         {props.country === 'Switzerland' && (
-          <GridCell minWidth={600} maxWidth={1000}>
+          <GridCell>
             <NamedSection title='Geography'>
               <Switzerland {...plotProps} />
             </NamedSection>
           </GridCell>
         )}
-        <GridCell minWidth={800}>
+        <GridCell>
           <NamedSection title='International comparison'>
             <InternationalComparison {...props} />
           </NamedSection>

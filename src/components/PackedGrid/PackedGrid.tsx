@@ -42,7 +42,7 @@ export const PackedGrid = ({ children }: Props) => {
       placedGridCells = placeGridCells(requests, Math.floor(width));
     } catch (err) {
       console.error('placeGridCells failed', err);
-      placedGridCells = requests.map((v, i) => [{ index: i, width: v.minWidth }]);
+      placedGridCells = requests.map((v, i) => [{ index: i, width }]);
     }
   }
 

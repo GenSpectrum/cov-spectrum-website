@@ -1,35 +1,43 @@
 import assert from 'assert';
 
 export interface GridCellRequest {
-  minWidth: number;
+  minWidth?: number;
   maxWidth?: number;
 }
+
+type StrictGridCellRequest = GridCellRequest & { minWidth: number };
 
 export interface PlacedGridCell {
   index: number;
   width: number;
 }
 
-export function placeGridCells(requests: GridCellRequest[], parentWidth: number): PlacedGridCell[][] {
-  assert(Number.isSafeInteger(parentWidth));
+export function placeGridCells(_requests: GridCellRequest[], parentWidth: number): PlacedGridCell[][] {
+  assert(Number.isSafeInteger(parentWidth) && parentWidth >= 0);
   assert(
-    requests.every(
+    _requests.every(
       request =>
-        Number.isSafeInteger(request.minWidth) &&
-        request.minWidth > 0 &&
+        (request.minWidth === undefined ||
+          (Number.isSafeInteger(request.minWidth) && request.minWidth > 0)) &&
         (request.maxWidth === undefined ||
-          (Number.isSafeInteger(request.maxWidth) &&
-            request.maxWidth > 0 &&
-            request.minWidth <= request.maxWidth))
+          (Number.isSafeInteger(request.maxWidth) && request.maxWidth > 0)) &&
+        (request.minWidth === undefined ||
+          request.maxWidth === undefined ||
+          request.minWidth <= request.maxWidth)
     )
   );
+
+  const requests: StrictGridCellRequest[] = _requests.map(request => ({
+    ...request,
+    minWidth: request.minWidth ?? Math.min(request.maxWidth ?? parentWidth, parentWidth),
+  }));
 
   if (!requests.length) {
     return [];
   }
 
-  const rows: GridCellRequest[][] = [];
-  let currentRow = { items: [] as GridCellRequest[], width: 0 };
+  const rows: StrictGridCellRequest[][] = [];
+  let currentRow = { items: [] as StrictGridCellRequest[], width: 0 };
   for (const request of requests) {
     if (currentRow.items.length && currentRow.width + request.minWidth > parentWidth) {
       rows.push(currentRow.items);
