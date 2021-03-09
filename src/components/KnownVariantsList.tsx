@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
 import { Button, Table } from 'react-bootstrap';
 import { VariantSelector } from '../helpers/sample-selector';
-import { getVariants } from '../services/api';
 import { Country, Variant } from '../services/api-types';
+import knownVariants from './known-variants.json';
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -11,28 +10,12 @@ export interface SelectedVariantAndCountry {
 
 interface Props {
   country: Country;
-  onVariantSelect: (variant: Variant) => void;
+  onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
 }
 
 export const KnownVariantsList = ({ country, onVariantSelect, selection }: Props) => {
-  const [variants, setVariants] = useState<Variant[]>();
-
-  useEffect(() => {
-    let isSubscribed = true;
-    getVariants().then(countries => {
-      if (isSubscribed) {
-        setVariants(countries);
-      }
-    });
-    return () => {
-      isSubscribed = false;
-    };
-  }, []);
-
-  if (!variants) {
-    return <p>Loading...</p>;
-  }
+  const _knownVariants: VariantSelector[] = knownVariants;
 
   return (
     <Table striped bordered hover>
@@ -43,18 +26,18 @@ export const KnownVariantsList = ({ country, onVariantSelect, selection }: Props
         </tr>
       </thead>
       <tbody>
-        {variants.map(d => (
-          <tr key={d.name}>
-            {selection !== undefined && selection.variant.name === d.name ? (
+        {_knownVariants.map(d => (
+          <tr key={d.variant.name}>
+            {selection !== undefined && selection.variant.name === d.variant.name ? (
               <>
                 <td>
-                  <b>{d.name}</b>
+                  <b>{d.variant.name}</b>
                 </td>
                 <td></td>
               </>
             ) : (
               <>
-                <td>{d.name}</td>
+                <td>{d.variant.name}</td>
                 <td>
                   <Button
                     onClick={() => {

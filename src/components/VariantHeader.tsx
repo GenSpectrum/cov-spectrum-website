@@ -1,5 +1,6 @@
 import React from 'react';
 import { Variant } from '../services/api-types';
+import { MutationList } from './MutationList';
 
 export interface Props {
   variant: Variant;
@@ -19,7 +20,7 @@ export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
         <div>{controls}</div>
       </div>
       <p>
-        <b>Mutations:</b> {variant.mutations.join(', ')}
+        <b>Mutations:</b> <MutationList mutations={variant.mutations} />
       </p>
     </>
   );

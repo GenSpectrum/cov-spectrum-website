@@ -25,7 +25,7 @@ export const ExplorePage = ({ country, onVariantSelect, selection }: Props) => {
               <NamedSection title='Known variants'>
                 <KnownVariantsList
                   country={country}
-                  onVariantSelect={variant => onVariantSelect({ variant, matchPercentage: 0.8 })}
+                  onVariantSelect={onVariantSelect}
                   selection={selection}
                 />
               </NamedSection>

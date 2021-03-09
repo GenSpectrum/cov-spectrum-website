@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Overlay, Popover, Table } from 'react-bootstrap';
 import { getSamples } from '../services/api';
 import { Country, Sample, Variant } from '../services/api-types';
+import { MutationList } from './MutationList';
 
 type SampleMetadata = NonNullable<Sample['metadata']>;
 
@@ -37,12 +38,13 @@ function sampleHasMetadata(sample: Sample): sample is Sample & { metadata: Sampl
 
 function formatMutations(sample: Sample): JSX.Element {
   if (sample.mutations) {
-    return <>{sample.mutations.join(', ')}</>;
+    return <MutationList mutations={sample.mutations} />;
   } else {
     return (
       <i className='text-muted'>
         Hidden - due to licensing reasons, we can currently only provide sequences submitted by the D-BSSE,
-        ETHZ.
+        ETHZ. If you are a submitter to GISAID and are happy to give us the right to show your sequences here,
+        please contact us!
       </i>
     );
   }

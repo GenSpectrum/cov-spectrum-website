@@ -1,9 +1,7 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { Footer } from './Footer';
 import { Header } from './Header';
 import {
-  FooterWrapper,
   ScrollableFullContentWrapper,
   HeaderWrapper,
   LoginWrapper,
@@ -48,10 +46,6 @@ export const App = () => {
           </ScrollableFullContentWrapper>
         </Route>
       </Switch>
-
-      <FooterWrapper>
-        <Footer />
-      </FooterWrapper>
     </OuterWrapper>
   );
 };
