@@ -1,17 +1,10 @@
 import React from 'react';
-import { Form, Nav, Navbar } from 'react-bootstrap';
+import { Nav, Navbar } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { AccountService } from './services/AccountService';
-import {
-  RequiredCountrySelect,
-  Props as RequiredCountrySelectProps,
-} from './components/RequiredCountrySelect';
-import { Link, Route } from 'react-router-dom';
 
-interface Props {
-  countryProps: Omit<RequiredCountrySelectProps, 'id'>;
-}
-
-export const Header = ({ countryProps }: Props) => {
+export const Header = () => {
   const loggedIn = AccountService.isLoggedIn();
   let username = null;
   if (loggedIn) {
@@ -20,7 +13,7 @@ export const Header = ({ countryProps }: Props) => {
 
   return (
     <Navbar bg='light' expand='md' style={{ height: '100%' }}>
-      <Navbar.Brand as={Link} to='/variant'>
+      <Navbar.Brand as={Link} to='/'>
         <span style={{ color: 'darkgray', fontWeight: 'bold' }}>cov</span>
         <span style={{ color: '#0D4A70', fontWeight: 'bold' }}>S</span>
         <span style={{ color: '#245C70', fontWeight: 'bold' }}>P</span>
@@ -34,14 +27,7 @@ export const Header = ({ countryProps }: Props) => {
       <Navbar.Toggle aria-controls='basic-navbar-nav' />
       <Navbar.Collapse>
         <Nav className='ml-4 mr-auto'>
-          <Route path='/variant'>
-            <Form inline>
-              <Form.Label htmlFor='countrySelect' className='mr-2'>
-                Country
-              </Form.Label>
-              <RequiredCountrySelect {...countryProps} id='countrySelect' />
-            </Form>
-          </Route>
+          <HeaderCountrySelect />
           <Nav.Link href='/about' style={{ marginLeft: '20px', textDecoration: 'underline' }}>
             What is this website?
           </Nav.Link>

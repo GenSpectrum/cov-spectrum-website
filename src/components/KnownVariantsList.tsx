@@ -1,5 +1,6 @@
 import { Button, Table } from 'react-bootstrap';
-import { Country, Variant, Selection } from '../services/api-types';
+import { VariantSelector } from '../helpers/sample-selector';
+import { Country, Variant } from '../services/api-types';
 import knownVariants from './known-variants.json';
 
 export interface SelectedVariantAndCountry {
@@ -9,12 +10,12 @@ export interface SelectedVariantAndCountry {
 
 interface Props {
   country: Country;
-  onVariantSelect: (selection: Selection) => void;
-  selection: Selection | undefined;
+  onVariantSelect: (selection: VariantSelector) => void;
+  selection: VariantSelector | undefined;
 }
 
 export const KnownVariantsList = ({ country, onVariantSelect, selection }: Props) => {
-  const _knownVariants: Selection[] = knownVariants;
+  const _knownVariants: VariantSelector[] = knownVariants;
 
   return (
     <Table striped bordered hover>
