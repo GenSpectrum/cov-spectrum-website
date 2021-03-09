@@ -14,7 +14,6 @@ import { BiHelpCircle } from 'react-icons/bi';
 import { fillWeeklyApiData } from '../helpers/fill-missing';
 import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
 
-const CHART_HEIGHT = 290;
 const CHART_MARGIN_RIGHT = 15;
 const METRIC_RIGHT_PADDING = '3rem';
 const METRIC_WIDTH = '12rem';
@@ -74,13 +73,18 @@ export type OnClickHandler = (index: number) => boolean;
 
 const Wrapper = styled.div`
   display: flex;
-  flex: 1;
+  flex-direction: column;
+  height: 100%;
 `;
 const TitleWrapper = styled.div`
   padding: 0.5rem 0rem 1rem 0rem;
   font-size: 1.2rem;
   line-height: 1.3;
   color: ${colors.secondary};
+`;
+const ChartAndMetricsWrapper = styled.div`
+  display: flex;
+  flex: 1;
 `;
 const MetricWrapper = styled.div`
   display: flex;
@@ -213,12 +217,11 @@ export type TimeEntry = {
 
 export type TimeGraphProps = {
   data: TimeEntry[];
-  height?: number;
   onClickHandler?: OnClickHandler;
 };
 
 export const TimeGraph = React.memo(
-  ({ data, onClickHandler, height = CHART_HEIGHT }: TimeGraphProps): JSX.Element => {
+  ({ data, onClickHandler }: TimeGraphProps): JSX.Element => {
     const [activeIndex, setActiveIndex] = useState<number>(data.length - 1);
     const [ready, setReady] = useState(false);
     const [currentData, setCurrentData] = useState<TimeEntry>(data[data.length - 1]);
@@ -272,62 +275,64 @@ export const TimeGraph = React.memo(
 
     return ready && currentData ? (
       <Wrapper>
-        <ChartWrapper>
-          <TitleWrapper>
-            Proportion of the variant on week {currentData.yearWeek.split('-')[1]}
-            {', '}
-            {currentData.yearWeek.split('-')[0] + ' '}({currentData.firstDayInWeek})
-          </TitleWrapper>
-          <ResponsiveContainer height={height}>
-            <BarChart
-              data={data}
-              barCategoryGap='5%'
-              margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
-              onMouseLeave={handleMouseLeave}
-            >
-              <XAxis
-                dataKey='yearWeek'
-                axisLine={false}
-                tickLine={false}
-                interval={0}
-                tick={
-                  <CustomTick
-                    activeIndex={activeIndex}
-                    dataLength={data.length}
-                    currentValue={currentData.yearWeek}
-                  />
-                }
-              />
-              <YAxis
-                dataKey='percent'
-                interval={1}
-                axisLine={false}
-                tickLine={false}
-                allowDecimals={true}
-                hide={false}
-                domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
-              />
-              <CartesianGrid vertical={false} />
-              {bars}
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartWrapper>
-        <MetricsWrapper>
-          <Spacing />
-          <Metric
-            value={currentData.percent.toFixed(2)}
-            title='Proportion'
-            color={colors.active}
-            helpText='Estimated proportion relative to all samples collected.'
-            percent={true}
-          />
-          <Metric
-            value={currentData.quantity}
-            title='Samples'
-            color={colors.secondary}
-            helpText='Number of samples collected in this time frame.'
-          />
-        </MetricsWrapper>
+        <TitleWrapper>
+          Proportion of the variant on week {currentData.yearWeek.split('-')[1]}
+          {', '}
+          {currentData.yearWeek.split('-')[0] + ' '}({currentData.firstDayInWeek})
+        </TitleWrapper>
+        <ChartAndMetricsWrapper>
+          <ChartWrapper>
+            <ResponsiveContainer>
+              <BarChart
+                data={data}
+                barCategoryGap='5%'
+                margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
+                onMouseLeave={handleMouseLeave}
+              >
+                <XAxis
+                  dataKey='yearWeek'
+                  axisLine={false}
+                  tickLine={false}
+                  interval={0}
+                  tick={
+                    <CustomTick
+                      activeIndex={activeIndex}
+                      dataLength={data.length}
+                      currentValue={currentData.yearWeek}
+                    />
+                  }
+                />
+                <YAxis
+                  dataKey='percent'
+                  interval={1}
+                  axisLine={false}
+                  tickLine={false}
+                  allowDecimals={true}
+                  hide={false}
+                  domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
+                />
+                <CartesianGrid vertical={false} />
+                {bars}
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartWrapper>
+          <MetricsWrapper>
+            <Spacing />
+            <Metric
+              value={currentData.percent.toFixed(2)}
+              title='Proportion'
+              color={colors.active}
+              helpText='Estimated proportion relative to all samples collected.'
+              percent={true}
+            />
+            <Metric
+              value={currentData.quantity}
+              title='Samples'
+              color={colors.secondary}
+              helpText='Number of samples collected in this time frame.'
+            />
+          </MetricsWrapper>
+        </ChartAndMetricsWrapper>
       </Wrapper>
     ) : (
       <></>
