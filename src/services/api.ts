@@ -11,8 +11,6 @@ import {
   SampleResultListSchema,
   TimeDistributionEntrySchema,
   TimeZipCodeDistributionEntrySchema,
-  Variant,
-  VariantSchema,
 } from './api-types';
 
 export enum DistributionType {
@@ -147,13 +145,6 @@ export const getGrowingVariants = (
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
     .then(data => zod.array(GrowingVariantSchema).parse(data));
-};
-
-export const getVariants = (): Promise<Variant[]> => {
-  const url = HOST + '/resource/variant';
-  return fetch(url, { headers: getBaseHeaders() })
-    .then(response => response.json())
-    .then(data => zod.array(VariantSchema).parse(data));
 };
 
 export const getCurrentWeek = (): Promise<number> => {

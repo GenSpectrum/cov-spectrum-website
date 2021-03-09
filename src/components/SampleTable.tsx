@@ -43,7 +43,8 @@ function formatMutations(sample: Sample): JSX.Element {
     return (
       <i className='text-muted'>
         Hidden - due to licensing reasons, we can currently only provide sequences submitted by the D-BSSE,
-        ETHZ.
+        ETHZ. If you are a submitter to GISAID and are happy to give us the right to show your sequences here,
+        please contact us!
       </i>
     );
   }
@@ -89,12 +90,6 @@ export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
 
   return (
     <>
-      <h3>Samples {country && 'in ' + country}</h3>
-
-      <p>
-        <b>Mutations:</b> <MutationList mutations={variant.mutations} />
-      </p>
-
       {popoverTarget && (
         <Overlay show target={popoverTarget.element} placement='right' transition={false}>
           <Popover id='sample-metadata-popover'>

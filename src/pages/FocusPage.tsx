@@ -7,6 +7,7 @@ import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistrib
 import { NamedSection } from '../components/NamedSection';
 import Switzerland from '../components/Switzerland';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
+import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
 
 interface Props {
   country: Country;
@@ -15,14 +16,19 @@ interface Props {
 }
 
 export const FocusPage = (props: Props) => {
+  const { country, matchPercentage, variant } = props;
   const plotProps = {
-    country: props.country,
-    matchPercentage: props.matchPercentage,
-    mutations: props.variant.mutations,
+    country,
+    matchPercentage,
+    mutations: variant.mutations,
   };
   return (
     <>
-      <VariantHeader {...props} />
+      <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...props} />} />
+      <p style={{ marginBottom: '30px' }}>
+        The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
+        mutations.
+      </p>
       <PackedGrid>
         <GridCell minWidth={400} maxWidth={1000}>
           <NamedSection title='Sequences over time'>

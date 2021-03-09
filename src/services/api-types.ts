@@ -15,21 +15,8 @@ export const CountAndProportionWithCISchema = zod.object({
   proportion: ValueWithCISchema,
 });
 
-const yearWeekRegex = /^(\d{4})-(\d{1,2})$/;
+export const yearWeekRegex = /^(\d{4})-(\d{1,2})$/;
 export const YearWeekSchema = zod.string().regex(yearWeekRegex);
-export function parseYearWeekString(
-  yearWeek: zod.infer<typeof YearWeekSchema>
-): { year: number; week: number } {
-  const m = yearWeek.match(yearWeekRegex);
-  if (!m) {
-    throw new Error('invalid YearWeek string');
-  }
-  const parsed = { year: +m[1], week: +m[2] };
-  if (!(parsed.week >= 1 && parsed.week <= 53)) {
-    throw new Error('invalid week in YearWeek string');
-  }
-  return parsed;
-}
 
 export const YearWeekWithDaySchema = zod.object({
   yearWeek: YearWeekSchema,
@@ -121,13 +108,11 @@ export const GrowingVariantSchema = zod.object({
 export const LoginResponseSchema = zod.object({
   token: zod.string(),
 });
-export interface Selection {
-  variant: Variant;
-  matchPercentage: number;
-}
-// TypeScript types from schemas
 
+// TypeScript types from schemas
 export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
+export type CountAndProportionWithCI = zod.infer<typeof CountAndProportionWithCISchema>;
+export type YearWeekWithDay = zod.infer<typeof YearWeekWithDaySchema>;
 export type Country = zod.infer<typeof CountrySchema>;
 export type Sample = zod.infer<typeof SampleSchema>;
 export type SampleResultList = zod.infer<typeof SampleResultListSchema>;

@@ -1,17 +1,38 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { DistributionType, getVariantDistributionData } from '../services/api';
 import { TimeDistributionEntry } from '../services/api-types';
-import { Plot } from '../components/Plot';
 import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
+import ReactTooltip from 'react-tooltip';
+
+import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
+import styled from 'styled-components';
+
+import { BiHelpCircle } from 'react-icons/bi';
+import { fillWeeklyApiData } from '../helpers/fill-missing';
+import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
+
+const CHART_HEIGHT = 290;
+const CHART_MARGIN_RIGHT = 15;
+const METRIC_RIGHT_PADDING = '3rem';
+const METRIC_WIDTH = '12rem';
 
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
 
+export const colors = {
+  active: '#2980b9',
+  inactive: '#bdc3c7',
+  active2: '#3498db',
+  secondary: '#7f8c8d',
+};
+
 export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentage }: Props) => {
-  const [distribution, setDistribution] = useState<TimeDistributionEntry[] | undefined>(undefined);
+  const [distribution, setDistribution] = useState<EntryWithoutCI<TimeDistributionEntry>[] | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     let isSubscribed = true;
@@ -20,8 +41,9 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
     getVariantDistributionData(DistributionType.Time, country, mutations, matchPercentage, signal).then(
       newDistributionData => {
         if (isSubscribed) {
-          setDistribution(newDistributionData);
-        } else {
+          setDistribution(
+            fillWeeklyApiData(newDistributionData.map(removeCIFromEntry), { count: 0, proportion: 0 })
+          );
         }
       }
     );
@@ -31,58 +53,287 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
     };
   }, [country, mutations, matchPercentage]);
 
-  return (
-    <div style={{ height: '100%' }}>
-      {distribution != null && (
-        <Plot
-          style={{ width: '100%', height: '100%' }}
-          data={[
-            {
-              name: 'Sequences',
-              type: 'bar',
-              x: distribution.map(d => new Date(d.x.firstDayInWeek)),
-              y: distribution.map(d => d.y.count),
-            },
-            {
-              x: distribution.map(d => new Date(d.x.firstDayInWeek)),
-              y: distribution.map(d => d.y.proportion.value * 100),
-              type: 'scatter',
-              mode: 'lines+markers',
-              marker: { color: 'red' },
-              yaxis: 'y2',
-              hovertemplate: '%{y:.2f}%<extra></extra>',
-            },
-          ]}
-          layout={{
-            title: '',
-            xaxis: {
-              title: 'Week',
-              type: 'date',
-              tickvals: distribution.map(d => d.x.firstDayInWeek),
-              tickformat: 'W%-V, %Y',
-              hoverformat: 'Week %-V, %Y (from %d.%m.)',
-            },
-            yaxis: {
-              title: 'Number Sequences',
-            },
-            yaxis2: {
-              title: 'Estimated Percentage',
-              overlaying: 'y',
-              side: 'right',
-            },
-            showlegend: false,
-            margin: { t: 10 },
-          }}
-          config={{
-            displaylogo: false,
-            modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
-            responsive: true,
-          }}
-        />
-      )}
-    </div>
+  const processedData: TimeEntry[] | undefined = distribution
+    ? distribution.map(d => ({
+        firstDayInWeek: d.x.firstDayInWeek,
+        yearWeek: d.x.yearWeek,
+        percent: d.y.proportion * 100,
+        quantity: d.y.count,
+      }))
+    : undefined;
+
+  return processedData === undefined ? (
+    <p>Loading</p>
+  ) : (
+    <TimeGraph data={processedData} onClickHandler={(e: unknown) => true} />
   );
 };
+
+//type for when a graph element is clicked
+export type OnClickHandler = (index: number) => boolean;
+
+const Wrapper = styled.div`
+  display: flex;
+  flex: 1;
+`;
+const TitleWrapper = styled.div`
+  padding: 0.5rem 0rem 1rem 0rem;
+  font-size: 1.2rem;
+  line-height: 1.3;
+  color: ${colors.secondary};
+`;
+const MetricWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+  padding-right: ${METRIC_RIGHT_PADDING};
+  width: ${METRIC_WIDTH};
+  flex: 1;
+  flex-grow: 0;
+`;
+const Spacing = styled.div`
+  display: flex;
+  flex-grow: 1;
+`;
+const ValueWrapper = styled.div`
+  font-size: 3rem;
+  width: auto;
+  flex-grow: 0;
+  line-height: 1;
+  color: ${props => props.color ?? colors.inactive};
+`;
+
+const MetricTitleWrapper = styled.div`
+  font-size: 1rem;
+  display: flex;
+  color: ${colors.inactive};
+  height: 1.6rem;
+`;
+const MetricsWrapper = styled.div`
+  padding: 1.5rem 0 1.4rem 0rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+const ChartWrapper = styled.div`
+  flex-grow: 1;
+  width: 10rem;
+`;
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  padding-left: 0.2rem;
+  flex-grow: 1;
+`;
+
+type MetricProps = {
+  value: number | string;
+  title: string;
+  color?: string;
+  helpText: string;
+  percent?: string | number | boolean;
+};
+
+export const Metric = ({ percent = false, value, title, color, helpText }: MetricProps): JSX.Element => {
+  const tooltipId = 'TEST-id' + title;
+  return (
+    <MetricWrapper id='metric-with-tooltip'>
+      <div data-for={tooltipId} data-tip={helpText}>
+        <ValueWrapper color={color}>
+          {value}
+          {percent && '%'}
+        </ValueWrapper>
+        <MetricTitleWrapper id='metric-title'>
+          {title + ' '}
+          <IconWrapper id='info-wrapper'>
+            <BiHelpCircle />
+          </IconWrapper>
+        </MetricTitleWrapper>
+      </div>
+      <ReactTooltip id={tooltipId} />
+    </MetricWrapper>
+  );
+};
+
+type CustomTickProps = {
+  x?: number;
+  y?: number;
+  stroke?: unknown;
+  payload?: { value: string };
+  activeIndex: number;
+  dataLength: number;
+  currentValue: string;
+};
+
+const getTickText = (value: string, dataLength: number, isActive: boolean) => {
+  if (dataLength > 10) {
+    return value.slice(5);
+  } else if (dataLength > 5) {
+    return value.slice(2);
+  } else {
+    return value;
+  }
+};
+
+const CustomTick = ({
+  x,
+  y,
+  payload,
+  activeIndex,
+  dataLength,
+  currentValue,
+}: CustomTickProps): JSX.Element => {
+  return (
+    <g transform={`translate(${x},${y})`}>
+      {payload ? (
+        <text
+          x={0}
+          y={0}
+          dx={0}
+          dy={10}
+          textAnchor='middle'
+          fill={payload.value === currentValue ? colors.active : colors.inactive}
+        >
+          {getTickText(payload.value, dataLength, payload.value === currentValue)}
+        </text>
+      ) : (
+        <></>
+      )}
+    </g>
+  );
+};
+
+export type TimeEntry = {
+  firstDayInWeek: string;
+  yearWeek: string;
+  percent: number;
+  quantity: number;
+};
+
+export type TimeGraphProps = {
+  data: TimeEntry[];
+  height?: number;
+  onClickHandler?: OnClickHandler;
+};
+
+export const TimeGraph = React.memo(
+  ({ data, onClickHandler, height = CHART_HEIGHT }: TimeGraphProps): JSX.Element => {
+    const [activeIndex, setActiveIndex] = useState<number>(data.length - 1);
+    const [ready, setReady] = useState(false);
+    const [currentData, setCurrentData] = useState<TimeEntry>(data[data.length - 1]);
+
+    useEffect(() => {
+      setReady(true);
+    }, []);
+
+    const resetDefault = useCallback(() => {
+      setCurrentData(data[data.length - 1]);
+      setActiveIndex(data.length - 1);
+    }, [data]);
+
+    useEffect(() => {
+      resetDefault();
+    }, [data, resetDefault]);
+
+    const handleMouseEnter = (context: unknown, index: number): void => {
+      setCurrentData(data[index]);
+      setActiveIndex(index);
+    };
+
+    const handleClick = (context: unknown, index: number): void => {
+      if (onClickHandler) {
+        onClickHandler(index);
+      }
+    };
+
+    const handleMouseLeave = (): void => {
+      resetDefault();
+    };
+
+    const bars = [
+      <Bar
+        dataKey='percent'
+        key='percent'
+        stackId='a'
+        onMouseEnter={handleMouseEnter}
+        onClick={handleClick}
+        isAnimationActive={false}
+      >
+        {data.map((entry: unknown, index: number) => (
+          <Cell
+            cursor={onClickHandler && 'pointer'}
+            fill={index === activeIndex ? colors.active : colors.inactive}
+            key={`cell-${index}`}
+          ></Cell>
+        ))}
+      </Bar>,
+    ];
+
+    return ready && currentData ? (
+      <Wrapper>
+        <ChartWrapper>
+          <TitleWrapper>
+            Proportion of the variant on week {currentData.yearWeek.split('-')[1]}
+            {', '}
+            {currentData.yearWeek.split('-')[0] + ' '}({currentData.firstDayInWeek})
+          </TitleWrapper>
+          <ResponsiveContainer height={height}>
+            <BarChart
+              data={data}
+              barCategoryGap='5%'
+              margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
+              onMouseLeave={handleMouseLeave}
+            >
+              <XAxis
+                dataKey='yearWeek'
+                axisLine={false}
+                tickLine={false}
+                interval={0}
+                tick={
+                  <CustomTick
+                    activeIndex={activeIndex}
+                    dataLength={data.length}
+                    currentValue={currentData.yearWeek}
+                  />
+                }
+              />
+              <YAxis
+                dataKey='percent'
+                interval={1}
+                axisLine={false}
+                tickLine={false}
+                allowDecimals={true}
+                hide={false}
+                domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
+              />
+              <CartesianGrid vertical={false} />
+              {bars}
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartWrapper>
+        <MetricsWrapper>
+          <Spacing />
+          <Metric
+            value={currentData.percent.toFixed(2)}
+            title='Proportion'
+            color={colors.active}
+            helpText='Estimated proportion relative to all samples collected.'
+            percent={true}
+          />
+          <Metric
+            value={currentData.quantity}
+            title='Samples'
+            color={colors.secondary}
+            helpText='Number of samples collected in this time frame.'
+          />
+        </MetricsWrapper>
+      </Wrapper>
+    ) : (
+      <></>
+    );
+  }
+);
 
 export const VariantTimeDistributionPlotWidget = new Widget(
   new ZodQueryEncoder(PropsSchema),

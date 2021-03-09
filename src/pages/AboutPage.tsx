@@ -69,6 +69,22 @@ export const AboutPage = () => {
         at ETH Zurich. Please contact Chaoran Chen (
         <a href='mailto:chaoran.chen@bsse.ethz.ch'>chaoran.chen@bsse.ethz.ch</a>) for any questions.
       </p>
+      <h2>Acknowledgement</h2>
+      <p>
+        We thank the{' '}
+        <a
+          href='https://bsse.ethz.ch/cevo/research/sars-cov-2/swiss-sequencing-consortium---viollier.html'
+          rel='noreferrer'
+          target='_blank'
+        >
+          Swiss SARS-CoV-2 Sequencing Consortium (S3C)
+        </a>{' '}
+        and{' '}
+        <a href='https://gisaid.org' rel='noreferrer' target='_blank'>
+          <img alt='GISAID' style={{ height: '18px' }} src='/img/gisaid.png' />
+        </a>{' '}
+        for providing the valuable data!
+      </p>
     </Wrapper>
   );
 };
