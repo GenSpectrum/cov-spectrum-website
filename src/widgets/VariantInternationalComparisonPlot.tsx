@@ -29,10 +29,12 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
     const controller = new AbortController();
     const signal = controller.signal;
     getVariantDistributionData(
-      DistributionType.International,
-      country,
-      mutations,
-      matchPercentage,
+      {
+        distributionType: DistributionType.International,
+        country,
+        mutations,
+        matchPercentage,
+      },
       signal
     ).then(newDistributionData => {
       if (isSubscribed) {

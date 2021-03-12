@@ -24,10 +24,12 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
     const controller = new AbortController();
     const signal = controller.signal;
     getVariantDistributionData(
-      DistributionType.International,
-      null,
-      variant.mutations,
-      matchPercentage,
+      {
+        distributionType: DistributionType.International,
+        country: undefined,
+        mutations: variant.mutations,
+        matchPercentage,
+      },
       signal
     ).then(newDistributionData => {
       if (isSubscribed) {

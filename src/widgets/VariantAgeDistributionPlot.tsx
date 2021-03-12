@@ -19,7 +19,15 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Pro
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    getVariantDistributionData(DistributionType.Age, country, mutations, matchPercentage, signal)
+    getVariantDistributionData(
+      {
+        distributionType: DistributionType.Age,
+        country,
+        mutations,
+        matchPercentage,
+      },
+      signal
+    )
       .then(newDistributionData => {
         if (isSubscribed) {
           setDistributionData(

@@ -66,12 +66,17 @@ const entrySchemaByDistributionType = {
 
 type EntryType<D extends DistributionType> = zod.infer<typeof entrySchemaByDistributionType[D]>;
 
-const getVariantRequestUrl = (
-  distributionType: DistributionType,
-  country: Country | null | undefined,
-  mutations: string[],
-  matchPercentage: number
-) => {
+const getVariantRequestUrl = ({
+  distributionType,
+  country,
+  mutations,
+  matchPercentage,
+}: {
+  distributionType: DistributionType;
+  country: Country | null | undefined;
+  mutations: string[];
+  matchPercentage: number;
+}) => {
   const endpoint = getVariantEndpoint(distributionType);
   const mutationsString = mutations.join(',');
   if (country) {
@@ -82,13 +87,20 @@ const getVariantRequestUrl = (
 };
 
 export const getVariantDistributionData = <D extends DistributionType>(
-  distributionType: D,
-  country: Country | null | undefined,
-  mutations: string[],
-  matchPercentage: number,
+  {
+    distributionType,
+    country,
+    mutations,
+    matchPercentage,
+  }: {
+    distributionType: D;
+    country: Country | null | undefined;
+    mutations: string[];
+    matchPercentage: number;
+  },
   signal?: AbortSignal
 ): Promise<EntryType<D>[]> => {
-  const url = getVariantRequestUrl(distributionType, country, mutations, matchPercentage);
+  const url = getVariantRequestUrl({ distributionType, country, mutations, matchPercentage });
   return fetch(url, {
     headers: getBaseHeaders(),
     signal,

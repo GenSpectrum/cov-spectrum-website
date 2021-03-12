@@ -37,15 +37,21 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    getVariantDistributionData(DistributionType.Time, country, mutations, matchPercentage, signal).then(
-      newDistributionData => {
-        if (isSubscribed) {
-          setDistribution(
-            fillWeeklyApiData(newDistributionData.map(removeCIFromEntry), { count: 0, proportion: 0 })
-          );
-        }
+    getVariantDistributionData(
+      {
+        distributionType: DistributionType.Time,
+        country,
+        mutations,
+        matchPercentage,
+      },
+      signal
+    ).then(newDistributionData => {
+      if (isSubscribed) {
+        setDistribution(
+          fillWeeklyApiData(newDistributionData.map(removeCIFromEntry), { count: 0, proportion: 0 })
+        );
       }
-    );
+    });
     return () => {
       isSubscribed = false;
       controller.abort();

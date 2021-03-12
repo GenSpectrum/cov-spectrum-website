@@ -27,7 +27,15 @@ const Switzerland = ({ country, mutations, matchPercentage }: Props) => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    getVariantDistributionData(DistributionType.TimeZipCode, country, mutations, matchPercentage, signal)
+    getVariantDistributionData(
+      {
+        distributionType: DistributionType.TimeZipCode,
+        country,
+        mutations,
+        matchPercentage,
+      },
+      signal
+    )
       .then(newDistributionData => {
         if (isSubscribed) {
           setDistributionData(newDistributionData);
