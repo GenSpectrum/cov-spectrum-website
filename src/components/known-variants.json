@@ -2,14 +2,14 @@
   {
     "variant": {
       "name": "20A.EU1",
-      "mutations": ["S:A222V"]
+      "mutations": ["S:A222V", "ORF10:V30L", "N:A220V"]
     },
     "matchPercentage": 1
   },
   {
     "variant": {
       "name": "20A.EU2",
-      "mutations": ["S:S477N"]
+      "mutations": ["S:S477N", "N:M234I", "N:A376T", "ORF1b:A176S", "ORF1b:V767L", "ORF1b:K1141R", "ORF1b:E1184D"]
     },
     "matchPercentage": 1
   },
