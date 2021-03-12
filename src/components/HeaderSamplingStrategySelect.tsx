@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { OverlayTriggerRenderProps } from 'react-bootstrap/esm/OverlayTrigger';
 import { useRouteMatch } from 'react-router-dom';
-import { SamplingStrategy } from '../services/api';
 import { unreachable } from '../helpers/unreachable';
-import { OverlayInjectedProps, OverlayTriggerRenderProps } from 'react-bootstrap/esm/OverlayTrigger';
+import { SamplingStrategy } from '../services/api';
 
 enum LockReason {
   ScreenNotSupported = 'ScreenNotSupported',
