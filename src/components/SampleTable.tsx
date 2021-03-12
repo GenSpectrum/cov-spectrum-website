@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Overlay, Popover, Table } from 'react-bootstrap';
-import { getSamples } from '../services/api';
+import { getSamples, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Sample, Variant } from '../services/api-types';
 import { MutationList } from './MutationList';
 
@@ -54,10 +54,11 @@ interface Props {
   matchPercentage: number;
   variant: Variant;
   country?: Country;
+  samplingStrategy: SamplingStrategy;
 }
 
 // SampleTable shows detailed information about individual samples from GISAID
-export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
+export const SampleTable = ({ matchPercentage, variant, country, samplingStrategy }: Props) => {
   const [samples, setSamples] = useState<Sample[] | undefined>(undefined);
   const [totalNumber, setTotalNumber] = useState<number | undefined>(undefined);
 
@@ -73,6 +74,7 @@ export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
         mutationsString,
         matchPercentage,
         country,
+        samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
       },
       signal
     ).then(response => {
@@ -86,7 +88,7 @@ export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
       isSubscribed = false;
       controller.abort();
     };
-  }, [matchPercentage, variant.mutations, country]);
+  }, [matchPercentage, variant.mutations, country, samplingStrategy]);
 
   const [popoverTarget, setPopoverTarget] = useState<PopoverTarget>();
   useEffect(() => {

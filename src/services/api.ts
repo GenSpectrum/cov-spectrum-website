@@ -160,16 +160,21 @@ export const getSamples = (
     mutationsString,
     matchPercentage,
     country,
+    samplingStrategy,
   }: {
     mutationsString: string;
     matchPercentage: number;
     country: string | null | undefined;
+    samplingStrategy: LiteralSamplingStrategy;
   },
   signal?: AbortSignal
 ): Promise<SampleResultList> => {
   let url = HOST + `/resource/sample/?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
   if (country) {
     url += `&country=${country}`;
+  }
+  if (samplingStrategy) {
+    url += `&dataType=${samplingStrategy}`;
   }
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
