@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Form } from 'react-bootstrap';
+import { Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useRouteMatch } from 'react-router-dom';
 import { SamplingStrategy } from '../services/api';
 import { unreachable } from '../helpers/unreachable';
+import { OverlayInjectedProps, OverlayTriggerRenderProps } from 'react-bootstrap/esm/OverlayTrigger';
 
 enum LockReason {
   ScreenNotSupported = 'ScreenNotSupported',
@@ -42,22 +43,39 @@ export const HeaderSamplingStrategySelect = ({ strategy, onStrategyChange, locke
     return unreachable(locked);
   }
 
-  return (
+  const makeForm = ({ ref, ...props }: Partial<OverlayTriggerRenderProps>) => (
     <Form inline className='mr-3'>
       <Form.Label htmlFor='samplingStrategySelect' className='mr-2'>
         Sampling strategy
       </Form.Label>
-      <Form.Control
-        as='select'
-        custom
-        id='samplingStrategySelect'
-        value={strategy}
-        onChange={ev => onStrategyChange(ev.target.value as SamplingStrategy)}
-        disabled={!!locked}
-      >
-        <option value={SamplingStrategy.AllSamples}>All samples</option>
-        <option value={SamplingStrategy.Surveillance}>Surveillance</option>
-      </Form.Control>
+      <div {...props} ref={ref}>
+        <Form.Control
+          as='select'
+          custom
+          id='samplingStrategySelect'
+          value={strategy}
+          onChange={ev => onStrategyChange(ev.target.value as SamplingStrategy)}
+          disabled={!!locked}
+          style={locked ? { pointerEvents: 'none' } : undefined}
+        >
+          <option value={SamplingStrategy.AllSamples}>All samples</option>
+          <option value={SamplingStrategy.Surveillance}>Surveillance</option>
+        </Form.Control>
+      </div>
     </Form>
+  );
+
+  const tooltip = (
+    <Tooltip id='samplingStrategyDisabledTooltip'>
+      Filtering for surveillance samples is only supported for Switzerland.
+    </Tooltip>
+  );
+
+  return locked ? (
+    <OverlayTrigger placement='bottom' overlay={tooltip}>
+      {makeForm}
+    </OverlayTrigger>
+  ) : (
+    makeForm({})
   );
 };
