@@ -7,6 +7,7 @@ import { DeepFocusPage } from '../pages/DeepFocusPage';
 import { ExplorePage } from '../pages/ExplorePage';
 import { FocusEmptyPage } from '../pages/FocusEmptyPage';
 import { FocusPage } from '../pages/FocusPage';
+import { SamplingStrategy } from '../services/api';
 import { Country } from '../services/api-types';
 
 const queryEncoder = new ZodQueryEncoder(VariantSelectorSchema);
@@ -23,7 +24,11 @@ export function getFocusPageLink(
   );
 }
 
-export const ExploreFocusSplit = () => {
+interface Props {
+  samplingStrategy: SamplingStrategy;
+}
+
+export const ExploreFocusSplit = ({ samplingStrategy }: Props) => {
   const { country } = useParams<{ country: string }>();
 
   const { path } = useRouteMatch();
@@ -51,7 +56,7 @@ export const ExploreFocusSplit = () => {
     </ExploreWrapper>
   );
 
-  const focusKey = encodedVariantSelector;
+  const focusKey = `${encodedVariantSelector}-${samplingStrategy}`;
 
   return (
     <>
@@ -65,12 +70,26 @@ export const ExploreFocusSplit = () => {
         <Route exact path={`${path}/variants/:variantSelector`}>
           {explorePage}
           <FocusWrapper>
-            {variantSelector && <FocusPage key={focusKey} {...variantSelector} country={country} />}
+            {variantSelector && (
+              <FocusPage
+                {...variantSelector}
+                key={focusKey}
+                country={country}
+                samplingStrategy={samplingStrategy}
+              />
+            )}
           </FocusWrapper>
         </Route>
         <Route path={`${path}/variants/:variantSelector`}>
           <RawFullContentWrapper>
-            {variantSelector && <DeepFocusPage key={focusKey} {...variantSelector} country={country} />}
+            {variantSelector && (
+              <DeepFocusPage
+                {...variantSelector}
+                key={focusKey}
+                country={country}
+                samplingStrategy={samplingStrategy}
+              />
+            )}
           </RawFullContentWrapper>
         </Route>
       </Switch>

@@ -1,4 +1,5 @@
 import * as zod from 'zod';
+import { unreachable } from '../helpers/unreachable';
 import { AccountService } from './AccountService';
 import {
   AgeDistributionEntrySchema,
@@ -23,6 +24,20 @@ export enum DistributionType {
 export enum SamplingStrategy {
   AllSamples = 'AllSamples',
   Surveillance = 'Surveillance',
+}
+
+export const LiteralSamplingStrategySchema = zod.literal('SURVEILLANCE').nullable();
+export type LiteralSamplingStrategy = zod.infer<typeof LiteralSamplingStrategySchema>;
+
+export function toLiteralSamplingStrategy(samplingStrategy: SamplingStrategy): LiteralSamplingStrategy {
+  switch (samplingStrategy) {
+    case SamplingStrategy.AllSamples:
+      return null;
+    case SamplingStrategy.Surveillance:
+      return 'SURVEILLANCE';
+    default:
+      unreachable(samplingStrategy);
+  }
 }
 
 const HOST = process.env.REACT_APP_SERVER_HOST;

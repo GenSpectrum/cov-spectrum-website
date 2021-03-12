@@ -4,18 +4,18 @@ import { Plot } from '../components/Plot';
 import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
 import { fillGroupedWeeklyApiData } from '../helpers/fill-missing';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
-import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { DistributionType, getVariantDistributionData } from '../services/api';
-import { InternationalTimeDistributionEntry } from '../services/api-types';
+import { CountrySchema, InternationalTimeDistributionEntry } from '../services/api-types';
 import { Widget } from './Widget';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
-const PropsSchema = SampleSelectorSchema.merge(
-  zod.object({
-    logScale: zod.boolean().optional(),
-  })
-);
+const PropsSchema = zod.object({
+  country: CountrySchema,
+  matchPercentage: zod.number(),
+  mutations: zod.array(zod.string()),
+  logScale: zod.boolean().optional(),
+});
 type Props = zod.infer<typeof PropsSchema>;
 
 const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentage, logScale }: Props) => {

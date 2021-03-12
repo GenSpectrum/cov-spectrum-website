@@ -15,6 +15,7 @@ import { useSamplingStrategy } from './components/HeaderSamplingStrategySelect';
 
 export const App = () => {
   const samplingStrategyProps = useSamplingStrategy();
+  const samplingStrategy = samplingStrategyProps.strategy;
 
   return (
     <OuterWrapper>
@@ -36,7 +37,7 @@ export const App = () => {
           </LoginWrapper>
         </Route>
         <Route path='/explore/:country'>
-          <ExploreFocusSplit />
+          <ExploreFocusSplit samplingStrategy={samplingStrategy} />
         </Route>
         <Route path='/global-samples'>
           <ScrollableFullContentWrapper>
