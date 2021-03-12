@@ -2,9 +2,17 @@ import React from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
+import {
+  HeaderSamplingStrategySelect,
+  Props as HeaderSamplingStrategySelectProps,
+} from './components/HeaderSamplingStrategySelect';
 import { AccountService } from './services/AccountService';
 
-export const Header = () => {
+interface Props {
+  samplingStrategyProps: HeaderSamplingStrategySelectProps;
+}
+
+export const Header = ({ samplingStrategyProps }: Props) => {
   const loggedIn = AccountService.isLoggedIn();
   let username = null;
   if (loggedIn) {
@@ -28,6 +36,7 @@ export const Header = () => {
       <Navbar.Collapse>
         <Nav className='ml-4 mr-auto'>
           <HeaderCountrySelect />
+          <HeaderSamplingStrategySelect {...samplingStrategyProps} />
           <Nav.Link href='/about' style={{ marginLeft: '20px', textDecoration: 'underline' }}>
             What is this website?
           </Nav.Link>

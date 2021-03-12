@@ -11,12 +11,15 @@ import { AboutPage } from './pages/AboutPage';
 import { ExploreFocusSplit } from './pages/ExploreFocusSplit';
 import { LoginPage } from './pages/LoginPage';
 import { GlobalSamplePage } from './pages/GlobalSamplePage';
+import { useSamplingStrategy } from './components/HeaderSamplingStrategySelect';
 
 export const App = () => {
+  const samplingStrategyProps = useSamplingStrategy();
+
   return (
     <OuterWrapper>
       <HeaderWrapper>
-        <Header />
+        <Header samplingStrategyProps={samplingStrategyProps} />
       </HeaderWrapper>
 
       <Switch>
