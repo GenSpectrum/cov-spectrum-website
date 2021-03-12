@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { AccountService } from '../services/AccountService';
+import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { NextcladeService } from '../services/NextcladeService';
 import { LazySampleButton } from './LazySampleButton';
@@ -9,12 +10,25 @@ export interface Props {
   country: Country;
   matchPercentage: number;
   variant: Variant;
+  samplingStrategy: SamplingStrategy;
 }
 
-export const FocusVariantHeaderControls = ({ country, matchPercentage, variant }: Props) => {
+export const FocusVariantHeaderControls = ({
+  country,
+  matchPercentage,
+  variant,
+  samplingStrategy,
+}: Props) => {
   const nextcladeButton = (
     <Button
-      onClick={() => NextcladeService.showVariantOnNextclade(variant, matchPercentage, country)}
+      onClick={() =>
+        NextcladeService.showVariantOnNextclade({
+          variant,
+          matchPercentage,
+          country,
+          samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
+        })
+      }
       variant='outline-dark'
       size='sm'
       className='mr-2'

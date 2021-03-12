@@ -164,14 +164,19 @@ export const getSampleFastaUrl = ({
   mutationsString,
   matchPercentage,
   country,
+  samplingStrategy,
 }: {
   mutationsString: string;
   matchPercentage: number;
   country: string | null | undefined;
+  samplingStrategy: LiteralSamplingStrategy;
 }): string => {
   let url = HOST + `/resource/sample-fasta?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
   if (country) {
     url += `&country=${country}`;
+  }
+  if (samplingStrategy) {
+    url += `&dataType=${samplingStrategy}`;
   }
   return url;
 };

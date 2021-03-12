@@ -1,15 +1,21 @@
 import { Variant } from './api-types';
 import { AccountService } from './AccountService';
-import { getSampleFastaUrl } from './api';
+import { getSampleFastaUrl, LiteralSamplingStrategy } from './api';
 
 export class NextcladeService {
-  static async showVariantOnNextclade(
-    variant: Variant,
-    matchPercentage: number,
-    country: string | undefined | null
-  ) {
+  static async showVariantOnNextclade({
+    variant,
+    matchPercentage,
+    country,
+    samplingStrategy,
+  }: {
+    variant: Variant;
+    matchPercentage: number;
+    country: string | undefined | null;
+    samplingStrategy: LiteralSamplingStrategy;
+  }) {
     const mutationsString = variant.mutations.join(',');
-    let endpoint = getSampleFastaUrl({ mutationsString, matchPercentage, country });
+    let endpoint = getSampleFastaUrl({ mutationsString, matchPercentage, country, samplingStrategy });
     if (AccountService.isLoggedIn()) {
       const jwt = await AccountService.createTemporaryJwt('/resource/sample-fasta');
       endpoint += '&jwt=' + jwt;

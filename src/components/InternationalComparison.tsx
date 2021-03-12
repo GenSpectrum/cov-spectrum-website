@@ -2,7 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import { AccountService } from '../services/AccountService';
-import { DistributionType, getVariantDistributionData } from '../services/api';
+import {
+  DistributionType,
+  getVariantDistributionData,
+  SamplingStrategy,
+  toLiteralSamplingStrategy,
+} from '../services/api';
 import { Country, InternationalTimeDistributionEntry, Variant } from '../services/api-types';
 import { NextcladeService } from '../services/NextcladeService';
 import { Utils } from '../services/Utils';
@@ -100,7 +105,14 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
                 variant='outline-primary'
                 size='sm'
                 className='ml-1'
-                onClick={() => NextcladeService.showVariantOnNextclade(variant, matchPercentage, undefined)}
+                onClick={() =>
+                  NextcladeService.showVariantOnNextclade({
+                    variant,
+                    matchPercentage,
+                    country: undefined,
+                    samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
+                  })
+                }
               >
                 Show on Nextclade
               </Button>
@@ -141,7 +153,12 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
                       {AccountService.isLoggedIn() && (
                         <Button
                           onClick={() =>
-                            NextcladeService.showVariantOnNextclade(variant, matchPercentage, c.country)
+                            NextcladeService.showVariantOnNextclade({
+                              variant,
+                              matchPercentage,
+                              country: c.country,
+                              samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
+                            })
                           }
                           variant='outline-dark'
                           size='sm'
