@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { useRouteMatch } from 'react-router-dom';
-import { AccountService } from '../services/AccountService';
 import { SamplingStrategy } from '../services/api';
+import { unreachable } from '../helpers/unreachable';
 
 enum LockReason {
-  PrivateLoginRequired = 'PrivateLoginRequired',
-  NotSupportedByScreen = 'NotSupportedByScreen',
+  ScreenNotSupported = 'ScreenNotSupported',
+  CountryNotSupported = 'CountryNotSupported',
 }
 
 export interface Props {
@@ -15,15 +15,15 @@ export interface Props {
   onStrategyChange: (strategy: SamplingStrategy) => void;
 }
 
-const supportedUrls = ['/explore', '/global-samples'];
-
 export function useSamplingStrategy(): Props {
-  const isSupported = !!useRouteMatch(supportedUrls);
-  const isLoggedIn = AccountService.isLoggedIn();
+  const match = useRouteMatch<{ country: string }>('/explore/:country');
+
+  const screenIsSupported = !!match;
+  const countryIsSupported = match?.params.country === 'Switzerland';
 
   const locked =
-    (!isSupported && LockReason.NotSupportedByScreen) ||
-    (!isLoggedIn && LockReason.PrivateLoginRequired) ||
+    (!screenIsSupported && LockReason.ScreenNotSupported) ||
+    (!countryIsSupported && LockReason.CountryNotSupported) ||
     undefined;
 
   const [preferredStrategy, setPreferredStrategy] = useState(SamplingStrategy.AllSamples);
@@ -36,8 +36,10 @@ export function useSamplingStrategy(): Props {
 }
 
 export const HeaderSamplingStrategySelect = ({ strategy, onStrategyChange, locked }: Props) => {
-  if (locked === LockReason.NotSupportedByScreen) {
+  if (locked === LockReason.ScreenNotSupported) {
     return null;
+  } else if (locked && locked !== LockReason.CountryNotSupported) {
+    return unreachable(locked);
   }
 
   return (
@@ -45,7 +47,14 @@ export const HeaderSamplingStrategySelect = ({ strategy, onStrategyChange, locke
       <Form.Label htmlFor='samplingStrategySelect' className='mr-2'>
         Sampling strategy
       </Form.Label>
-      <Form.Control as='select' custom id='samplingStrategySelect' value={strategy} disabled={!!locked}>
+      <Form.Control
+        as='select'
+        custom
+        id='samplingStrategySelect'
+        value={strategy}
+        onChange={ev => onStrategyChange(ev.target.value as SamplingStrategy)}
+        disabled={!!locked}
+      >
         <option value={SamplingStrategy.AllSamples}>All samples</option>
         <option value={SamplingStrategy.Surveillance}>Surveillance</option>
       </Form.Control>
