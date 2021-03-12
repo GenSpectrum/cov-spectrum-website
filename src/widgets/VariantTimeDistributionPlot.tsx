@@ -335,7 +335,7 @@ export const TimeGraph = React.memo(
               value={currentData.quantity}
               title='Samples'
               color={colors.secondary}
-              helpText='Number of samples collected in this time frame.'
+              helpText='Number of samples of the variant collected in this time frame.'
             />
           </MetricsWrapper>
         </ChartAndMetricsWrapper>
