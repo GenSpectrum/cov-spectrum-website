@@ -53,7 +53,7 @@ export const ExploreFocusSplit = () => {
 
   return (
     <>
-      <Switch key={encodedVariantSelector}>
+      <Switch>
         <Route exact path={`${path}`}>
           {explorePage}
           <FocusWrapper>
