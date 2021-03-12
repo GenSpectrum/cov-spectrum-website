@@ -19,7 +19,7 @@ export const NewVariantTable = ({ country, year, week, onVariantSelect }: Props)
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    getGrowingVariants(year, week, country, signal).then(newData => {
+    getGrowingVariants({ year, week, country }, signal).then(newData => {
       if (isSubscribed) {
         setData(newData);
       }

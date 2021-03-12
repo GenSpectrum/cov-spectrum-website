@@ -68,7 +68,14 @@ export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
 
     const mutationsString = variant.mutations.join(',');
 
-    getSamples(mutationsString, matchPercentage, country, signal).then(response => {
+    getSamples(
+      {
+        mutationsString,
+        matchPercentage,
+        country,
+      },
+      signal
+    ).then(response => {
       if (isSubscribed) {
         setTotalNumber(response.total);
         setSamples(response.data);

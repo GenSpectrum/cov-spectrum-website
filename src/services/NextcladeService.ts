@@ -9,7 +9,7 @@ export class NextcladeService {
     country: string | undefined | null
   ) {
     const mutationsString = variant.mutations.join(',');
-    let endpoint = getSampleFastaUrl(mutationsString, matchPercentage, country);
+    let endpoint = getSampleFastaUrl({ mutationsString, matchPercentage, country });
     if (AccountService.isLoggedIn()) {
       const jwt = await AccountService.createTemporaryJwt('/resource/sample-fasta');
       endpoint += '&jwt=' + jwt;

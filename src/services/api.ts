@@ -120,9 +120,15 @@ export const getVariantDistributionData = <D extends DistributionType>(
 };
 
 export const getSamples = (
-  mutationsString: string,
-  matchPercentage: number,
-  country: string | null | undefined,
+  {
+    mutationsString,
+    matchPercentage,
+    country,
+  }: {
+    mutationsString: string;
+    matchPercentage: number;
+    country: string | null | undefined;
+  },
   signal?: AbortSignal
 ): Promise<SampleResultList> => {
   let url = HOST + `/resource/sample/?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
@@ -134,11 +140,15 @@ export const getSamples = (
     .then(data => SampleResultListSchema.parse(data));
 };
 
-export const getSampleFastaUrl = (
-  mutationsString: string,
-  matchPercentage: number,
-  country: string | null | undefined
-): string => {
+export const getSampleFastaUrl = ({
+  mutationsString,
+  matchPercentage,
+  country,
+}: {
+  mutationsString: string;
+  matchPercentage: number;
+  country: string | null | undefined;
+}): string => {
   let url = HOST + `/resource/sample-fasta?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
   if (country) {
     url += `&country=${country}`;
@@ -147,9 +157,15 @@ export const getSampleFastaUrl = (
 };
 
 export const getGrowingVariants = (
-  year: number,
-  week: number,
-  country: string,
+  {
+    year,
+    week,
+    country,
+  }: {
+    year: number;
+    week: number;
+    country: string;
+  },
   signal?: AbortSignal
 ): Promise<GrowingVariant[]> => {
   const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${country}`;
