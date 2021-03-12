@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Form } from 'react-bootstrap';
 import { useRouteMatch } from 'react-router-dom';
 import { AccountService } from '../services/AccountService';
 import { SamplingStrategy } from '../services/api';
@@ -39,5 +40,15 @@ export const HeaderSamplingStrategySelect = ({ strategy, onStrategyChange, locke
     return null;
   }
 
-  return <div>{strategy}</div>;
+  return (
+    <Form inline className='mr-3'>
+      <Form.Label htmlFor='samplingStrategySelect' className='mr-2'>
+        Sampling strategy
+      </Form.Label>
+      <Form.Control as='select' custom id='samplingStrategySelect' value={strategy} disabled={!!locked}>
+        <option value={SamplingStrategy.AllSamples}>All samples</option>
+        <option value={SamplingStrategy.Surveillance}>Surveillance</option>
+      </Form.Control>
+    </Form>
+  );
 };

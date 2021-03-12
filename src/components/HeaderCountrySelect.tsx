@@ -27,7 +27,7 @@ export const HeaderCountrySelect = () => {
 
   return (
     <Route path='/explore'>
-      <Form inline>
+      <Form inline className='mr-3'>
         <Form.Label htmlFor='countrySelect' className='mr-2'>
           Country
         </Form.Label>

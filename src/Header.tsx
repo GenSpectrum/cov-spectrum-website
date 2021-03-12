@@ -37,7 +37,7 @@ export const Header = ({ samplingStrategyProps }: Props) => {
         <Nav className='ml-4 mr-auto'>
           <HeaderCountrySelect />
           <HeaderSamplingStrategySelect {...samplingStrategyProps} />
-          <Nav.Link href='/about' style={{ marginLeft: '20px', textDecoration: 'underline' }}>
+          <Nav.Link href='/about' style={{ textDecoration: 'underline' }}>
             What is this website?
           </Nav.Link>
         </Nav>
