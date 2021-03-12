@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
+import { Alert, Button } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import { AccountService } from '../services/AccountService';
 import {
@@ -18,9 +18,10 @@ interface Props {
   country: Country;
   matchPercentage: number;
   variant: Variant;
+  samplingStrategy: SamplingStrategy;
 }
 
-export const InternationalComparison = ({ country, matchPercentage, variant }: Props) => {
+export const InternationalComparison = ({ country, matchPercentage, variant, samplingStrategy }: Props) => {
   const [distribution, setDistribution] = useState<InternationalTimeDistributionEntry[] | null>(null);
   const [logScale, setLogScale] = useState<boolean>(false);
 
@@ -89,6 +90,13 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
 
   return (
     <>
+      {samplingStrategy !== SamplingStrategy.AllSamples && (
+        <Alert variant='warning'>
+          The selected sampling strategy can not be used for international comparison. Showing all samples
+          instead.
+        </Alert>
+      )}
+
       <VariantInternationalComparisonPlotWidget.ShareableComponent
         height={500}
         country={country}
