@@ -91,19 +91,27 @@ const getVariantRequestUrl = ({
   country,
   mutations,
   matchPercentage,
+  samplingStrategy,
 }: {
   distributionType: DistributionType;
   country: Country | null | undefined;
   mutations: string[];
   matchPercentage: number;
+  samplingStrategy: LiteralSamplingStrategy;
 }) => {
   const endpoint = getVariantEndpoint(distributionType);
   const mutationsString = mutations.join(',');
+  let url = `${HOST}${endpoint}?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
   if (country) {
-    return `${HOST}${endpoint}?country=${country}&mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
-  } else {
-    return `${HOST}${endpoint}?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
+    url += `&country=${country}`;
   }
+  if (samplingStrategy) {
+    if (distributionType === DistributionType.International) {
+      throw new Error('samplingStrategy is not supported with DistributionType.International');
+    }
+    url += `&dataType=${samplingStrategy}`;
+  }
+  return url;
 };
 
 export const getVariantDistributionData = <D extends DistributionType>(
@@ -112,15 +120,23 @@ export const getVariantDistributionData = <D extends DistributionType>(
     country,
     mutations,
     matchPercentage,
+    samplingStrategy,
   }: {
     distributionType: D;
     country: Country | null | undefined;
     mutations: string[];
     matchPercentage: number;
+    samplingStrategy: LiteralSamplingStrategy;
   },
   signal?: AbortSignal
 ): Promise<EntryType<D>[]> => {
-  const url = getVariantRequestUrl({ distributionType, country, mutations, matchPercentage });
+  const url = getVariantRequestUrl({
+    distributionType,
+    country,
+    mutations,
+    matchPercentage,
+    samplingStrategy,
+  });
   return fetch(url, {
     headers: getBaseHeaders(),
     signal,

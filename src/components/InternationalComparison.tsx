@@ -21,7 +21,12 @@ interface Props {
   samplingStrategy: SamplingStrategy;
 }
 
-export const InternationalComparison = ({ country, matchPercentage, variant, samplingStrategy }: Props) => {
+export const InternationalComparison = ({
+  country,
+  matchPercentage,
+  variant,
+  samplingStrategy: requestedSamplingStrategy,
+}: Props) => {
   const [distribution, setDistribution] = useState<InternationalTimeDistributionEntry[] | null>(null);
   const [logScale, setLogScale] = useState<boolean>(false);
 
@@ -35,6 +40,7 @@ export const InternationalComparison = ({ country, matchPercentage, variant, sam
         country: undefined,
         mutations: variant.mutations,
         matchPercentage,
+        samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
       },
       signal
     ).then(newDistributionData => {
@@ -90,7 +96,7 @@ export const InternationalComparison = ({ country, matchPercentage, variant, sam
 
   return (
     <>
-      {samplingStrategy !== SamplingStrategy.AllSamples && (
+      {requestedSamplingStrategy !== SamplingStrategy.AllSamples && (
         <Alert variant='warning'>
           The selected sampling strategy can not be used for international comparison. Showing all samples
           instead.

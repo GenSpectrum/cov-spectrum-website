@@ -4,7 +4,12 @@ import { Plot } from '../components/Plot';
 import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
 import { fillGroupedWeeklyApiData } from '../helpers/fill-missing';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
-import { DistributionType, getVariantDistributionData } from '../services/api';
+import {
+  DistributionType,
+  getVariantDistributionData,
+  SamplingStrategy,
+  toLiteralSamplingStrategy,
+} from '../services/api';
 import { CountrySchema, InternationalTimeDistributionEntry } from '../services/api-types';
 import { Widget } from './Widget';
 
@@ -34,6 +39,7 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
         country,
         mutations,
         matchPercentage,
+        samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
       },
       signal
     ).then(newDistributionData => {
