@@ -81,7 +81,7 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 const TitleWrapper = styled.div`
-  padding: 0.5rem 0rem 1rem 0rem;
+  padding: 0.5rem 0rem 1rem 3.125rem;
   font-size: 1.2rem;
   line-height: 1.3;
   color: ${colors.secondary};
@@ -279,7 +279,7 @@ export const TimeGraph = React.memo(
 
     return ready && currentData ? (
       <Wrapper>
-        <TitleWrapper>
+        <TitleWrapper id="graph_title">
           Proportion of the variant on week {currentData.yearWeek.split('-')[1]}
           {', '}
           {currentData.yearWeek.split('-')[0] + ' '}({currentData.firstDayInWeek})
@@ -311,8 +311,10 @@ export const TimeGraph = React.memo(
                   interval={1}
                   axisLine={false}
                   tickLine={false}
+                  tickFormatter={(tick) => (`${tick}%`)}
                   allowDecimals={true}
                   hide={false}
+                  width={50}
                   domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
                 />
                 <CartesianGrid vertical={false} />
