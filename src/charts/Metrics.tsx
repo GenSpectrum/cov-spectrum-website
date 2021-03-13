@@ -6,6 +6,18 @@ import styled from 'styled-components';
 const METRIC_RIGHT_PADDING = '3rem';
 const METRIC_WIDTH = '12rem';
 
+export const MetricsWrapper = styled.div`
+  padding: 1.5rem 0 1.4rem 0rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`;
+
+export const MetricsSpacing = styled.div`
+  display: flex;
+  flex-grow: 1;
+`;
+
 export const colors = {
   active: '#2980b9',
   inactive: '#bdc3c7',

@@ -11,7 +11,7 @@ import styled from 'styled-components';
 
 import { fillWeeklyApiData } from '../helpers/fill-missing';
 import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
-import Metric from "../charts/Metrics"
+import Metric, {MetricsWrapper, MetricsSpacing} from "../charts/Metrics"
 
 const CHART_MARGIN_RIGHT = 15;
 
@@ -88,23 +88,6 @@ const ChartAndMetricsWrapper = styled.div`
   flex: 1;
 `;
 
-const Spacing = styled.div`
-  display: flex;
-  flex-grow: 1;
-`;
-
-const MetricTitleWrapper = styled.div`
-  font-size: 1rem;
-  display: flex;
-  color: ${colors.inactive};
-  height: 1.6rem;
-`;
-const MetricsWrapper = styled.div`
-  padding: 1.5rem 0 1.4rem 0rem;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`;
 const ChartWrapper = styled.div`
   flex-grow: 1;
   width: 10rem;
@@ -282,7 +265,7 @@ export const TimeGraph = React.memo(
             </ResponsiveContainer>
           </ChartWrapper>
           <MetricsWrapper>
-            <Spacing />
+            <MetricsSpacing />
             <Metric
               value={currentData.percent.toFixed(2)}
               title='Proportion'
