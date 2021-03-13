@@ -4,8 +4,8 @@ import {
   AgeDistributionEntrySchema,
   Country,
   CountrySchema,
-  GrowingVariant,
-  GrowingVariantSchema,
+  InterestingVariant,
+  InterestingVariantSchema,
   InternationalTimeDistributionEntrySchema,
   SampleResultList,
   SampleResultListSchema,
@@ -156,23 +156,19 @@ export const getSampleFastaUrl = ({
   return url;
 };
 
-export const getGrowingVariants = (
+export const getInterestingVariants = (
   {
-    year,
-    week,
     country,
   }: {
-    year: number;
-    week: number;
     country: string;
   },
   signal?: AbortSignal
-): Promise<GrowingVariant[]> => {
-  const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${country}`;
+): Promise<InterestingVariant[]> => {
+  const endpoint = `/computed/find-interesting-variants?country=${country}`;
   const url = HOST + endpoint;
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
-    .then(data => zod.array(GrowingVariantSchema).parse(data));
+    .then(data => zod.array(InterestingVariantSchema).parse(data));
 };
 
 export const getCurrentWeek = (): Promise<number> => {

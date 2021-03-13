@@ -2,10 +2,10 @@ import React from 'react';
 import { KnownVariantsList } from '../components/KnownVariantsList';
 import { MutationLookup } from '../components/MutationLookup';
 import { NamedSection } from '../components/NamedSection';
-import { NewVariantLookup } from '../components/NewVariantLookup';
 import { Country } from '../services/api-types';
 import { ScrollableTabs } from '../components/ScrollableTabs';
 import { VariantSelector } from '../helpers/sample-selector';
+import {NewVariantTable} from "../components/NewVariantTable";
 
 interface Props {
   country: Country;
@@ -29,8 +29,8 @@ export const ExplorePage = ({ country, onVariantSelect, selection }: Props) => {
                   selection={selection}
                 />
               </NamedSection>
-              <NamedSection title='Potential interesting variants'>
-                <NewVariantLookup
+              <NamedSection title='Interesting variants'>
+                <NewVariantTable
                   country={country}
                   onVariantSelect={variant => onVariantSelect({ variant, matchPercentage: 1 })}
                 />

@@ -95,14 +95,12 @@ export const TimeZipCodeDistributionEntrySchema = zod.object({
   }),
 });
 
-export const GrowingVariantSchema = zod.object({
+export const InterestingVariantSchema = zod.object({
   variant: VariantSchema,
-  t0Count: zod.number(),
-  t1Count: zod.number(),
-  t0Proportion: zod.number(),
-  t1Proportion: zod.number(),
-  absoluteDifferenceProportion: zod.number(),
-  relativeDifferenceProportion: zod.number().nullable(),
+  a: zod.number(),
+  f: zod.number(),
+  absoluteNumberSamplesInPastThreeMonths: zod.number(),
+  relativeNumberSamplesInPastThreeMonths: zod.number(),
 });
 
 export const LoginResponseSchema = zod.object({
@@ -121,5 +119,5 @@ export type AgeDistributionEntry = zod.infer<typeof AgeDistributionEntrySchema>;
 export type TimeDistributionEntry = zod.infer<typeof TimeDistributionEntrySchema>;
 export type InternationalTimeDistributionEntry = zod.infer<typeof InternationalTimeDistributionEntrySchema>;
 export type TimeZipCodeDistributionEntry = zod.infer<typeof TimeZipCodeDistributionEntrySchema>;
-export type GrowingVariant = zod.infer<typeof GrowingVariantSchema>;
+export type InterestingVariant = zod.infer<typeof InterestingVariantSchema>;
 export type LoginResponse = zod.infer<typeof LoginResponseSchema>;

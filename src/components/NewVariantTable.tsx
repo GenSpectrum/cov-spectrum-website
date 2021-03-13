@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import Table from 'react-bootstrap/Table';
 import { Button } from 'react-bootstrap';
-import { getGrowingVariants } from '../services/api';
-import { Country, GrowingVariant, Variant } from '../services/api-types';
+import { getInterestingVariants } from '../services/api';
+import { Country, InterestingVariant, Variant } from '../services/api-types';
 import { MutationList } from './MutationList';
 
 interface Props {
   country: Country;
-  year: number;
-  week: number;
   onVariantSelect: (variant: Variant) => void;
 }
 
-export const NewVariantTable = ({ country, year, week, onVariantSelect }: Props) => {
-  const [data, setData] = useState<GrowingVariant[]>();
+export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
+  const [data, setData] = useState<InterestingVariant[]>();
 
   useEffect(() => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    getGrowingVariants({ year, week, country }, signal).then(newData => {
+    getInterestingVariants({ country }, signal).then(newData => {
       if (isSubscribed) {
         setData(newData);
       }
@@ -28,7 +26,7 @@ export const NewVariantTable = ({ country, year, week, onVariantSelect }: Props)
       isSubscribed = false;
       controller.abort();
     };
-  }, [country, year, week, onVariantSelect]);
+  }, [country]);
 
   return (
     <div>
@@ -38,24 +36,24 @@ export const NewVariantTable = ({ country, year, week, onVariantSelect }: Props)
             <thead>
               <tr>
                 <th>Mutations</th>
-                <th># Sequences</th>
-                <th>Proportion</th>
-                <th>Relative Increase</th>
+                <th># Sequences in last 3 months</th>
+                <th>Est. fitness advantage</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
-              {data.map(d => (
+              {data.slice(0, 200).map(d => (
                 <tr key={d.variant.mutations.join(',')}>
                   <td style={{ maxWidth: '400px', lineBreak: 'auto' }}>
                     <MutationList mutations={d.variant.mutations} />
                   </td>
-                  <td>{d.t1Count}</td>
                   <td>
-                    {d.t1Proportion.toFixed(4)} (+
-                    {d.absoluteDifferenceProportion.toFixed(4)})
+                    {d.absoluteNumberSamplesInPastThreeMonths} (
+                    {(d.relativeNumberSamplesInPastThreeMonths * 100).toFixed(2)}%)
                   </td>
-                  <td>{d.relativeDifferenceProportion?.toFixed(4)}</td>
+                  <td>
+                    {d.f.toFixed(4)}
+                  </td>
                   <td>
                     <Button
                       onClick={() => {
