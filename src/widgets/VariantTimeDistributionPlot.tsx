@@ -11,7 +11,7 @@ import styled from 'styled-components';
 
 import { fillWeeklyApiData } from '../helpers/fill-missing';
 import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
-import Metric, {MetricsWrapper, MetricsSpacing} from "../charts/Metrics"
+import Metric, { MetricsWrapper, MetricsSpacing } from '../charts/Metrics';
 
 const CHART_MARGIN_RIGHT = 15;
 
@@ -56,11 +56,11 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
   }, [country, mutations, matchPercentage]);
 
   const processedData: TimeEntry[] | undefined = distribution?.map(d => ({
-        firstDayInWeek: d.x.firstDayInWeek,
-        yearWeek: d.x.yearWeek,
-        percent: d.y.proportion * 100,
-        quantity: d.y.count,
-      }));
+    firstDayInWeek: d.x.firstDayInWeek,
+    yearWeek: d.x.yearWeek,
+    percent: d.y.proportion * 100,
+    quantity: d.y.count,
+  }));
 
   return processedData === undefined ? (
     <p>Loading</p>
@@ -93,21 +93,16 @@ const ChartWrapper = styled.div`
   width: 10rem;
 `;
 
-
 const getTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
   if (dataLength > 20) {
     if (activeIndex === index) {
       return value.slice(5);
+    } else if (Math.abs(activeIndex - index) <= 1) {
+      return '';
+    } else if (index % 2 === 0) {
+      return value.slice(5);
     }
-    else if (Math.abs(activeIndex - index) <= 1) {
-      return "";
-    }
-    else if (index % 2 === 0)
-    {
-      return value.slice(5)
-    }
-  }
-  else if (dataLength > 10) {
+  } else if (dataLength > 10) {
     return value.slice(5);
   } else if (dataLength > 5) {
     return value.slice(2);
@@ -120,7 +115,7 @@ type CustomTickProps = {
   x?: number;
   y?: number;
   stroke?: unknown;
-  payload?: { value: string, index: number};
+  payload?: { value: string; index: number };
   activeIndex: number;
   dataLength: number;
   currentValue: string;
@@ -221,7 +216,7 @@ export const TimeGraph = React.memo(
 
     return ready && currentData ? (
       <Wrapper>
-        <TitleWrapper id="graph_title">
+        <TitleWrapper id='graph_title'>
           Proportion of the variant on week {currentData.yearWeek.split('-')[1]}
           {', '}
           {currentData.yearWeek.split('-')[0] + ' '}({currentData.firstDayInWeek})
@@ -253,7 +248,7 @@ export const TimeGraph = React.memo(
                   interval={1}
                   axisLine={false}
                   tickLine={false}
-                  tickFormatter={(tick) => (`${tick}%`)}
+                  tickFormatter={tick => `${tick}%`}
                   allowDecimals={true}
                   hide={false}
                   width={50}
