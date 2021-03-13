@@ -5,18 +5,15 @@ import { SampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
-import ReactTooltip from 'react-tooltip';
 
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
 import styled from 'styled-components';
 
-import { BiHelpCircle } from 'react-icons/bi';
 import { fillWeeklyApiData } from '../helpers/fill-missing';
 import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
+import Metric from "../charts/Metrics"
 
 const CHART_MARGIN_RIGHT = 15;
-const METRIC_RIGHT_PADDING = '3rem';
-const METRIC_WIDTH = '12rem';
 
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
@@ -81,7 +78,7 @@ const Wrapper = styled.div`
   height: 100%;
 `;
 const TitleWrapper = styled.div`
-  padding: 0.5rem 0rem 1rem 3.125rem;
+  padding: 0.5rem 0rem 1rem 0rem;
   font-size: 1.2rem;
   line-height: 1.3;
   color: ${colors.secondary};
@@ -90,26 +87,10 @@ const ChartAndMetricsWrapper = styled.div`
   display: flex;
   flex: 1;
 `;
-const MetricWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: 100%;
-  padding-right: ${METRIC_RIGHT_PADDING};
-  width: ${METRIC_WIDTH};
-  flex: 1;
-  flex-grow: 0;
-`;
+
 const Spacing = styled.div`
   display: flex;
   flex-grow: 1;
-`;
-const ValueWrapper = styled.div`
-  font-size: 3rem;
-  width: auto;
-  flex-grow: 0;
-  line-height: 1;
-  color: ${props => props.color ?? colors.inactive};
 `;
 
 const MetricTitleWrapper = styled.div`
@@ -128,60 +109,38 @@ const ChartWrapper = styled.div`
   flex-grow: 1;
   width: 10rem;
 `;
-const IconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  padding-left: 0.2rem;
-  flex-grow: 1;
-`;
 
-type MetricProps = {
-  value: number | string;
-  title: string;
-  color?: string;
-  helpText: string;
-  percent?: string | number | boolean;
-};
 
-export const Metric = ({ percent = false, value, title, color, helpText }: MetricProps): JSX.Element => {
-  const tooltipId = 'TEST-id' + title;
-  return (
-    <MetricWrapper id='metric-with-tooltip'>
-      <div data-for={tooltipId} data-tip={helpText}>
-        <ValueWrapper color={color}>
-          {value}
-          {percent && '%'}
-        </ValueWrapper>
-        <MetricTitleWrapper id='metric-title'>
-          {title + ' '}
-          <IconWrapper id='info-wrapper'>
-            <BiHelpCircle />
-          </IconWrapper>
-        </MetricTitleWrapper>
-      </div>
-      <ReactTooltip id={tooltipId} />
-    </MetricWrapper>
-  );
-};
-
-type CustomTickProps = {
-  x?: number;
-  y?: number;
-  stroke?: unknown;
-  payload?: { value: string };
-  activeIndex: number;
-  dataLength: number;
-  currentValue: string;
-};
-
-const getTickText = (value: string, dataLength: number, isActive: boolean) => {
-  if (dataLength > 10) {
+const getTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
+  if (dataLength > 20) {
+    if (activeIndex === index) {
+      return value.slice(5);
+    }
+    else if (Math.abs(activeIndex - index) <= 1) {
+      return "";
+    }
+    else if (index % 2 === 0)
+    {
+      return value.slice(5)
+    }
+  }
+  else if (dataLength > 10) {
     return value.slice(5);
   } else if (dataLength > 5) {
     return value.slice(2);
   } else {
     return value;
   }
+};
+
+type CustomTickProps = {
+  x?: number;
+  y?: number;
+  stroke?: unknown;
+  payload?: { value: string, index: number};
+  activeIndex: number;
+  dataLength: number;
+  currentValue: string;
 };
 
 const CustomTick = ({
@@ -203,7 +162,7 @@ const CustomTick = ({
           textAnchor='middle'
           fill={payload.value === currentValue ? colors.active : colors.inactive}
         >
-          {getTickText(payload.value, dataLength, payload.value === currentValue)}
+          {getTickText(payload.value, dataLength, activeIndex, payload.index)}
         </text>
       ) : (
         <></>
