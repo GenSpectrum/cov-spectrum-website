@@ -58,14 +58,12 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
     };
   }, [country, mutations, matchPercentage]);
 
-  const processedData: TimeEntry[] | undefined = distribution
-    ? distribution.map(d => ({
+  const processedData: TimeEntry[] | undefined = distribution?.map(d => ({
         firstDayInWeek: d.x.firstDayInWeek,
         yearWeek: d.x.yearWeek,
         percent: d.y.proportion * 100,
         quantity: d.y.count,
-      }))
-    : undefined;
+      }));
 
   return processedData === undefined ? (
     <p>Loading</p>
