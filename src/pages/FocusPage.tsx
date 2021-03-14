@@ -9,6 +9,7 @@ import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
+import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
 
 interface Props {
   country: Country;
@@ -50,6 +51,12 @@ export const FocusPage = (props: Props) => {
             </NamedSection>
           </GridCell>
         )}
+        <GridCell>
+          <NamedSection title='Models'>
+            {/*TODO Should we make height optional?*/}
+            <Chen2021FitnessWidget.ShareableComponent {...plotProps} height={-1} />
+          </NamedSection>
+        </GridCell>
         <GridCell>
           <NamedSection title='International comparison'>
             <InternationalComparison {...props} />
