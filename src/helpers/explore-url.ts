@@ -28,10 +28,6 @@ export function useExploreUrl(): ExploreUrl | undefined {
     variantSelector: string;
   }>(`/explore/:country/:samplingStrategy/variants/:variantSelector`);
 
-  console.log('DEBUG location', location);
-  console.log('DEBUG baseRouteMatch', baseRouteMatch);
-  console.log('DEBUG variantRouteMatch', variantRouteMatch);
-
   const samplingStrategy = baseRouteMatch?.params.samplingStrategy;
   useEffect(() => {
     if (!baseRouteMatch) {
