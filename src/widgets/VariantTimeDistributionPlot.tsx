@@ -93,10 +93,6 @@ const ChartAndMetricsWrapper = styled.div`
   display: flex;
   flex: 1;
 `;
-const MetricWrapper = styled.div`
-  display: flex;
-  flex: 1;
-`;
 
 const ChartWrapper = styled.div`
   flex-grow: 1;
