@@ -27,13 +27,13 @@ export enum SamplingStrategy {
   Surveillance = 'Surveillance',
 }
 
-export const LiteralSamplingStrategySchema = zod.literal('SURVEILLANCE').nullable();
+export const LiteralSamplingStrategySchema = zod.literal('SURVEILLANCE').optional();
 export type LiteralSamplingStrategy = zod.infer<typeof LiteralSamplingStrategySchema>;
 
 export function toLiteralSamplingStrategy(samplingStrategy: SamplingStrategy): LiteralSamplingStrategy {
   switch (samplingStrategy) {
     case SamplingStrategy.AllSamples:
-      return null;
+      return undefined;
     case SamplingStrategy.Surveillance:
       return 'SURVEILLANCE';
     default:
