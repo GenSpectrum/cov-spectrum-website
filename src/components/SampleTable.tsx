@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Overlay, Popover, Table } from 'react-bootstrap';
 import { getSamples } from '../services/api';
 import { Country, Sample, Variant } from '../services/api-types';
-import { MutationList } from './MutationList';
 
 type SampleMetadata = NonNullable<Sample['metadata']>;
 
@@ -36,9 +35,9 @@ function sampleHasMetadata(sample: Sample): sample is Sample & { metadata: Sampl
   return sample.metadata !== null;
 }
 
-function formatMutations(sample: Sample): JSX.Element {
+function formatMutations(sample: Sample): React.ReactChild {
   if (sample.mutations) {
-    return <MutationList mutations={sample.mutations} />;
+    return sample.mutations.join(', ');
   } else {
     return (
       <i className='text-muted'>

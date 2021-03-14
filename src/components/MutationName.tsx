@@ -6,7 +6,7 @@ interface Props {
   mutation: string;
 }
 
-const headerMap: { [index: string]: string } = {
+const headerMap: { [index: string]: string | undefined } = {
   ORF1a: 'ORF1ab polyprotein',
   ORF1b: 'ORF1ab polyprotein',
   S: 'Spike glycoprotein',
@@ -15,7 +15,7 @@ const headerMap: { [index: string]: string } = {
   N: 'Nucleocapsid phosphoprotein',
 };
 
-const textMap: { [index: string]: string } = {
+const textMap: { [index: string]: string | undefined } = {
   S:
     'important for binding to host cell, trimeric, can be cleaved into S1 part (containing RBD) and S2 part; ' +
     'S1 = involved in attachment of virions by interaction with human ACE2; S2: fusion protein; immunogenic',
@@ -108,28 +108,25 @@ const ORF1abProteins = [
 ];
 
 const Mut = styled.span`
+  border-radius: 5px;
+  padding: 3px 5px;
+  margin-right: -5px;
+  cursor: pointer;
+
   &:hover {
     background: #eaeaea;
-    border-radius: 15px;
-    padding: 5px;
-    cursor: pointer;
   }
 `;
 
-const getInformation = (gene: string, position: number): { header: string; text: JSX.Element } => {
-  let header: string | undefined = headerMap[gene];
+const getInformation = (gene: string, position: number): { header: string; text?: string } => {
+  let header = headerMap[gene];
   if (!header) {
     return {
       header: gene + ' protein',
-      text: (
-        <p>
-          <i className='text-muted'>No description available</i>
-        </p>
-      ),
     };
   }
 
-  let text;
+  let text: string | undefined;
   if (gene === 'ORF1a' || gene === 'ORF1b') {
     if (gene === 'ORF1b') {
       position += 4401;
@@ -137,18 +134,11 @@ const getInformation = (gene: string, position: number): { header: string; text:
     for (let nsp of ORF1abProteins) {
       if (position >= nsp.range[0] && position <= nsp.range[1]) {
         header += ': ' + nsp.name;
-        text = <p>{nsp.text}</p>;
+        text = nsp.text;
       }
     }
-    if (!text) {
-      text = (
-        <p>
-          <i className='text-muted'>No description available</i>
-        </p>
-      );
-    }
   } else {
-    text = <p>{textMap[gene]}</p>;
+    text = textMap[gene];
   }
 
   return { header, text };
@@ -160,25 +150,23 @@ export const MutationName = ({ mutation }: Props) => {
 
   const information = getInformation(gene, parseInt(position));
   const popover = (
-    <Popover id='popover-basic'>
+    <Popover id='popover-basic' style={{ maxWidth: '600px' }}>
       <Popover.Title as='h3'>{information.header}</Popover.Title>
       <Popover.Content>
-        <div style={{ width: '600px' }}>{information.text}</div>
+        {information.text || <i className='text-muted'>No description available</i>}
       </Popover.Content>
     </Popover>
   );
 
   return (
     <>
-      {/*TODO It does not seem right to overwrite the CSS here. But how else?*/}
-      <style type='text/css'>
-        {`
-          .popover {
-            max-width: none;
-          } 
-        `}
-      </style>
-      <OverlayTrigger trigger='click' overlay={popover} rootClose={true} transition={false}>
+      <OverlayTrigger
+        trigger='click'
+        overlay={popover}
+        rootClose={true}
+        transition={false}
+        placement='bottom'
+      >
         <Mut>{mutation}</Mut>
       </OverlayTrigger>
     </>

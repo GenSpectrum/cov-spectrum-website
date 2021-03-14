@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import Table from 'react-bootstrap/Table';
+import React, { useEffect, useState } from 'react';
 import { Button } from 'react-bootstrap';
+import Table from 'react-bootstrap/Table';
 import { getInterestingVariants } from '../services/api';
 import { Country, InterestingVariant, Variant } from '../services/api-types';
-import { MutationList } from './MutationList';
 
 interface Props {
   country: Country;
@@ -44,9 +43,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
             <tbody>
               {data.slice(0, 200).map(d => (
                 <tr key={d.variant.mutations.join(',')}>
-                  <td style={{ maxWidth: '400px', lineBreak: 'auto' }}>
-                    <MutationList mutations={d.variant.mutations} />
-                  </td>
+                  <td style={{ maxWidth: '400px', lineBreak: 'auto' }}>{d.variant.mutations.join(', ')}</td>
                   <td>
                     {d.absoluteNumberSamplesInPastThreeMonths} (
                     {(d.relativeNumberSamplesInPastThreeMonths * 100).toFixed(2)}%)

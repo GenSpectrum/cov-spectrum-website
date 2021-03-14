@@ -9,8 +9,8 @@ export const MutationList = ({ mutations }: Props) => {
   return (
     <>
       {mutations
-        .map<React.ReactNode>(m => <MutationName key={m} mutation={m} />)
-        .reduce((prev, curr) => [prev, ', ', curr])}
+        .map(m => <MutationName key={m} mutation={m} />)
+        .flatMap((v, i) => (i === 0 ? [v] : [', ', v]))}
     </>
   );
 };
