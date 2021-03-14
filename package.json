@@ -35,6 +35,7 @@
     "react-icons": "^4.2.0",
     "react-plotly.js": "^2.5.1",
     "react-resize-detector": "^6.6.0",
+    "react-reverse-portal": "^2.0.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.1",
     "react-simple-maps": "^2.3.0",

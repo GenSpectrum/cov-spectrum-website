@@ -8,6 +8,7 @@ import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
+import { GridCell, PackedGrid } from '../components/PackedGrid';
 
 interface Props {
   country: Country;
@@ -31,20 +32,30 @@ export const FocusPage = (props: Props) => {
         The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
         mutations.
       </p>
-      <NamedSection title='Sequences over time'>
-        <VariantTimeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
-      </NamedSection>
-      <NamedSection title='Demographics'>
-        <VariantAgeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
-      </NamedSection>
-      {props.country === 'Switzerland' && (
-        <NamedSection title='Geography'>
-          <Switzerland {...plotProps} />
-        </NamedSection>
-      )}
-      <NamedSection title='International comparison'>
-        <InternationalComparison {...props} />
-      </NamedSection>
+      <PackedGrid>
+        <GridCell minWidth={800}>
+          <NamedSection title='Sequences over time'>
+            <VariantTimeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
+          </NamedSection>
+        </GridCell>
+        <GridCell minWidth={400}>
+          <NamedSection title='Demographics'>
+            <VariantAgeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
+          </NamedSection>
+        </GridCell>
+        {props.country === 'Switzerland' && (
+          <GridCell>
+            <NamedSection title='Geography'>
+              <Switzerland {...plotProps} />
+            </NamedSection>
+          </GridCell>
+        )}
+        <GridCell>
+          <NamedSection title='International comparison'>
+            <InternationalComparison {...props} />
+          </NamedSection>
+        </GridCell>
+      </PackedGrid>
     </>
   );
 };
