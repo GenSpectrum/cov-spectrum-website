@@ -8,7 +8,7 @@ import { Country } from '../services/api-types';
 
 const queryEncoder = new ZodQueryEncoder(VariantSelectorSchema);
 
-interface ExploreUrl {
+export interface ExploreUrl {
   country: Country;
   setCountry: (country: string) => void;
   samplingStrategy: SamplingStrategy;
@@ -33,7 +33,10 @@ export function useExploreUrl(): ExploreUrl | undefined {
   const samplingStrategy = baseRouteMatch?.params.samplingStrategy;
   useEffect(() => {
     if (!baseRouteMatch) {
-      if (location.pathname.startsWith('/explore/')) {
+      if (location.pathname.startsWith('/explore/') && !location.pathname.endsWith('/variants')) {
+        // This is probably an old URL with no focused variant
+        history.push(location.pathname.replace(/\/$/, '') + '/variants');
+      } else if (location.pathname.startsWith('/explore/')) {
         // We can't redirect anywhere better without the information from baseRouteMatch
         console.warn('invalid URL - redirecting home', location.pathname);
         history.push('/');
@@ -42,10 +45,10 @@ export function useExploreUrl(): ExploreUrl | undefined {
       }
     } else if (samplingStrategy === 'variants') {
       // Redirect from our old URL style
-      const prefix = `/explore/${baseRouteMatch.params.country}`;
+      const prefix = `/explore/${baseRouteMatch.params.country}/`;
       assert(location.pathname.startsWith(prefix));
       const suffix = location.pathname.slice(prefix.length);
-      history.push(`${prefix}${SamplingStrategy.AllSamples}${suffix}`);
+      history.push(`${prefix}${SamplingStrategy.AllSamples}/${suffix}`);
     } else if (typeof samplingStrategy === 'string' && !isSamplingStrategy(samplingStrategy)) {
       // Better to show all samples then to show a blank page
       const oldPrefix = `/explore/${baseRouteMatch.params.country}/${samplingStrategy}`;
