@@ -2,6 +2,7 @@ import React from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
+import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrategySelect';
 import { AccountService } from './services/AccountService';
 
 export const Header = () => {
@@ -28,7 +29,8 @@ export const Header = () => {
       <Navbar.Collapse>
         <Nav className='ml-4 mr-auto'>
           <HeaderCountrySelect />
-          <Nav.Link href='/about' style={{ marginLeft: '20px', textDecoration: 'underline' }}>
+          <HeaderSamplingStrategySelect />
+          <Nav.Link href='/about' style={{ textDecoration: 'underline' }}>
             What is this website?
           </Nav.Link>
         </Nav>

@@ -6,12 +6,14 @@ import styled from 'styled-components';
 import { SampleTable } from '../components/SampleTable';
 import { VariantHeader } from '../components/VariantHeader';
 import { scrollableContainerPaddingPx, scrollableContainerStyle } from '../helpers/scrollable-container';
+import { SamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 
 interface Props {
   country: Country;
   matchPercentage: number;
   variant: Variant;
+  samplingStrategy: SamplingStrategy;
 }
 
 const OuterWrapper = styled.div`

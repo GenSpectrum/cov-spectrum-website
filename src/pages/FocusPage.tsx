@@ -1,25 +1,28 @@
 import React from 'react';
+import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
 import { InternationalComparison } from '../components/InternationalComparison';
-import { Country, Variant } from '../services/api-types';
-import { VariantHeader } from '../components/VariantHeader';
-import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
-import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { NamedSection } from '../components/NamedSection';
 import Switzerland from '../components/Switzerland';
-import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
+import { VariantHeader } from '../components/VariantHeader';
+import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { Country, Variant } from '../services/api-types';
+import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
+import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 
 interface Props {
   country: Country;
   matchPercentage: number;
   variant: Variant;
+  samplingStrategy: SamplingStrategy;
 }
 
 export const FocusPage = (props: Props) => {
-  const { country, matchPercentage, variant } = props;
+  const { country, matchPercentage, variant, samplingStrategy } = props;
   const plotProps = {
     country,
     matchPercentage,
     mutations: variant.mutations,
+    samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
   };
   return (
     <>

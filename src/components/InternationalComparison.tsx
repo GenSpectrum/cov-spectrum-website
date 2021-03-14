@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Button } from 'react-bootstrap';
+import { Alert, Button } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import { AccountService } from '../services/AccountService';
-import { DistributionType, getVariantDistributionData } from '../services/api';
+import {
+  DistributionType,
+  getVariantDistributionData,
+  SamplingStrategy,
+  toLiteralSamplingStrategy,
+} from '../services/api';
 import { Country, InternationalTimeDistributionEntry, Variant } from '../services/api-types';
 import { NextcladeService } from '../services/NextcladeService';
 import { Utils } from '../services/Utils';
@@ -13,9 +18,15 @@ interface Props {
   country: Country;
   matchPercentage: number;
   variant: Variant;
+  samplingStrategy: SamplingStrategy;
 }
 
-export const InternationalComparison = ({ country, matchPercentage, variant }: Props) => {
+export const InternationalComparison = ({
+  country,
+  matchPercentage,
+  variant,
+  samplingStrategy: requestedSamplingStrategy,
+}: Props) => {
   const [distribution, setDistribution] = useState<InternationalTimeDistributionEntry[] | null>(null);
   const [logScale, setLogScale] = useState<boolean>(false);
 
@@ -29,6 +40,7 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
         country: undefined,
         mutations: variant.mutations,
         matchPercentage,
+        samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
       },
       signal
     ).then(newDistributionData => {
@@ -84,6 +96,13 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
 
   return (
     <>
+      {requestedSamplingStrategy !== SamplingStrategy.AllSamples && (
+        <Alert variant='warning'>
+          The selected sampling strategy can not be used for international comparison. Showing all samples
+          instead.
+        </Alert>
+      )}
+
       <VariantInternationalComparisonPlotWidget.ShareableComponent
         height={500}
         country={country}
@@ -100,13 +119,24 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
                 variant='outline-primary'
                 size='sm'
                 className='ml-1'
-                onClick={() => NextcladeService.showVariantOnNextclade(variant, matchPercentage, undefined)}
+                onClick={() =>
+                  NextcladeService.showVariantOnNextclade({
+                    variant,
+                    matchPercentage,
+                    country: undefined,
+                    samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
+                  })
+                }
               >
                 Show on Nextclade
               </Button>
             )}
             <LazySampleButton
-              query={{ variantSelector: { variant, matchPercentage }, country: undefined }}
+              query={{
+                variantSelector: { variant, matchPercentage },
+                country: undefined,
+                samplingStrategy: SamplingStrategy.AllSamples,
+              }}
               variant='outline-primary'
               size='sm'
               className='ml-1'
@@ -141,7 +171,12 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
                       {AccountService.isLoggedIn() && (
                         <Button
                           onClick={() =>
-                            NextcladeService.showVariantOnNextclade(variant, matchPercentage, c.country)
+                            NextcladeService.showVariantOnNextclade({
+                              variant,
+                              matchPercentage,
+                              country: c.country,
+                              samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
+                            })
                           }
                           variant='outline-dark'
                           size='sm'
@@ -151,7 +186,11 @@ export const InternationalComparison = ({ country, matchPercentage, variant }: P
                         </Button>
                       )}
                       <LazySampleButton
-                        query={{ variantSelector: { variant, matchPercentage }, country: c.country }}
+                        query={{
+                          variantSelector: { variant, matchPercentage },
+                          country: c.country,
+                          samplingStrategy: SamplingStrategy.AllSamples,
+                        }}
                         variant='outline-dark'
                         size='sm'
                       >

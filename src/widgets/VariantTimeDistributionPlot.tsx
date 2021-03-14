@@ -25,7 +25,12 @@ export const colors = {
   secondary: '#7f8c8d',
 };
 
-export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentage }: Props) => {
+export const VariantTimeDistributionPlot = ({
+  country,
+  mutations,
+  matchPercentage,
+  samplingStrategy,
+}: Props) => {
   const [distribution, setDistribution] = useState<EntryWithoutCI<TimeDistributionEntry>[] | undefined>(
     undefined
   );
@@ -40,6 +45,7 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
         country,
         mutations,
         matchPercentage,
+        samplingStrategy,
       },
       signal
     ).then(newDistributionData => {
@@ -53,7 +59,7 @@ export const VariantTimeDistributionPlot = ({ country, mutations, matchPercentag
       isSubscribed = false;
       controller.abort();
     };
-  }, [country, mutations, matchPercentage]);
+  }, [country, mutations, matchPercentage, samplingStrategy]);
 
   const processedData: TimeEntry[] | undefined = distribution?.map(d => ({
     firstDayInWeek: d.x.firstDayInWeek,

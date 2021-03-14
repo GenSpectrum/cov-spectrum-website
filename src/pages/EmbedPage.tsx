@@ -8,7 +8,7 @@ const host = process.env.REACT_APP_WEBSITE_HOST;
 export function EmbedPage() {
   const widgetUrlName = (useParams() as any).widget as string; // TODO(voinovp) use add types for react-router params
   const widget = allWidgets.find(w => w.urlName === widgetUrlName);
-  const widgetProps = useQueryWithEncoder(widget?.propsEncoder);
+  const widgetProps = useQueryWithEncoder<unknown>(widget?.propsEncoder);
 
   if (!widget || !widgetProps) {
     // TODO Redirect to a 404 page
@@ -25,7 +25,7 @@ export function EmbedPage() {
         .
       </div>
       <div style={{ flexGrow: 1 }}>
-        <widget.Component {...widgetProps} />
+        <widget.Component {...(widgetProps as any)} />
       </div>
     </div>
   );
