@@ -51,6 +51,8 @@ export const ExploreFocusSplit = () => {
     </ExploreWrapper>
   );
 
+  const focusKey = encodedVariantSelector;
+
   return (
     <>
       <Switch>
@@ -63,12 +65,12 @@ export const ExploreFocusSplit = () => {
         <Route exact path={`${path}/variants/:variantSelector`}>
           {explorePage}
           <FocusWrapper>
-            {variantSelector && <FocusPage {...variantSelector} country={country} />}
+            {variantSelector && <FocusPage key={focusKey} {...variantSelector} country={country} />}
           </FocusWrapper>
         </Route>
         <Route path={`${path}/variants/:variantSelector`}>
           <RawFullContentWrapper>
-            {variantSelector && <DeepFocusPage {...variantSelector} country={country} />}
+            {variantSelector && <DeepFocusPage key={focusKey} {...variantSelector} country={country} />}
           </RawFullContentWrapper>
         </Route>
       </Switch>
