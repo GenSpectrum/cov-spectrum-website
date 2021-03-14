@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Overlay, Popover, Table } from 'react-bootstrap';
-import { getSamples } from '../services/api';
+import { getSamples, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Sample, Variant } from '../services/api-types';
-import { MutationList } from './MutationList';
 
 type SampleMetadata = NonNullable<Sample['metadata']>;
 
@@ -36,9 +35,9 @@ function sampleHasMetadata(sample: Sample): sample is Sample & { metadata: Sampl
   return sample.metadata !== null;
 }
 
-function formatMutations(sample: Sample): JSX.Element {
+function formatMutations(sample: Sample): React.ReactChild {
   if (sample.mutations) {
-    return <MutationList mutations={sample.mutations} />;
+    return sample.mutations.join(', ');
   } else {
     return (
       <i className='text-muted'>
@@ -54,10 +53,11 @@ interface Props {
   matchPercentage: number;
   variant: Variant;
   country?: Country;
+  samplingStrategy: SamplingStrategy;
 }
 
 // SampleTable shows detailed information about individual samples from GISAID
-export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
+export const SampleTable = ({ matchPercentage, variant, country, samplingStrategy }: Props) => {
   const [samples, setSamples] = useState<Sample[] | undefined>(undefined);
   const [totalNumber, setTotalNumber] = useState<number | undefined>(undefined);
 
@@ -68,7 +68,15 @@ export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
 
     const mutationsString = variant.mutations.join(',');
 
-    getSamples(mutationsString, matchPercentage, country, signal).then(response => {
+    getSamples(
+      {
+        mutationsString,
+        matchPercentage,
+        country,
+        samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
+      },
+      signal
+    ).then(response => {
       if (isSubscribed) {
         setTotalNumber(response.total);
         setSamples(response.data);
@@ -79,7 +87,7 @@ export const SampleTable = ({ matchPercentage, variant, country }: Props) => {
       isSubscribed = false;
       controller.abort();
     };
-  }, [matchPercentage, variant.mutations, country]);
+  }, [matchPercentage, variant.mutations, country, samplingStrategy]);
 
   const [popoverTarget, setPopoverTarget] = useState<PopoverTarget>();
   useEffect(() => {

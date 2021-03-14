@@ -1,11 +1,12 @@
 import * as zod from 'zod';
+import { defaultForNever, unreachable } from '../helpers/unreachable';
 import { AccountService } from './AccountService';
 import {
   AgeDistributionEntrySchema,
   Country,
   CountrySchema,
-  GrowingVariant,
-  GrowingVariantSchema,
+  InterestingVariant,
+  InterestingVariantSchema,
   InternationalTimeDistributionEntrySchema,
   SampleResultList,
   SampleResultListSchema,
@@ -18,6 +19,37 @@ export enum DistributionType {
   Time = 'Time',
   International = 'International',
   TimeZipCode = 'TimeZipCode',
+}
+
+// WARNING These values are used in URLs - be careful when changing them
+export enum SamplingStrategy {
+  AllSamples = 'AllSamples',
+  Surveillance = 'Surveillance',
+}
+
+export const LiteralSamplingStrategySchema = zod.literal('SURVEILLANCE').optional();
+export type LiteralSamplingStrategy = zod.infer<typeof LiteralSamplingStrategySchema>;
+
+export function toLiteralSamplingStrategy(samplingStrategy: SamplingStrategy): LiteralSamplingStrategy {
+  switch (samplingStrategy) {
+    case SamplingStrategy.AllSamples:
+      return undefined;
+    case SamplingStrategy.Surveillance:
+      return 'SURVEILLANCE';
+    default:
+      unreachable(samplingStrategy);
+  }
+}
+
+export function isSamplingStrategy(s: string): s is SamplingStrategy {
+  const _s = s as SamplingStrategy;
+  switch (_s) {
+    case SamplingStrategy.AllSamples:
+    case SamplingStrategy.Surveillance:
+      return true;
+    default:
+      return defaultForNever(_s, false);
+  }
 }
 
 const HOST = process.env.REACT_APP_SERVER_HOST;
@@ -66,29 +98,57 @@ const entrySchemaByDistributionType = {
 
 type EntryType<D extends DistributionType> = zod.infer<typeof entrySchemaByDistributionType[D]>;
 
-const getVariantRequestUrl = (
-  distributionType: DistributionType,
-  country: Country | null | undefined,
-  mutations: string[],
-  matchPercentage: number
-) => {
+const getVariantRequestUrl = ({
+  distributionType,
+  country,
+  mutations,
+  matchPercentage,
+  samplingStrategy,
+}: {
+  distributionType: DistributionType;
+  country: Country | null | undefined;
+  mutations: string[];
+  matchPercentage: number;
+  samplingStrategy: LiteralSamplingStrategy;
+}) => {
   const endpoint = getVariantEndpoint(distributionType);
   const mutationsString = mutations.join(',');
+  let url = `${HOST}${endpoint}?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
   if (country) {
-    return `${HOST}${endpoint}?country=${country}&mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
-  } else {
-    return `${HOST}${endpoint}?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
+    url += `&country=${country}`;
   }
+  if (samplingStrategy) {
+    if (distributionType === DistributionType.International) {
+      throw new Error('samplingStrategy is not supported with DistributionType.International');
+    }
+    url += `&dataType=${samplingStrategy}`;
+  }
+  return url;
 };
 
 export const getVariantDistributionData = <D extends DistributionType>(
-  distributionType: D,
-  country: Country | null | undefined,
-  mutations: string[],
-  matchPercentage: number,
+  {
+    distributionType,
+    country,
+    mutations,
+    matchPercentage,
+    samplingStrategy,
+  }: {
+    distributionType: D;
+    country: Country | null | undefined;
+    mutations: string[];
+    matchPercentage: number;
+    samplingStrategy: LiteralSamplingStrategy;
+  },
   signal?: AbortSignal
 ): Promise<EntryType<D>[]> => {
-  const url = getVariantRequestUrl(distributionType, country, mutations, matchPercentage);
+  const url = getVariantRequestUrl({
+    distributionType,
+    country,
+    mutations,
+    matchPercentage,
+    samplingStrategy,
+  });
   return fetch(url, {
     headers: getBaseHeaders(),
     signal,
@@ -108,43 +168,65 @@ export const getVariantDistributionData = <D extends DistributionType>(
 };
 
 export const getSamples = (
-  mutationsString: string,
-  matchPercentage: number,
-  country: string | null | undefined,
+  {
+    mutationsString,
+    matchPercentage,
+    country,
+    samplingStrategy,
+  }: {
+    mutationsString: string;
+    matchPercentage: number;
+    country: string | null | undefined;
+    samplingStrategy: LiteralSamplingStrategy;
+  },
   signal?: AbortSignal
 ): Promise<SampleResultList> => {
   let url = HOST + `/resource/sample/?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
   if (country) {
     url += `&country=${country}`;
   }
+  if (samplingStrategy) {
+    url += `&dataType=${samplingStrategy}`;
+  }
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
     .then(data => SampleResultListSchema.parse(data));
 };
 
-export const getSampleFastaUrl = (
-  mutationsString: string,
-  matchPercentage: number,
-  country: string | null | undefined
-): string => {
+export const getSampleFastaUrl = ({
+  mutationsString,
+  matchPercentage,
+  country,
+  samplingStrategy,
+}: {
+  mutationsString: string;
+  matchPercentage: number;
+  country: string | null | undefined;
+  samplingStrategy: LiteralSamplingStrategy;
+}): string => {
   let url = HOST + `/resource/sample-fasta?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
   if (country) {
     url += `&country=${country}`;
   }
+  if (samplingStrategy) {
+    url += `&dataType=${samplingStrategy}`;
+  }
   return url;
 };
 
-export const getGrowingVariants = (
-  year: number,
-  week: number,
-  country: string,
+export const getInterestingVariants = (
+  {
+    country,
+  }: {
+    country: string;
+  },
   signal?: AbortSignal
-): Promise<GrowingVariant[]> => {
-  const endpoint = `/computed/find-growing-variants?year=${year}&week=${week}&country=${country}`;
+): Promise<InterestingVariant[]> => {
+  const endpoint = `/computed/find-interesting-variants?country=${country}`;
   const url = HOST + endpoint;
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
-    .then(data => zod.array(GrowingVariantSchema).parse(data));
+    .then(data => zod.array(InterestingVariantSchema).parse(data));
 };
 
 export const getCurrentWeek = (): Promise<number> => {

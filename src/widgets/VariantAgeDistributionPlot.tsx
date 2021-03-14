@@ -12,14 +12,23 @@ import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interva
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
 
-const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Props) => {
+const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage, samplingStrategy }: Props) => {
   const [distributionData, setDistributionData] = useState<EntryWithoutCI<AgeDistributionEntry>[]>();
 
   useEffect(() => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    getVariantDistributionData(DistributionType.Age, country, mutations, matchPercentage, signal)
+    getVariantDistributionData(
+      {
+        distributionType: DistributionType.Age,
+        country,
+        mutations,
+        matchPercentage,
+        samplingStrategy,
+      },
+      signal
+    )
       .then(newDistributionData => {
         if (isSubscribed) {
           setDistributionData(
@@ -34,7 +43,7 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage }: Pro
       isSubscribed = false;
       controller.abort();
     };
-  }, [country, mutations, matchPercentage]);
+  }, [country, mutations, matchPercentage, samplingStrategy]);
 
   return (
     <div style={{ height: '100%' }}>

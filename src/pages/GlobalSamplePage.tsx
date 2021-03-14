@@ -4,6 +4,7 @@ import { VariantHeader } from '../components/VariantHeader';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 import { VariantSelector, VariantSelectorSchema } from '../helpers/sample-selector';
 import { useQueryWithEncoder } from '../helpers/use-query';
+import { SamplingStrategy } from '../services/api';
 
 export const queryEncoder = new ZodQueryEncoder(VariantSelectorSchema);
 
@@ -23,7 +24,11 @@ export const GlobalSamplePage = () => {
   return (
     <>
       <VariantHeader variant={variant} titleSuffix='Worldwide samples' />
-      <SampleTable variant={variant} matchPercentage={matchPercentage} />
+      <SampleTable
+        variant={variant}
+        matchPercentage={matchPercentage}
+        samplingStrategy={SamplingStrategy.AllSamples}
+      />
     </>
   );
 };
