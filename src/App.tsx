@@ -12,9 +12,9 @@ import { ExploreFocusSplit } from './pages/ExploreFocusSplit';
 import { LoginPage } from './pages/LoginPage';
 import { GlobalSamplePage } from './pages/GlobalSamplePage';
 import { useSamplingStrategy } from './components/HeaderSamplingStrategySelect';
+import { SamplingStrategy } from './services/api';
 
 export const App = () => {
-  // TODO
   const samplingStrategyProps = useSamplingStrategy();
 
   return (
@@ -25,7 +25,7 @@ export const App = () => {
 
       <Switch>
         <Route exact path='/'>
-          <Redirect to='/explore/Switzerland' />
+          <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}`} />
         </Route>
         <Route path='/variant'>
           {/* This is so that we don't break old bookmarked links */}

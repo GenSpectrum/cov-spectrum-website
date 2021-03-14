@@ -10,7 +10,9 @@ const queryEncoder = new ZodQueryEncoder(VariantSelectorSchema);
 
 interface ExploreUrl {
   country: Country;
+  setCountry: (country: string) => void;
   samplingStrategy: SamplingStrategy;
+  setSamplingStrategy: (samplingStrategy: SamplingStrategy) => void;
   variantSelector?: VariantSelector;
   focusKey: string;
 }
@@ -31,20 +33,25 @@ export function useExploreUrl(): ExploreUrl | undefined {
   const samplingStrategy = baseRouteMatch?.params.samplingStrategy;
   useEffect(() => {
     if (!baseRouteMatch) {
-      // We can't redirect anywhere better without the information from baseRouteMatch
-      history.push('/');
+      if (location.pathname.startsWith('/explore/')) {
+        // We can't redirect anywhere better without the information from baseRouteMatch
+        console.warn('invalid URL - redirecting home', location.pathname);
+        history.push('/');
+      } else {
+        // We shouldn't redirect here, because that will make pages like /login unreachable
+      }
     } else if (samplingStrategy === 'variants') {
       // Redirect from our old URL style
-      const prefix = `/explore/${baseRouteMatch.params.country}/`;
+      const prefix = `/explore/${baseRouteMatch.params.country}`;
       assert(location.pathname.startsWith(prefix));
       const suffix = location.pathname.slice(prefix.length);
-      history.push(`${prefix}${SamplingStrategy.AllSamples}/${suffix}`);
+      history.push(`${prefix}${SamplingStrategy.AllSamples}${suffix}`);
     } else if (typeof samplingStrategy === 'string' && !isSamplingStrategy(samplingStrategy)) {
       // Better to show all samples then to show a blank page
-      const oldPrefix = `/explore/${baseRouteMatch.params.country}/${samplingStrategy}/`;
+      const oldPrefix = `/explore/${baseRouteMatch.params.country}/${samplingStrategy}`;
       assert(location.pathname.startsWith(oldPrefix));
       const suffix = location.pathname.slice(oldPrefix.length);
-      history.push(`/explore/${baseRouteMatch.params.country}/${SamplingStrategy.AllSamples}/${suffix}`);
+      history.push(`/explore/${baseRouteMatch.params.country}/${SamplingStrategy.AllSamples}${suffix}`);
     }
   }, [location.pathname, baseRouteMatch, history, samplingStrategy]);
 
@@ -76,9 +83,25 @@ export function useExploreUrl(): ExploreUrl | undefined {
 
   const country = baseRouteMatch.params.country;
 
+  const setCountry = (newCountry: string) => {
+    const oldPrefix = `/explore/${country}`;
+    assert(location.pathname.startsWith(oldPrefix));
+    const suffix = location.pathname.slice(oldPrefix.length);
+    history.push(`/explore/${newCountry}${suffix}`);
+  };
+
+  const setSamplingStrategy = (newSamplingStrategy: SamplingStrategy) => {
+    const oldPrefix = `/explore/${country}/${samplingStrategy}`;
+    assert(location.pathname.startsWith(oldPrefix));
+    const suffix = location.pathname.slice(oldPrefix.length);
+    history.push(`/explore/${country}/${newSamplingStrategy}${suffix}`);
+  };
+
   return {
     country,
+    setCountry,
     samplingStrategy,
+    setSamplingStrategy,
     variantSelector,
     focusKey: `${country}-${samplingStrategy}-${variantSelector}`,
   };
