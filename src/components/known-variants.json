@@ -2,7 +2,7 @@
   {
     "variant": {
       "name": "20A.EU1",
-      "mutations": ["S:A222V", "ORF10:V30L", "N:A220V"]
+      "mutations": ["S:A222V", "N:A220V"]
     },
     "matchPercentage": 1
   },
