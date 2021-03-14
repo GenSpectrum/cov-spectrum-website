@@ -51,9 +51,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                     {d.absoluteNumberSamplesInPastThreeMonths} (
                     {(d.relativeNumberSamplesInPastThreeMonths * 100).toFixed(2)}%)
                   </td>
-                  <td>
-                    {d.f.toFixed(4)}
-                  </td>
+                  <td>{d.f.toFixed(4)}</td>
                   <td>
                     <Button
                       onClick={() => {

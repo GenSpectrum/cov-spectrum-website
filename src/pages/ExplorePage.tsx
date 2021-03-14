@@ -5,7 +5,7 @@ import { NamedSection } from '../components/NamedSection';
 import { Country } from '../services/api-types';
 import { ScrollableTabs } from '../components/ScrollableTabs';
 import { VariantSelector } from '../helpers/sample-selector';
-import {NewVariantTable} from "../components/NewVariantTable";
+import { NewVariantTable } from '../components/NewVariantTable';
 
 interface Props {
   country: Country;
