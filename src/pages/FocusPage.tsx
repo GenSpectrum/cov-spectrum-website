@@ -8,10 +8,7 @@ import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
-import { NamedSection } from '../components/NamedSection';
-import Switzerland from '../components/Switzerland';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
-import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
 
 interface Props {
   country: Country;
