@@ -1,47 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { OverlayTriggerRenderProps } from 'react-bootstrap/esm/OverlayTrigger';
-import { useRouteMatch } from 'react-router-dom';
-import { unreachable } from '../helpers/unreachable';
+import { useExploreUrl } from '../helpers/explore-url';
 import { SamplingStrategy } from '../services/api';
 
-enum LockReason {
-  ScreenNotSupported = 'ScreenNotSupported',
-  CountryNotSupported = 'CountryNotSupported',
-}
+export const HeaderSamplingStrategySelect = () => {
+  const exploreUrl = useExploreUrl();
 
-export interface Props {
-  strategy: SamplingStrategy;
-  locked?: LockReason;
-  onStrategyChange: (strategy: SamplingStrategy) => void;
-}
-
-export function useSamplingStrategy(): Props {
-  const match = useRouteMatch<{ country: string }>('/explore/:country');
-
-  const screenIsSupported = !!match;
-  const countryIsSupported = match?.params.country === 'Switzerland';
-
-  const locked =
-    (!screenIsSupported && LockReason.ScreenNotSupported) ||
-    (!countryIsSupported && LockReason.CountryNotSupported) ||
-    undefined;
-
-  const [preferredStrategy, setPreferredStrategy] = useState(SamplingStrategy.AllSamples);
-
-  return {
-    strategy: locked ? SamplingStrategy.AllSamples : preferredStrategy,
-    locked,
-    onStrategyChange: setPreferredStrategy,
-  };
-}
-
-export const HeaderSamplingStrategySelect = ({ strategy, onStrategyChange, locked }: Props) => {
-  if (locked === LockReason.ScreenNotSupported) {
+  if (!exploreUrl) {
     return null;
-  } else if (locked && locked !== LockReason.CountryNotSupported) {
-    return unreachable(locked);
   }
+
+  const locked = exploreUrl.country !== 'Switzerland';
 
   const makeForm = ({ ref, ...props }: Partial<OverlayTriggerRenderProps>) => (
     <Form inline className='mr-3'>
@@ -53,8 +23,8 @@ export const HeaderSamplingStrategySelect = ({ strategy, onStrategyChange, locke
           as='select'
           custom
           id='samplingStrategySelect'
-          value={strategy}
-          onChange={ev => onStrategyChange(ev.target.value as SamplingStrategy)}
+          value={exploreUrl.samplingStrategy}
+          onChange={ev => exploreUrl.setSamplingStrategy(ev.target.value as SamplingStrategy)}
           disabled={!!locked}
           style={locked ? { pointerEvents: 'none' } : undefined}
         >

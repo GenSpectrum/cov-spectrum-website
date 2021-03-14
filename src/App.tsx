@@ -2,25 +2,22 @@ import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import { Header } from './Header';
 import {
-  ScrollableFullContentWrapper,
   HeaderWrapper,
   LoginWrapper,
   OuterWrapper,
+  ScrollableFullContentWrapper,
 } from './helpers/app-layout';
 import { AboutPage } from './pages/AboutPage';
 import { ExploreFocusSplit } from './pages/ExploreFocusSplit';
-import { LoginPage } from './pages/LoginPage';
 import { GlobalSamplePage } from './pages/GlobalSamplePage';
-import { useSamplingStrategy } from './components/HeaderSamplingStrategySelect';
+import { LoginPage } from './pages/LoginPage';
 import { SamplingStrategy } from './services/api';
 
 export const App = () => {
-  const samplingStrategyProps = useSamplingStrategy();
-
   return (
     <OuterWrapper>
       <HeaderWrapper>
-        <Header samplingStrategyProps={samplingStrategyProps} />
+        <Header />
       </HeaderWrapper>
 
       <Switch>
