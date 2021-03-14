@@ -1,5 +1,5 @@
 import * as zod from 'zod';
-import { unreachable } from '../helpers/unreachable';
+import { defaultForNever, unreachable } from '../helpers/unreachable';
 import { AccountService } from './AccountService';
 import {
   AgeDistributionEntrySchema,
@@ -21,6 +21,7 @@ export enum DistributionType {
   TimeZipCode = 'TimeZipCode',
 }
 
+// WARNING These values are used in URLs - be careful when changing them
 export enum SamplingStrategy {
   AllSamples = 'AllSamples',
   Surveillance = 'Surveillance',
@@ -37,6 +38,17 @@ export function toLiteralSamplingStrategy(samplingStrategy: SamplingStrategy): L
       return 'SURVEILLANCE';
     default:
       unreachable(samplingStrategy);
+  }
+}
+
+export function isSamplingStrategy(s: string): s is SamplingStrategy {
+  const _s = s as SamplingStrategy;
+  switch (_s) {
+    case SamplingStrategy.AllSamples:
+    case SamplingStrategy.Surveillance:
+      return true;
+    default:
+      return defaultForNever(_s, false);
   }
 }
 

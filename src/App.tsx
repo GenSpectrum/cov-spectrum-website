@@ -14,8 +14,8 @@ import { GlobalSamplePage } from './pages/GlobalSamplePage';
 import { useSamplingStrategy } from './components/HeaderSamplingStrategySelect';
 
 export const App = () => {
+  // TODO
   const samplingStrategyProps = useSamplingStrategy();
-  const samplingStrategy = samplingStrategyProps.strategy;
 
   return (
     <OuterWrapper>
@@ -36,8 +36,8 @@ export const App = () => {
             <LoginPage />
           </LoginWrapper>
         </Route>
-        <Route path='/explore/:country'>
-          <ExploreFocusSplit samplingStrategy={samplingStrategy} />
+        <Route path='/explore/:country/:samplingStrategy'>
+          <ExploreFocusSplit />
         </Route>
         <Route path='/global-samples'>
           <ScrollableFullContentWrapper>

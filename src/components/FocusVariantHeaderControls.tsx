@@ -55,7 +55,7 @@ export const FocusVariantHeaderControls = ({
         </OverlayTrigger>
       )}
       <LazySampleButton
-        query={{ variantSelector: { variant, matchPercentage }, country }}
+        query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy }}
         variant='outline-dark'
         size='sm'
       >

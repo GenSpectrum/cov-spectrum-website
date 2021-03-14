@@ -132,7 +132,11 @@ export const InternationalComparison = ({
               </Button>
             )}
             <LazySampleButton
-              query={{ variantSelector: { variant, matchPercentage }, country: undefined }}
+              query={{
+                variantSelector: { variant, matchPercentage },
+                country: undefined,
+                samplingStrategy: SamplingStrategy.AllSamples,
+              }}
               variant='outline-primary'
               size='sm'
               className='ml-1'
@@ -182,7 +186,11 @@ export const InternationalComparison = ({
                         </Button>
                       )}
                       <LazySampleButton
-                        query={{ variantSelector: { variant, matchPercentage }, country: c.country }}
+                        query={{
+                          variantSelector: { variant, matchPercentage },
+                          country: c.country,
+                          samplingStrategy: SamplingStrategy.AllSamples,
+                        }}
                         variant='outline-dark'
                         size='sm'
                       >
