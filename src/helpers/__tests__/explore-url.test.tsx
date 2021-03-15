@@ -91,6 +91,33 @@ describe('useExploreUrl', () => {
       },
     },
     {
+      label: 'allows Surveillance strategy in Switzerland',
+      initialUrl: '/explore/Switzerland/Surveillance',
+      exploreUrl: {
+        country: 'Switzerland',
+        samplingStrategy: SamplingStrategy.Surveillance,
+      },
+    },
+    {
+      label: 'redirects to AllSamples strategy outside of Switzerland (no focused variant)',
+      initialUrl: '/explore/Germany/Surveillance',
+      finalUrl: '/explore/Germany/AllSamples',
+      exploreUrl: {
+        country: 'Germany',
+        samplingStrategy: SamplingStrategy.AllSamples,
+      },
+    },
+    {
+      label: 'redirects to AllSamples strategy outside of Switzerland (focused variant, deep focus)',
+      initialUrl: `/explore/Germany/Surveillance/variants/json=${exampleVariantSelectorEncoded}/deepExample`,
+      finalUrl: `/explore/Germany/AllSamples/variants/json=${exampleVariantSelectorEncoded}/deepExample`,
+      exploreUrl: {
+        country: 'Germany',
+        samplingStrategy: SamplingStrategy.AllSamples,
+        variantSelector: exampleVariantSelector,
+      },
+    },
+    {
       label: 'redirects from old URL (focused variant)',
       initialUrl: `/explore/Germany/variants/json=${exampleVariantSelectorEncoded}`,
       finalUrl: `/explore/Germany/AllSamples/variants/json=${exampleVariantSelectorEncoded}`,

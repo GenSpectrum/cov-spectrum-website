@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { generatePath, useHistory, useLocation, useRouteMatch } from 'react-router';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 import { VariantSelector, VariantSelectorSchema } from '../helpers/sample-selector';
@@ -72,7 +72,62 @@ export function useExploreUrl(): ExploreUrl | undefined {
     }
   }, [encodedVariantSelector]);
 
-  if (!baseRouteMatch) {
+  const country = baseRouteMatch?.params.country;
+
+  const setCountryAndSamplingStrategy = useCallback(
+    (newCountry: string, newSamplingStrategy: SamplingStrategy) => {
+      if (!country || !samplingStrategy) {
+        throw new Error(
+          'setCountryAndSamplingStrategy call without defined country or samplingStrategy (should be unreachable)'
+        );
+      }
+      if (country !== 'Switzerland' && newSamplingStrategy !== SamplingStrategy.AllSamples) {
+        throw new Error('SamplingStrategy.AllSamples only works for Switzerland');
+      }
+      const oldPrefix = `/explore/${country}/${samplingStrategy}`;
+      assert(location.pathname.startsWith(oldPrefix));
+      const suffix = location.pathname.slice(oldPrefix.length);
+      history.push(`/explore/${newCountry}/${newSamplingStrategy}${suffix}`);
+    },
+    [history, location.pathname, country, samplingStrategy]
+  );
+
+  const setCountry = useCallback(
+    (newCountry: string) => {
+      if (!samplingStrategy) {
+        throw new Error('setCountry call without defined samplingStrategy (should be unreachable)');
+      }
+      const newSamplingStrategy =
+        newCountry === 'Switzerland' && isSamplingStrategy(samplingStrategy)
+          ? samplingStrategy
+          : SamplingStrategy.AllSamples;
+      setCountryAndSamplingStrategy(newCountry, newSamplingStrategy);
+    },
+    [setCountryAndSamplingStrategy, samplingStrategy]
+  );
+
+  const setSamplingStrategy = useCallback(
+    (newSamplingStrategy: SamplingStrategy) => {
+      if (!country) {
+        throw new Error('setSamplingStrategy call without defined country (should be unreachable)');
+      }
+      setCountryAndSamplingStrategy(country, newSamplingStrategy);
+    },
+    [setCountryAndSamplingStrategy, country]
+  );
+
+  useEffect(() => {
+    if (
+      country !== undefined &&
+      country !== 'Switzerland' &&
+      isSamplingStrategy(samplingStrategy) &&
+      samplingStrategy !== SamplingStrategy.AllSamples
+    ) {
+      setSamplingStrategy(SamplingStrategy.AllSamples);
+    }
+  }, [setSamplingStrategy, country, samplingStrategy]);
+
+  if (!baseRouteMatch || !country) {
     return undefined;
   }
 
@@ -82,26 +137,15 @@ export function useExploreUrl(): ExploreUrl | undefined {
     return undefined;
   }
 
+  if (country !== 'Switzerland' && samplingStrategy !== SamplingStrategy.AllSamples) {
+    // The useEffect above will redirect to AllSamples
+    return undefined;
+  }
+
   if (variantRouteMatch) {
     assert.strictEqual(baseRouteMatch.params.country, variantRouteMatch.params.country);
     assert.strictEqual(baseRouteMatch.params.samplingStrategy, variantRouteMatch.params.samplingStrategy);
   }
-
-  const country = baseRouteMatch.params.country;
-
-  const setCountry = (newCountry: string) => {
-    const oldPrefix = `/explore/${country}`;
-    assert(location.pathname.startsWith(oldPrefix));
-    const suffix = location.pathname.slice(oldPrefix.length);
-    history.push(`/explore/${newCountry}${suffix}`);
-  };
-
-  const setSamplingStrategy = (newSamplingStrategy: SamplingStrategy) => {
-    const oldPrefix = `/explore/${country}/${samplingStrategy}`;
-    assert(location.pathname.startsWith(oldPrefix));
-    const suffix = location.pathname.slice(oldPrefix.length);
-    history.push(`/explore/${country}/${newSamplingStrategy}${suffix}`);
-  };
 
   return {
     country,

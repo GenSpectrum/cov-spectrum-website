@@ -41,7 +41,7 @@ export function toLiteralSamplingStrategy(samplingStrategy: SamplingStrategy): L
   }
 }
 
-export function isSamplingStrategy(s: string): s is SamplingStrategy {
+export function isSamplingStrategy(s: unknown): s is SamplingStrategy {
   const _s = s as SamplingStrategy;
   switch (_s) {
     case SamplingStrategy.AllSamples:
