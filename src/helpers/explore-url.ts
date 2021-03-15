@@ -33,9 +33,12 @@ export function useExploreUrl(): ExploreUrl | undefined {
   const samplingStrategy = baseRouteMatch?.params.samplingStrategy;
   useEffect(() => {
     if (!baseRouteMatch) {
-      if (location.pathname.startsWith('/explore/') && !location.pathname.endsWith('/variants')) {
+      if (
+        location.pathname.startsWith('/explore/') &&
+        !location.pathname.endsWith(`/${SamplingStrategy.AllSamples}`)
+      ) {
         // This is probably an old URL with no focused variant
-        history.push(location.pathname.replace(/\/$/, '') + '/variants');
+        history.push(`${location.pathname.replace(/\/$/, '')}/${SamplingStrategy.AllSamples}`);
       } else if (location.pathname.startsWith('/explore/')) {
         // We can't redirect anywhere better without the information from baseRouteMatch
         console.warn('invalid URL - redirecting home', location.pathname);

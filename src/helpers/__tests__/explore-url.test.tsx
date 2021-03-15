@@ -57,32 +57,38 @@ describe('useExploreUrl', () => {
       warnings: [/invalid URL/],
     },
     {
-      label: 'accepts explore URL with no focused variant',
-      initialUrl: '/explore/Germany/Surveillance',
+      label: 'accepts explore URL with no focused variant (no trailing slash)',
+      initialUrl: '/explore/Germany/AllSamples',
       exploreUrl: {
         country: 'Germany',
-        samplingStrategy: SamplingStrategy.Surveillance,
+        samplingStrategy: SamplingStrategy.AllSamples,
+      },
+    },
+    {
+      label: 'accepts explore URL with no focused variant (trailing slash)',
+      initialUrl: '/explore/Germany/AllSamples/',
+      exploreUrl: {
+        country: 'Germany',
+        samplingStrategy: SamplingStrategy.AllSamples,
       },
     },
     {
       label: 'redirects from old URL (no focused variant, no trailing slash)',
-      initialUrl: '/explore/Germany/variants',
-      finalUrl: '/explore/Germany/AllSamples/variants',
+      initialUrl: '/explore/Germany',
+      finalUrl: '/explore/Germany/AllSamples',
       exploreUrl: {
         country: 'Germany',
         samplingStrategy: SamplingStrategy.AllSamples,
       },
-      warnings: [/invalid samplingStrategy/],
     },
     {
       label: 'redirects from old URL (no focused variant, trailing slash)',
-      initialUrl: '/explore/Germany/variants/',
-      finalUrl: '/explore/Germany/AllSamples/variants/',
+      initialUrl: '/explore/Germany/',
+      finalUrl: '/explore/Germany/AllSamples',
       exploreUrl: {
         country: 'Germany',
         samplingStrategy: SamplingStrategy.AllSamples,
       },
-      warnings: [/invalid samplingStrategy/],
     },
     {
       label: 'redirects from old URL (focused variant)',
@@ -108,19 +114,19 @@ describe('useExploreUrl', () => {
     },
     {
       label: 'decodes variant',
-      initialUrl: `/explore/Italy/Surveillance/variants/json=${exampleVariantSelectorEncoded}`,
+      initialUrl: `/explore/Switzerland/Surveillance/variants/json=${exampleVariantSelectorEncoded}`,
       exploreUrl: {
-        country: 'Italy',
+        country: 'Switzerland',
         samplingStrategy: SamplingStrategy.Surveillance,
         variantSelector: exampleVariantSelector,
       },
     },
     {
       label: 'gives warning with invalid encoded variant',
-      initialUrl: `/explore/Italy/Surveillance/variants/json=bla`,
+      initialUrl: `/explore/Switzerland/AllSamples/variants/json=bla`,
       exploreUrl: {
-        country: 'Italy',
-        samplingStrategy: SamplingStrategy.Surveillance,
+        country: 'Switzerland',
+        samplingStrategy: SamplingStrategy.AllSamples,
       },
       warnings: [/could not decode/],
     },
