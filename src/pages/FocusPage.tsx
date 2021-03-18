@@ -24,6 +24,9 @@ const HeaderArea = styled.div`
 
 const RaisedGridCell = styled.div`
   margin: 5px;
+  background: white;
+  padding: 10px 15px;
+  border: 1px solid #00000020;
 `;
 
 export const FocusPage = (props: Props) => {

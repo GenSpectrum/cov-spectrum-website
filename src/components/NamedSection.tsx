@@ -8,15 +8,11 @@ interface Props {
 }
 
 const Title = styled.h3`
-  margin: 0 4px 10px 4px;
+  font-size: 1.5rem;
+  margin-bottom: 15px;
 `;
 
-const RaisedContentWrapper = styled.div`
-  margin-bottom: 20px;
-  background: white;
-  padding: 10px;
-  border: 1px solid #00000020;
-`;
+const RaisedContentWrapper = styled.div``;
 
 const FlatContentWrapper = styled.div`
   margin-bottom: 30px;
@@ -25,7 +21,7 @@ const FlatContentWrapper = styled.div`
 export const NamedSection = ({ title, children, raised }: Props) => {
   return (
     <>
-      {raised ? <Title>{title}</Title> : <h3>{title}</h3>}
+      <Title>{title}</Title>
       {raised ? (
         <RaisedContentWrapper>{children}</RaisedContentWrapper>
       ) : (
