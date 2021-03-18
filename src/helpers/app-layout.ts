@@ -14,6 +14,7 @@ export const OuterWrapper = styled.div`
 
 export const HeaderWrapper = styled.div`
   grid-area: header;
+  border-bottom: 1px solid #00000020;
 `;
 
 export const fullGridStyle = css`
@@ -42,11 +43,10 @@ export const LoginWrapper = styled.div`
 export const ExploreWrapper = styled.div`
   grid-area: left;
   overflow: hidden;
-  padding: 0 0 10px 10px;
 `;
 
 export const FocusWrapper = styled.div`
   ${scrollableContainerStyle}
   grid-area: right;
-  padding: 5px;
+  padding: 15px 5px;
 `;

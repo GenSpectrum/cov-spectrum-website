@@ -19,7 +19,7 @@ interface Props {
 }
 
 const HeaderArea = styled.div`
-  padding: 0 15px 0 15px;
+  padding: 0 10px 0 10px;
 `;
 
 const RaisedGridCell = styled.div`
