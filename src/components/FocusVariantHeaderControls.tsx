@@ -29,7 +29,7 @@ export const FocusVariantHeaderControls = ({
           samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
         })
       }
-      variant='outline-dark'
+      variant='secondary'
       size='sm'
       className='mr-2'
     >
@@ -56,7 +56,7 @@ export const FocusVariantHeaderControls = ({
       )}
       <LazySampleButton
         query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy }}
-        variant='outline-dark'
+        variant='secondary'
         size='sm'
       >
         Show samples

@@ -43,7 +43,7 @@ export const KnownVariantsList = ({ country, onVariantSelect, selection }: Props
                     onClick={() => {
                       onVariantSelect(d);
                     }}
-                    variant='outline-secondary'
+                    variant='secondary'
                     size='sm'
                   >
                     Show Details

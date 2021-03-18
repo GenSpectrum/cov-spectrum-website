@@ -111,12 +111,12 @@ export const InternationalComparison = ({
         logScale={logScale}
         toolbarChildren={
           <>
-            <Button variant='outline-primary' size='sm' className='ml-1' onClick={() => setLogScale(v => !v)}>
+            <Button variant='primary' size='sm' className='ml-1' onClick={() => setLogScale(v => !v)}>
               Toggle log scale
             </Button>
             {AccountService.isLoggedIn() && (
               <Button
-                variant='outline-primary'
+                variant='primary'
                 size='sm'
                 className='ml-1'
                 onClick={() =>
@@ -137,7 +137,7 @@ export const InternationalComparison = ({
                 country: undefined,
                 samplingStrategy: SamplingStrategy.AllSamples,
               }}
-              variant='outline-primary'
+              variant='primary'
               size='sm'
               className='ml-1'
             >
@@ -178,7 +178,7 @@ export const InternationalComparison = ({
                               samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
                             })
                           }
-                          variant='outline-dark'
+                          variant='dark'
                           size='sm'
                           className='mr-2'
                         >
@@ -191,7 +191,7 @@ export const InternationalComparison = ({
                           country: c.country,
                           samplingStrategy: SamplingStrategy.AllSamples,
                         }}
-                        variant='outline-dark'
+                        variant='dark'
                         size='sm'
                       >
                         Show samples
