@@ -25,13 +25,13 @@ const OuterWrapper = styled.div`
 const HeaderWrapper = styled.div`
   padding: ${scrollableContainerPaddingPx}px;
   border-bottom: 1px solid #dee2e6;
-  background: var(--light);
 `;
 
 const ContentWrapper = styled.div`
   ${scrollableContainerStyle}
   height: 100px;
   flex-grow: 1;
+  background: white;
 `;
 
 export const DeepFocusPage = (props: Props) => {
