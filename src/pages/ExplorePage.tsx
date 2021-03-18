@@ -1,5 +1,5 @@
 import React from 'react';
-import { KnownVariantsList } from '../components/KnownVariantsList';
+import { KnownVariantsList } from '../components/KnownVariantsList/KnownVariantsList';
 import { MutationLookup } from '../components/MutationLookup';
 import { NamedSection } from '../components/NamedSection';
 import { Country } from '../services/api-types';

@@ -1,6 +1,6 @@
 import { Button, Table } from 'react-bootstrap';
-import { VariantSelector } from '../helpers/sample-selector';
-import { Country, Variant } from '../services/api-types';
+import { VariantSelector } from '../../helpers/sample-selector';
+import { Country, Variant } from '../../services/api-types';
 import knownVariants from './known-variants.json';
 
 export interface SelectedVariantAndCountry {
