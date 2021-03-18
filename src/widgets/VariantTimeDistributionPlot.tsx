@@ -19,8 +19,8 @@ const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
 
 export const colors = {
-  active: '#2980b9',
-  inactive: '#bdc3c7',
+  active: '#3a6e6f',
+  inactive: '#a1b3ba',
   active2: '#3498db',
   secondary: '#7f8c8d',
 };

@@ -29,17 +29,7 @@ const Map = ({ width, distributionData }: Props) => {
   const path = geoPath().projection(projection);
   const colorScale = scaleQuantile<string>()
     .domain(distributionData.map((d: TimeZipCodeDistributionEntry) => d.y.count))
-    .range([
-      '#ffedea',
-      '#ffcec5',
-      '#ffad9f',
-      '#ff8a75',
-      '#ff5533',
-      '#e2492d',
-      '#be3d26',
-      '#9a311f',
-      '#782618',
-    ]);
+    .range(['#f18805']);
 
   return width !== undefined ? (
     <div>

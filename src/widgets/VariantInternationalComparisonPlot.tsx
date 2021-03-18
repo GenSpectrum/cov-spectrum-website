@@ -48,9 +48,9 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
         const newPlotData = newDistributionData.filter((d: any) => countriesToPlot.has(d.x.country));
         // TODO Remove hard-coding..
         const newColorMap = [
-          { target: 'United Kingdom', value: { marker: { color: 'black' } } },
-          { target: 'Denmark', value: { marker: { color: 'green' } } },
-          { target: 'Switzerland', value: { marker: { color: 'red' } } },
+          { target: 'United Kingdom', value: { marker: { color: '#e08a13' } } },
+          { target: 'Denmark', value: { marker: { color: '#d70000' } } },
+          { target: 'Switzerland', value: { marker: { color: '#3a6e6f' } } },
         ];
         if (country && !['United Kingdom', 'Denmark', 'Switzerland'].includes(country)) {
           newColorMap.push({

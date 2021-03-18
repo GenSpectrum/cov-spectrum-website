@@ -9,3 +9,14 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+
+.btn-primary {
+  background-color: #3a6e6f !important;
+  border-color: #2f6384 !important;
+}
+
+.btn-secondary {
+  background-color: #526870 !important;
+  border-color: #345163 !important;
+}

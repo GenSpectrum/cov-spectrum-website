@@ -43,7 +43,7 @@ const SimpleAreaPlot = React.memo(
           <Area
             dataKey='y'
             type='basis'
-            fill={selected ? '#2980b9' : '#bdc3c7'}
+            fill={selected ? '#3a6e6f' : '#a1b3ba'}
             fillOpacity='1'
             stroke='none'
             isAnimationActive={false}
