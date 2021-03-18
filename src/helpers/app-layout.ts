@@ -9,6 +9,7 @@ export const OuterWrapper = styled.div`
   grid-template-areas:
     'header header'
     'left right';
+  background: var(--light);
 `;
 
 export const HeaderWrapper = styled.div`
@@ -41,11 +42,11 @@ export const LoginWrapper = styled.div`
 export const ExploreWrapper = styled.div`
   grid-area: left;
   overflow: hidden;
+  padding: 0 0 10px 10px;
 `;
 
 export const FocusWrapper = styled.div`
   ${scrollableContainerStyle}
   grid-area: right;
-  background: var(--light);
-  padding: 15px 5px;
+  padding: 5px;
 `;
