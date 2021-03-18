@@ -19,21 +19,11 @@ interface Props {
 }
 
 const HeaderArea = styled.div`
-  background: white;
-  padding: 15px;
-  padding-bottom: 1px;
-  margin: 5px;
-  border: 1px solid #00000030;
-  border-radius: 3px;
+  padding: 0 15px 0 15px;
 `;
 
 const RaisedGridCell = styled.div`
-  background: white;
-  padding: 15px;
   margin: 5px;
-  height: calc(100% - 5px - 5px);
-  border: 1px solid #00000030;
-  border-radius: 3px;
 `;
 
 export const FocusPage = (props: Props) => {
@@ -56,14 +46,14 @@ export const FocusPage = (props: Props) => {
       <PackedGrid>
         <GridCell minWidth={800}>
           <RaisedGridCell>
-            <NamedSection title='Sequences over time'>
+            <NamedSection title='Sequences over time' raised>
               <VariantTimeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
             </NamedSection>
           </RaisedGridCell>
         </GridCell>
         <GridCell minWidth={400}>
           <RaisedGridCell>
-            <NamedSection title='Demographics'>
+            <NamedSection title='Demographics' raised>
               <VariantAgeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
             </NamedSection>
           </RaisedGridCell>
@@ -71,7 +61,7 @@ export const FocusPage = (props: Props) => {
         {props.country === 'Switzerland' && (
           <GridCell minWidth={600}>
             <RaisedGridCell>
-              <NamedSection title='Geography'>
+              <NamedSection title='Geography' raised>
                 <Switzerland {...plotProps} />
               </NamedSection>
             </RaisedGridCell>
@@ -79,7 +69,7 @@ export const FocusPage = (props: Props) => {
         )}
         <GridCell minWidth={600}>
           <RaisedGridCell>
-            <NamedSection title='International comparison'>
+            <NamedSection title='International comparison' raised>
               <InternationalComparison {...props} />
             </NamedSection>
           </RaisedGridCell>
