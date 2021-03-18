@@ -71,7 +71,9 @@ export const PackedGrid = ({ children }: Props) => {
               key={child.key === null ? `child-${cell.index}` : `child-around-${child.key}`}
               node={portalNodes[cell.index]}
             >
-              <div style={{ width: cell.width, overflow: 'hidden' }}>{child.props.children}</div>
+              <div style={{ width: cell.width, overflow: 'hidden', height: '100%' }}>
+                {child.props.children}
+              </div>
             </InPortal>
           );
         })
