@@ -21,7 +21,7 @@ const FlatContentWrapper = styled.div`
 export const NamedSection = ({ title, children, raised }: Props) => {
   return (
     <>
-      <Title>{title}</Title>
+      <Title>{title} </Title>
       {raised ? (
         <RaisedContentWrapper>{children}</RaisedContentWrapper>
       ) : (

@@ -10,6 +10,7 @@ import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistribut
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import styled from 'styled-components';
+import { Button } from 'react-bootstrap';
 
 interface Props {
   country: Country;
@@ -23,11 +24,18 @@ const HeaderArea = styled.div`
 `;
 
 const RaisedGridCell = styled.div`
+  position: relative;
   margin: 5px;
   background: white;
   padding: 12px 15px;
   border: 1px solid #0000001f;
   box-shadow: #00000059 0 2px 3px 0px;
+`;
+
+const MoreButtonWrapper = styled.div`
+  position: absolute;
+  top: 12px;
+  right: 12px;
 `;
 
 export const FocusPage = (props: Props) => {
@@ -50,6 +58,9 @@ export const FocusPage = (props: Props) => {
       <PackedGrid>
         <GridCell minWidth={800}>
           <RaisedGridCell>
+            <MoreButtonWrapper>
+              <Button size='sm'>Show more</Button>
+            </MoreButtonWrapper>
             <NamedSection title='Sequences over time' raised>
               <VariantTimeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
             </NamedSection>
@@ -57,6 +68,9 @@ export const FocusPage = (props: Props) => {
         </GridCell>
         <GridCell minWidth={400}>
           <RaisedGridCell>
+            <MoreButtonWrapper>
+              <Button size='sm'>Show more</Button>
+            </MoreButtonWrapper>
             <NamedSection title='Demographics' raised>
               <VariantAgeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
             </NamedSection>
@@ -65,6 +79,9 @@ export const FocusPage = (props: Props) => {
         {props.country === 'Switzerland' && (
           <GridCell minWidth={600}>
             <RaisedGridCell>
+              <MoreButtonWrapper>
+                <Button size='sm'>Show more</Button>
+              </MoreButtonWrapper>
               <NamedSection title='Geography' raised>
                 <Switzerland {...plotProps} />
               </NamedSection>
@@ -73,6 +90,9 @@ export const FocusPage = (props: Props) => {
         )}
         <GridCell minWidth={600}>
           <RaisedGridCell>
+            <MoreButtonWrapper>
+              <Button size='sm'>Show more</Button>
+            </MoreButtonWrapper>
             <NamedSection title='International comparison' raised>
               <InternationalComparison {...props} />
             </NamedSection>
