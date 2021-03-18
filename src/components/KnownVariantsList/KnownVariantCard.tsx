@@ -11,7 +11,7 @@ interface Props {
 }
 
 const Title = styled.div`
-  margin: 10px 15px;
+  margin: 5px 10px;
   font-size: 1rem;
 `;
 
@@ -21,39 +21,39 @@ const StyledCard = styled.div`
   user-select: none;
   transition: background-color 0.15s ease-in-out;
 
-  ${({ selected }: { selected: boolean }) => selected && 'text-decoration: underline;'}
-
   &:hover {
     background-color: #e2e6ea !important;
   }
 `;
 
-const SimpleAreaPlot = React.memo(({ data }: { data: number[] | undefined }) => {
-  return (
-    <ResponsiveContainer width='100%' height={50}>
-      <AreaChart
-        data={(data || []).map(y => ({ y }))}
-        margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
-        style={{ pointerEvents: 'none' }}
-      >
-        <Area
-          dataKey='y'
-          type='basis'
-          fill='#2980b9'
-          fillOpacity='1'
-          stroke='none'
-          isAnimationActive={false}
-        />
-      </AreaChart>
-    </ResponsiveContainer>
-  );
-});
+const SimpleAreaPlot = React.memo(
+  ({ data, selected }: { data: number[] | undefined; selected?: boolean }) => {
+    return (
+      <ResponsiveContainer width='100%' height={50}>
+        <AreaChart
+          data={(data || []).map(y => ({ y }))}
+          margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
+          style={{ pointerEvents: 'none' }}
+        >
+          <Area
+            dataKey='y'
+            type='basis'
+            fill={selected ? '#2980b9' : '#bdc3c7'}
+            fillOpacity='1'
+            stroke='none'
+            isAnimationActive={false}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    );
+  }
+);
 
 export const KnownVariantCard = ({ name, chartData, onClick, selected }: Props) => {
   return (
     <Card as={StyledCard} className='bg-light' onClick={onClick} selected={selected}>
       <Title>{name}</Title>
-      <SimpleAreaPlot data={chartData} />
+      <SimpleAreaPlot data={chartData} selected={selected} />
     </Card>
   );
 };
