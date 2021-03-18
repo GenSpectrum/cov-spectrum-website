@@ -9,7 +9,6 @@ export const OuterWrapper = styled.div`
   grid-template-areas:
     'header header'
     'left right';
-  background: var(--light);
 `;
 
 export const HeaderWrapper = styled.div`

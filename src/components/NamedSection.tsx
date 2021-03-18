@@ -14,8 +14,8 @@ const Title = styled.h3`
 const RaisedContentWrapper = styled.div`
   margin-bottom: 20px;
   background: white;
-  padding: 10px;
-  border: 1px solid #00000020;
+  padding: 3px 3px 0 3px;
+  border-top: 3px solid #00000020;
 `;
 
 const FlatContentWrapper = styled.div`

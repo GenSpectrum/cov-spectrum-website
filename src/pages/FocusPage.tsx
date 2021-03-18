@@ -23,7 +23,7 @@ const HeaderArea = styled.div`
 `;
 
 const RaisedGridCell = styled.div`
-  margin: 5px;
+  margin: 5px 10px;
 `;
 
 export const FocusPage = (props: Props) => {
