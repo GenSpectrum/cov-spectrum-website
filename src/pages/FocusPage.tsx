@@ -32,7 +32,7 @@ const RaisedGridCell = styled.div`
   box-shadow: #00000059 0 2px 3px 0px;
 `;
 
-const MoreButtonWrapper = styled.div`
+const DetailsButtonWrapper = styled.div`
   position: absolute;
   top: 12px;
   right: 12px;
@@ -58,9 +58,9 @@ export const FocusPage = (props: Props) => {
       <PackedGrid>
         <GridCell minWidth={800}>
           <RaisedGridCell>
-            <MoreButtonWrapper>
-              <Button size='sm'>Show more</Button>
-            </MoreButtonWrapper>
+            <DetailsButtonWrapper>
+              <Button size='sm'>Show details</Button>
+            </DetailsButtonWrapper>
             <NamedSection title='Sequences over time' raised>
               <VariantTimeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
             </NamedSection>
@@ -68,9 +68,9 @@ export const FocusPage = (props: Props) => {
         </GridCell>
         <GridCell minWidth={400}>
           <RaisedGridCell>
-            <MoreButtonWrapper>
-              <Button size='sm'>Show more</Button>
-            </MoreButtonWrapper>
+            <DetailsButtonWrapper>
+              <Button size='sm'>Show details</Button>
+            </DetailsButtonWrapper>
             <NamedSection title='Demographics' raised>
               <VariantAgeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
             </NamedSection>
@@ -79,9 +79,9 @@ export const FocusPage = (props: Props) => {
         {props.country === 'Switzerland' && (
           <GridCell minWidth={600}>
             <RaisedGridCell>
-              <MoreButtonWrapper>
-                <Button size='sm'>Show more</Button>
-              </MoreButtonWrapper>
+              <DetailsButtonWrapper>
+                <Button size='sm'>Show details</Button>
+              </DetailsButtonWrapper>
               <NamedSection title='Geography' raised>
                 <Switzerland {...plotProps} />
               </NamedSection>
@@ -90,9 +90,9 @@ export const FocusPage = (props: Props) => {
         )}
         <GridCell minWidth={600}>
           <RaisedGridCell>
-            <MoreButtonWrapper>
-              <Button size='sm'>Show more</Button>
-            </MoreButtonWrapper>
+            <DetailsButtonWrapper>
+              <Button size='sm'>Show details</Button>
+            </DetailsButtonWrapper>
             <NamedSection title='International comparison' raised>
               <InternationalComparison {...props} />
             </NamedSection>
