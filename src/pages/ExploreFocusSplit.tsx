@@ -23,6 +23,7 @@ export const ExploreFocusSplit = () => {
     <ExploreWrapper>
       <ExplorePage
         country={country}
+        samplingStrategy={samplingStrategy}
         onVariantSelect={variantSelector =>
           history.push(getFocusPageLink({ variantSelector, country, samplingStrategy }))
         }
