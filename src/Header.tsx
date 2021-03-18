@@ -13,7 +13,7 @@ export const Header = () => {
   }
 
   return (
-    <Navbar expand='md' style={{ height: '100%' }}>
+    <Navbar bg='light' expand='md' style={{ height: '100%' }}>
       <Navbar.Brand as={Link} to='/'>
         <span style={{ color: 'darkgray', fontWeight: 'bold' }}>cov</span>
         <span style={{ color: '#0D4A70', fontWeight: 'bold' }}>S</span>
