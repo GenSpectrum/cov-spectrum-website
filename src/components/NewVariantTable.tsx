@@ -30,7 +30,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
   return (
     <div>
       {data && (
-        <div style={{ height: '400px', overflow: 'auto' }}>
+        <div style={{ height: '400px', overflow: 'auto', background: 'white' }}>
           <Table striped bordered hover>
             <thead>
               <tr>

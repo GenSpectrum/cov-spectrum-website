@@ -19,7 +19,6 @@ const StyledNav = styled.div`
 const StyledTabContent = styled.div`
   height: 100px;
   flex-grow: 1;
-  background: white;
   border-right: 1px solid #00000020;
 `;
 

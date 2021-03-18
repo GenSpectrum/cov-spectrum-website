@@ -9,11 +9,12 @@ export const OuterWrapper = styled.div`
   grid-template-areas:
     'header header'
     'left right';
-  background: var(--light);
+  background: #ecedef;
 `;
 
 export const HeaderWrapper = styled.div`
   grid-area: header;
+  background: #f9f9f9;
   border-bottom: 1px solid #00000020;
 `;
 
