@@ -24,6 +24,8 @@ const HeaderArea = styled.div`
   padding-bottom: 1px;
   margin: 5px;
   box-shadow: #00000036 0px 2px 5px;
+  border: 1px solid #0000001f;
+  border-radius: 3px;
 `;
 
 const RaisedGridCell = styled.div`
@@ -32,6 +34,8 @@ const RaisedGridCell = styled.div`
   margin: 5px;
   box-shadow: #00000036 0px 2px 5px;
   height: calc(100% - 5px - 5px);
+  border: 1px solid #0000001f;
+  border-radius: 3px;
 `;
 
 export const FocusPage = (props: Props) => {

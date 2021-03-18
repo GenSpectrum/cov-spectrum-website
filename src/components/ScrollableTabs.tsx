@@ -24,6 +24,8 @@ const StyledTabContent = styled.div`
   flex-grow: 1;
   box-shadow: #00000036 0px 2px 5px;
   background: white;
+  border: 1px solid #0000001f;
+  border-radius: 3px;
 `;
 
 const ScrollableTabPane = styled.div`
