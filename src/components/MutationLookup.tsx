@@ -37,7 +37,6 @@ export const MutationLookup = ({ onVariantSelect }: Props) => {
       <Form.Group controlId='matchPercentageGroup'>
         <Form.Label>Match Percentage</Form.Label>
         <span style={{ marginLeft: '30px' }}>{selectedMatchPercentage}%</span>
-        <Form.Control type='range' onChange={ev => setSelectedMatchPercentage(+ev.target.value)} />
       </Form.Group>
       <Button type='submit' variant='primary'>
         Search
