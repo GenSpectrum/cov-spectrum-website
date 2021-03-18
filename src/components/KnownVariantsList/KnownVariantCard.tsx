@@ -59,9 +59,9 @@ export const KnownVariantCard = ({ name, chartData, onClick, selected }: Props) 
     <Card as={StyledCard} className='bg-light' onClick={onClick} selected={selected}>
       <Title>
         {name}
-        <Percentage className='text-muted'>
-          {chartData?.length && `${(last(chartData)! * 100).toFixed(1)}%`}
-        </Percentage>
+        {chartData?.length && (
+          <Percentage className='text-muted'>{(last(chartData)! * 100).toFixed(1)}%</Percentage>
+        )}
       </Title>
       <SimpleAreaPlot data={chartData} selected={selected} />
     </Card>
