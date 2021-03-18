@@ -21,7 +21,6 @@ const StyledCard = styled.div`
   cursor: pointer;
   user-select: none;
   transition: background-color 0.15s ease-in-out;
-  background-color: white !important;
 
   &:hover {
     background-color: #e2e6ea !important;

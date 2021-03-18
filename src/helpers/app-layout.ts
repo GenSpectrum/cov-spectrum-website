@@ -9,13 +9,14 @@ export const OuterWrapper = styled.div`
   grid-template-areas:
     'header header'
     'left right';
-  background: #ecedef;
+  background: var(--light);
 `;
 
 export const HeaderWrapper = styled.div`
   grid-area: header;
-  background: #f9f9f9;
-  border-bottom: 1px solid #00000020;
+  z-index: 1;
+  box-shadow: #00000059 0 2px 7px 0px;
+  background: white;
 `;
 
 export const fullGridStyle = css`
@@ -44,10 +45,11 @@ export const LoginWrapper = styled.div`
 export const ExploreWrapper = styled.div`
   grid-area: left;
   overflow: hidden;
+  box-shadow: #00000059 0 2px 3px 0px;
 `;
 
 export const FocusWrapper = styled.div`
   ${scrollableContainerStyle}
   grid-area: right;
-  padding: 15px 5px;
+  padding: 20px 5px 15px 5px;
 `;
