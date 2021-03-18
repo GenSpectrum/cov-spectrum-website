@@ -1,7 +1,9 @@
-import { Button, Table } from 'react-bootstrap';
+import React from 'react';
+import styled from 'styled-components';
 import { VariantSelector } from '../../helpers/sample-selector';
 import { Country, Variant } from '../../services/api-types';
 import knownVariants from './known-variants.json';
+import { KnownVariantCard } from './KnownVariantCard';
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -14,46 +16,23 @@ interface Props {
   selection: VariantSelector | undefined;
 }
 
-export const KnownVariantsList = ({ country, onVariantSelect, selection }: Props) => {
-  const _knownVariants: VariantSelector[] = knownVariants;
+const Grid = styled.div`
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+`;
 
+export const KnownVariantsList = ({ country, onVariantSelect, selection }: Props) => {
   return (
-    <Table striped bordered hover>
-      <thead>
-        <tr>
-          <th>Variant</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {_knownVariants.map(d => (
-          <tr key={d.variant.name}>
-            {selection !== undefined && selection.variant.name === d.variant.name ? (
-              <>
-                <td>
-                  <b>{d.variant.name}</b>
-                </td>
-                <td></td>
-              </>
-            ) : (
-              <>
-                <td>{d.variant.name}</td>
-                <td>
-                  <Button
-                    onClick={() => {
-                      onVariantSelect(d);
-                    }}
-                    variant='outline-secondary'
-                    size='sm'
-                  >
-                    Show Details
-                  </Button>
-                </td>
-              </>
-            )}
-          </tr>
-        ))}
-      </tbody>
-    </Table>
+    <Grid>
+      {knownVariants.map(selector => (
+        <KnownVariantCard
+          key={selector.variant.name}
+          name={selector.variant.name}
+          onClick={() => onVariantSelect(selector)}
+          selected={selection?.variant.name === selector.variant.name}
+        />
+      ))}
+    </Grid>
   );
 };
