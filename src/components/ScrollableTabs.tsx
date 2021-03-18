@@ -13,6 +13,7 @@ const StyledNav = styled.div`
   padding-top: 5px;
   padding-left: 15px;
   border-bottom: none;
+  display: none;
 `;
 
 const StyledTabContent = styled.div`
