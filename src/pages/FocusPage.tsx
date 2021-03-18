@@ -23,8 +23,7 @@ const HeaderArea = styled.div`
   padding: 15px;
   padding-bottom: 1px;
   margin: 5px;
-  box-shadow: #00000036 0px 2px 5px;
-  border: 1px solid #0000001f;
+  border: 1px solid #00000030;
   border-radius: 3px;
 `;
 
@@ -32,9 +31,8 @@ const RaisedGridCell = styled.div`
   background: white;
   padding: 15px;
   margin: 5px;
-  box-shadow: #00000036 0px 2px 5px;
   height: calc(100% - 5px - 5px);
-  border: 1px solid #0000001f;
+  border: 1px solid #00000030;
   border-radius: 3px;
 `;
 

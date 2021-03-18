@@ -13,18 +13,13 @@ const StyledNav = styled.div`
   padding-top: 5px;
   padding-left: 15px;
   border-bottom: none;
-
-  .nav-link {
-    box-shadow: #00000036 0px 2px 5px;
-  }
 `;
 
 const StyledTabContent = styled.div`
   height: 100px;
   flex-grow: 1;
-  box-shadow: #00000036 0px 2px 5px;
   background: white;
-  border: 1px solid #0000001f;
+  border: 1px solid #00000030;
   border-radius: 3px;
 `;
 
