@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card } from 'react-bootstrap';
+import { last } from 'lodash';
 import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import styled from 'styled-components';
 
@@ -24,6 +25,10 @@ const StyledCard = styled.div`
   &:hover {
     background-color: #e2e6ea !important;
   }
+`;
+
+const Percentage = styled.span`
+  float: right;
 `;
 
 const SimpleAreaPlot = React.memo(
@@ -52,7 +57,12 @@ const SimpleAreaPlot = React.memo(
 export const KnownVariantCard = ({ name, chartData, onClick, selected }: Props) => {
   return (
     <Card as={StyledCard} className='bg-light' onClick={onClick} selected={selected}>
-      <Title>{name}</Title>
+      <Title>
+        {name}
+        <Percentage className='text-muted'>
+          {chartData?.length && `${(last(chartData)! * 100).toFixed(1)}%`}
+        </Percentage>
+      </Title>
       <SimpleAreaPlot data={chartData} selected={selected} />
     </Card>
   );
