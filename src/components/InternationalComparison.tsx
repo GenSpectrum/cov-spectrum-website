@@ -96,6 +96,41 @@ export const InternationalComparison = ({
 
   return (
     <>
+      <div style={{ margin: '0 -0.25rem 4px -0.25rem' }}>
+        <Button variant='secondary' size='sm' className='ml-1' onClick={() => setLogScale(v => !v)}>
+          Toggle log scale
+        </Button>
+        {AccountService.isLoggedIn() && (
+          <Button
+            variant='secondary'
+            size='sm'
+            className='ml-1'
+            onClick={() =>
+              NextcladeService.showVariantOnNextclade({
+                variant,
+                matchPercentage,
+                country: undefined,
+                samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
+              })
+            }
+          >
+            Show on Nextclade
+          </Button>
+        )}
+        <LazySampleButton
+          query={{
+            variantSelector: { variant, matchPercentage },
+            country: undefined,
+            samplingStrategy: SamplingStrategy.AllSamples,
+          }}
+          variant='secondary'
+          size='sm'
+          className='ml-1'
+        >
+          Show worldwide samples
+        </LazySampleButton>
+      </div>
+
       {requestedSamplingStrategy !== SamplingStrategy.AllSamples && (
         <Alert variant='warning'>
           The selected sampling strategy can not be used for international comparison. Showing all samples
@@ -109,42 +144,6 @@ export const InternationalComparison = ({
         matchPercentage={matchPercentage}
         mutations={variant.mutations}
         logScale={logScale}
-        toolbarChildren={
-          <>
-            <Button variant='primary' size='sm' className='ml-1' onClick={() => setLogScale(v => !v)}>
-              Toggle log scale
-            </Button>
-            {AccountService.isLoggedIn() && (
-              <Button
-                variant='primary'
-                size='sm'
-                className='ml-1'
-                onClick={() =>
-                  NextcladeService.showVariantOnNextclade({
-                    variant,
-                    matchPercentage,
-                    country: undefined,
-                    samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
-                  })
-                }
-              >
-                Show on Nextclade
-              </Button>
-            )}
-            <LazySampleButton
-              query={{
-                variantSelector: { variant, matchPercentage },
-                country: undefined,
-                samplingStrategy: SamplingStrategy.AllSamples,
-              }}
-              variant='primary'
-              size='sm'
-              className='ml-1'
-            >
-              Show worldwide samples
-            </LazySampleButton>
-          </>
-        }
       />
 
       {countryData ? (
