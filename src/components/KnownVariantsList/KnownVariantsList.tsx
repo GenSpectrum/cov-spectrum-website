@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { VariantSelector } from '../../helpers/sample-selector';
+import { SamplingStrategy } from '../../services/api';
 import { Country, Variant } from '../../services/api-types';
-import knownVariants from './known-variants.json';
+import knownVariantSelectors from './known-variants.json';
 import { KnownVariantCard } from './KnownVariantCard';
+import { loadKnownVariantChartData } from './load-data';
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -12,6 +14,7 @@ export interface SelectedVariantAndCountry {
 
 interface Props {
   country: Country;
+  samplingStrategy: SamplingStrategy;
   onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
 }
@@ -22,13 +25,39 @@ const Grid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 `;
 
-export const KnownVariantsList = ({ country, onVariantSelect, selection }: Props) => {
+export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, selection }: Props) => {
+  const [knownVariants, setKnownVariants] = useState<
+    { selector: VariantSelector & { variant: { name: string } }; chartData?: number[] }[]
+  >(knownVariantSelectors.map(selector => ({ selector })));
+
+  useEffect(() => {
+    let isSubscribed = true;
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    loadKnownVariantChartData({ variantSelectors: knownVariantSelectors, country, samplingStrategy }, signal)
+      .then(data => {
+        if (isSubscribed) {
+          setKnownVariants(data);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      });
+
+    return () => {
+      isSubscribed = false;
+      controller.abort();
+    };
+  }, [country, samplingStrategy]);
+
   return (
     <Grid>
-      {knownVariants.map(selector => (
+      {knownVariants.map(({ selector, chartData }) => (
         <KnownVariantCard
           key={selector.variant.name}
           name={selector.variant.name}
+          chartData={chartData}
           onClick={() => onVariantSelect(selector)}
           selected={selection?.variant.name === selector.variant.name}
         />

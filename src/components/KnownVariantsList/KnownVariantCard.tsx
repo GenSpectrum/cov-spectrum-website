@@ -5,11 +5,10 @@ import styled from 'styled-components';
 
 interface Props {
   name: string;
+  chartData?: number[];
   selected?: boolean;
   onClick: () => void;
 }
-
-const data = [{ y: 10 }, { y: 18 }, { y: 15 }, { y: 20 }, { y: 25 }];
 
 const Title = styled.div`
   margin: 10px 15px;
@@ -29,26 +28,32 @@ const StyledCard = styled.div`
   }
 `;
 
-export const KnownVariantCard = ({ name, onClick, selected }: Props) => {
+const SimpleAreaPlot = React.memo(({ data }: { data: number[] | undefined }) => {
+  return (
+    <ResponsiveContainer width='100%' height={50}>
+      <AreaChart
+        data={(data || []).map(y => ({ y }))}
+        margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
+        style={{ pointerEvents: 'none' }}
+      >
+        <Area
+          dataKey='y'
+          type='basis'
+          fill='#2980b9'
+          fillOpacity='1'
+          stroke='none'
+          isAnimationActive={false}
+        />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+});
+
+export const KnownVariantCard = ({ name, chartData, onClick, selected }: Props) => {
   return (
     <Card as={StyledCard} className='bg-light' onClick={onClick} selected={selected}>
       <Title>{name}</Title>
-      <ResponsiveContainer width='100%' height={50}>
-        <AreaChart
-          data={data}
-          margin={{ top: 0, left: 0, right: 0, bottom: 0 }}
-          style={{ pointerEvents: 'none' }}
-        >
-          <Area
-            dataKey='y'
-            type='monotone'
-            fill='#2980b9'
-            fillOpacity='1'
-            stroke='none'
-            isAnimationActive={false}
-          />
-        </AreaChart>
-      </ResponsiveContainer>
+      <SimpleAreaPlot data={chartData} />
     </Card>
   );
 };
