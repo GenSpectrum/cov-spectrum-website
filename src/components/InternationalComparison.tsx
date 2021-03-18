@@ -178,7 +178,7 @@ export const InternationalComparison = ({
                               samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
                             })
                           }
-                          variant='dark'
+                          variant='secondary'
                           size='sm'
                           className='mr-2'
                         >
@@ -191,7 +191,7 @@ export const InternationalComparison = ({
                           country: c.country,
                           samplingStrategy: SamplingStrategy.AllSamples,
                         }}
-                        variant='dark'
+                        variant='secondary'
                         size='sm'
                       >
                         Show samples
