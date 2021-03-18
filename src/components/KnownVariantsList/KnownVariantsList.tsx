@@ -25,12 +25,17 @@ const Grid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 `;
 
+const knownVariantsWithoutData: {
+  selector: VariantSelector & { variant: { name: string } };
+  chartData?: number[];
+}[] = knownVariantSelectors.map(selector => ({ selector }));
+
 export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, selection }: Props) => {
-  const [knownVariants, setKnownVariants] = useState<
-    { selector: VariantSelector & { variant: { name: string } }; chartData?: number[] }[]
-  >(knownVariantSelectors.map(selector => ({ selector })));
+  const [knownVariants, setKnownVariants] = useState(knownVariantsWithoutData);
 
   useEffect(() => {
+    setKnownVariants(knownVariantsWithoutData);
+
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
