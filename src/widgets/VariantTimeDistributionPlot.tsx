@@ -47,7 +47,7 @@ export const VariantTimeDistributionPlot = ({
       }
       setIsLoading(false);
     });
-    
+
     return () => {
       isSubscribed = false;
       controller.abort();
@@ -63,7 +63,7 @@ export const VariantTimeDistributionPlot = ({
   }));
 
   return processedData === undefined || isLoading ? (
-    <Loader/>
+    <Loader />
   ) : (
     <TimeChart data={processedData} onClickHandler={(e: unknown) => true} />
   );

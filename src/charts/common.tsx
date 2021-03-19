@@ -7,7 +7,6 @@ export const colors = {
   secondary: '#7f8c8d',
 };
 
-
 export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;

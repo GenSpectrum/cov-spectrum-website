@@ -111,9 +111,7 @@ export const TypeDistributionChart = React.memo(
 
     return ready && data.length > 0 && currentData ? (
       <Wrapper>
-        <TitleWrapper id='graph_title'>
-         Age Distribution (Estimated)
-        </TitleWrapper>
+        <TitleWrapper id='graph_title'>Proportion of the variant by age (estimated)</TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
             <ResponsiveContainer>

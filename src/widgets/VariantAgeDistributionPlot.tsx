@@ -7,7 +7,7 @@ import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 import { fillAgeKeyedApiData } from '../helpers/fill-missing';
 import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
-import TypeDistributionChart, {TypeDistributionEntry} from "../charts/TypeDistributionChart"
+import TypeDistributionChart, { TypeDistributionEntry } from '../charts/TypeDistributionChart';
 import Loader from '../components/Loader';
 
 const PropsSchema = SampleSelectorSchema;
@@ -21,7 +21,7 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage, sampl
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-        setIsLoading(true);
+    setIsLoading(true);
 
     getVariantDistributionData(
       {
@@ -46,23 +46,23 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage, sampl
       });
     return () => {
       isSubscribed = false;
-            setIsLoading(false);
+      setIsLoading(false);
 
       controller.abort();
     };
   }, [country, mutations, matchPercentage, samplingStrategy]);
 
-    const processedData: TypeDistributionEntry[] | undefined = distributionData?.map(d => ({
-      name: d.x,
-      percent: d.y.proportion * 100,
-      quantity: d.y.count,
-    }));
+  const processedData: TypeDistributionEntry[] | undefined = distributionData?.map(d => ({
+    name: d.x,
+    percent: d.y.proportion * 100,
+    quantity: d.y.count,
+  }));
 
-    return processedData === undefined || isLoading ? (
-      <Loader/>
-    ) : (
-      <TypeDistributionChart data={processedData} onClickHandler={(e: unknown) => true} />
-    );
+  return processedData === undefined || isLoading ? (
+    <Loader />
+  ) : (
+    <TypeDistributionChart data={processedData} onClickHandler={(e: unknown) => true} />
+  );
 };
 
 export const VariantAgeDistributionPlotWidget = new Widget(
