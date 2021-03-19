@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { DistributionType, getVariantDistributionData } from '../services/api';
 import { TimeDistributionEntry } from '../services/api-types';
 import { SampleSelectorSchema } from '../helpers/sample-selector';
