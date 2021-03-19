@@ -1,29 +1,15 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Metric, { MetricsWrapper, MetricsSpacing } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
-import {colors, Wrapper, TitleWrapper, ChartAndMetricsWrapper, ChartWrapper} from "./common"
+import { colors, Wrapper, TitleWrapper, ChartAndMetricsWrapper, ChartWrapper } from './common';
 
 const CHART_MARGIN_RIGHT = 15;
 
 export type OnClickHandler = (index: number) => boolean;
 
-const getTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
-  if (dataLength > 20) {
-    if (activeIndex === index) {
-      return value.slice(5);
-    } else if (Math.abs(activeIndex - index) <= 1) {
-      return '';
-    } else if (index % 2 === 0) {
-      return value.slice(5);
-    }
-  } else if (dataLength > 10) {
-    return value.slice(5);
-  } else if (dataLength > 5) {
-    return value.slice(2);
-  } else {
-    return value;
-  }
-};
+// const getTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
+//   return value;
+// };
 
 type CustomTickProps = {
   x?: number;
@@ -54,7 +40,8 @@ const CustomTick = ({
           textAnchor='middle'
           fill={payload.value === currentValue ? colors.active : colors.inactive}
         >
-          {getTickText(payload.value, dataLength, activeIndex, payload.index)}
+          {/* {getTickText(payload.value, dataLength, activeIndex, payload.index)} */}
+          {payload.value}
         </text>
       ) : (
         <></>
@@ -63,23 +50,22 @@ const CustomTick = ({
   );
 };
 
-export type TimeEntry = {
-  firstDayInWeek: string;
-  yearWeek: string;
+export type TypeDistributionEntry = {
+  name: string;
   percent: number;
   quantity: number;
 };
 
-export type TimeChartProps = {
-  data: TimeEntry[];
+export type TypeDistributionChartProps = {
+  data: TypeDistributionEntry[];
   onClickHandler?: OnClickHandler;
 };
 
-export const TimeChart = React.memo(
-  ({ data, onClickHandler }: TimeChartProps): JSX.Element => {
+export const TypeDistributionChart = React.memo(
+  ({ data, onClickHandler }: TypeDistributionChartProps): JSX.Element => {
     const [activeIndex, setActiveIndex] = useState<number>(data.length - 1);
     const [ready, setReady] = useState(false);
-    const [currentData, setCurrentData] = useState<TimeEntry>(data[data.length - 1]);
+    const [currentData, setCurrentData] = useState<TypeDistributionEntry>(data[data.length - 1]);
 
     useEffect(() => {
       setReady(true);
@@ -131,9 +117,7 @@ export const TimeChart = React.memo(
     return ready && currentData ? (
       <Wrapper>
         <TitleWrapper id='graph_title'>
-          Proportion of the variant on week {currentData.yearWeek.split('-')[1]}
-          {', '}
-          {currentData.yearWeek.split('-')[0] + ' '}({currentData.firstDayInWeek})
+          Estimated Age Distribution
         </TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
@@ -145,7 +129,7 @@ export const TimeChart = React.memo(
                 onMouseLeave={handleMouseLeave}
               >
                 <XAxis
-                  dataKey='yearWeek'
+                  dataKey='name'
                   axisLine={false}
                   tickLine={false}
                   interval={0}
@@ -153,7 +137,7 @@ export const TimeChart = React.memo(
                     <CustomTick
                       activeIndex={activeIndex}
                       dataLength={data.length}
-                      currentValue={currentData.yearWeek}
+                      currentValue={currentData.name}
                     />
                   }
                 />
@@ -197,4 +181,4 @@ export const TimeChart = React.memo(
   }
 );
 
-export default TimeChart;
+export default TypeDistributionChart;
