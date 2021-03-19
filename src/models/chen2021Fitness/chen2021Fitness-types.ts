@@ -1,19 +1,18 @@
 import * as zod from 'zod';
-import { LiteralSamplingStrategySchema } from '../../services/api';
 
-export const Chen2021FitnessRequestSchema = zod.object({
-  country: zod.string(),
-  mutations: zod.array(zod.string()),
-  matchPercentage: zod.number(),
-  samplingStrategy: LiteralSamplingStrategySchema,
-  alpha: zod.number(),
-  generationTime: zod.number(),
-  reproductionNumberWildtype: zod.number(),
-  plotStartDate: zod.date(),
-  plotEndDate: zod.date(),
-  initialWildtypeCases: zod.number(),
-  initialVariantCases: zod.number(),
-});
+export type Chen2021FitnessRequest = {
+  country: string;
+  mutations: string[];
+  matchPercentage: number;
+  samplingStrategy?: string;
+  alpha: number;
+  generationTime: number;
+  reproductionNumberWildtype: number;
+  plotStartDate: Date;
+  plotEndDate: Date;
+  initialWildtypeCases: number;
+  initialVariantCases: number;
+};
 
 export const ValueWithCISchema = zod.object({
   value: zod.number(),
