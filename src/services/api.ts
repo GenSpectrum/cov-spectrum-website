@@ -65,12 +65,22 @@ const getBaseHeaders = (): Headers => {
   return new Headers(headers);
 };
 
-export const post = (endpoint: string, body: unknown) => {
+export const get = (endpoint: string, signal?: AbortSignal) => {
+  const url = HOST + endpoint;
+  return fetch(url, {
+    method: 'GET',
+    headers: getBaseHeaders(),
+    signal,
+  });
+};
+
+export const post = (endpoint: string, body: unknown, signal?: AbortSignal) => {
   const url = HOST + endpoint;
   return fetch(url, {
     method: 'POST',
     headers: getBaseHeaders(),
     body: JSON.stringify(body),
+    signal,
   });
 };
 
