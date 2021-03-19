@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import Metric, { MetricsWrapper, MetricsSpacing } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
 import {colors, Wrapper, TitleWrapper, ChartAndMetricsWrapper, ChartWrapper} from "./common"
+import Loader from '../components/Loader';
 
 const CHART_MARGIN_RIGHT = 15;
 
@@ -192,7 +193,7 @@ export const TimeChart = React.memo(
         </ChartAndMetricsWrapper>
       </Wrapper>
     ) : (
-      <></>
+      <p>Chart not available</p>
     );
   }
 );

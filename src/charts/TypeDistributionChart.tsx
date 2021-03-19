@@ -7,10 +7,6 @@ const CHART_MARGIN_RIGHT = 15;
 
 export type OnClickHandler = (index: number) => boolean;
 
-// const getTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
-//   return value;
-// };
-
 type CustomTickProps = {
   x?: number;
   y?: number;
@@ -40,7 +36,6 @@ const CustomTick = ({
           textAnchor='middle'
           fill={payload.value === currentValue ? colors.active : colors.inactive}
         >
-          {/* {getTickText(payload.value, dataLength, activeIndex, payload.index)} */}
           {payload.value}
         </text>
       ) : (
@@ -114,10 +109,10 @@ export const TypeDistributionChart = React.memo(
       </Bar>,
     ];
 
-    return ready && currentData ? (
+    return ready && data.length > 0 && currentData ? (
       <Wrapper>
         <TitleWrapper id='graph_title'>
-          Estimated Age Distribution
+         Age Distribution (Estimated)
         </TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
@@ -176,7 +171,7 @@ export const TypeDistributionChart = React.memo(
         </ChartAndMetricsWrapper>
       </Wrapper>
     ) : (
-      <></>
+      <p>Chart not available</p>
     );
   }
 );

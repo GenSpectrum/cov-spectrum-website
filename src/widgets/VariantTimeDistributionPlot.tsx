@@ -9,6 +9,7 @@ import { ZodQueryEncoder } from '../helpers/query-encoder';
 import { fillWeeklyApiData } from '../helpers/fill-missing';
 import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
 import TimeChart, { TimeEntry } from '../charts/TimeChart';
+import Loader from '../components/Loader';
 
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
@@ -22,11 +23,13 @@ export const VariantTimeDistributionPlot = ({
   const [distribution, setDistribution] = useState<EntryWithoutCI<TimeDistributionEntry>[] | undefined>(
     undefined
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
+    setIsLoading(true);
     getVariantDistributionData(
       {
         distributionType: DistributionType.Time,
@@ -42,10 +45,13 @@ export const VariantTimeDistributionPlot = ({
           fillWeeklyApiData(newDistributionData.map(removeCIFromEntry), { count: 0, proportion: 0 })
         );
       }
+      setIsLoading(false);
     });
+    
     return () => {
       isSubscribed = false;
       controller.abort();
+      setIsLoading(false);
     };
   }, [country, mutations, matchPercentage, samplingStrategy]);
 
@@ -56,14 +62,12 @@ export const VariantTimeDistributionPlot = ({
     quantity: d.y.count,
   }));
 
-  return processedData === undefined ? (
-    <p>Loading</p>
+  return processedData === undefined || isLoading ? (
+    <Loader/>
   ) : (
     <TimeChart data={processedData} onClickHandler={(e: unknown) => true} />
   );
 };
-
-//type for when a graph element is clicked
 
 export const VariantTimeDistributionPlotWidget = new Widget(
   new ZodQueryEncoder(PropsSchema),
