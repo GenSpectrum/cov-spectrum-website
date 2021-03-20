@@ -27,3 +27,59 @@ export const ChartWrapper = styled.div`
   flex-grow: 1;
   width: 10rem;
 `;
+
+const getTimeTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
+  if (dataLength > 20) {
+    if (activeIndex === index) {
+      return value.slice(5);
+    } else if (Math.abs(activeIndex - index) <= 1) {
+      return '';
+    } else if (index % 2 === 0) {
+      return value.slice(5);
+    }
+  } else if (dataLength > 10) {
+    return value.slice(5);
+  } else if (dataLength > 5) {
+    return value.slice(2);
+  } else {
+    return value;
+  }
+};
+
+export type CustomTimeTickProps = {
+  x?: number;
+  y?: number;
+  stroke?: unknown;
+  payload?: { value: string; index: number };
+  activeIndex: number;
+  dataLength: number;
+  currentValue: string;
+};
+
+export const CustomTimeTick = ({
+  x,
+  y,
+  payload,
+  activeIndex,
+  dataLength,
+  currentValue,
+}: CustomTimeTickProps): JSX.Element => {
+  return (
+    <g transform={`translate(${x},${y})`}>
+      {payload ? (
+        <text
+          x={0}
+          y={0}
+          dx={0}
+          dy={10}
+          textAnchor='middle'
+          fill={payload.value === currentValue ? colors.active : colors.inactive}
+        >
+          {getTimeTickText(payload.value, dataLength, activeIndex, payload.index)}
+        </text>
+      ) : (
+        <></>
+      )}
+    </g>
+  );
+};

@@ -1,67 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Metric, { MetricsWrapper, MetricsSpacing } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { colors, Wrapper, TitleWrapper, ChartAndMetricsWrapper, ChartWrapper } from './common';
+import { colors, Wrapper, TitleWrapper, ChartAndMetricsWrapper, ChartWrapper, CustomTimeTick, CustomTimeTickProps } from './common';
+
 
 const CHART_MARGIN_RIGHT = 15;
 
 export type OnClickHandler = (index: number) => boolean;
-
-const getTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
-  if (dataLength > 20) {
-    if (activeIndex === index) {
-      return value.slice(5);
-    } else if (Math.abs(activeIndex - index) <= 1) {
-      return '';
-    } else if (index % 2 === 0) {
-      return value.slice(5);
-    }
-  } else if (dataLength > 10) {
-    return value.slice(5);
-  } else if (dataLength > 5) {
-    return value.slice(2);
-  } else {
-    return value;
-  }
-};
-
-type CustomTickProps = {
-  x?: number;
-  y?: number;
-  stroke?: unknown;
-  payload?: { value: string; index: number };
-  activeIndex: number;
-  dataLength: number;
-  currentValue: string;
-};
-
-const CustomTick = ({
-  x,
-  y,
-  payload,
-  activeIndex,
-  dataLength,
-  currentValue,
-}: CustomTickProps): JSX.Element => {
-  return (
-    <g transform={`translate(${x},${y})`}>
-      {payload ? (
-        <text
-          x={0}
-          y={0}
-          dx={0}
-          dy={10}
-          textAnchor='middle'
-          fill={payload.value === currentValue ? colors.active : colors.inactive}
-        >
-          {getTickText(payload.value, dataLength, activeIndex, payload.index)}
-        </text>
-      ) : (
-        <></>
-      )}
-    </g>
-  );
-};
 
 export type TimeEntry = {
   firstDayInWeek: string;
@@ -150,7 +95,7 @@ export const TimeChart = React.memo(
                   tickLine={false}
                   interval={0}
                   tick={
-                    <CustomTick
+                    <CustomTimeTick
                       activeIndex={activeIndex}
                       dataLength={data.length}
                       currentValue={currentData.yearWeek}
