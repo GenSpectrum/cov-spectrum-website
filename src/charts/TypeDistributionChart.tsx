@@ -156,14 +156,14 @@ export const TypeDistributionChart = React.memo(
               value={currentData.percent.toFixed(2)}
               title='Proportion'
               color={colors.active}
-              helpText='Estimated proportion relative to all samples collected.'
+              helpText='Proportion relative to all samples collected from this age group.'
               percent={true}
             />
             <Metric
               value={currentData.quantity}
               title='Samples'
               color={colors.secondary}
-              helpText='Number of samples of the variant collected in this time frame.'
+              helpText='Number of samples of the variant collected from this age group.'
             />
           </MetricsWrapper>
         </ChartAndMetricsWrapper>
