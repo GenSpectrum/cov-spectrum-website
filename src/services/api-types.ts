@@ -77,6 +77,14 @@ export const TimeDistributionEntrySchema = zod.object({
   y: CountAndProportionWithCISchema,
 });
 
+export const SequencingIntensityEntrySchema = zod.object({
+  x: YearWeekWithDaySchema,
+  y: zod.object({
+    numberCases: zod.number(),
+    numberSequenced: zod.number(), 
+  })
+})
+
 export const InternationalTimeDistributionEntrySchema = zod.object({
   x: zod.object({
     country: zod.string(),
@@ -94,6 +102,7 @@ export const TimeZipCodeDistributionEntrySchema = zod.object({
     count: zod.number(),
   }),
 });
+
 
 export const InterestingVariantSchema = zod.object({
   variant: VariantSchema,
@@ -121,3 +130,4 @@ export type InternationalTimeDistributionEntry = zod.infer<typeof InternationalT
 export type TimeZipCodeDistributionEntry = zod.infer<typeof TimeZipCodeDistributionEntrySchema>;
 export type InterestingVariant = zod.infer<typeof InterestingVariantSchema>;
 export type LoginResponse = zod.infer<typeof LoginResponseSchema>;
+export type SequencingIntensityEntry = zod.infer<typeof SequencingIntensityEntrySchema>;

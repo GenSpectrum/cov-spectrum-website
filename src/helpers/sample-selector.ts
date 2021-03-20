@@ -14,4 +14,8 @@ export const SampleSelectorSchema = zod.object({
   samplingStrategy: LiteralSamplingStrategySchema,
 });
 
+export const CountrySelectorSchema = zod.object({
+  country: CountrySchema,
+});
+
 export type VariantSelector = zod.infer<typeof VariantSelectorSchema>;

@@ -1,28 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { DistributionType, getVariantDistributionData } from '../services/api';
-import { TimeDistributionEntry } from '../services/api-types';
-import { SampleSelectorSchema } from '../helpers/sample-selector';
+import { DistributionType, getSequencingIntensity } from '../services/api';
+import { SequencingIntensityEntry } from '../services/api-types';
+import { CountrySelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
+// import { fillWeeklyApiData } from '../helpers/fill-missing';
+// import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
+// import TimeChart, { TimeEntry } from '../charts/TimeChart';
+// import Loader from '../components/Loader';
 
-import { fillWeeklyApiData } from '../helpers/fill-missing';
-import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
-import TimeChart, { TimeEntry } from '../charts/TimeChart';
-import Loader from '../components/Loader';
-
-const PropsSchema = SampleSelectorSchema;
+const PropsSchema = CountrySelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
 
-export const VariantTimeDistributionPlot = ({
+export const SequencingIntensityPlot = ({
   country,
-  mutations,
-  matchPercentage,
-  samplingStrategy,
 }: Props) => {
-  const [distribution, setDistribution] = useState<EntryWithoutCI<TimeDistributionEntry>[] | undefined>(
-    undefined
-  );
+  const [data, setData] = useState<SequencingIntensityEntry[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -30,20 +24,12 @@ export const VariantTimeDistributionPlot = ({
     const controller = new AbortController();
     const signal = controller.signal;
     setIsLoading(true);
-    getVariantDistributionData(
-      {
-        distributionType: DistributionType.Time,
-        country,
-        mutations,
-        matchPercentage,
-        samplingStrategy,
-      },
-      signal
-    ).then(newDistributionData => {
+    getSequencingIntensity(
+        {country, signal}
+    ).then(newSequencingData => {
       if (isSubscribed) {
-        setDistribution(
-          fillWeeklyApiData(newDistributionData.map(removeCIFromEntry), { count: 0, proportion: 0 })
-        );
+        console.log(newSequencingData);
+        // setData(newSequencingData);
       }
       setIsLoading(false);
     });
@@ -53,14 +39,14 @@ export const VariantTimeDistributionPlot = ({
       controller.abort();
       setIsLoading(false);
     };
-  }, [country, mutations, matchPercentage, samplingStrategy]);
+  }, [country]);
 
-  const processedData: TimeEntry[] | undefined = distribution?.map(d => ({
-    firstDayInWeek: d.x.firstDayInWeek,
-    yearWeek: d.x.yearWeek,
-    percent: d.y.proportion * 100,
-    quantity: d.y.count,
-  }));
+//   const processedData: TimeEntry[] | undefined = distribution?.map(d => ({
+//     firstDayInWeek: d.x.firstDayInWeek,
+//     yearWeek: d.x.yearWeek,
+//     percent: d.y.proportion * 100,
+//     quantity: d.y.count,
+//   }));
 
   return (<p>Chart goes here</p>)
 
@@ -71,8 +57,8 @@ export const VariantTimeDistributionPlot = ({
 //   );
 };
 
-export const VariantTimeDistributionPlotWidget = new Widget(
+export const SequencingIntensityPlotWidget = new Widget(
   new ZodQueryEncoder(PropsSchema),
-  VariantTimeDistributionPlot,
+  SequencingIntensityPlot,
   'VariantTimeDistributionPlot'
 );

@@ -7,6 +7,7 @@ import { ScrollableTabs } from '../components/ScrollableTabs';
 import { VariantSelector } from '../helpers/sample-selector';
 import { NewVariantTable } from '../components/NewVariantTable';
 import { SamplingStrategy } from '../services/api';
+import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
 
 interface Props {
   country: Country;
@@ -24,6 +25,12 @@ export const ExplorePage = ({ country, samplingStrategy, onVariantSelect, select
           title: 'Explore',
           content: (
             <>
+              <NamedSection title='Sequencing Intensity'>
+                <SequencingIntensityPlotWidget.ShareableComponent
+                  country={country}
+                  height={300}
+                />
+              </NamedSection>
               <NamedSection title='Known variants'>
                 <KnownVariantsList
                   country={country}

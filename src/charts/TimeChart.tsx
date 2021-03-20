@@ -3,7 +3,6 @@ import Metric, { MetricsWrapper, MetricsSpacing } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { colors, Wrapper, TitleWrapper, ChartAndMetricsWrapper, ChartWrapper, CustomTimeTick, CustomTimeTickProps } from './common';
 
-
 const CHART_MARGIN_RIGHT = 15;
 
 export type OnClickHandler = (index: number) => boolean;
