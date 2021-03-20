@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { DistributionType, getSequencingIntensity } from '../services/api';
+import { getSequencingIntensity } from '../services/api';
 import { SequencingIntensityEntry } from '../services/api-types';
 import { CountrySelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
-// import { fillWeeklyApiData } from '../helpers/fill-missing';
-// import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
-import TimeIntensityChart, { TimeIntensityEntry } from '../charts/TimeIntensityChart';
+import TimeIntensityChart from '../charts/TimeIntensityChart';
 import Loader from '../components/Loader';
 
 const PropsSchema = CountrySelectorSchema;

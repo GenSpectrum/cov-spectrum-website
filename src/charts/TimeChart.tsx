@@ -8,7 +8,6 @@ import {
   ChartAndMetricsWrapper,
   ChartWrapper,
   CustomTimeTick,
-  CustomTimeTickProps,
 } from './common';
 
 const CHART_MARGIN_RIGHT = 15;
