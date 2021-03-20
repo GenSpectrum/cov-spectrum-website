@@ -7,15 +7,21 @@ import * as zod from 'zod';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 // import { fillWeeklyApiData } from '../helpers/fill-missing';
 // import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
-// import TimeChart, { TimeEntry } from '../charts/TimeChart';
-// import Loader from '../components/Loader';
+import TimeIntensityChart, { TimeIntensityEntry } from '../charts/TimeIntensityChart';
+import Loader from '../components/Loader';
 
 const PropsSchema = CountrySelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
 
-export const SequencingIntensityPlot = ({
-  country,
-}: Props) => {
+const processData = (data: SequencingIntensityEntry[]): any =>
+  data.map(d => ({
+    firstDayInWeek: d.x.firstDayInWeek,
+    yearWeek: d.x.yearWeek,
+    proportion: d.y.numberSequenced,
+    quantity: d.y.numberCases,
+  }));;
+
+export const SequencingIntensityPlot = ({ country }: Props) => {
   const [data, setData] = useState<SequencingIntensityEntry[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,12 +30,10 @@ export const SequencingIntensityPlot = ({
     const controller = new AbortController();
     const signal = controller.signal;
     setIsLoading(true);
-    getSequencingIntensity(
-        {country, signal}
-    ).then(newSequencingData => {
+    getSequencingIntensity({ country, signal }).then(newSequencingData => {
       if (isSubscribed) {
         console.log(newSequencingData);
-        // setData(newSequencingData);
+        setData(newSequencingData);
       }
       setIsLoading(false);
     });
@@ -41,24 +45,15 @@ export const SequencingIntensityPlot = ({
     };
   }, [country]);
 
-//   const processedData: TimeEntry[] | undefined = distribution?.map(d => ({
-//     firstDayInWeek: d.x.firstDayInWeek,
-//     yearWeek: d.x.yearWeek,
-//     percent: d.y.proportion * 100,
-//     quantity: d.y.count,
-//   }));
-
-  return (<p>Chart goes here</p>)
-
-//   return processedData === undefined || isLoading ? (
-//     <Loader />
-//   ) : (
-//     <TimeChart data={processedData} onClickHandler={(e: unknown) => true} />
-//   );
+    return data === undefined || isLoading ? (
+      <Loader />
+    ) : (
+      <TimeIntensityChart data={processData(data)} onClickHandler={(e: unknown) => true} />
+    );
 };
 
 export const SequencingIntensityPlotWidget = new Widget(
   new ZodQueryEncoder(PropsSchema),
   SequencingIntensityPlot,
-  'VariantTimeDistributionPlot'
+  'SequencingIntensityPlot'
 );

@@ -29,7 +29,15 @@ export const ChartWrapper = styled.div`
 `;
 
 const getTimeTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
-  if (dataLength > 20) {
+  if (dataLength > 25) {
+    if (activeIndex === index) {
+      return value.slice(5);
+    } else if (Math.abs(activeIndex - index) <= 2) {
+      return '';
+    } else if (index % 5 === 0) {
+      return value.slice(5);
+    }
+  } else if (dataLength > 15) {
     if (activeIndex === index) {
       return value.slice(5);
     } else if (Math.abs(activeIndex - index) <= 1) {

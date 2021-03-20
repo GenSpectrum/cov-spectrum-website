@@ -26,10 +26,7 @@ export const ExplorePage = ({ country, samplingStrategy, onVariantSelect, select
           content: (
             <>
               <NamedSection title='Sequencing Intensity'>
-                <SequencingIntensityPlotWidget.ShareableComponent
-                  country={country}
-                  height={300}
-                />
+                <SequencingIntensityPlotWidget.ShareableComponent country={country} height={300} />
               </NamedSection>
               <NamedSection title='Known variants'>
                 <KnownVariantsList

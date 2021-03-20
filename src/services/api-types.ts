@@ -81,9 +81,9 @@ export const SequencingIntensityEntrySchema = zod.object({
   x: YearWeekWithDaySchema,
   y: zod.object({
     numberCases: zod.number(),
-    numberSequenced: zod.number(), 
-  })
-})
+    numberSequenced: zod.number(),
+  }),
+});
 
 export const InternationalTimeDistributionEntrySchema = zod.object({
   x: zod.object({
@@ -102,7 +102,6 @@ export const TimeZipCodeDistributionEntrySchema = zod.object({
     count: zod.number(),
   }),
 });
-
 
 export const InterestingVariantSchema = zod.object({
   variant: VariantSchema,

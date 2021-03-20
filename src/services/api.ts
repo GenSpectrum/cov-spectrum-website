@@ -226,22 +226,23 @@ export const getSampleFastaUrl = ({
   return url;
 };
 
-export const getSequencingIntensity = (
-  {country,
+export const getSequencingIntensity = ({
+  country,
   dataType = SamplingStrategy.Surveillance,
-  signal} : {
-    country: Country,
-    dataType?: SamplingStrategy,
-    signal: AbortSignal
-  }
-): Promise<SequencingIntensityEntry[]> => {
+  signal,
+}: {
+  country: Country;
+  dataType?: SamplingStrategy;
+  signal: AbortSignal;
+}): Promise<SequencingIntensityEntry[]> => {
   let url = HOST + `/plot/sequencing/time-intensity-distribution?country=${country}`;
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
     .then(data => {
       console.log(data);
-      return zod.array(SequencingIntensityEntrySchema).parse(data)});
-}; 
+      return zod.array(SequencingIntensityEntrySchema).parse(data);
+    });
+};
 
 export const getInterestingVariants = (
   {
