@@ -18,8 +18,8 @@ export type OnClickHandler = (index: number) => boolean;
 export type TimeIntensityEntry = {
   firstDayInWeek: string;
   yearWeek: string;
-  proportion: number;
   quantity: number;
+  proportion: number;
 };
 
 export type Props = {
@@ -125,7 +125,7 @@ export const TimeIntensityChart = React.memo(
                     />
                   }
                 />
-                <Tooltip />
+                <Tooltip formatter={format} />
                 <CartesianGrid vertical={false} />
                 {bars}
               </BarChart>
@@ -138,5 +138,14 @@ export const TimeIntensityChart = React.memo(
     );
   }
 );
+
+const format = (value: unknown, name: string, props: unknown) => {
+  if (name === "proportion") {
+    return [value, "Sequenced"]
+  }
+  else {
+    return ['formatted value', 'name'];
+  }
+}
 
 export default TimeIntensityChart;

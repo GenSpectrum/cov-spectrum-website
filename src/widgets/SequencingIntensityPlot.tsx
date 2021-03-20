@@ -32,7 +32,6 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
     setIsLoading(true);
     getSequencingIntensity({ country, signal }).then(newSequencingData => {
       if (isSubscribed) {
-        console.log(newSequencingData);
         setData(newSequencingData);
       }
       setIsLoading(false);
