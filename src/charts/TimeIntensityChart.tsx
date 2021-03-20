@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Metric, { MetricsWrapper, MetricsSpacing } from './Metrics';
-import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid , Tooltip} from 'recharts';
+import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
 import {
   colors,
   Wrapper,
@@ -18,8 +18,8 @@ export type OnClickHandler = (index: number) => boolean;
 export type TimeIntensityEntry = {
   firstDayInWeek: string;
   yearWeek: string;
-  quantity: number;
   proportion: number;
+  quantity: number;
 };
 
 export type Props = {
@@ -73,7 +73,7 @@ export const TimeIntensityChart = React.memo(
         {data.map((entry: unknown, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
-            fill={index === activeIndex ? colors.active : colors.secondary}
+            fill={index === activeIndex ? colors.highlight : colors.highlight2}
             key={`cell-${index}`}
           ></Cell>
         ))}
@@ -89,7 +89,7 @@ export const TimeIntensityChart = React.memo(
         {data.map((entry: unknown, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
-            fill={index === activeIndex ? colors.active : colors.inactive}
+            fill={index === activeIndex ? colors.active : colors.secondaryLight}
             key={`cell-${index}`}
           ></Cell>
         ))}
@@ -125,12 +125,36 @@ export const TimeIntensityChart = React.memo(
                     />
                   }
                 />
-                <Tooltip formatter={format} />
+                <YAxis
+                  dataKey='quantity'
+                  interval={1}
+                  axisLine={false}
+                  tickLine={false}
+                  allowDecimals={true}
+                  hide={false}
+                  width={60}
+                  domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
+                />
                 <CartesianGrid vertical={false} />
                 {bars}
               </BarChart>
             </ResponsiveContainer>
           </ChartWrapper>
+          <MetricsWrapper>
+            <MetricsSpacing />
+            <Metric
+              value={currentData.quantity}
+              title='Confirmed'
+              color={colors.active}
+              helpText='Number of confirmed caseson this time frame.'
+            />
+            <Metric
+              value={currentData.proportion}
+              title='Sequenced'
+              color={colors.highlight}
+              helpText='Number of samples sequenced among the confirmed cases on this time frame.'
+            />
+          </MetricsWrapper>
         </ChartAndMetricsWrapper>
       </Wrapper>
     ) : (
@@ -138,14 +162,5 @@ export const TimeIntensityChart = React.memo(
     );
   }
 );
-
-const format = (value: unknown, name: string, props: unknown) => {
-  if (name === "proportion") {
-    return [value, "Sequenced"]
-  }
-  else {
-    return ['formatted value', 'name'];
-  }
-}
 
 export default TimeIntensityChart;

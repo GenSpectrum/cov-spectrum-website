@@ -1,10 +1,12 @@
 import styled from 'styled-components';
 
 export const colors = {
-  active: '#2980b9',
+  active: '#3498db',
   inactive: '#bdc3c7',
-  active2: '#3498db',
   secondary: '#7f8c8d',
+  secondaryLight: '#ecf0f1',
+  highlight: '#e67e22',
+  highlight2: '#f1c40f',
 };
 
 export const Wrapper = styled.div`
