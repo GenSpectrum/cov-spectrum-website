@@ -125,38 +125,12 @@ export const TimeIntensityChart = React.memo(
                     />
                   }
                 />
-                {/* <YAxis
-                  dataKey='quantity'
-                  interval={1}
-                  axisLine={false}
-                  tickLine={false}
-                  // tickFormatter={tick => `${tick}`}
-                  allowDecimals={true}
-                  hide={false}
-                  width={50}
-                  domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
-                /> */}
                 <Tooltip />
                 <CartesianGrid vertical={false} />
                 {bars}
               </BarChart>
             </ResponsiveContainer>
           </ChartWrapper>
-          {/* <MetricsWrapper>
-            <MetricsSpacing />
-            <Metric
-              value={currentData.quantity}
-              title='Confirmed'
-              color={colors.active}
-              helpText='Number of confirmed caseson this time frame.'
-            />
-            <Metric
-              value={currentData.proportion}
-              title='Sequenced'
-              color={colors.secondary}
-              helpText='Number of samples sequenced among the confirmed cases on this time frame.'
-            />
-          </MetricsWrapper> */}
         </ChartAndMetricsWrapper>
       </Wrapper>
     ) : (
