@@ -17,7 +17,7 @@ const processData = (data: SequencingIntensityEntry[]): any =>
     yearWeek: d.x.yearWeek,
     proportion: d.y.numberSequenced,
     quantity: d.y.numberCases,
-  }));;
+  }));
 
 export const SequencingIntensityPlot = ({ country }: Props) => {
   const [data, setData] = useState<SequencingIntensityEntry[] | undefined>(undefined);
@@ -42,11 +42,11 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
     };
   }, [country]);
 
-    return data === undefined || isLoading ? (
-      <Loader />
-    ) : (
-      <TimeIntensityChart data={processData(data)} onClickHandler={(e: unknown) => true} />
-    );
+  return data === undefined || isLoading ? (
+    <Loader />
+  ) : (
+    <TimeIntensityChart data={processData(data)} onClickHandler={(e: unknown) => true} />
+  );
 };
 
 export const SequencingIntensityPlotWidget = new Widget(
