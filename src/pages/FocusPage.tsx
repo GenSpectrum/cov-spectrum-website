@@ -72,7 +72,7 @@ export const FocusPage = (props: Props) => {
           </GridCell>
         )}
         <GridCell>
-          <Chen2021FitnessWidget.ShareableComponent {...plotProps} title='Models' />
+          <Chen2021FitnessWidget.ShareableComponent {...plotProps} title='Fitness advantage estimation' />
         </GridCell>
         <GridCell>
           <VariantInternationalComparisonPlotWidget.ShareableComponent
