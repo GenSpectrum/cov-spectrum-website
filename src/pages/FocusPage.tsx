@@ -78,20 +78,20 @@ export const FocusPage = (props: Props) => {
           />
         </GridCell>
         {props.country === 'Switzerland' && (
-          <GridCell>
+          <GridCell minWidth={600}>
             <NamedCard title='Geography'>
               <Switzerland {...plotProps} />
             </NamedCard>
           </GridCell>
         )}
-        <GridCell>
+        <GridCell minWidth={600}>
           <NamedCard title='Fitness advantage estimation' toolbar={deepFocusButtons.chen2021Fitness}>
             <div style={{ height: 300 }}>
               <Chen2021FitnessPreview {...plotProps} />
             </div>
           </NamedCard>
         </GridCell>
-        <GridCell>
+        <GridCell minWidth={600}>
           <VariantInternationalComparisonPlotWidget.ShareableComponent
             {...plotProps}
             height={300}
