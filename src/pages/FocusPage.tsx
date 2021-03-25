@@ -13,6 +13,7 @@ import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
+import { mapValues } from 'lodash';
 
 interface Props {
   country: Country;
@@ -20,6 +21,11 @@ interface Props {
   variant: Variant;
   samplingStrategy: SamplingStrategy;
 }
+
+const deepFocusPaths = {
+  internationalComparison: '/international-comparison',
+  chen2021Fitness: '/chen-2021-fitness',
+};
 
 export const FocusPage = (props: Props) => {
   const { country, matchPercentage, variant, samplingStrategy } = props;
@@ -31,24 +37,20 @@ export const FocusPage = (props: Props) => {
     samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
   };
 
-  const internationalComparisonLink = useMemo(
+  const deepFocusButtons = useMemo(
     () =>
-      getFocusPageLink({
-        variantSelector: { variant, matchPercentage },
-        country,
-        samplingStrategy,
-        deepFocusPath: '/international-comparison',
-      }),
-    [country, samplingStrategy, matchPercentage, variant]
-  );
-
-  const chen2021FitnessLink = useMemo(
-    () =>
-      getFocusPageLink({
-        variantSelector: { variant, matchPercentage },
-        country,
-        samplingStrategy,
-        deepFocusPath: '/chen-2021-fitness',
+      mapValues(deepFocusPaths, suffix => {
+        const to = getFocusPageLink({
+          variantSelector: { variant, matchPercentage },
+          country,
+          samplingStrategy,
+          deepFocusPath: suffix,
+        });
+        return (
+          <Button as={Link} to={to} size='sm' className='ml-1'>
+            Show more
+          </Button>
+        );
       }),
     [country, samplingStrategy, matchPercentage, variant]
   );
@@ -83,15 +85,8 @@ export const FocusPage = (props: Props) => {
           </GridCell>
         )}
         <GridCell>
-          <NamedCard
-            title='Fitness advantage estimation'
-            toolbar={
-              <Button as={Link} to={chen2021FitnessLink} size='sm' className='ml-1'>
-                Show more
-              </Button>
-            }
-          >
-            <div style={{ height: 400 }}>
+          <NamedCard title='Fitness advantage estimation' toolbar={deepFocusButtons.chen2021Fitness}>
+            <div style={{ height: 300 }}>
               <Chen2021FitnessPreview {...plotProps} />
             </div>
           </NamedCard>
@@ -101,11 +96,7 @@ export const FocusPage = (props: Props) => {
             {...plotProps}
             height={300}
             title='International comparison'
-            toolbarChildren={
-              <Button as={Link} to={internationalComparisonLink} size='sm' className='ml-1'>
-                Show more
-              </Button>
-            }
+            toolbarChildren={deepFocusButtons.internationalComparison}
           />
         </GridCell>
       </PackedGrid>
