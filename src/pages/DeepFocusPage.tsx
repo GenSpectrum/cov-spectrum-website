@@ -53,7 +53,7 @@ export const DeepFocusPage = (props: Props) => {
         <VariantHeader
           variant={variant}
           controls={
-            <Button variant='outline-secondary' as={Link} to={url}>
+            <Button variant='secondary' as={Link} to={url}>
               Back to overview
             </Button>
           }
