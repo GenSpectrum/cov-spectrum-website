@@ -13,6 +13,7 @@ import { NextcladeService } from '../services/NextcladeService';
 import { Utils } from '../services/Utils';
 import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
 import { LazySampleButton } from './LazySampleButton';
+import { MinimalWidgetLayout } from './MinimalWidgetLayout';
 
 interface Props {
   country: Country;
@@ -105,7 +106,8 @@ export const InternationalComparison = ({
 
       <VariantInternationalComparisonPlotWidget.ShareableComponent
         title='International comparison'
-        height={500}
+        widgetLayout={MinimalWidgetLayout}
+        height={300}
         country={country}
         matchPercentage={matchPercentage}
         mutations={variant.mutations}
@@ -148,63 +150,59 @@ export const InternationalComparison = ({
         }
       />
 
-      {countryData ? (
-        <>
-          <div style={{ maxHeight: '400px', overflow: 'auto' }}>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Country</th>
-                  <th>Total Variant Sequences</th>
-                  <th>First seq. found at</th>
-                  <th>Last seq. found at</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {countryData.map((c: any) => (
-                  <tr key={c.country}>
-                    <td>{c.country}</td>
-                    <td>{c.count}</td>
-                    <td>{c.first.yearWeek}</td>
-                    <td>{c.last.yearWeek}</td>
-                    <td>
-                      {AccountService.isLoggedIn() && (
-                        <Button
-                          onClick={() =>
-                            NextcladeService.showVariantOnNextclade({
-                              variant,
-                              matchPercentage,
-                              country: c.country,
-                              samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
-                            })
-                          }
-                          variant='secondary'
-                          size='sm'
-                          className='mr-2'
-                        >
-                          Show on Nextclade
-                        </Button>
-                      )}
-                      <LazySampleButton
-                        query={{
-                          variantSelector: { variant, matchPercentage },
+      {countryData && (
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Total Variant Sequences</th>
+              <th>First seq. found at</th>
+              <th>Last seq. found at</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {countryData.map((c: any) => (
+              <tr key={c.country}>
+                <td>{c.country}</td>
+                <td>{c.count}</td>
+                <td>{c.first.yearWeek}</td>
+                <td>{c.last.yearWeek}</td>
+                <td>
+                  {AccountService.isLoggedIn() && (
+                    <Button
+                      onClick={() =>
+                        NextcladeService.showVariantOnNextclade({
+                          variant,
+                          matchPercentage,
                           country: c.country,
-                          samplingStrategy: SamplingStrategy.AllSamples,
-                        }}
-                        variant='secondary'
-                        size='sm'
-                      >
-                        Show samples
-                      </LazySampleButton>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
-        </>
-      ) : null}
+                          samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
+                        })
+                      }
+                      variant='secondary'
+                      size='sm'
+                      className='mr-2'
+                    >
+                      Show on Nextclade
+                    </Button>
+                  )}
+                  <LazySampleButton
+                    query={{
+                      variantSelector: { variant, matchPercentage },
+                      country: c.country,
+                      samplingStrategy: SamplingStrategy.AllSamples,
+                    }}
+                    variant='secondary'
+                    size='sm'
+                  >
+                    Show samples
+                  </LazySampleButton>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      )}
     </>
   );
 };

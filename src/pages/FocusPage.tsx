@@ -1,16 +1,18 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { Button } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
-import { InternationalComparison } from '../components/InternationalComparison';
-import { NamedSection } from '../components/NamedSection';
+import { NamedCard } from '../components/NamedCard';
+import { GridCell, PackedGrid } from '../components/PackedGrid';
 import Switzerland from '../components/Switzerland';
 import { VariantHeader } from '../components/VariantHeader';
+import { getFocusPageLink } from '../helpers/explore-url';
+import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
 import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
+import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
-import { GridCell, PackedGrid } from '../components/PackedGrid';
-import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
-import { NamedCard } from '../components/NamedCard';
 
 interface Props {
   country: Country;
@@ -21,12 +23,25 @@ interface Props {
 
 export const FocusPage = (props: Props) => {
   const { country, matchPercentage, variant, samplingStrategy } = props;
+
   const plotProps = {
     country,
     matchPercentage,
     mutations: variant.mutations,
     samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
   };
+
+  const internationalComparisonLink = useMemo(
+    () =>
+      getFocusPageLink({
+        variantSelector: { variant, matchPercentage },
+        country,
+        samplingStrategy,
+        deepFocusPath: '/international-comparison',
+      }),
+    [country, samplingStrategy, matchPercentage, variant]
+  );
+
   return (
     <>
       <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...props} />} />
@@ -57,11 +72,19 @@ export const FocusPage = (props: Props) => {
           </GridCell>
         )}
         <GridCell>
-          {/*TODO Should we make height optional?*/}
-          <Chen2021FitnessWidget.ShareableComponent {...plotProps} height={-1} title='Models' />
+          <Chen2021FitnessWidget.ShareableComponent {...plotProps} title='Models' />
         </GridCell>
         <GridCell>
-          <InternationalComparison {...props} />
+          <VariantInternationalComparisonPlotWidget.ShareableComponent
+            {...plotProps}
+            height={300}
+            title='International comparison'
+            toolbarChildren={
+              <Button as={Link} to={internationalComparisonLink} size='sm' className='ml-1'>
+                Show more
+              </Button>
+            }
+          />
         </GridCell>
       </PackedGrid>
     </>

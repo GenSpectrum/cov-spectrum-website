@@ -7,6 +7,7 @@ const Wrapper = styled.div`
   justify-content: center;
   align-items: center;
   padding: 5rem;
+  height: 100%;
 `;
 
 const Loader = () => {

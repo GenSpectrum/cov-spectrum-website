@@ -3,6 +3,7 @@ import { Button } from 'react-bootstrap';
 import { Route, useRouteMatch, Switch } from 'react-router';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
+import { InternationalComparison } from '../components/InternationalComparison';
 import { SampleTable } from '../components/SampleTable';
 import { VariantHeader } from '../components/VariantHeader';
 import { scrollableContainerPaddingPx, scrollableContainerStyle } from '../helpers/scrollable-container';
@@ -44,6 +45,11 @@ export const DeepFocusPage = (props: Props) => {
       key: 'samples',
       title: 'Samples',
       content: <SampleTable {...props} />,
+    },
+    {
+      key: 'international-comparison',
+      title: 'International comparison',
+      content: <InternationalComparison {...props} />,
     },
   ];
 
