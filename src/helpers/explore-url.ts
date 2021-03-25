@@ -153,7 +153,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     samplingStrategy,
     setSamplingStrategy,
     variantSelector,
-    focusKey: `${country}-${samplingStrategy}-${variantSelector}`,
+    focusKey: `${country}-${samplingStrategy}-${encodedVariantSelector}`,
   };
 }
 
