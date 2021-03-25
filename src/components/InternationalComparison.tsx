@@ -104,6 +104,7 @@ export const InternationalComparison = ({
       )}
 
       <VariantInternationalComparisonPlotWidget.ShareableComponent
+        title='International comparison'
         height={500}
         country={country}
         matchPercentage={matchPercentage}

@@ -1,5 +1,6 @@
 import { Button, Modal, Form, ButtonToolbar } from 'react-bootstrap';
 import { useState } from 'react';
+import { NamedCard } from '../components/NamedCard';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 
@@ -11,10 +12,11 @@ export interface InternalProps {
 
 // ExternalProps are passed by users of Widget.ShareableComponent
 export interface ExternalProps {
+  title: string;
   toolbarChildren?: React.ReactChild | React.ReactChild[];
   height: number;
 }
-const externalPropsKeys: (keyof ExternalProps)[] = ['toolbarChildren', 'height'];
+const externalPropsKeys: (keyof ExternalProps)[] = ['title', 'toolbarChildren', 'height'];
 
 export function pickExternalProps<T extends { [K in keyof ExternalProps]?: never }>(
   allProps: T
@@ -33,7 +35,7 @@ export function pickExternalProps<T extends { [K in keyof ExternalProps]?: never
 
 type Props = InternalProps & ExternalProps;
 
-export function WidgetWrapper({ getShareUrl, children, toolbarChildren, height }: Props) {
+export function WidgetWrapper({ getShareUrl, children, title, toolbarChildren, height }: Props) {
   const [shownEmbeddingCode, setShownEmbeddingCode] = useState<string>();
 
   const onShareClick = () => {
@@ -43,15 +45,19 @@ export function WidgetWrapper({ getShareUrl, children, toolbarChildren, height }
 
   return (
     <>
-      <div style={{ position: 'relative' }}>
-        <ButtonToolbar className='mb-1'>
-          <Button variant='secondary' size='sm' onClick={onShareClick}>
-            Share
-          </Button>
-          {toolbarChildren}
-        </ButtonToolbar>
+      <NamedCard
+        title={title}
+        toolbar={
+          <ButtonToolbar className='mb-1'>
+            <Button variant='secondary' size='sm' onClick={onShareClick}>
+              Share
+            </Button>
+            {toolbarChildren}
+          </ButtonToolbar>
+        }
+      >
         <div style={{ height }}>{children}</div>
-      </div>
+      </NamedCard>
 
       <Modal size='lg' show={!!shownEmbeddingCode} onHide={() => setShownEmbeddingCode(undefined)}>
         <Modal.Header closeButton>

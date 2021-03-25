@@ -10,6 +10,7 @@ import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistribut
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
+import { NamedCard } from '../components/NamedCard';
 
 interface Props {
   country: Country;
@@ -35,32 +36,32 @@ export const FocusPage = (props: Props) => {
       </p>
       <PackedGrid>
         <GridCell minWidth={800}>
-          <NamedSection title='Sequences over time'>
-            <VariantTimeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
-          </NamedSection>
+          <VariantTimeDistributionPlotWidget.ShareableComponent
+            {...plotProps}
+            height={300}
+            title='Sequences over time'
+          />
         </GridCell>
         <GridCell minWidth={400}>
-          <NamedSection title='Demographics'>
-            <VariantAgeDistributionPlotWidget.ShareableComponent {...plotProps} height={300} />
-          </NamedSection>
+          <VariantAgeDistributionPlotWidget.ShareableComponent
+            {...plotProps}
+            height={300}
+            title='Demographics'
+          />
         </GridCell>
         {props.country === 'Switzerland' && (
           <GridCell>
-            <NamedSection title='Geography'>
+            <NamedCard title='Geography'>
               <Switzerland {...plotProps} />
-            </NamedSection>
+            </NamedCard>
           </GridCell>
         )}
         <GridCell>
-          <NamedSection title='Models'>
-            {/*TODO Should we make height optional?*/}
-            <Chen2021FitnessWidget.ShareableComponent {...plotProps} height={-1} />
-          </NamedSection>
+          {/*TODO Should we make height optional?*/}
+          <Chen2021FitnessWidget.ShareableComponent {...plotProps} height={-1} title='Models' />
         </GridCell>
         <GridCell>
-          <NamedSection title='International comparison'>
-            <InternationalComparison {...props} />
-          </NamedSection>
+          <InternationalComparison {...props} />
         </GridCell>
       </PackedGrid>
     </>
