@@ -7,7 +7,7 @@ import { GridCell, PackedGrid } from '../components/PackedGrid';
 import Switzerland from '../components/Switzerland';
 import { VariantHeader } from '../components/VariantHeader';
 import { getFocusPageLink } from '../helpers/explore-url';
-import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
+import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
@@ -42,6 +42,17 @@ export const FocusPage = (props: Props) => {
     [country, samplingStrategy, matchPercentage, variant]
   );
 
+  const chen2021FitnessLink = useMemo(
+    () =>
+      getFocusPageLink({
+        variantSelector: { variant, matchPercentage },
+        country,
+        samplingStrategy,
+        deepFocusPath: '/chen-2021-fitness',
+      }),
+    [country, samplingStrategy, matchPercentage, variant]
+  );
+
   return (
     <>
       <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...props} />} />
@@ -72,7 +83,18 @@ export const FocusPage = (props: Props) => {
           </GridCell>
         )}
         <GridCell>
-          <Chen2021FitnessWidget.ShareableComponent {...plotProps} title='Fitness advantage estimation' />
+          <NamedCard
+            title='Fitness advantage estimation'
+            toolbar={
+              <Button as={Link} to={chen2021FitnessLink} size='sm' className='ml-1'>
+                Show more
+              </Button>
+            }
+          >
+            <div style={{ height: 400 }}>
+              <Chen2021FitnessPreview {...plotProps} />
+            </div>
+          </NamedCard>
         </GridCell>
         <GridCell>
           <VariantInternationalComparisonPlotWidget.ShareableComponent

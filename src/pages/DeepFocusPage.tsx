@@ -4,10 +4,12 @@ import { Route, useRouteMatch, Switch } from 'react-router';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { InternationalComparison } from '../components/InternationalComparison';
+import { MinimalWidgetLayout } from '../components/MinimalWidgetLayout';
 import { SampleTable } from '../components/SampleTable';
 import { VariantHeader } from '../components/VariantHeader';
 import { scrollableContainerPaddingPx, scrollableContainerStyle } from '../helpers/scrollable-container';
-import { SamplingStrategy } from '../services/api';
+import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
+import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 
 interface Props {
@@ -40,6 +42,13 @@ export const DeepFocusPage = (props: Props) => {
 
   const { path, url } = useRouteMatch();
 
+  const plotProps = {
+    country: props.country,
+    matchPercentage: props.matchPercentage,
+    mutations: props.variant.mutations,
+    samplingStrategy: toLiteralSamplingStrategy(props.samplingStrategy),
+  };
+
   const routes = [
     {
       key: 'samples',
@@ -50,6 +59,17 @@ export const DeepFocusPage = (props: Props) => {
       key: 'international-comparison',
       title: 'International comparison',
       content: <InternationalComparison {...props} />,
+    },
+    {
+      key: 'chen-2021-fitness',
+      title: 'Fitness advantage estimation',
+      content: (
+        <Chen2021FitnessWidget.ShareableComponent
+          {...plotProps}
+          widgetLayout={MinimalWidgetLayout}
+          title='Fitness advantage estimation'
+        />
+      ),
     },
   ];
 
