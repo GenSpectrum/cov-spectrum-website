@@ -3,6 +3,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import { groupBy, last, sortBy } from 'lodash';
 import { YearWeekWithDay } from '../services/api-types';
+import { globalDateCache, UnifiedIsoWeek } from './date-cache';
 import { dayjsToYearWeekWithDay, yearWeekWithDayToDayjs } from './week';
 
 dayjs.extend(isoWeek);
@@ -112,6 +113,19 @@ export function fillWeeklyApiData<Y>(
     [v => v.isoWeekYear(), v => v.isoWeek()],
     v => ({ x: dayjsToYearWeekWithDay(v), y: fillerY })
   );
+}
+
+export function fillWeeklyApiDataNew<O extends { isoWeek: UnifiedIsoWeek }>(
+  unsortedOriginalData: O[],
+  filler: Omit<O, 'isoWeek'>
+): O[] {
+  return fillWeeklyApiData<Omit<O, 'isoWeek'>>(
+    unsortedOriginalData.map(o => ({
+      x: { yearWeek: o.isoWeek.yearWeekString, firstDayInWeek: o.isoWeek.firstDay.string },
+      y: o,
+    })),
+    filler
+  ).map(({ x, y }) => ({ ...(y as O), isoWeek: globalDateCache.getIsoWeek(x.yearWeek) }));
 }
 
 function mapApiDataGroups<X, Y, K extends keyof X>(

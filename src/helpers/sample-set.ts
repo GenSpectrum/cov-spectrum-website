@@ -1,6 +1,7 @@
 import { RawMultiSample } from '../services/api-types';
 import { NewSampleSelector } from '../helpers/sample-selector';
-import { globalDateCache, UnifiedDay } from './date-cache';
+import { globalDateCache, UnifiedDay, UnifiedIsoWeek } from './date-cache';
+import { groupBy } from 'lodash';
 
 export type ParsedMultiSample = Omit<RawMultiSample, 'date'> & { date: UnifiedDay };
 
@@ -15,6 +16,33 @@ export class SampleSet<S extends NewSampleSelector | null = NewSampleSelector | 
       data.map(s => ({ ...s, date: globalDateCache.getDay(s.date) })),
       sampleSelector
     );
+  }
+
+  groupByWeek(): { isoWeek: UnifiedIsoWeek; samples: ParsedMultiSample[] }[] {
+    return Object.entries(this.groupByWeekAsObject()).map(([k, g]) => ({
+      isoWeek: g[0].date.isoWeek,
+      samples: g,
+    }));
+  }
+
+  // groupByWeekWithOther gives the same output as groupByWeek, but attaches
+  // grouped samples from another sample set to each entry.
+  // WARNING If there is a week in "other" but not in "this", it will not be returned.
+  groupByWeekWithOther(
+    other: SampleSet
+  ): { isoWeek: UnifiedIsoWeek; samples: ParsedMultiSample[]; otherSamples: ParsedMultiSample[] }[] {
+    const groupedOther = other.groupByWeekAsObject();
+    return Object.entries(this.groupByWeekAsObject()).map(([k, g]) => {
+      return {
+        isoWeek: g[0].date.isoWeek,
+        samples: g,
+        otherSamples: groupedOther[k] || [],
+      };
+    });
+  }
+
+  private groupByWeekAsObject(): { [yearWeek: string]: ParsedMultiSample[] } {
+    return groupBy(this.data, s => s.date.isoWeek.yearWeekString);
   }
 
   getAll(): Iterable<ParsedMultiSample> {

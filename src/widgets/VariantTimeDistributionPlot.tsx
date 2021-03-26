@@ -2,6 +2,8 @@ import { groupBy, omit } from 'lodash';
 import React from 'react';
 import * as zod from 'zod';
 import TimeChart, { TimeEntry } from '../charts/TimeChart';
+import { UnifiedIsoWeek } from '../helpers/date-cache';
+import { fillWeeklyApiDataNew } from '../helpers/fill-missing';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { SampleSetWithSelector } from '../helpers/sample-set';
@@ -14,17 +16,21 @@ interface Props {
 }
 
 export const VariantTimeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props) => {
-  const groupedSampleSet = groupBy([...sampleSet.getAll()], s => s.date.isoWeek.yearWeekString);
-  const groupedWholeSampleSet = groupBy([...wholeSampleSet.getAll()], s => s.date.isoWeek.yearWeekString);
-  const processedData: TimeEntry[] = Object.entries(groupedSampleSet).map(([k, g]) => {
-    const isoWeek = g[0].date.isoWeek;
-    return {
+  const dataBeforeFill = sampleSet
+    .groupByWeekWithOther(wholeSampleSet)
+    .map(({ isoWeek, samples, otherSamples }) => ({
+      isoWeek,
+      percent: 100 * (samples.length / otherSamples.length),
+      quantity: samples.length,
+    }));
+  const processedData = fillWeeklyApiDataNew(dataBeforeFill, { percent: 0, quantity: 0 }).map(
+    ({ isoWeek, percent, quantity }) => ({
       firstDayInWeek: isoWeek.firstDay.string,
       yearWeek: isoWeek.yearWeekString,
-      percent: (100 * g.length) / groupedWholeSampleSet[k].length,
-      quantity: g.length,
-    };
-  });
+      percent,
+      quantity,
+    })
+  );
 
   return <TimeChart data={processedData} onClickHandler={(e: unknown) => true} />;
 };
