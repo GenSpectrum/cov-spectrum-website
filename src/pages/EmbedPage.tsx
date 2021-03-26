@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-import { allWidgets } from '../widgets';
-import { useQueryWithAsyncEncoder, useQueryWithEncoder } from '../helpers/use-query';
-import { NewWidget } from '../widgets/Widget';
-import { AsyncQueryEncoder } from '../helpers/query-encoder';
 import { IfFulfilled, IfPending, IfRejected } from 'react-async';
-import Loader from '../components/Loader';
 import { Alert } from 'react-bootstrap';
+import { useParams } from 'react-router-dom';
+import Loader from '../components/Loader';
+import { AsyncQueryEncoder } from '../helpers/query-encoder';
+import { useQueryWithAsyncEncoder } from '../helpers/use-query';
+import { allWidgets } from '../widgets';
+import { NewWidget } from '../widgets/Widget';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 

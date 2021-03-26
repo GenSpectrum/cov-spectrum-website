@@ -6,6 +6,7 @@ import { SampleSelectorSchema } from '../../helpers/sample-selector';
 import { AccountService } from '../../services/AccountService';
 import { DistributionType, getVariantDistributionData } from '../../services/api';
 import { TimeZipCodeDistributionEntry } from '../../services/api-types';
+import Loader from '../Loader';
 import Map from './Map';
 
 const MAP_SIDE_PADDING = 2;
@@ -18,9 +19,9 @@ const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
 
 const Switzerland = ({ country, mutations, matchPercentage, samplingStrategy }: Props) => {
-  const [distributionData, setDistributionData] = useState<TimeZipCodeDistributionEntry[]>([]);
+  const [distributionData, setDistributionData] = useState<TimeZipCodeDistributionEntry[]>();
   const loggedIn = AccountService.isLoggedIn();
-  const { width, ref } = useResizeDetector();
+  const { width, ref } = useResizeDetector<HTMLDivElement>();
 
   useEffect(() => {
     let isSubscribed = true;
@@ -50,17 +51,15 @@ const Switzerland = ({ country, mutations, matchPercentage, samplingStrategy }: 
     };
   }, [country, mutations, matchPercentage, samplingStrategy]);
 
-  return loggedIn && distributionData !== undefined ? (
-    <>
-      <div>
-        <p>Number of cases by postal code (PLZ)</p>
-        <MapWrapper ref={ref as React.MutableRefObject<HTMLInputElement>}>
-          <Map width={width} distributionData={distributionData} />
-        </MapWrapper>
-      </div>
-    </>
-  ) : (
-    <div>Please log in to view the geographical distribution of cases.</div>
+  return (
+    <div>
+      <p>Number of cases by postal code (PLZ)</p>
+      <MapWrapper ref={ref}>
+        {!loggedIn && <div>Please log in to view the geographical distribution of cases.</div>}
+        {!distributionData && <Loader />}
+        {loggedIn && distributionData && width && <Map width={width} distributionData={distributionData} />}
+      </MapWrapper>
+    </div>
   );
 };
 export default Switzerland;

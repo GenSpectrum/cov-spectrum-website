@@ -1,8 +1,7 @@
-import { groupBy, omit } from 'lodash';
+import { omit } from 'lodash';
 import React from 'react';
 import * as zod from 'zod';
-import TimeChart, { TimeEntry } from '../charts/TimeChart';
-import { UnifiedIsoWeek } from '../helpers/date-cache';
+import TimeChart from '../charts/TimeChart';
 import { fillWeeklyApiDataNew } from '../helpers/fill-missing';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';

@@ -1,40 +1,22 @@
+import { mapValues } from 'lodash';
 import React, { useMemo } from 'react';
-import { Button } from 'react-bootstrap';
+import { AsyncState, PromiseFn, useAsync } from 'react-async';
+import { Alert, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import React, { useEffect, useState } from 'react';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
+import Loader from '../components/Loader';
 import { NamedCard } from '../components/NamedCard';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import Switzerland from '../components/Switzerland';
 import { VariantHeader } from '../components/VariantHeader';
 import { getFocusPageLink } from '../helpers/explore-url';
-import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
-import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
-import React, { useEffect, useMemo, useState } from 'react';
-import { AsyncState, PromiseFn, useAsync } from 'react-async';
-import { Alert } from 'react-bootstrap';
-import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
-import { InternationalComparison } from '../components/InternationalComparison';
-import Loader from '../components/Loader';
-import { NamedSection } from '../components/NamedSection';
-import { GridCell, PackedGrid } from '../components/PackedGrid';
-import Switzerland from '../components/Switzerland';
-import { VariantHeader } from '../components/VariantHeader';
 import { SampleSetWithSelector } from '../helpers/sample-set';
-import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
+import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { getNewSamples, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
-import { mapValues } from 'lodash';
-import { GridCell, PackedGrid } from '../components/PackedGrid';
-import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
-import { SampleSet } from '../helpers/sample-set';
-import { NewSampleSelector } from '../helpers/sample-selector';
-import Loader from '../components/Loader';
-import { Alert } from 'react-bootstrap';
-import { PromiseFn, useAsync } from 'react-async';
 
 interface Props {
   country: Country;
@@ -136,14 +118,12 @@ export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => 
       </p>
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
-          <NamedSection title='Sequences over time'>
-            <VariantTimeDistributionPlotWidget.ShareableComponent
-              sampleSet={sampleSetState.data}
-              wholeSampleSet={wholeSampleSetState.data}
-              height={300}
-              title='Sequences over time'
-            />
-          </NamedSection>
+          <VariantTimeDistributionPlotWidget.ShareableComponent
+            sampleSet={sampleSetState.data}
+            wholeSampleSet={wholeSampleSetState.data}
+            height={300}
+            title='Sequences over time'
+          />
         </GridCell>
         <GridCell minWidth={600}>
           <VariantAgeDistributionPlotWidget.ShareableComponent
@@ -154,7 +134,7 @@ export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => 
         </GridCell>
         {country === 'Switzerland' && (
           <GridCell minWidth={600}>
-            <NamedSection title='Geography'>
+            <NamedCard title='Geography'>
               <Switzerland {...plotProps} />
             </NamedCard>
           </GridCell>
@@ -168,7 +148,7 @@ export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => 
         </GridCell>
         <GridCell minWidth={600}>
           <VariantInternationalComparisonPlotWidget.ShareableComponent
-            {...forwardedProps}
+            {...plotProps}
             height={300}
             title='International comparison'
             toolbarChildren={deepFocusButtons.internationalComparison}

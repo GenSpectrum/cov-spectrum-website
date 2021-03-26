@@ -10,15 +10,14 @@ import relief from './relief.jpg';
 import geoJson from './PLZ10.json';
 
 type Props = {
-  width: number | undefined;
+  width: number;
   distributionData: TimeZipCodeDistributionEntry[];
 };
 
 const Map = ({ width, distributionData }: Props) => {
-  const activeWidth = width !== undefined ? width : 0;
   const [minX, minY, maxX, maxY] = bbox(geoJson);
-  const height = ((maxY - minY) / (maxX - minX)) * activeWidth;
-  const x = scaleLinear().range([0, activeWidth]).domain([minX, maxX]);
+  const height = ((maxY - minY) / (maxX - minX)) * width;
+  const x = scaleLinear().range([0, width]).domain([minX, maxX]);
   const y = scaleLinear().range([0, height]).domain([maxY, minY]);
   // https://bl.ocks.org/mbostock/6216797
   const projection = geoTransform({
@@ -41,7 +40,7 @@ const Map = ({ width, distributionData }: Props) => {
       '#782618',
     ]);
 
-  return width !== undefined ? (
+  return (
     <div>
       <div style={{ position: 'relative', width: width, height }}>
         <img src={relief} style={{ opacity: 0.4, width: '100%', height: 'auto' }} alt='' />
@@ -70,8 +69,6 @@ const Map = ({ width, distributionData }: Props) => {
       </div>
       <ReactTooltip />
     </div>
-  ) : (
-    <></>
   );
 };
 
