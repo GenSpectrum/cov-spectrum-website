@@ -8,9 +8,8 @@ import {
   Country,
   CountrySchema,
   InterestingVariantResult,
-  InterestingVariantResultSchema,
   InternationalTimeDistributionEntrySchema,
-  MultiSampleSchema,
+  MultiSample,
   SampleResultList,
   SampleResultListSchema,
   TimeDistributionEntrySchema,
@@ -224,7 +223,11 @@ export async function getNewSamples(
   if (!res.ok) {
     throw new Error('server responded with non-200 status code');
   }
-  const data = zod.array(MultiSampleSchema).parse(await res.json());
+
+  // TODO(voinovp) HACK don't actually parse because zod is slow
+  // const data = zod.array(MultiSampleSchema).parse(await res.json());
+  const data = (await res.json()) as MultiSample[];
+
   return new SampleSet(data, selector);
 }
 
@@ -261,7 +264,11 @@ export const getInterestingVariants = (
   const url = HOST + endpoint;
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
-    .then(data => InterestingVariantResultSchema.parse(data));
+    .then(data => {
+      // TODO(voinovp) HACK don't actually parse because zod is slow
+      // return InterestingVariantResultSchema.parse(data);
+      return data as InterestingVariantResult;
+    });
 };
 
 export const getCurrentWeek = (): Promise<number> => {
