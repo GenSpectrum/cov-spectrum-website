@@ -23,9 +23,27 @@ export const YearWeekWithDaySchema = zod.object({
   firstDayInWeek: zod.string(),
 });
 
+export const dateStringRegex = /^\d{4}-\d{2}-\d{2}$/;
+export const DateStringSchema = zod.string().regex(dateStringRegex);
+
 // Objects that are explicitly defined in the doc (in the same order)
 
 export const CountrySchema = zod.string();
+
+export const RegionSchema = zod.string();
+
+export const MultiSampleSchema = zod.object({
+  date: DateStringSchema,
+  region: RegionSchema,
+  country: CountrySchema,
+  division: zod.string().nullable(),
+  zipCode: zod.string().nullable(),
+  ageGroup: zod.string().nullable(),
+  sex: zod.union([zod.literal('Male'), zod.literal('Female')]).nullable(),
+  hospitalized: zod.boolean().nullable(),
+  deceased: zod.boolean().nullable(),
+  count: zod.number(),
+});
 
 export const SampleSchema = zod.object({
   name: zod.string(),
@@ -122,6 +140,8 @@ export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
 export type CountAndProportionWithCI = zod.infer<typeof CountAndProportionWithCISchema>;
 export type YearWeekWithDay = zod.infer<typeof YearWeekWithDaySchema>;
 export type Country = zod.infer<typeof CountrySchema>;
+export type Region = zod.infer<typeof RegionSchema>;
+export type MultiSample = zod.infer<typeof MultiSampleSchema>;
 export type Sample = zod.infer<typeof SampleSchema>;
 export type SampleResultList = zod.infer<typeof SampleResultListSchema>;
 export type Variant = zod.infer<typeof VariantSchema>;

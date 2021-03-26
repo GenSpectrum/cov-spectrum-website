@@ -1,4 +1,6 @@
 import * as zod from 'zod';
+import { NewSampleSelector } from '../helpers/sample-selector';
+import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import { defaultForNever, unreachable } from '../helpers/unreachable';
 import { AccountService } from './AccountService';
 import {
@@ -8,6 +10,7 @@ import {
   InterestingVariantResult,
   InterestingVariantResultSchema,
   InternationalTimeDistributionEntrySchema,
+  MultiSampleSchema,
   SampleResultList,
   SampleResultListSchema,
   TimeDistributionEntrySchema,
@@ -202,6 +205,28 @@ export const getSamples = (
     .then(response => response.json())
     .then(data => SampleResultListSchema.parse(data));
 };
+
+export async function getNewSamples(
+  selector: NewSampleSelector,
+  signal?: AbortSignal
+): Promise<SampleSetWithSelector> {
+  const params = new URLSearchParams();
+  if (selector.mutations?.length) {
+    params.set('mutations', selector.mutations.join(','));
+  }
+  for (const k of ['region', 'country', 'matchPercentage', 'dataType', 'dateFrom', 'dateTo'] as const) {
+    if (selector[k]) {
+      params.set(k, selector[k]!.toString());
+    }
+  }
+
+  const res = await get(`/resource/sample2?${params.toString()}`, signal);
+  if (!res.ok) {
+    throw new Error('server responded with non-200 status code');
+  }
+  const data = zod.array(MultiSampleSchema).parse(await res.json());
+  return new SampleSet(data, selector);
+}
 
 export const getSampleFastaUrl = ({
   mutationsString,

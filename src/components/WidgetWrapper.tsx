@@ -6,7 +6,7 @@ const host = process.env.REACT_APP_WEBSITE_HOST;
 
 // InternalProps are passed by Widget
 export interface InternalProps {
-  getShareUrl: () => string;
+  getShareUrl: () => Promise<string>;
   children: React.ReactChild | React.ReactChild[];
 }
 
@@ -54,8 +54,8 @@ export function WidgetWrapper({
 }: Props) {
   const [shownEmbeddingCode, setShownEmbeddingCode] = useState<string>();
 
-  const onShareClick = () => {
-    const embeddingCode = `<iframe src="${host}/embed/${getShareUrl()}" width="800" height="500" frameborder="0"></iframe>`;
+  const onShareClick = async () => {
+    const embeddingCode = `<iframe src="${host}/embed/${await getShareUrl()}" width="800" height="500" frameborder="0"></iframe>`;
     setShownEmbeddingCode(embeddingCode);
   };
 

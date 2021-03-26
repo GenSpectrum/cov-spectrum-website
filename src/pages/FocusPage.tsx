@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
 import { NamedCard } from '../components/NamedCard';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
@@ -9,17 +10,38 @@ import { VariantHeader } from '../components/VariantHeader';
 import { getFocusPageLink } from '../helpers/explore-url';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import React, { useEffect, useMemo, useState } from 'react';
+import { AsyncState, PromiseFn, useAsync } from 'react-async';
+import { Alert } from 'react-bootstrap';
+import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
+import { InternationalComparison } from '../components/InternationalComparison';
+import Loader from '../components/Loader';
+import { NamedSection } from '../components/NamedSection';
+import { GridCell, PackedGrid } from '../components/PackedGrid';
+import Switzerland from '../components/Switzerland';
+import { VariantHeader } from '../components/VariantHeader';
+import { SampleSetWithSelector } from '../helpers/sample-set';
+import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
+import { getNewSamples, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { mapValues } from 'lodash';
+import { GridCell, PackedGrid } from '../components/PackedGrid';
+import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
+import { SampleSet } from '../helpers/sample-set';
+import { NewSampleSelector } from '../helpers/sample-selector';
+import Loader from '../components/Loader';
+import { Alert } from 'react-bootstrap';
+import { PromiseFn, useAsync } from 'react-async';
 
 interface Props {
   country: Country;
   matchPercentage: number;
   variant: Variant;
   samplingStrategy: SamplingStrategy;
+  wholeSampleSetState: AsyncState<SampleSetWithSelector>;
 }
 
 const deepFocusPaths = {
@@ -27,9 +49,8 @@ const deepFocusPaths = {
   chen2021Fitness: '/chen-2021-fitness',
 };
 
-export const FocusPage = (props: Props) => {
-  const { country, matchPercentage, variant, samplingStrategy } = props;
-
+export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => {
+  const { country, matchPercentage, variant, samplingStrategy } = forwardedProps;
   const plotProps = {
     country,
     matchPercentage,
@@ -55,20 +76,74 @@ export const FocusPage = (props: Props) => {
     [country, samplingStrategy, matchPercentage, variant]
   );
 
+  const sampleSetPromiseFn = useMemo<PromiseFn<SampleSetWithSelector>>(
+    () => (options, { signal }) =>
+      getNewSamples(
+        {
+          country,
+          matchPercentage,
+          mutations: variant.mutations,
+          dataType: toLiteralSamplingStrategy(samplingStrategy),
+        },
+        signal
+      ),
+    [country, matchPercentage, variant.mutations, samplingStrategy]
+  );
+  const sampleSetState = useAsync<SampleSetWithSelector>(sampleSetPromiseFn);
+
+  const header = (
+    <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...forwardedProps} />} />
+  );
+
+  if (
+    wholeSampleSetState.status === 'initial' ||
+    wholeSampleSetState.status === 'pending' ||
+    sampleSetState.status === 'initial' ||
+    sampleSetState.status === 'pending'
+  ) {
+    return (
+      <>
+        {header}
+        <Loader />
+      </>
+    );
+  }
+
+  if (wholeSampleSetState.status === 'rejected' || sampleSetState.status === 'rejected') {
+    return (
+      <>
+        {header}
+        <Alert variant='danger'>Failed to load samples</Alert>
+      </>
+    );
+  }
+
+  if (sampleSetState.data.isEmpty()) {
+    return (
+      <>
+        {header}
+        <Alert variant='warning'>No samples match your query</Alert>
+      </>
+    );
+  }
+
   return (
     <>
-      <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...props} />} />
+      {header}
       <p style={{ marginBottom: '30px' }}>
         The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
         mutations.
       </p>
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
-          <VariantTimeDistributionPlotWidget.ShareableComponent
-            {...plotProps}
-            height={300}
-            title='Sequences over time'
-          />
+          <NamedSection title='Sequences over time'>
+            <VariantTimeDistributionPlotWidget.ShareableComponent
+              sampleSet={sampleSetState.data}
+              wholeSampleSet={wholeSampleSetState.data}
+              height={300}
+              title='Sequences over time'
+            />
+          </NamedSection>
         </GridCell>
         <GridCell minWidth={600}>
           <VariantAgeDistributionPlotWidget.ShareableComponent
@@ -77,9 +152,9 @@ export const FocusPage = (props: Props) => {
             title='Demographics'
           />
         </GridCell>
-        {props.country === 'Switzerland' && (
+        {country === 'Switzerland' && (
           <GridCell minWidth={600}>
-            <NamedCard title='Geography'>
+            <NamedSection title='Geography'>
               <Switzerland {...plotProps} />
             </NamedCard>
           </GridCell>
@@ -93,7 +168,7 @@ export const FocusPage = (props: Props) => {
         </GridCell>
         <GridCell minWidth={600}>
           <VariantInternationalComparisonPlotWidget.ShareableComponent
-            {...plotProps}
+            {...forwardedProps}
             height={300}
             title='International comparison'
             toolbarChildren={deepFocusButtons.internationalComparison}
