@@ -9,7 +9,7 @@ import {
   CountrySchema,
   InterestingVariantResult,
   InternationalTimeDistributionEntrySchema,
-  MultiSample,
+  RawMultiSample,
   SampleResultList,
   SampleResultListSchema,
   TimeDistributionEntrySchema,
@@ -226,9 +226,9 @@ export async function getNewSamples(
 
   // TODO(voinovp) HACK don't actually parse because zod is slow
   // const data = zod.array(MultiSampleSchema).parse(await res.json());
-  const data = (await res.json()) as MultiSample[];
+  const data = (await res.json()) as RawMultiSample[];
 
-  return new SampleSet(data, selector);
+  return SampleSet.fromRawSamples(data, selector);
 }
 
 export const getSampleFastaUrl = ({

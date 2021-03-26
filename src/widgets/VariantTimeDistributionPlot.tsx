@@ -1,12 +1,10 @@
-import dayjs from 'dayjs';
-import { groupBy, mergeWith, omit, zipWith } from 'lodash';
+import { groupBy, omit } from 'lodash';
 import React from 'react';
 import * as zod from 'zod';
 import TimeChart, { TimeEntry } from '../charts/TimeChart';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { SampleSetWithSelector } from '../helpers/sample-set';
-import { dayjsToYearWeekString, dayjsToYearWeekWithDay } from '../helpers/week';
 import { getNewSamples } from '../services/api';
 import { NewWidget } from './Widget';
 
@@ -16,15 +14,13 @@ interface Props {
 }
 
 export const VariantTimeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props) => {
-  const groupedSampleSet = groupBy([...sampleSet.getAll()], s => dayjsToYearWeekString(dayjs(s.date)));
-  const groupedWholeSampleSet = groupBy([...wholeSampleSet.getAll()], s =>
-    dayjsToYearWeekString(dayjs(s.date))
-  );
+  const groupedSampleSet = groupBy([...sampleSet.getAll()], s => s.date.isoWeek.yearWeekString);
+  const groupedWholeSampleSet = groupBy([...wholeSampleSet.getAll()], s => s.date.isoWeek.yearWeekString);
   const processedData: TimeEntry[] = Object.entries(groupedSampleSet).map(([k, g]) => {
-    const { firstDayInWeek, yearWeek } = dayjsToYearWeekWithDay(dayjs(g[0].date));
+    const isoWeek = g[0].date.isoWeek;
     return {
-      firstDayInWeek,
-      yearWeek,
+      firstDayInWeek: isoWeek.firstDay.string,
+      yearWeek: isoWeek.yearWeekString,
       percent: (100 * g.length) / groupedWholeSampleSet[k].length,
       quantity: g.length,
     };
