@@ -62,15 +62,15 @@ export const FocusPage = (props: Props) => {
         The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
         mutations.
       </p>
-      <PackedGrid>
-        <GridCell minWidth={800}>
+      <PackedGrid maxColumns={2}>
+        <GridCell minWidth={600}>
           <VariantTimeDistributionPlotWidget.ShareableComponent
             {...plotProps}
             height={300}
             title='Sequences over time'
           />
         </GridCell>
-        <GridCell minWidth={400}>
+        <GridCell minWidth={600}>
           <VariantAgeDistributionPlotWidget.ShareableComponent
             {...plotProps}
             height={300}
