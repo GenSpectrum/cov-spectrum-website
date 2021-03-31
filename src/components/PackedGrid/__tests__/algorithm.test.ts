@@ -5,6 +5,7 @@ describe('placeGridCells', () => {
     label: string;
     requests: GridCellRequest[];
     parentWidth: number;
+    maxColumns?: number;
     result: PlacedGridCell[][];
   }
   const cases: Case[] = [
@@ -85,6 +86,12 @@ describe('placeGridCells', () => {
         { minWidth: 300, maxWidth: 300 },
         { minWidth: 300, maxWidth: 300 },
       ],
+      parentWidth: 300,
+      result: [[{ index: 0, width: 300 }], [{ index: 1, width: 300 }], [{ index: 2, width: 300 }]],
+    },
+    {
+      label: 'multiple grid cells (no widths means full rows)',
+      requests: [{}, {}, {}],
       parentWidth: 300,
       result: [[{ index: 0, width: 300 }], [{ index: 1, width: 300 }], [{ index: 2, width: 300 }]],
     },
@@ -187,12 +194,90 @@ describe('placeGridCells', () => {
         [{ index: 6, width: 110 }],
       ],
     },
+    {
+      label:
+        'multiple grid cells forced onto separate rows by column limit (width limited elements would fill exactly one row)',
+      requests: [
+        { minWidth: 100, maxWidth: 100 },
+        { minWidth: 150, maxWidth: 150 },
+        { minWidth: 100, maxWidth: 100 },
+      ],
+      parentWidth: 350,
+      maxColumns: 2,
+      result: [
+        [
+          { index: 0, width: 100 },
+          { index: 1, width: 150 },
+        ],
+        [{ index: 2, width: 100 }],
+      ],
+    },
+    {
+      label: 'multiple grid cells forced onto separate rows (more than one full row)',
+      requests: [
+        { minWidth: 100, maxWidth: 100 },
+        { minWidth: 150, maxWidth: 150 },
+        { minWidth: 100, maxWidth: 100 },
+        { minWidth: 150, maxWidth: 150 },
+        { minWidth: 100, maxWidth: 100 },
+        { minWidth: 100, maxWidth: 100 },
+      ],
+      parentWidth: 350,
+      maxColumns: 2,
+      result: [
+        [
+          { index: 0, width: 100 },
+          { index: 1, width: 150 },
+        ],
+        [
+          { index: 2, width: 100 },
+          { index: 3, width: 150 },
+        ],
+        [
+          { index: 4, width: 100 },
+          { index: 5, width: 100 },
+        ],
+      ],
+    },
+    {
+      label: 'multiple grid cells forced onto separate rows by column limit (no max widths)',
+      requests: [{ minWidth: 10 }, { minWidth: 10 }, { minWidth: 100 }, { minWidth: 100 }],
+      parentWidth: 300,
+      maxColumns: 2,
+      result: [
+        [
+          { index: 0, width: 150 },
+          { index: 1, width: 150 },
+        ],
+        [
+          { index: 2, width: 150 },
+          { index: 3, width: 150 },
+        ],
+      ],
+    },
+    {
+      label: 'multiple grid cells forced onto separate rows by column limit (different maxColumns value)',
+      requests: [{ minWidth: 10 }, { minWidth: 10 }, { minWidth: 100 }, { minWidth: 100 }],
+      parentWidth: 300,
+      maxColumns: 3,
+      result: [
+        [
+          { index: 0, width: 25 },
+          { index: 1, width: 25 },
+          { index: 2, width: 250 },
+        ],
+        [{ index: 3, width: 300 }],
+      ],
+    },
   ];
 
   for (const c of cases) {
     // eslint-disable-next-line jest/valid-title
     test(c.label, () => {
-      const actualResult = placeGridCells(c.requests, c.parentWidth);
+      const actualResult = placeGridCells(c.requests, {
+        parentWidth: c.parentWidth,
+        maxColumns: c.maxColumns,
+      });
       expect(actualResult).toEqual(c.result);
     });
   }

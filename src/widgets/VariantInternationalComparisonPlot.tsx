@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import * as zod from 'zod';
+import Loader from '../components/Loader';
 import { Plot } from '../components/Plot';
 import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
 import { fillGroupedWeeklyApiData } from '../helpers/fill-missing';
@@ -77,7 +78,7 @@ const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentag
 
   return (
     <div style={{ height: '100%' }}>
-      {!filteredPlotData && <p>Loading...</p>}
+      {!filteredPlotData && <Loader />}
       {filteredPlotData && (
         <Plot
           style={{ width: '100%', height: '100%' }}

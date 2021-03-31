@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 interface Props {
   title: string;
-  children: React.ReactChild | React.ReactChild[];
+  children: React.ReactNode;
 }
 
 const ContentWrapper = styled.div`

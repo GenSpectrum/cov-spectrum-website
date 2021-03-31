@@ -1,5 +1,6 @@
 import { Button, Modal, Form, ButtonToolbar } from 'react-bootstrap';
 import { useState } from 'react';
+import { NamedCard } from '../components/NamedCard';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 
@@ -9,12 +10,22 @@ export interface InternalProps {
   children: React.ReactChild | React.ReactChild[];
 }
 
+// LayoutProps as passed by WidgetWrapper to the component responsible for Layout
+export interface LayoutProps {
+  title: string;
+  toolbar?: React.ReactChild | React.ReactChild[];
+  children: React.ReactChild | React.ReactChild[];
+}
+
 // ExternalProps are passed by users of Widget.ShareableComponent
 export interface ExternalProps {
+  title: string;
   toolbarChildren?: React.ReactChild | React.ReactChild[];
-  height: number;
+  height?: number;
+  widgetLayout?: React.ComponentType<LayoutProps>;
 }
-const externalPropsKeys: (keyof ExternalProps)[] = ['toolbarChildren', 'height'];
+// IMPORTANT externalPropsKeys must be kept in sync with ExternalProps
+const externalPropsKeys: (keyof ExternalProps)[] = ['title', 'toolbarChildren', 'height', 'widgetLayout'];
 
 export function pickExternalProps<T extends { [K in keyof ExternalProps]?: never }>(
   allProps: T
@@ -33,7 +44,14 @@ export function pickExternalProps<T extends { [K in keyof ExternalProps]?: never
 
 type Props = InternalProps & ExternalProps;
 
-export function WidgetWrapper({ getShareUrl, children, toolbarChildren, height }: Props) {
+export function WidgetWrapper({
+  getShareUrl,
+  children,
+  title,
+  toolbarChildren,
+  height,
+  widgetLayout: WidgetLayout = NamedCard,
+}: Props) {
   const [shownEmbeddingCode, setShownEmbeddingCode] = useState<string>();
 
   const onShareClick = () => {
@@ -43,15 +61,19 @@ export function WidgetWrapper({ getShareUrl, children, toolbarChildren, height }
 
   return (
     <>
-      <div style={{ position: 'relative' }}>
-        <ButtonToolbar className='mb-1'>
-          <Button variant='outline-primary' size='sm' onClick={onShareClick}>
-            Share
-          </Button>
-          {toolbarChildren}
-        </ButtonToolbar>
-        <div style={{ height }}>{children}</div>
-      </div>
+      <WidgetLayout
+        title={title}
+        toolbar={
+          <ButtonToolbar className='mb-1'>
+            <Button variant='secondary' size='sm' onClick={onShareClick}>
+              Share
+            </Button>
+            {toolbarChildren}
+          </ButtonToolbar>
+        }
+      >
+        <div style={height ? { height } : undefined}>{children}</div>
+      </WidgetLayout>
 
       <Modal size='lg' show={!!shownEmbeddingCode} onHide={() => setShownEmbeddingCode(undefined)}>
         <Modal.Header closeButton>

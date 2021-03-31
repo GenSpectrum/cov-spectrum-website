@@ -45,3 +45,6 @@ export const Chen2021FitnessResponseSchema = zod.object({
     ciUpper: zod.array(zod.number()),
   }),
 });
+
+export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
+export type Chen2021FitnessResponse = zod.infer<typeof Chen2021FitnessResponseSchema>;

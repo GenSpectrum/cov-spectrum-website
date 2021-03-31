@@ -12,8 +12,12 @@ export interface PlacedGridCell {
   width: number;
 }
 
-export function placeGridCells(_requests: GridCellRequest[], parentWidth: number): PlacedGridCell[][] {
+export function placeGridCells(
+  _requests: GridCellRequest[],
+  { parentWidth, maxColumns }: { parentWidth: number; maxColumns?: number }
+): PlacedGridCell[][] {
   assert(Number.isSafeInteger(parentWidth) && parentWidth >= 0);
+  assert(maxColumns === undefined || (Number.isSafeInteger(maxColumns) && maxColumns > 0));
   assert(
     _requests.every(
       request =>
@@ -39,7 +43,10 @@ export function placeGridCells(_requests: GridCellRequest[], parentWidth: number
   const rows: StrictGridCellRequest[][] = [];
   let currentRow = { items: [] as StrictGridCellRequest[], width: 0 };
   for (const request of requests) {
-    if (currentRow.items.length && currentRow.width + request.minWidth > parentWidth) {
+    if (
+      (currentRow.items.length && currentRow.width + request.minWidth > parentWidth) ||
+      (maxColumns && currentRow.items.length >= maxColumns)
+    ) {
       rows.push(currentRow.items);
       currentRow = { items: [], width: 0 };
     }

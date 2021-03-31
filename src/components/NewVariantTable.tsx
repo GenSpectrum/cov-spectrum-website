@@ -57,7 +57,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                       onClick={() => {
                         onVariantSelect(d.variant);
                       }}
-                      variant='outline-secondary'
+                      variant='secondary'
                       size='sm'
                     >
                       Show Details

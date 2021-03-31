@@ -5,13 +5,9 @@ import * as zod from 'zod';
 import { SampleSelectorSchema } from '../../helpers/sample-selector';
 import styled from 'styled-components';
 import { Chen2021FitnessResults } from './Chen2021FitnessResults';
+import { fillRequestWithDefaults } from './loading';
 
 type ContainerProps = zod.infer<typeof SampleSelectorSchema>;
-
-const Wrapper = styled.div`
-  background-color: #ffe0b6;
-  padding: 15px;
-`;
 
 const SectionHeader = styled.h5`
   margin-top: 20px;
@@ -23,19 +19,9 @@ export const Chen2021FitnessContainer = ({
   matchPercentage,
   samplingStrategy,
 }: ContainerProps) => {
-  const [paramData, setParamData] = useState<Chen2021FitnessRequest>({
-    country,
-    mutations,
-    matchPercentage,
-    samplingStrategy,
-    alpha: 0.95,
-    generationTime: 4.8,
-    reproductionNumberWildtype: 1,
-    plotStartDate: new Date('2021-01-01'),
-    plotEndDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-    initialWildtypeCases: 1000,
-    initialVariantCases: 100,
-  });
+  const [paramData, setParamData] = useState<Chen2021FitnessRequest>(() =>
+    fillRequestWithDefaults({ country, mutations, matchPercentage, samplingStrategy })
+  );
   const [formGenerationTime, setFormGenerationTime] = useState(paramData.generationTime.toString());
   const [formReproductionNumberWildtype, setFormReproductionNumberWildtype] = useState(
     paramData.reproductionNumberWildtype.toString()
@@ -68,8 +54,7 @@ export const Chen2021FitnessContainer = ({
   };
 
   return (
-    <Wrapper>
-      <h4>Fitness Advantage Estimation</h4>
+    <>
       <p>
         The model assumes that the increase or decrease of the proportion of a variant follows a logistic
         function. It fits a logistic model to the data by optimizing the maximum likelihood to obtain the
@@ -130,6 +115,6 @@ export const Chen2021FitnessContainer = ({
           </a>
         </li>
       </ul>
-    </Wrapper>
+    </>
   );
 };

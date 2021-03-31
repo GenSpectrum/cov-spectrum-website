@@ -168,6 +168,7 @@ export function getFocusPageLink({
   samplingStrategy: SamplingStrategy;
   deepFocusPath?: string;
 }) {
+  assert(!deepFocusPath || deepFocusPath.startsWith('/'));
   return (
     generatePath(`/explore/${country}/${samplingStrategy}/variants/:variantSelector`, {
       variantSelector: queryEncoder.encode(variantSelector).toString(),
