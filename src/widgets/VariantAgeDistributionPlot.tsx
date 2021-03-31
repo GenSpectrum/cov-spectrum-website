@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { DistributionType, getVariantDistributionData } from '../services/api';
 import { AgeDistributionEntry } from '../services/api-types';
 import { SampleSelectorSchema } from '../helpers/sample-selector';
@@ -9,6 +9,7 @@ import { fillAgeKeyedApiData } from '../helpers/fill-missing';
 import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
 import TypeDistributionChart, { TypeDistributionEntry } from '../charts/TypeDistributionChart';
 import Loader from '../components/Loader';
+import { useResizeDetector } from 'react-resize-detector';
 
 const PropsSchema = SampleSelectorSchema;
 type Props = zod.infer<typeof PropsSchema>;
@@ -52,16 +53,30 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage, sampl
     };
   }, [country, mutations, matchPercentage, samplingStrategy]);
 
-  const processedData: TypeDistributionEntry[] | undefined = distributionData?.map(d => ({
-    name: d.x,
-    percent: d.y.proportion * 100,
-    quantity: d.y.count,
-  }));
+  const { width, ref } = useResizeDetector();
 
-  return processedData === undefined || isLoading ? (
-    <Loader />
-  ) : (
-    <TypeDistributionChart data={processedData} onClickHandler={(e: unknown) => true} />
+  const widthIsSmall = !!width && width < 700;
+
+  const processedData = useMemo(
+    () =>
+      distributionData?.map(
+        (d): TypeDistributionEntry => ({
+          name: widthIsSmall ? d.x.replace(/-\d+$/, '-') : d.x,
+          percent: d.y.proportion * 100,
+          quantity: d.y.count,
+        })
+      ),
+    [distributionData, widthIsSmall]
+  );
+
+  return (
+    <div ref={ref as React.MutableRefObject<HTMLDivElement>}>
+      {processedData === undefined || isLoading ? (
+        <Loader />
+      ) : (
+        <TypeDistributionChart data={processedData} onClickHandler={(e: unknown) => true} />
+      )}
+    </div>
   );
 };
 
