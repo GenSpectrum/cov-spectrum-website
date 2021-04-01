@@ -1,11 +1,8 @@
 import { mapValues } from 'lodash';
 import React, { useMemo } from 'react';
-import { AsyncState, PromiseFn, useAsync } from 'react-async';
 import { Alert, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
-import Loader from '../components/Loader';
 import { NamedCard } from '../components/NamedCard';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import Switzerland from '../components/Switzerland';
@@ -14,7 +11,7 @@ import { getFocusPageLink } from '../helpers/explore-url';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { AccountService } from '../services/AccountService';
-import { getNewSamples, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
@@ -25,7 +22,8 @@ interface Props {
   matchPercentage: number;
   variant: Variant;
   samplingStrategy: SamplingStrategy;
-  wholeSampleSetState: AsyncState<SampleSetWithSelector>;
+  sampleSet: SampleSetWithSelector;
+  wholeSampleSet: SampleSetWithSelector;
 }
 
 const deepFocusPaths = {
@@ -33,17 +31,7 @@ const deepFocusPaths = {
   chen2021Fitness: '/chen-2021-fitness',
 };
 
-const LoadingPageWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
-const LoaderWrapper = styled.div`
-  flex: 1;
-`;
-
-export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => {
+export const FocusPage = ({ sampleSet, wholeSampleSet, ...forwardedProps }: Props) => {
   const { country, matchPercentage, variant, samplingStrategy } = forwardedProps;
   const plotProps = {
     country,
@@ -72,57 +60,12 @@ export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => 
     [country, samplingStrategy, matchPercentage, variant]
   );
 
-  const sampleSetPromiseFn = useMemo<PromiseFn<SampleSetWithSelector>>(
-    () => (options, { signal }) =>
-      getNewSamples(
-        {
-          country,
-          matchPercentage,
-          mutations: variant.mutations,
-          dataType: toLiteralSamplingStrategy(samplingStrategy),
-        },
-        signal
-      ),
-    [country, matchPercentage, variant.mutations, samplingStrategy]
-  );
-  const sampleSetState = useAsync<SampleSetWithSelector>(sampleSetPromiseFn);
-
   const header = (
     <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...forwardedProps} />} />
   );
 
-  if (
-    wholeSampleSetState.status === 'initial' ||
-    wholeSampleSetState.status === 'pending' ||
-    sampleSetState.status === 'initial' ||
-    sampleSetState.status === 'pending'
-  ) {
-    return (
-      <LoadingPageWrapper>
-        {header}
-        <LoaderWrapper>
-          <Loader />
-        </LoaderWrapper>
-      </LoadingPageWrapper>
-    );
-  }
-
-  if (wholeSampleSetState.status === 'rejected' || sampleSetState.status === 'rejected') {
-    return (
-      <>
-        {header}
-        <Alert variant='danger'>Failed to load samples</Alert>
-      </>
-    );
-  }
-
-  if (sampleSetState.data.isEmpty()) {
-    return (
-      <>
-        {header}
-        <Alert variant='warning'>No samples match your query</Alert>
-      </>
-    );
+  if (sampleSet.isEmpty()) {
+    return <Alert variant='warning'>No samples match your query</Alert>;
   }
 
   return (
@@ -135,16 +78,16 @@ export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => 
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <VariantTimeDistributionPlotWidget.ShareableComponent
-            sampleSet={sampleSetState.data}
-            wholeSampleSet={wholeSampleSetState.data}
+            sampleSet={sampleSet}
+            wholeSampleSet={wholeSampleSet}
             height={300}
             title='Sequences over time'
           />
         </GridCell>
         <GridCell minWidth={600}>
           <VariantAgeDistributionPlotWidget.ShareableComponent
-            sampleSet={sampleSetState.data}
-            wholeSampleSet={wholeSampleSetState.data}
+            sampleSet={sampleSet}
+            wholeSampleSet={wholeSampleSet}
             height={300}
             title='Demographics'
           />
@@ -153,7 +96,7 @@ export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => 
           <GridCell minWidth={600}>
             <NamedCard title='Geography'>
               {loggedIn ? (
-                <Switzerland sampleSet={sampleSetState.data} />
+                <Switzerland sampleSet={sampleSet} />
               ) : (
                 <div>Please log in to view the geographical distribution of cases.</div>
               )}
