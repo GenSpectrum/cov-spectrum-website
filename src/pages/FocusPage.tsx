@@ -127,7 +127,8 @@ export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => 
         </GridCell>
         <GridCell minWidth={600}>
           <VariantAgeDistributionPlotWidget.ShareableComponent
-            {...plotProps}
+            sampleSet={sampleSetState.data}
+            wholeSampleSet={wholeSampleSetState.data}
             height={300}
             title='Demographics'
           />

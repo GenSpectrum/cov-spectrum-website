@@ -1,87 +1,65 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { DistributionType, getVariantDistributionData } from '../services/api';
-import { AgeDistributionEntry } from '../services/api-types';
-import { SampleSelectorSchema } from '../helpers/sample-selector';
-import { Widget } from './Widget';
-import * as zod from 'zod';
-import { ZodQueryEncoder } from '../helpers/query-encoder';
-import { fillAgeKeyedApiData } from '../helpers/fill-missing';
-import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
-import TypeDistributionChart, { TypeDistributionEntry } from '../charts/TypeDistributionChart';
-import Loader from '../components/Loader';
+import { omit } from 'lodash';
+import React, { useMemo } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
+import * as zod from 'zod';
+import TypeDistributionChart from '../charts/TypeDistributionChart';
+import { fillAgeKeyedApiData } from '../helpers/fill-missing';
+import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
+import { NewSampleSelectorSchema } from '../helpers/sample-selector';
+import { SampleSetWithSelector } from '../helpers/sample-set';
+import { getNewSamples } from '../services/api';
+import { NewWidget } from './Widget';
 
-const PropsSchema = SampleSelectorSchema;
-type Props = zod.infer<typeof PropsSchema>;
+interface Props {
+  sampleSet: SampleSetWithSelector;
+  wholeSampleSet: SampleSetWithSelector;
+}
 
-const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage, samplingStrategy }: Props) => {
-  const [distributionData, setDistributionData] = useState<EntryWithoutCI<AgeDistributionEntry>[]>();
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    let isSubscribed = true;
-    const controller = new AbortController();
-    const signal = controller.signal;
-    setIsLoading(true);
-
-    getVariantDistributionData(
-      {
-        distributionType: DistributionType.Age,
-        country,
-        mutations,
-        matchPercentage,
-        samplingStrategy,
-      },
-      signal
-    )
-      .then(newDistributionData => {
-        if (isSubscribed) {
-          setDistributionData(
-            fillAgeKeyedApiData(newDistributionData.map(removeCIFromEntry), { count: 0, proportion: 0 })
-          );
-        }
-        setIsLoading(false);
-      })
-      .catch(e => {
-        console.log('Called fetch data error', e);
-      });
-    return () => {
-      isSubscribed = false;
-      setIsLoading(false);
-
-      controller.abort();
-    };
-  }, [country, mutations, matchPercentage, samplingStrategy]);
-
+const VariantAgeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props) => {
   const { width, ref } = useResizeDetector();
-
   const widthIsSmall = !!width && width < 700;
 
-  const processedData = useMemo(
-    () =>
-      distributionData?.map(
-        (d): TypeDistributionEntry => ({
-          name: widthIsSmall ? d.x.replace(/-\d+$/, '-') : d.x,
-          percent: d.y.proportion * 100,
-          quantity: d.y.count,
-        })
-      ),
-    [distributionData, widthIsSmall]
-  );
+  const processedData = useMemo(() => {
+    const dataBeforeFill = sampleSet
+      .proportionByField('ageGroup', wholeSampleSet)
+      .filter(({ key }) => key !== null)
+      .map(({ key, count, proportion }) => ({
+        x: key!,
+        y: {
+          quantity: count,
+          percent: proportion === undefined ? undefined : 100 * proportion,
+        },
+      }));
+    return fillAgeKeyedApiData(dataBeforeFill, { percent: 0, quantity: 0 }).map(({ x, y }) => ({
+      ...y,
+      name: widthIsSmall ? x.replace(/-\d+$/, '-') : x,
+    }));
+  }, [sampleSet, wholeSampleSet, widthIsSmall]);
 
   return (
     <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '100%' }}>
-      {processedData === undefined || isLoading ? (
-        <Loader />
-      ) : (
-        <TypeDistributionChart data={processedData} onClickHandler={(e: unknown) => true} />
-      )}
+      <TypeDistributionChart data={processedData} onClickHandler={(e: unknown) => true} />
     </div>
   );
 };
 
-export const VariantAgeDistributionPlotWidget = new Widget(
-  new ZodQueryEncoder(PropsSchema),
+export const VariantAgeDistributionPlotWidget = new NewWidget(
+  new AsyncZodQueryEncoder(
+    zod.object({
+      sampleSelector: NewSampleSelectorSchema,
+      wholeSampleSelector: NewSampleSelectorSchema,
+    }),
+    async (decoded: Props) => ({
+      ...omit(decoded, ['sampleSet', 'wholeSampleSet']),
+      sampleSelector: decoded.sampleSet.sampleSelector,
+      wholeSampleSelector: decoded.wholeSampleSet.sampleSelector,
+    }),
+    async (encoded, signal) => ({
+      ...omit(encoded, ['sampleSelector', 'wholeSampleSelector']),
+      sampleSet: await getNewSamples(encoded.sampleSelector, signal),
+      wholeSampleSet: await getNewSamples(encoded.wholeSampleSelector, signal),
+    })
+  ),
   VariantAgeDistributionPlot,
   'VariantAgeDistributionPlot'
 );
