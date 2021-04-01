@@ -70,7 +70,7 @@ const VariantAgeDistributionPlot = ({ country, mutations, matchPercentage, sampl
   );
 
   return (
-    <div ref={ref as React.MutableRefObject<HTMLDivElement>}>
+    <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '100%' }}>
       {processedData === undefined || isLoading ? (
         <Loader />
       ) : (
