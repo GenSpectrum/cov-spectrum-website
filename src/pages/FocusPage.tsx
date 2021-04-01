@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 import { AsyncState, PromiseFn, useAsync } from 'react-async';
 import { Alert, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
 import Loader from '../components/Loader';
 import { NamedCard } from '../components/NamedCard';
@@ -30,6 +31,16 @@ const deepFocusPaths = {
   internationalComparison: '/international-comparison',
   chen2021Fitness: '/chen-2021-fitness',
 };
+
+const LoadingPageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+`;
+
+const LoaderWrapper = styled.div`
+  flex: 1;
+`;
 
 export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => {
   const { country, matchPercentage, variant, samplingStrategy } = forwardedProps;
@@ -84,10 +95,12 @@ export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => 
     sampleSetState.status === 'pending'
   ) {
     return (
-      <>
+      <LoadingPageWrapper>
         {header}
-        <Loader />
-      </>
+        <LoaderWrapper>
+          <Loader />
+        </LoaderWrapper>
+      </LoadingPageWrapper>
     );
   }
 
