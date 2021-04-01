@@ -13,6 +13,7 @@ import { VariantHeader } from '../components/VariantHeader';
 import { getFocusPageLink } from '../helpers/explore-url';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
+import { AccountService } from '../services/AccountService';
 import { getNewSamples, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
@@ -50,6 +51,8 @@ export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => 
     mutations: variant.mutations,
     samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
   };
+
+  const loggedIn = AccountService.isLoggedIn();
 
   const deepFocusButtons = useMemo(
     () =>
@@ -149,7 +152,11 @@ export const FocusPage = ({ wholeSampleSetState, ...forwardedProps }: Props) => 
         {country === 'Switzerland' && (
           <GridCell minWidth={600}>
             <NamedCard title='Geography'>
-              <Switzerland {...plotProps} />
+              {loggedIn ? (
+                <Switzerland sampleSet={sampleSetState.data} />
+              ) : (
+                <div>Please log in to view the geographical distribution of cases.</div>
+              )}
             </NamedCard>
           </GridCell>
         )}

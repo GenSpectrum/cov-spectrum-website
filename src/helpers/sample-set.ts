@@ -61,9 +61,7 @@ export class SampleSet<S extends NewSampleSelector | null = NewSampleSelector | 
     });
   }
 
-  private countByFieldAsMap<F extends CountableMultiSampleField>(
-    field: F
-  ): Map<ParsedMultiSample[F], number> {
+  countByFieldAsMap<F extends CountableMultiSampleField>(field: F): Map<ParsedMultiSample[F], number> {
     const output = new Map<ParsedMultiSample[F], number>();
     for (const multiSample of this.data) {
       const oldCount = output.get(multiSample[field]) ?? 0;
@@ -72,7 +70,7 @@ export class SampleSet<S extends NewSampleSelector | null = NewSampleSelector | 
     return output;
   }
 
-  private countByWeekAsMap(): Map<UnifiedIsoWeek, number> {
+  countByWeekAsMap(): Map<UnifiedIsoWeek, number> {
     const output = new Map<UnifiedIsoWeek, number>();
     for (const multiSample of this.data) {
       const oldCount = output.get(multiSample.date.isoWeek) ?? 0;
