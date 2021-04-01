@@ -1,7 +1,6 @@
-import { RawMultiSample } from '../services/api-types';
 import { NewSampleSelector } from '../helpers/sample-selector';
+import { RawMultiSample } from '../services/api-types';
 import { globalDateCache, UnifiedDay, UnifiedIsoWeek } from './date-cache';
-import { groupBy } from 'lodash';
 
 export type ParsedMultiSample = Omit<RawMultiSample, 'date'> & { date: UnifiedDay };
 
@@ -18,31 +17,33 @@ export class SampleSet<S extends NewSampleSelector | null = NewSampleSelector | 
     );
   }
 
-  groupByWeek(): { isoWeek: UnifiedIsoWeek; samples: ParsedMultiSample[] }[] {
-    return Object.entries(this.groupByWeekAsObject()).map(([k, g]) => ({
-      isoWeek: g[0].date.isoWeek,
-      samples: g,
-    }));
+  countByWeek(): { isoWeek: UnifiedIsoWeek; count: number }[] {
+    return [...this.countByWeekAsMap().entries()].map(([k, v]) => ({ isoWeek: k, count: v }));
   }
 
-  // groupByWeekWithOther gives the same output as groupByWeek, but attaches
-  // grouped samples from another sample set to each entry.
-  // WARNING If there is a week in "other" but not in "this", it will not be returned.
-  groupByWeekWithOther(
-    other: SampleSet
-  ): { isoWeek: UnifiedIsoWeek; samples: ParsedMultiSample[]; otherSamples: ParsedMultiSample[] }[] {
-    const groupedOther = other.groupByWeekAsObject();
-    return Object.entries(this.groupByWeekAsObject()).map(([k, g]) => {
+  // proportionByWeek gives similar output to countByWeek, but also gives the
+  // proportion of samples from this set relative to some other "whole" set
+  // WARNING If there is a week in "whole" but not in "this", it will not be returned.
+  // If there is a week in "this" but not in "whole", proportion will be undefined.
+  proportionByWeek(whole: SampleSet): { isoWeek: UnifiedIsoWeek; count: number; proportion?: number }[] {
+    const wholeCounts = whole.countByWeekAsMap();
+    return [...this.countByWeekAsMap().entries()].map(([k, v]) => {
+      const wholeCount = wholeCounts.get(k);
       return {
-        isoWeek: g[0].date.isoWeek,
-        samples: g,
-        otherSamples: groupedOther[k] || [],
+        isoWeek: k,
+        count: v,
+        proportion: wholeCount === undefined ? undefined : v / wholeCount,
       };
     });
   }
 
-  private groupByWeekAsObject(): { [yearWeek: string]: ParsedMultiSample[] } {
-    return groupBy(this.data, s => s.date.isoWeek.yearWeekString);
+  private countByWeekAsMap(): Map<UnifiedIsoWeek, number> {
+    const output = new Map<UnifiedIsoWeek, number>();
+    for (const multiSample of this.data) {
+      const oldCount = output.get(multiSample.date.isoWeek) ?? 0;
+      output.set(multiSample.date.isoWeek, oldCount + multiSample.count);
+    }
+    return output;
   }
 
   getAll(): Iterable<ParsedMultiSample> {

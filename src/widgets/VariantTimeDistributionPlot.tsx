@@ -15,13 +15,11 @@ interface Props {
 }
 
 export const VariantTimeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props) => {
-  const dataBeforeFill = sampleSet
-    .groupByWeekWithOther(wholeSampleSet)
-    .map(({ isoWeek, samples, otherSamples }) => ({
-      isoWeek,
-      percent: 100 * (samples.length / otherSamples.length),
-      quantity: samples.length,
-    }));
+  const dataBeforeFill = sampleSet.proportionByWeek(wholeSampleSet).map(({ isoWeek, count, proportion }) => ({
+    isoWeek,
+    quantity: count,
+    percent: proportion === undefined ? undefined : 100 * proportion,
+  }));
   const processedData = fillWeeklyApiDataNew(dataBeforeFill, { percent: 0, quantity: 0 }).map(
     ({ isoWeek, percent, quantity }) => ({
       firstDayInWeek: isoWeek.firstDay.string,
