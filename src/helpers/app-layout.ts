@@ -4,11 +4,15 @@ import { scrollableContainerStyle } from './scrollable-container';
 export const OuterWrapper = styled.div`
   display: grid;
   height: 100vh;
-  grid-template-columns: minmax(auto, 700px) auto;
+  grid-template-columns: 1fr 1fr;
   grid-template-rows: 60px auto;
   grid-template-areas:
     'header header'
     'left right';
+
+  @media (min-width: 1400px) {
+    grid-template-columns: 700px auto;
+  }
 `;
 
 export const HeaderWrapper = styled.div`
