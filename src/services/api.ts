@@ -5,8 +5,8 @@ import {
   AgeDistributionEntrySchema,
   Country,
   CountrySchema,
-  InterestingVariant,
-  InterestingVariantSchema,
+  InterestingVariantResult,
+  InterestingVariantResultSchema,
   InternationalTimeDistributionEntrySchema,
   SampleResultList,
   SampleResultListSchema,
@@ -231,12 +231,12 @@ export const getInterestingVariants = (
     country: string;
   },
   signal?: AbortSignal
-): Promise<InterestingVariant[]> => {
+): Promise<InterestingVariantResult> => {
   const endpoint = `/computed/find-interesting-variants?country=${country}`;
   const url = HOST + endpoint;
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
-    .then(data => zod.array(InterestingVariantSchema).parse(data));
+    .then(data => InterestingVariantResultSchema.parse(data));
 };
 
 export const getCurrentWeek = (): Promise<number> => {
