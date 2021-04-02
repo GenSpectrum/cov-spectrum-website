@@ -4,6 +4,8 @@ import Table from 'react-bootstrap/Table';
 import { getInterestingVariants } from '../services/api';
 import { Country, InterestingVariant, Variant } from '../services/api-types';
 import { sortMutationList } from '../helpers/mutation-list';
+import { BiHelpCircle } from 'react-icons/bi';
+import ReactTooltip from 'react-tooltip';
 
 interface Props {
   country: Country;
@@ -35,7 +37,17 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
           <Table striped bordered hover>
             <thead>
               <tr>
-                <th>Mutations</th>
+                <th>
+                  Mutations{' '}
+                  <div
+                    style={{ display: 'inline' }}
+                    data-for='new-variant-table-mutations-help'
+                    data-tip='The mutations in bold are characteristic for the variant.'
+                  >
+                    <BiHelpCircle />
+                  </div>
+                  <ReactTooltip id='new-variant-table-mutations-help' />
+                </th>
                 <th># Sequences in last 3 months</th>
                 <th>Est. fitness advantage</th>
                 <th></th>
