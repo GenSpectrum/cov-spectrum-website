@@ -1,7 +1,9 @@
 import { mapValues } from 'lodash';
 import React, { useMemo } from 'react';
+import { AsyncState } from 'react-async';
 import { Alert, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { AsyncVariantInternationalComparisonPlot } from '../components/AsyncVariantInternationalComparisonPlot';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
 import { NamedCard } from '../components/NamedCard';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
@@ -14,7 +16,6 @@ import { AccountService } from '../services/AccountService';
 import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
-import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 
 interface Props {
@@ -24,6 +25,8 @@ interface Props {
   samplingStrategy: SamplingStrategy;
   sampleSet: SampleSetWithSelector;
   wholeSampleSet: SampleSetWithSelector;
+  variantInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
+  wholeInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
 }
 
 const deepFocusPaths = {
@@ -31,7 +34,13 @@ const deepFocusPaths = {
   chen2021Fitness: '/chen-2021-fitness',
 };
 
-export const FocusPage = ({ sampleSet, wholeSampleSet, ...forwardedProps }: Props) => {
+export const FocusPage = ({
+  sampleSet,
+  wholeSampleSet,
+  variantInternationalSampleSetState,
+  wholeInternationalSampleSetState,
+  ...forwardedProps
+}: Props) => {
   const { country, matchPercentage, variant, samplingStrategy } = forwardedProps;
   const plotProps = {
     country,
@@ -110,14 +119,18 @@ export const FocusPage = ({ sampleSet, wholeSampleSet, ...forwardedProps }: Prop
             </div>
           </NamedCard>
         </GridCell>
-        <GridCell minWidth={600}>
-          <VariantInternationalComparisonPlotWidget.ShareableComponent
-            {...plotProps}
-            height={300}
-            title='International comparison'
-            toolbarChildren={deepFocusButtons.internationalComparison}
-          />
-        </GridCell>
+        {samplingStrategy === SamplingStrategy.AllSamples && (
+          <GridCell minWidth={600}>
+            <AsyncVariantInternationalComparisonPlot
+              {...plotProps}
+              height={300}
+              title='International comparison'
+              toolbarChildren={deepFocusButtons.internationalComparison}
+              variantInternationalSampleSetState={variantInternationalSampleSetState}
+              wholeInternationalSampleSetState={wholeInternationalSampleSetState}
+            />
+          </GridCell>
+        )}
       </PackedGrid>
     </>
   );

@@ -79,6 +79,34 @@ export class SampleSet<S extends NewSampleSelector | null = NewSampleSelector | 
     return output;
   }
 
+  groupByFieldAsMap<F extends CountableMultiSampleField>(
+    field: F
+  ): Map<ParsedMultiSample[F], ParsedMultiSample[]> {
+    const output = new Map<ParsedMultiSample[F], ParsedMultiSample[]>();
+    for (const multiSample of this.data) {
+      let group = output.get(multiSample[field]);
+      if (!group) {
+        group = [];
+        output.set(multiSample[field], group);
+      }
+      group.push(multiSample);
+    }
+    return output;
+  }
+
+  groupByWeekAsMap(): Map<UnifiedIsoWeek, ParsedMultiSample[]> {
+    const output = new Map<UnifiedIsoWeek, ParsedMultiSample[]>();
+    for (const multiSample of this.data) {
+      let group = output.get(multiSample.date.isoWeek);
+      if (!group) {
+        group = [];
+        output.set(multiSample.date.isoWeek, group);
+      }
+      group.push(multiSample);
+    }
+    return output;
+  }
+
   getAll(): Iterable<ParsedMultiSample> {
     return this.data;
   }

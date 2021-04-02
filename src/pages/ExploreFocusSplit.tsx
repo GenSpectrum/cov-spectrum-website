@@ -1,25 +1,35 @@
 import React, { useMemo } from 'react';
-import { PromiseFn, useAsync } from 'react-async';
+import { AsyncState, PromiseFn, useAsync } from 'react-async';
 import { Alert } from 'react-bootstrap';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
 import Loader from '../components/Loader';
 import { ExploreWrapper, FocusWrapper, RawFullContentWrapper } from '../helpers/app-layout';
 import { getFocusPageLink, useExploreUrl } from '../helpers/explore-url';
+import { VariantSelector } from '../helpers/sample-selector';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { DeepFocusPage } from '../pages/DeepFocusPage';
 import { ExplorePage } from '../pages/ExplorePage';
 import { FocusEmptyPage } from '../pages/FocusEmptyPage';
 import { FocusPage } from '../pages/FocusPage';
-import { getNewSamples, toLiteralSamplingStrategy } from '../services/api';
+import { getNewSamples, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { Country } from '../services/api-types';
 
-export const ExploreFocusSplit = () => {
-  const { country, samplingStrategy, variantSelector, focusKey } = useExploreUrl() || {};
-
-  const sampleSetPromiseFn = useMemo<PromiseFn<SampleSetWithSelector | undefined>>(
-    () => async (options, { signal }) =>
-      variantSelector &&
-      samplingStrategy &&
-      getNewSamples(
+function useVariantSampleSet({
+  country,
+  samplingStrategy,
+  variantSelector,
+}: {
+  country?: Country;
+  samplingStrategy?: SamplingStrategy;
+  variantSelector?: VariantSelector;
+}): AsyncState<SampleSetWithSelector> {
+  const promiseFn = useMemo<PromiseFn<SampleSetWithSelector>>(
+    () => async (options, { signal }) => {
+      if (!samplingStrategy || !variantSelector) {
+        // this error is never consumed since we do not use this sample set if these arguments are undefined
+        throw new Error('samplingStrategy and variantSelector are required');
+      }
+      return getNewSamples(
         {
           country,
           matchPercentage: variantSelector.matchPercentage,
@@ -27,15 +37,24 @@ export const ExploreFocusSplit = () => {
           dataType: toLiteralSamplingStrategy(samplingStrategy),
         },
         signal
-      ),
+      );
+    },
     [country, variantSelector, samplingStrategy]
   );
-  const sampleSetState = useAsync(sampleSetPromiseFn);
+  return useAsync(promiseFn);
+}
 
-  const wholeSampleSetPromiseFn = useMemo<PromiseFn<SampleSetWithSelector>>(
-    () => (options, { signal }) => {
+function useWholeSampleSet({
+  country,
+  samplingStrategy,
+}: {
+  country?: Country;
+  samplingStrategy?: SamplingStrategy;
+}): AsyncState<SampleSetWithSelector> {
+  const promiseFn = useMemo<PromiseFn<SampleSetWithSelector>>(
+    () => async (options, { signal }) => {
       if (!samplingStrategy) {
-        // this error is never consumed since we do an early return below
+        // this error is never consumed since we do not use this sample set if there is no samplingStrategy
         throw new Error('samplingStrategy is required');
       }
       return getNewSamples(
@@ -48,7 +67,16 @@ export const ExploreFocusSplit = () => {
     },
     [country, samplingStrategy]
   );
-  const wholeSampleSetState = useAsync(wholeSampleSetPromiseFn);
+  return useAsync(promiseFn);
+}
+
+export const ExploreFocusSplit = () => {
+  const { country, samplingStrategy, variantSelector, focusKey } = useExploreUrl() || {};
+
+  const variantSampleSetState = useVariantSampleSet({ country, samplingStrategy, variantSelector });
+  const wholeSampleSetState = useWholeSampleSet({ country, samplingStrategy });
+  const variantInternationalSampleSetState = useVariantSampleSet({ samplingStrategy, variantSelector });
+  const wholeInternationalSampleSetState = useWholeSampleSet({ samplingStrategy });
 
   const { path } = useRouteMatch();
 
@@ -93,28 +121,30 @@ export const ExploreFocusSplit = () => {
   );
 
   if (
+    variantSampleSetState.status === 'initial' ||
+    variantSampleSetState.status === 'pending' ||
     wholeSampleSetState.status === 'initial' ||
-    wholeSampleSetState.status === 'pending' ||
-    sampleSetState.status === 'initial' ||
-    sampleSetState.status === 'pending'
+    wholeSampleSetState.status === 'pending'
   ) {
     return makeLayout(<Loader />, <Loader />);
   }
 
-  if (wholeSampleSetState.status === 'rejected' || sampleSetState.status === 'rejected') {
+  if (variantSampleSetState.status === 'rejected' || wholeSampleSetState.status === 'rejected') {
     const alert = <Alert variant='danger'>Failed to load samples</Alert>;
     return makeLayout(alert, alert);
   }
 
   return makeLayout(
-    variantSelector && sampleSetState.data && (
+    variantSelector && (
       <FocusPage
         {...variantSelector}
         key={focusKey}
         country={country}
         samplingStrategy={samplingStrategy}
-        sampleSet={sampleSetState.data}
+        sampleSet={variantSampleSetState.data}
         wholeSampleSet={wholeSampleSetState.data}
+        variantInternationalSampleSetState={variantInternationalSampleSetState}
+        wholeInternationalSampleSetState={wholeInternationalSampleSetState}
       />
     ),
     variantSelector && (
@@ -123,6 +153,10 @@ export const ExploreFocusSplit = () => {
         key={focusKey}
         country={country}
         samplingStrategy={samplingStrategy}
+        sampleSet={variantSampleSetState.data}
+        wholeSampleSet={wholeSampleSetState.data}
+        variantInternationalSampleSetState={variantInternationalSampleSetState}
+        wholeInternationalSampleSetState={wholeInternationalSampleSetState}
       />
     )
   );

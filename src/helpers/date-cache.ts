@@ -1,3 +1,4 @@
+import assert from 'assert';
 import dayjs, { Dayjs } from 'dayjs';
 import { dayjsToYearWeekString, parseYearWeekString, yearWeekStringToDayjs } from './week';
 
@@ -41,6 +42,30 @@ class DateCache {
     output.firstDay = this._getDay(firstDayString, firstDayDayjs, output);
     this.isoWeekCache.set(yearWeekString, output);
     return output;
+  }
+
+  rangeFromWeeks(weeks: UnifiedIsoWeek[]): { min: UnifiedIsoWeek; max: UnifiedIsoWeek } | undefined {
+    let min: UnifiedIsoWeek | undefined;
+    let max: UnifiedIsoWeek | undefined;
+    for (const week of weeks) {
+      if (!min) {
+        min = week;
+      } else if (this.weekIsBefore(week, min)) {
+        min = week;
+      }
+      if (!max) {
+        max = week;
+      } else if (this.weekIsBefore(max, week)) {
+        max = week;
+      }
+    }
+    assert.strictEqual(min === undefined, max === undefined);
+    return min && max && { min, max };
+  }
+
+  // a < b
+  private weekIsBefore(a: UnifiedIsoWeek, b: UnifiedIsoWeek) {
+    return a.isoYear < b.isoYear || (a.isoYear === b.isoYear && a.isoWeek < b.isoWeek);
   }
 
   private _getDay(
