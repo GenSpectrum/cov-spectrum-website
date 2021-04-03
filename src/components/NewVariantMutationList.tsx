@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { sortListByMutation } from '../helpers/mutation-list';
 import styled from 'styled-components';
+import { UNIQUENESS_SCORE_IMPORTANCE_THRESHOLD } from './NewVariantTable';
 
 interface Props {
   mutations: Array<{ mutation: string; uniquenessScore: number }>;
@@ -19,10 +20,6 @@ const ImportantMutation = styled.span`
 `;
 
 const OtherMutation = styled.span``;
-
-// We consider mutations with a uniquenessScore of at least the following value as characteristic/important for a
-// variant.
-const uniquenessScoreImportanceThreshold = 0.5;
 
 /**
  * The function splits the list of mutations based on the uniqueness score and returns two list. The short list contains
@@ -44,7 +41,7 @@ function sortAndFormatMutationList(mutations: Array<{ mutation: string; uniquene
   mutations = sortListByMutation(mutations, x => x.mutation);
   const formatted = mutations
     .map(({ mutation, uniquenessScore }) =>
-      uniquenessScore >= uniquenessScoreImportanceThreshold ? (
+      uniquenessScore >= UNIQUENESS_SCORE_IMPORTANCE_THRESHOLD ? (
         <ImportantMutation key={mutation}>{mutation}</ImportantMutation>
       ) : (
         <OtherMutation key={mutation}>{mutation}</OtherMutation>
