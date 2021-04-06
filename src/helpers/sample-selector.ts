@@ -7,7 +7,7 @@ export const VariantSelectorSchema = zod.object({
   matchPercentage: zod.number(),
 });
 
-export const SampleSelectorSchema = zod.object({
+export const OldSampleSelectorSchema = zod.object({
   country: CountrySchema,
   matchPercentage: zod.number(),
   mutations: zod.array(zod.string()),
