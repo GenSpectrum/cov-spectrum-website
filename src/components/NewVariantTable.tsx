@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import Table from 'react-bootstrap/Table';
 import { getInterestingVariants } from '../services/api';
@@ -44,35 +44,37 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
     };
   }, [country]);
 
-  const uniqueVisibleMutations = new Set();
-  let variants = data?.variants
-    .map(v => {
-      const visibleMutations = v.mutations.filter(m => {
-        if (geneFilter !== '-' && !m.mutation.startsWith(geneFilter + ':')) {
+  const variants = useMemo(() => {
+    const uniqueVisibleMutations = new Set();
+    return data?.variants
+      .map(v => {
+        const visibleMutations = v.mutations.filter(m => {
+          if (geneFilter !== '-' && !m.mutation.startsWith(geneFilter + ':')) {
+            return false;
+          }
+          if (characteristicMutationsFilter && m.uniquenessScore < UNIQUENESS_SCORE_IMPORTANCE_THRESHOLD) {
+            return false;
+          }
+          return true;
+        });
+        return {
+          ...v,
+          visibleMutations,
+          visibleMutationsString: sortMutationList(visibleMutations.map(m => m.mutation)).join(','),
+        };
+      })
+      .filter(v => v.visibleMutations.length > 0)
+      .filter(v => {
+        // We don't want duplicates and will only show unique visible mutations. The variant with the highest estimated
+        // fitness advantage (i.e. on the top of the list) should be kept.
+        if (uniqueVisibleMutations.has(v.visibleMutationsString)) {
           return false;
         }
-        if (characteristicMutationsFilter && m.uniquenessScore < UNIQUENESS_SCORE_IMPORTANCE_THRESHOLD) {
-          return false;
-        }
+        uniqueVisibleMutations.add(v.visibleMutationsString);
         return true;
-      });
-      return {
-        ...v,
-        visibleMutations,
-        visibleMutationsString: sortMutationList(visibleMutations.map(m => m.mutation)).join(','),
-      };
-    })
-    .filter(v => v.visibleMutations.length > 0)
-    .filter(v => {
-      // We don't want duplicates and will only show unique visible mutations. The variant with the highest estimated
-      // fitness advantage (i.e. on the top of the list) should be kept.
-      if (uniqueVisibleMutations.has(v.visibleMutationsString)) {
-        return false;
-      }
-      uniqueVisibleMutations.add(v.visibleMutationsString);
-      return true;
-    })
-    .slice(0, 200);
+      })
+      .slice(0, 200);
+  }, [data, geneFilter, characteristicMutationsFilter]);
 
   return (
     <div>
