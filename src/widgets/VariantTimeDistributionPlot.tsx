@@ -2,7 +2,7 @@ import { omit } from 'lodash';
 import React from 'react';
 import * as zod from 'zod';
 import TimeChart from '../charts/TimeChart';
-import { fillWeeklyApiDataNew } from '../helpers/fill-missing';
+import { fillFromWeeklyMap } from '../helpers/fill-missing';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { SampleSetWithSelector } from '../helpers/sample-set';
@@ -15,19 +15,15 @@ interface Props {
 }
 
 export const VariantTimeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props) => {
-  const dataBeforeFill = sampleSet.proportionByWeek(wholeSampleSet).map(({ isoWeek, count, proportion }) => ({
-    isoWeek,
-    quantity: count,
+  const processedData = fillFromWeeklyMap(sampleSet.proportionByWeekAsMap(wholeSampleSet), {
+    count: 0,
+    proportion: 0,
+  }).map(({ isoWeek, count, proportion }) => ({
+    firstDayInWeek: isoWeek.firstDay.string,
+    yearWeek: isoWeek.yearWeekString,
     percent: proportion === undefined ? undefined : 100 * proportion,
+    quantity: count,
   }));
-  const processedData = fillWeeklyApiDataNew(dataBeforeFill, { percent: 0, quantity: 0 }).map(
-    ({ isoWeek, percent, quantity }) => ({
-      firstDayInWeek: isoWeek.firstDay.string,
-      yearWeek: isoWeek.yearWeekString,
-      percent,
-      quantity,
-    })
-  );
 
   return <TimeChart data={processedData} onClickHandler={(e: unknown) => true} />;
 };

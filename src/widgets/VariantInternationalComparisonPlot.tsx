@@ -3,7 +3,7 @@ import React, { useMemo } from 'react';
 import * as zod from 'zod';
 import { Plot } from '../components/Plot';
 import { globalDateCache } from '../helpers/date-cache';
-import { fillWeeklyApiDataNew } from '../helpers/fill-missing';
+import { fillFromWeeklyMap } from '../helpers/fill-missing';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
@@ -53,13 +53,12 @@ const VariantInternationalComparisonPlot = ({
         const variantSampleSet = new SampleSet(variantSamplesByCountry.get(country) ?? [], null);
         const wholeSampleSet = new SampleSet(wholeSamplesByCountry.get(country) ?? [], null);
 
-        const dataBeforeFill = variantSampleSet
-          .proportionByWeek(wholeSampleSet)
-          .filter(e => e.proportion !== undefined)
-          .map(e => ({ isoWeek: e.isoWeek, proportion: e.proportion! }));
-        const filledData = fillWeeklyApiDataNew(dataBeforeFill, { proportion: 0 }).filter(
-          ({ proportion }) => !logScale || proportion > 0
-        );
+        const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeekAsMap(wholeSampleSet), {
+          count: 0,
+          proportion: 0,
+        })
+          .filter(({ proportion }) => proportion !== undefined && (!logScale || proportion > 0))
+          .map(({ proportion, ...rest }) => ({ ...rest, proportion: proportion! }));
 
         return {
           name: country,

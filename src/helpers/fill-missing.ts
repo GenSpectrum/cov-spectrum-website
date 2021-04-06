@@ -115,17 +115,14 @@ export function fillWeeklyApiData<Y>(
   );
 }
 
-export function fillWeeklyApiDataNew<O extends { isoWeek: UnifiedIsoWeek }>(
-  unsortedOriginalData: O[],
-  filler: Omit<O, 'isoWeek'>
-): O[] {
-  return fillWeeklyApiData<Omit<O, 'isoWeek'>>(
-    unsortedOriginalData.map(o => ({
-      x: { yearWeek: o.isoWeek.yearWeekString, firstDayInWeek: o.isoWeek.firstDay.string },
-      y: o,
-    })),
-    filler
-  ).map(({ x, y }) => ({ ...(y as O), isoWeek: globalDateCache.getIsoWeek(x.yearWeek) }));
+export function fillFromWeeklyMap<T>(
+  unsortedOriginalData: Map<UnifiedIsoWeek, T>,
+  filler: T
+): (T & { isoWeek: UnifiedIsoWeek })[] {
+  const sortedFilledWeeks = globalDateCache.weeksFromRange(
+    globalDateCache.rangeFromWeeks(unsortedOriginalData.keys())
+  );
+  return sortedFilledWeeks.map(isoWeek => ({ ...(unsortedOriginalData.get(isoWeek) ?? filler), isoWeek }));
 }
 
 function mapApiDataGroups<X, Y, K extends keyof X>(

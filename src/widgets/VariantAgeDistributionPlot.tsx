@@ -20,10 +20,9 @@ const VariantAgeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props) => {
   const widthIsSmall = !!width && width < 700;
 
   const processedData = useMemo(() => {
-    const dataBeforeFill = sampleSet
-      .proportionByField('ageGroup', wholeSampleSet)
-      .filter(({ key }) => key !== null)
-      .map(({ key, count, proportion }) => ({
+    const dataBeforeFill = [...sampleSet.proportionByFieldAsMap('ageGroup', wholeSampleSet).entries()]
+      .filter(([k, v]) => k !== null)
+      .map(([key, { count, proportion }]) => ({
         x: key!,
         y: {
           quantity: count,

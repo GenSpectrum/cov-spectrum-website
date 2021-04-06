@@ -49,7 +49,7 @@ class DateCache {
     return output;
   }
 
-  rangeFromWeeks(weeks: UnifiedIsoWeek[]): { min: UnifiedIsoWeek; max: UnifiedIsoWeek } | undefined {
+  rangeFromWeeks(weeks: Iterable<UnifiedIsoWeek>): { min: UnifiedIsoWeek; max: UnifiedIsoWeek } | undefined {
     let min: UnifiedIsoWeek | undefined;
     let max: UnifiedIsoWeek | undefined;
     for (const week of weeks) {
