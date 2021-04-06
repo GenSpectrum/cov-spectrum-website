@@ -12,8 +12,6 @@ interface Props {
   toolbarChildren: JSX.Element;
   height: number;
   country: Country;
-  matchPercentage: number;
-  mutations: string[];
   logScale?: boolean;
   variantInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
   wholeInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
@@ -55,6 +53,8 @@ export const AsyncVariantInternationalComparisonPlot = ({
       height={height}
       title={title}
       toolbarChildren={toolbarChildren}
+      variantInternationalSampleSet={variantInternationalSampleSetState.data}
+      wholeInternationalSampleSet={wholeInternationalSampleSetState.data}
     />
   );
 };

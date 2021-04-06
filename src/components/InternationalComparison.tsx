@@ -25,6 +25,7 @@ export const InternationalComparison = ({
   variant,
   samplingStrategy: requestedSamplingStrategy,
   variantInternationalSampleSet,
+  wholeInternationalSampleSet,
 }: Props) => {
   const [logScale, setLogScale] = useState<boolean>(false);
 
@@ -44,9 +45,9 @@ export const InternationalComparison = ({
         widgetLayout={MinimalWidgetLayout}
         height={300}
         country={country}
-        matchPercentage={matchPercentage}
-        mutations={variant.mutations}
         logScale={logScale}
+        variantInternationalSampleSet={variantInternationalSampleSet}
+        wholeInternationalSampleSet={wholeInternationalSampleSet}
         toolbarChildren={
           <>
             <Button variant='secondary' size='sm' className='ml-1' onClick={() => setLogScale(v => !v)}>

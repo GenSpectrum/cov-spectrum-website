@@ -122,10 +122,10 @@ export const FocusPage = ({
         {samplingStrategy === SamplingStrategy.AllSamples && (
           <GridCell minWidth={600}>
             <AsyncVariantInternationalComparisonPlot
-              {...plotProps}
               height={300}
               title='International comparison'
               toolbarChildren={deepFocusButtons.internationalComparison}
+              country={country}
               variantInternationalSampleSetState={variantInternationalSampleSetState}
               wholeInternationalSampleSetState={wholeInternationalSampleSetState}
             />
