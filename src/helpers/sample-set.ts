@@ -19,27 +19,17 @@ export class SampleSet<S extends NewSampleSelector | null = NewSampleSelector | 
     );
   }
 
-  countByField<F extends CountableMultiSampleField>(
-    field: F
-  ): { key: ParsedMultiSample[F]; count: number }[] {
-    return [...this.countByFieldAsMap(field).entries()].map(([k, v]) => ({ key: k, count: v }));
-  }
-
-  countByWeek(): { isoWeek: UnifiedIsoWeek; count: number }[] {
-    return [...this.countByWeekAsMap().entries()].map(([k, v]) => ({ isoWeek: k, count: v }));
-  }
-
-  // proportionByFieldAsMap gives similar output to countByFieldAsMap, but also gives the
+  // proportionByField gives similar output to countByField, but also gives the
   // proportion of samples from this set relative to some other "whole" set
   // WARNING If there is a week in "whole" but not in "this", it will not be returned.
   // If there is a week in "this" but not in "whole", proportion will be undefined.
-  proportionByFieldAsMap<F extends CountableMultiSampleField>(
+  proportionByField<F extends CountableMultiSampleField>(
     field: F,
     whole: SampleSet
   ): Map<ParsedMultiSample[F], { count: number; proportion?: number }> {
-    const wholeCounts = whole.countByFieldAsMap(field);
+    const wholeCounts = whole.countByField(field);
     return new Map(
-      [...this.countByFieldAsMap(field).entries()].map(([k, v]) => {
+      [...this.countByField(field).entries()].map(([k, v]) => {
         const wholeCount = wholeCounts.get(k);
         return [
           k,
@@ -52,11 +42,11 @@ export class SampleSet<S extends NewSampleSelector | null = NewSampleSelector | 
     );
   }
 
-  // see documentation and warnings for proportionByFieldAsMap
-  proportionByWeekAsMap(whole: SampleSet): Map<UnifiedIsoWeek, { count: number; proportion?: number }> {
-    const wholeCounts = whole.countByWeekAsMap();
+  // see documentation and warnings for proportionByField
+  proportionByWeek(whole: SampleSet): Map<UnifiedIsoWeek, { count: number; proportion?: number }> {
+    const wholeCounts = whole.countByWeek();
     return new Map(
-      [...this.countByWeekAsMap().entries()].map(([k, v]) => {
+      [...this.countByWeek().entries()].map(([k, v]) => {
         const wholeCount = wholeCounts.get(k);
         return [
           k,
@@ -69,7 +59,7 @@ export class SampleSet<S extends NewSampleSelector | null = NewSampleSelector | 
     );
   }
 
-  countByFieldAsMap<F extends CountableMultiSampleField>(field: F): Map<ParsedMultiSample[F], number> {
+  countByField<F extends CountableMultiSampleField>(field: F): Map<ParsedMultiSample[F], number> {
     const output = new Map<ParsedMultiSample[F], number>();
     for (const multiSample of this.data) {
       const oldCount = output.get(multiSample[field]) ?? 0;
@@ -78,7 +68,7 @@ export class SampleSet<S extends NewSampleSelector | null = NewSampleSelector | 
     return output;
   }
 
-  countByWeekAsMap(): Map<UnifiedIsoWeek, number> {
+  countByWeek(): Map<UnifiedIsoWeek, number> {
     const output = new Map<UnifiedIsoWeek, number>();
     for (const multiSample of this.data) {
       const oldCount = output.get(multiSample.date.isoWeek) ?? 0;
@@ -87,7 +77,7 @@ export class SampleSet<S extends NewSampleSelector | null = NewSampleSelector | 
     return output;
   }
 
-  groupByFieldAsMap<F extends CountableMultiSampleField>(
+  groupByField<F extends CountableMultiSampleField>(
     field: F
   ): Map<ParsedMultiSample[F], ParsedMultiSample[]> {
     const output = new Map<ParsedMultiSample[F], ParsedMultiSample[]>();
@@ -102,7 +92,7 @@ export class SampleSet<S extends NewSampleSelector | null = NewSampleSelector | 
     return output;
   }
 
-  groupByWeekAsMap(): Map<UnifiedIsoWeek, ParsedMultiSample[]> {
+  groupByWeek(): Map<UnifiedIsoWeek, ParsedMultiSample[]> {
     const output = new Map<UnifiedIsoWeek, ParsedMultiSample[]>();
     for (const multiSample of this.data) {
       let group = output.get(multiSample.date.isoWeek);

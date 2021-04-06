@@ -40,10 +40,10 @@ const VariantInternationalComparisonPlot = ({
     [country]
   );
 
-  const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByFieldAsMap('country'), [
+  const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByField('country'), [
     variantInternationalSampleSet,
   ]);
-  const wholeSamplesByCountry = useMemo(() => wholeInternationalSampleSet.groupByFieldAsMap('country'), [
+  const wholeSamplesByCountry = useMemo(() => wholeInternationalSampleSet.groupByField('country'), [
     wholeInternationalSampleSet,
   ]);
 
@@ -53,7 +53,7 @@ const VariantInternationalComparisonPlot = ({
         const variantSampleSet = new SampleSet(variantSamplesByCountry.get(country) ?? [], null);
         const wholeSampleSet = new SampleSet(wholeSamplesByCountry.get(country) ?? [], null);
 
-        const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeekAsMap(wholeSampleSet), {
+        const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
           count: 0,
           proportion: 0,
         })

@@ -16,7 +16,7 @@ interface Props {
 
 const Switzerland = ({ sampleSet }: Props) => {
   const casesByZipCode = useMemo(() => {
-    const counts = sampleSet.countByFieldAsMap('zipCode');
+    const counts = sampleSet.countByField('zipCode');
     counts.delete(null);
     return counts as Map<string, number>;
   }, [sampleSet]);

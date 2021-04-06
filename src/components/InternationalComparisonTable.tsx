@@ -28,7 +28,7 @@ export const InternationalComparisonTable = ({
 }: Props) => {
   const summaries = useMemo(() => {
     const summaries: CountrySummary[] = [];
-    for (const [country, samples] of variantInternationalSampleSet.groupByFieldAsMap('country')) {
+    for (const [country, samples] of variantInternationalSampleSet.groupByField('country')) {
       const weekRange = globalDateCache.rangeFromWeeks(samples.map(s => s.date.isoWeek));
       if (!weekRange) {
         continue;

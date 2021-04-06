@@ -15,7 +15,7 @@ interface Props {
 }
 
 export const VariantTimeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props) => {
-  const processedData = fillFromWeeklyMap(sampleSet.proportionByWeekAsMap(wholeSampleSet), {
+  const processedData = fillFromWeeklyMap(sampleSet.proportionByWeek(wholeSampleSet), {
     count: 0,
     proportion: 0,
   }).map(({ isoWeek, count, proportion }) => ({
