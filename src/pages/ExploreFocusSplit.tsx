@@ -14,6 +14,9 @@ import { FocusPage } from '../pages/FocusPage';
 import { getNewSamples, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country } from '../services/api-types';
 
+// a promise which is never resolved or rejected
+const waitForever = new Promise<never>(() => {});
+
 function useVariantSampleSet({
   country,
   samplingStrategy,
@@ -26,8 +29,8 @@ function useVariantSampleSet({
   const promiseFn = useMemo<PromiseFn<SampleSetWithSelector>>(
     () => async (options, { signal }) => {
       if (!samplingStrategy || !variantSelector) {
-        // this error is never consumed since we do not use this sample set if these arguments are undefined
-        throw new Error('samplingStrategy and variantSelector are required');
+        // this result is never consumed since we do not use this sample set if these arguments are undefined
+        return waitForever;
       }
       return getNewSamples(
         {
@@ -54,8 +57,8 @@ function useWholeSampleSet({
   const promiseFn = useMemo<PromiseFn<SampleSetWithSelector>>(
     () => async (options, { signal }) => {
       if (!samplingStrategy) {
-        // this error is never consumed since we do not use this sample set if there is no samplingStrategy
-        throw new Error('samplingStrategy is required');
+        // this result is never consumed since we do not use this sample set if there is no samplingStrategy
+        return waitForever;
       }
       return getNewSamples(
         {
