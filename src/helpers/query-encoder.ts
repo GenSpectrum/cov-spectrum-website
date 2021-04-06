@@ -6,7 +6,8 @@ export interface QueryEncoder<T> {
   decode(encoded: URLSearchParams): T;
 }
 
-export class ZodQueryEncoder<S extends zod.ZodSchema<any>, T extends zod.input<S> & zod.output<S>> {
+export class ZodQueryEncoder<S extends zod.ZodSchema<any>, T extends zod.input<S> & zod.output<S>>
+  implements QueryEncoder<T> {
   _decodedType!: T;
 
   constructor(private schema: S, private searchParamsKey: string = 'json') {}
