@@ -1,6 +1,9 @@
 import assert from 'assert';
 import dayjs, { Dayjs } from 'dayjs';
-import { dayjsToYearWeekString, parseYearWeekString, yearWeekStringToDayjs } from './week';
+import isoWeek from 'dayjs/plugin/isoWeek';
+import { yearWeekRegex } from '../services/api-types';
+
+dayjs.extend(isoWeek);
 
 export interface UnifiedDay {
   string: string;
@@ -13,6 +16,32 @@ export interface UnifiedIsoWeek {
   isoWeek: number;
   yearWeekString: string;
   firstDay: UnifiedDay;
+}
+
+// parseYearWeekString extracts the ISO week and year from a string.
+// It will **not check** whether there is actually a week 53 in the specified year.
+function parseYearWeekString(yearWeek: string): { year: number; week: number } {
+  const m = yearWeek.match(yearWeekRegex);
+  if (!m) {
+    throw new Error('invalid YearWeek string');
+  }
+  const parsed = { year: +m[1], week: +m[2] };
+  if (!(parsed.week >= 1 && parsed.week <= 53)) {
+    throw new Error('invalid week in YearWeek string');
+  }
+  return parsed;
+}
+
+function yearWeekStringToDayjs(yearWeek: string): Dayjs {
+  const { year, week } = parseYearWeekString(yearWeek);
+  // "The first week of the year, hence, always contains 4 January." https://en.wikipedia.org/wiki/ISO_week_date
+  const output = dayjs().year(year).month(1).date(4).isoWeek(week).startOf('isoWeek');
+  assert(output.isoWeek() === week && output.isoWeekYear() === year, 'conversion to dayjs was wrong');
+  return output;
+}
+
+function dayjsToYearWeekString(yearWeek: Dayjs): string {
+  return `${yearWeek.isoWeekYear()}-${yearWeek.isoWeek().toString().padStart(2, '0')}`;
 }
 
 class DateCache {
@@ -28,11 +57,18 @@ class DateCache {
     return this.getDay(dayjsDay.format('YYYY-MM-DD'));
   }
 
-  getIsoWeek(yearWeekString: string): UnifiedIsoWeek {
+  getIsoWeek(nonNormalizedYearWeekString: string): UnifiedIsoWeek {
+    let yearWeekString =
+      nonNormalizedYearWeekString.length === 7
+        ? nonNormalizedYearWeekString
+        : nonNormalizedYearWeekString.slice(0, 5) + '0' + nonNormalizedYearWeekString.slice(5);
+
     const cachedIsoWeek = this.isoWeekCache.get(yearWeekString);
     if (cachedIsoWeek) {
       return cachedIsoWeek;
     }
+
+    assert(!!yearWeekString.match(/^\d{4}-\d{2}$/));
 
     const { year, week } = parseYearWeekString(yearWeekString);
     const firstDayDayjs = yearWeekStringToDayjs(yearWeekString);
@@ -45,6 +81,7 @@ class DateCache {
       firstDay: (undefined as any) as UnifiedDay,
     };
     output.firstDay = this._getDay(firstDayString, firstDayDayjs, output);
+    assert(output.firstDay.isoWeek === output);
     this.isoWeekCache.set(yearWeekString, output);
     return output;
   }
@@ -76,12 +113,17 @@ class DateCache {
     const { min, max } = range;
     assert(this.weekIsBefore(min, max) || min === max);
 
+    const maxOutputSize = (max.isoYear - min.isoYear + 1) * 53;
+    assert(maxOutputSize > 0);
+
     const output: UnifiedIsoWeek[] = [min];
     let last = min;
     while (last !== max) {
       const next = this.getNextWeek(last);
-      output.push(next);
       last = next;
+
+      output.push(next);
+      assert(output.length <= maxOutputSize);
     }
     return output;
   }
@@ -121,10 +163,17 @@ class DateCache {
       return cachedDay;
     }
 
-    assert(dayString.match(/^\d{4}-\d{2}-\d{2}$/));
+    assert(!!dayString.match(/^\d{4}-\d{2}-\d{2}$/));
 
     const dayDayjs = _dayDayjs || dayjs(dayString, 'YYYY-MM-DD');
     const isoWeek = _isoWeek || this.getIsoWeek(dayjsToYearWeekString(dayDayjs));
+
+    // Since getDay and getIsoWeek are mutually recursive, we may already have created
+    // the requested day. If that is the case, return that instance to prevent duplicates.
+    if (isoWeek.firstDay?.string === dayString) {
+      return isoWeek.firstDay;
+    }
+
     const output: UnifiedDay = {
       string: dayString,
       dayjs: dayDayjs,
@@ -138,3 +187,5 @@ class DateCache {
 // It is important that there is only one DateCache instance, so that all UnifiedDay (etc.)
 // objects are reference equal when they describe the same day
 export const globalDateCache = new DateCache();
+
+export const DateCacheClassForTests = DateCache;
