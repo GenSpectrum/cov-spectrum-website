@@ -10,12 +10,12 @@ import { getNewSamples } from '../services/api';
 import { Widget } from './Widget';
 
 interface Props {
-  sampleSet: SampleSetWithSelector;
+  variantSampleSet: SampleSetWithSelector;
   wholeSampleSet: SampleSetWithSelector;
 }
 
-export const VariantTimeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props) => {
-  const processedData = fillFromWeeklyMap(sampleSet.proportionByWeek(wholeSampleSet), {
+export const VariantTimeDistributionPlot = ({ variantSampleSet, wholeSampleSet }: Props) => {
+  const processedData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
     count: 0,
     proportion: 0,
   }).map(({ isoWeek, count, proportion }) => ({
@@ -31,17 +31,17 @@ export const VariantTimeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props
 export const VariantTimeDistributionPlotWidget = new Widget(
   new AsyncZodQueryEncoder(
     zod.object({
-      sampleSelector: NewSampleSelectorSchema,
+      variantSampleSelector: NewSampleSelectorSchema,
       wholeSampleSelector: NewSampleSelectorSchema,
     }),
     async (decoded: Props) => ({
-      ...omit(decoded, ['sampleSet', 'wholeSampleSet']),
-      sampleSelector: decoded.sampleSet.sampleSelector,
+      ...omit(decoded, ['variantSampleSet', 'wholeSampleSet']),
+      variantSampleSelector: decoded.variantSampleSet.sampleSelector,
       wholeSampleSelector: decoded.wholeSampleSet.sampleSelector,
     }),
     async (encoded, signal) => ({
-      ...omit(encoded, ['sampleSelector', 'wholeSampleSelector']),
-      sampleSet: await getNewSamples(encoded.sampleSelector, signal),
+      ...omit(encoded, ['variantSampleSelector', 'wholeSampleSelector']),
+      variantSampleSet: await getNewSamples(encoded.variantSampleSelector, signal),
       wholeSampleSet: await getNewSamples(encoded.wholeSampleSelector, signal),
     })
   ),

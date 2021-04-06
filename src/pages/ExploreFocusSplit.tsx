@@ -145,7 +145,7 @@ export const ExploreFocusSplit = () => {
         key={focusKey}
         country={country}
         samplingStrategy={samplingStrategy}
-        sampleSet={variantSampleSetState.data}
+        variantSampleSet={variantSampleSetState.data}
         wholeSampleSet={wholeSampleSetState.data}
         variantInternationalSampleSetState={variantInternationalSampleSetState}
         wholeInternationalSampleSetState={wholeInternationalSampleSetState}
@@ -157,7 +157,7 @@ export const ExploreFocusSplit = () => {
         key={focusKey}
         country={country}
         samplingStrategy={samplingStrategy}
-        sampleSet={variantSampleSetState.data}
+        variantSampleSet={variantSampleSetState.data}
         wholeSampleSet={wholeSampleSetState.data}
         variantInternationalSampleSetState={variantInternationalSampleSetState}
         wholeInternationalSampleSetState={wholeInternationalSampleSetState}

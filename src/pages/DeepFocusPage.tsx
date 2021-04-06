@@ -20,7 +20,7 @@ interface SyncProps {
   matchPercentage: number;
   variant: Variant;
   samplingStrategy: SamplingStrategy;
-  sampleSet: SampleSetWithSelector;
+  variantSampleSet: SampleSetWithSelector;
   wholeSampleSet: SampleSetWithSelector;
 }
 

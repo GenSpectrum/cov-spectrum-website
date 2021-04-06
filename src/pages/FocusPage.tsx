@@ -23,7 +23,7 @@ interface Props {
   matchPercentage: number;
   variant: Variant;
   samplingStrategy: SamplingStrategy;
-  sampleSet: SampleSetWithSelector;
+  variantSampleSet: SampleSetWithSelector;
   wholeSampleSet: SampleSetWithSelector;
   variantInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
   wholeInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
@@ -35,7 +35,7 @@ const deepFocusPaths = {
 };
 
 export const FocusPage = ({
-  sampleSet,
+  variantSampleSet,
   wholeSampleSet,
   variantInternationalSampleSetState,
   wholeInternationalSampleSetState,
@@ -73,7 +73,7 @@ export const FocusPage = ({
     <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...forwardedProps} />} />
   );
 
-  if (sampleSet.isEmpty()) {
+  if (variantSampleSet.isEmpty()) {
     return <Alert variant='warning'>No samples match your query</Alert>;
   }
 
@@ -87,7 +87,7 @@ export const FocusPage = ({
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <VariantTimeDistributionPlotWidget.ShareableComponent
-            sampleSet={sampleSet}
+            variantSampleSet={variantSampleSet}
             wholeSampleSet={wholeSampleSet}
             height={300}
             title='Sequences over time'
@@ -95,7 +95,7 @@ export const FocusPage = ({
         </GridCell>
         <GridCell minWidth={600}>
           <VariantAgeDistributionPlotWidget.ShareableComponent
-            sampleSet={sampleSet}
+            variantSampleSet={variantSampleSet}
             wholeSampleSet={wholeSampleSet}
             height={300}
             title='Demographics'
@@ -105,7 +105,7 @@ export const FocusPage = ({
           <GridCell minWidth={600}>
             <NamedCard title='Geography'>
               {loggedIn ? (
-                <Switzerland sampleSet={sampleSet} />
+                <Switzerland variantSampleSet={variantSampleSet} />
               ) : (
                 <div>Please log in to view the geographical distribution of cases.</div>
               )}

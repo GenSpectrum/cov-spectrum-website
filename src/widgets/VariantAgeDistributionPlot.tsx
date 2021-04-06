@@ -11,17 +11,17 @@ import { getNewSamples } from '../services/api';
 import { Widget } from './Widget';
 
 interface Props {
-  sampleSet: SampleSetWithSelector;
+  variantSampleSet: SampleSetWithSelector;
   wholeSampleSet: SampleSetWithSelector;
 }
 
-const VariantAgeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props) => {
+const VariantAgeDistributionPlot = ({ variantSampleSet, wholeSampleSet }: Props) => {
   const { width, ref } = useResizeDetector();
   const widthIsSmall = !!width && width < 700;
 
   const processedData = useMemo(() => {
     const filledData = fillFromPrimitiveMap(
-      sampleSet.proportionByField('ageGroup', wholeSampleSet),
+      variantSampleSet.proportionByField('ageGroup', wholeSampleSet),
       possibleAgeKeys,
       { count: 0, proportion: 0 }
     );
@@ -32,7 +32,7 @@ const VariantAgeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props) => {
         quantity: count,
         percent: proportion === undefined ? undefined : 100 * proportion,
       }));
-  }, [sampleSet, wholeSampleSet, widthIsSmall]);
+  }, [variantSampleSet, wholeSampleSet, widthIsSmall]);
 
   return (
     <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '100%' }}>
@@ -44,17 +44,17 @@ const VariantAgeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props) => {
 export const VariantAgeDistributionPlotWidget = new Widget(
   new AsyncZodQueryEncoder(
     zod.object({
-      sampleSelector: NewSampleSelectorSchema,
+      variantSampleSelector: NewSampleSelectorSchema,
       wholeSampleSelector: NewSampleSelectorSchema,
     }),
     async (decoded: Props) => ({
-      ...omit(decoded, ['sampleSet', 'wholeSampleSet']),
-      sampleSelector: decoded.sampleSet.sampleSelector,
+      ...omit(decoded, ['variantSampleSet', 'wholeSampleSet']),
+      variantSampleSelector: decoded.variantSampleSet.sampleSelector,
       wholeSampleSelector: decoded.wholeSampleSet.sampleSelector,
     }),
     async (encoded, signal) => ({
-      ...omit(encoded, ['sampleSelector', 'wholeSampleSelector']),
-      sampleSet: await getNewSamples(encoded.sampleSelector, signal),
+      ...omit(encoded, ['variantSampleSelector', 'wholeSampleSelector']),
+      variantSampleSet: await getNewSamples(encoded.variantSampleSelector, signal),
       wholeSampleSet: await getNewSamples(encoded.wholeSampleSelector, signal),
     })
   ),

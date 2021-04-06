@@ -11,15 +11,15 @@ const MapWrapper = styled.div`
 `;
 
 interface Props {
-  sampleSet: SampleSet;
+  variantSampleSet: SampleSet;
 }
 
-const Switzerland = ({ sampleSet }: Props) => {
+const Switzerland = ({ variantSampleSet }: Props) => {
   const casesByZipCode = useMemo(() => {
-    const counts = sampleSet.countByField('zipCode');
+    const counts = variantSampleSet.countByField('zipCode');
     counts.delete(null);
     return counts as Map<string, number>;
-  }, [sampleSet]);
+  }, [variantSampleSet]);
 
   const { width, ref } = useResizeDetector<HTMLDivElement>();
 
