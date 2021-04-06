@@ -4,24 +4,13 @@ import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import { defaultForNever, unreachable } from '../helpers/unreachable';
 import { AccountService } from './AccountService';
 import {
-  AgeDistributionEntrySchema,
   Country,
   CountrySchema,
   InterestingVariantResult,
-  InternationalTimeDistributionEntrySchema,
   RawMultiSample,
   SampleResultList,
   SampleResultListSchema,
-  TimeDistributionEntrySchema,
-  TimeZipCodeDistributionEntrySchema,
 } from './api-types';
-
-export enum DistributionType {
-  Age = 'Age',
-  Time = 'Time',
-  International = 'International',
-  TimeZipCode = 'TimeZipCode',
-}
 
 // WARNING These values are used in URLs - be careful when changing them
 export enum SamplingStrategy {
@@ -84,99 +73,6 @@ export const post = (endpoint: string, body: unknown, signal?: AbortSignal) => {
     body: JSON.stringify(body),
     signal,
   });
-};
-
-const getVariantEndpoint = (distributionType: DistributionType) => {
-  switch (distributionType) {
-    case 'Age':
-      return '/plot/variant/age-distribution';
-    case 'Time':
-      return '/plot/variant/time-distribution';
-    case 'International':
-      return '/plot/variant/international-time-distribution';
-    case DistributionType.TimeZipCode:
-      return '/plot/variant/time-zip-code-distribution';
-    default:
-      throw new Error(`unknown distributionType ${distributionType}`);
-  }
-};
-
-const entrySchemaByDistributionType = {
-  [DistributionType.Age]: AgeDistributionEntrySchema,
-  [DistributionType.Time]: TimeDistributionEntrySchema,
-  [DistributionType.International]: InternationalTimeDistributionEntrySchema,
-  [DistributionType.TimeZipCode]: TimeZipCodeDistributionEntrySchema,
-};
-
-type EntryType<D extends DistributionType> = zod.infer<typeof entrySchemaByDistributionType[D]>;
-
-const getVariantRequestUrl = ({
-  distributionType,
-  country,
-  mutations,
-  matchPercentage,
-  samplingStrategy,
-}: {
-  distributionType: DistributionType;
-  country: Country | null | undefined;
-  mutations: string[];
-  matchPercentage: number;
-  samplingStrategy: LiteralSamplingStrategy;
-}) => {
-  const endpoint = getVariantEndpoint(distributionType);
-  const mutationsString = mutations.join(',');
-  let url = `${HOST}${endpoint}?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
-  if (country) {
-    url += `&country=${country}`;
-  }
-  if (samplingStrategy) {
-    if (distributionType === DistributionType.International) {
-      throw new Error('samplingStrategy is not supported with DistributionType.International');
-    }
-    url += `&dataType=${samplingStrategy}`;
-  }
-  return url;
-};
-
-export const getVariantDistributionData = <D extends DistributionType>(
-  {
-    distributionType,
-    country,
-    mutations,
-    matchPercentage,
-    samplingStrategy,
-  }: {
-    distributionType: D;
-    country: Country | null | undefined;
-    mutations: string[];
-    matchPercentage: number;
-    samplingStrategy: LiteralSamplingStrategy;
-  },
-  signal?: AbortSignal
-): Promise<EntryType<D>[]> => {
-  const url = getVariantRequestUrl({
-    distributionType,
-    country,
-    mutations,
-    matchPercentage,
-    samplingStrategy,
-  });
-  return fetch(url, {
-    headers: getBaseHeaders(),
-    signal,
-  })
-    .then(response => {
-      return response.json();
-    })
-    .then(distributionData => {
-      return zod
-        .array(entrySchemaByDistributionType[distributionType])
-        .parse(distributionData) as EntryType<D>[];
-    })
-    .catch(e => {
-      console.log('Error fetching', e);
-      return e;
-    });
 };
 
 export const getSamples = (
@@ -269,13 +165,6 @@ export const getInterestingVariants = (
       // return InterestingVariantResultSchema.parse(data);
       return data as InterestingVariantResult;
     });
-};
-
-export const getCurrentWeek = (): Promise<number> => {
-  const url = HOST + '/utils/current-week';
-  return fetch(url, { headers: getBaseHeaders() })
-    .then(response => response.json())
-    .then(data => zod.number().parse(data));
 };
 
 export const getCountries = (): Promise<Country[]> => {

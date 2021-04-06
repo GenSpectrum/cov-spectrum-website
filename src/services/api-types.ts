@@ -32,7 +32,8 @@ export const CountrySchema = zod.string();
 
 export const RegionSchema = zod.string();
 
-export const MultiSampleSchema = zod.object({
+// This is an item from the response to /resource/sample2
+export const RawMultiSampleSchema = zod.object({
   date: DateStringSchema,
   region: RegionSchema,
   country: CountrySchema,
@@ -85,34 +86,6 @@ export const VariantSchema = zod.object({
   mutations: zod.array(zod.string()),
 });
 
-export const AgeDistributionEntrySchema = zod.object({
-  x: zod.string(),
-  y: CountAndProportionWithCISchema,
-});
-
-export const TimeDistributionEntrySchema = zod.object({
-  x: YearWeekWithDaySchema,
-  y: CountAndProportionWithCISchema,
-});
-
-export const InternationalTimeDistributionEntrySchema = zod.object({
-  x: zod.object({
-    country: zod.string(),
-    week: YearWeekWithDaySchema,
-  }),
-  y: CountAndProportionWithCISchema,
-});
-
-export const TimeZipCodeDistributionEntrySchema = zod.object({
-  x: zod.object({
-    week: YearWeekWithDaySchema,
-    zipCode: zod.string(),
-  }),
-  y: zod.object({
-    count: zod.number(),
-  }),
-});
-
 export const InterestingVariantResultSchema = zod.object({
   computedAt: zod.string(),
   variants: zod.array(
@@ -141,13 +114,9 @@ export type CountAndProportionWithCI = zod.infer<typeof CountAndProportionWithCI
 export type YearWeekWithDay = zod.infer<typeof YearWeekWithDaySchema>;
 export type Country = zod.infer<typeof CountrySchema>;
 export type Region = zod.infer<typeof RegionSchema>;
-export type RawMultiSample = zod.infer<typeof MultiSampleSchema>;
+export type RawMultiSample = zod.infer<typeof RawMultiSampleSchema>;
 export type Sample = zod.infer<typeof SampleSchema>;
 export type SampleResultList = zod.infer<typeof SampleResultListSchema>;
 export type Variant = zod.infer<typeof VariantSchema>;
-export type AgeDistributionEntry = zod.infer<typeof AgeDistributionEntrySchema>;
-export type TimeDistributionEntry = zod.infer<typeof TimeDistributionEntrySchema>;
-export type InternationalTimeDistributionEntry = zod.infer<typeof InternationalTimeDistributionEntrySchema>;
-export type TimeZipCodeDistributionEntry = zod.infer<typeof TimeZipCodeDistributionEntrySchema>;
 export type InterestingVariantResult = zod.infer<typeof InterestingVariantResultSchema>;
 export type LoginResponse = zod.infer<typeof LoginResponseSchema>;
