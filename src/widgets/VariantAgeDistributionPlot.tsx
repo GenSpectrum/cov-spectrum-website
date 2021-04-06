@@ -8,7 +8,7 @@ import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { getNewSamples } from '../services/api';
-import { NewWidget } from './Widget';
+import { Widget } from './Widget';
 
 interface Props {
   sampleSet: SampleSetWithSelector;
@@ -43,7 +43,7 @@ const VariantAgeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props) => {
   );
 };
 
-export const VariantAgeDistributionPlotWidget = new NewWidget(
+export const VariantAgeDistributionPlotWidget = new Widget(
   new AsyncZodQueryEncoder(
     zod.object({
       sampleSelector: NewSampleSelectorSchema,

@@ -7,7 +7,7 @@ import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { getNewSamples } from '../services/api';
-import { NewWidget } from './Widget';
+import { Widget } from './Widget';
 
 interface Props {
   sampleSet: SampleSetWithSelector;
@@ -32,7 +32,7 @@ export const VariantTimeDistributionPlot = ({ sampleSet, wholeSampleSet }: Props
   return <TimeChart data={processedData} onClickHandler={(e: unknown) => true} />;
 };
 
-export const VariantTimeDistributionPlotWidget = new NewWidget(
+export const VariantTimeDistributionPlotWidget = new Widget(
   new AsyncZodQueryEncoder(
     zod.object({
       sampleSelector: NewSampleSelectorSchema,

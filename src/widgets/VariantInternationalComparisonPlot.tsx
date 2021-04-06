@@ -9,7 +9,7 @@ import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import { getNewSamples } from '../services/api';
 import { Country, CountrySchema } from '../services/api-types';
-import { NewWidget } from './Widget';
+import { Widget } from './Widget';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
@@ -119,7 +119,7 @@ const VariantInternationalComparisonPlot = ({
   );
 };
 
-export const VariantInternationalComparisonPlotWidget = new NewWidget(
+export const VariantInternationalComparisonPlotWidget = new Widget(
   new AsyncZodQueryEncoder(
     zod.object({
       country: CountrySchema,
