@@ -96,6 +96,7 @@ export const ExploreFocusSplit = () => {
           history.push(getFocusPageLink({ variantSelector, country, samplingStrategy }))
         }
         selection={variantSelector}
+        wholeSampleSetState={wholeSampleSetState}
       />
     </ExploreWrapper>
   );
