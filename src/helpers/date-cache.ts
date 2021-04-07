@@ -129,7 +129,7 @@ class DateCache {
   }
 
   // a < b
-  private weekIsBefore(a: UnifiedIsoWeek, b: UnifiedIsoWeek) {
+  weekIsBefore(a: UnifiedIsoWeek, b: UnifiedIsoWeek) {
     return a.isoYear < b.isoYear || (a.isoYear === b.isoYear && a.isoWeek < b.isoWeek);
   }
 

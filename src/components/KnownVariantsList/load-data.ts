@@ -1,4 +1,5 @@
 import assert from 'assert';
+import dayjs from 'dayjs';
 import { globalDateCache } from '../../helpers/date-cache';
 import { VariantSelector } from '../../helpers/sample-selector';
 import { SampleSet, SampleSetWithSelector } from '../../helpers/sample-set';
@@ -38,6 +39,10 @@ export async function loadKnownVariantSampleSets<T extends VariantSelector>(
           matchPercentage: selector.matchPercentage,
           mutations: selector.variant.mutations,
           dataType: toLiteralSamplingStrategy(samplingStrategy),
+          // We don't need very old data, since convertKnownVariantChartData will only
+          // take the latest 2 months. However since our data collection lags by a couple
+          // of weeks, we need to fetch slightly more here to ensure we have enough.
+          dateFrom: dayjs().subtract(3, 'months').format('YYYY-MM-DD'),
         },
         signal
       )
@@ -71,6 +76,10 @@ export function convertKnownVariantChartData<T extends VariantSelector>({
     min: globalDateCache.getDayUsingDayjs(dataWeekRange.max.firstDay.dayjs.subtract(2, 'months')).isoWeek,
     max: dataWeekRange.max,
   };
+  if (globalDateCache.weekIsBefore(plotWeekRange.min, dataWeekRange.min)) {
+    console.warn('not enough data was fetched to show the latest 2 month window');
+    plotWeekRange.min = dataWeekRange.min;
+  }
   const plotWeeks = globalDateCache.weeksFromRange(plotWeekRange);
 
   const filledData = variantWeeklyCounts.map(counts => {
