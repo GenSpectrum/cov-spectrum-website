@@ -1,25 +1,32 @@
+import { mapValues } from 'lodash';
 import React, { useMemo } from 'react';
-import { Button } from 'react-bootstrap';
+import { AsyncState } from 'react-async';
+import { Alert, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { AsyncVariantInternationalComparisonPlot } from '../components/AsyncVariantInternationalComparisonPlot';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
 import { NamedCard } from '../components/NamedCard';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import Switzerland from '../components/Switzerland';
 import { VariantHeader } from '../components/VariantHeader';
 import { getFocusPageLink } from '../helpers/explore-url';
+import { SampleSetWithSelector } from '../helpers/sample-set';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
+import { AccountService } from '../services/AccountService';
 import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
-import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
-import { mapValues } from 'lodash';
 
 interface Props {
   country: Country;
   matchPercentage: number;
   variant: Variant;
   samplingStrategy: SamplingStrategy;
+  variantSampleSet: SampleSetWithSelector;
+  wholeSampleSet: SampleSetWithSelector;
+  variantInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
+  wholeInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
 }
 
 const deepFocusPaths = {
@@ -27,15 +34,22 @@ const deepFocusPaths = {
   chen2021Fitness: '/chen-2021-fitness',
 };
 
-export const FocusPage = (props: Props) => {
-  const { country, matchPercentage, variant, samplingStrategy } = props;
-
+export const FocusPage = ({
+  variantSampleSet,
+  wholeSampleSet,
+  variantInternationalSampleSetState,
+  wholeInternationalSampleSetState,
+  ...forwardedProps
+}: Props) => {
+  const { country, matchPercentage, variant, samplingStrategy } = forwardedProps;
   const plotProps = {
     country,
     matchPercentage,
     mutations: variant.mutations,
     samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
   };
+
+  const loggedIn = AccountService.isLoggedIn();
 
   const deepFocusButtons = useMemo(
     () =>
@@ -55,9 +69,17 @@ export const FocusPage = (props: Props) => {
     [country, samplingStrategy, matchPercentage, variant]
   );
 
+  const header = (
+    <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...forwardedProps} />} />
+  );
+
+  if (variantSampleSet.isEmpty()) {
+    return <Alert variant='warning'>No samples match your query</Alert>;
+  }
+
   return (
     <>
-      <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...props} />} />
+      {header}
       <p style={{ marginBottom: '30px' }}>
         The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
         mutations.
@@ -65,22 +87,28 @@ export const FocusPage = (props: Props) => {
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <VariantTimeDistributionPlotWidget.ShareableComponent
-            {...plotProps}
+            variantSampleSet={variantSampleSet}
+            wholeSampleSet={wholeSampleSet}
             height={300}
             title='Sequences over time'
           />
         </GridCell>
         <GridCell minWidth={600}>
           <VariantAgeDistributionPlotWidget.ShareableComponent
-            {...plotProps}
+            variantSampleSet={variantSampleSet}
+            wholeSampleSet={wholeSampleSet}
             height={300}
             title='Demographics'
           />
         </GridCell>
-        {props.country === 'Switzerland' && (
+        {country === 'Switzerland' && (
           <GridCell minWidth={600}>
             <NamedCard title='Geography'>
-              <Switzerland {...plotProps} />
+              {loggedIn ? (
+                <Switzerland variantSampleSet={variantSampleSet} />
+              ) : (
+                <div>Please log in to view the geographical distribution of cases.</div>
+              )}
             </NamedCard>
           </GridCell>
         )}
@@ -91,14 +119,18 @@ export const FocusPage = (props: Props) => {
             </div>
           </NamedCard>
         </GridCell>
-        <GridCell minWidth={600}>
-          <VariantInternationalComparisonPlotWidget.ShareableComponent
-            {...plotProps}
-            height={300}
-            title='International comparison'
-            toolbarChildren={deepFocusButtons.internationalComparison}
-          />
-        </GridCell>
+        {samplingStrategy === SamplingStrategy.AllSamples && (
+          <GridCell minWidth={600}>
+            <AsyncVariantInternationalComparisonPlot
+              height={300}
+              title='International comparison'
+              toolbarChildren={deepFocusButtons.internationalComparison}
+              country={country}
+              variantInternationalSampleSetState={variantInternationalSampleSetState}
+              wholeInternationalSampleSetState={wholeInternationalSampleSetState}
+            />
+          </GridCell>
+        )}
       </PackedGrid>
     </>
   );

@@ -4,7 +4,7 @@ import {
   Chen2021FitnessResponseSchema,
 } from './chen2021Fitness-types';
 import * as zod from 'zod';
-import { SampleSelectorSchema } from '../../helpers/sample-selector';
+import { OldSampleSelectorSchema } from '../../helpers/sample-selector';
 import { useEffect, useState } from 'react';
 import { get } from '../../services/api';
 
@@ -13,7 +13,7 @@ export function fillRequestWithDefaults({
   mutations,
   matchPercentage,
   samplingStrategy,
-}: zod.infer<typeof SampleSelectorSchema>): Chen2021FitnessRequest {
+}: zod.infer<typeof OldSampleSelectorSchema>): Chen2021FitnessRequest {
   return {
     country,
     mutations,

@@ -1,6 +1,6 @@
-import { shuffle, sortBy } from 'lodash';
-import { fillAgeKeyedApiData, fillGroupedWeeklyApiData, fillWeeklyApiData } from '../fill-missing';
-import { addDayToYearWeek } from '../week';
+import { shuffle } from 'lodash';
+import { globalDateCache, UnifiedIsoWeek } from '../date-cache';
+import { fillFromPrimitiveMap, fillFromWeeklyMap, possibleAgeKeys } from '../fill-missing';
 
 describe('fillWeeklyApiData', () => {
   interface Case {
@@ -95,63 +95,83 @@ describe('fillWeeklyApiData', () => {
     },
   ];
 
-  const fromTemplate = (template: [string, number][]) =>
-    template.map(([yearWeek, y]) => ({ x: addDayToYearWeek(yearWeek), y }));
+  type Output = { isoWeek: UnifiedIsoWeek; y: number }[];
+
+  const fromTemplate = (template: [string, number][]): [UnifiedIsoWeek, { y: number }][] =>
+    template.map(([yearWeek, y]) => [globalDateCache.getIsoWeek(yearWeek), { y }]);
+
+  // https://github.com/facebook/jest/issues/10577
+  function assertOutputEqual(a: Output, b: Output) {
+    const convertForEquality = (output: Output) =>
+      output.map(({ isoWeek, y }) => [isoWeek.yearWeekString, y]);
+    expect(convertForEquality(a)).toEqual(convertForEquality(b));
+    expect(a.every((va, i) => va.isoWeek === b[i].isoWeek)).toBe(true);
+  }
 
   for (const c of cases) {
     // eslint-disable-next-line jest/valid-title
     test(c.label, () => {
-      const expectedOutput = fromTemplate(c.output);
+      const expectedOutput: Output = fromTemplate(c.output).map(([isoWeek, { y }]) => ({ isoWeek, y }));
       for (let i = 0; i < 5; i++) {
-        const shuffledInput = shuffle(fromTemplate(c.input));
-        expect(fillWeeklyApiData<number>(shuffledInput, c.fillValue)).toEqual(expectedOutput);
+        const inputMap = new Map(shuffle(fromTemplate(c.input)));
+        const actualOutput = fillFromWeeklyMap(inputMap, { y: c.fillValue });
+        assertOutputEqual(actualOutput, expectedOutput);
       }
     });
   }
 });
 
-describe('fillGroupedWeeklyApiData', () => {
-  for (let i = 0; i < 5; i++) {
-    const shuffledInput = shuffle([
-      { x: { country: 'Germany', week: addDayToYearWeek('2020-25') }, y: 50 },
-      { x: { country: 'Switzerland', week: addDayToYearWeek('2020-18') }, y: 123 },
-      { x: { country: 'Germany', week: addDayToYearWeek('2020-27') }, y: 60 },
-    ]);
-    const actualSortedOutput = sortBy(fillGroupedWeeklyApiData(shuffledInput, 'country', 0), [
-      v => v.x.country,
-      v => v.x.week.firstDayInWeek,
-    ]);
-    expect(actualSortedOutput).toEqual([
-      { x: { country: 'Germany', week: addDayToYearWeek('2020-25') }, y: 50 },
-      { x: { country: 'Germany', week: addDayToYearWeek('2020-26') }, y: 0 },
-      { x: { country: 'Germany', week: addDayToYearWeek('2020-27') }, y: 60 },
-      { x: { country: 'Switzerland', week: addDayToYearWeek('2020-18') }, y: 123 },
-    ]);
-  }
-});
-
-describe('fillAgeKeyedApiData', () => {
-  interface Case {
+describe('fillFromPrimitiveMap', () => {
+  interface Case<T> {
     label: string;
-    input: [string, number][];
+    input: [T, number][];
+    possibleKeys: T[];
     fillValue: number;
-    output: [string, number][];
+    output: [T, number][];
   }
-  const cases: Case[] = [
+  const cases: Case<unknown>[] = [
     {
-      label: 'empty input',
+      label: 'empty input and possibleKeys',
       input: [],
+      possibleKeys: [],
+      fillValue: 123,
+      output: [],
+    },
+    {
+      label: 'empty input and various possibleKeys',
+      input: [],
+      possibleKeys: ['123', 15, null, 12, undefined],
       fillValue: 123,
       output: [
-        ['0-9', 123],
-        ['10-19', 123],
-        ['20-29', 123],
-        ['30-39', 123],
-        ['40-49', 123],
-        ['50-59', 123],
-        ['60-69', 123],
-        ['70-79', 123],
-        ['80+', 123],
+        ['123', 123],
+        [15, 123],
+        [null, 123],
+        [12, 123],
+        [undefined, 123],
+      ],
+    },
+    {
+      label: 'possibleKeys without null',
+      input: [],
+      possibleKeys: ['abc', 'def'],
+      fillValue: 123,
+      output: [
+        ['abc', 123],
+        ['def', 123],
+      ],
+    },
+    {
+      label: 'different fill value',
+      input: [
+        ['abc', 123],
+        ['def', 0],
+      ],
+      possibleKeys: ['abc', 'ABC', 'def'],
+      fillValue: 10,
+      output: [
+        ['abc', 123],
+        ['ABC', 10],
+        ['def', 0],
       ],
     },
     {
@@ -160,6 +180,7 @@ describe('fillAgeKeyedApiData', () => {
         ['20-29', 18],
         ['50-59', 30],
       ],
+      possibleKeys: possibleAgeKeys,
       fillValue: 123,
       output: [
         ['0-9', 123],
@@ -171,31 +192,36 @@ describe('fillAgeKeyedApiData', () => {
         ['60-69', 123],
         ['70-79', 123],
         ['80+', 123],
+        [null, 123],
       ],
     },
   ];
 
-  const fromTemplate = (template: [string, number][]) => template.map(([x, y]) => ({ x, y }));
+  const fromTemplate = <T>(template: [T, number][]) =>
+    template.map(([x, y]): [T, { y: number }] => [x, { y }]);
 
   for (const c of cases) {
     // eslint-disable-next-line jest/valid-title
     test(c.label, () => {
-      const expectedOutput = fromTemplate(c.output);
+      const expectedOutput = fromTemplate(c.output).map(([key, { y }]) => ({ key, y }));
       for (let i = 0; i < 5; i++) {
-        const shuffledInput = shuffle(fromTemplate(c.input));
-        expect(fillAgeKeyedApiData(shuffledInput, c.fillValue)).toEqual(expectedOutput);
+        const inputMap = new Map(shuffle(fromTemplate(c.input)));
+        expect(fillFromPrimitiveMap(inputMap, c.possibleKeys, { y: c.fillValue })).toEqual(expectedOutput);
       }
     });
   }
 
-  test('throws on bad age values', () => {
+  test('throws when value is not in possibleKeys', () => {
     expect(() =>
-      fillAgeKeyedApiData(
-        fromTemplate([
-          ['10-19', 100],
-          ['25-28', 50],
-        ]),
-        0
+      fillFromPrimitiveMap(
+        new Map(
+          fromTemplate([
+            ['10-19', 100],
+            ['25-28', 50],
+          ])
+        ),
+        ['10-19', '20-29', '30-39'],
+        { y: 0 }
       )
     ).toThrow();
   });

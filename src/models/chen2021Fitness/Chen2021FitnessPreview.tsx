@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import * as zod from 'zod';
 import Loader from '../../components/Loader';
-import { SampleSelectorSchema } from '../../helpers/sample-selector';
+import { OldSampleSelectorSchema } from '../../helpers/sample-selector';
 import { Chen2021ProportionPlot } from './Chen2021ProportionPlot';
 import { fillRequestWithDefaults, useModelData } from './loading';
 
-type Props = zod.infer<typeof SampleSelectorSchema>;
+type Props = zod.infer<typeof OldSampleSelectorSchema>;
 
 export const Chen2021FitnessPreview = ({ country, mutations, matchPercentage, samplingStrategy }: Props) => {
   const request = useMemo(

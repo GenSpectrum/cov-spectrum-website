@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { Chen2021FitnessRequest } from './chen2021Fitness-types';
 import { Button, Col, Form } from 'react-bootstrap';
 import * as zod from 'zod';
-import { SampleSelectorSchema } from '../../helpers/sample-selector';
+import { OldSampleSelectorSchema } from '../../helpers/sample-selector';
 import styled from 'styled-components';
 import { Chen2021FitnessResults } from './Chen2021FitnessResults';
 import { fillRequestWithDefaults } from './loading';
 
-type ContainerProps = zod.infer<typeof SampleSelectorSchema>;
+export type ContainerProps = zod.infer<typeof OldSampleSelectorSchema>;
 
 const SectionHeader = styled.h5`
   margin-top: 20px;
