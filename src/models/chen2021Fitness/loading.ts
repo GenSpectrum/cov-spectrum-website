@@ -7,6 +7,7 @@ import * as zod from 'zod';
 import { OldSampleSelectorSchema } from '../../helpers/sample-selector';
 import { useEffect, useState } from 'react';
 import { get } from '../../services/api';
+import { dateToString } from './format-value';
 
 export function fillRequestWithDefaults({
   country,
@@ -22,7 +23,7 @@ export function fillRequestWithDefaults({
     alpha: 0.95,
     generationTime: 4.8,
     reproductionNumberWildtype: 1,
-    plotStartDate: new Date('2021-01-01'),
+    plotStartDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
     plotEndDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
     initialWildtypeCases: 1000,
     initialVariantCases: 100,
@@ -41,8 +42,8 @@ const getData = async (
     alpha: params.alpha.toString(),
     generationTime: params.generationTime.toString(),
     reproductionNumberWildtype: params.reproductionNumberWildtype.toString(),
-    plotStartDate: params.plotStartDate.toISOString().substring(0, 10),
-    plotEndDate: params.plotEndDate.toISOString().substring(0, 10),
+    plotStartDate: dateToString(params.plotStartDate),
+    plotEndDate: dateToString(params.plotEndDate),
     initialWildtypeCases: params.initialWildtypeCases.toString(),
     initialVariantCases: params.initialVariantCases.toString(),
   });

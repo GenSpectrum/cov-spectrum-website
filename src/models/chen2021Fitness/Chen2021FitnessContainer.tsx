@@ -6,6 +6,7 @@ import { OldSampleSelectorSchema } from '../../helpers/sample-selector';
 import styled from 'styled-components';
 import { Chen2021FitnessResults } from './Chen2021FitnessResults';
 import { fillRequestWithDefaults } from './loading';
+import { dateToString } from './format-value';
 
 export type ContainerProps = zod.infer<typeof OldSampleSelectorSchema>;
 
@@ -32,6 +33,8 @@ export const Chen2021FitnessContainer = ({
   const [formInitialWildtypeCases, setFormInitialWildtypeCases] = useState(
     paramData.initialWildtypeCases.toString()
   );
+  const [formPlotStartDate, setFormPlotStartDate] = useState(dateToString(paramData.plotStartDate));
+  const [formPlotEndDate, setFormPlotEndDate] = useState(dateToString(paramData.plotEndDate));
 
   useEffect(() => {
     setParamData(p => ({
@@ -50,6 +53,8 @@ export const Chen2021FitnessContainer = ({
       reproductionNumberWildtype: parseFloat(formReproductionNumberWildtype),
       initialVariantCases: parseInt(formInitialVariantCases),
       initialWildtypeCases: parseInt(formInitialWildtypeCases),
+      plotStartDate: new Date(formPlotStartDate),
+      plotEndDate: new Date(formPlotEndDate),
     });
   };
 
@@ -90,6 +95,16 @@ export const Chen2021FitnessContainer = ({
               value={formInitialVariantCases}
               onChange={x => setFormInitialVariantCases(x.target.value)}
             />
+          </Form.Group>
+        </Form.Row>
+        <Form.Row>
+          <Form.Group as={Col} controlId='formPlotStartDate'>
+            <Form.Label>Start date</Form.Label>
+            <Form.Control value={formPlotStartDate} onChange={x => setFormPlotStartDate(x.target.value)} />
+          </Form.Group>
+          <Form.Group as={Col} controlId='formPlotEndDate'>
+            <Form.Label>End date</Form.Label>
+            <Form.Control value={formPlotEndDate} onChange={x => setFormPlotEndDate(x.target.value)} />
           </Form.Group>
         </Form.Row>
       </Form>
