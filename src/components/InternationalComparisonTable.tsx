@@ -61,7 +61,7 @@ export const InternationalComparisonTable = ({
             <td>{c.weekRange.min.yearWeekString}</td>
             <td>{c.weekRange.max.yearWeekString}</td>
             <td>
-              {AccountService.isLoggedIn() && (
+              {AccountService.isLoggedIn() && (<>
                 <Button
                   onClick={() =>
                     NextcladeService.showVariantOnNextclade({
@@ -77,18 +77,18 @@ export const InternationalComparisonTable = ({
                 >
                   Show on Nextclade
                 </Button>
-              )}
-              <LazySampleButton
+                <LazySampleButton
                 query={{
-                  variantSelector: { variant, matchPercentage },
-                  country: c.country,
-                  samplingStrategy: SamplingStrategy.AllSamples,
-                }}
+                variantSelector: { variant, matchPercentage },
+                country: c.country,
+                samplingStrategy: SamplingStrategy.AllSamples,
+              }}
                 variant='secondary'
                 size='sm'
-              >
+                >
                 Show samples
-              </LazySampleButton>
+                </LazySampleButton>
+              </>)}
             </td>
           </tr>
         ))}
