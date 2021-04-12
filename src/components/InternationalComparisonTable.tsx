@@ -61,34 +61,36 @@ export const InternationalComparisonTable = ({
             <td>{c.weekRange.min.yearWeekString}</td>
             <td>{c.weekRange.max.yearWeekString}</td>
             <td>
-              {AccountService.isLoggedIn() && (<>
-                <Button
-                  onClick={() =>
-                    NextcladeService.showVariantOnNextclade({
-                      variant,
-                      matchPercentage,
+              {AccountService.isLoggedIn() && (
+                <>
+                  <Button
+                    onClick={() =>
+                      NextcladeService.showVariantOnNextclade({
+                        variant,
+                        matchPercentage,
+                        country: c.country,
+                        samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
+                      })
+                    }
+                    variant='secondary'
+                    size='sm'
+                    className='mr-2'
+                  >
+                    Show on Nextclade
+                  </Button>
+                  <LazySampleButton
+                    query={{
+                      variantSelector: { variant, matchPercentage },
                       country: c.country,
-                      samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
-                    })
-                  }
-                  variant='secondary'
-                  size='sm'
-                  className='mr-2'
-                >
-                  Show on Nextclade
-                </Button>
-                <LazySampleButton
-                query={{
-                variantSelector: { variant, matchPercentage },
-                country: c.country,
-                samplingStrategy: SamplingStrategy.AllSamples,
-              }}
-                variant='secondary'
-                size='sm'
-                >
-                Show samples
-                </LazySampleButton>
-              </>)}
+                      samplingStrategy: SamplingStrategy.AllSamples,
+                    }}
+                    variant='secondary'
+                    size='sm'
+                  >
+                    Show samples
+                  </LazySampleButton>
+                </>
+              )}
             </td>
           </tr>
         ))}
