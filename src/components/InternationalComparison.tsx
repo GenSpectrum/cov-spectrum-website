@@ -54,34 +54,36 @@ export const InternationalComparison = ({
               Toggle log scale
             </Button>
             {AccountService.isLoggedIn() && (
-              <Button
-                variant='secondary'
-                size='sm'
-                className='ml-1'
-                onClick={() =>
-                  NextcladeService.showVariantOnNextclade({
-                    variant,
-                    matchPercentage,
+              <>
+                <Button
+                  variant='secondary'
+                  size='sm'
+                  className='ml-1'
+                  onClick={() =>
+                    NextcladeService.showVariantOnNextclade({
+                      variant,
+                      matchPercentage,
+                      country: undefined,
+                      samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
+                    })
+                  }
+                >
+                  Show on Nextclade
+                </Button>
+                <LazySampleButton
+                  query={{
+                    variantSelector: { variant, matchPercentage },
                     country: undefined,
-                    samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
-                  })
-                }
-              >
-                Show on Nextclade
-              </Button>
+                    samplingStrategy: SamplingStrategy.AllSamples,
+                  }}
+                  variant='secondary'
+                  size='sm'
+                  className='ml-1'
+                >
+                  Show worldwide samples
+                </LazySampleButton>
+              </>
             )}
-            <LazySampleButton
-              query={{
-                variantSelector: { variant, matchPercentage },
-                country: undefined,
-                samplingStrategy: SamplingStrategy.AllSamples,
-              }}
-              variant='secondary'
-              size='sm'
-              className='ml-1'
-            >
-              Show worldwide samples
-            </LazySampleButton>
           </>
         }
       />
