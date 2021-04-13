@@ -42,7 +42,7 @@ export async function loadKnownVariantSampleSets<T extends VariantSelector>(
           // We don't need very old data, since convertKnownVariantChartData will only
           // take the latest 2 months. However since our data collection lags by a couple
           // of weeks, we need to fetch slightly more here to ensure we have enough.
-          dateFrom: dayjs().subtract(3, 'months').format('YYYY-MM-DD'),
+          dateFrom: dayjs().subtract(3, 'months').day(1).format('YYYY-MM-DD'),
         },
         signal
       )
