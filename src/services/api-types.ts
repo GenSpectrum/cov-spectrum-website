@@ -85,6 +85,49 @@ export const VariantSchema = zod.object({
     .optional(),
   mutations: zod.array(zod.string()),
 });
+export const SequencingIntensityEntrySchema = zod.object({
+  x: DateStringSchema,
+  y: zod.object({
+    numberCases: zod.number(),
+    numberSequenced: zod.number(),
+  }),
+});
+
+export const AgeDistributionEntrySchema = zod.object({
+  x: zod.string(),
+  y: CountAndProportionWithCISchema,
+});
+
+export const TimeDistributionEntrySchema = zod.object({
+  x: YearWeekWithDaySchema,
+  y: CountAndProportionWithCISchema,
+});
+
+export const InternationalTimeDistributionEntrySchema = zod.object({
+  x: zod.object({
+    country: zod.string(),
+    week: YearWeekWithDaySchema,
+  }),
+  y: CountAndProportionWithCISchema,
+});
+
+export const TimeZipCodeDistributionEntrySchema = zod.object({
+  x: zod.object({
+    week: YearWeekWithDaySchema,
+    zipCode: zod.string(),
+  }),
+  y: zod.object({
+    count: zod.number(),
+  }),
+});
+
+export const InterestingVariantSchema = zod.object({
+  variant: VariantSchema,
+  a: zod.number(),
+  f: zod.number(),
+  absoluteNumberSamplesInPastThreeMonths: zod.number(),
+  relativeNumberSamplesInPastThreeMonths: zod.number(),
+});
 
 export const InterestingVariantResultSchema = zod.object({
   computedAt: zod.string(),
@@ -120,3 +163,4 @@ export type SampleResultList = zod.infer<typeof SampleResultListSchema>;
 export type Variant = zod.infer<typeof VariantSchema>;
 export type InterestingVariantResult = zod.infer<typeof InterestingVariantResultSchema>;
 export type LoginResponse = zod.infer<typeof LoginResponseSchema>;
+export type SequencingIntensityEntry = zod.infer<typeof SequencingIntensityEntrySchema>;

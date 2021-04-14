@@ -9,32 +9,28 @@ import {
   ChartWrapper,
   CustomTimeTick,
 } from './common';
+import { kFormat } from '../helpers/number';
 
 const CHART_MARGIN_RIGHT = 15;
 
 export type OnClickHandler = (index: number) => boolean;
 
-export type TimeEntry = {
-  firstDayInWeek: string;
-  yearWeek: string;
-  percent?: number;
+export type TimeIntensityEntry = {
+  id?: string;
+  month: string;
+  proportion: number;
   quantity: number;
 };
 
-export type TimeChartProps = {
-  data: TimeEntry[];
+export type Props = {
+  data: TimeIntensityEntry[];
   onClickHandler?: OnClickHandler;
 };
 
-export const TimeChart = React.memo(
-  ({ data, onClickHandler }: TimeChartProps): JSX.Element => {
+export const TimeIntensityChart = React.memo(
+  ({ data, onClickHandler }: Props): JSX.Element => {
     const [activeIndex, setActiveIndex] = useState<number>(data.length - 1);
-    const [ready, setReady] = useState(false);
-    const [currentData, setCurrentData] = useState<TimeEntry>(data[data.length - 1]);
-
-    useEffect(() => {
-      setReady(true);
-    }, []);
+    const [currentData, setCurrentData] = useState<TimeIntensityEntry>(data[data.length - 1]);
 
     const resetDefault = useCallback(() => {
       setCurrentData(data[data.length - 1]);
@@ -62,8 +58,8 @@ export const TimeChart = React.memo(
 
     const bars = [
       <Bar
-        dataKey='percent'
-        key='percent'
+        dataKey='proportion'
+        key='proportion'
         stackId='a'
         onMouseEnter={handleMouseEnter}
         onClick={handleClick}
@@ -72,20 +68,32 @@ export const TimeChart = React.memo(
         {data.map((entry: unknown, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
-            fill={index === activeIndex ? colors.active : colors.inactive}
+            fill={index === activeIndex ? colors.highlight : colors.highlight2}
+            key={`cell-${index}`}
+          ></Cell>
+        ))}
+      </Bar>,
+      <Bar
+        dataKey='quantity'
+        key='quantity'
+        stackId='a'
+        onMouseEnter={handleMouseEnter}
+        onClick={handleClick}
+        isAnimationActive={false}
+      >
+        {data.map((entry: unknown, index: number) => (
+          <Cell
+            cursor={onClickHandler && 'pointer'}
+            fill={index === activeIndex ? colors.active : colors.secondaryLight}
             key={`cell-${index}`}
           ></Cell>
         ))}
       </Bar>,
     ];
 
-    return ready && currentData ? (
+    return currentData ? (
       <Wrapper>
-        <TitleWrapper id='graph_title'>
-          Proportion of the variant on week {currentData.yearWeek.split('-')[1]}
-          {', '}
-          {currentData.yearWeek.split('-')[0] + ' '}({currentData.firstDayInWeek})
-        </TitleWrapper>
+        <TitleWrapper id='graph_title'>Number of sequenced samples on {currentData.month}</TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
             <ResponsiveContainer>
@@ -96,7 +104,7 @@ export const TimeChart = React.memo(
                 onMouseLeave={handleMouseLeave}
               >
                 <XAxis
-                  dataKey='yearWeek'
+                  dataKey='month'
                   axisLine={false}
                   tickLine={false}
                   interval={0}
@@ -104,19 +112,19 @@ export const TimeChart = React.memo(
                     <CustomTimeTick
                       activeIndex={activeIndex}
                       dataLength={data.length}
-                      currentValue={currentData.yearWeek}
+                      currentValue={currentData.month}
                     />
                   }
                 />
                 <YAxis
-                  dataKey='percent'
+                  dataKey='quantity'
+                  tickFormatter={(v: number) => kFormat(v)}
                   interval={1}
                   axisLine={false}
                   tickLine={false}
-                  tickFormatter={tick => `${tick}%`}
                   allowDecimals={true}
                   hide={false}
-                  width={50}
+                  width={60}
                   domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
                 />
                 <CartesianGrid vertical={false} />
@@ -127,17 +135,16 @@ export const TimeChart = React.memo(
           <MetricsWrapper>
             <MetricsSpacing />
             <Metric
-              value={currentData.percent === undefined ? '-' : currentData.percent.toFixed(2)}
-              title='Proportion'
+              value={kFormat(currentData.quantity)}
+              title='Confirmed'
               color={colors.active}
-              helpText='Estimated proportion relative to all samples collected.'
-              percent={true}
+              helpText='Number of confirmed caseson this time frame.'
             />
             <Metric
-              value={currentData.quantity}
-              title='Samples'
-              color={colors.secondary}
-              helpText='Number of samples of the variant collected in this time frame.'
+              value={kFormat(currentData.proportion)}
+              title='Sequenced'
+              color={colors.highlight}
+              helpText='Number of samples sequenced among the confirmed cases on this time frame.'
             />
           </MetricsWrapper>
         </ChartAndMetricsWrapper>
@@ -148,4 +155,4 @@ export const TimeChart = React.memo(
   }
 );
 
-export default TimeChart;
+export default TimeIntensityChart;

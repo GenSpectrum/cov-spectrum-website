@@ -47,8 +47,8 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
   const variants = useMemo(() => {
     const uniqueVisibleMutations = new Set();
     return data?.variants
-      .map(v => {
-        const visibleMutations = v.mutations.filter(m => {
+      .map((v: any) => {
+        const visibleMutations = v.mutations.filter((m: any) => {
           if (geneFilter !== '-' && !m.mutation.startsWith(geneFilter + ':')) {
             return false;
           }
@@ -60,11 +60,11 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
         return {
           ...v,
           visibleMutations,
-          visibleMutationsString: sortMutationList(visibleMutations.map(m => m.mutation)).join(','),
+          visibleMutationsString: sortMutationList(visibleMutations.map((m: any) => m.mutation)).join(','),
         };
       })
-      .filter(v => v.visibleMutations.length > 0)
-      .filter(v => {
+      .filter((v: any) => v.visibleMutations.length > 0)
+      .filter((v: any) => {
         // We don't want duplicates and will only show unique visible mutations. The variant with the highest estimated
         // fitness advantage (i.e. on the top of the list) should be kept.
         if (uniqueVisibleMutations.has(v.visibleMutationsString)) {
@@ -128,9 +128,9 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                 </tr>
               </thead>
               <tbody>
-                {variants?.map(v => {
+                {variants?.map((v: any) => {
                   return (
-                    <tr key={v.mutations.map(m => m.mutation).join(', ')}>
+                    <tr key={v.mutations.map((m: any) => m.mutation).join(', ')}>
                       <td style={{ maxWidth: '400px', lineBreak: 'auto' }}>
                         <NewVariantMutationList mutations={v.visibleMutations} />
                       </td>
@@ -143,7 +143,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                         <Button
                           onClick={() => {
                             onVariantSelect({
-                              mutations: v.mutations.map(m => m.mutation),
+                              mutations: v.mutations.map((m: any) => m.mutation),
                             });
                           }}
                           variant='secondary'

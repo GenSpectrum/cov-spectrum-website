@@ -33,6 +33,7 @@ export class ZodQueryEncoder<S extends zod.ZodSchema<any>, T extends zod.input<S
   }
 }
 
+//Convert data to URL search params for API requests, and vice-versa
 export class AsyncZodQueryEncoder<
   ExternalType,
   Schema extends zod.ZodSchema<any>,
