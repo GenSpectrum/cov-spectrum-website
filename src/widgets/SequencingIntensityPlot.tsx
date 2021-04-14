@@ -16,7 +16,6 @@ interface Props {
   country: Country;
 }
 
-
 const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[] => {
   const groupedEntries = _(
     entries.map(d => ({
@@ -38,7 +37,7 @@ const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[]
   return groupedEntries;
 };
 
-const processData = (data: SequencingIntensityEntry[]): any => (groupByMonth(data));
+const processData = (data: SequencingIntensityEntry[]): any => groupByMonth(data);
 
 export const SequencingIntensityPlot = ({ country }: Props) => {
   const [data, setData] = useState<SequencingIntensityEntry[] | undefined>(undefined);
