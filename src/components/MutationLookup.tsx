@@ -9,7 +9,7 @@ interface Props {
 
 export const MutationLookup = ({ onVariantSelect }: Props) => {
   const [selectedMutations, setSelectedMutations] = useState('');
-  const [selectedMatchPercentage, setSelectedMatchPercentage] = useState(50);
+  const [selectedMatchPercentage, setSelectedMatchPercentage] = useState(100);
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,9 +35,13 @@ export const MutationLookup = ({ onVariantSelect }: Props) => {
         />
       </Form.Group>
       <Form.Group controlId='matchPercentageGroup'>
-        <Form.Label>Match Percentage</Form.Label>
+        <Form.Label>Match percentage</Form.Label>
         <span style={{ marginLeft: '30px' }}>{selectedMatchPercentage}%</span>
-        <Form.Control type='range' onChange={ev => setSelectedMatchPercentage(+ev.target.value)} />
+        <Form.Control
+          type='range'
+          value={selectedMatchPercentage}
+          onChange={ev => setSelectedMatchPercentage(+ev.target.value)}
+        />
       </Form.Group>
       <Button type='submit' variant='primary'>
         Search
