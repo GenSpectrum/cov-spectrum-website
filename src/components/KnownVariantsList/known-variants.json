@@ -101,5 +101,23 @@
       ]
     },
     "matchPercentage": 1
+  },
+  {
+    "variant": {
+      "name": "P.2",
+      "mutations": [
+        "S:E484K",
+        "S:D614G",
+        "S:V1176F",
+        "ORF1a:L3468V",
+        "ORF1a:L3930F",
+        "ORF1b:P314L",
+        "N:A119S",
+        "N:R203K",
+        "N:G204R",
+        "N:M234I"
+      ]
+    },
+    "matchPercentage": 1
   }
 ]
