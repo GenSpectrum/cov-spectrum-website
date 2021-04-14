@@ -17,7 +17,7 @@ export type OnClickHandler = (index: number) => boolean;
 export type TimeEntry = {
   firstDayInWeek: string;
   yearWeek: string;
-  percent: number;
+  percent?: number;
   quantity: number;
 };
 
@@ -127,7 +127,7 @@ export const TimeChart = React.memo(
           <MetricsWrapper>
             <MetricsSpacing />
             <Metric
-              value={currentData.percent.toFixed(2)}
+              value={currentData.percent === undefined ? '-' : currentData.percent.toFixed(2)}
               title='Proportion'
               color={colors.active}
               helpText='Estimated proportion relative to all samples collected.'

@@ -29,14 +29,14 @@
   },
   {
     "variant": {
-      "name": "20A.EU1",
+      "name": "B.1.177",
       "mutations": ["S:A222V", "N:A220V"]
     },
     "matchPercentage": 1
   },
   {
     "variant": {
-      "name": "20A.EU2",
+      "name": "B.1.160",
       "mutations": [
         "S:S477N",
         "N:M234I",
@@ -98,6 +98,24 @@
         "S:N501Y",
         "S:H655Y",
         "S:L18F"
+      ]
+    },
+    "matchPercentage": 1
+  },
+  {
+    "variant": {
+      "name": "P.2",
+      "mutations": [
+        "S:E484K",
+        "S:D614G",
+        "S:V1176F",
+        "ORF1a:L3468V",
+        "ORF1a:L3930F",
+        "ORF1b:P314L",
+        "N:A119S",
+        "N:R203K",
+        "N:G204R",
+        "N:M234I"
       ]
     },
     "matchPercentage": 1

@@ -1,137 +1,142 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import { omit, uniqBy } from 'lodash';
+import React, { useMemo } from 'react';
 import * as zod from 'zod';
 import { Plot } from '../components/Plot';
-import { EntryWithoutCI, removeCIFromEntry } from '../helpers/confidence-interval';
-import { fillGroupedWeeklyApiData } from '../helpers/fill-missing';
-import { ZodQueryEncoder } from '../helpers/query-encoder';
-import {
-  DistributionType,
-  getVariantDistributionData,
-  SamplingStrategy,
-  toLiteralSamplingStrategy,
-} from '../services/api';
-import { CountrySchema, InternationalTimeDistributionEntry } from '../services/api-types';
+import { globalDateCache } from '../helpers/date-cache';
+import { fillFromWeeklyMap } from '../helpers/fill-missing';
+import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
+import { NewSampleSelectorSchema } from '../helpers/sample-selector';
+import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
+import { getNewSamples } from '../services/api';
+import { Country, CountrySchema } from '../services/api-types';
 import { Widget } from './Widget';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
-const PropsSchema = zod.object({
-  country: CountrySchema,
-  matchPercentage: zod.number(),
-  mutations: zod.array(zod.string()),
-  logScale: zod.boolean().optional(),
-});
-type Props = zod.infer<typeof PropsSchema>;
+interface Props {
+  country: Country;
+  logScale?: boolean;
+  variantInternationalSampleSet: SampleSetWithSelector;
+  wholeInternationalSampleSet: SampleSetWithSelector;
+}
 
-const VariantInternationalComparisonPlot = ({ country, mutations, matchPercentage, logScale }: Props) => {
-  const [plotData, setPlotData] = useState<EntryWithoutCI<InternationalTimeDistributionEntry>[] | undefined>(
-    undefined
+const VariantInternationalComparisonPlot = ({
+  country,
+  logScale,
+  variantInternationalSampleSet,
+  wholeInternationalSampleSet,
+}: Props) => {
+  const countriesToPlotList = useMemo(
+    () =>
+      uniqBy(
+        [
+          { name: 'United Kingdom', color: 'black' },
+          { name: 'Denmark', color: 'green' },
+          { name: 'Switzerland', color: 'red' },
+          { name: country, color: 'blue' },
+        ],
+        c => c.name
+      ),
+    [country]
   );
-  const [colorMap, setColorMap] = useState<any>(null);
 
-  useEffect(() => {
-    let isSubscribed = true;
-    const controller = new AbortController();
-    const signal = controller.signal;
-    getVariantDistributionData(
-      {
-        distributionType: DistributionType.International,
-        country,
-        mutations,
-        matchPercentage,
-        samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
-      },
-      signal
-    ).then(newDistributionData => {
-      if (isSubscribed) {
-        const countriesToPlot = new Set(['United Kingdom', 'Denmark', 'Switzerland', country]);
-        const newPlotData = newDistributionData.filter((d: any) => countriesToPlot.has(d.x.country));
-        // TODO Remove hard-coding..
-        const newColorMap = [
-          { target: 'United Kingdom', value: { marker: { color: 'black' } } },
-          { target: 'Denmark', value: { marker: { color: 'green' } } },
-          { target: 'Switzerland', value: { marker: { color: 'red' } } },
-        ];
-        if (country && !['United Kingdom', 'Denmark', 'Switzerland'].includes(country)) {
-          newColorMap.push({
-            target: country,
-            value: { marker: { color: 'blue' } },
-          });
-        }
-        setColorMap(newColorMap);
-        setPlotData(
-          fillGroupedWeeklyApiData(newPlotData.map(removeCIFromEntry), 'country', { count: 0, proportion: 0 })
-        );
-      }
-    });
-    return () => {
-      isSubscribed = false;
-      controller.abort();
-    };
-  }, [country, mutations, matchPercentage]);
-
-  const filteredPlotData = useMemo(() => plotData?.filter(v => !logScale || v.y.proportion > 0), [
-    plotData,
-    logScale,
+  const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByField('country'), [
+    variantInternationalSampleSet,
   ]);
+  const wholeSamplesByCountry = useMemo(() => wholeInternationalSampleSet.groupByField('country'), [
+    wholeInternationalSampleSet,
+  ]);
+
+  const plotData = useMemo(() => {
+    return countriesToPlotList.map(
+      ({ name: country, color }): Plotly.Data => {
+        const variantSampleSet = new SampleSet(variantSamplesByCountry.get(country) ?? [], null);
+        const wholeSampleSet = new SampleSet(wholeSamplesByCountry.get(country) ?? [], null);
+
+        const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
+          count: 0,
+          proportion: 0,
+        })
+          .filter(({ proportion }) => proportion !== undefined && (!logScale || proportion > 0))
+          .map(({ proportion, ...rest }) => ({ ...rest, proportion: proportion! }));
+
+        return {
+          name: country,
+          marker: { color },
+          type: 'scatter',
+          mode: 'lines+markers',
+          x: filledData.map(({ isoWeek }) => isoWeek.firstDay.string),
+          y: filledData.map(({ proportion }) => digitsForPercent(proportion)),
+          text: filledData.map(({ proportion }) => `${digitsForPercent(proportion)}%`),
+          hovertemplate: '%{text}',
+        };
+      }
+    );
+  }, [countriesToPlotList, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
+
+  const xTickVals = useMemo(() => {
+    const relevantWeeks = countriesToPlotList.flatMap(({ name }) =>
+      (variantSamplesByCountry.get(name) ?? []).map(s => s.date.isoWeek)
+    );
+    return globalDateCache
+      .weeksFromRange(globalDateCache.rangeFromWeeks(relevantWeeks))
+      .map(w => w.firstDay.string);
+  }, [countriesToPlotList, variantSamplesByCountry]);
 
   return (
     <div style={{ height: '100%' }}>
-      {!filteredPlotData && <p>Loading...</p>}
-      {filteredPlotData && (
-        <Plot
-          style={{ width: '100%', height: '100%' }}
-          data={[
-            {
-              type: 'scatter',
-              mode: 'lines+markers',
-              x: filteredPlotData.map(d => d.x.week.firstDayInWeek),
-              y: filteredPlotData.map(d => digitsForPercent(d.y.proportion)),
-              text: filteredPlotData.map(d => `${digitsForPercent(d.y.proportion)}%`),
-              transforms: [
-                {
-                  type: 'groupby',
-                  groups: filteredPlotData.map(d => d.x.country),
-                  styles: colorMap,
-                  nameformat: '%{group}',
-                },
-              ],
-              hovertemplate: '%{text}',
-            },
-          ]}
-          layout={{
-            title: '',
-            xaxis: {
-              title: 'Week',
-              type: 'date',
-              tickvals: filteredPlotData.map(d => d.x.week.firstDayInWeek),
-              tickformat: 'W%-V, %Y',
-              hoverformat: 'Week %-V, %Y (from %d.%m.)',
-            },
-            yaxis: {
-              title: 'Estimated Percentage',
-              type: logScale ? 'log' : 'linear',
-            },
-            legend: {
-              x: 0,
-              xanchor: 'left',
-              y: 1,
-            },
-            margin: { t: 10 },
-          }}
-          config={{
-            displaylogo: false,
-            modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
-            responsive: true,
-          }}
-        />
-      )}
+      <Plot
+        style={{ width: '100%', height: '100%' }}
+        data={plotData}
+        layout={{
+          title: '',
+          xaxis: {
+            title: 'Week',
+            type: 'date',
+            tickvals: xTickVals,
+            tickformat: 'W%-V, %Y',
+            hoverformat: 'Week %-V, %Y (from %d.%m.)',
+          },
+          yaxis: {
+            title: 'Estimated Percentage',
+            type: logScale ? 'log' : 'linear',
+          },
+          legend: {
+            x: 0,
+            xanchor: 'left',
+            y: 1,
+          },
+          margin: { t: 10 },
+        }}
+        config={{
+          displaylogo: false,
+          modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
+          responsive: true,
+        }}
+      />
     </div>
   );
 };
 
 export const VariantInternationalComparisonPlotWidget = new Widget(
-  new ZodQueryEncoder(PropsSchema),
+  new AsyncZodQueryEncoder(
+    zod.object({
+      country: CountrySchema,
+      logScale: zod.boolean().optional(),
+      variantInternationalSampleSelector: NewSampleSelectorSchema,
+      wholeInternationalSampleSelector: NewSampleSelectorSchema,
+    }),
+    async (decoded: Props) => ({
+      ...omit(decoded, ['variantInternationalSampleSet', 'wholeInternationalSampleSet']),
+      variantInternationalSampleSelector: decoded.variantInternationalSampleSet.sampleSelector,
+      wholeInternationalSampleSelector: decoded.wholeInternationalSampleSet.sampleSelector,
+    }),
+    async (encoded, signal) => ({
+      ...omit(encoded, ['variantInternationalSampleSelector', 'wholeInternationalSampleSelector']),
+      variantInternationalSampleSet: await getNewSamples(encoded.variantInternationalSampleSelector, signal),
+      wholeInternationalSampleSet: await getNewSamples(encoded.wholeInternationalSampleSelector, signal),
+    })
+  ),
   VariantInternationalComparisonPlot,
   'VariantInternationalComparisonPlot'
 );

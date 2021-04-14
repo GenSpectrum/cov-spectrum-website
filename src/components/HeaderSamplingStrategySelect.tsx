@@ -15,9 +15,6 @@ export const HeaderSamplingStrategySelect = () => {
 
   const makeForm = ({ ref, ...props }: Partial<OverlayTriggerRenderProps>) => (
     <Form inline className='mr-3'>
-      <Form.Label htmlFor='samplingStrategySelect' className='mr-2'>
-        Sampling strategy
-      </Form.Label>
       <div {...props} ref={ref}>
         <Form.Control
           as='select'

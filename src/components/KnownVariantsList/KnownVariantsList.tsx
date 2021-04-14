@@ -1,11 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { AsyncState } from 'react-async';
 import styled from 'styled-components';
 import { VariantSelector } from '../../helpers/sample-selector';
+import { SampleSetWithSelector } from '../../helpers/sample-set';
 import { SamplingStrategy } from '../../services/api';
 import { Country, Variant } from '../../services/api-types';
 import knownVariantSelectors from './known-variants.json';
 import { KnownVariantCard } from './KnownVariantCard';
-import { loadKnownVariantChartData } from './load-data';
+import {
+  convertKnownVariantChartData,
+  KnownVariantWithSampleSet,
+  loadKnownVariantSampleSets,
+} from './load-data';
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -17,6 +23,7 @@ interface Props {
   samplingStrategy: SamplingStrategy;
   onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
+  wholeSampleSetState: AsyncState<SampleSetWithSelector>;
 }
 
 const Grid = styled.div`
@@ -25,25 +32,35 @@ const Grid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
 `;
 
+type NamedVariantSelector = VariantSelector & { variant: { name: string } };
+
 const knownVariantsWithoutData: {
-  selector: VariantSelector & { variant: { name: string } };
+  selector: NamedVariantSelector;
   chartData?: number[];
 }[] = knownVariantSelectors.map(selector => ({ selector }));
 
-export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, selection }: Props) => {
-  const [knownVariants, setKnownVariants] = useState(knownVariantsWithoutData);
+export const KnownVariantsList = ({
+  country,
+  samplingStrategy,
+  onVariantSelect,
+  selection,
+  wholeSampleSetState,
+}: Props) => {
+  const [variantSampleSets, setVariantSampleSets] = useState<
+    KnownVariantWithSampleSet<NamedVariantSelector>[]
+  >();
 
   useEffect(() => {
-    setKnownVariants(knownVariantsWithoutData);
+    setVariantSampleSets(undefined);
 
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
 
-    loadKnownVariantChartData({ variantSelectors: knownVariantSelectors, country, samplingStrategy }, signal)
+    loadKnownVariantSampleSets({ variantSelectors: knownVariantSelectors, country, samplingStrategy }, signal)
       .then(data => {
         if (isSubscribed) {
-          setKnownVariants(data);
+          setVariantSampleSets(data);
         }
       })
       .catch(err => {
@@ -55,6 +72,16 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
       controller.abort();
     };
   }, [country, samplingStrategy]);
+
+  const knownVariants = useMemo(() => {
+    if (variantSampleSets === undefined || !wholeSampleSetState.isResolved) {
+      return knownVariantsWithoutData;
+    }
+    return convertKnownVariantChartData({
+      variantSampleSets,
+      wholeSampleSet: wholeSampleSetState.data,
+    });
+  }, [variantSampleSets, wholeSampleSetState]);
 
   return (
     <Grid>

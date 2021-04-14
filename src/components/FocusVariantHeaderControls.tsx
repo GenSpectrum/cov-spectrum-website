@@ -29,7 +29,7 @@ export const FocusVariantHeaderControls = ({
           samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
         })
       }
-      variant='outline-dark'
+      variant='secondary'
       size='sm'
       className='mr-2'
     >
@@ -54,13 +54,15 @@ export const FocusVariantHeaderControls = ({
           {nextcladeButton}
         </OverlayTrigger>
       )}
-      <LazySampleButton
-        query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy }}
-        variant='outline-dark'
-        size='sm'
-      >
-        Show samples
-      </LazySampleButton>
+      {AccountService.isLoggedIn() && (
+        <LazySampleButton
+          query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy }}
+          variant='secondary'
+          size='sm'
+        >
+          Show samples
+        </LazySampleButton>
+      )}
     </>
   );
 };

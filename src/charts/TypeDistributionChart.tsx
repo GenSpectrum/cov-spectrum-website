@@ -47,7 +47,7 @@ const CustomTick = ({
 
 export type TypeDistributionEntry = {
   name: string;
-  percent: number;
+  percent?: number;
   quantity: number;
 };
 
@@ -153,7 +153,7 @@ export const TypeDistributionChart = React.memo(
           <MetricsWrapper>
             <MetricsSpacing />
             <Metric
-              value={currentData.percent.toFixed(2)}
+              value={currentData.percent === undefined ? '-' : currentData.percent.toFixed(2)}
               title='Proportion'
               color={colors.active}
               helpText='Proportion relative to all samples collected from this age group.'

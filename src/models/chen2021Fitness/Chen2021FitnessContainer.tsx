@@ -2,16 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { Chen2021FitnessRequest } from './chen2021Fitness-types';
 import { Button, Col, Form } from 'react-bootstrap';
 import * as zod from 'zod';
-import { SampleSelectorSchema } from '../../helpers/sample-selector';
+import { OldSampleSelectorSchema } from '../../helpers/sample-selector';
 import styled from 'styled-components';
 import { Chen2021FitnessResults } from './Chen2021FitnessResults';
+import { fillRequestWithDefaults } from './loading';
+import { dateToString } from './format-value';
 
-type ContainerProps = zod.infer<typeof SampleSelectorSchema>;
-
-const Wrapper = styled.div`
-  background-color: #ffe0b6;
-  padding: 15px;
-`;
+export type ContainerProps = zod.infer<typeof OldSampleSelectorSchema>;
 
 const SectionHeader = styled.h5`
   margin-top: 20px;
@@ -23,19 +20,9 @@ export const Chen2021FitnessContainer = ({
   matchPercentage,
   samplingStrategy,
 }: ContainerProps) => {
-  const [paramData, setParamData] = useState<Chen2021FitnessRequest>({
-    country,
-    mutations,
-    matchPercentage,
-    samplingStrategy,
-    alpha: 0.95,
-    generationTime: 4.8,
-    reproductionNumberWildtype: 1,
-    plotStartDate: new Date('2021-01-01'),
-    plotEndDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
-    initialWildtypeCases: 1000,
-    initialVariantCases: 100,
-  });
+  const [paramData, setParamData] = useState<Chen2021FitnessRequest>(() =>
+    fillRequestWithDefaults({ country, mutations, matchPercentage, samplingStrategy })
+  );
   const [formGenerationTime, setFormGenerationTime] = useState(paramData.generationTime.toString());
   const [formReproductionNumberWildtype, setFormReproductionNumberWildtype] = useState(
     paramData.reproductionNumberWildtype.toString()
@@ -46,6 +33,8 @@ export const Chen2021FitnessContainer = ({
   const [formInitialWildtypeCases, setFormInitialWildtypeCases] = useState(
     paramData.initialWildtypeCases.toString()
   );
+  const [formPlotStartDate, setFormPlotStartDate] = useState(dateToString(paramData.plotStartDate));
+  const [formPlotEndDate, setFormPlotEndDate] = useState(dateToString(paramData.plotEndDate));
 
   useEffect(() => {
     setParamData(p => ({
@@ -64,12 +53,13 @@ export const Chen2021FitnessContainer = ({
       reproductionNumberWildtype: parseFloat(formReproductionNumberWildtype),
       initialVariantCases: parseInt(formInitialVariantCases),
       initialWildtypeCases: parseInt(formInitialWildtypeCases),
+      plotStartDate: new Date(formPlotStartDate),
+      plotEndDate: new Date(formPlotEndDate),
     });
   };
 
   return (
-    <Wrapper>
-      <h4>Fitness Advantage Estimation</h4>
+    <>
       <p>
         The model assumes that the increase or decrease of the proportion of a variant follows a logistic
         function. It fits a logistic model to the data by optimizing the maximum likelihood to obtain the
@@ -107,6 +97,16 @@ export const Chen2021FitnessContainer = ({
             />
           </Form.Group>
         </Form.Row>
+        <Form.Row>
+          <Form.Group as={Col} controlId='formPlotStartDate'>
+            <Form.Label>Start date</Form.Label>
+            <Form.Control value={formPlotStartDate} onChange={x => setFormPlotStartDate(x.target.value)} />
+          </Form.Group>
+          <Form.Group as={Col} controlId='formPlotEndDate'>
+            <Form.Label>End date</Form.Label>
+            <Form.Control value={formPlotEndDate} onChange={x => setFormPlotEndDate(x.target.value)} />
+          </Form.Group>
+        </Form.Row>
       </Form>
       <Button onClick={compute}>Compute</Button>
       <SectionHeader>Results</SectionHeader>
@@ -130,6 +130,6 @@ export const Chen2021FitnessContainer = ({
           </a>
         </li>
       </ul>
-    </Wrapper>
+    </>
   );
 };

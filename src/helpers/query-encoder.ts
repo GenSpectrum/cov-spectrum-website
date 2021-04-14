@@ -6,7 +6,14 @@ export interface QueryEncoder<T> {
   decode(encoded: URLSearchParams): T;
 }
 
-export class ZodQueryEncoder<S extends zod.ZodSchema<any>, T extends zod.input<S> & zod.output<S>> {
+export interface AsyncQueryEncoder<T> {
+  _decodedType: T;
+  encode(decoded: T): Promise<URLSearchParams>;
+  decode(encoded: URLSearchParams, signal: AbortSignal | undefined): Promise<T>;
+}
+
+export class ZodQueryEncoder<S extends zod.ZodSchema<any>, T extends zod.input<S> & zod.output<S>>
+  implements QueryEncoder<T> {
   _decodedType!: T;
 
   constructor(private schema: S, private searchParamsKey: string = 'json') {}
@@ -23,5 +30,32 @@ export class ZodQueryEncoder<S extends zod.ZodSchema<any>, T extends zod.input<S
       );
     }
     return this.schema.parse(JSON.parse(encodedFieldValues[0]));
+  }
+}
+
+//Convert data to URL search params for API requests, and vice-versa
+export class AsyncZodQueryEncoder<
+  ExternalType,
+  Schema extends zod.ZodSchema<any>,
+  InternalType extends zod.infer<Schema>
+> implements AsyncQueryEncoder<ExternalType> {
+  _decodedType!: ExternalType;
+  private zodQueryEncoder: ZodQueryEncoder<Schema, InternalType>;
+
+  constructor(
+    schema: Schema,
+    private encodeToInternal: (decoded: ExternalType) => Promise<InternalType>,
+    private decodeFromInternal: (encoded: InternalType, signal?: AbortSignal) => Promise<ExternalType>,
+    searchParamsKey: string = 'json'
+  ) {
+    this.zodQueryEncoder = new ZodQueryEncoder(schema, searchParamsKey);
+  }
+
+  async encode(decoded: ExternalType): Promise<URLSearchParams> {
+    return this.zodQueryEncoder.encode(await this.encodeToInternal(decoded));
+  }
+
+  async decode(encoded: URLSearchParams): Promise<ExternalType> {
+    return this.decodeFromInternal(this.zodQueryEncoder.decode(encoded));
   }
 }

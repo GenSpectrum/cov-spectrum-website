@@ -1,18 +1,22 @@
 import React from 'react';
+import { IfFulfilled, IfPending, IfRejected } from 'react-async';
+import { Alert } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import Loader from '../components/Loader';
+import { useQueryWithAsyncEncoder } from '../helpers/use-query';
 import { allWidgets } from '../widgets';
-import { useQueryWithEncoder } from '../helpers/use-query';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 
 export function EmbedPage() {
   const widgetUrlName = (useParams() as any).widget as string; // TODO(voinovp) use add types for react-router params
   const widget = allWidgets.find(w => w.urlName === widgetUrlName);
-  const widgetProps = useQueryWithEncoder<unknown>(widget?.propsEncoder);
 
-  if (!widget || !widgetProps) {
+  const asyncWidgetProps = useQueryWithAsyncEncoder<any>(widget?.propsEncoder);
+
+  if (!widget) {
     // TODO Redirect to a 404 page
-    return <div>Widget is unspecified, unsupported, or has invalid parameters</div>;
+    return <Alert variant='danger'>Widget is unspecified or unsupported</Alert>;
   }
 
   return (
@@ -25,7 +29,15 @@ export function EmbedPage() {
         .
       </div>
       <div style={{ flexGrow: 1 }}>
-        <widget.Component {...(widgetProps as any)} />
+        <IfPending state={asyncWidgetProps}>
+          <Loader />
+        </IfPending>
+        <IfRejected state={asyncWidgetProps}>
+          <Alert variant='danger'>Failed to load widget</Alert>
+        </IfRejected>
+        <IfFulfilled state={asyncWidgetProps}>
+          {widgetProps => <widget.Component {...widgetProps} />}
+        </IfFulfilled>
       </div>
     </div>
   );

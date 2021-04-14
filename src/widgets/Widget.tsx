@@ -1,13 +1,13 @@
 import React from 'react';
 import {
-  WidgetWrapper,
   ExternalProps as WidgetWrapperExternalProps,
   pickExternalProps,
+  WidgetWrapper,
 } from '../components/WidgetWrapper';
-import { QueryEncoder } from '../helpers/query-encoder';
+import { AsyncQueryEncoder } from '../helpers/query-encoder';
 
 export class Widget<
-  E extends QueryEncoder<any>,
+  E extends AsyncQueryEncoder<any>,
   P extends E['_decodedType'],
   C extends React.FunctionComponent<P>
 > {
@@ -23,7 +23,7 @@ export class Widget<
       return (
         <WidgetWrapper
           {...wrapperProps}
-          getShareUrl={() => `${this.urlName}?${this.propsEncoder.encode(props)}`}
+          getShareUrl={async () => `${this.urlName}?${await this.propsEncoder.encode(props)}`}
         >
           <this.Component {...componentProps} />
         </WidgetWrapper>

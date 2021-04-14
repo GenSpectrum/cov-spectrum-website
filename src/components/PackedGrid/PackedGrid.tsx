@@ -7,6 +7,7 @@ import { GridCell, Props as GridCellProps } from './GridCell';
 
 interface Props {
   children: React.ReactNode;
+  maxColumns?: number;
 }
 
 function childIsGridCell(
@@ -20,7 +21,7 @@ const Row = styled.div`
   align-items: stretch;
 `;
 
-export const PackedGrid = ({ children }: Props) => {
+export const PackedGrid = ({ children, maxColumns }: Props) => {
   const childrenAsArray: (React.ReactChild | {})[] = React.Children.toArray(children);
   const gridCellChildren = childrenAsArray
     .map(c => (childIsGridCell(c) ? c : undefined))
@@ -39,7 +40,7 @@ export const PackedGrid = ({ children }: Props) => {
   let placedGridCells: PlacedGridCell[][] = [];
   if (width) {
     try {
-      placedGridCells = placeGridCells(requests, Math.floor(width));
+      placedGridCells = placeGridCells(requests, { maxColumns, parentWidth: Math.floor(width) });
     } catch (err) {
       console.error('placeGridCells failed', err);
       placedGridCells = requests.map((v, i) => [{ index: i, width }]);

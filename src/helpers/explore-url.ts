@@ -1,6 +1,7 @@
 import assert from 'assert';
 import { useCallback, useEffect, useMemo } from 'react';
 import { generatePath, useHistory, useLocation, useRouteMatch } from 'react-router';
+import { Location, createLocation } from 'history';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 import { VariantSelector, VariantSelectorSchema } from '../helpers/sample-selector';
 import { isSamplingStrategy, SamplingStrategy } from '../services/api';
@@ -153,7 +154,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     samplingStrategy,
     setSamplingStrategy,
     variantSelector,
-    focusKey: `${country}-${samplingStrategy}-${variantSelector}`,
+    focusKey: `${country}-${samplingStrategy}-${encodedVariantSelector}`,
   };
 }
 
@@ -167,10 +168,23 @@ export function getFocusPageLink({
   country: Country;
   samplingStrategy: SamplingStrategy;
   deepFocusPath?: string;
-}) {
-  return (
+}): Location {
+  assert(!deepFocusPath || deepFocusPath.startsWith('/'));
+
+  // createLocation is used here because react-router usually normalizes URLs.
+  // If we don't normalize our URLs as well by calling createLocation, then they
+  // may be slightly different than the ones that react-router makes. This can cause
+  // useless reloads.
+  // Specifically the "Back to overview" button used to trigger a reload of data for
+  // the focus page, because the encoding of square brackets in the URL would change,
+  // which changed the reference equality of variantSelector from useExploreUrl,
+  // which caused all hooks which depend on variantSelector to be re-run.
+  return createLocation(
     generatePath(`/explore/${country}/${samplingStrategy}/variants/:variantSelector`, {
       variantSelector: queryEncoder.encode(variantSelector).toString(),
-    }) + deepFocusPath
+    }) + deepFocusPath,
+    undefined,
+    undefined,
+    undefined
   );
 }
