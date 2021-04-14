@@ -15,11 +15,11 @@ const CHART_MARGIN_RIGHT = 15;
 export type OnClickHandler = (index: number) => boolean;
 
 export type TimeIntensityEntry = {
-  firstDayInWeek: string;
-  yearWeek: string;
-  proportion: number;
-  quantity: number;
-};
+  id?: string,
+  month: string,
+  proportion: number,
+  quantity: number,
+}
 
 export type Props = {
   data: TimeIntensityEntry[];
@@ -98,9 +98,7 @@ export const TimeIntensityChart = React.memo(
     return ready && currentData ? (
       <Wrapper>
         <TitleWrapper id='graph_title'>
-          Number of sequenced samples on week {currentData.yearWeek.split('-')[1]}
-          {', '}
-          {currentData.yearWeek.split('-')[0] + ' '}({currentData.firstDayInWeek})
+          Number of sequenced samples on {currentData.month}
         </TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
@@ -120,7 +118,7 @@ export const TimeIntensityChart = React.memo(
                     <CustomTimeTick
                       activeIndex={activeIndex}
                       dataLength={data.length}
-                      currentValue={currentData.yearWeek}
+                      currentValue={currentData.month}
                     />
                   }
                 />

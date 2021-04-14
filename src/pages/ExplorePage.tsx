@@ -34,7 +34,7 @@ export const ExplorePage = ({
           title: 'Explore',
           content: (
             <>
-              <NamedSection title='Sequencing Intensity'>
+              <NamedSection title=''>
                 <SequencingIntensityPlotWidget.ShareableComponent title="Sequencing Intensity" country={country} height={300} />
               </NamedSection>
               <NamedSection title='Known variants'>

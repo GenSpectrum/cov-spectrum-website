@@ -6,7 +6,7 @@ import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
-import TimeIntensityChart from '../charts/TimeIntensityChart';
+import TimeIntensityChart, { TimeIntensityEntry } from '../charts/TimeIntensityChart';
 import Loader from '../components/Loader';
 
 // const PropsSchema = NewSampleSelectorSchema;
@@ -16,19 +16,20 @@ interface Props {
   country: Country;
 }
 
-const groupByMonth = (entries: SequencingIntensityEntry[]): any[] => {
+
+const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[] => {
   const groupedEntries = _(
     entries.map(d => ({
       firstDayInWeek: d.x,
-      yearWeek: d.x.split('-')[0] + d.x.split('-')[1],
+      yearWeek: d.x.split('-')[1] + '-' + d.x.split('-')[0],
       proportion: d.y.numberSequenced,
       quantity: d.y.numberCases,
     }))
   )
     .groupBy('yearWeek')
     .map((monthData, id) => ({
-      firstDayInWeek: id,
-      yearWeek: monthData[0].yearWeek,
+      id: id,
+      month: monthData[0].yearWeek,
       proportion: _.sumBy(monthData, 'proportion'),
       quantity: _.sumBy(monthData, 'quantity'),
     }))
