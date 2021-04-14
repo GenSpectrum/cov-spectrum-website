@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { omit } from 'lodash';
+import _ from 'lodash';
 import { getSequencingIntensity } from '../services/api';
 import { SequencingIntensityEntry, Country, CountrySchema } from '../services/api-types';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
@@ -16,13 +16,28 @@ interface Props {
   country: Country;
 }
 
-const processData = (data: SequencingIntensityEntry[]): any =>
-  data.map(d => ({
-    firstDayInWeek: d.x,
-    yearWeek: d.x,
-    proportion: d.y.numberSequenced,
-    quantity: d.y.numberCases,
-  }));
+const groupByMonth = (entries: SequencingIntensityEntry[]): any[] => {
+  const groupedEntries = _(
+    entries.map(d => ({
+      firstDayInWeek: d.x,
+      yearWeek: d.x.split('-')[0] + d.x.split('-')[1],
+      proportion: d.y.numberSequenced,
+      quantity: d.y.numberCases,
+    }))
+  )
+    .groupBy('yearWeek')
+    .map((monthData, id) => ({
+      firstDayInWeek: id,
+      yearWeek: monthData[0].yearWeek,
+      proportion: _.sumBy(monthData, 'proportion'),
+      quantity: _.sumBy(monthData, 'quantity'),
+    }))
+    .value();
+  console.log(groupedEntries);
+  return groupedEntries;
+};
+
+const processData = (data: SequencingIntensityEntry[]): any => (groupByMonth(data));
 
 export const SequencingIntensityPlot = ({ country }: Props) => {
   const [data, setData] = useState<SequencingIntensityEntry[] | undefined>(undefined);
@@ -56,17 +71,16 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
   );
 };
 
-
 export const SequencingIntensityPlotWidget = new Widget(
   new AsyncZodQueryEncoder(
     zod.object({
       country: CountrySchema,
     }),
     async (decoded: Props) => ({
-      ...omit(decoded, ['country']),
+      ..._.omit(decoded, ['country']),
       country: decoded.country,
     }),
-    async (encoded) => ({
+    async encoded => ({
       country: encoded.country,
     })
   ),
