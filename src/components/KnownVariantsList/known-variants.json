@@ -29,14 +29,14 @@
   },
   {
     "variant": {
-      "name": "20A.EU1",
+      "name": "B.1.177",
       "mutations": ["S:A222V", "N:A220V"]
     },
     "matchPercentage": 1
   },
   {
     "variant": {
-      "name": "20A.EU2",
+      "name": "B.1.160",
       "mutations": [
         "S:S477N",
         "N:M234I",
