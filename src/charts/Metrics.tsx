@@ -3,8 +3,8 @@ import ReactTooltip from 'react-tooltip';
 import { BiHelpCircle } from 'react-icons/bi';
 import styled from 'styled-components';
 
-const METRIC_RIGHT_PADDING = '3rem';
-const METRIC_WIDTH = '12rem';
+const METRIC_RIGHT_PADDING = '2rem';
+const METRIC_WIDTH = '10rem';
 
 export const MetricsWrapper = styled.div`
   padding: 1.5rem 0 1.4rem 0rem;

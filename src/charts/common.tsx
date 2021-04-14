@@ -47,7 +47,7 @@ const getTimeTickText = (value: string, dataLength: number, activeIndex: number,
     } else if (index % 2 === 0) {
       return value.slice(5);
     }
-  } else if (dataLength > 10) {
+  } else if (dataLength > 12) {
     return value.slice(5);
   } else if (dataLength > 5) {
     return value.slice(2);

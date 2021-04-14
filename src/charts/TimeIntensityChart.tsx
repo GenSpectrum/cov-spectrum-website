@@ -9,28 +9,18 @@ import {
   ChartWrapper,
   CustomTimeTick,
 } from './common';
+import { kFormat } from '../helpers/number';
 
 const CHART_MARGIN_RIGHT = 15;
 
 export type OnClickHandler = (index: number) => boolean;
 
-function numFormatter(num: number): number | string {
-  if (num > 999 && num < 1000000) {
-    return (num / 1000).toFixed(0) + 'K'; // convert to K for number from > 1000 < 1 million
-  } else if (num > 1000000) {
-    return (num / 1000000).toFixed(0) + 'M'; // convert to M for number from > 1 million
-  } else if (num < 900) {
-    return num; // if value < 1000, nothing to do
-  }
-  return num
-}
-
 export type TimeIntensityEntry = {
-  id?: string,
-  month: string,
-  proportion: number,
-  quantity: number,
-}
+  id?: string;
+  month: string;
+  proportion: number;
+  quantity: number;
+};
 
 export type Props = {
   data: TimeIntensityEntry[];
@@ -40,12 +30,7 @@ export type Props = {
 export const TimeIntensityChart = React.memo(
   ({ data, onClickHandler }: Props): JSX.Element => {
     const [activeIndex, setActiveIndex] = useState<number>(data.length - 1);
-    const [ready, setReady] = useState(false);
     const [currentData, setCurrentData] = useState<TimeIntensityEntry>(data[data.length - 1]);
-
-    useEffect(() => {
-      setReady(true);
-    }, []);
 
     const resetDefault = useCallback(() => {
       setCurrentData(data[data.length - 1]);
@@ -106,7 +91,7 @@ export const TimeIntensityChart = React.memo(
       </Bar>,
     ];
 
-    return ready && currentData ? (
+    return currentData ? (
       <Wrapper>
         <TitleWrapper id='graph_title'>Number of sequenced samples on {currentData.month}</TitleWrapper>
         <ChartAndMetricsWrapper>
@@ -119,7 +104,7 @@ export const TimeIntensityChart = React.memo(
                 onMouseLeave={handleMouseLeave}
               >
                 <XAxis
-                  dataKey='yearWeek'
+                  dataKey='month'
                   axisLine={false}
                   tickLine={false}
                   interval={0}
@@ -133,6 +118,7 @@ export const TimeIntensityChart = React.memo(
                 />
                 <YAxis
                   dataKey='quantity'
+                  tickFormatter={(v: number) => kFormat(v)}
                   interval={1}
                   axisLine={false}
                   tickLine={false}
@@ -149,13 +135,13 @@ export const TimeIntensityChart = React.memo(
           <MetricsWrapper>
             <MetricsSpacing />
             <Metric
-              value={numFormatter(currentData.quantity)}
+              value={kFormat(currentData.quantity)}
               title='Confirmed'
               color={colors.active}
               helpText='Number of confirmed caseson this time frame.'
             />
             <Metric
-              value={currentData.proportion}
+              value={kFormat(currentData.proportion)}
               title='Sequenced'
               color={colors.highlight}
               helpText='Number of samples sequenced among the confirmed cases on this time frame.'

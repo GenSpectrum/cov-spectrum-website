@@ -21,7 +21,7 @@ const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[]
   const groupedEntries = _(
     entries.map(d => ({
       firstDayInWeek: d.x,
-      yearWeek: d.x.split('-')[1] + '-' + d.x.split('-')[0],
+      yearWeek: d.x.split('-')[0] + '-' + d.x.split('-')[1],
       proportion: d.y.numberSequenced,
       quantity: d.y.numberCases,
     }))
