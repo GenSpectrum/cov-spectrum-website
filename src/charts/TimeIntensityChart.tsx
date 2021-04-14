@@ -14,6 +14,17 @@ const CHART_MARGIN_RIGHT = 15;
 
 export type OnClickHandler = (index: number) => boolean;
 
+function numFormatter(num: number): number | string {
+  if (num > 999 && num < 1000000) {
+    return (num / 1000).toFixed(0) + 'K'; // convert to K for number from > 1000 < 1 million
+  } else if (num > 1000000) {
+    return (num / 1000000).toFixed(0) + 'M'; // convert to M for number from > 1 million
+  } else if (num < 900) {
+    return num; // if value < 1000, nothing to do
+  }
+  return num
+}
+
 export type TimeIntensityEntry = {
   id?: string,
   month: string,
@@ -97,9 +108,7 @@ export const TimeIntensityChart = React.memo(
 
     return ready && currentData ? (
       <Wrapper>
-        <TitleWrapper id='graph_title'>
-          Number of sequenced samples on {currentData.month}
-        </TitleWrapper>
+        <TitleWrapper id='graph_title'>Number of sequenced samples on {currentData.month}</TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
             <ResponsiveContainer>
@@ -140,7 +149,7 @@ export const TimeIntensityChart = React.memo(
           <MetricsWrapper>
             <MetricsSpacing />
             <Metric
-              value={currentData.quantity}
+              value={numFormatter(currentData.quantity)}
               title='Confirmed'
               color={colors.active}
               helpText='Number of confirmed caseson this time frame.'
