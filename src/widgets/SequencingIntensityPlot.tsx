@@ -2,16 +2,11 @@ import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import { getSequencingIntensity } from '../services/api';
 import { SequencingIntensityEntry, Country, CountrySchema } from '../services/api-types';
-import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { Widget } from './Widget';
 import * as zod from 'zod';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import TimeIntensityChart, { TimeIntensityEntry } from '../charts/TimeIntensityChart';
 import Loader from '../components/Loader';
-
-// const PropsSchema = NewSampleSelectorSchema;
-// type Props = zod.infer<typeof PropsSchema>;
-
 interface Props {
   country: Country;
 }

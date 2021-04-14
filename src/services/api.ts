@@ -10,8 +10,6 @@ import {
   RawMultiSample,
   SampleResultList,
   SampleResultListSchema,
-  TimeDistributionEntrySchema,
-  TimeZipCodeDistributionEntrySchema,
   SequencingIntensityEntrySchema,
   SequencingIntensityEntry,
 } from './api-types';
