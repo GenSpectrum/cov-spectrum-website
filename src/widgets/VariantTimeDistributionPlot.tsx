@@ -18,9 +18,9 @@ export const VariantTimeDistributionPlot = ({ variantSampleSet, wholeSampleSet }
   const processedData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
     count: 0,
     proportion: 0,
-  }).map(({ isoWeek, count, proportion }) => ({
-    firstDayInWeek: isoWeek.firstDay.string,
-    yearWeek: isoWeek.yearWeekString,
+  }).map(({ key, value: { count, proportion } }) => ({
+    firstDayInWeek: key.firstDay.string,
+    yearWeek: key.yearWeekString,
     percent: proportion === undefined ? undefined : 100 * proportion,
     quantity: count,
   }));

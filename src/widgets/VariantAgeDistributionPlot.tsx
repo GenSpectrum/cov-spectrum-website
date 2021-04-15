@@ -27,7 +27,7 @@ const VariantAgeDistributionPlot = ({ variantSampleSet, wholeSampleSet }: Props)
     );
     return filledData
       .filter(({ key }) => key !== null)
-      .map(({ key, count, proportion }) => ({
+      .map(({ key, value: { count, proportion } }) => ({
         name: widthIsSmall ? key!.replace(/-\d+$/, '-') : key!,
         quantity: count,
         percent: proportion === undefined ? undefined : 100 * proportion,

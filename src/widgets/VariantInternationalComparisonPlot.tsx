@@ -57,17 +57,20 @@ const VariantInternationalComparisonPlot = ({
           count: 0,
           proportion: 0,
         })
-          .filter(({ proportion }) => proportion !== undefined && (!logScale || proportion > 0))
-          .map(({ proportion, ...rest }) => ({ ...rest, proportion: proportion! }));
+          .filter(({ value: { proportion } }) => proportion !== undefined && (!logScale || proportion > 0))
+          .map(({ value: { proportion, ...restValue }, key }) => ({
+            key,
+            value: { ...restValue, proportion: proportion! },
+          }));
 
         return {
           name: country,
           marker: { color },
           type: 'scatter',
           mode: 'lines+markers',
-          x: filledData.map(({ isoWeek }) => isoWeek.firstDay.string),
-          y: filledData.map(({ proportion }) => digitsForPercent(proportion)),
-          text: filledData.map(({ proportion }) => `${digitsForPercent(proportion)}%`),
+          x: filledData.map(({ key }) => key.firstDay.string),
+          y: filledData.map(({ value: { proportion } }) => digitsForPercent(proportion)),
+          text: filledData.map(({ value: { proportion } }) => `${digitsForPercent(proportion)}%`),
           hovertemplate: '%{text}',
         };
       }

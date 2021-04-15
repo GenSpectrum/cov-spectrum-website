@@ -95,26 +95,26 @@ describe('fillWeeklyApiData', () => {
     },
   ];
 
-  type Output = { isoWeek: UnifiedIsoWeek; y: number }[];
+  type Output = { key: UnifiedIsoWeek; value: number }[];
 
-  const fromTemplate = (template: [string, number][]): [UnifiedIsoWeek, { y: number }][] =>
-    template.map(([yearWeek, y]) => [globalDateCache.getIsoWeek(yearWeek), { y }]);
+  const fromTemplate = (template: [string, number][]): [UnifiedIsoWeek, number][] =>
+    template.map(([yearWeek, value]) => [globalDateCache.getIsoWeek(yearWeek), value]);
 
   // https://github.com/facebook/jest/issues/10577
   function assertOutputEqual(a: Output, b: Output) {
     const convertForEquality = (output: Output) =>
-      output.map(({ isoWeek, y }) => [isoWeek.yearWeekString, y]);
+      output.map(({ key, value }) => [key.yearWeekString, value]);
     expect(convertForEquality(a)).toEqual(convertForEquality(b));
-    expect(a.every((va, i) => va.isoWeek === b[i].isoWeek)).toBe(true);
+    expect(a.every((va, i) => va.key === b[i].key)).toBe(true);
   }
 
   for (const c of cases) {
     // eslint-disable-next-line jest/valid-title
     test(c.label, () => {
-      const expectedOutput: Output = fromTemplate(c.output).map(([isoWeek, { y }]) => ({ isoWeek, y }));
+      const expectedOutput: Output = fromTemplate(c.output).map(([key, value]) => ({ key, value }));
       for (let i = 0; i < 5; i++) {
         const inputMap = new Map(shuffle(fromTemplate(c.input)));
-        const actualOutput = fillFromWeeklyMap(inputMap, { y: c.fillValue });
+        const actualOutput = fillFromWeeklyMap(inputMap, c.fillValue);
         assertOutputEqual(actualOutput, expectedOutput);
       }
     });
@@ -197,16 +197,15 @@ describe('fillFromPrimitiveMap', () => {
     },
   ];
 
-  const fromTemplate = <T>(template: [T, number][]) =>
-    template.map(([x, y]): [T, { y: number }] => [x, { y }]);
+  const fromTemplate = <T>(template: [T, number][]) => template.map(([x, y]): [T, number] => [x, y]);
 
   for (const c of cases) {
     // eslint-disable-next-line jest/valid-title
     test(c.label, () => {
-      const expectedOutput = fromTemplate(c.output).map(([key, { y }]) => ({ key, y }));
+      const expectedOutput = fromTemplate(c.output).map(([key, value]) => ({ key, value }));
       for (let i = 0; i < 5; i++) {
         const inputMap = new Map(shuffle(fromTemplate(c.input)));
-        expect(fillFromPrimitiveMap(inputMap, c.possibleKeys, { y: c.fillValue })).toEqual(expectedOutput);
+        expect(fillFromPrimitiveMap(inputMap, c.possibleKeys, c.fillValue)).toEqual(expectedOutput);
       }
     });
   }
@@ -221,7 +220,7 @@ describe('fillFromPrimitiveMap', () => {
           ])
         ),
         ['10-19', '20-29', '30-39'],
-        { y: 0 }
+        0
       )
     ).toThrow();
   });

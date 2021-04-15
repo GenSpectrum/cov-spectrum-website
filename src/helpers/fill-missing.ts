@@ -1,20 +1,23 @@
 import { globalDateCache, UnifiedIsoWeek } from './date-cache';
 
-export function fillFromWeeklyMap<T>(
-  unsortedOriginalData: Map<UnifiedIsoWeek, T>,
-  filler: T
-): (T & { isoWeek: UnifiedIsoWeek })[] {
+export function fillFromWeeklyMap<V>(
+  unsortedOriginalData: Map<UnifiedIsoWeek, V>,
+  filler: V
+): { key: UnifiedIsoWeek; value: V }[] {
   const sortedFilledWeeks = globalDateCache.weeksFromRange(
     globalDateCache.rangeFromWeeks(unsortedOriginalData.keys())
   );
-  return sortedFilledWeeks.map(isoWeek => ({ ...(unsortedOriginalData.get(isoWeek) ?? filler), isoWeek }));
+  return sortedFilledWeeks.map(isoWeek => ({
+    key: isoWeek,
+    value: unsortedOriginalData.get(isoWeek) ?? filler,
+  }));
 }
 
 export function fillFromPrimitiveMap<K, V>(
   unsortedOriginalData: Map<K, V>,
   possibleKeys: K[],
   filler: V
-): (V & { key: K })[] {
+): { key: K; value: V }[] {
   const possibleKeysSet = new Set(possibleKeys);
   for (const key of unsortedOriginalData.keys()) {
     if (!possibleKeysSet.has(key)) {
@@ -22,7 +25,7 @@ export function fillFromPrimitiveMap<K, V>(
     }
   }
 
-  return possibleKeys.map(key => ({ ...(unsortedOriginalData.get(key) ?? filler), key }));
+  return possibleKeys.map(key => ({ key, value: unsortedOriginalData.get(key) ?? filler }));
 }
 
 export const possibleAgeKeys = [
