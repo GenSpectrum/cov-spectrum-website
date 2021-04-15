@@ -7,6 +7,7 @@ import * as zod from 'zod';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import TimeIntensityChart, { TimeIntensityEntry } from '../charts/TimeIntensityChart';
 import Loader from '../components/Loader';
+
 interface Props {
   country: Country;
 }
@@ -70,13 +71,8 @@ export const SequencingIntensityPlotWidget = new Widget(
     zod.object({
       country: CountrySchema,
     }),
-    async (decoded: Props) => ({
-      ..._.omit(decoded, ['country']),
-      country: decoded.country,
-    }),
-    async encoded => ({
-      country: encoded.country,
-    })
+    async (decoded: Props) => decoded,
+    async encoded => encoded
   ),
   SequencingIntensityPlot,
   'SequencingIntensityPlot'

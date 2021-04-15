@@ -152,7 +152,6 @@ export const getSampleFastaUrl = ({
 
 export const getSequencingIntensity = ({
   country,
-  dataType = SamplingStrategy.Surveillance,
   signal,
 }: {
   country: Country;
