@@ -163,7 +163,6 @@ export const getSequencingIntensity = ({
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
     .then(data => {
-      console.log(data);
       return zod.array(SequencingIntensityEntrySchema).parse(data);
     });
 };

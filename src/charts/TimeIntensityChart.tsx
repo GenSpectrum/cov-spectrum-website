@@ -146,6 +146,13 @@ export const TimeIntensityChart = React.memo(
               color={colors.highlight}
               helpText='Number of samples sequenced among the confirmed cases on this time frame.'
             />
+            <Metric
+              value={((currentData.proportion / currentData.quantity) * 100).toFixed(2)}
+              title='Proportion'
+              color={colors.highlight}
+              helpText='The proportion of sequenced samples'
+              percent={true}
+            />
           </MetricsWrapper>
         </ChartAndMetricsWrapper>
       </Wrapper>

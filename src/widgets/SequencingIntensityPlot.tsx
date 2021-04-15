@@ -28,7 +28,6 @@ const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[]
       quantity: _.sumBy(monthData, 'quantity'),
     }))
     .value();
-  console.log(groupedEntries);
   return groupedEntries;
 };
 
