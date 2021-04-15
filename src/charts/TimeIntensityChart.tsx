@@ -138,7 +138,7 @@ export const TimeIntensityChart = React.memo(
               value={kFormat(currentData.quantity)}
               title='Confirmed'
               color={colors.active}
-              helpText='Number of confirmed caseson this time frame.'
+              helpText='Number of confirmed cases in this time frame.'
             />
             <Metric
               value={kFormat(currentData.proportion)}
