@@ -47,8 +47,8 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
   const variants = useMemo(() => {
     const uniqueVisibleMutations = new Set();
     return data?.variants
-      .map((v: any) => {
-        const visibleMutations = v.mutations.filter((m: any) => {
+      .map(v => {
+        const visibleMutations = v.mutations.filter(m => {
           if (geneFilter !== '-' && !m.mutation.startsWith(geneFilter + ':')) {
             return false;
           }
@@ -60,11 +60,11 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
         return {
           ...v,
           visibleMutations,
-          visibleMutationsString: sortMutationList(visibleMutations.map((m: any) => m.mutation)).join(','),
+          visibleMutationsString: sortMutationList(visibleMutations.map(m => m.mutation)).join(','),
         };
       })
-      .filter((v: any) => v.visibleMutations.length > 0)
-      .filter((v: any) => {
+      .filter(v => v.visibleMutations.length > 0)
+      .filter(v => {
         // We don't want duplicates and will only show unique visible mutations. The variant with the highest estimated
         // fitness advantage (i.e. on the top of the list) should be kept.
         if (uniqueVisibleMutations.has(v.visibleMutationsString)) {
