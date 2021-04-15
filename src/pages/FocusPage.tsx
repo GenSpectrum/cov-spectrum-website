@@ -15,6 +15,7 @@ import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021Fitnes
 import { AccountService } from '../services/AccountService';
 import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
+import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 
@@ -129,6 +130,17 @@ export const FocusPage = ({
               variantInternationalSampleSetState={variantInternationalSampleSetState}
               wholeInternationalSampleSetState={wholeInternationalSampleSetState}
             />
+          </GridCell>
+        )}
+        {loggedIn && country === 'Switzerland' && (
+          <GridCell minWidth={600}>
+            <NamedCard title='Hospitalization and death'>
+              <HospitalizationDeathPlot
+                field='hospitalized'
+                variantSampleSet={variantSampleSet}
+                wholeSampleSet={wholeSampleSet}
+              />
+            </NamedCard>
           </GridCell>
         )}
       </PackedGrid>

@@ -3,8 +3,8 @@ import ReactTooltip from 'react-tooltip';
 import { BiHelpCircle } from 'react-icons/bi';
 import styled from 'styled-components';
 
-const METRIC_RIGHT_PADDING = '2rem';
-const METRIC_WIDTH = '10rem';
+export const METRIC_RIGHT_PADDING_PX = 32;
+export const METRIC_WIDTH_PX = 160;
 
 export const MetricsWrapper = styled.div`
   padding: 1.5rem 0 1.4rem 0rem;
@@ -52,8 +52,8 @@ const MetricWrapper = styled.div`
   flex-direction: column;
   justify-content: flex-end;
   height: 100%;
-  padding-right: ${METRIC_RIGHT_PADDING};
-  width: ${METRIC_WIDTH};
+  padding-right: ${METRIC_RIGHT_PADDING_PX}px;
+  width: ${METRIC_WIDTH_PX}px;
   flex: 1;
   flex-grow: 0;
 `;
