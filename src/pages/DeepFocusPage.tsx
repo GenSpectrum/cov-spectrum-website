@@ -15,6 +15,7 @@ import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021Fitness
 import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { HospitalizationDeathDeepFocus } from '../components/HospitalizationDeathDeepFocus';
+import { WasteWaterDeepFocus } from '../components/WasteWaterDeepFocus';
 
 interface SyncProps {
   country: Country;
@@ -100,6 +101,11 @@ const routes: DeepFocusRoute[] = [
         wholeSampleSet={props.wholeSampleSet}
       />
     ),
+  },
+  {
+    key: 'waste-water',
+    title: 'Results from waste water',
+    content: props => <WasteWaterDeepFocus />,
   },
 ];
 

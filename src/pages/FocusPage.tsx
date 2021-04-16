@@ -19,6 +19,7 @@ import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { VariantLineages } from '../components/VariantLineages';
+import { TimeHeatMapChart } from '../charts/TimeHeatMapChart';
 
 interface Props {
   country: Country;
@@ -36,6 +37,7 @@ const deepFocusPaths = {
   internationalComparison: '/international-comparison',
   chen2021Fitness: '/chen-2021-fitness',
   hospitalizationAndDeath: '/hospitalization-death',
+  wasteWater: '/waste-water',
 };
 
 export const FocusPage = ({
@@ -141,6 +143,20 @@ export const FocusPage = ({
             </NamedCard>
           </GridCell>
         )}
+        {country === 'Switzerland' && variant.name === 'B.1.1.7' && (
+          <GridCell minWidth={600}>
+            <NamedCard title='Results from waste water' toolbar={deepFocusButtons.wasteWater}>
+              Coming..
+            </NamedCard>
+          </GridCell>
+        )}
+        <GridCell minWidth={600}>
+          <NamedCard title='Fitness advantage estimation' toolbar={deepFocusButtons.chen2021Fitness}>
+            <div style={{ height: 300 }}>
+              <Chen2021FitnessPreview {...plotProps} />
+            </div>
+          </NamedCard>
+        </GridCell>
         {samplingStrategy === SamplingStrategy.AllSamples && (
           <GridCell minWidth={600}>
             <AsyncVariantInternationalComparisonPlot
