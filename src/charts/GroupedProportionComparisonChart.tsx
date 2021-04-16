@@ -67,15 +67,31 @@ export interface ValueWithConfidence {
   confidenceInterval: [number, number];
 }
 
+export interface TopLevelTexts {
+  left: SubgroupTexts;
+}
+
+export interface SubgroupTexts {
+  true: LeafTexts;
+  false: LeafTexts;
+}
+
+export interface LeafTexts {
+  title: string;
+  helpText: string;
+}
+
 export type Props = {
   data: GroupValue[];
+  total: { left: SubgroupValue; right: SubgroupValue };
+  texts: TopLevelTexts;
   width: number;
   height: number;
   onClickHandler?: OnClickHandler;
 };
 
 export const GroupedProportionComparisonChart = React.memo(
-  ({ data, width, height, onClickHandler }: Props): JSX.Element => {
+  ({ data, total, texts, width, height, onClickHandler }: Props): JSX.Element => {
     const [currentData, setCurrentData] = useState<GroupValue | undefined>();
 
     useEffect(() => {
@@ -105,6 +121,8 @@ export const GroupedProportionComparisonChart = React.memo(
           y: proportion.value,
           yError: proportion.confidenceInterval.map(v => Math.abs(proportion.value - v)),
         }));
+
+    const metricData = currentData || total;
 
     return (
       <Wrapper>
@@ -152,11 +170,16 @@ export const GroupedProportionComparisonChart = React.memo(
           <MetricsWrapper>
             <MetricsSpacing />
             <Metric
-              value={5}
-              title='Proportion'
+              value={metricData.left.countTrue}
+              title={texts.left.true.title}
               color={colors.active}
-              helpText='Proportion relative to all samples collected from this age group.'
-              percent={true}
+              helpText={texts.left.true.helpText}
+            />
+            <Metric
+              value={metricData.left.countFalse}
+              title={texts.left.false.title}
+              color={colors.active}
+              helpText={texts.left.false.helpText}
             />
           </MetricsWrapper>
         </ChartAndMetricsWrapper>
