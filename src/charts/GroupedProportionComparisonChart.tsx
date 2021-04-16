@@ -1,5 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Bar, CartesianGrid, ComposedChart, ErrorBar, Scatter, XAxis, YAxis } from 'recharts';
+import {
+  Bar,
+  BarProps,
+  CartesianGrid,
+  ComposedChart,
+  ErrorBar,
+  Scatter,
+  ScatterProps,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from './common';
 import Metric, { MetricsSpacing, MetricsWrapper, METRIC_RIGHT_PADDING_PX, METRIC_WIDTH_PX } from './Metrics';
 
@@ -134,6 +144,13 @@ export const GroupedProportionComparisonChart = React.memo(
 
     const metricData = currentData || total;
 
+    const commonProps: Partial<Omit<BarProps & ScatterProps, 'ref'>> = {
+      onMouseEnter: handleMouseEnter,
+      onClick: handleClick,
+      cursor: onClickHandler && 'pointer',
+      isAnimationActive: false,
+    };
+
     return (
       <Wrapper>
         <ChartAndMetricsWrapper>
@@ -162,29 +179,16 @@ export const GroupedProportionComparisonChart = React.memo(
                 scale='linear'
               />
               <CartesianGrid vertical={false} />
-              <Bar
-                dataKey='y'
-                fill='transparent'
-                onMouseEnter={handleMouseEnter}
-                onClick={handleClick}
-                cursor={onClickHandler && 'pointer'}
-                isAnimationActive={false}
-              />
+              <Bar {...commonProps} dataKey='y' fill='transparent' />
               <Scatter
+                {...commonProps}
                 data={makeScatterData('reference', { active: colors.secondary, inactive: colors.inactive })}
                 fill={colors.secondary}
                 shape={ScatterBarShape}
-                onMouseEnter={handleMouseEnter}
-                onClick={handleClick}
-                cursor={onClickHandler && 'pointer'}
-                isAnimationActive={false}
               />
               <Scatter
+                {...commonProps}
                 data={makeScatterData('subject', { active: colors.active, inactive: colors.inactive })}
-                onMouseEnter={handleMouseEnter}
-                onClick={handleClick}
-                cursor={onClickHandler && 'pointer'}
-                isAnimationActive={false}
               >
                 <ErrorBar direction='y' dataKey='yErrorActive' stroke={colors.active} />
                 <ErrorBar direction='y' dataKey='yErrorInactive' stroke={colors.inactive} />
