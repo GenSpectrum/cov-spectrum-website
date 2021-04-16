@@ -8,6 +8,7 @@ import {
 } from '../charts/GroupedProportionComparisonChart';
 import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
+import calculateWilsonInterval from 'wilson-interval';
 
 interface Props {
   variantSampleSet: SampleSetWithSelector;
@@ -37,16 +38,21 @@ function processCounts(
     }
   }
 
+  if (countTrue + countFalse === 0) {
+    return { countTrue, countFalse };
+  }
+
+  const wilsonInterval = calculateWilsonInterval(countTrue, countTrue + countFalse, false, {
+    confidence: 0.95,
+    precision: 10,
+  });
   return {
     countTrue,
     countFalse,
-    proportion:
-      countTrue + countFalse === 0
-        ? undefined
-        : {
-            value: countTrue / (countTrue + countFalse),
-            confidenceInterval: [0, 1],
-          },
+    proportion: {
+      value: countTrue / (countTrue + countFalse),
+      confidenceInterval: [+wilsonInterval.low, +wilsonInterval.high],
+    },
   };
 }
 

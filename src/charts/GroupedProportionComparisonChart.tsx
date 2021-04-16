@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { CartesianGrid, Scatter, ScatterChart, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, ErrorBar, Scatter, ScatterChart, XAxis, YAxis } from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from './common';
 import Metric, { MetricsSpacing, MetricsWrapper, METRIC_RIGHT_PADDING_PX, METRIC_WIDTH_PX } from './Metrics';
 
@@ -86,11 +86,13 @@ export const GroupedProportionComparisonChart = React.memo(
 
     const makeScatterData = (side: 'left' | 'right') =>
       data
-        .map(({ label, [side]: sideData }, i) => ({
+        .filter(({ [side]: sideData }) => sideData.proportion !== undefined)
+        .map(({ label, [side]: sideData }) => ({ label, proportion: sideData.proportion! }))
+        .map(({ label, proportion }, i) => ({
           label,
-          y: sideData.proportion?.value,
-        }))
-        .filter(({ y }) => y !== undefined);
+          y: proportion.value,
+          yError: proportion.confidenceInterval.map(v => Math.abs(proportion.value - v)),
+        }));
 
     return (
       <Wrapper>
@@ -110,7 +112,11 @@ export const GroupedProportionComparisonChart = React.memo(
                 interval={0}
                 tick={<CustomTick currentValue={currentData?.label} />}
               />
-              <YAxis dataKey='y' />
+              <YAxis
+                dataKey='y'
+                domain={[0, (dataMax: number) => Math.min(1, Math.ceil(dataMax * 10) / 10)]}
+                scale='linear'
+              />
               <CartesianGrid vertical={false} />
               <Scatter
                 data={makeScatterData('left')}
@@ -118,7 +124,9 @@ export const GroupedProportionComparisonChart = React.memo(
                 onMouseEnter={handleMouseEnter}
                 onClick={handleClick}
                 isAnimationActive={false}
-              />
+              >
+                <ErrorBar direction='y' dataKey='yError' />
+              </Scatter>
               <Scatter
                 data={makeScatterData('right')}
                 fill='red'
