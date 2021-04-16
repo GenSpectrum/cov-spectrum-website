@@ -50,6 +50,11 @@ const ScatterBarShape = ({ cx, cy, fill }: ScatterBarShapeProps) => {
   );
 };
 
+interface PerTrueFalse<T> {
+  true: T;
+  false: T;
+}
+
 export interface GroupValue {
   label: string;
   subject: SubgroupValue;
@@ -57,8 +62,7 @@ export interface GroupValue {
 }
 
 export interface SubgroupValue {
-  countTrue: number;
-  countFalse: number;
+  count: PerTrueFalse<number>;
   proportion?: ValueWithConfidence;
 }
 
@@ -68,12 +72,7 @@ export interface ValueWithConfidence {
 }
 
 export interface TopLevelTexts {
-  subject: SubgroupTexts;
-}
-
-export interface SubgroupTexts {
-  true: LeafTexts;
-  false: LeafTexts;
+  subject: PerTrueFalse<LeafTexts>;
 }
 
 export interface LeafTexts {
@@ -170,13 +169,13 @@ export const GroupedProportionComparisonChart = React.memo(
           <MetricsWrapper>
             <MetricsSpacing />
             <Metric
-              value={metricData.subject.countTrue}
+              value={metricData.subject.count.true}
               title={texts.subject.true.title}
               color={colors.active}
               helpText={texts.subject.true.helpText}
             />
             <Metric
-              value={metricData.subject.countFalse}
+              value={metricData.subject.count.false}
               title={texts.subject.false.title}
               color={colors.active}
               helpText={texts.subject.false.helpText}

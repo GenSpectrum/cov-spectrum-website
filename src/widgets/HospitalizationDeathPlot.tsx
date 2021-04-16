@@ -21,36 +21,34 @@ function processCounts(
   negativeSamples: ParsedMultiSample[],
   field: 'hospitalized' | 'deceased'
 ): SubgroupValue {
-  let countTrue = 0;
-  let countFalse = 0;
+  let count = { true: 0, false: 0 };
   for (const [k, v] of new SampleSet(positiveSamples, null).countByField(field)) {
     if (k === true) {
-      countTrue += v;
+      count.true += v;
     } else if (k === false) {
-      countFalse += v;
+      count.false += v;
     }
   }
   for (const [k, v] of new SampleSet(negativeSamples, null).countByField(field)) {
     if (k === true) {
-      countTrue -= v;
+      count.true -= v;
     } else if (k === false) {
-      countFalse -= v;
+      count.false -= v;
     }
   }
 
-  if (countTrue + countFalse === 0) {
-    return { countTrue, countFalse };
+  if (count.true + count.false === 0) {
+    return { count };
   }
 
-  const wilsonInterval = calculateWilsonInterval(countTrue, countTrue + countFalse, false, {
+  const wilsonInterval = calculateWilsonInterval(count.true, count.true + count.false, false, {
     confidence: 0.95,
     precision: 10,
   });
   return {
-    countTrue,
-    countFalse,
+    count,
     proportion: {
-      value: countTrue / (countTrue + countFalse),
+      value: count.true / (count.true + count.false),
       confidenceInterval: [+wilsonInterval.low, +wilsonInterval.high],
     },
   };
@@ -82,13 +80,13 @@ export const HospitalizationDeathPlot = ({ variantSampleSet, wholeSampleSet, fie
   }, [variantSampleSet, wholeSampleSet, field, widthIsSmall]);
 
   const total = useMemo(() => {
-    const total = { subject: { countTrue: 0, countFalse: 0 }, reference: { countTrue: 0, countFalse: 0 } };
+    const total = { subject: { count: { true: 0, false: 0 } }, reference: { count: { true: 0, false: 0 } } };
     for (const entry of processedData) {
       for (const [_k0, v0] of Object.entries(total)) {
         const k0 = _k0 as 'subject' | 'reference';
-        for (const _k1 of Object.keys(v0)) {
-          const k1 = _k1 as 'countTrue' | 'countFalse';
-          v0[k1] += entry[k0][k1];
+        for (const _k1 of Object.keys(v0.count)) {
+          const k1 = _k1 as 'true' | 'false';
+          v0.count[k1] += entry[k0].count[k1];
         }
       }
     }
