@@ -45,9 +45,7 @@ export const FocusVariantHeaderControls = ({
           placement='bottom'
           overlay={
             <Tooltip id='tooltip-show-on-nextclade'>
-              Due to licensing reasons, we can currently only provide sequences submitted by the D-BSSE, ETHZ
-              for an analysis on Nextclade. If you are a submitter to GISAID and are happy to give us the
-              right to show your sequences here, please contact us!
+              Note: We can only use our own sequences for the Nextclade analysis.
             </Tooltip>
           }
         >
