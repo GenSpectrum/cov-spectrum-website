@@ -1,6 +1,7 @@
 import { TimeHeatMapChart } from '../charts/TimeHeatMapChart';
 import React from 'react';
 import { NamedCard } from './NamedCard';
+import {NamedSection} from "./NamedSection";
 
 export const WasteWaterDeepFocus = () => {
   return (
@@ -32,6 +33,20 @@ export const WasteWaterDeepFocus = () => {
           <TimeHeatMapChart />
         </div>
       </NamedCard>
+
+      <div style={{marginTop: '50px'}}>
+        <NamedSection title='References'>
+          <ul>
+            <li>
+              Jahn, Katharina, et al. "Detection of SARS-CoV-2 variants in Switzerland by genomic analysis of wastewater samples."
+              medRxiv (2021); doi:{' '}
+              <a href='https://doi.org/10.1101/2021.01.08.21249379' target='_blank' rel='noreferrer'>
+                10.1101/2021.01.08.21249379
+              </a>
+            </li>
+          </ul>
+        </NamedSection>
+      </div>
     </>
   );
 };
