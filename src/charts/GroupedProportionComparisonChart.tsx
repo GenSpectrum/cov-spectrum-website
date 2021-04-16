@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CartesianGrid, ErrorBar, Scatter, ScatterChart, XAxis, YAxis } from 'recharts';
+import { Bar, CartesianGrid, ComposedChart, ErrorBar, Scatter, ScatterChart, XAxis, YAxis } from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from './common';
 import Metric, { MetricsSpacing, MetricsWrapper, METRIC_RIGHT_PADDING_PX, METRIC_WIDTH_PX } from './Metrics';
 
@@ -128,17 +128,23 @@ export const GroupedProportionComparisonChart = React.memo(
           stroke: isActive ? fill.active : fill.inactive,
         }));
 
+    // HACK Render transparent "bars" in the chart so that hovers
+    // work anywhere, instead of only exactly on the scatter markers
+    const hoverBarData = data.map(({ label }) => ({ label, y: 1 }));
+
     const metricData = currentData || total;
 
     return (
       <Wrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
-            <ScatterChart
+            <ComposedChart
               width={width - METRIC_WIDTH_PX - METRIC_RIGHT_PADDING_PX}
               height={height}
               margin={{ top: 6, right: 0, left: 0, bottom: 0 }}
               onMouseLeave={handleMouseLeave}
+              data={hoverBarData}
+              barCategoryGap='0%'
             >
               <XAxis
                 dataKey='label'
@@ -154,24 +160,34 @@ export const GroupedProportionComparisonChart = React.memo(
                 scale='linear'
               />
               <CartesianGrid vertical={false} />
+              <Bar
+                dataKey='y'
+                fill='transparent'
+                onMouseEnter={handleMouseEnter}
+                onClick={handleClick}
+                cursor={onClickHandler && 'pointer'}
+                isAnimationActive={false}
+              />
               <Scatter
                 data={makeScatterData('reference', { active: colors.secondary, inactive: colors.inactive })}
                 fill={colors.secondary}
                 shape={ScatterBarShape}
                 onMouseEnter={handleMouseEnter}
                 onClick={handleClick}
+                cursor={onClickHandler && 'pointer'}
                 isAnimationActive={false}
               />
               <Scatter
                 data={makeScatterData('subject', { active: colors.active, inactive: colors.inactive })}
                 onMouseEnter={handleMouseEnter}
                 onClick={handleClick}
+                cursor={onClickHandler && 'pointer'}
                 isAnimationActive={false}
               >
                 <ErrorBar direction='y' dataKey='yErrorActive' stroke={colors.active} />
                 <ErrorBar direction='y' dataKey='yErrorInactive' stroke={colors.inactive} />
               </Scatter>
-            </ScatterChart>
+            </ComposedChart>
           </ChartWrapper>
           <MetricsWrapper>
             <MetricsSpacing />
