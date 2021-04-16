@@ -76,18 +76,14 @@ export type Props = {
 
 export const GroupedProportionComparisonChart = React.memo(
   ({ data, width, height, onClickHandler }: Props): JSX.Element => {
-    const [activeIndex, setActiveIndex] = useState<number>();
-    const currentData = useMemo<GroupValue | undefined>(
-      () => (activeIndex === undefined ? undefined : data[activeIndex]),
-      [data, activeIndex]
-    );
+    const [currentData, setCurrentData] = useState<GroupValue | undefined>();
 
     useEffect(() => {
-      setActiveIndex(undefined);
+      setCurrentData(undefined);
     }, [data]);
 
     const handleMouseEnter = (context: unknown, index: number): void => {
-      setActiveIndex(index);
+      setCurrentData(data[index]);
     };
 
     const handleClick = (context: unknown, index: number): void => {
@@ -97,7 +93,7 @@ export const GroupedProportionComparisonChart = React.memo(
     };
 
     const handleMouseLeave = (): void => {
-      setActiveIndex(undefined);
+      setCurrentData(undefined);
     };
 
     const makeScatterData = (side: 'left' | 'right') =>
