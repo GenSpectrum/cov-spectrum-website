@@ -75,17 +75,17 @@ export const HospitalizationDeathPlot = ({ variantSampleSet, wholeSampleSet, fie
 
       return {
         label: widthIsSmall ? (key ? key.replace(/-\d+$/, '-') : '?') : key ? key : 'Unk.',
-        left: processCounts(variantSamples, [], field),
-        right: processCounts(wholeSamples, variantSamples, field),
+        subject: processCounts(variantSamples, [], field),
+        reference: processCounts(wholeSamples, variantSamples, field),
       };
     });
   }, [variantSampleSet, wholeSampleSet, field, widthIsSmall]);
 
   const total = useMemo(() => {
-    const total = { left: { countTrue: 0, countFalse: 0 }, right: { countTrue: 0, countFalse: 0 } };
+    const total = { subject: { countTrue: 0, countFalse: 0 }, reference: { countTrue: 0, countFalse: 0 } };
     for (const entry of processedData) {
       for (const [_k0, v0] of Object.entries(total)) {
-        const k0 = _k0 as 'left' | 'right';
+        const k0 = _k0 as 'subject' | 'reference';
         for (const _k1 of Object.keys(v0)) {
           const k1 = _k1 as 'countTrue' | 'countFalse';
           v0[k1] += entry[k0][k1];
@@ -102,7 +102,7 @@ export const HospitalizationDeathPlot = ({ variantSampleSet, wholeSampleSet, fie
           data={processedData}
           total={total}
           texts={{
-            left: {
+            subject: {
               true: {
                 title: 'Hospitalized',
                 helpText: 'Number of samples taken from patients who were eventually hospitalized',

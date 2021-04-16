@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CartesianGrid, ErrorBar, Scatter, ScatterChart, XAxis, YAxis } from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from './common';
 import Metric, { MetricsSpacing, MetricsWrapper, METRIC_RIGHT_PADDING_PX, METRIC_WIDTH_PX } from './Metrics';
@@ -52,8 +52,8 @@ const ScatterBarShape = ({ cx, cy, fill }: ScatterBarShapeProps) => {
 
 export interface GroupValue {
   label: string;
-  left: SubgroupValue;
-  right: SubgroupValue;
+  subject: SubgroupValue;
+  reference: SubgroupValue;
 }
 
 export interface SubgroupValue {
@@ -68,7 +68,7 @@ export interface ValueWithConfidence {
 }
 
 export interface TopLevelTexts {
-  left: SubgroupTexts;
+  subject: SubgroupTexts;
 }
 
 export interface SubgroupTexts {
@@ -83,7 +83,7 @@ export interface LeafTexts {
 
 export type Props = {
   data: GroupValue[];
-  total: { left: SubgroupValue; right: SubgroupValue };
+  total: { subject: SubgroupValue; reference: SubgroupValue };
   texts: TopLevelTexts;
   width: number;
   height: number;
@@ -112,7 +112,7 @@ export const GroupedProportionComparisonChart = React.memo(
       setCurrentData(undefined);
     };
 
-    const makeScatterData = (side: 'left' | 'right') =>
+    const makeScatterData = (side: 'subject' | 'reference') =>
       data
         .filter(({ [side]: sideData }) => sideData.proportion !== undefined)
         .map(({ label, [side]: sideData }) => ({ label, proportion: sideData.proportion! }))
@@ -149,7 +149,7 @@ export const GroupedProportionComparisonChart = React.memo(
               />
               <CartesianGrid vertical={false} />
               <Scatter
-                data={makeScatterData('right')}
+                data={makeScatterData('reference')}
                 fill={colors.secondary}
                 shape={ScatterBarShape}
                 onMouseEnter={handleMouseEnter}
@@ -157,7 +157,7 @@ export const GroupedProportionComparisonChart = React.memo(
                 isAnimationActive={false}
               />
               <Scatter
-                data={makeScatterData('left')}
+                data={makeScatterData('subject')}
                 fill={colors.active}
                 onMouseEnter={handleMouseEnter}
                 onClick={handleClick}
@@ -170,16 +170,16 @@ export const GroupedProportionComparisonChart = React.memo(
           <MetricsWrapper>
             <MetricsSpacing />
             <Metric
-              value={metricData.left.countTrue}
-              title={texts.left.true.title}
+              value={metricData.subject.countTrue}
+              title={texts.subject.true.title}
               color={colors.active}
-              helpText={texts.left.true.helpText}
+              helpText={texts.subject.true.helpText}
             />
             <Metric
-              value={metricData.left.countFalse}
-              title={texts.left.false.title}
+              value={metricData.subject.countFalse}
+              title={texts.subject.false.title}
               color={colors.active}
-              helpText={texts.left.false.helpText}
+              helpText={texts.subject.false.helpText}
             />
           </MetricsWrapper>
         </ChartAndMetricsWrapper>
