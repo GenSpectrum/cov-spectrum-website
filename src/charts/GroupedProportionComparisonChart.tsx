@@ -34,6 +34,22 @@ const CustomTick = ({ x, y, payload, currentValue }: CustomTickProps): JSX.Eleme
   );
 };
 
+interface ScatterBarShapeProps {
+  cx: number;
+  cy: number;
+  fill?: string;
+}
+
+const ScatterBarShape = ({ cx, cy, fill }: ScatterBarShapeProps) => {
+  const width = 18;
+  const height = 6;
+  return (
+    <g transform={`translate(${cx}, ${cy}) scale(${width / 2}, ${height / 2})`}>
+      <polygon points='-1,0 0,1 1,0 0,-1' fill={fill} />
+    </g>
+  );
+};
+
 export interface GroupValue {
   label: string;
   left: SubgroupValue;
@@ -119,21 +135,22 @@ export const GroupedProportionComparisonChart = React.memo(
               />
               <CartesianGrid vertical={false} />
               <Scatter
-                data={makeScatterData('left')}
-                fill='#8884d8'
-                onMouseEnter={handleMouseEnter}
-                onClick={handleClick}
-                isAnimationActive={false}
-              >
-                <ErrorBar direction='y' dataKey='yError' />
-              </Scatter>
-              <Scatter
                 data={makeScatterData('right')}
-                fill='red'
+                fill={colors.secondary}
+                shape={ScatterBarShape}
                 onMouseEnter={handleMouseEnter}
                 onClick={handleClick}
                 isAnimationActive={false}
               />
+              <Scatter
+                data={makeScatterData('left')}
+                fill={colors.active}
+                onMouseEnter={handleMouseEnter}
+                onClick={handleClick}
+                isAnimationActive={false}
+              >
+                <ErrorBar direction='y' dataKey='yError' stroke={colors.active} />
+              </Scatter>
             </ScatterChart>
           </ChartWrapper>
           <MetricsWrapper>
