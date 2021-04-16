@@ -156,6 +156,8 @@ export const GroupedProportionComparisonChart = React.memo(
               />
               <YAxis
                 dataKey='y'
+                axisLine={false}
+                tickLine={false}
                 domain={[0, (dataMax: number) => Math.min(1, Math.ceil(dataMax * 10) / 10)]}
                 scale='linear'
               />
