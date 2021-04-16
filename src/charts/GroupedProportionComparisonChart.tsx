@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Bar, CartesianGrid, ComposedChart, ErrorBar, Scatter, ScatterChart, XAxis, YAxis } from 'recharts';
+import { Bar, CartesianGrid, ComposedChart, ErrorBar, Scatter, XAxis, YAxis } from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from './common';
 import Metric, { MetricsSpacing, MetricsWrapper, METRIC_RIGHT_PADDING_PX, METRIC_WIDTH_PX } from './Metrics';
 
