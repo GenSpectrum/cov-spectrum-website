@@ -111,14 +111,21 @@ export const GroupedProportionComparisonChart = React.memo(
       setCurrentData(undefined);
     };
 
-    const makeScatterData = (side: 'subject' | 'reference') =>
+    const makeScatterData = (side: 'subject' | 'reference', fill: { active: string; inactive: string }) =>
       data
         .filter(({ [side]: sideData }) => sideData.proportion !== undefined)
-        .map(({ label, [side]: sideData }) => ({ label, proportion: sideData.proportion! }))
-        .map(({ label, proportion }, i) => ({
+        .map(entry => {
+          const { label, [side]: sideData } = entry;
+          return { label, proportion: sideData.proportion!, isActive: entry === currentData || !currentData };
+        })
+        .map(({ label, proportion, isActive }) => ({
           label,
           y: proportion.value,
-          yError: proportion.confidenceInterval.map(v => Math.abs(proportion.value - v)),
+          [isActive ? 'yErrorActive' : 'yErrorInactive']: proportion.confidenceInterval.map(v =>
+            Math.abs(proportion.value - v)
+          ),
+          fill: isActive ? fill.active : fill.inactive,
+          stroke: isActive ? fill.active : fill.inactive,
         }));
 
     const metricData = currentData || total;
@@ -148,7 +155,7 @@ export const GroupedProportionComparisonChart = React.memo(
               />
               <CartesianGrid vertical={false} />
               <Scatter
-                data={makeScatterData('reference')}
+                data={makeScatterData('reference', { active: colors.secondary, inactive: colors.inactive })}
                 fill={colors.secondary}
                 shape={ScatterBarShape}
                 onMouseEnter={handleMouseEnter}
@@ -156,13 +163,13 @@ export const GroupedProportionComparisonChart = React.memo(
                 isAnimationActive={false}
               />
               <Scatter
-                data={makeScatterData('subject')}
-                fill={colors.active}
+                data={makeScatterData('subject', { active: colors.active, inactive: colors.inactive })}
                 onMouseEnter={handleMouseEnter}
                 onClick={handleClick}
                 isAnimationActive={false}
               >
-                <ErrorBar direction='y' dataKey='yError' stroke={colors.active} />
+                <ErrorBar direction='y' dataKey='yErrorActive' stroke={colors.active} />
+                <ErrorBar direction='y' dataKey='yErrorInactive' stroke={colors.inactive} />
               </Scatter>
             </ScatterChart>
           </ChartWrapper>
