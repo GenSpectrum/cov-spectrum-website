@@ -177,6 +177,7 @@ export const GroupedProportionComparisonChart = React.memo(
                 tickLine={false}
                 domain={[0, (dataMax: number) => Math.min(1, Math.ceil(dataMax * 10) / 10)]}
                 scale='linear'
+                tickFormatter={v => `${(v * 100).toFixed(0)}%`}
               />
               <CartesianGrid vertical={false} />
               <Bar {...commonProps} dataKey='y' fill='transparent' />
