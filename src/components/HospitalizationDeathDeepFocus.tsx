@@ -1,16 +1,34 @@
 import React from 'react';
+import { Alert } from 'react-bootstrap';
 import { SampleSetWithSelector } from '../helpers/sample-set';
+import { AccountService } from '../services/AccountService';
+import { Country } from '../services/api-types';
 import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
 import { NamedCard } from './NamedCard';
 import { GridCell, PackedGrid } from './PackedGrid';
 
 interface Props {
+  country: Country;
   variantSampleSet: SampleSetWithSelector;
   wholeSampleSet: SampleSetWithSelector;
   variantName: string;
 }
 
-export const HospitalizationDeathDeepFocus = ({ variantSampleSet, wholeSampleSet, variantName }: Props) => {
+export const HospitalizationDeathDeepFocus = ({
+  country,
+  variantSampleSet,
+  wholeSampleSet,
+  variantName,
+}: Props) => {
+  const loggedIn = AccountService.isLoggedIn();
+  if (!loggedIn) {
+    return <Alert variant='danger'>You must log in to view hospitalization and death rates</Alert>;
+  }
+
+  if (country !== 'Switzerland') {
+    return <Alert variant='danger'>Hospitalization and death rates are only available for Switzerland</Alert>;
+  }
+
   return (
     <PackedGrid maxColumns={2}>
       <GridCell minWidth={800}>

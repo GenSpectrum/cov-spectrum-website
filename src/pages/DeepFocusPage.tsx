@@ -92,6 +92,7 @@ const routes: DeepFocusRoute[] = [
     title: 'Hospitalization and death',
     content: props => (
       <HospitalizationDeathDeepFocus
+        country={props.country}
         variantName={props.variant.name || 'unnamed variant'}
         variantSampleSet={props.variantSampleSet}
         wholeSampleSet={props.wholeSampleSet}
