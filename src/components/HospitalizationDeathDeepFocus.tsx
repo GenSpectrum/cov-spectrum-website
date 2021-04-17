@@ -1,5 +1,6 @@
 import React from 'react';
 import { Alert } from 'react-bootstrap';
+import styled from 'styled-components';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { AccountService } from '../services/AccountService';
 import { Country } from '../services/api-types';
@@ -13,6 +14,10 @@ interface Props {
   wholeSampleSet: SampleSetWithSelector;
   variantName: string;
 }
+
+const Info = styled.div`
+  margin: 15px;
+`;
 
 export const HospitalizationDeathDeepFocus = ({
   country,
@@ -30,29 +35,47 @@ export const HospitalizationDeathDeepFocus = ({
   }
 
   return (
-    <PackedGrid maxColumns={2}>
-      <GridCell minWidth={800}>
-        <NamedCard title='Hospitalization rate'>
-          <HospitalizationDeathPlot
-            field='hospitalized'
-            variantSampleSet={variantSampleSet}
-            wholeSampleSet={wholeSampleSet}
-            variantName={variantName}
-            extendedMetrics
-          />
-        </NamedCard>
-      </GridCell>
-      <GridCell minWidth={800}>
-        <NamedCard title='Death rate'>
-          <HospitalizationDeathPlot
-            field='deceased'
-            variantSampleSet={variantSampleSet}
-            wholeSampleSet={wholeSampleSet}
-            variantName={variantName}
-            extendedMetrics
-          />
-        </NamedCard>
-      </GridCell>
-    </PackedGrid>
+    <>
+      <PackedGrid maxColumns={2}>
+        <GridCell minWidth={800}>
+          <NamedCard title='Hospitalization rate'>
+            <HospitalizationDeathPlot
+              field='hospitalized'
+              variantSampleSet={variantSampleSet}
+              wholeSampleSet={wholeSampleSet}
+              variantName={variantName}
+              extendedMetrics
+            />
+          </NamedCard>
+        </GridCell>
+        <GridCell minWidth={800}>
+          <NamedCard title='Death rate'>
+            <HospitalizationDeathPlot
+              field='deceased'
+              variantSampleSet={variantSampleSet}
+              wholeSampleSet={wholeSampleSet}
+              variantName={variantName}
+              extendedMetrics
+            />
+          </NamedCard>
+        </GridCell>
+      </PackedGrid>
+
+      <Info>
+        <p>
+          These plots show the rates of hospitalization and death reported in connection with SARS-CoV-2
+          samples.
+        </p>
+        <p>The following samples are omitted from the plots:</p>
+        <ul>
+          <li>Samples from the last 4 weeks</li>
+          <li>Samples for which no hospitalization or death outcome is known</li>
+        </ul>
+        <p>
+          The error bars show Wilson score intervals with 95% confidence assuming that the measured outcomes
+          are binomially distributed.
+        </p>
+      </Info>
+    </>
   );
 };
