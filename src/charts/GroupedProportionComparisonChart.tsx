@@ -51,8 +51,8 @@ interface ScatterBarShapeProps {
 }
 
 const ScatterBarShape = ({ cx, cy, fill }: ScatterBarShapeProps) => {
-  const width = 18;
-  const height = 6;
+  const width = 24;
+  const height = 7;
   return (
     <g transform={`translate(${cx}, ${cy}) scale(${width / 2}, ${height / 2})`}>
       <polygon points='-1,0 0,1 1,0 0,-1' fill={fill} />
@@ -182,16 +182,42 @@ export const GroupedProportionComparisonChart = React.memo(
               <Bar {...commonProps} dataKey='y' fill='transparent' />
               <Scatter
                 {...commonProps}
-                data={makeScatterData('reference', { active: colors.secondary, inactive: colors.inactive })}
-                fill={colors.secondary}
+                data={makeScatterData('reference', { active: colors.inactive, inactive: colors.inactive })}
                 shape={ScatterBarShape}
-              />
+              >
+                <ErrorBar
+                  direction='y'
+                  dataKey='yErrorActive'
+                  stroke={colors.inactive}
+                  strokeWidth={9}
+                  width={0}
+                />
+                <ErrorBar
+                  direction='y'
+                  dataKey='yErrorInactive'
+                  stroke={colors.inactive}
+                  strokeWidth={9}
+                  width={0}
+                />
+              </Scatter>
               <Scatter
                 {...commonProps}
                 data={makeScatterData('subject', { active: colors.active, inactive: colors.inactive })}
               >
-                <ErrorBar direction='y' dataKey='yErrorActive' stroke={colors.active} />
-                <ErrorBar direction='y' dataKey='yErrorInactive' stroke={colors.inactive} />
+                <ErrorBar
+                  direction='y'
+                  dataKey='yErrorActive'
+                  stroke={colors.active}
+                  strokeWidth={2}
+                  width={8}
+                />
+                <ErrorBar
+                  direction='y'
+                  dataKey='yErrorInactive'
+                  stroke={colors.inactive}
+                  strokeWidth={2}
+                  width={8}
+                />
               </Scatter>
             </ComposedChart>
           </ChartWrapper>
