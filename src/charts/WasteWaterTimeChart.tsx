@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from './common';
 import Metric, { MetricsSpacing, MetricsWrapper } from './Metrics';
-import { Area, ComposedChart, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 const dateFormatter = (date: number) => {
   const d = new Date(date);
@@ -13,6 +13,8 @@ type WasteWaterTimeEntry = {
   proportion: number;
   proportionCI: [number, number];
 };
+
+const CHART_MARGIN_RIGHT = 15;
 
 export const WasteWaterTimeChart = React.memo(
   (): JSX.Element => {
@@ -72,7 +74,10 @@ export const WasteWaterTimeChart = React.memo(
         <ChartAndMetricsWrapper>
           <ChartWrapper>
             <ResponsiveContainer>
-              <ComposedChart data={data}>
+              <ComposedChart
+                data={data}
+                margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
+              >
                 <XAxis
                   dataKey='date'
                   scale='time'
@@ -102,6 +107,7 @@ export const WasteWaterTimeChart = React.memo(
                   dataKey='proportionCI'
                   fill={colors.secondaryLight}
                   stroke={colors.secondary}
+                  isAnimationActive={false}
                 />
                 <Line
                   type='monotone'
@@ -114,6 +120,7 @@ export const WasteWaterTimeChart = React.memo(
             </ResponsiveContainer>
           </ChartWrapper>
           <MetricsWrapper>
+            <MetricsSpacing />
             <Metric
               value={active !== undefined ? (active.proportion * 100).toFixed(2) + '%' : 'NA'}
               title='Proportion'
@@ -135,7 +142,6 @@ export const WasteWaterTimeChart = React.memo(
               helpText='The 95% confidence interval'
               percent={false}
             />
-            <MetricsSpacing />
           </MetricsWrapper>
         </ChartAndMetricsWrapper>
       </Wrapper>

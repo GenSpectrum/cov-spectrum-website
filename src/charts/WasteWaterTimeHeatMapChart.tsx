@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { scaleLinear } from 'd3-scale';
 import styled from 'styled-components';
-import Metric, { MetricsWrapper } from './Metrics';
+import Metric, {MetricsSpacing, MetricsWrapper} from './Metrics';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from './common';
 import dayjs from 'dayjs';
 
@@ -75,7 +75,7 @@ function formatDate(date: Date) {
   return date.getDate() + '.' + (date.getMonth() + 1);
 }
 
-export const TimeHeatMapChart = React.memo(
+export const WasteWaterTimeHeatMapChart = React.memo(
   (_: TimeHeatMapChartProps): JSX.Element => {
     const [active, setActive] = useState<TimeHeatMapEntry | undefined>(undefined);
 
@@ -137,6 +137,7 @@ export const TimeHeatMapChart = React.memo(
             </div>
           </ChartWrapper>
           <MetricsWrapper>
+            <MetricsSpacing />
             <Metric
               value={active?.proportion !== undefined ? (active.proportion * 100).toFixed(2) + '%' : 'NA'}
               title='Proportion'

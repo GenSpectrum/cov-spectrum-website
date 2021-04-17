@@ -1,4 +1,4 @@
-import { TimeHeatMapChart } from '../charts/TimeHeatMapChart';
+import { WasteWaterTimeHeatMapChart } from '../charts/WasteWaterTimeHeatMapChart';
 import React from 'react';
 import { NamedCard } from './NamedCard';
 import { NamedSection } from './NamedSection';
@@ -23,7 +23,7 @@ export const WasteWaterDeepFocus = () => {
             <WasteWaterTimeChart />
           </div>
           <div style={{ height: '400px', maxWidth: '900px', flexGrow: 1 }}>
-            <TimeHeatMapChart />
+            <WasteWaterTimeHeatMapChart />
           </div>
         </div>
       </NamedCard>
@@ -34,7 +34,7 @@ export const WasteWaterDeepFocus = () => {
             <WasteWaterTimeChart />
           </div>
           <div style={{ height: '400px', maxWidth: '900px', flexGrow: 1 }}>
-            <TimeHeatMapChart />
+            <WasteWaterTimeHeatMapChart />
           </div>
         </div>
       </NamedCard>
@@ -45,7 +45,7 @@ export const WasteWaterDeepFocus = () => {
             <WasteWaterTimeChart />
           </div>
           <div style={{ height: '400px', maxWidth: '900px', flexGrow: 1 }}>
-            <TimeHeatMapChart />
+            <WasteWaterTimeHeatMapChart />
           </div>
         </div>
       </NamedCard>
