@@ -33,6 +33,7 @@ interface Props {
 const deepFocusPaths = {
   internationalComparison: '/international-comparison',
   chen2021Fitness: '/chen-2021-fitness',
+  hospitalizationAndDeath: '/hospitalization-death',
 };
 
 export const FocusPage = ({
@@ -104,7 +105,7 @@ export const FocusPage = ({
         </GridCell>
         {loggedIn && country === 'Switzerland' && (
           <GridCell minWidth={600}>
-            <NamedCard title='Hospitalization and death'>
+            <NamedCard title='Hospitalization and death' toolbar={deepFocusButtons.hospitalizationAndDeath}>
               <HospitalizationDeathPlot
                 field='hospitalized'
                 variantSampleSet={variantSampleSet}

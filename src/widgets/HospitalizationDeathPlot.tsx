@@ -6,6 +6,7 @@ import {
   GroupedProportionComparisonChart,
   GroupValue,
   SubgroupValue,
+  TopLevelTexts,
 } from '../charts/GroupedProportionComparisonChart';
 import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
@@ -15,6 +16,33 @@ interface Props {
   wholeSampleSet: SampleSetWithSelector;
   field: 'hospitalized' | 'deceased';
 }
+
+const texts: { hospitalized: TopLevelTexts; deceased: TopLevelTexts } = {
+  hospitalized: {
+    subject: {
+      true: {
+        title: 'Hospitalized',
+        helpText: 'Number of samples taken from patients who were eventually hospitalized',
+      },
+      false: {
+        title: 'Not hosp.',
+        helpText: 'Number of samples taken from patients who were not eventually hospitalized',
+      },
+    },
+  },
+  deceased: {
+    subject: {
+      true: {
+        title: 'Dead',
+        helpText: 'Number of samples taken from patients who eventually died',
+      },
+      false: {
+        title: 'Not dead',
+        helpText: 'Number of samples taken from patients who did not eventually die',
+      },
+    },
+  },
+};
 
 function processCounts(
   positiveSamples: ParsedMultiSample[],
@@ -99,24 +127,7 @@ export const HospitalizationDeathPlot = ({ variantSampleSet, wholeSampleSet, fie
         <GroupedProportionComparisonChart
           data={processedData}
           total={total}
-          texts={{
-            subject: {
-              true: {
-                title: 'Hospitalized',
-                helpText:
-                  field === 'hospitalized'
-                    ? 'Number of samples taken from patients who were eventually hospitalized'
-                    : 'Number of samples taken from patients who eventually died',
-              },
-              false: {
-                title: 'Not hosp.',
-                helpText:
-                  field === 'hospitalized'
-                    ? 'Number of samples taken from patients who were not eventually hospitalized'
-                    : 'Number of samples taken from patients who did not eventually die',
-              },
-            },
-          }}
+          texts={texts[field]}
           width={width}
           height={height}
           onClickHandler={noopOnClickHandler}

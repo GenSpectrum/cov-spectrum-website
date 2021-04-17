@@ -14,6 +14,7 @@ import { scrollableContainerPaddingPx, scrollableContainerStyle } from '../helpe
 import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
 import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
+import { HospitalizationDeathDeepFocus } from '../components/HospitalizationDeathDeepFocus';
 
 interface SyncProps {
   country: Country;
@@ -83,6 +84,16 @@ const routes: DeepFocusRoute[] = [
         samplingStrategy={toLiteralSamplingStrategy(props.samplingStrategy)}
         widgetLayout={MinimalWidgetLayout}
         title='Fitness advantage estimation'
+      />
+    ),
+  },
+  {
+    key: 'hospitalization-death',
+    title: 'Hospitalization and death',
+    content: props => (
+      <HospitalizationDeathDeepFocus
+        variantSampleSet={props.variantSampleSet}
+        wholeSampleSet={props.wholeSampleSet}
       />
     ),
   },
