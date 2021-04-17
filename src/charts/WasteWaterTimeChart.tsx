@@ -18,6 +18,16 @@ export const WasteWaterTimeChart = React.memo(
   (): JSX.Element => {
     const data: WasteWaterTimeEntry[] = [
       {
+        date: new Date('2021-01-01'),
+        proportion: 0.15,
+        proportionCI: [0.03, 0.19],
+      },
+      {
+        date: new Date('2021-01-07'),
+        proportion: 0.32,
+        proportionCI: [0.25, 0.37],
+      },
+      {
         date: new Date('2021-01-15'),
         proportion: 0.41,
         proportionCI: [0.25, 0.49],
@@ -25,7 +35,7 @@ export const WasteWaterTimeChart = React.memo(
       {
         date: new Date('2021-01-19'),
         proportion: 0.43,
-        proportionCI: [0.35, 0.51],
+        proportionCI: [0.30, 0.51],
       },
       {
         date: new Date('2021-01-23'),
@@ -114,12 +124,12 @@ export const WasteWaterTimeChart = React.memo(
             <Metric
               value={
                 active !== undefined
-                  ? (active.proportionCI[0] * 100).toFixed(2) +
-                    '-' +
-                    (active.proportionCI[1] * 100).toFixed(2) +
+                  ? Math.round(active.proportionCI[0] * 100) +
+                    '-' + Math.round(active.proportionCI[1] * 100) +
                     '%'
                   : 'NA'
               }
+              fontSize='small'
               title='Confidence interval'
               color={colors.active}
               helpText='The 95% confidence interval'
