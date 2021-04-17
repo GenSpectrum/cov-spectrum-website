@@ -103,11 +103,17 @@ export const HospitalizationDeathPlot = ({ variantSampleSet, wholeSampleSet, fie
             subject: {
               true: {
                 title: 'Hospitalized',
-                helpText: 'Number of samples taken from patients who were eventually hospitalized',
+                helpText:
+                  field === 'hospitalized'
+                    ? 'Number of samples taken from patients who were eventually hospitalized'
+                    : 'Number of samples taken from patients who eventually died',
               },
               false: {
                 title: 'Not hosp.',
-                helpText: 'Number of samples taken from patients who were not eventually hospitalized',
+                helpText:
+                  field === 'hospitalized'
+                    ? 'Number of samples taken from patients who were not eventually hospitalized'
+                    : 'Number of samples taken from patients who did not eventually die',
               },
             },
           }}
