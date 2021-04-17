@@ -15,6 +15,7 @@ import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021Fitnes
 import { AccountService } from '../services/AccountService';
 import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
+import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 
@@ -32,6 +33,7 @@ interface Props {
 const deepFocusPaths = {
   internationalComparison: '/international-comparison',
   chen2021Fitness: '/chen-2021-fitness',
+  hospitalizationAndDeath: '/hospitalization-death',
 };
 
 export const FocusPage = ({
@@ -101,6 +103,25 @@ export const FocusPage = ({
             title='Demographics'
           />
         </GridCell>
+        {loggedIn && country === 'Switzerland' && (
+          <GridCell minWidth={600}>
+            <NamedCard title='Hospitalization rates' toolbar={deepFocusButtons.hospitalizationAndDeath}>
+              <HospitalizationDeathPlot
+                field='hospitalized'
+                variantSampleSet={variantSampleSet}
+                wholeSampleSet={wholeSampleSet}
+                variantName={variant.name || 'unnamed variant'}
+              />
+            </NamedCard>
+          </GridCell>
+        )}
+        <GridCell minWidth={600}>
+          <NamedCard title='Fitness advantage estimation' toolbar={deepFocusButtons.chen2021Fitness}>
+            <div style={{ height: 300 }}>
+              <Chen2021FitnessPreview {...plotProps} />
+            </div>
+          </NamedCard>
+        </GridCell>
         {country === 'Switzerland' && (
           <GridCell minWidth={600}>
             <NamedCard title='Geography'>
@@ -112,13 +133,6 @@ export const FocusPage = ({
             </NamedCard>
           </GridCell>
         )}
-        <GridCell minWidth={600}>
-          <NamedCard title='Fitness advantage estimation' toolbar={deepFocusButtons.chen2021Fitness}>
-            <div style={{ height: 300 }}>
-              <Chen2021FitnessPreview {...plotProps} />
-            </div>
-          </NamedCard>
-        </GridCell>
         {samplingStrategy === SamplingStrategy.AllSamples && (
           <GridCell minWidth={600}>
             <AsyncVariantInternationalComparisonPlot
