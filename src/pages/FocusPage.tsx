@@ -110,6 +110,7 @@ export const FocusPage = ({
                 field='hospitalized'
                 variantSampleSet={variantSampleSet}
                 wholeSampleSet={wholeSampleSet}
+                variantName={variant.name || 'unnamed variant'}
               />
             </NamedCard>
           </GridCell>

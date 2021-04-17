@@ -7,9 +7,10 @@ import { GridCell, PackedGrid } from './PackedGrid';
 interface Props {
   variantSampleSet: SampleSetWithSelector;
   wholeSampleSet: SampleSetWithSelector;
+  variantName: string;
 }
 
-export const HospitalizationDeathDeepFocus = ({ variantSampleSet, wholeSampleSet }: Props) => {
+export const HospitalizationDeathDeepFocus = ({ variantSampleSet, wholeSampleSet, variantName }: Props) => {
   return (
     <PackedGrid maxColumns={2}>
       <GridCell minWidth={800}>
@@ -18,6 +19,7 @@ export const HospitalizationDeathDeepFocus = ({ variantSampleSet, wholeSampleSet
             field='hospitalized'
             variantSampleSet={variantSampleSet}
             wholeSampleSet={wholeSampleSet}
+            variantName={variantName}
             extendedMetrics
           />
         </NamedCard>
@@ -28,6 +30,7 @@ export const HospitalizationDeathDeepFocus = ({ variantSampleSet, wholeSampleSet
             field='deceased'
             variantSampleSet={variantSampleSet}
             wholeSampleSet={wholeSampleSet}
+            variantName={variantName}
             extendedMetrics
           />
         </NamedCard>

@@ -17,6 +17,7 @@ interface Props {
   variantSampleSet: SampleSetWithSelector;
   wholeSampleSet: SampleSetWithSelector;
   field: 'hospitalized' | 'deceased';
+  variantName: string;
   extendedMetrics?: boolean;
 }
 
@@ -44,16 +45,16 @@ const makeDeceasedTexts = (variant: string): SubgroupTexts => ({
   },
 });
 
-const texts: { hospitalized: TopLevelTexts; deceased: TopLevelTexts } = {
+const makeTexts = (variantName: string): { hospitalized: TopLevelTexts; deceased: TopLevelTexts } => ({
   hospitalized: {
-    subject: makeHospitalizedTexts('selected variant'),
+    subject: makeHospitalizedTexts(variantName),
     reference: makeHospitalizedTexts('other variants'),
   },
   deceased: {
-    subject: makeDeceasedTexts('selected variant'),
+    subject: makeDeceasedTexts(variantName),
     reference: makeDeceasedTexts('other variants'),
   },
-};
+});
 
 function processCounts(
   positiveSamples: ParsedMultiSample[],
@@ -99,6 +100,7 @@ export const HospitalizationDeathPlot = ({
   variantSampleSet,
   wholeSampleSet,
   field,
+  variantName,
   extendedMetrics,
 }: Props) => {
   const { width, height, ref } = useResizeDetector();
@@ -143,7 +145,7 @@ export const HospitalizationDeathPlot = ({
         <GroupedProportionComparisonChart
           data={processedData}
           total={total}
-          texts={texts[field]}
+          texts={makeTexts(variantName)[field]}
           width={width}
           height={height}
           extendedMetrics={extendedMetrics}
