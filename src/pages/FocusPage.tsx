@@ -19,7 +19,6 @@ import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { VariantLineages } from '../components/VariantLineages';
-import { TimeHeatMapChart } from '../charts/TimeHeatMapChart';
 
 interface Props {
   country: Country;
@@ -146,7 +145,7 @@ export const FocusPage = ({
         {country === 'Switzerland' && variant.name === 'B.1.1.7' && (
           <GridCell minWidth={600}>
             <NamedCard title='Results from waste water' toolbar={deepFocusButtons.wasteWater}>
-              Coming..
+              <></>
             </NamedCard>
           </GridCell>
         )}

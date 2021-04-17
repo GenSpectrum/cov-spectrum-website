@@ -1,7 +1,8 @@
 import { TimeHeatMapChart } from '../charts/TimeHeatMapChart';
 import React from 'react';
 import { NamedCard } from './NamedCard';
-import {NamedSection} from "./NamedSection";
+import { NamedSection } from './NamedSection';
+import { WasteWaterTimeChart } from '../charts/WasteWaterTimeChart';
 
 export const WasteWaterDeepFocus = () => {
   return (
@@ -17,29 +18,44 @@ export const WasteWaterDeepFocus = () => {
       </p>
 
       <NamedCard title='Zurich'>
-        <div style={{ height: '400px', maxWidth: '900px' }}>
-          <TimeHeatMapChart />
+        <div style={{ display: 'flex' }}>
+          <div style={{ height: '400px', width: '600px', marginRight: '50px' }}>
+            <WasteWaterTimeChart />
+          </div>
+          <div style={{ height: '400px', maxWidth: '900px', flexGrow: 1 }}>
+            <TimeHeatMapChart />
+          </div>
         </div>
       </NamedCard>
 
       <NamedCard title='Lausanne'>
-        <div style={{ height: '400px', maxWidth: '900px' }}>
-          <TimeHeatMapChart />
+        <div style={{ display: 'flex' }}>
+          <div style={{ height: '400px', width: '600px', marginRight: '50px' }}>
+            <WasteWaterTimeChart />
+          </div>
+          <div style={{ height: '400px', maxWidth: '900px', flexGrow: 1 }}>
+            <TimeHeatMapChart />
+          </div>
         </div>
       </NamedCard>
 
       <NamedCard title='Geneva'>
-        <div style={{ height: '400px', maxWidth: '900px' }}>
-          <TimeHeatMapChart />
+        <div style={{ display: 'flex' }}>
+          <div style={{ height: '400px', width: '600px', marginRight: '50px' }}>
+            <WasteWaterTimeChart />
+          </div>
+          <div style={{ height: '400px', maxWidth: '900px', flexGrow: 1 }}>
+            <TimeHeatMapChart />
+          </div>
         </div>
       </NamedCard>
 
-      <div style={{marginTop: '50px'}}>
+      <div style={{ marginTop: '50px' }}>
         <NamedSection title='References'>
           <ul>
             <li>
-              Jahn, Katharina, et al. "Detection of SARS-CoV-2 variants in Switzerland by genomic analysis of wastewater samples."
-              medRxiv (2021); doi:{' '}
+              Jahn, Katharina, et al. "Detection of SARS-CoV-2 variants in Switzerland by genomic analysis of
+              wastewater samples." medRxiv (2021); doi:{' '}
               <a href='https://doi.org/10.1101/2021.01.08.21249379' target='_blank' rel='noreferrer'>
                 10.1101/2021.01.08.21249379
               </a>

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { scaleLinear } from 'd3-scale';
 import styled from 'styled-components';
-import Metric, { MetricsSpacing, MetricsWrapper } from './Metrics';
+import Metric, { MetricsWrapper } from './Metrics';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from './common';
 import dayjs from 'dayjs';
 
