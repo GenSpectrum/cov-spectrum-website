@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { AccountService } from '../services/AccountService';
 import { Country } from '../services/api-types';
-import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
+import { HospitalizationDeathPlot, OMIT_LAST_N_WEEKS } from '../widgets/HospitalizationDeathPlot';
 import { NamedCard } from './NamedCard';
 import { GridCell, PackedGrid } from './PackedGrid';
 
@@ -68,7 +68,7 @@ export const HospitalizationDeathDeepFocus = ({
         </p>
         <p>The following samples are omitted from the plots:</p>
         <ul>
-          <li>Samples from the last 4 weeks</li>
+          <li>Samples from the last {OMIT_LAST_N_WEEKS} weeks</li>
           <li>Samples for which no hospitalization or death outcome is known</li>
         </ul>
         <p>

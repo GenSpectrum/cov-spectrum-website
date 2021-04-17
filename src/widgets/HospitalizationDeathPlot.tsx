@@ -12,6 +12,10 @@ import {
 } from '../charts/GroupedProportionComparisonChart';
 import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
+import dayjs from 'dayjs';
+import { globalDateCache } from '../helpers/date-cache';
+
+export const OMIT_LAST_N_WEEKS = 4;
 
 interface Props {
   variantSampleSet: SampleSetWithSelector;
@@ -107,10 +111,19 @@ export const HospitalizationDeathPlot = ({
   const widthIsSmall = !!width && width < 700;
 
   const processedData = useMemo((): GroupValue[] => {
-    const fillData = (sampleSet: SampleSet) =>
-      fillFromPrimitiveMap(sampleSet.groupByField('ageGroup'), possibleAgeKeys, []);
-    const variantFilledData = fillData(variantSampleSet);
-    const wholeFilledData = fillData(wholeSampleSet);
+    const filterAndGroupData = (originalSampleSet: SampleSet) => {
+      const lastWeek = globalDateCache.getDayUsingDayjs(
+        globalDateCache.getDayUsingDayjs(dayjs()).dayjs.subtract(OMIT_LAST_N_WEEKS, 'weeks')
+      ).isoWeek;
+      const filteredSampleSet = new SampleSet(
+        [...originalSampleSet.getAll()].filter(s => !globalDateCache.weekIsBefore(lastWeek, s.date.isoWeek)),
+        null
+      );
+      return fillFromPrimitiveMap(filteredSampleSet.groupByField('ageGroup'), possibleAgeKeys, []);
+    };
+
+    const variantFilledData = filterAndGroupData(variantSampleSet);
+    const wholeFilledData = filterAndGroupData(wholeSampleSet);
 
     return variantFilledData.map(({ key, value: variantSamples }, i) => {
       const wholeEntry = wholeFilledData[i];
