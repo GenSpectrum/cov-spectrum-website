@@ -102,6 +102,24 @@ export const FocusPage = ({
             title='Demographics'
           />
         </GridCell>
+        {loggedIn && country === 'Switzerland' && (
+          <GridCell minWidth={600}>
+            <NamedCard title='Hospitalization and death'>
+              <HospitalizationDeathPlot
+                field='hospitalized'
+                variantSampleSet={variantSampleSet}
+                wholeSampleSet={wholeSampleSet}
+              />
+            </NamedCard>
+          </GridCell>
+        )}
+        <GridCell minWidth={600}>
+          <NamedCard title='Fitness advantage estimation' toolbar={deepFocusButtons.chen2021Fitness}>
+            <div style={{ height: 300 }}>
+              <Chen2021FitnessPreview {...plotProps} />
+            </div>
+          </NamedCard>
+        </GridCell>
         {country === 'Switzerland' && (
           <GridCell minWidth={600}>
             <NamedCard title='Geography'>
@@ -113,13 +131,6 @@ export const FocusPage = ({
             </NamedCard>
           </GridCell>
         )}
-        <GridCell minWidth={600}>
-          <NamedCard title='Fitness advantage estimation' toolbar={deepFocusButtons.chen2021Fitness}>
-            <div style={{ height: 300 }}>
-              <Chen2021FitnessPreview {...plotProps} />
-            </div>
-          </NamedCard>
-        </GridCell>
         {samplingStrategy === SamplingStrategy.AllSamples && (
           <GridCell minWidth={600}>
             <AsyncVariantInternationalComparisonPlot
@@ -130,17 +141,6 @@ export const FocusPage = ({
               variantInternationalSampleSetState={variantInternationalSampleSetState}
               wholeInternationalSampleSetState={wholeInternationalSampleSetState}
             />
-          </GridCell>
-        )}
-        {loggedIn && country === 'Switzerland' && (
-          <GridCell minWidth={600}>
-            <NamedCard title='Hospitalization and death'>
-              <HospitalizationDeathPlot
-                field='hospitalized'
-                variantSampleSet={variantSampleSet}
-                wholeSampleSet={wholeSampleSet}
-              />
-            </NamedCard>
           </GridCell>
         )}
       </PackedGrid>
