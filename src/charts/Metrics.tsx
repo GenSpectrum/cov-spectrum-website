@@ -7,7 +7,7 @@ export const METRIC_RIGHT_PADDING_PX = 32;
 export const METRIC_WIDTH_PX = 160;
 
 export const MetricsWrapper = styled.div`
-  padding: 1.5rem 0 1.4rem 0rem;
+  padding: 0 0 1.4rem 0rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

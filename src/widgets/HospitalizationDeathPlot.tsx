@@ -1,12 +1,12 @@
 import assert from 'assert';
+import { capitalize } from 'lodash';
 import React, { useMemo } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
 import calculateWilsonInterval from 'wilson-interval';
 import {
   GroupedProportionComparisonChart,
   GroupValue,
-  LeafTexts,
-  PerTrueFalse,
+  SubgroupTexts,
   SubgroupValue,
   TopLevelTexts,
 } from '../charts/GroupedProportionComparisonChart';
@@ -20,25 +20,27 @@ interface Props {
   extendedMetrics?: boolean;
 }
 
-const makeHospitalizedTexts = (note: string): PerTrueFalse<LeafTexts> => ({
+const makeHospitalizedTexts = (variant: string): SubgroupTexts => ({
+  legend: capitalize(variant),
   true: {
     title: 'Hospitalized',
-    helpText: `Number of samples taken from patients who were eventually hospitalized (${note})`,
+    helpText: `Number of samples taken from patients who were eventually hospitalized (${variant})`,
   },
   false: {
     title: 'Not hosp.',
-    helpText: `Number of samples taken from patients who were not eventually hospitalized (${note})`,
+    helpText: `Number of samples taken from patients who were not eventually hospitalized (${variant})`,
   },
 });
 
-const makeDeceasedTexts = (note: string): PerTrueFalse<LeafTexts> => ({
+const makeDeceasedTexts = (variant: string): SubgroupTexts => ({
+  legend: capitalize(variant),
   true: {
     title: 'Dead',
-    helpText: `Number of samples taken from patients who eventually died (${note})`,
+    helpText: `Number of samples taken from patients who eventually died (${variant})`,
   },
   false: {
     title: 'Not dead',
-    helpText: `Number of samples taken from patients who did not eventually die (${note})`,
+    helpText: `Number of samples taken from patients who did not eventually die (${variant})`,
   },
 });
 

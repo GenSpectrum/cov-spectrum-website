@@ -10,8 +10,10 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
+import styled from 'styled-components';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from './common';
 import Metric, { MetricsSpacing, MetricsWrapper, METRIC_RIGHT_PADDING_PX, METRIC_WIDTH_PX } from './Metrics';
+import { ScatterLegendItem, ScatterLegend } from './ScatterLegend';
 
 export type OnClickHandler = (index: number) => void;
 
@@ -65,6 +67,10 @@ export interface PerTrueFalse<T> {
   false: T;
 }
 
+const ExtendedScatterLegendWrapper = styled.div`
+  margin-bottom: 10px;
+`;
+
 export interface GroupValue {
   label: string;
   subject: SubgroupValue;
@@ -82,8 +88,12 @@ export interface ValueWithConfidence {
 }
 
 export interface TopLevelTexts {
-  subject: PerTrueFalse<LeafTexts>;
-  reference: PerTrueFalse<LeafTexts>;
+  subject: SubgroupTexts;
+  reference: SubgroupTexts;
+}
+
+export interface SubgroupTexts extends PerTrueFalse<LeafTexts> {
+  legend: string;
 }
 
 export interface LeafTexts {
@@ -153,6 +163,30 @@ export const GroupedProportionComparisonChart = React.memo(
       isAnimationActive: false,
     };
 
+    const subjectErrorBarSizes = {
+      strokeWidth: 2,
+      width: 8,
+    };
+    const referenceErrorBarSizes = {
+      strokeWidth: 9,
+      width: 0,
+    };
+
+    const subjectLegendItem: ScatterLegendItem = {
+      ...subjectErrorBarSizes,
+      name: texts.subject.legend,
+      color: colors.active,
+      textColor: colors.active,
+      shape: ({ r, fill }) => <circle r={r} fill={fill} />,
+    };
+    const referenceLegendItem: ScatterLegendItem = {
+      ...referenceErrorBarSizes,
+      name: texts.reference.legend,
+      color: colors.inactive,
+      textColor: colors.secondary,
+      shape: ScatterBarShape,
+    };
+
     return (
       <Wrapper>
         <ChartAndMetricsWrapper>
@@ -192,15 +226,13 @@ export const GroupedProportionComparisonChart = React.memo(
                   direction='y'
                   dataKey='yErrorActive'
                   stroke={colors.inactive}
-                  strokeWidth={9}
-                  width={0}
+                  {...referenceErrorBarSizes}
                 />
                 <ErrorBar
                   direction='y'
                   dataKey='yErrorInactive'
                   stroke={colors.inactive}
-                  strokeWidth={9}
-                  width={0}
+                  {...referenceErrorBarSizes}
                 />
               </Scatter>
               <Scatter
@@ -211,21 +243,31 @@ export const GroupedProportionComparisonChart = React.memo(
                   direction='y'
                   dataKey='yErrorActive'
                   stroke={colors.active}
-                  strokeWidth={2}
-                  width={8}
+                  {...subjectErrorBarSizes}
                 />
                 <ErrorBar
                   direction='y'
                   dataKey='yErrorInactive'
                   stroke={colors.inactive}
-                  strokeWidth={2}
-                  width={8}
+                  {...subjectErrorBarSizes}
                 />
               </Scatter>
             </ComposedChart>
           </ChartWrapper>
           <MetricsWrapper>
-            <MetricsSpacing />
+            {extendedMetrics ? (
+              <>
+                <MetricsSpacing />
+                <ExtendedScatterLegendWrapper>
+                  <ScatterLegend items={[subjectLegendItem]} />
+                </ExtendedScatterLegendWrapper>
+              </>
+            ) : (
+              <>
+                <ScatterLegend items={[subjectLegendItem, referenceLegendItem]} />
+                <MetricsSpacing />
+              </>
+            )}
             <Metric
               value={metricData.subject.count.true}
               title={texts.subject.true.title}
@@ -242,6 +284,9 @@ export const GroupedProportionComparisonChart = React.memo(
           {extendedMetrics && (
             <MetricsWrapper>
               <MetricsSpacing />
+              <ExtendedScatterLegendWrapper>
+                <ScatterLegend items={[referenceLegendItem]} />
+              </ExtendedScatterLegendWrapper>
               <Metric
                 value={metricData.reference.count.true}
                 title={texts.reference.true.title}
