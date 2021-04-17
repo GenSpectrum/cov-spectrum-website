@@ -5,6 +5,8 @@ import calculateWilsonInterval from 'wilson-interval';
 import {
   GroupedProportionComparisonChart,
   GroupValue,
+  LeafTexts,
+  PerTrueFalse,
   SubgroupValue,
   TopLevelTexts,
 } from '../charts/GroupedProportionComparisonChart';
@@ -15,32 +17,39 @@ interface Props {
   variantSampleSet: SampleSetWithSelector;
   wholeSampleSet: SampleSetWithSelector;
   field: 'hospitalized' | 'deceased';
+  extendedMetrics?: boolean;
 }
+
+const makeHospitalizedTexts = (note: string): PerTrueFalse<LeafTexts> => ({
+  true: {
+    title: 'Hospitalized',
+    helpText: `Number of samples taken from patients who were eventually hospitalized (${note})`,
+  },
+  false: {
+    title: 'Not hosp.',
+    helpText: `Number of samples taken from patients who were not eventually hospitalized (${note})`,
+  },
+});
+
+const makeDeceasedTexts = (note: string): PerTrueFalse<LeafTexts> => ({
+  true: {
+    title: 'Dead',
+    helpText: `Number of samples taken from patients who eventually died (${note})`,
+  },
+  false: {
+    title: 'Not dead',
+    helpText: `Number of samples taken from patients who did not eventually die (${note})`,
+  },
+});
 
 const texts: { hospitalized: TopLevelTexts; deceased: TopLevelTexts } = {
   hospitalized: {
-    subject: {
-      true: {
-        title: 'Hospitalized',
-        helpText: 'Number of samples taken from patients who were eventually hospitalized',
-      },
-      false: {
-        title: 'Not hosp.',
-        helpText: 'Number of samples taken from patients who were not eventually hospitalized',
-      },
-    },
+    subject: makeHospitalizedTexts('selected variant'),
+    reference: makeHospitalizedTexts('other variants'),
   },
   deceased: {
-    subject: {
-      true: {
-        title: 'Dead',
-        helpText: 'Number of samples taken from patients who eventually died',
-      },
-      false: {
-        title: 'Not dead',
-        helpText: 'Number of samples taken from patients who did not eventually die',
-      },
-    },
+    subject: makeDeceasedTexts('selected variant'),
+    reference: makeDeceasedTexts('other variants'),
   },
 };
 
@@ -84,7 +93,12 @@ function processCounts(
 
 const noopOnClickHandler = () => {};
 
-export const HospitalizationDeathPlot = ({ variantSampleSet, wholeSampleSet, field }: Props) => {
+export const HospitalizationDeathPlot = ({
+  variantSampleSet,
+  wholeSampleSet,
+  field,
+  extendedMetrics,
+}: Props) => {
   const { width, height, ref } = useResizeDetector();
   const widthIsSmall = !!width && width < 700;
 
@@ -130,6 +144,7 @@ export const HospitalizationDeathPlot = ({ variantSampleSet, wholeSampleSet, fie
           texts={texts[field]}
           width={width}
           height={height}
+          extendedMetrics={extendedMetrics}
           onClickHandler={noopOnClickHandler}
         />
       )}

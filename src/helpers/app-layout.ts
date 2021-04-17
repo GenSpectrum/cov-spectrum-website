@@ -27,6 +27,7 @@ export const fullGridStyle = css`
 
 export const RawFullContentWrapper = styled.div`
   ${fullGridStyle}
+  width: 100vw;
 `;
 
 export const ScrollableFullContentWrapper = styled.div`

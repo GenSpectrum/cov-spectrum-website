@@ -60,7 +60,7 @@ const ScatterBarShape = ({ cx, cy, fill }: ScatterBarShapeProps) => {
   );
 };
 
-interface PerTrueFalse<T> {
+export interface PerTrueFalse<T> {
   true: T;
   false: T;
 }
@@ -83,6 +83,7 @@ export interface ValueWithConfidence {
 
 export interface TopLevelTexts {
   subject: PerTrueFalse<LeafTexts>;
+  reference: PerTrueFalse<LeafTexts>;
 }
 
 export interface LeafTexts {
@@ -96,11 +97,12 @@ export type Props = {
   texts: TopLevelTexts;
   width: number;
   height: number;
+  extendedMetrics?: boolean;
   onClickHandler?: OnClickHandler;
 };
 
 export const GroupedProportionComparisonChart = React.memo(
-  ({ data, total, texts, width, height, onClickHandler }: Props): JSX.Element => {
+  ({ data, total, texts, width, height, extendedMetrics, onClickHandler }: Props): JSX.Element => {
     const [currentData, setCurrentData] = useState<GroupValue | undefined>();
 
     useEffect(() => {
@@ -156,7 +158,7 @@ export const GroupedProportionComparisonChart = React.memo(
         <ChartAndMetricsWrapper>
           <ChartWrapper>
             <ComposedChart
-              width={width - METRIC_WIDTH_PX - METRIC_RIGHT_PADDING_PX}
+              width={width - (extendedMetrics ? 2 : 1) * (METRIC_WIDTH_PX + METRIC_RIGHT_PADDING_PX)}
               height={height}
               margin={{ top: 6, right: 0, left: 0, bottom: 0 }}
               onMouseLeave={handleMouseLeave}
@@ -237,6 +239,23 @@ export const GroupedProportionComparisonChart = React.memo(
               helpText={texts.subject.false.helpText}
             />
           </MetricsWrapper>
+          {extendedMetrics && (
+            <MetricsWrapper>
+              <MetricsSpacing />
+              <Metric
+                value={metricData.reference.count.true}
+                title={texts.reference.true.title}
+                color={colors.secondary}
+                helpText={texts.reference.true.helpText}
+              />
+              <Metric
+                value={metricData.reference.count.false}
+                title={texts.reference.false.title}
+                color={colors.secondary}
+                helpText={texts.reference.false.helpText}
+              />
+            </MetricsWrapper>
+          )}
         </ChartAndMetricsWrapper>
       </Wrapper>
     );

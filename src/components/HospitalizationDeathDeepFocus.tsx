@@ -12,21 +12,23 @@ interface Props {
 export const HospitalizationDeathDeepFocus = ({ variantSampleSet, wholeSampleSet }: Props) => {
   return (
     <PackedGrid maxColumns={2}>
-      <GridCell minWidth={600}>
+      <GridCell minWidth={800}>
         <NamedCard title='Hospitalization rate'>
           <HospitalizationDeathPlot
             field='hospitalized'
             variantSampleSet={variantSampleSet}
             wholeSampleSet={wholeSampleSet}
+            extendedMetrics
           />
         </NamedCard>
       </GridCell>
-      <GridCell minWidth={600}>
+      <GridCell minWidth={800}>
         <NamedCard title='Death rate'>
           <HospitalizationDeathPlot
             field='deceased'
             variantSampleSet={variantSampleSet}
             wholeSampleSet={wholeSampleSet}
+            extendedMetrics
           />
         </NamedCard>
       </GridCell>
