@@ -1,88 +1,65 @@
 import React, { useState } from 'react';
-import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from './common';
-import Metric, { MetricsSpacing, MetricsWrapper } from './Metrics';
+import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../../charts/common';
+import Metric, { MetricsSpacing, MetricsWrapper } from '../../charts/Metrics';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { WasteWaterTimeEntry, WasteWaterTimeseriesSummaryDataset } from './types';
 
-const dateFormatter = (date: number) => {
+/**
+ * A very basic function that returns three ticks: the first date, the last date, and the date that lies in the middle.
+ *
+ * @param data: A list that is sorted by date ascendantly
+ */
+function getTicks(data: WasteWaterTimeseriesSummaryDataset): number[] {
+  let ticksDates: Date[] = [];
+  if (data.length === 0) {
+    ticksDates = [];
+  } else if (data.length === 1) {
+    ticksDates = [data[0].date];
+  } else {
+    const startDate = data[0].date;
+    const endDate = data[data.length - 1].date;
+    if (data.length === 2) {
+      ticksDates = [startDate, endDate];
+    } else {
+      ticksDates = [startDate, new Date((endDate.getTime() + startDate.getTime()) / 2), endDate];
+    }
+  }
+  return ticksDates.map(d => d.getTime());
+}
+
+const formatDate = (date: number) => {
   const d = new Date(date);
   return d.getDate() + '.' + (d.getMonth() + 1);
 };
 
-type WasteWaterTimeEntry = {
-  date: Date;
-  proportion: number;
-  proportionCI: [number, number];
-};
+interface Props {
+  data: WasteWaterTimeseriesSummaryDataset;
+}
 
 const CHART_MARGIN_RIGHT = 15;
 
 export const WasteWaterTimeChart = React.memo(
-  (): JSX.Element => {
-    const data: WasteWaterTimeEntry[] = [
-      {
-        date: new Date('2021-01-01'),
-        proportion: 0.15,
-        proportionCI: [0.03, 0.19],
-      },
-      {
-        date: new Date('2021-01-07'),
-        proportion: 0.32,
-        proportionCI: [0.25, 0.37],
-      },
-      {
-        date: new Date('2021-01-15'),
-        proportion: 0.41,
-        proportionCI: [0.25, 0.49],
-      },
-      {
-        date: new Date('2021-01-19'),
-        proportion: 0.43,
-        proportionCI: [0.30, 0.51],
-      },
-      {
-        date: new Date('2021-01-23'),
-        proportion: 0.82,
-        proportionCI: [0.65, 0.99],
-      },
-      {
-        date: new Date('2021-01-31'),
-        proportion: 0.62,
-        proportionCI: [0.58, 0.66],
-      },
-      {
-        date: new Date('2021-02-30'),
-        proportion: 0.54,
-        proportionCI: [0.41, 0.67],
-      },
-    ];
-
+  ({ data }: Props): JSX.Element => {
     const [active, setActive] = useState<WasteWaterTimeEntry | undefined>(undefined);
-
-    const endDate = new Date('2021-02-30');
-    const ticks = [
-      new Date('2021-01-01').getTime(),
-      new Date('2021-02-01').getTime(),
-      new Date('2021-03-01').getTime(),
-    ];
+    data = [...data].sort((a, b) => a.date.getTime() - b.date.getTime());
+    const endDate = data[data.length - 1].date;
+    const ticks = getTicks(data);
 
     return (
       <Wrapper>
         <TitleWrapper>
           Estimated prevalence in waste water samples
-          {active !== undefined ? ' on ' + dateFormatter(active.date.getTime()) : ''}
+          {active !== undefined ? ' on ' + formatDate(active.date.getTime()) : ''}
         </TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
             <ResponsiveContainer>
-              <ComposedChart
-                data={data}
-                margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
-              >
+              <ComposedChart data={data} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
                 <XAxis
                   dataKey='date'
                   scale='time'
                   type='number'
-                  tickFormatter={dateFormatter}
+                  tickFormatter={formatDate}
                   domain={[(dataMin: any) => dataMin, () => endDate.getTime()]}
                   ticks={ticks}
                 />
@@ -132,7 +109,8 @@ export const WasteWaterTimeChart = React.memo(
               value={
                 active !== undefined
                   ? Math.round(active.proportionCI[0] * 100) +
-                    '-' + Math.round(active.proportionCI[1] * 100) +
+                    '-' +
+                    Math.round(active.proportionCI[1] * 100) +
                     '%'
                   : 'NA'
               }
@@ -148,3 +126,5 @@ export const WasteWaterTimeChart = React.memo(
     );
   }
 );
+
+export default WasteWaterTimeChart;

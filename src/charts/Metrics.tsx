@@ -39,8 +39,8 @@ const MetricTitleWrapper = styled.div`
   height: 1.6rem;
 `;
 
-const ValueWrapper = styled("div")<{fontSize: 'small' | 'normal'}>`
-  font-size: ${props => props.fontSize === 'small' ? '2rem' : '3rem'};
+const ValueWrapper = styled('div')<{ fontSize: 'small' | 'normal' }>`
+  font-size: ${props => (props.fontSize === 'small' ? '2rem' : '3rem')};
   width: auto;
   flex-grow: 0;
   line-height: 1;
@@ -67,7 +67,14 @@ export type MetricProps = {
   fontSize?: 'normal' | 'small';
 };
 
-const Metric = ({ percent = false, fontSize = 'normal', value, title, color, helpText }: MetricProps): JSX.Element => {
+const Metric = ({
+  percent = false,
+  fontSize = 'normal',
+  value,
+  title,
+  color,
+  helpText,
+}: MetricProps): JSX.Element => {
   const tooltipId = 'TEST-id' + title;
   return (
     <MetricWrapper id='metric-with-tooltip'>
