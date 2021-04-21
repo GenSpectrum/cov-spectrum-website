@@ -124,7 +124,7 @@ export const KnownVariantsList = ({
           id='pangolinLineageSearch'
           options={pangolinLineages}
           labelKey='pangolinLineage'
-          placeholder='Search pangolin lineage (B.1, B.1.1.7, ...)'
+          placeholder='Search pangolin lineage (B.1, B.1.1.7, B.1.*)'
           selected={[]}
           onChange={selected =>
             selected.length === 1 &&
@@ -136,6 +136,7 @@ export const KnownVariantsList = ({
               matchPercentage: 1,
             })
           }
+          allowNew={true}
         />
       </SearchWrapper>
       <Grid>
