@@ -118,10 +118,16 @@ export const SampleTable = ({ matchPercentage, variant, country, samplingStrateg
 
       {samples && (
         <>
-          <p>
-            {totalNumber} samples have at least <b>{Math.round(matchPercentage * 100)}%</b> of the mutations.{' '}
-            {samples && totalNumber && samples.length < totalNumber && samples.length + ' will be displayed.'}
-          </p>
+          {variant.mutations.length > 0 && (
+            <p>
+              {totalNumber} samples have at least <b>{Math.round(matchPercentage * 100)}%</b> of the
+              mutations.{' '}
+              {samples &&
+                totalNumber &&
+                samples.length < totalNumber &&
+                samples.length + ' will be displayed.'}
+            </p>
+          )}
 
           <Table striped bordered hover>
             <thead>

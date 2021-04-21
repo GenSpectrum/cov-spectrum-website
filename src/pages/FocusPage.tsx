@@ -83,10 +83,12 @@ export const FocusPage = ({
   return (
     <>
       {header}
-      <p style={{ marginBottom: '30px' }}>
-        The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
-        mutations.
-      </p>
+      {variant.mutations.length > 0 && (
+        <p style={{ marginBottom: '30px' }}>
+          The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
+          mutations.
+        </p>
+      )}
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <VariantTimeDistributionPlotWidget.ShareableComponent

@@ -19,9 +19,11 @@ export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
         </h1>
         <div>{controls}</div>
       </div>
-      <p>
-        <b>Mutations:</b> <MutationList mutations={variant.mutations} />
-      </p>
+      {variant.mutations.length > 0 && (
+        <p>
+          <b>Mutations:</b> <MutationList mutations={variant.mutations} />
+        </p>
+      )}
     </>
   );
 };
