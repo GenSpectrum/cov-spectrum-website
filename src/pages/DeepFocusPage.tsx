@@ -81,6 +81,7 @@ const routes: DeepFocusRoute[] = [
         country={props.country}
         matchPercentage={props.matchPercentage}
         mutations={props.variant.mutations}
+        pangolinLineage={props.variant.name}
         samplingStrategy={toLiteralSamplingStrategy(props.samplingStrategy)}
         widgetLayout={MinimalWidgetLayout}
         title='Fitness advantage estimation'

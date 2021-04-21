@@ -18,10 +18,11 @@ export const Chen2021FitnessContainer = ({
   country,
   mutations,
   matchPercentage,
+  pangolinLineage,
   samplingStrategy,
 }: ContainerProps) => {
   const [paramData, setParamData] = useState<Chen2021FitnessRequest>(() =>
-    fillRequestWithDefaults({ country, mutations, matchPercentage, samplingStrategy })
+    fillRequestWithDefaults({ country, mutations, matchPercentage, pangolinLineage, samplingStrategy })
   );
   const [formGenerationTime, setFormGenerationTime] = useState(paramData.generationTime.toString());
   const [formReproductionNumberWildtype, setFormReproductionNumberWildtype] = useState(
