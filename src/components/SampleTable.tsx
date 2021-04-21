@@ -88,7 +88,7 @@ export const SampleTable = ({ matchPercentage, variant, country, samplingStrateg
       isSubscribed = false;
       controller.abort();
     };
-  }, [matchPercentage, variant.mutations, country, samplingStrategy]);
+  }, [matchPercentage, variant.name, variant.mutations, country, samplingStrategy]);
 
   const [popoverTarget, setPopoverTarget] = useState<PopoverTarget>();
   useEffect(() => {
