@@ -51,14 +51,14 @@ export const ExplorePage = ({
                   wholeSampleSetState={wholeSampleSetState}
                 />
               </NamedSection>
+              <NamedSection title='Search by mutations'>
+                <MutationLookup onVariantSelect={onVariantSelect} />
+              </NamedSection>
               <NamedSection title='Interesting variants'>
                 <NewVariantTable
                   country={country}
                   onVariantSelect={variant => onVariantSelect({ variant, matchPercentage: 1 })}
                 />
-              </NamedSection>
-              <NamedSection title='Search by mutations'>
-                <MutationLookup onVariantSelect={onVariantSelect} />
               </NamedSection>
             </>
           ),
