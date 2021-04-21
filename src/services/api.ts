@@ -12,6 +12,8 @@ import {
   SampleResultListSchema,
   SequencingIntensityEntrySchema,
   SequencingIntensityEntry,
+  PangolinLineageListSchema,
+  PangolinLineageList,
 } from './api-types';
 
 // WARNING These values are used in URLs - be careful when changing them
@@ -111,7 +113,15 @@ export async function getNewSamples(
   if (selector.mutations?.length) {
     params.set('mutations', selector.mutations.join(','));
   }
-  for (const k of ['region', 'country', 'matchPercentage', 'dataType', 'dateFrom', 'dateTo'] as const) {
+  for (const k of [
+    'region',
+    'country',
+    'matchPercentage',
+    'dataType',
+    'dateFrom',
+    'dateTo',
+    'pangolinLineage',
+  ] as const) {
     if (selector[k]) {
       params.set(k, selector[k]!.toString());
     }
@@ -148,6 +158,33 @@ export const getSampleFastaUrl = ({
     url += `&dataType=${samplingStrategy}`;
   }
   return url;
+};
+
+export const getPangolinLineages = (
+  {
+    country,
+    samplingStrategy,
+    dateFrom,
+  }: {
+    country: Country;
+    samplingStrategy: SamplingStrategy;
+    dateFrom?: string;
+  },
+  signal?: AbortSignal
+): Promise<PangolinLineageList> => {
+  let url = HOST + `/resource/sample2?fields=pangolinLineage&country=${country}`;
+  const literalSamplingStrategy = toLiteralSamplingStrategy(samplingStrategy);
+  if (literalSamplingStrategy) {
+    url += `&dataType=${literalSamplingStrategy}`;
+  }
+  if (dateFrom) {
+    url += `&dateFrom=${dateFrom}`;
+  }
+  return fetch(url, { headers: getBaseHeaders(), signal })
+    .then(response => response.json())
+    .then(data => {
+      return PangolinLineageListSchema.parse(data);
+    });
 };
 
 export const getSequencingIntensity = ({

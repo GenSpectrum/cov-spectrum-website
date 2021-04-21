@@ -13,12 +13,14 @@ export function fillRequestWithDefaults({
   country,
   mutations,
   matchPercentage,
+  pangolinLineage,
   samplingStrategy,
 }: zod.infer<typeof OldSampleSelectorSchema>): Chen2021FitnessRequest {
   return {
     country,
     mutations,
     matchPercentage,
+    pangolinLineage,
     samplingStrategy,
     alpha: 0.95,
     generationTime: 4.8,
@@ -34,10 +36,8 @@ const getData = async (
   params: Chen2021FitnessRequest,
   signal: AbortSignal
 ): Promise<Chen2021FitnessResponse | undefined> => {
-  const mutationsString = params.mutations.join(',');
   const urlSearchParams = new URLSearchParams({
     country: params.country,
-    mutations: mutationsString,
     matchPercentage: params.matchPercentage.toString(),
     alpha: params.alpha.toString(),
     generationTime: params.generationTime.toString(),
@@ -47,8 +47,14 @@ const getData = async (
     initialWildtypeCases: params.initialWildtypeCases.toString(),
     initialVariantCases: params.initialVariantCases.toString(),
   });
+  if (params.mutations?.length) {
+    urlSearchParams.set('mutations', params.mutations.join(','));
+  }
   if (params.samplingStrategy) {
     urlSearchParams.set('dataType', params.samplingStrategy);
+  }
+  if (params.pangolinLineage) {
+    urlSearchParams.set('pangolinLineage', params.pangolinLineage);
   }
   const url = `/computed/model/chen2021Fitness?` + urlSearchParams.toString();
   const response = await get(url, signal);

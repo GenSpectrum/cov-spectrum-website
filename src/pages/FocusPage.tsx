@@ -48,6 +48,7 @@ export const FocusPage = ({
     country,
     matchPercentage,
     mutations: variant.mutations,
+    pangolinLineage: variant.name,
     samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
   };
 

@@ -2,8 +2,9 @@ import * as zod from 'zod';
 
 export type Chen2021FitnessRequest = {
   country: string;
-  mutations: string[];
+  mutations?: string[];
   matchPercentage: number;
+  pangolinLineage?: string;
   samplingStrategy?: string;
   alpha: number;
   generationTime: number;

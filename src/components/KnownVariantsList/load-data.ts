@@ -38,6 +38,7 @@ export async function loadKnownVariantSampleSets<T extends VariantSelector>(
           country,
           matchPercentage: selector.matchPercentage,
           mutations: selector.variant.mutations,
+          pangolinLineage: selector.variant.name,
           dataType: toLiteralSamplingStrategy(samplingStrategy),
           // We don't need very old data, since convertKnownVariantChartData will only
           // take the latest 2 months. However since our data collection lags by a couple

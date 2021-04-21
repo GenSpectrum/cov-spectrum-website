@@ -3,7 +3,7 @@ import { AsyncState } from 'react-async';
 import styled from 'styled-components';
 import { VariantSelector } from '../../helpers/sample-selector';
 import { SampleSetWithSelector } from '../../helpers/sample-set';
-import { SamplingStrategy } from '../../services/api';
+import { getPangolinLineages, SamplingStrategy } from '../../services/api';
 import { Country, Variant } from '../../services/api-types';
 import knownVariantSelectors from './known-variants.json';
 import { KnownVariantCard } from './KnownVariantCard';
@@ -12,6 +12,8 @@ import {
   KnownVariantWithSampleSet,
   loadKnownVariantSampleSets,
 } from './load-data';
+import dayjs from 'dayjs';
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -39,6 +41,10 @@ const knownVariantsWithoutData: {
   chartData?: number[];
 }[] = knownVariantSelectors.map(selector => ({ selector }));
 
+const SearchWrapper = styled.div`
+  margin-bottom: 10px;
+`;
+
 export const KnownVariantsList = ({
   country,
   samplingStrategy,
@@ -49,6 +55,12 @@ export const KnownVariantsList = ({
   const [variantSampleSets, setVariantSampleSets] = useState<
     KnownVariantWithSampleSet<NamedVariantSelector>[]
   >();
+  const [pangolinLineages, setPangolinLineages] = useState<
+    {
+      pangolinLineage: string;
+      count: number;
+    }[]
+  >([]);
 
   useEffect(() => {
     setVariantSampleSets(undefined);
@@ -61,6 +73,28 @@ export const KnownVariantsList = ({
       .then(data => {
         if (isSubscribed) {
           setVariantSampleSets(data);
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      });
+
+    getPangolinLineages(
+      {
+        country,
+        samplingStrategy,
+        dateFrom: dayjs().subtract(3, 'months').day(1).format('YYYY-MM-DD'),
+      },
+      signal
+    )
+      .then(data => {
+        if (isSubscribed) {
+          setPangolinLineages(
+            data.filter(d => d.pangolinLineage !== null).sort((a, b) => b.count - a.count) as {
+              pangolinLineage: string;
+              count: number;
+            }[]
+          );
         }
       })
       .catch(err => {
@@ -84,16 +118,37 @@ export const KnownVariantsList = ({
   }, [variantSampleSets, wholeSampleSetState]);
 
   return (
-    <Grid>
-      {knownVariants.map(({ selector, chartData }) => (
-        <KnownVariantCard
-          key={selector.variant.name}
-          name={selector.variant.name}
-          chartData={chartData}
-          onClick={() => onVariantSelect(selector)}
-          selected={selection?.variant.name === selector.variant.name}
+    <>
+      <SearchWrapper>
+        <Typeahead
+          id='pangolinLineageSearch'
+          options={pangolinLineages}
+          labelKey='pangolinLineage'
+          placeholder='Search pangolin lineage (B.1, B.1.1.7, ...)'
+          selected={[]}
+          onChange={selected =>
+            selected.length === 1 &&
+            onVariantSelect({
+              variant: {
+                name: selected[0].pangolinLineage,
+                mutations: [],
+              },
+              matchPercentage: 1,
+            })
+          }
         />
-      ))}
-    </Grid>
+      </SearchWrapper>
+      <Grid>
+        {knownVariants.map(({ selector, chartData }) => (
+          <KnownVariantCard
+            key={selector.variant.name}
+            name={selector.variant.name}
+            chartData={chartData}
+            onClick={() => onVariantSelect(selector)}
+            selected={selection?.variant.name === selector.variant.name}
+          />
+        ))}
+      </Grid>
+    </>
   );
 };

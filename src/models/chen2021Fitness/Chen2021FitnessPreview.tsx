@@ -7,10 +7,16 @@ import { fillRequestWithDefaults, useModelData } from './loading';
 
 type Props = zod.infer<typeof OldSampleSelectorSchema>;
 
-export const Chen2021FitnessPreview = ({ country, mutations, matchPercentage, samplingStrategy }: Props) => {
+export const Chen2021FitnessPreview = ({
+  country,
+  mutations,
+  matchPercentage,
+  pangolinLineage,
+  samplingStrategy,
+}: Props) => {
   const request = useMemo(
-    () => fillRequestWithDefaults({ country, mutations, matchPercentage, samplingStrategy }),
-    [country, mutations, matchPercentage, samplingStrategy]
+    () => fillRequestWithDefaults({ country, mutations, matchPercentage, pangolinLineage, samplingStrategy }),
+    [country, mutations, matchPercentage, pangolinLineage, samplingStrategy]
   );
 
   const { modelData, loading } = useModelData(request);

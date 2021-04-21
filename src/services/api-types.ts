@@ -77,6 +77,13 @@ export const SampleResultListSchema = zod.object({
   data: zod.array(SampleSchema),
 });
 
+export const PangolinLineageListSchema = zod.array(
+  zod.object({
+    pangolinLineage: zod.string().nullable(),
+    count: zod.number(),
+  })
+);
+
 export const VariantSchema = zod.object({
   name: zod
     .string()
@@ -160,6 +167,7 @@ export type Region = zod.infer<typeof RegionSchema>;
 export type RawMultiSample = zod.infer<typeof RawMultiSampleSchema>;
 export type Sample = zod.infer<typeof SampleSchema>;
 export type SampleResultList = zod.infer<typeof SampleResultListSchema>;
+export type PangolinLineageList = zod.infer<typeof PangolinLineageListSchema>;
 export type Variant = zod.infer<typeof VariantSchema>;
 export type InterestingVariantResult = zod.infer<typeof InterestingVariantResultSchema>;
 export type LoginResponse = zod.infer<typeof LoginResponseSchema>;

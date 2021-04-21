@@ -37,6 +37,7 @@ function useVariantSampleSet({
           country,
           matchPercentage: variantSelector.matchPercentage,
           mutations: variantSelector.variant.mutations,
+          pangolinLineage: variantSelector.variant.name,
           dataType: toLiteralSamplingStrategy(samplingStrategy),
         },
         signal

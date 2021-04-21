@@ -10,7 +10,8 @@ export const VariantSelectorSchema = zod.object({
 export const OldSampleSelectorSchema = zod.object({
   country: CountrySchema,
   matchPercentage: zod.number(),
-  mutations: zod.array(zod.string()),
+  mutations: zod.array(zod.string()).optional(),
+  pangolinLineage: zod.string().optional(),
   samplingStrategy: LiteralSamplingStrategySchema,
 });
 
@@ -19,6 +20,7 @@ export const NewSampleSelectorSchema = zod.object({
   country: CountrySchema.optional(),
   mutations: zod.array(zod.string()).optional(),
   matchPercentage: zod.number().optional(),
+  pangolinLineage: zod.string().optional(),
   dataType: LiteralSamplingStrategySchema,
   dateFrom: DateStringSchema.optional(),
   dateTo: DateStringSchema.optional(),

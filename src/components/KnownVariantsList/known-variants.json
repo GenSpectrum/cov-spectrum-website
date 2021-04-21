@@ -2,121 +2,56 @@
   {
     "variant": {
       "name": "B.1.1.7",
-      "mutations": [
-        "ORF8:Q27*",
-        "S:A570D",
-        "ORF1a:T1001I",
-        "ORF8:R52I",
-        "ORF1a:G3676-",
-        "S:N501Y",
-        "S:T716I",
-        "ORF8:Y73C",
-        "ORF1a:A1708D",
-        "N:S235F",
-        "ORF1a:I2230T",
-        "ORF1a:F3677-",
-        "S:S982A",
-        "S:Y144-",
-        "N:D3L",
-        "ORF1a:S3675-",
-        "S:H69-",
-        "S:D1118H",
-        "S:P681H",
-        "S:V70-"
-      ]
+      "mutations": []
     },
     "matchPercentage": 0.8
   },
   {
     "variant": {
       "name": "B.1.177",
-      "mutations": ["S:A222V", "N:A220V"]
+      "mutations": []
     },
     "matchPercentage": 1
   },
   {
     "variant": {
       "name": "B.1.160",
-      "mutations": [
-        "S:S477N",
-        "N:M234I",
-        "N:A376T",
-        "ORF1b:A176S",
-        "ORF1b:V767L",
-        "ORF1b:K1141R",
-        "ORF1b:E1184D"
-      ]
+      "mutations": []
     },
     "matchPercentage": 1
   },
   {
     "variant": {
       "name": "B.1.351",
-      "mutations": [
-        "ORF1a:K1655N",
-        "ORF1a:K3353R",
-        "S:K417N",
-        "E:P71L",
-        "ORF1a:T265I",
-        "ORF3a:S171L",
-        "S:D80A",
-        "S:E484K",
-        "S:N501Y",
-        "S:A701V",
-        "N:T205I",
-        "ORF3a:Q57H"
-      ]
+      "mutations": []
     },
     "matchPercentage": 0.8
   },
   {
     "variant": {
       "name": "A.23.1",
-      "mutations": ["S:V367F", "S:Q613H", "S:P681R", "S:F157L"]
+      "mutations": []
     },
     "matchPercentage": 1
   },
   {
     "variant": {
       "name": "B.1.525",
-      "mutations": ["S:F888L", "S:Q52R", "E:I82T", "S:Q677H", "S:E484K", "E:L21F"]
+      "mutations": []
     },
     "matchPercentage": 1
   },
   {
     "variant": {
       "name": "P.1",
-      "mutations": [
-        "N:R203K",
-        "ORF1a:F3677-",
-        "N:P80R",
-        "ORF1a:G3676-",
-        "ORF1a:S3675-",
-        "N:G204R",
-        "S:K417T",
-        "S:E484K",
-        "S:N501Y",
-        "S:H655Y",
-        "S:L18F"
-      ]
+      "mutations": []
     },
     "matchPercentage": 1
   },
   {
     "variant": {
       "name": "P.2",
-      "mutations": [
-        "S:E484K",
-        "S:D614G",
-        "S:V1176F",
-        "ORF1a:L3468V",
-        "ORF1a:L3930F",
-        "ORF1b:P314L",
-        "N:A119S",
-        "N:R203K",
-        "N:G204R",
-        "N:M234I"
-      ]
+      "mutations": []
     },
     "matchPercentage": 1
   }
