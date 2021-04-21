@@ -175,7 +175,7 @@ export const KnownVariantsList = ({
       variantSampleSets,
       wholeSampleSet: wholeSampleSetState.data,
     });
-  }, [variantSampleSets, wholeSampleSetState]);
+  }, [variantSampleSets, wholeSampleSetState, knownVariantsWithoutData]);
 
   return (
     <>
