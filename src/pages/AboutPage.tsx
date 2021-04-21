@@ -15,7 +15,7 @@ const Question = styled.div`
 export const AboutPage = () => {
   return (
     <Wrapper>
-      <h1>Spectrum</h1>
+      <h1>CoV-Spectrum</h1>
       <p>
         Explore up-to-date genome data and monitor variants of SARS-CoV-2! CoV-Spectrum is a fully interactive
         platform aiming to help scientists investigate known variants as well as identifying new ones. It is

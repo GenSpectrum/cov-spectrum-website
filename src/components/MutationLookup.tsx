@@ -26,7 +26,7 @@ export const MutationLookup = ({ onVariantSelect }: Props) => {
   return (
     <Form onSubmit={onSubmit}>
       <Form.Group controlId='mutationsFieldGroup'>
-        <Form.Label>Mutations (comma-separated and case-sensitive)</Form.Label>
+        <Form.Label>Mutations (comma-separated)</Form.Label>
         <Form.Control
           type='text'
           value={selectedMutations}

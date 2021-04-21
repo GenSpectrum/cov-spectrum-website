@@ -37,7 +37,7 @@ export const Header = () => {
           <HeaderCountrySelect />
           <HeaderSamplingStrategySelect />
           <Nav.Link href='/about' style={{ textDecoration: 'underline' }}>
-            What is this website?
+            About this website
           </Nav.Link>
         </Nav>
         <Nav>
