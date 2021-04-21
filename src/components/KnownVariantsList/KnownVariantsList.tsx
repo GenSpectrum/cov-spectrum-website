@@ -5,7 +5,6 @@ import { VariantSelector } from '../../helpers/sample-selector';
 import { SampleSetWithSelector } from '../../helpers/sample-set';
 import { getPangolinLineages, SamplingStrategy } from '../../services/api';
 import { Country, Variant } from '../../services/api-types';
-import knownVariantSelectors from './known-variants.json';
 import { KnownVariantCard } from './KnownVariantCard';
 import {
   convertKnownVariantChartData,
@@ -36,14 +35,58 @@ const Grid = styled.div`
 
 type NamedVariantSelector = VariantSelector & { variant: { name: string } };
 
-const knownVariantsWithoutData: {
-  selector: NamedVariantSelector;
-  chartData?: number[];
-}[] = knownVariantSelectors.map(selector => ({ selector }));
-
 const SearchWrapper = styled.div`
   margin-bottom: 10px;
 `;
+
+function selectPreviewVariants(
+  pangolinLineages: {
+    pangolinLineage: string;
+    count: number;
+  }[],
+  numberVariants: number
+): NamedVariantSelector[] {
+  const variants: NamedVariantSelector[] = [
+    // The three official VOCs should always come first
+    {
+      variant: {
+        name: 'B.1.1.7',
+        mutations: [],
+      },
+      matchPercentage: 1,
+    },
+    {
+      variant: {
+        name: 'B.1.351',
+        mutations: [],
+      },
+      matchPercentage: 1,
+    },
+    {
+      variant: {
+        name: 'P.1',
+        mutations: [],
+      },
+      matchPercentage: 1,
+    },
+  ];
+  for (let pangolinLineage of pangolinLineages) {
+    if (variants.length >= numberVariants) {
+      break;
+    }
+    if (['B.1.1.7', 'B.1.351', 'P.1'].includes(pangolinLineage.pangolinLineage)) {
+      continue;
+    }
+    variants.push({
+      variant: {
+        name: pangolinLineage.pangolinLineage,
+        mutations: [],
+      },
+      matchPercentage: 1,
+    });
+  }
+  return variants;
+}
 
 export const KnownVariantsList = ({
   country,
@@ -61,6 +104,45 @@ export const KnownVariantsList = ({
       count: number;
     }[]
   >([]);
+  const [knownVariantSelectors, setKnownVariantSelectors] = useState<NamedVariantSelector[]>([]);
+
+  const knownVariantsWithoutData: {
+    selector: NamedVariantSelector;
+    chartData?: number[];
+  }[] = knownVariantSelectors.map(selector => ({ selector }));
+
+  useEffect(() => {
+    let isSubscribed = true;
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    getPangolinLineages(
+      {
+        country,
+        samplingStrategy,
+        dateFrom: dayjs().subtract(3, 'months').day(1).format('YYYY-MM-DD'),
+      },
+      signal
+    )
+      .then(data => {
+        if (isSubscribed) {
+          const lineages = data.filter(d => d.pangolinLineage !== null).sort((a, b) => b.count - a.count) as {
+            pangolinLineage: string;
+            count: number;
+          }[];
+          setPangolinLineages(lineages);
+          setKnownVariantSelectors(selectPreviewVariants(lineages, 8));
+        }
+      })
+      .catch(err => {
+        console.error(err);
+      });
+
+    return () => {
+      isSubscribed = false;
+      controller.abort();
+    };
+  }, [country, samplingStrategy]);
 
   useEffect(() => {
     setVariantSampleSets(undefined);
@@ -79,33 +161,11 @@ export const KnownVariantsList = ({
         console.error(err);
       });
 
-    getPangolinLineages(
-      {
-        country,
-        samplingStrategy,
-        dateFrom: dayjs().subtract(3, 'months').day(1).format('YYYY-MM-DD'),
-      },
-      signal
-    )
-      .then(data => {
-        if (isSubscribed) {
-          setPangolinLineages(
-            data.filter(d => d.pangolinLineage !== null).sort((a, b) => b.count - a.count) as {
-              pangolinLineage: string;
-              count: number;
-            }[]
-          );
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      });
-
     return () => {
       isSubscribed = false;
       controller.abort();
     };
-  }, [country, samplingStrategy]);
+  }, [country, samplingStrategy, knownVariantSelectors]);
 
   const knownVariants = useMemo(() => {
     if (variantSampleSets === undefined || !wholeSampleSetState.isResolved) {
