@@ -70,6 +70,7 @@ export const SampleTable = ({ matchPercentage, variant, country, samplingStrateg
 
     getSamples(
       {
+        pangolinLineage: variant.name,
         mutationsString,
         matchPercentage,
         country,

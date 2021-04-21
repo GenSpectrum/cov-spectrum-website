@@ -81,19 +81,27 @@ export const post = (endpoint: string, body: unknown, signal?: AbortSignal) => {
 
 export const getSamples = (
   {
+    pangolinLineage,
     mutationsString,
     matchPercentage,
     country,
     samplingStrategy,
   }: {
-    mutationsString: string;
+    pangolinLineage?: string;
+    mutationsString?: string;
     matchPercentage: number;
     country: string | null | undefined;
     samplingStrategy: LiteralSamplingStrategy;
   },
   signal?: AbortSignal
 ): Promise<SampleResultList> => {
-  let url = HOST + `/resource/sample/?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
+  let url = HOST + `/resource/sample/?matchPercentage=${matchPercentage}`;
+  if (pangolinLineage?.length) {
+    url += `&pangolinLineage=${pangolinLineage}`;
+  }
+  if (mutationsString?.length) {
+    url += `&mutations=${mutationsString}`;
+  }
   if (country) {
     url += `&country=${country}`;
   }
@@ -140,17 +148,25 @@ export async function getNewSamples(
 }
 
 export const getSampleFastaUrl = ({
+  pangolinLineage,
   mutationsString,
   matchPercentage,
   country,
   samplingStrategy,
 }: {
-  mutationsString: string;
+  pangolinLineage?: string;
+  mutationsString?: string;
   matchPercentage: number;
   country: string | null | undefined;
   samplingStrategy: LiteralSamplingStrategy;
 }): string => {
-  let url = HOST + `/resource/sample-fasta?mutations=${mutationsString}&matchPercentage=${matchPercentage}`;
+  let url = HOST + `/resource/sample-fasta?matchPercentage=${matchPercentage}`;
+  if (pangolinLineage?.length) {
+    url += `&pangolinLineage=${pangolinLineage}`;
+  }
+  if (mutationsString?.length) {
+    url += `&mutations=${mutationsString}`;
+  }
   if (country) {
     url += `&country=${country}`;
   }

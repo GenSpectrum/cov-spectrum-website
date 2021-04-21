@@ -15,7 +15,13 @@ export class NextcladeService {
     samplingStrategy: LiteralSamplingStrategy;
   }) {
     const mutationsString = variant.mutations.join(',');
-    let endpoint = getSampleFastaUrl({ mutationsString, matchPercentage, country, samplingStrategy });
+    let endpoint = getSampleFastaUrl({
+      pangolinLineage: variant.name,
+      mutationsString,
+      matchPercentage,
+      country,
+      samplingStrategy,
+    });
     if (AccountService.isLoggedIn()) {
       const jwt = await AccountService.createTemporaryJwt('/resource/sample-fasta');
       endpoint += '&jwt=' + jwt;
