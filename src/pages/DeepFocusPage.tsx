@@ -15,7 +15,7 @@ import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021Fitness
 import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { HospitalizationDeathDeepFocus } from '../components/HospitalizationDeathDeepFocus';
-import { WasteWaterDeepFocus } from '../components/WasteWaterDeepFocus';
+import { WasteWaterDeepFocus } from '../models/wasteWater/WasteWaterDeepFocus';
 
 interface SyncProps {
   country: Country;

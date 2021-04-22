@@ -30,7 +30,7 @@ export const WasteWaterResponseSchema = zod.object({
         zod.object({
           date: zod.string(),
           nucMutation: zod.string(),
-          proportion: zod.number(),
+          proportion: zod.number().nullable(),
         })
       ),
     })

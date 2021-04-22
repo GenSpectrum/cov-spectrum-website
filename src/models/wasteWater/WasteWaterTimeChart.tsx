@@ -96,6 +96,7 @@ export const WasteWaterTimeChart = React.memo(
                   dataKey='proportion'
                   stroke={colors.active}
                   strokeWidth={3}
+                  dot={false}
                   isAnimationActive={false}
                 />
               </ComposedChart>

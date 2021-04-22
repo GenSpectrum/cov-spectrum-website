@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { NamedSection } from './NamedSection';
-import { WasteWaterTimeWidget } from '../models/wasteWater/WasteWaterTimeWidget';
-import { getData } from '../models/wasteWater/loading';
-import { WasteWaterDataset } from '../models/wasteWater/types';
-import { WasteWaterHeatMapWidget } from '../models/wasteWater/WasteWaterHeatMapWidget';
-import { GridCell, PackedGrid } from './PackedGrid';
+import { NamedSection } from '../../components/NamedSection';
+import { WasteWaterTimeWidget } from './WasteWaterTimeWidget';
+import { getData } from './loading';
+import { WasteWaterDataset } from './types';
+import { WasteWaterHeatMapWidget } from './WasteWaterHeatMapWidget';
+import { GridCell, PackedGrid } from '../../components/PackedGrid';
 
 interface Props {
   country: string;
@@ -54,7 +54,7 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
                     country={country}
                     location={d.location}
                     title='Estimated proportion'
-                    height={400}
+                    height={500}
                   />
                 </GridCell>
                 <GridCell minWidth={800}>
@@ -64,7 +64,7 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
                     country={country}
                     location={d.location}
                     title='Occurrences of individual mutations'
-                    height={400}
+                    height={500}
                   />
                 </GridCell>
               </PackedGrid>

@@ -10,13 +10,14 @@ export type TimeHeatMapChartProps = {
 };
 
 const Cell = styled.td<{ backgroundColor?: string; active?: boolean }>`
-  min-height: 30px;
-  height: 30px;
+  min-height: 20px;
+  height: 20px;
   padding: 0;
-  width: 40px;
-  min-width: 40px;
+  width: 35px;
+  min-width: 35px;
   background-color: ${props => props.backgroundColor ?? 'none'};
   outline: ${props => (props.active ? '3px solid black' : 'none')};
+  font-size: small;
 `;
 
 const XAxisTicksCell = styled(Cell)`
@@ -46,10 +47,10 @@ function formatDate(date: Date) {
 
 function transformDataToTableFormat(data: WasteWaterMutationOccurrencesDataset): WasteWaterHeatMapEntry[][] {
   // Get the unique set of dates (rows) and nucMutations (columns)
-  const dates: Set<Date> = new Set();
+  const dates: Set<number> = new Set();
   const nucMutations: Set<string> = new Set();
   for (let d of data) {
-    dates.add(d.date);
+    dates.add(d.date.getTime());
     nucMutations.add(d.nucMutation);
   }
 
@@ -58,7 +59,7 @@ function transformDataToTableFormat(data: WasteWaterMutationOccurrencesDataset):
   const nucMutationList = Array.from(nucMutations); // TODO sort the list correctly (by nucleotide position)
   const dateIndexMap: Map<number, number> = new Map();
   const nucMutationIndexMap: Map<string, number> = new Map();
-  dateList.forEach((date, i) => dateIndexMap.set(date.getTime(), i));
+  dateList.forEach((date, i) => dateIndexMap.set(date, i));
   nucMutationList.forEach((nucMutation, i) => nucMutationIndexMap.set(nucMutation, i));
 
   // Create a table with empty values
@@ -67,7 +68,7 @@ function transformDataToTableFormat(data: WasteWaterMutationOccurrencesDataset):
     const row: WasteWaterHeatMapEntry[] = [];
     for (let date of dateList) {
       row.push({
-        date,
+        date: new Date(date),
         nucMutation,
         proportion: undefined,
       });
@@ -143,12 +144,12 @@ export const WasteWaterHeatMapChart = React.memo(
         </TitleWrapper>
         <ChartAndMetricsWrapper2>
           <ChartWrapper2>
-            <div style={{ width: '100px', height: '100%', display: 'block' }}>
+            <div style={{ width: '70px', height: '100%', display: 'block' }}>
               <table style={{ tableLayout: 'fixed', width: '100px', height: '100%' }}>
                 <tbody>{nucMutationsLabelTableRows}</tbody>
               </table>
             </div>
-            <div style={{ width: 'calc(100% - 100px)', height: '100%', display: 'block' }}>
+            <div style={{ width: 'calc(100% - 70px)', height: '100%', display: 'block' }}>
               <div style={{ height: '100%' }}>
                 <table style={{ tableLayout: 'fixed', width: '100%', height: '100%' }}>
                   <tbody>{heatMapTableRows}</tbody>
