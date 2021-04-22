@@ -101,7 +101,7 @@ export async function getData({ country, variantName }: WasteWaterRequest): Prom
           proportionCI: [0.41, 0.67],
         },
       ],
-      mutationOccurrences: generateHeatMapData(11, 15),
+      mutationOccurrences: generateHeatMapData(10, 20),
     });
   }
   return {

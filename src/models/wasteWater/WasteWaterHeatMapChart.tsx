@@ -9,10 +9,28 @@ export type TimeHeatMapChartProps = {
   data: WasteWaterMutationOccurrencesDataset;
 };
 
-const Cell = styled.td`
+const Cell = styled.td<{ backgroundColor?: string; active?: boolean }>`
+  min-height: 30px;
+  height: 30px;
+  padding: 0;
   width: 40px;
   min-width: 40px;
-  height: 30px;
+  background-color: ${props => props.backgroundColor ?? 'none'};
+  outline: ${props => (props.active ? '3px solid black' : 'none')};
+`;
+
+const XAxisTicksCell = styled(Cell)`
+  text-align: center;
+`;
+
+const ChartAndMetricsWrapper2 = styled(ChartAndMetricsWrapper)`
+  overflow-x: auto;
+`;
+
+const ChartWrapper2 = styled(ChartWrapper)`
+  display: flex;
+  margin-right: 20px;
+  overflow-y: auto;
 `;
 
 function samePosition(entry1?: WasteWaterHeatMapEntry, entry2?: WasteWaterHeatMapEntry) {
@@ -77,57 +95,67 @@ export const WasteWaterHeatMapChart = React.memo(
       setActive(cell);
     }
 
+    const nucMutationsLabelTableRows = [];
+    const heatMapTableRows = [];
+    for (let row of processedData) {
+      const nucMutation = row[0].nucMutation;
+      nucMutationsLabelTableRows.push(
+        <tr key={nucMutation}>
+          <Cell>{nucMutation}</Cell>
+        </tr>
+      );
+      heatMapTableRows.push(
+        <tr key={nucMutation}>
+          {row.map(col => (
+            <Cell
+              backgroundColor={col.proportion !== undefined ? colorScale(col.proportion) : 'lightgray'}
+              active={samePosition(active, col)}
+              onMouseEnter={() => handleMouseEnter(col)}
+            />
+          ))}
+        </tr>
+      );
+    }
+    nucMutationsLabelTableRows.push(
+      <tr>
+        <Cell />
+      </tr>
+    );
+    heatMapTableRows.push(
+      <tr>
+        {processedData[0].map(col => (
+          <XAxisTicksCell key={col.date.getTime()}>{formatDate(col.date)}</XAxisTicksCell>
+        ))}
+      </tr>
+    );
+
     return (
       <Wrapper>
         <TitleWrapper>
-          {active !== undefined
-            ? 'Occurrence of ' + active.nucMutation + ' in waste water samples on ' + formatDate(active.date)
-            : 'Occurrence of signature mutations in waste water samples through time'}
+          {active !== undefined ? (
+            <>
+              Occurrence of <b>{active.nucMutation}</b> in waste water samples on{' '}
+              <b>{formatDate(active.date)}</b>
+            </>
+          ) : (
+            'Occurrence of signature mutations in waste water samples through time'
+          )}
         </TitleWrapper>
-        <ChartAndMetricsWrapper>
-          <ChartWrapper>
-            <div style={{ display: 'flex', marginRight: '20px' }}>
-              <table style={{ tableLayout: 'fixed' }}>
-                <tbody>
-                  {processedData.map(row => (
-                    <tr key={'row-' + row[0].nucMutation}>
-                      <td style={{ paddingRight: '20px', height: '30px' }}>{row[0].nucMutation}</td>
-                    </tr>
-                  ))}
-                </tbody>
+        <ChartAndMetricsWrapper2>
+          <ChartWrapper2>
+            <div style={{ width: '100px', height: '100%', display: 'block' }}>
+              <table style={{ tableLayout: 'fixed', width: '100px', height: '100%' }}>
+                <tbody>{nucMutationsLabelTableRows}</tbody>
               </table>
-              <div style={{ overflow: 'auto' }}>
-                <table style={{ tableLayout: 'fixed' }}>
-                  <tbody>
-                    {processedData.map(row => (
-                      <tr key={'row-' + row[0].nucMutation}>
-                        {row.map(cell => {
-                          return (
-                            <Cell
-                              key={'cell-' + cell.nucMutation + '-' + cell.date}
-                              style={{
-                                backgroundColor:
-                                  cell.proportion !== undefined ? colorScale(cell.proportion) : 'lightgray',
-                                outline: samePosition(active, cell) ? '3px solid black' : 'none',
-                              }}
-                              onMouseEnter={() => handleMouseEnter(cell)}
-                            />
-                          );
-                        })}
-                      </tr>
-                    ))}
-                    <tr>
-                      {processedData[0].map(cell => (
-                        <td key={'xaxis-' + cell.date} style={{ textAlign: 'center', paddingTop: '10px' }}>
-                          {formatDate(cell.date)}
-                        </td>
-                      ))}
-                    </tr>
-                  </tbody>
+            </div>
+            <div style={{ width: 'calc(100% - 100px)', height: '100%', display: 'block' }}>
+              <div style={{ height: '100%' }}>
+                <table style={{ tableLayout: 'fixed', width: '100%', height: '100%' }}>
+                  <tbody>{heatMapTableRows}</tbody>
                 </table>
               </div>
             </div>
-          </ChartWrapper>
+          </ChartWrapper2>
           <MetricsWrapper>
             <MetricsSpacing />
             <Metric
@@ -137,7 +165,7 @@ export const WasteWaterHeatMapChart = React.memo(
               helpText='Proportion of waste water samples containing the mutation.'
             />
           </MetricsWrapper>
-        </ChartAndMetricsWrapper>
+        </ChartAndMetricsWrapper2>
       </Wrapper>
     );
   }

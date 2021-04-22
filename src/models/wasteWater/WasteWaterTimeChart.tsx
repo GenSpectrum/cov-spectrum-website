@@ -49,7 +49,12 @@ export const WasteWaterTimeChart = React.memo(
       <Wrapper>
         <TitleWrapper>
           Estimated prevalence in waste water samples
-          {active !== undefined ? ' on ' + formatDate(active.date.getTime()) : ''}
+          {active !== undefined && (
+            <>
+              {' '}
+              on <b>{formatDate(active.date.getTime())}</b>
+            </>
+          )}
         </TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>

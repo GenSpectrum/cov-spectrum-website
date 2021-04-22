@@ -4,6 +4,7 @@ import { WasteWaterTimeWidget } from '../models/wasteWater/WasteWaterTimeWidget'
 import { getData } from '../models/wasteWater/loading';
 import { WasteWaterDataset } from '../models/wasteWater/types';
 import { WasteWaterHeatMapWidget } from '../models/wasteWater/WasteWaterHeatMapWidget';
+import { GridCell, PackedGrid } from './PackedGrid';
 
 interface Props {
   country: string;
@@ -45,8 +46,8 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
           {data.data.map(d => (
             <div key={d.location} style={{ marginTop: '20px' }}>
               <h2>{d.location}</h2>
-              <div style={{ display: 'flex' }}>
-                <div style={{ width: '700px', marginRight: '50px' }}>
+              <PackedGrid maxColumns={2}>
+                <GridCell minWidth={500}>
                   <WasteWaterTimeWidget.ShareableComponent
                     data={d.timeseriesSummary}
                     variantName={variantName}
@@ -55,8 +56,8 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
                     title='Estimated proportion'
                     height={400}
                   />
-                </div>
-                <div style={{ height: '400px', maxWidth: '950px', flexGrow: 1 }}>
+                </GridCell>
+                <GridCell minWidth={800}>
                   <WasteWaterHeatMapWidget.ShareableComponent
                     data={d.mutationOccurrences}
                     variantName={variantName}
@@ -65,8 +66,8 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
                     title='Occurrences of individual mutations'
                     height={400}
                   />
-                </div>
-              </div>
+                </GridCell>
+              </PackedGrid>
             </div>
           ))}
 
