@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { getFocusPageLink } from '../helpers/explore-url';
 import { VariantSelector } from '../helpers/sample-selector';
 import { getGlobalSamplePageLink } from '../pages/GlobalSamplePage';
-import { SamplingStrategy } from '../services/api';
+import { DateRange, SamplingStrategy } from '../services/api';
 import { Country } from '../services/api-types';
 
 interface Props extends ButtonProps {
@@ -12,11 +12,12 @@ interface Props extends ButtonProps {
     variantSelector: VariantSelector;
     samplingStrategy: SamplingStrategy;
     country: Country | undefined;
+    dateRange: DateRange;
   };
 }
 
 export const LazySampleButton = ({
-  query: { variantSelector, country, samplingStrategy },
+  query: { variantSelector, country, samplingStrategy, dateRange },
   onClick: onClickFromProps,
   ...buttonProps
 }: Props) => {
@@ -27,7 +28,13 @@ export const LazySampleButton = ({
       onClick={ev => {
         if (country) {
           history.push(
-            getFocusPageLink({ variantSelector, country, samplingStrategy, deepFocusPath: '/samples' })
+            getFocusPageLink({
+              variantSelector,
+              country,
+              samplingStrategy,
+              dateRange,
+              deepFocusPath: '/samples',
+            })
           );
         } else {
           history.push(getGlobalSamplePageLink(variantSelector));

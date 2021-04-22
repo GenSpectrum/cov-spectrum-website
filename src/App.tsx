@@ -22,7 +22,7 @@ export const App = () => {
 
       <Switch>
         <Route exact path='/'>
-          <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}`} />
+          <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}/AllTimes`} />
         </Route>
         <Route path='/variant'>
           {/* This is so that we don't break old bookmarked links */}
@@ -33,7 +33,7 @@ export const App = () => {
             <LoginPage />
           </LoginWrapper>
         </Route>
-        <Route path='/explore/:country/:samplingStrategy'>
+        <Route path='/explore/:country/:samplingStrategy/:dateRange'>
           <ExploreFocusSplit />
         </Route>
         <Route path='/global-samples'>

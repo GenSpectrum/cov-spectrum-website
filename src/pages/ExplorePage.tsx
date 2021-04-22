@@ -7,13 +7,14 @@ import { NewVariantTable } from '../components/NewVariantTable';
 import { ScrollableTabs } from '../components/ScrollableTabs';
 import { VariantSelector } from '../helpers/sample-selector';
 import { SampleSetWithSelector } from '../helpers/sample-set';
-import { SamplingStrategy } from '../services/api';
+import { DateRange, SamplingStrategy } from '../services/api';
 import { Country } from '../services/api-types';
 import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
 
 interface Props {
   country: Country;
   samplingStrategy: SamplingStrategy;
+  dateRange: DateRange;
   onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
   wholeSampleSetState: AsyncState<SampleSetWithSelector>;
@@ -22,6 +23,7 @@ interface Props {
 export const ExplorePage = ({
   country,
   samplingStrategy,
+  dateRange,
   onVariantSelect,
   selection,
   wholeSampleSetState,

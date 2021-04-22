@@ -13,7 +13,7 @@ import { getFocusPageLink } from '../helpers/explore-url';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { AccountService } from '../services/AccountService';
-import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
@@ -24,6 +24,7 @@ interface Props {
   matchPercentage: number;
   variant: Variant;
   samplingStrategy: SamplingStrategy;
+  dateRange: DateRange;
   variantSampleSet: SampleSetWithSelector;
   wholeSampleSet: SampleSetWithSelector;
   variantInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
@@ -43,13 +44,14 @@ export const FocusPage = ({
   wholeInternationalSampleSetState,
   ...forwardedProps
 }: Props) => {
-  const { country, matchPercentage, variant, samplingStrategy } = forwardedProps;
+  const { country, matchPercentage, variant, samplingStrategy, dateRange } = forwardedProps;
   const plotProps = {
     country,
     matchPercentage,
     mutations: variant.mutations,
     pangolinLineage: variant.name,
     samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
+    dateRange,
   };
 
   const loggedIn = AccountService.isLoggedIn();
@@ -61,6 +63,7 @@ export const FocusPage = ({
           variantSelector: { variant, matchPercentage },
           country,
           samplingStrategy,
+          dateRange,
           deepFocusPath: suffix,
         });
         return (
@@ -69,7 +72,7 @@ export const FocusPage = ({
           </Button>
         );
       }),
-    [country, samplingStrategy, matchPercentage, variant]
+    [country, samplingStrategy, dateRange, matchPercentage, variant]
   );
 
   const header = (

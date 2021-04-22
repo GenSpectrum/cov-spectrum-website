@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Alert, Button } from 'react-bootstrap';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { AccountService } from '../services/AccountService';
-import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { NextcladeService } from '../services/NextcladeService';
 import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
@@ -15,6 +15,7 @@ interface Props {
   matchPercentage: number;
   variant: Variant;
   samplingStrategy: SamplingStrategy;
+  dateRange: DateRange;
   variantInternationalSampleSet: SampleSetWithSelector;
   wholeInternationalSampleSet: SampleSetWithSelector;
 }
@@ -24,6 +25,7 @@ export const InternationalComparison = ({
   matchPercentage,
   variant,
   samplingStrategy: requestedSamplingStrategy,
+  dateRange,
   variantInternationalSampleSet,
   wholeInternationalSampleSet,
 }: Props) => {
@@ -75,6 +77,7 @@ export const InternationalComparison = ({
                     variantSelector: { variant, matchPercentage },
                     country: undefined,
                     samplingStrategy: SamplingStrategy.AllSamples,
+                    dateRange,
                   }}
                   variant='secondary'
                   size='sm'
@@ -89,6 +92,7 @@ export const InternationalComparison = ({
       />
 
       <InternationalComparisonTable
+        dateRange={dateRange}
         matchPercentage={matchPercentage}
         variant={variant}
         variantInternationalSampleSet={variantInternationalSampleSet}

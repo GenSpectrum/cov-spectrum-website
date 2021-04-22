@@ -4,7 +4,7 @@ import { generatePath, useHistory, useLocation, useRouteMatch } from 'react-rout
 import { Location, createLocation } from 'history';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 import { VariantSelector, VariantSelectorSchema } from '../helpers/sample-selector';
-import { isSamplingStrategy, SamplingStrategy } from '../services/api';
+import { DateRange, isDateRange, isSamplingStrategy, SamplingStrategy } from '../services/api';
 import { Country } from '../services/api-types';
 
 const queryEncoder = new ZodQueryEncoder(VariantSelectorSchema);
@@ -14,6 +14,8 @@ export interface ExploreUrl {
   setCountry: (country: string) => void;
   samplingStrategy: SamplingStrategy;
   setSamplingStrategy: (samplingStrategy: SamplingStrategy) => void;
+  dateRange: DateRange;
+  setDateRange: (dateRange: DateRange) => void;
   variantSelector?: VariantSelector;
   focusKey: string;
 }
@@ -22,14 +24,15 @@ export function useExploreUrl(): ExploreUrl | undefined {
   const history = useHistory();
   const location = useLocation();
 
-  const baseRouteMatch = useRouteMatch<{ country: string; samplingStrategy: string }>(
-    `/explore/:country/:samplingStrategy`
+  const baseRouteMatch = useRouteMatch<{ country: string; samplingStrategy: string; dateRange: string }>(
+    `/explore/:country/:samplingStrategy/:dateRange`
   );
   const variantRouteMatch = useRouteMatch<{
     country: string;
     samplingStrategy: string;
+    dateRange: string;
     variantSelector: string;
-  }>(`/explore/:country/:samplingStrategy/variants/:variantSelector`);
+  }>(`/explore/:country/:samplingStrategy/:dateRange/variants/:variantSelector`);
 
   const samplingStrategy = baseRouteMatch?.params.samplingStrategy;
   useEffect(() => {
@@ -117,6 +120,18 @@ export function useExploreUrl(): ExploreUrl | undefined {
     [setCountryAndSamplingStrategy, country]
   );
 
+  const dateRange = baseRouteMatch?.params.dateRange;
+
+  const setDateRange = useCallback(
+    (newDateRange: string) => {
+      const oldPrefix = `/explore/${country}/${samplingStrategy}/${dateRange}`;
+      assert(location.pathname.startsWith(oldPrefix));
+      const suffix = location.pathname.slice(oldPrefix.length);
+      history.push(`/explore/${country}/${samplingStrategy}/${newDateRange}${suffix}`);
+    },
+    [history, location.pathname, country, samplingStrategy, dateRange]
+  );
+
   useEffect(() => {
     if (
       country !== undefined &&
@@ -143,9 +158,14 @@ export function useExploreUrl(): ExploreUrl | undefined {
     return undefined;
   }
 
+  if (!dateRange || !isDateRange(dateRange)) {
+    return undefined;
+  }
+
   if (variantRouteMatch) {
     assert.strictEqual(baseRouteMatch.params.country, variantRouteMatch.params.country);
     assert.strictEqual(baseRouteMatch.params.samplingStrategy, variantRouteMatch.params.samplingStrategy);
+    assert.strictEqual(baseRouteMatch.params.dateRange, variantRouteMatch.params.dateRange);
   }
 
   return {
@@ -153,8 +173,10 @@ export function useExploreUrl(): ExploreUrl | undefined {
     setCountry,
     samplingStrategy,
     setSamplingStrategy,
+    dateRange,
+    setDateRange,
     variantSelector,
-    focusKey: `${country}-${samplingStrategy}-${encodedVariantSelector}`,
+    focusKey: `${country}-${samplingStrategy}-${dateRange}-${encodedVariantSelector}`,
   };
 }
 
@@ -162,11 +184,13 @@ export function getFocusPageLink({
   variantSelector,
   country,
   samplingStrategy,
+  dateRange,
   deepFocusPath = '',
 }: {
   variantSelector: VariantSelector;
   country: Country;
   samplingStrategy: SamplingStrategy;
+  dateRange: DateRange;
   deepFocusPath?: string;
 }): Location {
   assert(!deepFocusPath || deepFocusPath.startsWith('/'));
@@ -180,7 +204,7 @@ export function getFocusPageLink({
   // which changed the reference equality of variantSelector from useExploreUrl,
   // which caused all hooks which depend on variantSelector to be re-run.
   return createLocation(
-    generatePath(`/explore/${country}/${samplingStrategy}/variants/:variantSelector`, {
+    generatePath(`/explore/${country}/${samplingStrategy}/${dateRange}/variants/:variantSelector`, {
       variantSelector: queryEncoder.encode(variantSelector).toString(),
     }) + deepFocusPath,
     undefined,

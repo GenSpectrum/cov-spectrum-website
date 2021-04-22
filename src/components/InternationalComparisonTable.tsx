@@ -5,11 +5,12 @@ import { LazySampleButton } from '../components/LazySampleButton';
 import { globalDateCache, UnifiedIsoWeek } from '../helpers/date-cache';
 import { SampleSet } from '../helpers/sample-set';
 import { AccountService } from '../services/AccountService';
-import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Variant } from '../services/api-types';
 import { NextcladeService } from '../services/NextcladeService';
 
 interface Props {
+  dateRange: DateRange;
   matchPercentage: number;
   variant: Variant;
   variantInternationalSampleSet: SampleSet;
@@ -22,6 +23,7 @@ interface CountrySummary {
 }
 
 export const InternationalComparisonTable = ({
+  dateRange,
   matchPercentage,
   variant,
   variantInternationalSampleSet,
@@ -83,6 +85,7 @@ export const InternationalComparisonTable = ({
                       variantSelector: { variant, matchPercentage },
                       country: c.country,
                       samplingStrategy: SamplingStrategy.AllSamples,
+                      dateRange,
                     }}
                     variant='secondary'
                     size='sm'

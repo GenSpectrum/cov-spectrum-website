@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { AccountService } from '../services/AccountService';
-import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { NextcladeService } from '../services/NextcladeService';
 import { LazySampleButton } from './LazySampleButton';
@@ -11,6 +11,7 @@ export interface Props {
   matchPercentage: number;
   variant: Variant;
   samplingStrategy: SamplingStrategy;
+  dateRange: DateRange;
 }
 
 export const FocusVariantHeaderControls = ({
@@ -18,6 +19,7 @@ export const FocusVariantHeaderControls = ({
   matchPercentage,
   variant,
   samplingStrategy,
+  dateRange,
 }: Props) => {
   const nextcladeButton = (
     <Button
@@ -54,7 +56,7 @@ export const FocusVariantHeaderControls = ({
       )}
       {AccountService.isLoggedIn() && (
         <LazySampleButton
-          query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy }}
+          query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy, dateRange }}
           variant='secondary'
           size='sm'
         >

@@ -12,7 +12,7 @@ import { VariantHeader } from '../components/VariantHeader';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { scrollableContainerPaddingPx, scrollableContainerStyle } from '../helpers/scrollable-container';
 import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
-import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { HospitalizationDeathDeepFocus } from '../components/HospitalizationDeathDeepFocus';
 
@@ -21,6 +21,7 @@ interface SyncProps {
   matchPercentage: number;
   variant: Variant;
   samplingStrategy: SamplingStrategy;
+  dateRange: DateRange;
   variantSampleSet: SampleSetWithSelector;
   wholeSampleSet: SampleSetWithSelector;
 }

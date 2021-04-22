@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrategySelect';
 import { AccountService } from './services/AccountService';
+import { HeaderDateRangeSelect } from './components/HeaderDateRangeSelect';
 
 export const Header = () => {
   const loggedIn = AccountService.isLoggedIn();
@@ -36,6 +37,7 @@ export const Header = () => {
         <Nav className='ml-4 mr-auto'>
           <HeaderCountrySelect />
           <HeaderSamplingStrategySelect />
+          <HeaderDateRangeSelect />
           <Nav.Link href='/about' style={{ textDecoration: 'underline' }}>
             About this website
           </Nav.Link>
