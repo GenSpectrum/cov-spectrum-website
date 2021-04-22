@@ -18,6 +18,7 @@ import { Country, Variant } from '../services/api-types';
 import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
+import { VariantLineages } from '../components/VariantLineages';
 
 interface Props {
   country: Country;
@@ -92,6 +93,7 @@ export const FocusPage = ({
           mutations.
         </p>
       )}
+      {!variant.name && <VariantLineages {...forwardedProps} />}
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <VariantTimeDistributionPlotWidget.ShareableComponent

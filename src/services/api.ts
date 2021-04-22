@@ -230,15 +230,22 @@ export const getSampleFastaUrl = ({
   return url;
 };
 
+// TODO We might want to merge this function with getNewSamples() as it uses the same endpoint.
 export const getPangolinLineages = (
   {
     country,
     samplingStrategy,
     dateFrom,
+    dateTo,
+    mutationsString,
+    matchPercentage,
   }: {
     country: Country;
     samplingStrategy: SamplingStrategy;
     dateFrom?: string;
+    dateTo?: string;
+    mutationsString?: string;
+    matchPercentage?: number;
   },
   signal?: AbortSignal
 ): Promise<PangolinLineageList> => {
@@ -249,6 +256,15 @@ export const getPangolinLineages = (
   }
   if (dateFrom) {
     url += `&dateFrom=${dateFrom}`;
+  }
+  if (dateTo) {
+    url += `&dateTo=${dateTo}`;
+  }
+  if (mutationsString) {
+    url += `&mutations=${mutationsString}`;
+  }
+  if (matchPercentage) {
+    url += `&matchPercentage=${matchPercentage}`;
   }
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
