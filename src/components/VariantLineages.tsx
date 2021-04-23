@@ -69,7 +69,7 @@ export const VariantLineages = ({
         {data
           .sort((a, b) => b.count - a.count)
           .map(({ pangolinLineage, proportion }) => {
-            const label = pangolinLineage || 'Unknown lineage';
+            const label = pangolinLineage || 'Unknown';
             return (
               <LineageEntry key={label}>
                 {label} ({(proportion * 100).toFixed(2)}%)

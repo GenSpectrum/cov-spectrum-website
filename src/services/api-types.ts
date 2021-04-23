@@ -158,6 +158,16 @@ export const LoginResponseSchema = zod.object({
   token: zod.string(),
 });
 
+export const PangolinLineageInformationSchema = zod.object({
+  commonMutations: zod.array(
+    zod.object({
+      mutation: zod.string(),
+      count: zod.number(),
+      proportion: zod.number(),
+    })
+  ),
+});
+
 // TypeScript types from schemas
 export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
 export type CountAndProportionWithCI = zod.infer<typeof CountAndProportionWithCISchema>;
@@ -172,3 +182,4 @@ export type Variant = zod.infer<typeof VariantSchema>;
 export type InterestingVariantResult = zod.infer<typeof InterestingVariantResultSchema>;
 export type LoginResponse = zod.infer<typeof LoginResponseSchema>;
 export type SequencingIntensityEntry = zod.infer<typeof SequencingIntensityEntrySchema>;
+export type PangolinLineageInformation = zod.infer<typeof PangolinLineageInformationSchema>;

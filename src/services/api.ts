@@ -14,6 +14,8 @@ import {
   SequencingIntensityEntry,
   PangolinLineageListSchema,
   PangolinLineageList,
+  PangolinLineageInformationSchema,
+  PangolinLineageInformation,
 } from './api-types';
 import dayjs from 'dayjs';
 
@@ -277,6 +279,43 @@ export const getPangolinLineages = (
       return PangolinLineageListSchema.parse(data);
     });
 };
+
+export async function getInformationOfPangolinLineage(
+  {
+    pangolinLineage,
+    region,
+    country,
+    dateFrom,
+    dateTo,
+  }: {
+    pangolinLineage: string;
+    region?: string;
+    country?: string;
+    dateFrom?: Date;
+    dateTo?: Date;
+  },
+  signal?: AbortSignal
+): Promise<PangolinLineageInformation> {
+  const params = new URLSearchParams();
+  if (region) {
+    params.set('region', region);
+  }
+  if (country) {
+    params.set('country', country);
+  }
+  if (dateFrom) {
+    params.set('dateFrom', dayjs(dateFrom).format('YYYY-MM-DD'));
+  }
+  if (dateTo) {
+    params.set('dateTo', dayjs(dateTo).format('YYYY-MM-DD'));
+  }
+  const url = `/resource/pangolin-lineage/${pangolinLineage}?${params.toString()}`;
+  const res = await get(url, signal);
+  if (!res.ok) {
+    throw new Error('server responded with non-200 status code');
+  }
+  return PangolinLineageInformationSchema.parse(await res.json());
+}
 
 export const getSequencingIntensity = ({
   country,

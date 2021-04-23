@@ -19,6 +19,7 @@ import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { VariantLineages } from '../components/VariantLineages';
+import { VariantMutations } from '../components/VariantMutations';
 
 interface Props {
   country: Country;
@@ -95,6 +96,13 @@ export const FocusPage = ({
         </p>
       )}
       {(!variant.name || variant.name.endsWith('*')) && <VariantLineages {...forwardedProps} />}
+      {variant.name && (
+        <VariantMutations
+          country={forwardedProps.country}
+          pangolinLineage={variant.name}
+          dateRange={forwardedProps.dateRange}
+        />
+      )}
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <VariantTimeDistributionPlotWidget.ShareableComponent
