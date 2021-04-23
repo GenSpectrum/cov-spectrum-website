@@ -32,17 +32,6 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
     <>
       {data && (
         <>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean sit amet vehicula urna, sed
-            malesuada tortor. Morbi nisi leo, maximus in rutrum id, dapibus vel libero. Donec vestibulum non
-            augue ac faucibus. Integer eleifend commodo purus, vel porta tellus consequat ac. Nam nec tempor
-            justo, in accumsan nulla. Mauris et augue ante. Nulla facilisis tellus in ante tempor, eu lobortis
-            eros posuere. Vestibulum cursus blandit eros vitae hendrerit. Vivamus a ultricies urna, vel tempor
-            nisi. Ut interdum at velit sed luctus. Maecenas magna orci, dictum sit amet nulla id, varius
-            facilisis lacus. Donec eu gravida nibh, eget consectetur dui. Nunc consequat varius erat vitae
-            pretium.
-          </p>
-
           {data.data.map(d => (
             <div key={d.location} style={{ marginTop: '20px' }}>
               <h2>{d.location}</h2>
