@@ -23,12 +23,10 @@ export const WasteWaterTimeWidget = new Widget(
       country: encoded.country,
       variantName: encoded.variantName,
       location: encoded.location,
-      data: (
-        await getData({
-          country: encoded.country,
-          variantName: encoded.variantName,
-        })
-      ).data.filter(({ location }) => location === encoded.location)[0].timeseriesSummary,
+      data: (await getData({
+        country: encoded.country,
+        variantName: encoded.variantName,
+      }))!.data.filter(({ location }) => location === encoded.location)[0].timeseriesSummary,
     })
   ),
   WasteWaterTimeChart,

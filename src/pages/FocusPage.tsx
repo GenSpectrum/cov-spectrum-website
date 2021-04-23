@@ -1,5 +1,5 @@
 import { mapValues } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { AsyncState } from 'react-async';
 import { Alert, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -19,9 +19,6 @@ import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { VariantLineages } from '../components/VariantLineages';
-import { WasteWaterDataset } from '../models/wasteWater/types';
-import { getData } from '../models/wasteWater/loading';
-import { WasteWaterTimeWidget } from '../models/wasteWater/WasteWaterTimeWidget';
 
 interface Props {
   country: Country;
@@ -79,18 +76,6 @@ export const FocusPage = ({
       }),
     [country, samplingStrategy, dateRange, matchPercentage, variant]
   );
-
-  // Waste water
-  const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
-  useEffect(() => {
-    if (country !== 'Switzerland' || variant.name !== 'B.1.1.7') {
-      return;
-    }
-    getData({
-      country,
-      variantName: variant.name,
-    }).then(d => setWasteWaterData(d));
-  }, [country, variant]);
 
   const header = (
     <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...forwardedProps} />} />
@@ -160,17 +145,9 @@ export const FocusPage = ({
         {country === 'Switzerland' && variant.name === 'B.1.1.7' && (
           <GridCell minWidth={600}>
             {/* TODO Use a summary plot if available or find another more representative solution. */}
-            {(wasteWaterData && (
-              <WasteWaterTimeWidget.ShareableComponent
-                data={wasteWaterData.data[0].timeseriesSummary}
-                variantName={variant.name}
-                country={country}
-                location={wasteWaterData.data[0].location}
-                title='Results from waste water'
-                toolbarChildren={deepFocusButtons.wasteWater}
-                height={400}
-              />
-            )) || <></>}
+            <NamedCard title='Results from waste water' toolbar={deepFocusButtons.wasteWater}>
+              <></>
+            </NamedCard>
           </GridCell>
         )}
         {samplingStrategy === SamplingStrategy.AllSamples && (

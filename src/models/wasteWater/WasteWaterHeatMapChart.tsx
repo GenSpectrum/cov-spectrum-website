@@ -109,6 +109,7 @@ export const WasteWaterHeatMapChart = React.memo(
         <tr key={nucMutation}>
           {row.map(col => (
             <Cell
+              key={nucMutation + col.date.getTime()}
               backgroundColor={col.proportion !== undefined ? colorScale(col.proportion) : 'lightgray'}
               active={samePosition(active, col)}
               onMouseEnter={() => handleMouseEnter(col)}
@@ -118,12 +119,12 @@ export const WasteWaterHeatMapChart = React.memo(
       );
     }
     nucMutationsLabelTableRows.push(
-      <tr>
+      <tr key={'lastrow'}>
         <Cell />
       </tr>
     );
     heatMapTableRows.push(
-      <tr>
+      <tr key={'lastrow'}>
         {processedData[0].map(col => (
           <XAxisTicksCell key={col.date.getTime()}>{formatDate(col.date)}</XAxisTicksCell>
         ))}
