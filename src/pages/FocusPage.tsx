@@ -93,7 +93,7 @@ export const FocusPage = ({
           mutations.
         </p>
       )}
-      {!variant.name && <VariantLineages {...forwardedProps} />}
+      {(!variant.name || variant.name.endsWith('*')) && <VariantLineages {...forwardedProps} />}
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <VariantTimeDistributionPlotWidget.ShareableComponent

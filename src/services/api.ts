@@ -235,6 +235,7 @@ export const getPangolinLineages = (
   {
     country,
     samplingStrategy,
+    pangolinLineage,
     dateFrom,
     dateTo,
     mutationsString,
@@ -242,6 +243,7 @@ export const getPangolinLineages = (
   }: {
     country: Country;
     samplingStrategy: SamplingStrategy;
+    pangolinLineage?: string;
     dateFrom?: string;
     dateTo?: string;
     mutationsString?: string;
@@ -259,6 +261,9 @@ export const getPangolinLineages = (
   }
   if (dateTo) {
     url += `&dateTo=${dateTo}`;
+  }
+  if (pangolinLineage) {
+    url += `&pangolinLineage=${pangolinLineage}`;
   }
   if (mutationsString) {
     url += `&mutations=${mutationsString}`;

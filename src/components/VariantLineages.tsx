@@ -46,6 +46,7 @@ export const VariantLineages = ({
     getPangolinLineages({
       country,
       samplingStrategy,
+      pangolinLineage: variant.name,
       dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
       dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
       mutationsString: variant.mutations.join(','),
