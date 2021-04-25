@@ -58,6 +58,16 @@ const MetricWrapper = styled.div`
   flex-grow: 0;
 `;
 
+const PercentWrapper = styled.div`
+  font-size: 1rem;
+  width: auto;
+  flex-grow: 1;
+  line-height: 1;
+  color: #95a5a6;
+  margin-top: 1.8rem;
+  margin-left: 0.4rem;
+`;
+
 export type MetricProps = {
   value: number | string;
   title: string;
@@ -65,7 +75,12 @@ export type MetricProps = {
   helpText: string;
   percent?: string | number | boolean;
   fontSize?: 'normal' | 'small';
+  showPercent?: number | string;
 };
+
+const ValueAndPercentWrapper = styled.div`
+  display: flex;
+`;
 
 const Metric = ({
   percent = false,
@@ -74,15 +89,19 @@ const Metric = ({
   title,
   color,
   helpText,
+  showPercent
 }: MetricProps): JSX.Element => {
   const tooltipId = 'TEST-id' + title;
   return (
     <MetricWrapper id='metric-with-tooltip'>
       <div data-for={tooltipId} data-tip={helpText}>
+         <ValueAndPercentWrapper>
         <ValueWrapper color={color} fontSize={fontSize}>
           {value}
           {percent && '%'}
         </ValueWrapper>
+        <PercentWrapper>{showPercent && '' + showPercent + '%'}</PercentWrapper>
+         </ValueAndPercentWrapper>
         <MetricTitleWrapper id='metric-title'>
           {title + ' '}
           <IconWrapper id='info-wrapper'>
