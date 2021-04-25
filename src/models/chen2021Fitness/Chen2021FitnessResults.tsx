@@ -6,7 +6,6 @@ import { Chen2021ProportionPlot } from './Chen2021ProportionPlot';
 import { formatValueWithCI } from './format-value';
 import { useModelData } from './loading';
 import { GridCell, PackedGrid } from '../../components/PackedGrid';
-import { VariantTimeDistributionPlotWidget } from '../../widgets/VariantTimeDistributionPlot';
 
 type ResultsProps = {
   request: Chen2021FitnessRequest;
