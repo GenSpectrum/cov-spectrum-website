@@ -33,6 +33,13 @@ export const Chen2021AbsolutePlot = ({ modelData }: Props) => {
         xaxis: {
           hoverformat: '%d.%m.%Y',
         },
+        margin: {
+          l: 50,
+          r: 10,
+          b: 40,
+          t: 40,
+          pad: 4,
+        },
       }}
       config={{
         displaylogo: false,

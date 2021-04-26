@@ -8,9 +8,15 @@ interface Props {
   modelData: Chen2021FitnessResponse;
   plotStartDate: Date;
   plotEndDate: Date;
+  showLegend?: boolean;
 }
 
-export const Chen2021ProportionPlot = ({ modelData, plotStartDate, plotEndDate }: Props) => {
+export const Chen2021ProportionPlot = ({
+  modelData,
+  plotStartDate,
+  plotEndDate,
+  showLegend = true,
+}: Props) => {
   const filteredDaily: zod.infer<typeof Chen2021FitnessResponseSchema.shape.daily> = {
     t: [],
     proportion: [],
@@ -107,6 +113,14 @@ export const Chen2021ProportionPlot = ({ modelData, plotStartDate, plotEndDate }
         title: 'Estimated proportion through time',
         xaxis: {
           hoverformat: '%d.%m.%Y',
+        },
+        showlegend: showLegend,
+        margin: {
+          l: 30,
+          r: 10,
+          b: 30,
+          t: 40,
+          pad: 4,
         },
       }}
       config={{
