@@ -5,7 +5,7 @@ import { Alert, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { AsyncVariantInternationalComparisonPlot } from '../components/AsyncVariantInternationalComparisonPlot';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
-import { NamedCard } from '../components/NamedCard';
+import { NamedCard, NamedCardStyle } from '../components/NamedCard';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import Switzerland from '../components/Switzerland';
 import { VariantHeader } from '../components/VariantHeader';
@@ -122,7 +122,11 @@ export const FocusPage = ({
         </GridCell>
         {loggedIn && country === 'Switzerland' && (
           <GridCell minWidth={600}>
-            <NamedCard title='Hospitalization rates' toolbar={deepFocusButtons.hospitalizationAndDeath}>
+            <NamedCard
+              title='Hospitalization rates'
+              toolbar={deepFocusButtons.hospitalizationAndDeath}
+              style={NamedCardStyle.CONFIDENTIAL}
+            >
               <HospitalizationDeathPlot
                 field='hospitalized'
                 variantSampleSet={variantSampleSet}
@@ -139,14 +143,10 @@ export const FocusPage = ({
             </div>
           </NamedCard>
         </GridCell>
-        {country === 'Switzerland' && (
+        {loggedIn && country === 'Switzerland' && (
           <GridCell minWidth={600}>
-            <NamedCard title='Geography'>
-              {loggedIn ? (
-                <Switzerland variantSampleSet={variantSampleSet} />
-              ) : (
-                <div>Please log in to view the geographical distribution of cases.</div>
-              )}
+            <NamedCard title='Geography' style={NamedCardStyle.CONFIDENTIAL}>
+              <Switzerland variantSampleSet={variantSampleSet} />
             </NamedCard>
           </GridCell>
         )}
