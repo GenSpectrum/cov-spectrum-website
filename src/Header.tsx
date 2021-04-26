@@ -5,6 +5,7 @@ import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrategySelect';
 import { AccountService } from './services/AccountService';
 import { HeaderDateRangeSelect } from './components/HeaderDateRangeSelect';
+import { ExternalLink } from './components/ExternalLink';
 
 export const Header = () => {
   const loggedIn = AccountService.isLoggedIn();
@@ -28,9 +29,9 @@ export const Header = () => {
       </Navbar.Brand>
       <div style={{ fontSize: 'small' }}>
         Enabled by data from{' '}
-        <a rel='noreferrer' target='_blank' href='https://gisaid.org/'>
+        <ExternalLink url='https://gisaid.org/'>
           <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />
-        </a>
+        </ExternalLink>
       </div>
       <Navbar.Toggle aria-controls='basic-navbar-nav' />
       <Navbar.Collapse>

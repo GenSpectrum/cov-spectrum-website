@@ -7,6 +7,7 @@ import styled from 'styled-components';
 import { Chen2021FitnessResults } from './Chen2021FitnessResults';
 import { fillRequestWithDefaults } from './loading';
 import { dateToString } from './format-value';
+import { ExternalLink } from '../../components/ExternalLink';
 
 export type ContainerProps = zod.infer<typeof OldSampleSelectorSchema>;
 
@@ -117,18 +118,12 @@ export const Chen2021FitnessContainer = ({
         <li>
           Chen, Chaoran, et al. "Quantification of the spread of SARS-CoV-2 variant B. 1.1. 7 in Switzerland."
           medRxiv (2021); doi:{' '}
-          <a href='https://doi.org/10.1101/2021.03.05.21252520' target='_blank' rel='noreferrer'>
+          <ExternalLink url='https://doi.org/10.1101/2021.03.05.21252520'>
             10.1101/2021.03.05.21252520
-          </a>
+          </ExternalLink>
         </li>
         <li>
-          <a
-            href='https://github.com/cevo-public/Quantification-of-the-spread-of-a-SARS-CoV-2-variant'
-            target='_blank'
-            rel='noreferrer'
-          >
-            https://github.com/cevo-public/Quantification-of-the-spread-of-a-SARS-CoV-2-variant
-          </a>
+          <ExternalLink url='https://github.com/cevo-public/Quantification-of-the-spread-of-a-SARS-CoV-2-variant' />
         </li>
       </ul>
     </>

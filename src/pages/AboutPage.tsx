@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import React from 'react';
+import { ExternalLink } from '../components/ExternalLink';
+import { EmailLink } from '../components/EmailLink';
 
 const Wrapper = styled.div`
   max-width: 1200px;
@@ -21,25 +23,20 @@ export const AboutPage = () => {
         platform aiming to help scientists investigate known variants as well as identifying new ones. It is
         in an early stage of development. Suggestions for improvements, bug reports as well as active
         contributions are highly welcome. Please create an issue in our{' '}
-        <a target='_blank' rel='noreferrer' href='https://github.com/cevo-public/cov-spectrum-website'>
+        <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website'>
           Github repository
-        </a>{' '}
-        or send an email to <a href='mailto:chaoran.chen@bsse.ethz.ch'>chaoran.chen@bsse.ethz.ch</a>.
+        </ExternalLink>{' '}
+        or send an email to <EmailLink email='chaoran.chen@bsse.ethz.ch' />.
       </p>
       <h2>FAQ</h2>
       <Question>What is a variant?</Question>
       <p>
         We define a variant as a set of amino acid mutations. On{' '}
-        <a href='https://covariants.org/' target='_blank' rel='noreferrer'>
-          CoVariants
-        </a>{' '}
-        and{' '}
-        <a href='https://cov-lineages.org/global_report.html' target='_blank' rel='noreferrer'>
-          PANGO lineages
-        </a>
-        , you can find detailed information about variants that are currently of particular interest.
-        Different to these websites, CoV-Spectrum does not only show pre-defined variants but provides tools
-        to discover and analyze new variants.
+        <ExternalLink url='https://covariants.org/'>CoVariants</ExternalLink> and{' '}
+        <ExternalLink url='https://cov-lineages.org/global_report.html'>PANGO lineages</ExternalLink> , you
+        can find detailed information about variants that are currently of particular interest. Different to
+        these websites, CoV-Spectrum does not only show pre-defined variants but provides tools to discover
+        and analyze new variants.
       </p>
       <Question>Which data do you use?</Question>
       <p>
@@ -63,26 +60,20 @@ export const AboutPage = () => {
       <h2>Contact</h2>
       <p>
         This project is developed by the{' '}
-        <a href='https://bsse.ethz.ch/cevo' target='_blank' rel='noreferrer'>
-          Computational Evolution group
-        </a>{' '}
-        at ETH Zurich. Please contact Chaoran Chen (
-        <a href='mailto:chaoran.chen@bsse.ethz.ch'>chaoran.chen@bsse.ethz.ch</a>) for any questions.
+        <ExternalLink url='https://bsse.ethz.ch/cevo'>Computational Evolution group</ExternalLink> at ETH
+        Zurich. Please contact Chaoran Chen (
+        <EmailLink email='chaoran.chen@bsse.ethz.ch' />) for any questions.
       </p>
       <h2>Acknowledgement</h2>
       <p>
         We thank the{' '}
-        <a
-          href='https://bsse.ethz.ch/cevo/research/sars-cov-2/swiss-sequencing-consortium---viollier.html'
-          rel='noreferrer'
-          target='_blank'
-        >
+        <ExternalLink url='https://bsse.ethz.ch/cevo/research/sars-cov-2/swiss-sequencing-consortium---viollier.html'>
           Swiss SARS-CoV-2 Sequencing Consortium (S3C)
-        </a>{' '}
+        </ExternalLink>{' '}
         and{' '}
-        <a href='https://gisaid.org' rel='noreferrer' target='_blank'>
+        <ExternalLink url='https://gisaid.org'>
           <img alt='GISAID' style={{ height: '18px' }} src='/img/gisaid.png' />
-        </a>{' '}
+        </ExternalLink>{' '}
         for providing the valuable data!
       </p>
     </Wrapper>
