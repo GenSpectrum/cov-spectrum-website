@@ -9,7 +9,7 @@ import { WasteWaterTimeEntry, WasteWaterTimeseriesSummaryDataset } from './types
  *
  * @param data: A list that is sorted by date ascendantly
  */
-function getTicks(data: WasteWaterTimeseriesSummaryDataset): number[] {
+export function getTicks(data: { date: Date }[]): number[] {
   let ticksDates: Date[] = [];
   if (data.length === 0) {
     ticksDates = [];
@@ -27,10 +27,10 @@ function getTicks(data: WasteWaterTimeseriesSummaryDataset): number[] {
   return ticksDates.map(d => d.getTime());
 }
 
-const formatDate = (date: number) => {
+export function formatDate(date: number) {
   const d = new Date(date);
   return d.getDate() + '.' + (d.getMonth() + 1);
-};
+}
 
 interface Props {
   data: WasteWaterTimeseriesSummaryDataset;
