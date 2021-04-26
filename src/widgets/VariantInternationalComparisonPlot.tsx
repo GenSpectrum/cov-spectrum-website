@@ -10,6 +10,8 @@ import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import { getNewSamples } from '../services/api';
 import { Country, CountrySchema } from '../services/api-types';
 import { Widget } from './Widget';
+import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
+import Metric, { MetricsSpacing, MetricsWrapper } from '../charts/Metrics';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
@@ -87,37 +89,56 @@ const VariantInternationalComparisonPlot = ({
   }, [countriesToPlotList, variantSamplesByCountry]);
 
   return (
-    <div style={{ height: '100%' }}>
-      <Plot
-        style={{ width: '100%', height: '100%' }}
-        data={plotData}
-        layout={{
-          title: '',
-          xaxis: {
-            title: 'Week',
-            type: 'date',
-            tickvals: xTickVals,
-            tickformat: 'W%-V, %Y',
-            hoverformat: 'Week %-V, %Y (from %d.%m.)',
-          },
-          yaxis: {
-            title: 'Estimated Percentage',
-            type: logScale ? 'log' : 'linear',
-          },
-          legend: {
-            x: 0,
-            xanchor: 'left',
-            y: 1,
-          },
-          margin: { t: 10 },
-        }}
-        config={{
-          displaylogo: false,
-          modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
-          responsive: true,
-        }}
-      />
-    </div>
+    <Wrapper>
+      <ChartAndMetricsWrapper>
+        <ChartWrapper>
+          <Plot
+            style={{ width: '100%', height: '100%' }}
+            data={plotData}
+            layout={{
+              title: '',
+              xaxis: {
+                title: 'Week',
+                type: 'date',
+                tickvals: xTickVals,
+                tickformat: 'W%-V, %Y',
+                hoverformat: 'Week %-V, %Y (from %d.%m.)',
+              },
+              yaxis: {
+                title: 'Estimated Percentage',
+                type: logScale ? 'log' : 'linear',
+              },
+              legend: {
+                x: 0,
+                xanchor: 'left',
+                y: 1,
+              },
+              margin: {
+                l: 50,
+                r: 40,
+                b: 70,
+                t: 10,
+                pad: 4,
+              },
+            }}
+            config={{
+              displaylogo: false,
+              modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
+              responsive: true,
+            }}
+          />
+        </ChartWrapper>
+        <MetricsWrapper>
+          <MetricsSpacing />
+          <Metric
+            value={variantSamplesByCountry.size}
+            title={'Countries'}
+            helpText={'The number of countries in which the variant was detected'}
+            color={colors.active}
+          />
+        </MetricsWrapper>
+      </ChartAndMetricsWrapper>
+    </Wrapper>
   );
 };
 
