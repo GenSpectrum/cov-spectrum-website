@@ -64,18 +64,6 @@ export const AboutPage = () => {
         Zurich. Please contact Chaoran Chen (
         <EmailLink email='chaoran.chen@bsse.ethz.ch' />) for any questions.
       </p>
-      <h2>Acknowledgement</h2>
-      <p>
-        We thank the{' '}
-        <ExternalLink url='https://bsse.ethz.ch/cevo/research/sars-cov-2/swiss-sequencing-consortium---viollier.html'>
-          Swiss SARS-CoV-2 Sequencing Consortium (S3C)
-        </ExternalLink>{' '}
-        and{' '}
-        <ExternalLink url='https://gisaid.org'>
-          <img alt='GISAID' style={{ height: '18px' }} src='/img/gisaid.png' />
-        </ExternalLink>{' '}
-        for providing the valuable data!
-      </p>
     </Wrapper>
   );
 };

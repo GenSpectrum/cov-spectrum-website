@@ -42,6 +42,9 @@ export const Header = () => {
           <Nav.Link href='/about' style={{ textDecoration: 'underline' }}>
             About this website
           </Nav.Link>
+          <Nav.Link href='/acknowledgements' style={{ textDecoration: 'underline' }}>
+            Acknowledgements
+          </Nav.Link>
         </Nav>
         <Nav>
           {loggedIn ? (
