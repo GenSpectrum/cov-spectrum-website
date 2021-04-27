@@ -45,17 +45,17 @@ export const Chen2021FitnessPreview = ({
         <MetricsWrapper>
           <MetricsSpacing />
           <Metric
-            value={(modelData.params.fc.value * 100).toFixed(2)}
+            value={(modelData.params.fd.value * 100).toFixed(2)}
             title={'Fitness adv.'}
-            helpText={'The estimated fitness advantage under a continuous model'}
+            helpText={'The estimated fitness advantage under a discrete model assuming a generation time of 4.8 days.'}
             percent={true}
             color={colors.active}
           />
           <Metric
             value={
-              Math.round(modelData.params.fc.ciLower * 100) +
+              Math.round(modelData.params.fd.ciLower * 100) +
               '-' +
-              Math.round(modelData.params.fc.ciUpper * 100) +
+              Math.round(modelData.params.fd.ciUpper * 100) +
               '%'
             }
             fontSize='small'
