@@ -47,7 +47,9 @@ export const Chen2021FitnessPreview = ({
           <Metric
             value={(modelData.params.fd.value * 100).toFixed(2)}
             title={'Fitness adv.'}
-            helpText={'The estimated fitness advantage under a discrete model assuming a generation time of 4.8 days.'}
+            helpText={
+              'The estimated fitness advantage under a discrete model assuming a generation time of 4.8 days.'
+            }
             percent={true}
             color={colors.active}
           />
