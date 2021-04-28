@@ -47,7 +47,7 @@ function selectPreviewVariants(
   numberVariants: number
 ): NamedVariantSelector[] {
   const variants: NamedVariantSelector[] = [
-    // The three official VOCs should always come first
+    // The three official VOCs (and now also B.1.617*) should always come first
     {
       variant: {
         name: 'B.1.1.7',
@@ -69,12 +69,22 @@ function selectPreviewVariants(
       },
       matchPercentage: 1,
     },
+    {
+      variant: {
+        name: 'B.1.617*',
+        mutations: [],
+      },
+      matchPercentage: 1,
+    },
   ];
   for (let pangolinLineage of pangolinLineages) {
     if (variants.length >= numberVariants) {
       break;
     }
-    if (['B.1.1.7', 'B.1.351', 'P.1'].includes(pangolinLineage.pangolinLineage)) {
+    if (
+      ['B.1.1.7', 'B.1.351', 'P.1'].includes(pangolinLineage.pangolinLineage) ||
+      pangolinLineage.pangolinLineage.startsWith('B.1.617')
+    ) {
       continue;
     }
     variants.push({
