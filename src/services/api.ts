@@ -191,7 +191,13 @@ export async function getNewSamples(
     'pangolinLineage',
   ] as const) {
     if (selector[k]) {
-      params.set(k, selector[k]!.toString());
+      const newParam = selector[k]!.toString();
+      if (k == "country" && isRegion(newParam)) {
+        params.set("region", newParam)
+      }
+      else {
+        params.set(k, newParam);
+      }
     }
   }
 
