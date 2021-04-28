@@ -17,8 +17,7 @@ export const PlaceSelect = ({ id, selected, onSelect, onMenuToggle }: Props) => 
     let isSubscribed = true;
     getPlaces().then(places => {
       if (isSubscribed) {
-        console.log('Places are');
-        console.log(places);
+      
         setPlaces(places);
       }
     });

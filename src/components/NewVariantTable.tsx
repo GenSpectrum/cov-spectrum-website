@@ -35,8 +35,6 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
     const signal = controller.signal;
     getInterestingVariants({ country }, signal).then(newData => {
       if (isSubscribed) {
-        console.log("new interesting variant ");
-        console.log(newData)
         setData(newData);
       }
     });
@@ -131,7 +129,6 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
               </thead>
               <tbody>
                 {variants?.map((v: any) => {
-                  console.log(v);
                   return (
                     <tr key={v.mutations.map((m: any) => m.mutation).join(', ')}>
                       <td style={{ maxWidth: '400px', lineBreak: 'auto' }}>
