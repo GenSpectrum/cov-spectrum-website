@@ -183,3 +183,5 @@ export type InterestingVariantResult = zod.infer<typeof InterestingVariantResult
 export type LoginResponse = zod.infer<typeof LoginResponseSchema>;
 export type SequencingIntensityEntry = zod.infer<typeof SequencingIntensityEntrySchema>;
 export type PangolinLineageInformation = zod.infer<typeof PangolinLineageInformationSchema>;
+
+export type Place = Country | Region;

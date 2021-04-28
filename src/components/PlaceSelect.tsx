@@ -1,23 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead';
-import { getCountries } from '../services/api';
-import { Country } from '../services/api-types';
+import { getPlaces } from '../services/api';
+import {Place} from '../services/api-types';
 
 export interface Props {
   id?: string;
-  selected: Country | undefined;
-  onSelect: (country: Country | undefined) => void;
+  selected: Place | undefined;
+  onSelect: (country: Place | undefined) => void;
   onMenuToggle?: (show: boolean) => void;
 }
 
-export const CountrySelect = ({ id, selected, onSelect, onMenuToggle }: Props) => {
-  const [countries, setCountries] = useState<Country[]>([]);
+export const PlaceSelect = ({ id, selected, onSelect, onMenuToggle }: Props) => {
+  const [places, setPlaces] = useState<Place[]>([]);
 
   useEffect(() => {
     let isSubscribed = true;
-    getCountries().then(countries => {
+    getPlaces().then(places => {
       if (isSubscribed) {
-        setCountries(countries);
+        console.log("Places are");
+        console.log(places)
+        setPlaces(places);
       }
     });
     return () => {
@@ -29,10 +31,10 @@ export const CountrySelect = ({ id, selected, onSelect, onMenuToggle }: Props) =
     <Typeahead
       id={id}
       selected={selected ? [selected] : []}
-      placeholder='Select a country'
+      placeholder='Select country/region'
       onChange={selected => onSelect(selected.length === 1 ? selected[0] : undefined)}
       onMenuToggle={onMenuToggle}
-      options={countries}
+      options={places}
     />
   );
 };

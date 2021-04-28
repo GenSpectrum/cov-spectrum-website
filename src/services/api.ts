@@ -5,6 +5,8 @@ import { defaultForNever, unreachable } from '../helpers/unreachable';
 import { AccountService } from './AccountService';
 import {
   Country,
+  Region,
+  Place,
   CountrySchema,
   InterestingVariantResult,
   RawMultiSample,
@@ -357,6 +359,21 @@ export const getCountries = (): Promise<Country[]> => {
   return fetch(url, { headers: getBaseHeaders() })
     .then(response => response.json())
     .then(data => zod.array(CountrySchema).parse(data));
+};
+
+export const getRegions = (): Promise<Region[]> => {
+  const url = HOST + '/resource/region';
+  return fetch(url, { headers: getBaseHeaders() })
+    .then(response => response.json())
+    .then(data => zod.array(CountrySchema).parse(data));
+};
+
+export const getPlaces = async (): Promise<Place[]> => {
+  const url = HOST + '/resource/country';
+  const countries = await getCountries();
+  const regions = await getRegions();  
+  return countries.concat(regions);
+
 };
 
 export const fetchTimeDistributionData = () => {};
