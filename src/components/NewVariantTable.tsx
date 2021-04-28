@@ -35,6 +35,8 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
     const signal = controller.signal;
     getInterestingVariants({ country }, signal).then(newData => {
       if (isSubscribed) {
+        console.log("new interesting variant ");
+        console.log(newData)
         setData(newData);
       }
     });

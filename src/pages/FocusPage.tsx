@@ -168,7 +168,7 @@ export const FocusPage = ({
         {country === 'Switzerland' && variant.name === 'B.1.1.7' && (
           <GridCell minWidth={600}>
             {/* TODO Use a summary plot if available or find another more representative solution. */}
-            <NamedCard title='Waste water results' toolbar={deepFocusButtons.wasteWater}>
+            <NamedCard title='Waste water prevalence' toolbar={deepFocusButtons.wasteWater}>
               <div style={{ height: 300, width: '100%' }}>
                 {wasteWaterData && (
                   <WasteWaterSummaryTimeChart
