@@ -12,6 +12,7 @@ import { ExploreFocusSplit } from './pages/ExploreFocusSplit';
 import { GlobalSamplePage } from './pages/GlobalSamplePage';
 import { LoginPage } from './pages/LoginPage';
 import { SamplingStrategy } from './services/api';
+import { AcknowledgementsPage } from './pages/AcknowledgementsPage';
 
 export const App = () => {
   return (
@@ -44,6 +45,11 @@ export const App = () => {
         <Route path='/about'>
           <ScrollableFullContentWrapper>
             <AboutPage />
+          </ScrollableFullContentWrapper>
+        </Route>
+        <Route path='/acknowledgements'>
+          <ScrollableFullContentWrapper>
+            <AcknowledgementsPage />
           </ScrollableFullContentWrapper>
         </Route>
       </Switch>

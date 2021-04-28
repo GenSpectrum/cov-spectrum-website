@@ -89,19 +89,19 @@ const Metric = ({
   title,
   color,
   helpText,
-  showPercent
+  showPercent,
 }: MetricProps): JSX.Element => {
   const tooltipId = 'TEST-id' + title;
   return (
     <MetricWrapper id='metric-with-tooltip'>
       <div data-for={tooltipId} data-tip={helpText}>
-         <ValueAndPercentWrapper>
-        <ValueWrapper color={color} fontSize={fontSize}>
-          {value}
-          {percent && '%'}
-        </ValueWrapper>
-        <PercentWrapper>{showPercent && '' + showPercent + '%'}</PercentWrapper>
-         </ValueAndPercentWrapper>
+        <ValueAndPercentWrapper>
+          <ValueWrapper color={color} fontSize={fontSize}>
+            {value}
+            {percent && '%'}
+          </ValueWrapper>
+          <PercentWrapper>{showPercent && '' + showPercent + '%'}</PercentWrapper>
+        </ValueAndPercentWrapper>
         <MetricTitleWrapper id='metric-title'>
           {title + ' '}
           <IconWrapper id='info-wrapper'>

@@ -129,7 +129,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
               </thead>
               <tbody>
                 {variants?.map((v: any) => {
-                  console.log(v)
+                  console.log(v);
                   return (
                     <tr key={v.mutations.map((m: any) => m.mutation).join(', ')}>
                       <td style={{ maxWidth: '400px', lineBreak: 'auto' }}>
@@ -139,7 +139,10 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                         {v.absoluteNumberSamplesInPastThreeMonths} (
                         {(v.relativeNumberSamplesInPastThreeMonths * 100).toFixed(2)}%)
                       </td>
-                      <td>{v.f.value.toFixed(4)}</td>
+                      <td>
+                        {v.f.value.toFixed(4)}
+                        <br />[{v.f.ciLower.toFixed(2)}, {v.f.ciUpper.toFixed(2)}]
+                      </td>
                       <td>
                         <Button
                           onClick={() => {

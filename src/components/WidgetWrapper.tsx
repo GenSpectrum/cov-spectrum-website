@@ -1,6 +1,6 @@
 import { Button, Modal, Form, ButtonToolbar } from 'react-bootstrap';
 import { useState } from 'react';
-import { NamedCard } from '../components/NamedCard';
+import { NamedCard } from './NamedCard';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 

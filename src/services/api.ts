@@ -371,9 +371,8 @@ export const getRegions = (): Promise<Region[]> => {
 export const getPlaces = async (): Promise<Place[]> => {
   const url = HOST + '/resource/country';
   const countries = await getCountries();
-  const regions = await getRegions();  
+  const regions = await getRegions();
   return countries.concat(regions);
-
 };
 
 export const fetchTimeDistributionData = () => {};

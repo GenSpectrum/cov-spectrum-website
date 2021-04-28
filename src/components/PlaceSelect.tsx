@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import { getPlaces } from '../services/api';
-import {Place} from '../services/api-types';
+import { Place } from '../services/api-types';
 
 export interface Props {
   id?: string;
@@ -17,8 +17,8 @@ export const PlaceSelect = ({ id, selected, onSelect, onMenuToggle }: Props) => 
     let isSubscribed = true;
     getPlaces().then(places => {
       if (isSubscribed) {
-        console.log("Places are");
-        console.log(places)
+        console.log('Places are');
+        console.log(places);
         setPlaces(places);
       }
     });

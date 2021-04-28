@@ -1,11 +1,11 @@
 import { mapValues } from 'lodash';
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { AsyncState } from 'react-async';
 import { Alert, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { AsyncVariantInternationalComparisonPlot } from '../components/AsyncVariantInternationalComparisonPlot';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
-import { NamedCard } from '../components/NamedCard';
+import { NamedCard, NamedCardStyle } from '../components/NamedCard';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import Switzerland from '../components/Switzerland';
 import { VariantHeader } from '../components/VariantHeader';
@@ -20,6 +20,9 @@ import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistribut
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { VariantLineages } from '../components/VariantLineages';
 import { VariantMutations } from '../components/VariantMutations';
+import WasteWaterSummaryTimeChart from '../models/wasteWater/WasteWaterSummaryTimeChart';
+import { WasteWaterDataset } from '../models/wasteWater/types';
+import { getData } from '../models/wasteWater/loading';
 
 interface Props {
   country: Country;
@@ -78,6 +81,18 @@ export const FocusPage = ({
     [country, samplingStrategy, dateRange, matchPercentage, variant]
   );
 
+  // Waste water
+  const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
+  useEffect(() => {
+    if (!variant.name) {
+      return;
+    }
+    getData({
+      country,
+      variantName: variant.name,
+    }).then(d => setWasteWaterData(d));
+  }, [country, variant.name]);
+
   const header = (
     <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...forwardedProps} />} />
   );
@@ -122,7 +137,11 @@ export const FocusPage = ({
         </GridCell>
         {loggedIn && country === 'Switzerland' && (
           <GridCell minWidth={600}>
-            <NamedCard title='Hospitalization rates' toolbar={deepFocusButtons.hospitalizationAndDeath}>
+            <NamedCard
+              title='Hospitalization rates'
+              toolbar={deepFocusButtons.hospitalizationAndDeath}
+              style={NamedCardStyle.CONFIDENTIAL}
+            >
               <HospitalizationDeathPlot
                 field='hospitalized'
                 variantSampleSet={variantSampleSet}
@@ -139,14 +158,10 @@ export const FocusPage = ({
             </div>
           </NamedCard>
         </GridCell>
-        {country === 'Switzerland' && (
+        {loggedIn && country === 'Switzerland' && (
           <GridCell minWidth={600}>
-            <NamedCard title='Geography'>
-              {loggedIn ? (
-                <Switzerland variantSampleSet={variantSampleSet} />
-              ) : (
-                <div>Please log in to view the geographical distribution of cases.</div>
-              )}
+            <NamedCard title='Geography' style={NamedCardStyle.CONFIDENTIAL}>
+              <Switzerland variantSampleSet={variantSampleSet} />
             </NamedCard>
           </GridCell>
         )}
@@ -154,7 +169,16 @@ export const FocusPage = ({
           <GridCell minWidth={600}>
             {/* TODO Use a summary plot if available or find another more representative solution. */}
             <NamedCard title='Results from waste water' toolbar={deepFocusButtons.wasteWater}>
-              <></>
+              <div style={{ height: 300, width: '100%' }}>
+                {wasteWaterData && (
+                  <WasteWaterSummaryTimeChart
+                    wasteWaterPlants={wasteWaterData.data.map(({ location, timeseriesSummary }) => ({
+                      location,
+                      data: timeseriesSummary,
+                    }))}
+                  />
+                )}
+              </div>
             </NamedCard>
           </GridCell>
         )}

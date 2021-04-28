@@ -146,8 +146,8 @@ export const InterestingVariantResultSchema = zod.object({
           uniquenessScore: zod.number(),
         })
       ),
-      a: zod.number(),
-      f: zod.number(),
+      a: ValueWithCISchema,
+      f: ValueWithCISchema,
       absoluteNumberSamplesInPastThreeMonths: zod.number(),
       relativeNumberSamplesInPastThreeMonths: zod.number(),
     })

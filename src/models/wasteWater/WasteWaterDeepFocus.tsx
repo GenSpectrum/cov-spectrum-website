@@ -5,6 +5,7 @@ import { getData } from './loading';
 import { WasteWaterDataset } from './types';
 import { WasteWaterHeatMapWidget } from './WasteWaterHeatMapWidget';
 import { GridCell, PackedGrid } from '../../components/PackedGrid';
+import { ExternalLink } from '../../components/ExternalLink';
 
 interface Props {
   country: string;
@@ -66,9 +67,9 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
                 <li>
                   Jahn, Katharina, et al. "Detection of SARS-CoV-2 variants in Switzerland by genomic analysis
                   of wastewater samples." medRxiv (2021); doi:{' '}
-                  <a href='https://doi.org/10.1101/2021.01.08.21249379' target='_blank' rel='noreferrer'>
+                  <ExternalLink url='https://doi.org/10.1101/2021.01.08.21249379'>
                     10.1101/2021.01.08.21249379
-                  </a>
+                  </ExternalLink>
                 </li>
               </ul>
             </NamedSection>
