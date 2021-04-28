@@ -28,7 +28,7 @@ export const Header = () => {
         <span style={{ color: '#F18805', fontWeight: 'bold' }}>M</span>
       </Navbar.Brand>
       <div style={{ fontSize: 'small' }}>
-        Enabled by data from{' '}
+        Enabled by {' '}
         <ExternalLink url='https://gisaid.org/'>
           <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />
         </ExternalLink>

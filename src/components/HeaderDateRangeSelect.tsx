@@ -19,7 +19,7 @@ export const HeaderDateRangeSelect = () => {
         value={exploreUrl.dateRange}
         onChange={ev => exploreUrl.setDateRange(ev.target.value as DateRange)}
       >
-        <option value='AllTimes'>All times</option>
+        <option value='AllTimes'>All time</option>
         <option value='Past3M'>Past 3 months</option>
         <option value='Past6M'>Past 6 months</option>
         <option value='Y2020'>2020</option>
