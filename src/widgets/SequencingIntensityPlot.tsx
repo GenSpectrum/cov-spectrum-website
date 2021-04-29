@@ -60,16 +60,10 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
     };
   }, [country]);
 
-  const componentRef = useRef(null);
-
-  const exportOptions = {
-    fileName: 'plot.jpg',
-  };
-
   return data === undefined || isLoading ? (
     <Loader />
   ) : (
-    <DownloadWrapper>
+    <DownloadWrapper name="SequencingIntensityPlot">
       <TimeIntensityChart data={processData(data)} onClickHandler={(e: unknown) => true} />
     </DownloadWrapper>
   );

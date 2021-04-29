@@ -7,6 +7,7 @@ import styled from 'styled-components';
 
 const DownloadButton = styled(FaCloudDownloadAlt)`
   position: absolute;
+  z-index: 10;
   top: 0px;
   right: 8px;
   padding: 8px 8px 8px 8px;
@@ -21,6 +22,10 @@ const Wrapper = styled.div`
   position: relative;
 `;
 
+const DownloadContainer = styled.div`
+    position: relative;
+`
+
 //Adds button to download wrapper component as an image
 const DownloadWrapper = ({ name = 'plot', ...props }) => {
   const componentRef = useRef(null);
@@ -34,14 +39,14 @@ const DownloadWrapper = ({ name = 'plot', ...props }) => {
       <Wrapper>
         <DownloadButton
           data-for='downloadJPEG'
-          data-tip='Download this chart as JPEG image'
+          data-tip='Download this chart as JPEG image.'
           size='2.5em'
           color='#95a5a6'
           onClick={() => exportComponentAsJPEG(componentRef, exportOptions)}
         />
-        <div id='image-download-container' ref={componentRef}>
+        <DownloadContainer id='image-download-container' ref={componentRef}>
           {props.children}
-        </div>
+        </DownloadContainer>
       </Wrapper>
       <ReactTooltip id='downloadJPEG' delayShow={1000} />
     </>
