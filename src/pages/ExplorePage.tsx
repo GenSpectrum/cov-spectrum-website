@@ -11,6 +11,8 @@ import { DateRange, SamplingStrategy } from '../services/api';
 import { Country } from '../services/api-types';
 import { isRegion } from '../services/api';
 import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
+import styled from 'styled-components';
+import { ExternalLink } from '../components/ExternalLink';
 
 interface Props {
   country: Country;
@@ -20,6 +22,13 @@ interface Props {
   selection: VariantSelector | undefined;
   wholeSampleSetState: AsyncState<SampleSetWithSelector>;
 }
+
+const Footer = styled.footer`
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid darkgray;
+  font-size: small;
+`;
 
 export const ExplorePage = ({
   country,
@@ -65,6 +74,10 @@ export const ExplorePage = ({
                   />
                 </NamedSection>
               )}
+              <Footer>
+                Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
+                <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
+              </Footer>
             </>
           ),
         },
