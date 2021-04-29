@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 
-import { exportComponentAsJPEG } from 'react-component-export-image';
+import { exportComponentAsPNG } from 'react-component-export-image';
 import { FaCloudDownloadAlt } from 'react-icons/fa';
 import { BiTable } from 'react-icons/bi';
 import ReactTooltip from 'react-tooltip';
@@ -12,6 +12,8 @@ const baseButtonStyles = css`
   top: 0px;
   right: 8px;
   padding: 8px 8px 8px 8px;
+  transform: translate(0%, 0%);
+  transition: 0.1s ease-in;
   &:hover {
     cursor: pointer;
     transform: translate(0%, -10%);
@@ -42,7 +44,7 @@ const DownloadWrapper = ({ name = 'plot', data = [], ...props }: any) => {
   const componentRef = useRef(null);
 
   const exportOptions = {
-    fileName: name + '.jpg',
+    fileName: name + '.png',
     html2CanvasOptions: {
       scale: 8,
     },
@@ -58,17 +60,17 @@ const DownloadWrapper = ({ name = 'plot', data = [], ...props }: any) => {
           color='#95a5a6'
         />
         <DownloadButton
-          data-for='downloadJPEG'
-          data-tip='Download this chart as JPEG image.'
+          data-for='downloadPNG'
+          data-tip='Download this chart as PNG image.'
           size='2.5em'
           color='#95a5a6'
-          onClick={() => exportComponentAsJPEG(componentRef, exportOptions)}
+          onClick={() => exportComponentAsPNG(componentRef, exportOptions)}
         />
         <DownloadContainer id='image-download-container' ref={componentRef}>
           {props.children}
         </DownloadContainer>
       </Wrapper>
-      <ReactTooltip id='downloadJPEG' delayShow={1000} />
+      <ReactTooltip id='downloadPNG' delayShow={1000} />
       <ReactTooltip id='downloadCSV' delayShow={1000} />
     </>
   );

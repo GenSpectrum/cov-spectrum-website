@@ -3,6 +3,7 @@ import { geoPath, geoTransform } from 'd3-geo';
 import { scaleLinear, scaleQuantile } from 'd3-scale';
 import React from 'react';
 import ReactTooltip from 'react-tooltip';
+import DownloadWrapper from '../../charts/DownloadWrapper';
 import geoJson from './PLZ10.json';
 import relief from './relief.jpg';
 
@@ -38,7 +39,7 @@ const Map = ({ width, casesByZipCode }: Props) => {
     ]);
 
   return (
-    <div>
+    <DownloadWrapper name="SwitzerlandCases">
       <div style={{ position: 'relative', width: width, height }}>
         <img src={relief} style={{ opacity: 0.4, width: '100%', height: 'auto' }} alt='' />
         <svg width={width} height={height} style={{ position: 'absolute', top: 0, left: 0 }}>
@@ -59,7 +60,7 @@ const Map = ({ width, casesByZipCode }: Props) => {
         </svg>
       </div>
       <ReactTooltip />
-    </div>
+    </DownloadWrapper>
   );
 };
 

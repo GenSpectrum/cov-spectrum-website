@@ -4,15 +4,16 @@
 	[] Share API configuration
 
 2. COV-SPECTRUM
-[] Additional region 3
+Submit pull requests:
+[x] Additional region 3
 	[x] Fetch the region
 	[x] Add to URL
 	[x] Add to selection
 	[O] Convert naming to place
 		[O] Fix selector sample
-[] Save plot as image
-	[] Downloadable image
-	[] Seperate wrapper component
+[x] Save plot as image
+	[x] Downloadable image
+	[x] Seperate wrapper component
 [] Export CSV
 [] International comparison with recharts 3
 [] Third value adding implementation 3
