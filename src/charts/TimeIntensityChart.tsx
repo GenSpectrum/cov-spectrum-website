@@ -84,7 +84,7 @@ export const TimeIntensityChart = React.memo(
         {data.map((entry: unknown, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
-            fill={index === activeIndex ? colors.active : colors.secondaryLight}
+            fill={index === activeIndex ? colors.active : colors.inactive}
             key={`cell-${index}`}
           ></Cell>
         ))}
@@ -145,13 +145,7 @@ export const TimeIntensityChart = React.memo(
               title='Sequenced'
               color={colors.highlight}
               helpText='Number of samples sequenced among the confirmed cases on this time frame.'
-            />
-            <Metric
-              value={((currentData.proportion / currentData.quantity) * 100).toFixed(2)}
-              title='Proportion'
-              color={colors.highlight}
-              helpText='The proportion of sequenced samples'
-              percent={true}
+              showPercent={((currentData.proportion / currentData.quantity) * 100).toFixed(2)}
             />
           </MetricsWrapper>
         </ChartAndMetricsWrapper>

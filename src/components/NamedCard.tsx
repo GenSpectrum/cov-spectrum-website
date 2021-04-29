@@ -17,9 +17,11 @@ interface Props {
 const Card = styled.div<{ namedCardStyle: NamedCardStyle }>`
   position: relative;
   margin: 5px;
-  background: ${props => (props.namedCardStyle === NamedCardStyle.NORMAL ? 'white' : '#f5f5f5')};
+  background: 'white';
   padding: 12px 15px;
   border: 1px solid #0000001f;
+  border: ${props =>
+    props.namedCardStyle === NamedCardStyle.NORMAL ? '1px solid #0000001f' : '4px solid #e74c3c'};
   box-shadow: #00000059 0 2px 3px 0px;
 `;
 
@@ -30,7 +32,7 @@ const Title = styled.h3`
 
 const TitleConfidential = styled.span`
   font-size: small;
-  color: #656464;
+  color: #e74c3c;
   margin-left: 20px;
 `;
 

@@ -24,7 +24,6 @@ export const VariantTimeDistributionPlot = ({ variantSampleSet, wholeSampleSet }
     percent: proportion === undefined ? undefined : 100 * proportion,
     quantity: count,
   }));
-
   return <TimeChart data={processedData} onClickHandler={(e: unknown) => true} />;
 };
 

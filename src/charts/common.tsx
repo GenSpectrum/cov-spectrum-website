@@ -5,8 +5,8 @@ export const colors = {
   inactive: '#bdc3c7',
   secondary: '#7f8c8d',
   secondaryLight: '#ecf0f1',
-  highlight: '#e67e22',
-  highlight2: '#f1c40f',
+  highlight: '#c0392b',
+  highlight2: '#e74c3c',
 };
 
 export const Wrapper = styled.div`
