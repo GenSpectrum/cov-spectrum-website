@@ -70,11 +70,7 @@ const DownloadWrapper = ({
     <>
       <Wrapper id='download wrapper wrapper'>
         {rawData.length > 0 && (
-          <CSVLink
-            data={dataProcessor(rawData)}
-            filename={`${name}.csv`}
-            onClick={downloadCSV}
-          >
+          <CSVLink data={dataProcessor(rawData)} filename={`${name}.csv`} onClick={downloadCSV}>
             <DownloadDataButton
               data-for='downloadCSV'
               data-tip='Download chart data as CSV.'
