@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import { getSequencingIntensity } from '../services/api';
 import { SequencingIntensityEntry, Country, CountrySchema } from '../services/api-types';
