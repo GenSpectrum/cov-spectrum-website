@@ -163,7 +163,6 @@ export const HospitalizationDeathPlot = ({
   }, [variantSampleSet, wholeSampleSet, field, widthIsSmall]);
 
   const total = useMemo(() => {
-    console.log(processedData);
     const total = { subject: { count: { true: 0, false: 0 } }, reference: { count: { true: 0, false: 0 } } };
     for (const entry of processedData) {
       for (const [_k0, v0] of Object.entries(total)) {

@@ -8,7 +8,7 @@ export interface Props {
   onSelect: (country: Country) => void;
 }
 
-export const RequiredCountrySelect = ({ id, selected, onSelect }: Props) => {
+export const RequiredPlaceSelect = ({ id, selected, onSelect }: Props) => {
   const [menuVisible, setMenuVisible] = useState(false);
   const [visuallySelected, setVisuallySelected] = useState<Country | undefined>(selected);
 
