@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import _ from 'lodash';
 import { getSequencingIntensity } from '../services/api';
 import { SequencingIntensityEntry, Country, CountrySchema } from '../services/api-types';
@@ -8,6 +8,8 @@ import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import TimeIntensityChart, { TimeIntensityEntry } from '../charts/TimeIntensityChart';
 import Loader from '../components/Loader';
 import { exportComponentAsJPEG } from 'react-component-export-image';
+import { FaCloudDownloadAlt } from 'react-icons/fa';
+import styled from 'styled-components';
 
 interface Props {
   country: Country;
@@ -34,11 +36,6 @@ const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[]
 };
 
 const processData = (data: SequencingIntensityEntry[]): any => groupByMonth(data);
-
-//Adds button to download wrapper component as an image
-export const DownloadImageWrapper = () => {
-
-}
 
 export const SequencingIntensityPlot = ({ country }: Props) => {
   const [data, setData] = useState<SequencingIntensityEntry[] | undefined>(undefined);
@@ -67,24 +64,34 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
 
   const componentRef = useRef(null);
 
-
-
   const exportOptions = {
-    fileName: "plot.jpg"
-  }
+    fileName: 'plot.jpg',
+  };
 
   return data === undefined || isLoading ? (
     <Loader />
   ) : (
+    <ImageDownloadWrapper>
+      <TimeIntensityChart data={processData(data)} onClickHandler={(e: unknown) => true} />
+    </ImageDownloadWrapper>
+  );
+};
+
+//Adds button to download wrapper component as an image
+export const ImageDownloadWrapper = ({ fileName = 'plot.jpg', ...props }) => {
+  const componentRef = useRef(null);
+
+  const exportOptions = {
+    fileName: fileName,
+  };
+
+  return (
     <>
-      <div id='container' ref={componentRef}>
-        <TimeIntensityChart
-          data={processData(data)}
-          onClickHandler={(e: unknown) => true}
-        />
-      </div>
+    <div id='image-download-container' ref={componentRef}>
+      {props.children}
+    </div>
       <button onClick={() => exportComponentAsJPEG(componentRef, exportOptions)}>Save image</button>
-    </>
+      </>
   );
 };
 
