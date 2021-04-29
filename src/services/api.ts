@@ -5,6 +5,8 @@ import { defaultForNever, unreachable } from '../helpers/unreachable';
 import { AccountService } from './AccountService';
 import {
   Country,
+  Region,
+  Place,
   CountrySchema,
   InterestingVariantResult,
   RawMultiSample,
@@ -158,7 +160,9 @@ export const getSamples = (
   if (mutationsString?.length) {
     url += `&mutations=${mutationsString}`;
   }
-  if (country) {
+  if (country && isRegion(country)) {
+    url += `&region=${country}`;
+  } else if (country) {
     url += `&country=${country}`;
   }
   if (samplingStrategy) {
@@ -187,7 +191,12 @@ export async function getNewSamples(
     'pangolinLineage',
   ] as const) {
     if (selector[k]) {
-      params.set(k, selector[k]!.toString());
+      const newParam = selector[k]!.toString();
+      if (k === 'country' && isRegion(newParam)) {
+        params.set('region', newParam);
+      } else {
+        params.set(k, newParam);
+      }
     }
   }
 
@@ -223,7 +232,9 @@ export const getSampleFastaUrl = ({
   if (mutationsString?.length) {
     url += `&mutations=${mutationsString}`;
   }
-  if (country) {
+  if (country && isRegion(country)) {
+    url += `&region=${country}`;
+  } else if (country) {
     url += `&country=${country}`;
   }
   if (samplingStrategy) {
@@ -253,7 +264,12 @@ export const getPangolinLineages = (
   },
   signal?: AbortSignal
 ): Promise<PangolinLineageList> => {
-  let url = HOST + `/resource/sample2?fields=pangolinLineage&country=${country}`;
+  let url = HOST + `/resource/sample2?fields=pangolinLineage`;
+  if (isRegion(country)) {
+    url += `&region=${country}`;
+  } else {
+    url += `&country=${country}`;
+  }
   const literalSamplingStrategy = toLiteralSamplingStrategy(samplingStrategy);
   if (literalSamplingStrategy) {
     url += `&dataType=${literalSamplingStrategy}`;
@@ -299,8 +315,9 @@ export async function getInformationOfPangolinLineage(
   const params = new URLSearchParams();
   if (region) {
     params.set('region', region);
-  }
-  if (country) {
+  } else if (country && isRegion(country)) {
+    params.set('region', country);
+  } else if (country) {
     params.set('country', country);
   }
   if (dateFrom) {
@@ -325,7 +342,12 @@ export const getSequencingIntensity = ({
   dataType?: SamplingStrategy;
   signal: AbortSignal;
 }): Promise<SequencingIntensityEntry[]> => {
-  let url = HOST + `/plot/sequencing/time-intensity-distribution?country=${country}`;
+  let url = HOST + `/plot/sequencing/time-intensity-distribution?`;
+  if (isRegion(country)) {
+    url += `region=${country}`;
+  } else {
+    url += `country=${country}`;
+  }
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
     .then(data => {
@@ -341,7 +363,12 @@ export const getInterestingVariants = (
   },
   signal?: AbortSignal
 ): Promise<InterestingVariantResult> => {
-  const endpoint = `/computed/find-interesting-variants?country=${country}`;
+  let endpoint = `/computed/find-interesting-variants?`;
+  if (isRegion(country)) {
+    endpoint += `country=Switzerland`;
+  } else {
+    endpoint += `country=${country}`;
+  }
   const url = HOST + endpoint;
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
@@ -357,6 +384,25 @@ export const getCountries = (): Promise<Country[]> => {
   return fetch(url, { headers: getBaseHeaders() })
     .then(response => response.json())
     .then(data => zod.array(CountrySchema).parse(data));
+};
+
+export const getRegions = (): Promise<Region[]> => {
+  const url = HOST + '/resource/region';
+  return fetch(url, { headers: getBaseHeaders() })
+    .then(response => response.json())
+    .then(data => zod.array(CountrySchema).parse(data));
+};
+
+//temp until better solution
+export const isRegion = (place: Place): boolean => {
+  const regions = ['Africa', 'Europe', 'Asia', 'North America', 'South America', 'Oceania'];
+  return regions.includes(place);
+};
+
+export const getPlaces = async (): Promise<Place[]> => {
+  const countries = await getCountries();
+  const regions = await getRegions();
+  return countries.concat(regions);
 };
 
 export const fetchTimeDistributionData = () => {};

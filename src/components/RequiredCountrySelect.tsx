@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Country } from '../services/api-types';
-import { CountrySelect } from './CountrySelect';
+import { PlaceSelect } from './PlaceSelect';
 
 export interface Props {
   id?: string;
@@ -13,13 +13,13 @@ export const RequiredCountrySelect = ({ id, selected, onSelect }: Props) => {
   const [visuallySelected, setVisuallySelected] = useState<Country | undefined>(selected);
 
   return (
-    <CountrySelect
+    <PlaceSelect
       id={id}
       selected={menuVisible ? visuallySelected : selected}
-      onSelect={country => {
-        setVisuallySelected(country);
-        if (country) {
-          onSelect(country);
+      onSelect={place => {
+        setVisuallySelected(place);
+        if (place) {
+          onSelect(place);
         }
       }}
       onMenuToggle={show => {

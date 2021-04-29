@@ -13,7 +13,7 @@ import { getFocusPageLink } from '../helpers/explore-url';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { AccountService } from '../services/AccountService';
-import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { DateRange, SamplingStrategy, toLiteralSamplingStrategy, isRegion } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
@@ -151,13 +151,15 @@ export const FocusPage = ({
             </NamedCard>
           </GridCell>
         )}
-        <GridCell minWidth={600}>
-          <NamedCard title='Fitness advantage estimation' toolbar={deepFocusButtons.chen2021Fitness}>
-            <div style={{ height: 300 }}>
-              <Chen2021FitnessPreview {...plotProps} />
-            </div>
-          </NamedCard>
-        </GridCell>
+        {!isRegion(country) && (
+          <GridCell minWidth={600}>
+            <NamedCard title='Fitness advantage estimation' toolbar={deepFocusButtons.chen2021Fitness}>
+              <div style={{ height: 300 }}>
+                <Chen2021FitnessPreview {...plotProps} />
+              </div>
+            </NamedCard>
+          </GridCell>
+        )}
         {loggedIn && country === 'Switzerland' && (
           <GridCell minWidth={600}>
             <NamedCard title='Geography' style={NamedCardStyle.CONFIDENTIAL}>
@@ -168,7 +170,7 @@ export const FocusPage = ({
         {country === 'Switzerland' && variant.name === 'B.1.1.7' && (
           <GridCell minWidth={600}>
             {/* TODO Use a summary plot if available or find another more representative solution. */}
-            <NamedCard title='Results from waste water' toolbar={deepFocusButtons.wasteWater}>
+            <NamedCard title='Waste water prevalence' toolbar={deepFocusButtons.wasteWater}>
               <div style={{ height: 300, width: '100%' }}>
                 {wasteWaterData && (
                   <WasteWaterSummaryTimeChart
