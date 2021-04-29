@@ -192,10 +192,9 @@ export async function getNewSamples(
   ] as const) {
     if (selector[k]) {
       const newParam = selector[k]!.toString();
-      if (k == "country" && isRegion(newParam)) {
-        params.set("region", newParam)
-      }
-      else {
+      if (k == 'country' && isRegion(newParam)) {
+        params.set('region', newParam);
+      } else {
         params.set(k, newParam);
       }
     }
