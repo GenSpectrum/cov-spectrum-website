@@ -73,8 +73,6 @@ const DownloadWrapper = ({
           <CSVLink
             data={dataProcessor(rawData)}
             filename={`${name}.csv`}
-            className='btn btn-primary'
-            target='_blank'
             onClick={downloadCSV}
           >
             <DownloadDataButton
