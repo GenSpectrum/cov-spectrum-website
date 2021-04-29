@@ -25,11 +25,10 @@ export type TimeIntensityEntry = {
 export type Props = {
   data: TimeIntensityEntry[];
   onClickHandler?: OnClickHandler;
-  downloadReference: any;
 };
 
 export const TimeIntensityChart = React.memo(
-  ({ data, onClickHandler, downloadReference }: Props): JSX.Element => {
+  ({ data, onClickHandler}: Props): JSX.Element => {
     const [activeIndex, setActiveIndex] = useState<number>(data.length - 1);
     const [currentData, setCurrentData] = useState<TimeIntensityEntry>(data[data.length - 1]);
 
@@ -103,7 +102,6 @@ export const TimeIntensityChart = React.memo(
                 barCategoryGap='5%'
                 margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
                 onMouseLeave={handleMouseLeave}
-                ref={downloadReference}
               >
                 <XAxis
                   dataKey='month'

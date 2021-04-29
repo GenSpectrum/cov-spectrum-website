@@ -1,0 +1,26 @@
+
+1. THESIS
+[] Functional mobile app with expo, designed for backend
+	[] Share API configuration
+
+2. COV-SPECTRUM
+[] Additional region 3
+	[x] Fetch the region
+	[x] Add to URL
+	[x] Add to selection
+	[O] Convert naming to place
+		[O] Fix selector sample
+[] Save plot as image
+[] Export CSV
+[] International comparison with recharts 3
+[] Third value adding implementation 3
+
+3. HUAWEI
+
+4. 
+
+
+Give yourself 3rd person advice:
+The biggest challenge is mental.
+
+

@@ -7,9 +7,6 @@ import * as zod from 'zod';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import TimeIntensityChart, { TimeIntensityEntry } from '../charts/TimeIntensityChart';
 import Loader from '../components/Loader';
-import { useRechartToPng } from 'recharts-to-png';
-import FileSaver from 'file-saver';
-import { useMeasure } from 'react-use';
 import { exportComponentAsJPEG } from 'react-component-export-image';
 
 interface Props {
@@ -38,6 +35,11 @@ const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[]
 
 const processData = (data: SequencingIntensityEntry[]): any => groupByMonth(data);
 
+//Adds button to download wrapper component as an image
+export const DownloadImageWrapper = () => {
+
+}
+
 export const SequencingIntensityPlot = ({ country }: Props) => {
   const [data, setData] = useState<SequencingIntensityEntry[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,10 +67,11 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
 
   const componentRef = useRef(null);
 
-  const [png, ref] = useRechartToPng();
-  const handleDownload = React.useCallback(async () => {
-    FileSaver.saveAs(png, 'sequence.png');
-  }, [png]);
+
+
+  const exportOptions = {
+    fileName: "plot.jpg"
+  }
 
   return data === undefined || isLoading ? (
     <Loader />
@@ -77,12 +80,10 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
       <div id='container' ref={componentRef}>
         <TimeIntensityChart
           data={processData(data)}
-          downloadReference={ref}
           onClickHandler={(e: unknown) => true}
         />
       </div>
-      <button onClick={handleDownload}>Download chart</button>
-      <button onClick={() => exportComponentAsJPEG(componentRef)}>Export As JPEG</button>
+      <button onClick={() => exportComponentAsJPEG(componentRef, exportOptions)}>Save image</button>
     </>
   );
 };
