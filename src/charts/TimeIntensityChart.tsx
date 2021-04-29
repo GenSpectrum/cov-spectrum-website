@@ -28,7 +28,7 @@ export type Props = {
 };
 
 export const TimeIntensityChart = React.memo(
-  ({ data, onClickHandler}: Props): JSX.Element => {
+  ({ data, onClickHandler }: Props): JSX.Element => {
     const [activeIndex, setActiveIndex] = useState<number>(data.length - 1);
     const [currentData, setCurrentData] = useState<TimeIntensityEntry>(data[data.length - 1]);
 

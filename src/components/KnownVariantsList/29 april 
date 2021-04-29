@@ -11,6 +11,8 @@
 	[O] Convert naming to place
 		[O] Fix selector sample
 [] Save plot as image
+	[] Downloadable image
+	[] Seperate wrapper component
 [] Export CSV
 [] International comparison with recharts 3
 [] Third value adding implementation 3
