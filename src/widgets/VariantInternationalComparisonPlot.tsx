@@ -13,6 +13,7 @@ import { Widget } from './Widget';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
 import Metric, { MetricsSpacing, MetricsWrapper } from '../charts/Metrics';
 import DownloadWrapper from '../charts/DownloadWrapper';
+import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
