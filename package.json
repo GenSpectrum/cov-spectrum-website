@@ -34,6 +34,7 @@
     "react-async": "^10.0.1",
     "react-bootstrap": "^1.4.3",
     "react-bootstrap-typeahead": "^5.1.4",
+    "react-component-export-image": "^1.0.6",
     "react-dom": "^17.0.1",
     "react-icons": "^4.2.0",
     "react-plotly.js": "^2.5.1",

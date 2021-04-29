@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import _ from 'lodash';
 import { getSequencingIntensity } from '../services/api';
 import { SequencingIntensityEntry, Country, CountrySchema } from '../services/api-types';
@@ -10,7 +10,7 @@ import Loader from '../components/Loader';
 import { useRechartToPng } from 'recharts-to-png';
 import FileSaver from 'file-saver';
 import { useMeasure } from 'react-use';
-
+import { exportComponentAsJPEG } from 'react-component-export-image';
 
 interface Props {
   country: Country;
@@ -63,16 +63,18 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
     };
   }, [country]);
 
+  const componentRef = useRef(null);
+
   const [png, ref] = useRechartToPng();
   const handleDownload = React.useCallback(async () => {
-    FileSaver.saveAs(png, 'test.png');
+    FileSaver.saveAs(png, 'sequence.png');
   }, [png]);
 
   return data === undefined || isLoading ? (
     <Loader />
   ) : (
     <>
-      <div id='container'>
+      <div id='container' ref={componentRef}>
         <TimeIntensityChart
           data={processData(data)}
           downloadReference={ref}
@@ -80,6 +82,7 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
         />
       </div>
       <button onClick={handleDownload}>Download chart</button>
+      <button onClick={() => exportComponentAsJPEG(componentRef)}>Export As JPEG</button>
     </>
   );
 };
