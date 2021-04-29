@@ -192,7 +192,7 @@ export async function getNewSamples(
   ] as const) {
     if (selector[k]) {
       const newParam = selector[k]!.toString();
-      if (k == 'country' && isRegion(newParam)) {
+      if (k === 'country' && isRegion(newParam)) {
         params.set('region', newParam);
       } else {
         params.set(k, newParam);
@@ -400,7 +400,6 @@ export const isRegion = (place: Place): boolean => {
 };
 
 export const getPlaces = async (): Promise<Place[]> => {
-  const url = HOST + '/resource/country';
   const countries = await getCountries();
   const regions = await getRegions();
   return countries.concat(regions);
