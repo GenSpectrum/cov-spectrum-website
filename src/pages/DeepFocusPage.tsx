@@ -12,8 +12,8 @@ import { VariantHeader } from '../components/VariantHeader';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { scrollableContainerPaddingPx, scrollableContainerStyle } from '../helpers/scrollable-container';
 import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
-import { DateRange, SamplingStrategy, toLiteralSamplingStrategy} from '../services/api';
-import { Country, Variant} from '../services/api-types';
+import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { Country, Variant } from '../services/api-types';
 import { HospitalizationDeathDeepFocus } from '../components/HospitalizationDeathDeepFocus';
 import { WasteWaterDeepFocus } from '../models/wasteWater/WasteWaterDeepFocus';
 
