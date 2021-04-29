@@ -9,7 +9,7 @@ import TimeIntensityChart, { TimeIntensityEntry } from '../charts/TimeIntensityC
 import Loader from '../components/Loader';
 import { exportComponentAsJPEG } from 'react-component-export-image';
 import { FaCloudDownloadAlt } from 'react-icons/fa';
-import styled from 'styled-components';
+import styled, {keyframes} from 'styled-components';
 
 interface Props {
   country: Country;
@@ -83,12 +83,15 @@ const DownloadButton = styled(FaCloudDownloadAlt)`
   right: 8px;
   &:hover {
     cursor: pointer;
+    transform: translate(0%, -20%);
+    transition: 0.3s ease-out;
   }
 `;
 
 const Wrapper = styled.div`
   position: relative;
 `;
+
 //Adds button to download wrapper component as an image
 export const ImageDownloadWrapper = ({ fileName = 'plot.jpg', ...props }) => {
   const componentRef = useRef(null);
@@ -100,7 +103,11 @@ export const ImageDownloadWrapper = ({ fileName = 'plot.jpg', ...props }) => {
   return (
     <>
       <Wrapper>
-        <DownloadButton onClick={() => exportComponentAsJPEG(componentRef, exportOptions)} />
+        <DownloadButton
+          size='1.5em'
+          color='#95a5a6'
+          onClick={() => exportComponentAsJPEG(componentRef, exportOptions)}
+        />
         <div id='image-download-container' ref={componentRef}>
           {props.children}
         </div>
