@@ -101,6 +101,30 @@ function processCounts(
 
 const noopOnClickHandler = () => {};
 
+interface CSVEntry {
+  age_class: string;
+  subject_mean: number | undefined;
+  subject_uncertainty_min: number | undefined;
+  subject_uncertainty_max: number | undefined;
+  reference_mean: number | undefined;
+  reference_uncertainty_min: number | undefined;
+  reference_uncertainty_max: number | undefined;
+}
+const dataProcessor = (data: GroupValue[]): CSVEntry[] => {
+
+  return data.map((entry) => {
+    return {
+      age_class: entry.label,
+      subject_mean: entry.subject.proportion?.value,
+      subject_uncertainty_min: entry.subject.proportion?.confidenceInterval[0],
+      subject_uncertainty_max: entry.subject.proportion?.confidenceInterval[1],
+      reference_mean: entry.reference.proportion?.value,
+      reference_uncertainty_min: entry.reference.proportion?.confidenceInterval[0],
+      reference_uncertainty_max: entry.reference.proportion?.confidenceInterval[1],
+    };
+  });
+}
+
 export const HospitalizationDeathPlot = ({
   variantSampleSet,
   wholeSampleSet,
@@ -140,6 +164,7 @@ export const HospitalizationDeathPlot = ({
   }, [variantSampleSet, wholeSampleSet, field, widthIsSmall]);
 
   const total = useMemo(() => {
+    console.log(processedData)
     const total = { subject: { count: { true: 0, false: 0 } }, reference: { count: { true: 0, false: 0 } } };
     for (const entry of processedData) {
       for (const [_k0, v0] of Object.entries(total)) {
@@ -154,7 +179,7 @@ export const HospitalizationDeathPlot = ({
   }, [processedData]);
 
   return (
-    <DownloadWrapper>
+    <DownloadWrapper name='HospitalizationDeathPlot' rawData={processedData} dataProcessor={dataProcessor}>
       <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '300px' }}>
         {width && height && (
           <GroupedProportionComparisonChart

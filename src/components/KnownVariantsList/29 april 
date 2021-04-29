@@ -14,7 +14,7 @@ Submit pull requests:
 [x] Save plot as image
 	[x] Downloadable image
 	[x] Seperate wrapper component
-[] Export CSV
+[x] Export CSV
 [] International comparison with recharts 3
 [] Third value adding implementation 3
 
