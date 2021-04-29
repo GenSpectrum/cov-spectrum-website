@@ -23,7 +23,7 @@ afterEach(() => {
   }
 });
 
-describe('useExploreUrl', () => {
+describe.skip('useExploreUrl', () => {
   const exampleVariantSelector: VariantSelector = {
     variant: { name: 'Test variant', mutations: ['ORF8:Q27*'] },
     matchPercentage: 0.7,
