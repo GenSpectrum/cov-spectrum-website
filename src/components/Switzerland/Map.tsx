@@ -39,7 +39,7 @@ const Map = ({ width, casesByZipCode }: Props) => {
     ]);
 
   return (
-    <DownloadWrapper name="SwitzerlandCases">
+    <DownloadWrapper name='SwitzerlandCases'>
       <div style={{ position: 'relative', width: width, height }}>
         <img src={relief} style={{ opacity: 0.4, width: '100%', height: 'auto' }} alt='' />
         <svg width={width} height={height} style={{ position: 'absolute', top: 0, left: 0 }}>

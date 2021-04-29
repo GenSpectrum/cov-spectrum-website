@@ -111,8 +111,7 @@ interface CSVEntry {
   reference_uncertainty_max: number | undefined;
 }
 const dataProcessor = (data: GroupValue[]): CSVEntry[] => {
-
-  return data.map((entry) => {
+  return data.map(entry => {
     return {
       age_class: entry.label,
       subject_mean: entry.subject.proportion?.value,
@@ -123,7 +122,7 @@ const dataProcessor = (data: GroupValue[]): CSVEntry[] => {
       reference_uncertainty_max: entry.reference.proportion?.confidenceInterval[1],
     };
   });
-}
+};
 
 export const HospitalizationDeathPlot = ({
   variantSampleSet,
@@ -164,7 +163,7 @@ export const HospitalizationDeathPlot = ({
   }, [variantSampleSet, wholeSampleSet, field, widthIsSmall]);
 
   const total = useMemo(() => {
-    console.log(processedData)
+    console.log(processedData);
     const total = { subject: { count: { true: 0, false: 0 } }, reference: { count: { true: 0, false: 0 } } };
     for (const entry of processedData) {
       for (const [_k0, v0] of Object.entries(total)) {
