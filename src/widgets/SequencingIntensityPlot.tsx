@@ -9,6 +9,7 @@ import TimeIntensityChart, { TimeIntensityEntry } from '../charts/TimeIntensityC
 import Loader from '../components/Loader';
 import { exportComponentAsJPEG } from 'react-component-export-image';
 import { FaCloudDownloadAlt } from 'react-icons/fa';
+import ReactTooltip from 'react-tooltip';
 import styled, {keyframes} from 'styled-components';
 
 interface Props {
@@ -79,12 +80,13 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
 
 const DownloadButton = styled(FaCloudDownloadAlt)`
   position: absolute;
-  top: 8px;
+  top: 0px;
   right: 8px;
+  padding: 8px 8px 8px 8px;
   &:hover {
     cursor: pointer;
-    transform: translate(0%, -20%);
-    transition: 0.3s ease-out;
+    transform: translate(0%, -10%);
+    transition: 0.2s ease-out;
   }
 `;
 
@@ -104,7 +106,9 @@ export const ImageDownloadWrapper = ({ fileName = 'plot.jpg', ...props }) => {
     <>
       <Wrapper>
         <DownloadButton
-          size='1.5em'
+          data-for={fileName}
+          data-tip='Download this chart as JPEG image'
+          size='2.5em'
           color='#95a5a6'
           onClick={() => exportComponentAsJPEG(componentRef, exportOptions)}
         />
@@ -112,6 +116,7 @@ export const ImageDownloadWrapper = ({ fileName = 'plot.jpg', ...props }) => {
           {props.children}
         </div>
       </Wrapper>
+      <ReactTooltip id={fileName} delayShow={1000}/>
     </>
   );
 };
