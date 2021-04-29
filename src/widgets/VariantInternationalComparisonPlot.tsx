@@ -90,58 +90,57 @@ const VariantInternationalComparisonPlot = ({
   }, [countriesToPlotList, variantSamplesByCountry]);
 
   return (
-    <DownloadWrapper name="VariantInternationalComparisonPlot">
-      
-    <Wrapper>
-      <ChartAndMetricsWrapper>
-        <ChartWrapper>
-          <Plot
-            style={{ width: '100%', height: '100%' }}
-            data={plotData}
-            layout={{
-              title: '',
-              xaxis: {
-                title: 'Week',
-                type: 'date',
-                tickvals: xTickVals,
-                tickformat: 'W%-V, %Y',
-                hoverformat: 'Week %-V, %Y (from %d.%m.)',
-              },
-              yaxis: {
-                title: 'Estimated Percentage',
-                type: logScale ? 'log' : 'linear',
-              },
-              legend: {
-                x: 0,
-                xanchor: 'left',
-                y: 1,
-              },
-              margin: {
-                l: 50,
-                r: 40,
-                b: 70,
-                t: 10,
-                pad: 4,
-              },
-            }}
-            config={{
-              displaylogo: false,
-              modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
-              responsive: true,
-            }}
+    <DownloadWrapper name='VariantInternationalComparisonPlot'>
+      <Wrapper>
+        <ChartAndMetricsWrapper>
+          <ChartWrapper>
+            <Plot
+              style={{ width: '100%', height: '100%' }}
+              data={plotData}
+              layout={{
+                title: '',
+                xaxis: {
+                  title: 'Week',
+                  type: 'date',
+                  tickvals: xTickVals,
+                  tickformat: 'W%-V, %Y',
+                  hoverformat: 'Week %-V, %Y (from %d.%m.)',
+                },
+                yaxis: {
+                  title: 'Estimated Percentage',
+                  type: logScale ? 'log' : 'linear',
+                },
+                legend: {
+                  x: 0,
+                  xanchor: 'left',
+                  y: 1,
+                },
+                margin: {
+                  l: 50,
+                  r: 40,
+                  b: 70,
+                  t: 10,
+                  pad: 4,
+                },
+              }}
+              config={{
+                displaylogo: false,
+                modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
+                responsive: true,
+              }}
             />
-        </ChartWrapper>
-        <MetricsWrapper>
-          <MetricsSpacing />
-          <Metric
-            value={variantSamplesByCountry.size}
-            title={'Countries'}
-            helpText={'The number of countries in which the variant was detected'}
-            color={colors.active}
+          </ChartWrapper>
+          <MetricsWrapper>
+            <MetricsSpacing />
+            <Metric
+              value={variantSamplesByCountry.size}
+              title={'Countries'}
+              helpText={'The number of countries in which the variant was detected'}
+              color={colors.active}
             />
-        </MetricsWrapper>
-      </ChartAndMetricsWrapper>
-    </Wrapper>
+          </MetricsWrapper>
+        </ChartAndMetricsWrapper>
+      </Wrapper>
     </DownloadWrapper>
   );
 };

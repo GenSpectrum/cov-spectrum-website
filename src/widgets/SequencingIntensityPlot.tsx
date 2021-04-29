@@ -63,7 +63,7 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
   return data === undefined || isLoading ? (
     <Loader />
   ) : (
-    <DownloadWrapper name="SequencingIntensityPlot">
+    <DownloadWrapper name='SequencingIntensityPlot'>
       <TimeIntensityChart data={processData(data)} onClickHandler={(e: unknown) => true} />
     </DownloadWrapper>
   );
