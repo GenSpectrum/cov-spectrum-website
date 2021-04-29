@@ -12,6 +12,7 @@ import { Country, CountrySchema } from '../services/api-types';
 import { Widget } from './Widget';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
 import Metric, { MetricsSpacing, MetricsWrapper } from '../charts/Metrics';
+import DownloadWrapper from '../charts/DownloadWrapper';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
@@ -89,6 +90,8 @@ const VariantInternationalComparisonPlot = ({
   }, [countriesToPlotList, variantSamplesByCountry]);
 
   return (
+    <DownloadWrapper name="VariantInternationalComparisonPlot">
+      
     <Wrapper>
       <ChartAndMetricsWrapper>
         <ChartWrapper>
@@ -126,7 +129,7 @@ const VariantInternationalComparisonPlot = ({
               modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
               responsive: true,
             }}
-          />
+            />
         </ChartWrapper>
         <MetricsWrapper>
           <MetricsSpacing />
@@ -135,10 +138,11 @@ const VariantInternationalComparisonPlot = ({
             title={'Countries'}
             helpText={'The number of countries in which the variant was detected'}
             color={colors.active}
-          />
+            />
         </MetricsWrapper>
       </ChartAndMetricsWrapper>
     </Wrapper>
+    </DownloadWrapper>
   );
 };
 

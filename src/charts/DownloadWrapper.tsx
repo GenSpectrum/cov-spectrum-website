@@ -20,10 +20,12 @@ const DownloadButton = styled(FaCloudDownloadAlt)`
 
 const Wrapper = styled.div`
   position: relative;
+  height: 100%;
 `;
 
 const DownloadContainer = styled.div`
     position: relative;
+    height: 100%;
 `
 
 //Adds button to download wrapper component as an image
@@ -36,7 +38,7 @@ const DownloadWrapper = ({ name = 'plot', ...props }) => {
 
   return (
     <>
-      <Wrapper>
+      <Wrapper id="download wrapper wrapper">
         <DownloadButton
           data-for='downloadJPEG'
           data-tip='Download this chart as JPEG image.'

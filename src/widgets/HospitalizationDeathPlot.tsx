@@ -14,6 +14,7 @@ import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import dayjs from 'dayjs';
 import { globalDateCache } from '../helpers/date-cache';
+import DownloadWrapper from '../charts/DownloadWrapper';
 
 export const OMIT_LAST_N_WEEKS = 4;
 
@@ -153,18 +154,20 @@ export const HospitalizationDeathPlot = ({
   }, [processedData]);
 
   return (
-    <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '300px' }}>
-      {width && height && (
-        <GroupedProportionComparisonChart
-          data={processedData}
-          total={total}
-          texts={makeTexts(variantName)[field]}
-          width={width}
-          height={height}
-          extendedMetrics={extendedMetrics}
-          onClickHandler={noopOnClickHandler}
-        />
-      )}
-    </div>
+    <DownloadWrapper>
+      <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '300px' }}>
+        {width && height && (
+          <GroupedProportionComparisonChart
+            data={processedData}
+            total={total}
+            texts={makeTexts(variantName)[field]}
+            width={width}
+            height={height}
+            extendedMetrics={extendedMetrics}
+            onClickHandler={noopOnClickHandler}
+          />
+        )}
+      </div>
+    </DownloadWrapper>
   );
 };
