@@ -77,6 +77,18 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
   );
 };
 
+const DownloadButton = styled(FaCloudDownloadAlt)`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  &:hover {
+    cursor: pointer;
+  }
+`;
+
+const Wrapper = styled.div`
+  position: relative;
+`;
 //Adds button to download wrapper component as an image
 export const ImageDownloadWrapper = ({ fileName = 'plot.jpg', ...props }) => {
   const componentRef = useRef(null);
@@ -87,11 +99,13 @@ export const ImageDownloadWrapper = ({ fileName = 'plot.jpg', ...props }) => {
 
   return (
     <>
-    <div id='image-download-container' ref={componentRef}>
-      {props.children}
-    </div>
-      <button onClick={() => exportComponentAsJPEG(componentRef, exportOptions)}>Save image</button>
-      </>
+      <Wrapper>
+        <DownloadButton onClick={() => exportComponentAsJPEG(componentRef, exportOptions)} />
+        <div id='image-download-container' ref={componentRef}>
+          {props.children}
+        </div>
+      </Wrapper>
+    </>
   );
 };
 
