@@ -7,6 +7,10 @@ import * as zod from 'zod';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import TimeIntensityChart, { TimeIntensityEntry } from '../charts/TimeIntensityChart';
 import Loader from '../components/Loader';
+import { useRechartToPng } from 'recharts-to-png';
+import FileSaver from 'file-saver';
+import { useMeasure } from 'react-use';
+
 
 interface Props {
   country: Country;
@@ -59,10 +63,24 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
     };
   }, [country]);
 
+  const [png, ref] = useRechartToPng();
+  const handleDownload = React.useCallback(async () => {
+    FileSaver.saveAs(png, 'test.png');
+  }, [png]);
+
   return data === undefined || isLoading ? (
     <Loader />
   ) : (
-    <TimeIntensityChart data={processData(data)} onClickHandler={(e: unknown) => true} />
+    <>
+      <div id='container'>
+        <TimeIntensityChart
+          data={processData(data)}
+          downloadReference={ref}
+          onClickHandler={(e: unknown) => true}
+        />
+      </div>
+      <button onClick={handleDownload}>Download chart</button>
+    </>
   );
 };
 
