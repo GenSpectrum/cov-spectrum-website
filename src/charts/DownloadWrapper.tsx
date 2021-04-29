@@ -58,6 +58,7 @@ const DownloadWrapper = ({
     },
   };
 
+  //keep for debug
   const downloadCSV = () => {
     // console.log("downloading data CVS raw data");
     // console.log(rawData);
@@ -96,8 +97,8 @@ const DownloadWrapper = ({
           {props.children}
         </DownloadContainer>
       </Wrapper>
-      <ReactTooltip id='downloadPNG' delayShow={1000} />
-      <ReactTooltip id='downloadCSV' delayShow={1000} />
+      <ReactTooltip id='downloadPNG' delayShow={500} />
+      <ReactTooltip id='downloadCSV' delayShow={500} />
     </>
   );
 };
