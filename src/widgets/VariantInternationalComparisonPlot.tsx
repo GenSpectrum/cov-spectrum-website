@@ -173,15 +173,6 @@ console.log("result is", result);
             </ComposedChart>
           </ResponsiveContainer>
         </ChartWrapper>
-        <MetricsWrapper>
-          <MetricsSpacing />
-          <Metric
-            value={variantSamplesByCountry.size}
-            title={'Countries'}
-            helpText={'The number of countries in which the variant was detected'}
-            color={colors.active}
-          />
-        </MetricsWrapper>
       </ChartAndMetricsWrapper>
     </Wrapper>
   );
