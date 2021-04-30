@@ -70,7 +70,7 @@ interface PlaceCount {
 }
 
 const getPlacesMostVariantSamples = (
-  variantSamplesByPlace: Map<any, any>,
+  variantSamplesByPlace: Map<Place, any>,
   exclude: Place,
   n = DEFAULT_SHOW
 ): string[] => {
