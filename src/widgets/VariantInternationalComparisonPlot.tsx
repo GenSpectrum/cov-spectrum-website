@@ -159,16 +159,6 @@ const VariantInternationalComparisonPlot = ({
     console.log('Plottable result is', result);
     return result;
   }, [selectedCountryOptions, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
-
-  const xTickVals = useMemo(() => {
-    const relevantWeeks = countriesToPlotList.flatMap(({ name }) =>
-      (variantSamplesByCountry.get(name) ?? []).map(s => s.date.isoWeek)
-    );
-    return globalDateCache
-      .weeksFromRange(globalDateCache.rangeFromWeeks(relevantWeeks))
-      .map(w => w.firstDay.string);
-  }, [countriesToPlotList, variantSamplesByCountry]);
-
   interface CountryOption {
     value: string;
     label: string;
@@ -195,16 +185,15 @@ const VariantInternationalComparisonPlot = ({
   return (
     <Wrapper>
       <SelectWrapper>
-
-      <Select
-        closeMenuOnSelect={false}
-        placeholder='Select countries...'
-        isMulti
-        options={countryOptions}
-        styles={colourStyles}
-        onChange={onChange}
-        value={selectedCountryOptions}
-      />
+        <Select
+          closeMenuOnSelect={false}
+          placeholder='Select countries...'
+          isMulti
+          options={countryOptions}
+          styles={colourStyles}
+          onChange={onChange}
+          value={selectedCountryOptions}
+        />
       </SelectWrapper>
       <ChartAndMetricsWrapper>
         <ChartWrapper>
@@ -220,11 +209,12 @@ const VariantInternationalComparisonPlot = ({
               />
               {selectedCountryOptions.map((country: CountryOption) => (
                 <Line
-                  type='monotone'
-                  dataKey={country.value}
-                  strokeWidth={3}
-                  dot={false}
-                  stroke={country.color}
+                type='monotone'
+                dataKey={country.value}
+                strokeWidth={3}
+                dot={false}
+                stroke={country.color}
+                isAnimationActive={false}
                   key={country.value}
                 />
               ))}
