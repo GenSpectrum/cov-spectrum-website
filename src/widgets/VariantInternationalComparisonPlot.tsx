@@ -168,14 +168,12 @@ const VariantInternationalComparisonPlot = ({
     <Wrapper>
       <Select
         closeMenuOnSelect={false}
-        // defaultValue={[colourOptions[0], colourOptions[1]]}
         placeholder='Select countries...'
         isMulti
         options={countryOptions}
         styles={colourStyles}
         onChange={onChange}
         value={selectedCountryOptions}
-        // isClearable={this.state.value.some(v => !v.isFixed)}
       />
       <ChartAndMetricsWrapper>
         <ChartWrapper>
@@ -196,7 +194,6 @@ const VariantInternationalComparisonPlot = ({
                   strokeWidth={3}
                   dot={false}
                   stroke={country.color}
-                  // isAnimationActive={false}
                   key={country.value}
                 />
               ))}
