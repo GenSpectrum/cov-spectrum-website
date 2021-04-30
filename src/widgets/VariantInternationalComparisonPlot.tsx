@@ -100,10 +100,10 @@ const VariantInternationalComparisonPlot = ({
           }
       }
   
-      return [...dateMap.values()].sort((a, b) => Date.parse(a.dateString) - Date.parse(b.dateString));
-  }, [countriesToPlotList, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
-
-  
+      const result =  [...dateMap.values()].sort((a, b) => Date.parse(a.dateString) - Date.parse(b.dateString));
+console.log("result is", result);
+      return (result);
+    }, [countriesToPlotList, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
 
 
   const xTickVals = useMemo(() => {
@@ -150,25 +150,22 @@ const VariantInternationalComparisonPlot = ({
       <ChartAndMetricsWrapper>
         <ChartWrapper>
           <ResponsiveContainer>
-            <ComposedChart
-              data={proportionData}
-              margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
-            >
+            <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
               <XAxis
-                dataKey='date'
-                scale='time'
-                type='number'
+                dataKey='dateString'
               />
-              <YAxis dataKey="proportion" domain={['dataMin', 'auto']} />
-              <Tooltip
-                formatter={(value: any, name: any, props: any) => (value * 100).toFixed(2) + '%'}
-                labelFormatter={label => {
-                  return 'Date: ';
-                }}
-              />
-                <Line dataKey="date" />
-              {/* {plotData.map(location => (
-              ))} */}
+              <YAxis />
+              {/* <YAxis domain={['dataMin', 'auto']} /> */}
+              {countriesToPlotList.map(country => (
+                <Line
+                  type='monotone'
+                  dataKey={country.name}
+                  strokeWidth={3}
+                  dot={false}
+                  // isAnimationActive={false}
+                  key={country.name}
+                />
+              ))}
             </ComposedChart>
           </ResponsiveContainer>
         </ChartWrapper>
