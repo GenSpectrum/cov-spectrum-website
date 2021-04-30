@@ -35,10 +35,10 @@ const VariantInternationalComparisonPlot = ({
     variantInternationalSampleSet,
   ]);
 
-  const countryOptions = Array.from(variantSamplesByCountry.keys()).map(country => ({
-    value: country,
-    label: country,
-    color: country === "Switzerland" ? chroma('red').darken().hex() : chroma.random().hex(),
+  const countryOptions = Array.from(variantSamplesByCountry.keys()).map(countryName => ({
+    value: countryName,
+    label: countryName,
+    color: countryName === 'Switzerland' ? chroma('red').darken().hex() : (countryName === country ? chroma('blue').hex() : chroma.random().hex()),
     isFixed: true,
   }));
   console.log(countryOptions);
@@ -207,32 +207,6 @@ export const VariantInternationalComparisonPlotWidget = new Widget(
 //intentional any type
 const colourStyles: any = {
   control: (styles: Object) => ({ ...styles, backgroundColor: 'white' }),
-  option: (styles: any, { data, isDisabled, isFocused, isSelected }: any) => {
-    const color = chroma(data.color);
-    return {
-      ...styles,
-      'backgroundColor': isDisabled
-        ? null
-        : isSelected
-        ? data.color
-        : isFocused
-        ? color.alpha(0.1).css()
-        : null,
-      'color': isDisabled
-        ? '#ccc'
-        : isSelected
-        ? chroma.contrast(color, 'white') > 2
-          ? 'white'
-          : 'black'
-        : data.color,
-      'cursor': isDisabled ? 'not-allowed' : 'default',
-
-      ':active': {
-        ...styles[':active'],
-        backgroundColor: !isDisabled && (isSelected ? data.color : color.alpha(0.3).css()),
-      },
-    };
-  },
   multiValue: (styles: any, { data }: any) => {
     const color = chroma(data.color);
     return {
