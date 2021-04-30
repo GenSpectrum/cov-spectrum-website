@@ -35,13 +35,13 @@ const VariantInternationalComparisonPlot = ({
     variantInternationalSampleSet,
   ]);
 
-  const countriesOptions = Array.from(variantSamplesByCountry.keys()).map(country => ({
+  const countryOptions = Array.from(variantSamplesByCountry.keys()).map(country => ({
     value: country,
     label: country,
-    color: '#00B8D9',
+    color: country === "Switzerland" ? chroma('red').darken().hex() : chroma.random().hex(),
     isFixed: true,
   }));
-  console.log(countriesOptions);
+  console.log(countryOptions);
 
   const wholeSamplesByCountry = useMemo(() => wholeInternationalSampleSet.groupByField('country'), [
     wholeInternationalSampleSet,
@@ -147,7 +147,7 @@ const VariantInternationalComparisonPlot = ({
         // defaultValue={[colourOptions[0], colourOptions[1]]}
         placeholder='Select countries...'
         isMulti
-        options={countriesOptions}
+        options={countryOptions}
         styles={colourStyles}
       />
       <ChartAndMetricsWrapper>
