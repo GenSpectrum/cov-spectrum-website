@@ -65,7 +65,7 @@ export const Chen2021ProportionPlot = ({
 
   return (
     <>
-      <TitleWrapper>Estimated proportion through time</TitleWrapper>
+      <TitleWrapper>Predicted proportion through time</TitleWrapper>
       <Plot
         style={{ width: '100%', height: '100%' }}
         data={[
@@ -113,7 +113,6 @@ export const Chen2021ProportionPlot = ({
           },
         ]}
         layout={{
-          // title: 'Estimated proportion through time',
           xaxis: {
             hoverformat: '%d.%m.%Y',
           },

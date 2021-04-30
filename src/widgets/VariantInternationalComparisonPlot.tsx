@@ -16,6 +16,7 @@ import chroma from 'chroma-js';
 import styled, { CSSPseudos } from 'styled-components';
 
 const CHART_MARGIN_RIGHT = 15;
+const MAX_SELECT = 6;
 
  interface PlaceOption {
    value: string;
@@ -165,8 +166,9 @@ const VariantInternationalComparisonPlot = ({
         value = selectedPlaceOptions.filter((c: PlaceOption) => c.isFixed);
         break;
     }
-    setSelectedPlaceOptions(value);
+    (value.length < MAX_SELECT + 1) && setSelectedPlaceOptions(value);
   };
+
 
   return (
     <Wrapper>
@@ -178,6 +180,7 @@ const VariantInternationalComparisonPlot = ({
           options={placeOptions}
           styles={colourStyles}
           onChange={onChange}
+          // menuIsOpen={selectedPlaceOptions.length < MAX_SELECT}
           value={selectedPlaceOptions}
         />
       </SelectWrapper>
@@ -195,12 +198,12 @@ const VariantInternationalComparisonPlot = ({
               />
               {selectedPlaceOptions.map((place: PlaceOption) => (
                 <Line
-                type='monotone'
-                dataKey={place.value}
-                strokeWidth={3}
-                dot={false}
-                stroke={place.color}
-                isAnimationActive={false}
+                  type='monotone'
+                  dataKey={place.value}
+                  strokeWidth={3}
+                  dot={false}
+                  stroke={place.color}
+                  isAnimationActive={false}
                   key={place.value}
                 />
               ))}
