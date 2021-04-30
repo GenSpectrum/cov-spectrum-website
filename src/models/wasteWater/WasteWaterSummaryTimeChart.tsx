@@ -5,7 +5,6 @@ import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } f
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { WasteWaterTimeseriesSummaryDataset } from './types';
 import { formatDate, getTicks } from './WasteWaterTimeChart';
-import Metric, { MetricsSpacing, MetricsWrapper } from '../../charts/Metrics';
 
 interface Props {
   wasteWaterPlants: {

@@ -7,15 +7,12 @@ import { fillFromWeeklyMap } from '../helpers/fill-missing';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
-import { getNewSamples } from '../services/api';
+import { getNewSamples, getCountries } from '../services/api';
 import { Country, CountrySchema } from '../services/api-types';
 import { Widget } from './Widget';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
-import Metric, { MetricsSpacing, MetricsWrapper } from '../charts/Metrics';
 import Select from 'react-select';
-
-const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
 const CHART_MARGIN_RIGHT = 15;
 interface Props {
@@ -48,6 +45,12 @@ const VariantInternationalComparisonPlot = ({
   const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByField('country'), [
     variantInternationalSampleSet,
   ]);
+
+  const countriesList = Array.from(variantSamplesByCountry.keys()).map((country) => ({
+    value: country
+  }));
+console.log(countriesList)
+
   const wholeSamplesByCountry = useMemo(() => wholeInternationalSampleSet.groupByField('country'), [
     wholeInternationalSampleSet,
   ]);
