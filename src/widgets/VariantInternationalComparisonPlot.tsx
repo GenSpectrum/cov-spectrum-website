@@ -1,7 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { omit, uniqBy } from 'lodash';
+import { omit } from 'lodash';
 import * as zod from 'zod';
-import { globalDateCache } from '../helpers/date-cache';
 import { fillFromWeeklyMap } from '../helpers/fill-missing';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
@@ -11,7 +10,7 @@ import { Country, CountrySchema, Place } from '../services/api-types';
 import { Widget } from './Widget';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, Wrapper } from '../charts/common';
-import Select, { Styles, StylesConfig } from 'react-select';
+import Select, { Styles } from 'react-select';
 import chroma from 'chroma-js';
 import styled, { CSSPseudos } from 'styled-components';
 
@@ -73,7 +72,7 @@ interface PlaceCount {
 const getPlacesMostVariantSamples = (
   variantSamplesByPlace: Map<any, any>,
   exclude: Place,
-  n = DEFAULT_SHOW,
+  n = DEFAULT_SHOW
 ): string[] => {
   const result = Array.from(variantSamplesByPlace)
     .map((entry: [Place, unknown[]]) => ({
