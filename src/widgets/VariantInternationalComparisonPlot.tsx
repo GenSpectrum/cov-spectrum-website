@@ -11,28 +11,33 @@ import { Country, CountrySchema } from '../services/api-types';
 import { Widget } from './Widget';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, Wrapper } from '../charts/common';
-import Select from 'react-select';
+import Select , {Styles, StylesConfig} from 'react-select';
 import chroma from 'chroma-js';
-import styled from 'styled-components';
+import styled, { CSSPseudos } from 'styled-components';
 
 const CHART_MARGIN_RIGHT = 15;
 
-//intentional any type
-const colourStyles: any = {
-  control: (styles: Object) => ({ ...styles, backgroundColor: 'white' }),
-  multiValue: (styles: any, { data }: any) => {
+ interface CountryOption {
+   value: string;
+   label: string;
+   color: string;
+   isFixed: boolean;
+ }
+
+const colourStyles: Partial<Styles<any, true, any>> = {
+  control: (styles: CSSPseudos) => ({ ...styles, backgroundColor: 'white' }),
+  multiValue: (styles: CSSPseudos, { data }: { data: CountryOption }) => {
     const color = chroma(data.color);
     return {
       ...styles,
       backgroundColor: color.alpha(0.1).css(),
     };
   },
-  multiValueLabel: (styles: any, { data }: any) => ({
+  multiValueLabel: (styles: CSSPseudos, { data }: { data: CountryOption }) => ({
     ...styles,
     color: data.color,
   }),
-
-  multiValueRemove: (styles: any, { data }: any) => {
+  multiValueRemove: (styles: CSSPseudos, { data }: { data: CountryOption }) => {
     return data.isFixed
       ? { ...styles, display: 'none' }
       : {
@@ -94,20 +99,6 @@ const VariantInternationalComparisonPlot = ({
     wholeInternationalSampleSet,
   ]);
 
-  const countriesToPlotList = useMemo(
-    () =>
-      uniqBy(
-        [
-          { name: 'United Kingdom', color: 'black' },
-          { name: 'Denmark', color: 'green' },
-          { name: 'Switzerland', color: 'red' },
-          { name: country, color: 'blue' },
-        ],
-        c => c.name
-      ),
-    [country]
-  );
-
   const plotData = useMemo(() => {
     console.log('Variant samples by country', variantSamplesByCountry);
     console.log('Whole samples by country', wholeSamplesByCountry);
@@ -159,12 +150,7 @@ const VariantInternationalComparisonPlot = ({
     console.log('Plottable result is', result);
     return result;
   }, [selectedCountryOptions, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
-  interface CountryOption {
-    value: string;
-    label: string;
-    color: string;
-    isFixed: boolean;
-  }
+ 
 
   const onChange = (value: any, { action, removedValue }: any) => {
     console.log(value);
