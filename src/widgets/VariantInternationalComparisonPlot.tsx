@@ -1,5 +1,5 @@
+import React, { useMemo, useState, useEffect } from 'react';
 import { omit, uniqBy } from 'lodash';
-import React, { useMemo, useState } from 'react';
 import * as zod from 'zod';
 import { globalDateCache } from '../helpers/date-cache';
 import { fillFromWeeklyMap } from '../helpers/fill-missing';
@@ -7,7 +7,7 @@ import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import { getNewSamples } from '../services/api';
-import { Country, CountrySchema } from '../services/api-types';
+import { Country, CountrySchema, Place} from '../services/api-types';
 import { Widget } from './Widget';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, Wrapper } from '../charts/common';
@@ -64,6 +64,33 @@ const SelectWrapper = styled.div`
   margin: 0rem 1rem 1rem 0rem;
 `
 
+interface PlaceCount {
+  place: Place, 
+  count: number
+}
+
+
+const getPlacesMostVariantSamples = (variantSamplesByPlace: Map<any, any> , exclude: Place, n = 4): string[] => {
+  const result = Array.from(variantSamplesByPlace)
+    .map((entry: [Place, unknown[]]) => ({
+      place: entry[0],
+      count: entry[1]?.length,
+    }))
+    .filter((a: PlaceCount) => a.place !== exclude)
+    .sort((a: PlaceCount, b: PlaceCount) => b.count - a.count)
+    .slice(0, n).map((entry: PlaceCount) => (entry.place));
+  console.log("TOP", result)
+  return result;
+}
+
+const getPlaceColor = (place: Place, selectedPlace: Place): string=> {
+  return (place === 'Switzerland'
+        ? chroma('red').hex()
+        : place === selectedPlace
+        ? chroma('blue').hex()
+        : chroma.random().darken().hex())
+}
+
 const VariantInternationalComparisonPlot = ({
   country,
   logScale,
@@ -77,21 +104,30 @@ const VariantInternationalComparisonPlot = ({
       color: country === 'Switzerland' ? chroma('red').hex() : chroma('blue').hex(),
       isFixed: true,
     },
+    // getPlacesMostVariantSamples(variantSamplesByCountry, country),
   ]);
 
+  useEffect(() => {
+    const initialPlaces = [country].concat(getPlacesMostVariantSamples(variantSamplesByCountry, country));
+    const newOptions = initialPlaces.map((place: Place) => ({
+      value: place,
+      label: place,
+      color: getPlaceColor(place, country),
+      isFixed: place === country,
+    }))
+    setSelectedPlaceOptions(newOptions);
+  }, [country]);
+  
   const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByField('country'), [
     variantInternationalSampleSet,
   ]);
+  getPlacesMostVariantSamples(variantSamplesByCountry, country);
 
+  console.log("by country", variantSamplesByCountry)
   const placeOptions: PlaceOption[] = Array.from(variantSamplesByCountry.keys()).map(countryName => ({
     value: countryName,
     label: countryName,
-    color:
-      countryName === 'Switzerland'
-        ? chroma('red').hex()
-        : countryName === country
-        ? chroma('blue').hex()
-        : chroma.random().darken().hex(),
+    color: getPlaceColor(countryName, country),
     isFixed: countryName === country,
   }));
   console.log(placeOptions);
