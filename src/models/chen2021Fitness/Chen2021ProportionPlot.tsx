@@ -3,7 +3,7 @@ import * as zod from 'zod';
 import { Plot } from '../../components/Plot';
 import { Chen2021FitnessResponse, Chen2021FitnessResponseSchema } from './chen2021Fitness-types';
 import { formatValueWithCI } from './format-value';
-import {TitleWrapper} from "../../charts/common"
+import { TitleWrapper } from '../../charts/common';
 
 interface Props {
   modelData: Chen2021FitnessResponse;

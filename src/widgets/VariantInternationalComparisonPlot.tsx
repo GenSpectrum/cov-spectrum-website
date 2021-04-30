@@ -46,18 +46,18 @@ const VariantInternationalComparisonPlot = ({
     variantInternationalSampleSet,
   ]);
 
-  const countriesList = Array.from(variantSamplesByCountry.keys()).map((country) => ({
-    value: country
+  const countriesList = Array.from(variantSamplesByCountry.keys()).map(country => ({
+    value: country,
   }));
-console.log(countriesList)
+  console.log(countriesList);
 
   const wholeSamplesByCountry = useMemo(() => wholeInternationalSampleSet.groupByField('country'), [
     wholeInternationalSampleSet,
   ]);
 
   const plotData = useMemo(() => {
-    console.log("Variant samples by country", variantSamplesByCountry)
-    console.log("Whole samples by country", wholeSamplesByCountry)
+    console.log('Variant samples by country', variantSamplesByCountry);
+    console.log('Whole samples by country', wholeSamplesByCountry);
     // console.log('Variant samples set', variantSampleSet);
     interface ProportionCountry {
       countryName: string;
@@ -66,48 +66,45 @@ console.log(countriesList)
         proportion: number;
       }[];
     }
-    const proportionCountries: ProportionCountry[] = countriesToPlotList.map(
-      ({ name: country }) => {
-        const variantSampleSet = new SampleSet(variantSamplesByCountry.get(country) ?? [], null);
-        const wholeSampleSet = new SampleSet(wholeSamplesByCountry.get(country) ?? [], null);
-        const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
-          count: 0,
-          proportion: 0,
-        })
-          .filter(({ value: { proportion } }) => proportion !== undefined && (!logScale || proportion > 0))
-          .map(({ value: { proportion, ...restValue }, key }) => ({
-            key,
-            value: { ...restValue, proportion: proportion! },
-          }));
-          console.log("international filled data", filledData)
-        return {
-          countryName: country,
-          data: filledData.map((entry) => ({
-            dateString: entry.key.firstDay.string,
-            proportion: entry.value.proportion
-          }))
-        };
-      }
-      );
-      
-      const dateMap: Map<string, any> = new Map();
+    const proportionCountries: ProportionCountry[] = countriesToPlotList.map(({ name: country }) => {
+      const variantSampleSet = new SampleSet(variantSamplesByCountry.get(country) ?? [], null);
+      const wholeSampleSet = new SampleSet(wholeSamplesByCountry.get(country) ?? [], null);
+      const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
+        count: 0,
+        proportion: 0,
+      })
+        .filter(({ value: { proportion } }) => proportion !== undefined && (!logScale || proportion > 0))
+        .map(({ value: { proportion, ...restValue }, key }) => ({
+          key,
+          value: { ...restValue, proportion: proportion! },
+        }));
+      console.log('international filled data', filledData);
+      return {
+        countryName: country,
+        data: filledData.map(entry => ({
+          dateString: entry.key.firstDay.string,
+          proportion: entry.value.proportion,
+        })),
+      };
+    });
 
-      for (let {countryName, data} of proportionCountries) {
-          for (let {dateString, proportion} of data) {
-            if (!dateMap.has(dateString)) {
-              dateMap.set(dateString, {
-                dateString,
-              });
-            }
-              dateMap.get(dateString)[countryName] = Math.max(proportion, 0);
-          }
-      }
-  
-      const result =  [...dateMap.values()].sort((a, b) => Date.parse(a.dateString) - Date.parse(b.dateString));
-console.log("result is", result);
-      return (result);
-    }, [countriesToPlotList, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
+    const dateMap: Map<string, any> = new Map();
 
+    for (let { countryName, data } of proportionCountries) {
+      for (let { dateString, proportion } of data) {
+        if (!dateMap.has(dateString)) {
+          dateMap.set(dateString, {
+            dateString,
+          });
+        }
+        dateMap.get(dateString)[countryName] = Math.max(proportion, 0);
+      }
+    }
+
+    const result = [...dateMap.values()].sort((a, b) => Date.parse(a.dateString) - Date.parse(b.dateString));
+    console.log('result is', result);
+    return result;
+  }, [countriesToPlotList, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
 
   const xTickVals = useMemo(() => {
     const relevantWeeks = countriesToPlotList.flatMap(({ name }) =>
@@ -118,13 +115,11 @@ console.log("result is", result);
       .map(w => w.firstDay.string);
   }, [countriesToPlotList, variantSamplesByCountry]);
 
-
   const options = [
     { value: 'chocolate', label: 'Chocolate' },
     { value: 'strawberry', label: 'Strawberry' },
     { value: 'vanilla', label: 'Vanilla' },
   ];
-
 
   const proportionData = [
     [
@@ -138,7 +133,6 @@ console.log("result is", result);
       },
     ],
   ];
-
 
   return (
     <Wrapper>
@@ -159,7 +153,7 @@ console.log("result is", result);
               <Tooltip
                 formatter={(value: number, name: string, props: unknown) => (value * 100).toFixed(2) + '%'}
                 labelFormatter={label => {
-                  return 'Date: ' + (label);
+                  return 'Date: ' + label;
                 }}
               />
               {countriesToPlotList.map(country => (

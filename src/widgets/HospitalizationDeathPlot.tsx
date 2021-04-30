@@ -157,16 +157,16 @@ export const HospitalizationDeathPlot = ({
     <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '300px' }}>
       {width && height && (
         <>
-        <TitleWrapper>Estimated hospitalization rate by age group</TitleWrapper>
-        <GroupedProportionComparisonChart
-          data={processedData}
-          total={total}
-          texts={makeTexts(variantName)[field]}
-          width={width}
-          height={height}
-          extendedMetrics={extendedMetrics}
-          onClickHandler={noopOnClickHandler}
-        />
+          <TitleWrapper>Estimated hospitalization rate by age group</TitleWrapper>
+          <GroupedProportionComparisonChart
+            data={processedData}
+            total={total}
+            texts={makeTexts(variantName)[field]}
+            width={width}
+            height={height}
+            extendedMetrics={extendedMetrics}
+            onClickHandler={noopOnClickHandler}
+          />
         </>
       )}
     </div>
