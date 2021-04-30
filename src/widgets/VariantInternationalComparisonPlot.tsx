@@ -12,7 +12,8 @@ import { Country, CountrySchema } from '../services/api-types';
 import { Widget } from './Widget';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
-import Select from 'react-select';
+import Select, { StylesConfig} from 'react-select';
+import chroma from 'chroma-js';
 
 const CHART_MARGIN_RIGHT = 15;
 interface Props {
@@ -28,6 +29,24 @@ const VariantInternationalComparisonPlot = ({
   variantInternationalSampleSet,
   wholeInternationalSampleSet,
 }: Props) => {
+  
+
+  const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByField('country'), [
+    variantInternationalSampleSet,
+  ]);
+
+  const countriesOptions = Array.from(variantSamplesByCountry.keys()).map(country => ({
+    value: country,
+    label: country,
+    color: '#00B8D9',
+    isFixed: true,
+  }));
+  console.log(countriesOptions);
+
+  const wholeSamplesByCountry = useMemo(() => wholeInternationalSampleSet.groupByField('country'), [
+    wholeInternationalSampleSet,
+  ]);
+
   const countriesToPlotList = useMemo(
     () =>
       uniqBy(
@@ -41,19 +60,6 @@ const VariantInternationalComparisonPlot = ({
       ),
     [country]
   );
-
-  const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByField('country'), [
-    variantInternationalSampleSet,
-  ]);
-
-  const countriesList = Array.from(variantSamplesByCountry.keys()).map(country => ({
-    value: country,
-  }));
-  console.log(countriesList);
-
-  const wholeSamplesByCountry = useMemo(() => wholeInternationalSampleSet.groupByField('country'), [
-    wholeInternationalSampleSet,
-  ]);
 
   const plotData = useMemo(() => {
     console.log('Variant samples by country', variantSamplesByCountry);
@@ -141,8 +147,8 @@ const VariantInternationalComparisonPlot = ({
         // defaultValue={[colourOptions[0], colourOptions[1]]}
         placeholder='Select countries...'
         isMulti
-        options={options}
-        // styles={colourStyles}
+        options={countriesOptions}
+        styles={colourStyles}
       />
       <ChartAndMetricsWrapper>
         <ChartWrapper>
@@ -198,37 +204,52 @@ export const VariantInternationalComparisonPlotWidget = new Widget(
   'VariantInternationalComparisonPlot'
 );
 
-// const plotData = useMemo(() => {
-//   console.log('Variant samples by country', variantSamplesByCountry);
-//   console.log('Whole samples by country', wholeSamplesByCountry);
-//   // console.log('Variant samples set', variantSampleSet);
-//   const mappedVals = countriesToPlotList.map(
-//     ({ name: country, color }): Plotly.Data => {
-//       const variantSampleSet = new SampleSet(variantSamplesByCountry.get(country) ?? [], null);
-//       const wholeSampleSet = new SampleSet(wholeSamplesByCountry.get(country) ?? [], null);
-//       const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
-//         count: 0,
-//         proportion: 0,
-//       })
-//         .filter(({ value: { proportion } }) => proportion !== undefined && (!logScale || proportion > 0))
-//         .map(({ value: { proportion, ...restValue }, key }) => ({
-//           key,
-//           value: { ...restValue, proportion: proportion! },
-//         }));
-//       // console.log("international filled data")
-//       return {
-//         name: country,
-//         marker: { color },
-//         type: 'scatter',
-//         mode: 'lines+markers',
-//         x: filledData.map(({ key }) => key.firstDay.string),
-//         y: filledData.map(({ value: { proportion } }) => digitsForPercent(proportion)),
-//         text: filledData.map(({ value: { proportion } }) => `${digitsForPercent(proportion)}%`),
-//         hovertemplate: '%{text}',
-//       };
-//     }
-//   );
-//   console.log('Mapped values international are...');
-//   console.log(mappedVals);
-//   return mappedVals;
-// }, [countriesToPlotList, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
+//intentional any type
+const colourStyles: any = {
+  control: (styles: Object) => ({ ...styles, backgroundColor: 'white' }),
+  option: (styles: any, { data, isDisabled, isFocused, isSelected }: any) => {
+    const color = chroma(data.color);
+    return {
+      ...styles,
+      'backgroundColor': isDisabled
+        ? null
+        : isSelected
+        ? data.color
+        : isFocused
+        ? color.alpha(0.1).css()
+        : null,
+      'color': isDisabled
+        ? '#ccc'
+        : isSelected
+        ? chroma.contrast(color, 'white') > 2
+          ? 'white'
+          : 'black'
+        : data.color,
+      'cursor': isDisabled ? 'not-allowed' : 'default',
+
+      ':active': {
+        ...styles[':active'],
+        backgroundColor: !isDisabled && (isSelected ? data.color : color.alpha(0.3).css()),
+      },
+    };
+  },
+  multiValue: (styles: any, { data }: any) => {
+    const color = chroma(data.color);
+    return {
+      ...styles,
+      backgroundColor: color.alpha(0.1).css(),
+    };
+  },
+  multiValueLabel: (styles: any, { data }: any) => ({
+    ...styles,
+    color: data.color,
+  }),
+  multiValueRemove: (styles: any, { data }: any) => ({
+    ...styles,
+    'color': data.color,
+    ':hover': {
+      backgroundColor: data.color,
+      color: 'white',
+    },
+  }),
+};
