@@ -84,27 +84,29 @@ const VariantInternationalComparisonPlot = ({
         proportion: number;
       }[];
     }
-    const proportionCountries: ProportionCountry[] = selectedCountryOptions.map(({ value: country }: CountryOption) => {
-      const variantSampleSet = new SampleSet(variantSamplesByCountry.get(country) ?? [], null);
-      const wholeSampleSet = new SampleSet(wholeSamplesByCountry.get(country) ?? [], null);
-      const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
-        count: 0,
-        proportion: 0,
-      })
-        .filter(({ value: { proportion } }) => proportion !== undefined && (!logScale || proportion > 0))
-        .map(({ value: { proportion, ...restValue }, key }) => ({
-          key,
-          value: { ...restValue, proportion: proportion! },
-        }));
-      console.log('international filled data', filledData);
-      return {
-        countryName: country,
-        data: filledData.map(entry => ({
-          dateString: entry.key.firstDay.string,
-          proportion: entry.value.proportion,
-        })),
-      };
-    });
+    const proportionCountries: ProportionCountry[] = selectedCountryOptions.map(
+      ({ value: country }: CountryOption) => {
+        const variantSampleSet = new SampleSet(variantSamplesByCountry.get(country) ?? [], null);
+        const wholeSampleSet = new SampleSet(wholeSamplesByCountry.get(country) ?? [], null);
+        const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
+          count: 0,
+          proportion: 0,
+        })
+          .filter(({ value: { proportion } }) => proportion !== undefined && (!logScale || proportion > 0))
+          .map(({ value: { proportion, ...restValue }, key }) => ({
+            key,
+            value: { ...restValue, proportion: proportion! },
+          }));
+        console.log('international filled data', filledData);
+        return {
+          countryName: country,
+          data: filledData.map(entry => ({
+            dateString: entry.key.firstDay.string,
+            proportion: entry.value.proportion,
+          })),
+        };
+      }
+    );
 
     const dateMap: Map<string, any> = new Map();
 
