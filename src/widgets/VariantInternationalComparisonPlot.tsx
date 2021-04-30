@@ -151,17 +151,21 @@ console.log("result is", result);
         <ChartWrapper>
           <ResponsiveContainer>
             <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
-              <XAxis
-                dataKey='dateString'
-              />
+              <XAxis dataKey='dateString' />
               <YAxis />
-              {/* <YAxis domain={['dataMin', 'auto']} /> */}
+              <Tooltip
+                formatter={(value: number, name: string, props: unknown) => (value * 100).toFixed(2) + '%'}
+                labelFormatter={label => {
+                  return 'Date: ' + (label);
+                }}
+              />
               {countriesToPlotList.map(country => (
                 <Line
                   type='monotone'
                   dataKey={country.name}
                   strokeWidth={3}
                   dot={false}
+                  stroke={country.color}
                   // isAnimationActive={false}
                   key={country.name}
                 />
