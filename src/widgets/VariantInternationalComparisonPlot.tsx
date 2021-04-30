@@ -29,6 +29,15 @@ const VariantInternationalComparisonPlot = ({
   variantInternationalSampleSet,
   wholeInternationalSampleSet,
 }: Props) => {
+  const [selectedCountryOptions, setSelectedCountryOptions] = useState<any>([
+    {
+      value: country,
+      label: country,
+      color: country === 'Switzerland' ? chroma('red').hex() : chroma('blue').hex(),
+      isFixed: true,
+    },
+  ]);
+
   const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByField('country'), [
     variantInternationalSampleSet,
   ]);
@@ -75,7 +84,7 @@ const VariantInternationalComparisonPlot = ({
         proportion: number;
       }[];
     }
-    const proportionCountries: ProportionCountry[] = countriesToPlotList.map(({ name: country }) => {
+    const proportionCountries: ProportionCountry[] = selectedCountryOptions.map(({ value: country }: CountryOption) => {
       const variantSampleSet = new SampleSet(variantSamplesByCountry.get(country) ?? [], null);
       const wholeSampleSet = new SampleSet(wholeSamplesByCountry.get(country) ?? [], null);
       const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
@@ -111,9 +120,9 @@ const VariantInternationalComparisonPlot = ({
     }
 
     const result = [...dateMap.values()].sort((a, b) => Date.parse(a.dateString) - Date.parse(b.dateString));
-    console.log('result is', result);
+    console.log('Plottable result is', result);
     return result;
-  }, [countriesToPlotList, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
+  }, [selectedCountryOptions, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
 
   const xTickVals = useMemo(() => {
     const relevantWeeks = countriesToPlotList.flatMap(({ name }) =>
@@ -137,42 +146,22 @@ const VariantInternationalComparisonPlot = ({
     isFixed: boolean;
   }
 
-  // const onChange = (value: any, { action: any, removedValue: any }) => {
-  //     switch (action) {
-  //       case 'remove-value':
-  //       case 'pop-value':
-  //         if (removedValue.isFixed) {
-  //           return;
-  //         }
-  //         break;
-  //       case 'clear':
-  //         value = colourOptions.filter(v => v.isFixed);
-  //         break;
-  //     }
-
   const onChange = (value: any, { action, removedValue }: any) => {
     console.log(value);
     switch (action) {
       case 'remove-value':
-        case 'pop-value':
-          if (removedValue.isFixed) {
-            return;
-          }
-          break;
-          case 'clear':
-            value = selectedCountryOptions.filter((c: CountryOption) => c.isFixed);
-            break;
-          }
-          setSelectedCountryOptions(value);
+      case 'pop-value':
+        if (removedValue.isFixed) {
+          return;
+        }
+        break;
+      case 'clear':
+        value = selectedCountryOptions.filter((c: CountryOption) => c.isFixed);
+        break;
+    }
+    setSelectedCountryOptions(value);
   };
-  const [selectedCountryOptions, setSelectedCountryOptions] = useState<any>([
-    {
-      value: country,
-      label: country,
-      color: country === "Switzerland" ? chroma('red').hex() : chroma('blue').hex(),
-      isFixed: true,
-    },
-  ]);
+
   return (
     <Wrapper>
       <Select
@@ -198,15 +187,15 @@ const VariantInternationalComparisonPlot = ({
                   return 'Date: ' + label;
                 }}
               />
-              {countriesToPlotList.map(country => (
+              {selectedCountryOptions.map((country: CountryOption) => (
                 <Line
                   type='monotone'
-                  dataKey={country.name}
+                  dataKey={country.value}
                   strokeWidth={3}
                   dot={false}
                   stroke={country.color}
                   // isAnimationActive={false}
-                  key={country.name}
+                  key={country.value}
                 />
               ))}
             </ComposedChart>
@@ -255,20 +244,17 @@ const colourStyles: any = {
     color: data.color,
   }),
 
-  multiValueRemove: (styles: any, {data}: any) => {
-    return data.isFixed ? { ...styles, display: 'none' } : {...styles, 'color': data.color, ':hover': {
-      backgroundColor: data.color,
-      color: 'white',
-      cursor: 'pointer'
-    }};
+  multiValueRemove: (styles: any, { data }: any) => {
+    return data.isFixed
+      ? { ...styles, display: 'none' }
+      : {
+          ...styles,
+          'color': data.color,
+          ':hover': {
+            backgroundColor: data.color,
+            color: 'white',
+            cursor: 'pointer',
+          },
+        };
   },
-  // multiValueRemove: (styles: any, { data, state }: any) => ({
-  //   ...styles,
-  //   'color': data.color,
-  //   ':hover': {
-  //     backgroundColor: data.color,
-  //     color: 'white',
-  //   },
-  // }),
-  
 };
