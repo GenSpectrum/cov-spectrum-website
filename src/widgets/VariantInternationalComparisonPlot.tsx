@@ -1,27 +1,62 @@
 import { omit, uniqBy } from 'lodash';
 import React, { useMemo, useState } from 'react';
 import * as zod from 'zod';
-import { Plot } from '../components/Plot';
-import { globalDateCache, UnifiedIsoWeek } from '../helpers/date-cache';
+import { globalDateCache } from '../helpers/date-cache';
 import { fillFromWeeklyMap } from '../helpers/fill-missing';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
-import { getNewSamples, getCountries } from '../services/api';
+import { getNewSamples } from '../services/api';
 import { Country, CountrySchema } from '../services/api-types';
 import { Widget } from './Widget';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
-import Select, { StylesConfig } from 'react-select';
+import { ChartAndMetricsWrapper, ChartWrapper, Wrapper } from '../charts/common';
+import Select from 'react-select';
 import chroma from 'chroma-js';
+import styled from 'styled-components';
 
 const CHART_MARGIN_RIGHT = 15;
+
+//intentional any type
+const colourStyles: any = {
+  control: (styles: Object) => ({ ...styles, backgroundColor: 'white' }),
+  multiValue: (styles: any, { data }: any) => {
+    const color = chroma(data.color);
+    return {
+      ...styles,
+      backgroundColor: color.alpha(0.1).css(),
+    };
+  },
+  multiValueLabel: (styles: any, { data }: any) => ({
+    ...styles,
+    color: data.color,
+  }),
+
+  multiValueRemove: (styles: any, { data }: any) => {
+    return data.isFixed
+      ? { ...styles, display: 'none' }
+      : {
+          ...styles,
+          'color': data.color,
+          ':hover': {
+            backgroundColor: data.color,
+            color: 'white',
+            cursor: 'pointer',
+          },
+        };
+  },
+};
+
 interface Props {
   country: Country;
   logScale?: boolean;
   variantInternationalSampleSet: SampleSetWithSelector;
   wholeInternationalSampleSet: SampleSetWithSelector;
 }
+
+const SelectWrapper = styled.div`
+  margin: 0rem 1rem 1rem 0rem;
+`
 
 const VariantInternationalComparisonPlot = ({
   country,
@@ -76,7 +111,6 @@ const VariantInternationalComparisonPlot = ({
   const plotData = useMemo(() => {
     console.log('Variant samples by country', variantSamplesByCountry);
     console.log('Whole samples by country', wholeSamplesByCountry);
-    // console.log('Variant samples set', variantSampleSet);
     interface ProportionCountry {
       countryName: string;
       data: {
@@ -135,12 +169,6 @@ const VariantInternationalComparisonPlot = ({
       .map(w => w.firstDay.string);
   }, [countriesToPlotList, variantSamplesByCountry]);
 
-  //  OptionsType<{
-  //     value: string;
-  //     label: string;
-  //     color: string;
-  //     isFixed: boolean;
-  // }>
   interface CountryOption {
     value: string;
     label: string;
@@ -166,6 +194,8 @@ const VariantInternationalComparisonPlot = ({
 
   return (
     <Wrapper>
+      <SelectWrapper>
+
       <Select
         closeMenuOnSelect={false}
         placeholder='Select countries...'
@@ -175,6 +205,7 @@ const VariantInternationalComparisonPlot = ({
         onChange={onChange}
         value={selectedCountryOptions}
       />
+      </SelectWrapper>
       <ChartAndMetricsWrapper>
         <ChartWrapper>
           <ResponsiveContainer>
@@ -227,33 +258,3 @@ export const VariantInternationalComparisonPlotWidget = new Widget(
   VariantInternationalComparisonPlot,
   'VariantInternationalComparisonPlot'
 );
-
-//intentional any type
-const colourStyles: any = {
-  control: (styles: Object) => ({ ...styles, backgroundColor: 'white' }),
-  multiValue: (styles: any, { data }: any) => {
-    const color = chroma(data.color);
-    return {
-      ...styles,
-      backgroundColor: color.alpha(0.1).css(),
-    };
-  },
-  multiValueLabel: (styles: any, { data }: any) => ({
-    ...styles,
-    color: data.color,
-  }),
-
-  multiValueRemove: (styles: any, { data }: any) => {
-    return data.isFixed
-      ? { ...styles, display: 'none' }
-      : {
-          ...styles,
-          'color': data.color,
-          ':hover': {
-            backgroundColor: data.color,
-            color: 'white',
-            cursor: 'pointer',
-          },
-        };
-  },
-};
