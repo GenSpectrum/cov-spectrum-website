@@ -14,6 +14,7 @@ import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import dayjs from 'dayjs';
 import { globalDateCache } from '../helpers/date-cache';
+import { TitleWrapper } from '../charts/common';
 
 export const OMIT_LAST_N_WEEKS = 4;
 
@@ -155,6 +156,8 @@ export const HospitalizationDeathPlot = ({
   return (
     <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '300px' }}>
       {width && height && (
+        <>
+        <TitleWrapper>Estimated hospitalization rate by age group</TitleWrapper>
         <GroupedProportionComparisonChart
           data={processedData}
           total={total}
@@ -164,6 +167,7 @@ export const HospitalizationDeathPlot = ({
           extendedMetrics={extendedMetrics}
           onClickHandler={noopOnClickHandler}
         />
+        </>
       )}
     </div>
   );

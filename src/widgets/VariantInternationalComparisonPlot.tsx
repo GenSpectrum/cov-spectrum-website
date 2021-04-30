@@ -10,8 +10,10 @@ import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import { getNewSamples } from '../services/api';
 import { Country, CountrySchema } from '../services/api-types';
 import { Widget } from './Widget';
+import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
 import Metric, { MetricsSpacing, MetricsWrapper } from '../charts/Metrics';
+import Select from 'react-select';
 
 const digitsForPercent = (v: number): string => (v * 100).toFixed(2);
 
@@ -50,11 +52,13 @@ const VariantInternationalComparisonPlot = ({
   ]);
 
   const plotData = useMemo(() => {
-    return countriesToPlotList.map(
+    console.log("Variant samples by country", variantSamplesByCountry)
+    console.log("Whole samples by country", wholeSamplesByCountry)
+    // console.log('Variant samples set', variantSampleSet);
+    const mappedVals =  countriesToPlotList.map(
       ({ name: country, color }): Plotly.Data => {
         const variantSampleSet = new SampleSet(variantSamplesByCountry.get(country) ?? [], null);
         const wholeSampleSet = new SampleSet(wholeSamplesByCountry.get(country) ?? [], null);
-
         const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
           count: 0,
           proportion: 0,
@@ -64,7 +68,7 @@ const VariantInternationalComparisonPlot = ({
             key,
             value: { ...restValue, proportion: proportion! },
           }));
-
+          // console.log("international filled data")
         return {
           name: country,
           marker: { color },
@@ -76,7 +80,10 @@ const VariantInternationalComparisonPlot = ({
           hovertemplate: '%{text}',
         };
       }
-    );
+      );
+      console.log("Mapped values international are...");
+      console.log(mappedVals);
+      return mappedVals;
   }, [countriesToPlotList, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
 
   const xTickVals = useMemo(() => {
@@ -88,8 +95,23 @@ const VariantInternationalComparisonPlot = ({
       .map(w => w.firstDay.string);
   }, [countriesToPlotList, variantSamplesByCountry]);
 
+
+  const options = [
+    { value: 'chocolate', label: 'Chocolate' },
+    { value: 'strawberry', label: 'Strawberry' },
+    { value: 'vanilla', label: 'Vanilla' },
+  ];
+
   return (
     <Wrapper>
+      <Select
+        closeMenuOnSelect={false}
+        // defaultValue={[colourOptions[0], colourOptions[1]]}
+        placeholder="Select countries..."
+        isMulti
+        options={options}
+        // styles={colourStyles}
+      />
       <ChartAndMetricsWrapper>
         <ChartWrapper>
           <Plot
