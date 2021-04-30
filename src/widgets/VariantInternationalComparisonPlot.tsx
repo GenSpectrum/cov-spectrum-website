@@ -254,12 +254,16 @@ const colourStyles: any = {
     ...styles,
     color: data.color,
   }),
-  multiValueRemove: (styles: any, { data }: any) => ({
-    ...styles,
-    'color': data.color,
-    ':hover': {
-      backgroundColor: data.color,
-      color: 'white',
-    },
-  }),
+
+  multiValueRemove: (base: any, state: any) => {
+    return state.data.isFixed ? { ...base, display: 'none' } : base;
+  },
+  // multiValueRemove: (styles: any, { data, state }: any) => ({
+  //   ...styles,
+  //   'color': data.color,
+  //   ':hover': {
+  //     backgroundColor: data.color,
+  //     color: 'white',
+  //   },
+  // }),
 };
