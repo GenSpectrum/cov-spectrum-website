@@ -17,7 +17,7 @@ import styled, { CSSPseudos } from 'styled-components';
 
 const CHART_MARGIN_RIGHT = 15;
 
- interface CountryOption {
+ interface PlaceOption {
    value: string;
    label: string;
    color: string;
@@ -26,18 +26,18 @@ const CHART_MARGIN_RIGHT = 15;
 
 const colourStyles: Partial<Styles<any, true, any>> = {
   control: (styles: CSSPseudos) => ({ ...styles, backgroundColor: 'white' }),
-  multiValue: (styles: CSSPseudos, { data }: { data: CountryOption }) => {
+  multiValue: (styles: CSSPseudos, { data }: { data: PlaceOption }) => {
     const color = chroma(data.color);
     return {
       ...styles,
       backgroundColor: color.alpha(0.1).css(),
     };
   },
-  multiValueLabel: (styles: CSSPseudos, { data }: { data: CountryOption }) => ({
+  multiValueLabel: (styles: CSSPseudos, { data }: { data: PlaceOption }) => ({
     ...styles,
     color: data.color,
   }),
-  multiValueRemove: (styles: CSSPseudos, { data }: { data: CountryOption }) => {
+  multiValueRemove: (styles: CSSPseudos, { data }: { data: PlaceOption }) => {
     return data.isFixed
       ? { ...styles, display: 'none' }
       : {
@@ -69,7 +69,7 @@ const VariantInternationalComparisonPlot = ({
   variantInternationalSampleSet,
   wholeInternationalSampleSet,
 }: Props) => {
-  const [selectedCountryOptions, setSelectedCountryOptions] = useState<any>([
+  const [selectedPlaceOptions, setSelectedPlaceOptions] = useState<any>([
     {
       value: country,
       label: country,
@@ -82,7 +82,7 @@ const VariantInternationalComparisonPlot = ({
     variantInternationalSampleSet,
   ]);
 
-  const countryOptions: CountryOption[] = Array.from(variantSamplesByCountry.keys()).map(countryName => ({
+  const placeOptions: PlaceOption[] = Array.from(variantSamplesByCountry.keys()).map(countryName => ({
     value: countryName,
     label: countryName,
     color:
@@ -93,7 +93,7 @@ const VariantInternationalComparisonPlot = ({
         : chroma.random().darken().hex(),
     isFixed: countryName === country,
   }));
-  console.log(countryOptions);
+  console.log(placeOptions);
 
   const wholeSamplesByCountry = useMemo(() => wholeInternationalSampleSet.groupByField('country'), [
     wholeInternationalSampleSet,
@@ -109,8 +109,8 @@ const VariantInternationalComparisonPlot = ({
         proportion: number;
       }[];
     }
-    const proportionCountries: ProportionCountry[] = selectedCountryOptions.map(
-      ({ value: country }: CountryOption) => {
+    const proportionCountries: ProportionCountry[] = selectedPlaceOptions.map(
+      ({ value: country }: PlaceOption) => {
         const variantSampleSet = new SampleSet(variantSamplesByCountry.get(country) ?? [], null);
         const wholeSampleSet = new SampleSet(wholeSamplesByCountry.get(country) ?? [], null);
         const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
@@ -149,7 +149,7 @@ const VariantInternationalComparisonPlot = ({
     const result = [...dateMap.values()].sort((a, b) => Date.parse(a.dateString) - Date.parse(b.dateString));
     console.log('Plottable result is', result);
     return result;
-  }, [selectedCountryOptions, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
+  }, [selectedPlaceOptions, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
  
 
   const onChange = (value: any, { action, removedValue }: any) => {
@@ -162,10 +162,10 @@ const VariantInternationalComparisonPlot = ({
         }
         break;
       case 'clear':
-        value = selectedCountryOptions.filter((c: CountryOption) => c.isFixed);
+        value = selectedPlaceOptions.filter((c: PlaceOption) => c.isFixed);
         break;
     }
-    setSelectedCountryOptions(value);
+    setSelectedPlaceOptions(value);
   };
 
   return (
@@ -175,10 +175,10 @@ const VariantInternationalComparisonPlot = ({
           closeMenuOnSelect={false}
           placeholder='Select countries...'
           isMulti
-          options={countryOptions}
+          options={placeOptions}
           styles={colourStyles}
           onChange={onChange}
-          value={selectedCountryOptions}
+          value={selectedPlaceOptions}
         />
       </SelectWrapper>
       <ChartAndMetricsWrapper>
@@ -193,15 +193,15 @@ const VariantInternationalComparisonPlot = ({
                   return 'Date: ' + label;
                 }}
               />
-              {selectedCountryOptions.map((country: CountryOption) => (
+              {selectedPlaceOptions.map((place: PlaceOption) => (
                 <Line
                 type='monotone'
-                dataKey={country.value}
+                dataKey={place.value}
                 strokeWidth={3}
                 dot={false}
-                stroke={country.color}
+                stroke={place.color}
                 isAnimationActive={false}
-                  key={country.value}
+                  key={place.value}
                 />
               ))}
             </ComposedChart>
