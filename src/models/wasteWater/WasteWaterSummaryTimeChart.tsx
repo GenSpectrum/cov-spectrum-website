@@ -78,15 +78,6 @@ export const WasteWaterSummaryTimeChart = React.memo(
               </ComposedChart>
             </ResponsiveContainer>
           </ChartWrapper>
-          <MetricsWrapper>
-            <MetricsSpacing />
-            <Metric
-              value={locations.length}
-              title='Locations'
-              helpText={`Samples were gathered from ${locations.length} waste water plants.`}
-              color={colors.active}
-            />
-          </MetricsWrapper>
         </ChartAndMetricsWrapper>
       </Wrapper>
     );
