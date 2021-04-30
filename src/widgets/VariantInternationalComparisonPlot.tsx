@@ -42,7 +42,7 @@ const VariantInternationalComparisonPlot = ({
         : countryName === country
         ? chroma('blue').hex()
         : chroma.random().darken().hex(),
-    isFixed: true,
+    isFixed: countryName === country,
   }));
   console.log(countryOptions);
 
@@ -124,13 +124,12 @@ const VariantInternationalComparisonPlot = ({
       .map(w => w.firstDay.string);
   }, [countriesToPlotList, variantSamplesByCountry]);
 
-
-//  OptionsType<{
-//     value: string;
-//     label: string;
-//     color: string;
-//     isFixed: boolean;
-// }>
+  //  OptionsType<{
+  //     value: string;
+  //     label: string;
+  //     color: string;
+  //     isFixed: boolean;
+  // }>
   interface CountryOption {
     value: string;
     label: string;
@@ -138,29 +137,42 @@ const VariantInternationalComparisonPlot = ({
     isFixed: boolean;
   }
 
-// const onChange = (value: any, { action: any, removedValue: any }) => {
-//     switch (action) {
-//       case 'remove-value':
-//       case 'pop-value':
-//         if (removedValue.isFixed) {
-//           return;
-//         }
-//         break;
-//       case 'clear':
-//         value = colourOptions.filter(v => v.isFixed);
-//         break;
-//     }
+  // const onChange = (value: any, { action: any, removedValue: any }) => {
+  //     switch (action) {
+  //       case 'remove-value':
+  //       case 'pop-value':
+  //         if (removedValue.isFixed) {
+  //           return;
+  //         }
+  //         break;
+  //       case 'clear':
+  //         value = colourOptions.filter(v => v.isFixed);
+  //         break;
+  //     }
 
-    const onChange = (value: any) => {
+  const onChange = (value: any, { action, removedValue }: any) => {
+    console.log(value);
+    switch (action) {
+      case 'remove-value':
+        case 'pop-value':
+          if (removedValue.isFixed) {
+            return;
+          }
+          break;
+          case 'clear':
+            value = selectedCountryOptions.filter((c: CountryOption) => c.isFixed);
+            break;
+          }
           setSelectedCountryOptions(value);
-          console.log(value);
-        }
-  const [selectedCountryOptions, setSelectedCountryOptions] = useState<any>([{
-    value: "Switzerland",
-    label: "Switzerland",
-    color: chroma('red').hex(),
-    isFixed: false,
-  }]);
+  };
+  const [selectedCountryOptions, setSelectedCountryOptions] = useState<any>([
+    {
+      value: country,
+      label: country,
+      color: country === "Switzerland" ? chroma('red').hex() : chroma('blue').hex(),
+      isFixed: true,
+    },
+  ]);
   return (
     <Wrapper>
       <Select
