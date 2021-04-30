@@ -17,6 +17,7 @@ import styled, { CSSPseudos } from 'styled-components';
 
 const CHART_MARGIN_RIGHT = 15;
 const MAX_SELECT = 6;
+const DEFAULT_SHOW = 4;
 
 interface PlaceOption {
   value: string;
@@ -72,7 +73,7 @@ interface PlaceCount {
 const getPlacesMostVariantSamples = (
   variantSamplesByPlace: Map<any, any>,
   exclude: Place,
-  n = 4
+  n = DEFAULT_SHOW,
 ): string[] => {
   const result = Array.from(variantSamplesByPlace)
     .map((entry: [Place, unknown[]]) => ({
@@ -81,7 +82,7 @@ const getPlacesMostVariantSamples = (
     }))
     .filter((a: PlaceCount) => a.place !== exclude)
     .sort((a: PlaceCount, b: PlaceCount) => b.count - a.count)
-    .slice(0, n)
+    .slice(0, n - 1)
     .map((entry: PlaceCount) => entry.place);
   return result;
 };
