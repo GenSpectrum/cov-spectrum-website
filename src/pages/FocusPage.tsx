@@ -167,7 +167,7 @@ export const FocusPage = ({
             </NamedCard>
           </GridCell>
         )}
-        {country === 'Switzerland' && variant.name === 'B.1.1.7' && (
+        {loggedIn && country === 'Switzerland' && variant.name === 'B.1.1.7' && (
           <GridCell minWidth={600}>
             {/* TODO Use a summary plot if available or find another more representative solution. */}
             <NamedCard title='Waste water prevalence' toolbar={deepFocusButtons.wasteWater}>
