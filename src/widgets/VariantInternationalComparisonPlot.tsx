@@ -7,23 +7,23 @@ import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import { getNewSamples } from '../services/api';
-import { Country, CountrySchema, Place} from '../services/api-types';
+import { Country, CountrySchema, Place } from '../services/api-types';
 import { Widget } from './Widget';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, Wrapper } from '../charts/common';
-import Select , {Styles, StylesConfig} from 'react-select';
+import Select, { Styles, StylesConfig } from 'react-select';
 import chroma from 'chroma-js';
 import styled, { CSSPseudos } from 'styled-components';
 
 const CHART_MARGIN_RIGHT = 15;
 const MAX_SELECT = 6;
 
- interface PlaceOption {
-   value: string;
-   label: string;
-   color: string;
-   isFixed: boolean;
- }
+interface PlaceOption {
+  value: string;
+  label: string;
+  color: string;
+  isFixed: boolean;
+}
 
 const colourStyles: Partial<Styles<any, true, any>> = {
   control: (styles: CSSPseudos) => ({ ...styles, backgroundColor: 'white' }),
@@ -62,15 +62,18 @@ interface Props {
 
 const SelectWrapper = styled.div`
   margin: 0rem 1rem 1rem 0rem;
-`
+`;
 
 interface PlaceCount {
-  place: Place, 
-  count: number
+  place: Place;
+  count: number;
 }
 
-
-const getPlacesMostVariantSamples = (variantSamplesByPlace: Map<any, any> , exclude: Place, n = 4): string[] => {
+const getPlacesMostVariantSamples = (
+  variantSamplesByPlace: Map<any, any>,
+  exclude: Place,
+  n = 4
+): string[] => {
   const result = Array.from(variantSamplesByPlace)
     .map((entry: [Place, unknown[]]) => ({
       place: entry[0],
@@ -78,18 +81,18 @@ const getPlacesMostVariantSamples = (variantSamplesByPlace: Map<any, any> , excl
     }))
     .filter((a: PlaceCount) => a.place !== exclude)
     .sort((a: PlaceCount, b: PlaceCount) => b.count - a.count)
-    .slice(0, n).map((entry: PlaceCount) => (entry.place));
-  console.log("TOP", result)
+    .slice(0, n)
+    .map((entry: PlaceCount) => entry.place);
   return result;
-}
+};
 
-const getPlaceColor = (place: Place, selectedPlace: Place): string=> {
-  return (place === 'Switzerland'
-        ? chroma('red').hex()
-        : place === selectedPlace
-        ? chroma('blue').hex()
-        : chroma.random().darken().hex())
-}
+const getPlaceColor = (place: Place, selectedPlace: Place): string => {
+  return place === 'Switzerland'
+    ? chroma('red').hex()
+    : place === selectedPlace
+    ? chroma('blue').hex()
+    : chroma.random().darken().hex();
+};
 
 const VariantInternationalComparisonPlot = ({
   country,
@@ -104,7 +107,6 @@ const VariantInternationalComparisonPlot = ({
       color: country === 'Switzerland' ? chroma('red').hex() : chroma('blue').hex(),
       isFixed: true,
     },
-    // getPlacesMostVariantSamples(variantSamplesByCountry, country),
   ]);
 
   useEffect(() => {
@@ -114,31 +116,27 @@ const VariantInternationalComparisonPlot = ({
       label: place,
       color: getPlaceColor(place, country),
       isFixed: place === country,
-    }))
+    }));
     setSelectedPlaceOptions(newOptions);
   }, [country]);
-  
+
   const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByField('country'), [
     variantInternationalSampleSet,
   ]);
   getPlacesMostVariantSamples(variantSamplesByCountry, country);
 
-  console.log("by country", variantSamplesByCountry)
   const placeOptions: PlaceOption[] = Array.from(variantSamplesByCountry.keys()).map(countryName => ({
     value: countryName,
     label: countryName,
     color: getPlaceColor(countryName, country),
     isFixed: countryName === country,
   }));
-  console.log(placeOptions);
 
   const wholeSamplesByCountry = useMemo(() => wholeInternationalSampleSet.groupByField('country'), [
     wholeInternationalSampleSet,
   ]);
 
   const plotData = useMemo(() => {
-    console.log('Variant samples by country', variantSamplesByCountry);
-    console.log('Whole samples by country', wholeSamplesByCountry);
     interface ProportionCountry {
       countryName: string;
       data: {
@@ -159,7 +157,6 @@ const VariantInternationalComparisonPlot = ({
             key,
             value: { ...restValue, proportion: proportion! },
           }));
-        console.log('international filled data', filledData);
         return {
           countryName: country,
           data: filledData.map(entry => ({
@@ -184,13 +181,10 @@ const VariantInternationalComparisonPlot = ({
     }
 
     const result = [...dateMap.values()].sort((a, b) => Date.parse(a.dateString) - Date.parse(b.dateString));
-    console.log('Plottable result is', result);
     return result;
   }, [selectedPlaceOptions, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
- 
 
   const onChange = (value: any, { action, removedValue }: any) => {
-    console.log(value);
     switch (action) {
       case 'remove-value':
       case 'pop-value':
@@ -202,9 +196,8 @@ const VariantInternationalComparisonPlot = ({
         value = selectedPlaceOptions.filter((c: PlaceOption) => c.isFixed);
         break;
     }
-    (value.length < MAX_SELECT + 1) && setSelectedPlaceOptions(value);
+    value.length < MAX_SELECT + 1 && setSelectedPlaceOptions(value);
   };
-
 
   return (
     <Wrapper>
@@ -216,7 +209,6 @@ const VariantInternationalComparisonPlot = ({
           options={placeOptions}
           styles={colourStyles}
           onChange={onChange}
-          // menuIsOpen={selectedPlaceOptions.length < MAX_SELECT}
           value={selectedPlaceOptions}
         />
       </SelectWrapper>
