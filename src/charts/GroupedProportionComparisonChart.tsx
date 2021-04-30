@@ -109,11 +109,23 @@ export type Props = {
   width: number;
   height: number;
   extendedMetrics?: boolean;
+  rawY?: boolean;
+  hideReferenceScatter?: boolean;
   onClickHandler?: OnClickHandler;
 };
 
 export const GroupedProportionComparisonChart = React.memo(
-  ({ data, total, texts, width, height, extendedMetrics, onClickHandler }: Props): JSX.Element => {
+  ({
+    data,
+    total,
+    texts,
+    width,
+    height,
+    extendedMetrics,
+    rawY,
+    hideReferenceScatter,
+    onClickHandler,
+  }: Props): JSX.Element => {
     const [currentData, setCurrentData] = useState<GroupValue | undefined>();
 
     useEffect(() => {
@@ -212,33 +224,37 @@ export const GroupedProportionComparisonChart = React.memo(
                 dataKey='y'
                 axisLine={false}
                 tickLine={false}
-                domain={[0, (dataMax: number) => Math.min(1, Math.ceil(dataMax * 10) / 10)]}
+                domain={
+                  rawY ? undefined : [0, (dataMax: number) => Math.min(1, Math.ceil(dataMax * 10) / 10)]
+                }
                 scale='linear'
-                tickFormatter={v => `${(v * 100).toFixed(0)}%`}
+                tickFormatter={rawY ? undefined : v => `${(v * 100).toFixed(0)}%`}
               />
               <CartesianGrid vertical={false} />
               <Bar {...commonProps} dataKey='y' fill='transparent' />
-              <Scatter
-                {...commonProps}
-                data={makeScatterData('reference', {
-                  active: colors.inactive,
-                  inactive: colors.inactive,
-                })}
-                shape={ScatterBarShape}
-              >
-                <ErrorBar
-                  direction='y'
-                  dataKey='yErrorActive'
-                  stroke={colors.inactive}
-                  {...referenceErrorBarSizes}
-                />
-                <ErrorBar
-                  direction='y'
-                  dataKey='yErrorInactive'
-                  stroke={colors.inactive}
-                  {...referenceErrorBarSizes}
-                />
-              </Scatter>
+              {!hideReferenceScatter && (
+                <Scatter
+                  {...commonProps}
+                  data={makeScatterData('reference', {
+                    active: colors.inactive,
+                    inactive: colors.inactive,
+                  })}
+                  shape={ScatterBarShape}
+                >
+                  <ErrorBar
+                    direction='y'
+                    dataKey='yErrorActive'
+                    stroke={colors.inactive}
+                    {...referenceErrorBarSizes}
+                  />
+                  <ErrorBar
+                    direction='y'
+                    dataKey='yErrorInactive'
+                    stroke={colors.inactive}
+                    {...referenceErrorBarSizes}
+                  />
+                </Scatter>
+              )}
               <Scatter
                 {...commonProps}
                 data={makeScatterData('subject', { active: colors.active, inactive: colors.inactive })}

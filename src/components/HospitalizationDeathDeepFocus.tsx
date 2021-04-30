@@ -39,6 +39,7 @@ export const HospitalizationDeathDeepFocus = ({
               wholeSampleSet={wholeSampleSet}
               variantName={variantName}
               extendedMetrics
+              relativeToOtherVariants
             />
           </NamedCard>
         </GridCell>

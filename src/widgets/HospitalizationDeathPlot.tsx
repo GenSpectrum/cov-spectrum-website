@@ -9,6 +9,7 @@ import {
   SubgroupTexts,
   SubgroupValue,
   TopLevelTexts,
+  ValueWithConfidence,
 } from '../charts/GroupedProportionComparisonChart';
 import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
@@ -16,6 +17,7 @@ import dayjs from 'dayjs';
 import { globalDateCache } from '../helpers/date-cache';
 import { TitleWrapper } from '../charts/common';
 import DownloadWrapper from '../charts/DownloadWrapper';
+import { approximateBinomialRatioConfidence } from '../helpers/binomial-ratio-confidence';
 
 export const OMIT_LAST_N_WEEKS = 4;
 
@@ -25,6 +27,7 @@ interface Props {
   field: 'hospitalized' | 'deceased';
   variantName: string;
   extendedMetrics?: boolean;
+  relativeToOtherVariants?: boolean;
 }
 
 const makeHospitalizedTexts = (variant: string): SubgroupTexts => ({
@@ -133,6 +136,7 @@ export const HospitalizationDeathPlot = ({
   field,
   variantName,
   extendedMetrics,
+  relativeToOtherVariants,
 }: Props) => {
   const { width, height, ref } = useResizeDetector();
   const widthIsSmall = !!width && width < 700;
@@ -157,13 +161,46 @@ export const HospitalizationDeathPlot = ({
       assert(!!wholeEntry && wholeEntry.key === key);
       const wholeSamples = wholeEntry.value;
 
-      return {
-        label: widthIsSmall ? (key ? key.replace(/-\d+$/, '-') : '?') : key ? key : 'Unk.',
+      const label = widthIsSmall ? (key ? key.replace(/-\d+$/, '-') : '?') : key ? key : 'Unk.';
+
+      const baseCounts = {
         subject: processCounts(variantSamples, [], field),
         reference: processCounts(wholeSamples, variantSamples, field),
       };
+
+      if (relativeToOtherVariants) {
+        const x = baseCounts.subject.count.true;
+        const m = baseCounts.subject.count.true + baseCounts.subject.count.false;
+        const y = baseCounts.reference.count.true;
+        const n = baseCounts.reference.count.true + baseCounts.reference.count.false;
+
+        let relativeProportion: ValueWithConfidence | undefined = {
+          value: x / m / (y / n),
+          confidenceInterval: approximateBinomialRatioConfidence(x, m, y, n),
+        };
+        if (
+          !isFinite(relativeProportion.value) ||
+          !relativeProportion.confidenceInterval.every(v => isFinite(v))
+        ) {
+          relativeProportion = undefined;
+        }
+
+        return {
+          label,
+          subject: {
+            count: baseCounts.subject.count,
+            proportion: relativeProportion,
+          },
+          reference: { count: baseCounts.reference.count },
+        };
+      }
+
+      return {
+        ...baseCounts,
+        label,
+      };
     });
-  }, [variantSampleSet, wholeSampleSet, field, widthIsSmall]);
+  }, [variantSampleSet, wholeSampleSet, field, widthIsSmall, relativeToOtherVariants]);
 
   const total = useMemo(() => {
     const total = { subject: { count: { true: 0, false: 0 } }, reference: { count: { true: 0, false: 0 } } };
@@ -195,6 +232,8 @@ export const HospitalizationDeathPlot = ({
               height={height}
               extendedMetrics={extendedMetrics}
               onClickHandler={noopOnClickHandler}
+              rawY={relativeToOtherVariants}
+              hideReferenceScatter={relativeToOtherVariants}
             />
           </>
         )}
