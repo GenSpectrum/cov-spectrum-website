@@ -1,5 +1,5 @@
 import { omit, uniqBy } from 'lodash';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import * as zod from 'zod';
 import { Plot } from '../components/Plot';
 import { globalDateCache, UnifiedIsoWeek } from '../helpers/date-cache';
@@ -12,7 +12,7 @@ import { Country, CountrySchema } from '../services/api-types';
 import { Widget } from './Widget';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
-import Select, { StylesConfig} from 'react-select';
+import Select, { StylesConfig } from 'react-select';
 import chroma from 'chroma-js';
 
 const CHART_MARGIN_RIGHT = 15;
@@ -29,16 +29,19 @@ const VariantInternationalComparisonPlot = ({
   variantInternationalSampleSet,
   wholeInternationalSampleSet,
 }: Props) => {
-  
-
   const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByField('country'), [
     variantInternationalSampleSet,
   ]);
 
-  const countryOptions = Array.from(variantSamplesByCountry.keys()).map(countryName => ({
+  const countryOptions: CountryOption[] = Array.from(variantSamplesByCountry.keys()).map(countryName => ({
     value: countryName,
     label: countryName,
-    color: countryName === 'Switzerland' ? chroma('red').darken().hex() : (countryName === country ? chroma('blue').hex() : chroma.random().hex()),
+    color:
+      countryName === 'Switzerland'
+        ? chroma('red').hex()
+        : countryName === country
+        ? chroma('blue').hex()
+        : chroma.random().darken().hex(),
     isFixed: true,
   }));
   console.log(countryOptions);
@@ -121,25 +124,43 @@ const VariantInternationalComparisonPlot = ({
       .map(w => w.firstDay.string);
   }, [countriesToPlotList, variantSamplesByCountry]);
 
-  const options = [
-    { value: 'chocolate', label: 'Chocolate' },
-    { value: 'strawberry', label: 'Strawberry' },
-    { value: 'vanilla', label: 'Vanilla' },
-  ];
 
-  const proportionData = [
-    [
-      {
-        date: '1',
-        proportion: 12,
-      },
-      {
-        date: '2',
-        proportion: 10,
-      },
-    ],
-  ];
+//  OptionsType<{
+//     value: string;
+//     label: string;
+//     color: string;
+//     isFixed: boolean;
+// }>
+  interface CountryOption {
+    value: string;
+    label: string;
+    color: string;
+    isFixed: boolean;
+  }
 
+// const onChange = (value: any, { action: any, removedValue: any }) => {
+//     switch (action) {
+//       case 'remove-value':
+//       case 'pop-value':
+//         if (removedValue.isFixed) {
+//           return;
+//         }
+//         break;
+//       case 'clear':
+//         value = colourOptions.filter(v => v.isFixed);
+//         break;
+//     }
+
+    const onChange = (value: any) => {
+          setSelectedCountryOptions(value);
+          console.log(value);
+        }
+  const [selectedCountryOptions, setSelectedCountryOptions] = useState<any>([{
+    value: "Switzerland",
+    label: "Switzerland",
+    color: chroma('red').hex(),
+    isFixed: false,
+  }]);
   return (
     <Wrapper>
       <Select
@@ -149,6 +170,9 @@ const VariantInternationalComparisonPlot = ({
         isMulti
         options={countryOptions}
         styles={colourStyles}
+        onChange={onChange}
+        value={selectedCountryOptions}
+        // isClearable={this.state.value.some(v => !v.isFixed)}
       />
       <ChartAndMetricsWrapper>
         <ChartWrapper>
