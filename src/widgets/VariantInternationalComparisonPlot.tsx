@@ -5,7 +5,7 @@ import { fillFromWeeklyMap } from '../helpers/fill-missing';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
-import { getNewSamples } from '../services/api';
+import { getNewSamples, isRegion } from '../services/api';
 import { Country, CountrySchema, Place } from '../services/api-types';
 import { Widget } from './Widget';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
@@ -13,8 +13,6 @@ import Select, { Styles } from 'react-select';
 import chroma from 'chroma-js';
 import styled, { CSSPseudos } from 'styled-components';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
-import Metric, { MetricsSpacing, MetricsWrapper } from '../charts/Metrics';
-import DownloadWrapper from '../charts/DownloadWrapper';
 
 const CHART_MARGIN_RIGHT = 15;
 const MAX_SELECT = 6;
@@ -111,8 +109,15 @@ const VariantInternationalComparisonPlot = ({
     },
   ]);
 
+  const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByField('country'), [
+    variantInternationalSampleSet,
+  ]);
+  getPlacesMostVariantSamples(variantSamplesByCountry, country);
+
   useEffect(() => {
-    const initialPlaces = [country].concat(getPlacesMostVariantSamples(variantSamplesByCountry, country));
+    const initialPlaces = isRegion(country)
+      ? (getPlacesMostVariantSamples(variantSamplesByCountry, country, DEFAULT_SHOW + 1))
+      : [country].concat(getPlacesMostVariantSamples(variantSamplesByCountry, country, DEFAULT_SHOW));
     const newOptions = initialPlaces.map((place: Place) => ({
       value: place,
       label: place,
@@ -121,11 +126,6 @@ const VariantInternationalComparisonPlot = ({
     }));
     setSelectedPlaceOptions(newOptions);
   }, [country, variantSamplesByCountry]);
-
-  const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByField('country'), [
-    variantInternationalSampleSet,
-  ]);
-  getPlacesMostVariantSamples(variantSamplesByCountry, country);
 
   const placeOptions: PlaceOption[] = Array.from(variantSamplesByCountry.keys()).map(countryName => ({
     value: countryName,
