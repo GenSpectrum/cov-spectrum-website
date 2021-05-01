@@ -3,6 +3,7 @@ import * as zod from 'zod';
 import { Plot } from '../../components/Plot';
 import { Chen2021FitnessResponse, Chen2021FitnessResponseSchema } from './chen2021Fitness-types';
 import { formatValueWithCI } from './format-value';
+import { TitleWrapper } from '../../charts/common';
 
 interface Props {
   modelData: Chen2021FitnessResponse;
@@ -63,71 +64,73 @@ export const Chen2021ProportionPlot = ({
   }
 
   return (
-    <Plot
-      style={{ width: '100%', height: '100%' }}
-      data={[
-        {
-          name: '95% confidence interval',
-          showlegend: false,
-          line: { color: 'transparent' },
-          type: 'scatter',
-          mode: 'lines',
-          x: modelData.plotProportion.t.map(dateString => new Date(dateString)),
-          y: modelData.plotProportion.ciUpper,
-          hoverinfo: 'x',
-        },
-        {
-          name: '95% confidence interval',
-          fill: 'tonexty',
-          fillcolor: 'lightgray',
-          line: { color: 'transparent' },
-          type: 'scatter',
-          mode: 'lines',
-          x: modelData.plotProportion.t.map(dateString => new Date(dateString)),
-          y: modelData.plotProportion.ciLower,
-          hoverinfo: 'x',
-        },
-        {
-          name: 'Logistic fit',
-          type: 'scatter',
-          mode: 'lines',
-          x: modelData.plotProportion.t.map(dateString => new Date(dateString)),
-          y: modelData.plotProportion.proportion,
-          text: plotProportionText,
-          hovertemplate: '%{text}',
-        },
-        {
-          name: 'Estimated daily proportion',
-          type: 'scatter',
-          mode: 'markers',
-          marker: {
-            size: 4,
+    <>
+      <TitleWrapper>Predicted proportion through time</TitleWrapper>
+      <Plot
+        style={{ width: '100%', height: '100%' }}
+        data={[
+          {
+            name: '95% confidence interval',
+            showlegend: false,
+            line: { color: 'transparent' },
+            type: 'scatter',
+            mode: 'lines',
+            x: modelData.plotProportion.t.map(dateString => new Date(dateString)),
+            y: modelData.plotProportion.ciUpper,
+            hoverinfo: 'x',
           },
-          text: filteredDailyText,
-          hovertemplate: '%{text}',
-          x: filteredDaily.t.map(dateString => new Date(dateString)),
-          y: filteredDaily.proportion,
-        },
-      ]}
-      layout={{
-        title: 'Estimated proportion through time',
-        xaxis: {
-          hoverformat: '%d.%m.%Y',
-        },
-        showlegend: showLegend,
-        margin: {
-          l: 30,
-          r: 10,
-          b: 30,
-          t: 40,
-          pad: 4,
-        },
-      }}
-      config={{
-        displaylogo: false,
-        modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
-        responsive: true,
-      }}
-    />
+          {
+            name: '95% confidence interval',
+            fill: 'tonexty',
+            fillcolor: 'lightgray',
+            line: { color: 'transparent' },
+            type: 'scatter',
+            mode: 'lines',
+            x: modelData.plotProportion.t.map(dateString => new Date(dateString)),
+            y: modelData.plotProportion.ciLower,
+            hoverinfo: 'x',
+          },
+          {
+            name: 'Logistic fit',
+            type: 'scatter',
+            mode: 'lines',
+            x: modelData.plotProportion.t.map(dateString => new Date(dateString)),
+            y: modelData.plotProportion.proportion,
+            text: plotProportionText,
+            hovertemplate: '%{text}',
+          },
+          {
+            name: 'Estimated daily proportion',
+            type: 'scatter',
+            mode: 'markers',
+            marker: {
+              size: 4,
+            },
+            text: filteredDailyText,
+            hovertemplate: '%{text}',
+            x: filteredDaily.t.map(dateString => new Date(dateString)),
+            y: filteredDaily.proportion,
+          },
+        ]}
+        layout={{
+          xaxis: {
+            hoverformat: '%d.%m.%Y',
+          },
+          showlegend: showLegend,
+          margin: {
+            l: 30,
+            r: 10,
+            b: 30,
+            t: 40,
+            pad: 4,
+          },
+        }}
+        config={{
+          displaylogo: false,
+          modeBarButtons: [['zoom2d', 'toImage', 'resetScale2d', 'pan2d']],
+          responsive: true,
+        }}
+      />
+    </>
   );
 };
