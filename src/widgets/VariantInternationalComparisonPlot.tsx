@@ -27,7 +27,7 @@ interface PlaceOption {
   isFixed: boolean;
 }
 
-const colourStyles: Partial<Styles<any, true, any>> = {
+const colorStyles: Partial<Styles<any, true, any>> = {
   control: (styles: CSSPseudos) => ({ ...styles, backgroundColor: 'white' }),
   multiValue: (styles: CSSPseudos, { data }: { data: PlaceOption }) => {
     const color = chroma(data.color);
@@ -209,7 +209,7 @@ const VariantInternationalComparisonPlot = ({
           placeholder='Select countries...'
           isMulti
           options={placeOptions}
-          styles={colourStyles}
+          styles={colorStyles}
           onChange={onChange}
           value={selectedPlaceOptions}
         />
