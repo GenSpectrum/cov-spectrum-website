@@ -111,7 +111,7 @@ const Metric = ({
           </IconWrapper>
         </MetricTitleWrapper>
       </div>
-      <ReactTooltip id={tooltipId} delayShow={TOOLTIP_DALAY}/>
+      <ReactTooltip id={tooltipId} delayShow={TOOLTIP_DALAY} />
     </MetricWrapper>
   );
 };

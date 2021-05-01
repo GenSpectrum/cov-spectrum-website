@@ -116,7 +116,7 @@ const VariantInternationalComparisonPlot = ({
 
   useEffect(() => {
     const initialPlaces = isRegion(country)
-      ? (getPlacesMostVariantSamples(variantSamplesByCountry, country, DEFAULT_SHOW + 1))
+      ? getPlacesMostVariantSamples(variantSamplesByCountry, country, DEFAULT_SHOW + 1)
       : [country].concat(getPlacesMostVariantSamples(variantSamplesByCountry, country, DEFAULT_SHOW));
     const newOptions = initialPlaces.map((place: Place) => ({
       value: place,
