@@ -42,13 +42,19 @@ const DownloadContainer = styled.div`
   height: 100%;
 `;
 
+interface Props {
+  name: string,
+  rawData?: any[],
+  dataProcessor?: (data: any[]) => any,
+  children: React.ReactNode,
+}
 //Adds button to download wrapper component as an image
 const DownloadWrapper = ({
   name = 'plot',
   rawData = [],
   dataProcessor = (data: any[]) => data,
-  ...props
-}: any) => {
+  children
+}: Props) => {
   const componentRef = useRef(null);
 
   const exportOptions = {
@@ -58,25 +64,16 @@ const DownloadWrapper = ({
     },
   };
 
-  //keep for debug
-  const downloadCSV = () => {
-    // console.log("downloading data CVS raw data");
-    // console.log(rawData);
-    // console.log("processed");
-    // console.log(dataProcessor(rawData));
-  };
-
   return (
     <>
       <Wrapper id='download wrapper wrapper'>
         {rawData.length > 0 && (
-          <CSVLink data={dataProcessor(rawData)} filename={`${name}.csv`} onClick={downloadCSV}>
+          <CSVLink data={dataProcessor(rawData)} filename={`${name}.csv`} >
             <DownloadDataButton
               data-for='downloadCSV'
               data-tip='Download chart data as CSV.'
               size={BUTTON_SIZE}
               color='#95a5a6'
-              onClick={downloadCSV}
             />
           </CSVLink>
         )}
@@ -88,7 +85,7 @@ const DownloadWrapper = ({
           onClick={() => exportComponentAsPNG(componentRef, exportOptions)}
         />
         <DownloadContainer id='image-download-container' ref={componentRef}>
-          {props.children}
+          {children}
         </DownloadContainer>
       </Wrapper>
       <ReactTooltip id='downloadPNG' delayShow={500} />
