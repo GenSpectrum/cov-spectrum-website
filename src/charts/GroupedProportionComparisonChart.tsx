@@ -219,7 +219,10 @@ export const GroupedProportionComparisonChart = React.memo(
               <Bar {...commonProps} dataKey='y' fill='transparent' />
               <Scatter
                 {...commonProps}
-                data={makeScatterData('reference', { active: colors.secondary, inactive: colors.inactiveSecondary })}
+                data={makeScatterData('reference', {
+                  active: colors.secondary,
+                  inactive: colors.inactiveSecondary,
+                })}
                 shape={ScatterBarShape}
               >
                 <ErrorBar

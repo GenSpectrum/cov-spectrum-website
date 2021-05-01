@@ -43,17 +43,17 @@ const DownloadContainer = styled.div`
 `;
 
 interface Props {
-  name: string,
-  rawData?: any[],
-  dataProcessor?: (data: any[]) => any,
-  children: React.ReactNode,
+  name: string;
+  rawData?: any[];
+  dataProcessor?: (data: any[]) => any;
+  children: React.ReactNode;
 }
 //Adds button to download wrapper component as an image
 const DownloadWrapper = ({
   name = 'plot',
   rawData = [],
   dataProcessor = (data: any[]) => data,
-  children
+  children,
 }: Props) => {
   const componentRef = useRef(null);
 
@@ -68,7 +68,7 @@ const DownloadWrapper = ({
     <>
       <Wrapper id='download wrapper wrapper'>
         {rawData.length > 0 && (
-          <CSVLink data={dataProcessor(rawData)} filename={`${name}.csv`} >
+          <CSVLink data={dataProcessor(rawData)} filename={`${name}.csv`}>
             <DownloadDataButton
               data-for='downloadCSV'
               data-tip='Download chart data as CSV.'
