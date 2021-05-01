@@ -9,10 +9,12 @@ import { getNewSamples } from '../services/api';
 import { Country, CountrySchema, Place } from '../services/api-types';
 import { Widget } from './Widget';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { ChartAndMetricsWrapper, ChartWrapper, Wrapper } from '../charts/common';
 import Select, { Styles } from 'react-select';
 import chroma from 'chroma-js';
 import styled, { CSSPseudos } from 'styled-components';
+import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
+import Metric, { MetricsSpacing, MetricsWrapper } from '../charts/Metrics';
+import DownloadWrapper from '../charts/DownloadWrapper';
 
 const CHART_MARGIN_RIGHT = 15;
 const MAX_SELECT = 6;
@@ -61,7 +63,7 @@ interface Props {
 }
 
 const SelectWrapper = styled.div`
-  margin: 0rem 1rem 1rem 0rem;
+  margin: 0rem 0rem 0.5rem 0rem;
 `;
 
 interface PlaceCount {

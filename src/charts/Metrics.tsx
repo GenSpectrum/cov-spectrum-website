@@ -75,7 +75,7 @@ export type MetricProps = {
   helpText: string;
   percent?: string | number | boolean;
   fontSize?: 'normal' | 'small';
-  showPercent?: number | string;
+  showPercent?: number | string | undefined;
 };
 
 const ValueAndPercentWrapper = styled.div`

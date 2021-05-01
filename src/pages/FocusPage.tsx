@@ -13,7 +13,7 @@ import { getFocusPageLink } from '../helpers/explore-url';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { AccountService } from '../services/AccountService';
-import { DateRange, SamplingStrategy, toLiteralSamplingStrategy, isRegion } from '../services/api';
+import { DateRange, isRegion, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
@@ -135,13 +135,9 @@ export const FocusPage = ({
             title='Demographics'
           />
         </GridCell>
-        {loggedIn && country === 'Switzerland' && (
+        {country === 'Switzerland' && (
           <GridCell minWidth={600}>
-            <NamedCard
-              title='Hospitalization rates'
-              toolbar={deepFocusButtons.hospitalizationAndDeath}
-              style={NamedCardStyle.CONFIDENTIAL}
-            >
+            <NamedCard title='Hospitalization rates' toolbar={deepFocusButtons.hospitalizationAndDeath}>
               <HospitalizationDeathPlot
                 field='hospitalized'
                 variantSampleSet={variantSampleSet}
@@ -167,10 +163,14 @@ export const FocusPage = ({
             </NamedCard>
           </GridCell>
         )}
-        {country === 'Switzerland' && variant.name === 'B.1.1.7' && (
+        {loggedIn && country === 'Switzerland' && variant.name === 'B.1.1.7' && (
           <GridCell minWidth={600}>
             {/* TODO Use a summary plot if available or find another more representative solution. */}
-            <NamedCard title='Waste water prevalence' toolbar={deepFocusButtons.wasteWater}>
+            <NamedCard
+              title='Waste water prevalence'
+              toolbar={deepFocusButtons.wasteWater}
+              style={NamedCardStyle.CONFIDENTIAL}
+            >
               <div style={{ height: 300, width: '100%' }}>
                 {wasteWaterData && (
                   <WasteWaterSummaryTimeChart

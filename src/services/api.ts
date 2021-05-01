@@ -365,7 +365,7 @@ export const getInterestingVariants = (
 ): Promise<InterestingVariantResult> => {
   let endpoint = `/computed/find-interesting-variants?`;
   if (isRegion(country)) {
-    endpoint += `country=Switzerland`;
+    endpoint += `region=${country}`;
   } else {
     endpoint += `country=${country}`;
   }

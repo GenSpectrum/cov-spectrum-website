@@ -1,10 +1,12 @@
 import styled from 'styled-components';
 
 export const colors = {
-  active: '#3498db',
+  active: '#2980b9',
+  activeSecondary: '#3498db',
   inactive: '#bdc3c7',
+  inactiveSecondary: '#ecf0f1',
   secondary: '#7f8c8d',
-  secondaryLight: '#ecf0f1',
+  secondaryLight: '#95a5a6',
   highlight: '#c0392b',
   highlight2: '#e74c3c',
 };

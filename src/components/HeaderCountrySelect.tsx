@@ -1,7 +1,7 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
 import { useExploreUrl } from '../helpers/explore-url';
-import { RequiredCountrySelect } from './RequiredCountrySelect';
+import { RequiredPlaceSelect } from './RequiredPlaceSelect';
 
 export const HeaderCountrySelect = () => {
   const exploreUrl = useExploreUrl();
@@ -15,7 +15,7 @@ export const HeaderCountrySelect = () => {
       <Form.Label htmlFor='countrySelect' className='mr-2'>
         Country or Region
       </Form.Label>
-      <RequiredCountrySelect
+      <RequiredPlaceSelect
         id='countrySelect'
         selected={exploreUrl.country}
         onSelect={exploreUrl.setCountry}
