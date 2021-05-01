@@ -120,7 +120,7 @@ const VariantInternationalComparisonPlot = ({
       isFixed: place === country,
     }));
     setSelectedPlaceOptions(newOptions);
-  }, [country]);
+  }, [country, variantSamplesByCountry]);
 
   const variantSamplesByCountry = useMemo(() => variantInternationalSampleSet.groupByField('country'), [
     variantInternationalSampleSet,
