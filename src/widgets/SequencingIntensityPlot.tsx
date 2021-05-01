@@ -30,7 +30,7 @@ const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[]
       quantity: _.sumBy(monthData, 'quantity'),
     }))
     .value();
-  if (groupedEntries[groupedEntries.length - 1].quantity == 0) {
+  if (groupedEntries[groupedEntries.length - 1].quantity === 0) {
     groupedEntries.pop();
   }
   return groupedEntries;

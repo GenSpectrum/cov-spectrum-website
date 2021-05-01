@@ -12,7 +12,7 @@ import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 
 import Select, { Styles } from 'react-select';
 import chroma from 'chroma-js';
 import styled, { CSSPseudos } from 'styled-components';
-import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
+import { ChartAndMetricsWrapper, ChartWrapper, Wrapper } from '../charts/common';
 
 const CHART_MARGIN_RIGHT = 15;
 const MAX_SELECT = 6;
