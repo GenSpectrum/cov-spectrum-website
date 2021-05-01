@@ -14,6 +14,7 @@ import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import dayjs from 'dayjs';
 import { globalDateCache } from '../helpers/date-cache';
+import DownloadWrapper from '../charts/DownloadWrapper';
 
 export const OMIT_LAST_N_WEEKS = 4;
 
@@ -100,6 +101,29 @@ function processCounts(
 
 const noopOnClickHandler = () => {};
 
+interface CSVEntry {
+  age_class: string;
+  subject_mean: number | undefined;
+  subject_uncertainty_min: number | undefined;
+  subject_uncertainty_max: number | undefined;
+  reference_mean: number | undefined;
+  reference_uncertainty_min: number | undefined;
+  reference_uncertainty_max: number | undefined;
+}
+const dataProcessor = (data: GroupValue[]): CSVEntry[] => {
+  return data.map(entry => {
+    return {
+      age_class: entry.label,
+      subject_mean: entry.subject.proportion?.value,
+      subject_uncertainty_min: entry.subject.proportion?.confidenceInterval[0],
+      subject_uncertainty_max: entry.subject.proportion?.confidenceInterval[1],
+      reference_mean: entry.reference.proportion?.value,
+      reference_uncertainty_min: entry.reference.proportion?.confidenceInterval[0],
+      reference_uncertainty_max: entry.reference.proportion?.confidenceInterval[1],
+    };
+  });
+};
+
 export const HospitalizationDeathPlot = ({
   variantSampleSet,
   wholeSampleSet,
@@ -153,18 +177,20 @@ export const HospitalizationDeathPlot = ({
   }, [processedData]);
 
   return (
-    <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '300px' }}>
-      {width && height && (
-        <GroupedProportionComparisonChart
-          data={processedData}
-          total={total}
-          texts={makeTexts(variantName)[field]}
-          width={width}
-          height={height}
-          extendedMetrics={extendedMetrics}
-          onClickHandler={noopOnClickHandler}
-        />
-      )}
-    </div>
+    <DownloadWrapper name='HospitalizationDeathPlot' rawData={processedData} dataProcessor={dataProcessor}>
+      <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '300px' }}>
+        {width && height && (
+          <GroupedProportionComparisonChart
+            data={processedData}
+            total={total}
+            texts={makeTexts(variantName)[field]}
+            width={width}
+            height={height}
+            extendedMetrics={extendedMetrics}
+            onClickHandler={noopOnClickHandler}
+          />
+        )}
+      </div>
+    </DownloadWrapper>
   );
 };

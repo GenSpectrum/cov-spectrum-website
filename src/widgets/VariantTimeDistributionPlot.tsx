@@ -1,6 +1,7 @@
 import { omit } from 'lodash';
 import React from 'react';
 import * as zod from 'zod';
+import DownloadWrapper from '../charts/DownloadWrapper';
 import TimeChart from '../charts/TimeChart';
 import { fillFromWeeklyMap } from '../helpers/fill-missing';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
@@ -24,7 +25,12 @@ export const VariantTimeDistributionPlot = ({ variantSampleSet, wholeSampleSet }
     percent: proportion === undefined ? undefined : 100 * proportion,
     quantity: count,
   }));
-  return <TimeChart data={processedData} onClickHandler={(e: unknown) => true} />;
+
+  return (
+    <DownloadWrapper name='VariantTimeDistributionPlot'>
+      <TimeChart data={processedData} onClickHandler={(e: unknown) => true} />
+    </DownloadWrapper>
+  );
 };
 
 export const VariantTimeDistributionPlotWidget = new Widget(

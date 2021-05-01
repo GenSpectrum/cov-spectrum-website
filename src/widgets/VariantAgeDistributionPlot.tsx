@@ -2,6 +2,7 @@ import { omit } from 'lodash';
 import React, { useMemo } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
 import * as zod from 'zod';
+import DownloadWrapper from '../charts/DownloadWrapper';
 import TypeDistributionChart from '../charts/TypeDistributionChart';
 import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
@@ -36,7 +37,9 @@ const VariantAgeDistributionPlot = ({ variantSampleSet, wholeSampleSet }: Props)
 
   return (
     <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '100%' }}>
-      <TypeDistributionChart data={processedData} onClickHandler={(e: unknown) => true} />
+      <DownloadWrapper name='VariantAgeDistributionPlot'>
+        <TypeDistributionChart data={processedData} onClickHandler={(e: unknown) => true} />
+      </DownloadWrapper>
     </div>
   );
 };
