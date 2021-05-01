@@ -245,13 +245,13 @@ export const GroupedProportionComparisonChart = React.memo(
                 <ErrorBar
                   direction='y'
                   dataKey='yErrorActive'
-                  stroke={colors.inactive}
+                  stroke={colors.activeSecondary}
                   {...subjectErrorBarSizes}
                 />
                 <ErrorBar
                   direction='y'
                   dataKey='yErrorInactive'
-                  stroke={colors.inactive}
+                  stroke={colors.inactiveSecondary}
                   {...subjectErrorBarSizes}
                 />
               </Scatter>

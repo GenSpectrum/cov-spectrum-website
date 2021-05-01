@@ -9,6 +9,7 @@ export const colors = {
   secondaryLight: '#95a5a6',
   highlight: '#c0392b',
   highlight2: '#e74c3c',
+  transparent: '#ffffff80',
 };
 
 export const Wrapper = styled.div`
