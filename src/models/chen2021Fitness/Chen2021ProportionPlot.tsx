@@ -3,7 +3,6 @@ import * as zod from 'zod';
 import { Plot } from '../../components/Plot';
 import { Chen2021FitnessResponse, Chen2021FitnessResponseSchema } from './chen2021Fitness-types';
 import { formatValueWithCI } from './format-value';
-import { TitleWrapper } from '../../charts/common';
 
 interface Props {
   modelData: Chen2021FitnessResponse;
@@ -65,7 +64,6 @@ export const Chen2021ProportionPlot = ({
 
   return (
     <>
-      <TitleWrapper>Predicted proportion through time</TitleWrapper>
       <Plot
         style={{ width: '100%', height: '100%' }}
         data={[
@@ -113,6 +111,7 @@ export const Chen2021ProportionPlot = ({
           },
         ]}
         layout={{
+          title: 'Estimated proportion through time',
           xaxis: {
             hoverformat: '%d.%m.%Y',
           },
