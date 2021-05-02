@@ -13,6 +13,7 @@ import Select, { Styles } from 'react-select';
 import chroma from 'chroma-js';
 import styled, { CSSPseudos } from 'styled-components';
 import { ChartAndMetricsWrapper, ChartWrapper, Wrapper } from '../charts/common';
+import { scaleLog } from 'd3-scale';
 
 const CHART_MARGIN_RIGHT = 15;
 const MAX_SELECT = 6;
@@ -74,7 +75,6 @@ const getPlacesMostVariantSamples = (
   exclude: Place,
   n = DEFAULT_SHOW
 ): string[] => {
-  console.log("most samples from", variantSamplesByPlace)
   const result = Array.from(variantSamplesByPlace)
     .map(
       (entry: [Place, ParsedMultiSample[]]): PlaceCount => ({
@@ -157,7 +157,7 @@ const VariantInternationalComparisonPlot = ({
           count: 0,
           proportion: 0,
         })
-          .filter(({ value: { proportion } }) => proportion !== undefined && (!logScale || proportion > 0))
+          // .filter(({ value: { proportion } }) => proportion !== undefined && (!logScale || proportion > 0))
           .map(({ value: { proportion, ...restValue }, key }) => ({
             key,
             value: { ...restValue, proportion: proportion! },
@@ -221,8 +221,13 @@ const VariantInternationalComparisonPlot = ({
         <ChartWrapper>
           <ResponsiveContainer>
             <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
-              <XAxis dataKey='dateString' />
-              <YAxis />
+              <XAxis dataKey='dateString' xAxisId="date"/>
+              <YAxis
+                yAxisId='variant-proportion'
+                scale={logScale ? 'sqrt' : 'auto'}
+                domain={[0, 'dataMax']}
+                // dataKey="value"
+              />
               <Tooltip
                 formatter={(value: number, name: string, props: unknown) => (value * 100).toFixed(2) + '%'}
                 labelFormatter={label => {
@@ -231,6 +236,8 @@ const VariantInternationalComparisonPlot = ({
               />
               {selectedPlaceOptions.map((place: PlaceOption) => (
                 <Line
+                  yAxisId='variant-proportion'
+                  xAxisId="date"
                   type='monotone'
                   dataKey={place.value}
                   strokeWidth={3}
