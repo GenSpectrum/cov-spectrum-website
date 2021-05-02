@@ -155,11 +155,10 @@ const VariantInternationalComparisonPlot = ({
         const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
           count: 0,
           proportion: 0,
-        })
-          .map(({ value: { proportion, ...restValue }, key }) => ({
-            key,
-            value: { ...restValue, proportion: proportion! },
-          }));
+        }).map(({ value: { proportion, ...restValue }, key }) => ({
+          key,
+          value: { ...restValue, proportion: proportion! },
+        }));
         return {
           countryName: country,
           data: filledData.map(entry => ({
