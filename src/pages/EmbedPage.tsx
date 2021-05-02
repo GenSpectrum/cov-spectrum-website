@@ -5,8 +5,24 @@ import { useParams } from 'react-router-dom';
 import Loader from '../components/Loader';
 import { useQueryWithAsyncEncoder } from '../helpers/use-query';
 import { allWidgets } from '../widgets';
+import styled from 'styled-components';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
+
+const Wrapper = styled.div`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid darkgray;
+  padding: 15px;
+  border-radius: 10px;
+`;
+
+const Header = styled.div`
+  margin-bottom: 5px;
+  font-size: small;
+  text-align: right;
+`;
 
 export function EmbedPage() {
   const widgetUrlName = (useParams() as any).widget as string; // TODO(voinovp) use add types for react-router params
@@ -20,14 +36,14 @@ export function EmbedPage() {
   }
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <div>
-        This widget is provided by the{' '}
+    <Wrapper>
+      <Header>
+        Find more information on{' '}
         <a rel='noreferrer' target='_blank' href={host}>
           <span style={{ color: 'orange', fontWeight: 'bold' }}>CoV-Spectrum</span>
         </a>
         .
-      </div>
+      </Header>
       <div style={{ flexGrow: 1 }}>
         <IfPending state={asyncWidgetProps}>
           <Loader />
@@ -39,6 +55,6 @@ export function EmbedPage() {
           {widgetProps => <widget.Component {...widgetProps} />}
         </IfFulfilled>
       </div>
-    </div>
+    </Wrapper>
   );
 }
