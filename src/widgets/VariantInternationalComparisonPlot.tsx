@@ -155,19 +155,22 @@ const VariantInternationalComparisonPlot = ({
         const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
           count: 0,
           proportion: 0,
-        }).map(({ value: { proportion, ...restValue }, key }) => ({
-          key,
-          value: { ...restValue, proportion: proportion! },
-        }));
+        })
+          .filter(({ value: { proportion } }) => proportion !== undefined && (!logScale || proportion > 0))
+          .map(({ value: { proportion, ...restValue }, key }) => ({
+            key,
+            value: { ...restValue, proportion: logScale ? proportion! : proportion === 0 ? 0.00000001 : proportion },
+          }));
         return {
           countryName: country,
           data: filledData.map(entry => ({
             dateString: entry.key.firstDay.string,
-            proportion: entry.value.proportion,
+            proportion: (entry.value.proportion && entry.value.proportion > 0) ? entry.value.proportion : 0.1,
           })),
         };
       }
     );
+    console.log(proportionCountries)
 
     const dateMap: Map<string, any> = new Map();
 
@@ -219,11 +222,7 @@ const VariantInternationalComparisonPlot = ({
           <ResponsiveContainer>
             <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
               <XAxis dataKey='dateString' xAxisId='date' />
-              <YAxis
-                yAxisId='variant-proportion'
-                scale={logScale ? 'sqrt' : 'auto'}
-                domain={[0, 'dataMax']}
-              />
+              <YAxis yAxisId='variant-proportion' scale={logScale ? 'log' : 'auto'} domain={[0, 1]} />
               <Tooltip
                 formatter={(value: number, name: string, props: unknown) => (value * 100).toFixed(2) + '%'}
                 labelFormatter={label => {
