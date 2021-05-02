@@ -184,7 +184,7 @@ const VariantInternationalComparisonPlot = ({
 
     const result = [...dateMap.values()].sort((a, b) => Date.parse(a.dateString) - Date.parse(b.dateString));
     return result;
-  }, [selectedPlaceOptions, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
+  }, [selectedPlaceOptions, variantSamplesByCountry, wholeSamplesByCountry]);
 
   const onChange = (value: any, { action, removedValue }: any) => {
     switch (action) {
