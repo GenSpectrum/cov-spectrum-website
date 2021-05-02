@@ -4,7 +4,7 @@ import * as zod from 'zod';
 import { fillFromWeeklyMap } from '../helpers/fill-missing';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
-import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
+import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import { getNewSamples, isRegion } from '../services/api';
 import { Country, CountrySchema, Place } from '../services/api-types';
 import { Widget } from './Widget';
@@ -74,11 +74,14 @@ const getPlacesMostVariantSamples = (
   exclude: Place,
   n = DEFAULT_SHOW
 ): string[] => {
+  console.log("most samples from", variantSamplesByPlace)
   const result = Array.from(variantSamplesByPlace)
-    .map((entry: [Place, unknown[]]) => ({
-      place: entry[0],
-      count: entry[1]?.length,
-    }))
+    .map(
+      (entry: [Place, ParsedMultiSample[]]): PlaceCount => ({
+        place: entry[0],
+        count: entry[1].reduce((total: number, entry: ParsedMultiSample) => (total + entry.count), 0),
+      })
+    )
     .filter((a: PlaceCount) => a.place !== exclude)
     .sort((a: PlaceCount, b: PlaceCount) => b.count - a.count)
     .slice(0, n - 1)
