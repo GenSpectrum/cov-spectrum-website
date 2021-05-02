@@ -178,13 +178,16 @@ const VariantInternationalComparisonPlot = ({
             dateString,
           });
         }
+        if (logScale && proportion <= 0) {
+          continue;
+        }
         dateMap.get(dateString)[countryName] = Math.max(proportion, 0);
       }
     }
 
     const result = [...dateMap.values()].sort((a, b) => Date.parse(a.dateString) - Date.parse(b.dateString));
     return result;
-  }, [selectedPlaceOptions, variantSamplesByCountry, wholeSamplesByCountry]);
+  }, [logScale, selectedPlaceOptions, variantSamplesByCountry, wholeSamplesByCountry]);
 
   const onChange = (value: any, { action, removedValue }: any) => {
     switch (action) {
@@ -221,8 +224,8 @@ const VariantInternationalComparisonPlot = ({
               <XAxis dataKey='dateString' xAxisId='date' />
               <YAxis
                 yAxisId='variant-proportion'
-                scale={logScale ? 'sqrt' : 'auto'}
-                domain={[0, 'dataMax']}
+                scale={logScale ? 'log' : 'auto'}
+                domain={logScale ? ['auto', 'auto'] : [0, 'auto']}
               />
               <Tooltip
                 formatter={(value: number, name: string, props: unknown) => (value * 100).toFixed(2) + '%'}
