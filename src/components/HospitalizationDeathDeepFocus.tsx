@@ -2,7 +2,6 @@ import React from 'react';
 import { Alert } from 'react-bootstrap';
 import styled from 'styled-components';
 import { SampleSetWithSelector } from '../helpers/sample-set';
-import { AccountService } from '../services/AccountService';
 import { Country } from '../services/api-types';
 import { HospitalizationDeathPlot, OMIT_LAST_N_WEEKS } from '../widgets/HospitalizationDeathPlot';
 import { NamedCard } from './NamedCard';
@@ -25,11 +24,6 @@ export const HospitalizationDeathDeepFocus = ({
   wholeSampleSet,
   variantName,
 }: Props) => {
-  const loggedIn = AccountService.isLoggedIn();
-  if (!loggedIn) {
-    return <Alert variant='danger'>You must log in to view hospitalization and death rates</Alert>;
-  }
-
   if (country !== 'Switzerland') {
     return <Alert variant='danger'>Hospitalization and death rates are only available for Switzerland</Alert>;
   }

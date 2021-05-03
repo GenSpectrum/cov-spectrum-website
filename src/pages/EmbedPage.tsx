@@ -6,8 +6,24 @@ import Loader from '../components/Loader';
 import { useQueryWithAsyncEncoder } from '../helpers/use-query';
 import { allWidgets } from '../widgets';
 import { DecodedMergedWidgetProps } from '../widgets/Widget';
+import styled from 'styled-components';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
+
+const Wrapper = styled.div`
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid darkgray;
+  padding: 15px;
+  border-radius: 10px;
+`;
+
+const Header = styled.div`
+  margin-bottom: 5px;
+  font-size: small;
+  text-align: right;
+`;
 
 export function EmbedPage() {
   const widgetUrlName = (useParams() as any).widget as string; // TODO(voinovp) use add types for react-router params
@@ -22,7 +38,7 @@ export function EmbedPage() {
 
   const renderHeader = (href: string | undefined) => (
     <>
-      This widget is provided by the{' '}
+      Find more information on{' '}
       <a rel='noreferrer' target='_blank' href={href}>
         <span style={{ color: 'orange', fontWeight: 'bold' }}>CoV-Spectrum</span>
       </a>
@@ -31,14 +47,14 @@ export function EmbedPage() {
   );
 
   return (
-    <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <div>
+    <Wrapper>
+      <Header>
         <IfPending state={asyncWidgetProps}>{renderHeader(host)}</IfPending>
         <IfRejected state={asyncWidgetProps}>{renderHeader(host)}</IfRejected>
         <IfFulfilled state={asyncWidgetProps}>
           {({ shared }) => renderHeader(shared.originalPageUrl || host)}
         </IfFulfilled>
-      </div>
+      </Header>
       <div style={{ flexGrow: 1 }}>
         <IfPending state={asyncWidgetProps}>
           <Loader />
@@ -50,6 +66,6 @@ export function EmbedPage() {
           {({ specific }) => <widget.Component {...specific} />}
         </IfFulfilled>
       </div>
-    </div>
+    </Wrapper>
   );
 }

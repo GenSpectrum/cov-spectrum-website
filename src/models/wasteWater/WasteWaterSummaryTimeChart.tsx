@@ -1,11 +1,10 @@
 import React from 'react';
 import { scaleOrdinal } from 'd3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
-import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../../charts/common';
+import { ChartAndMetricsWrapper, ChartWrapper, TitleWrapper, Wrapper } from '../../charts/common';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { WasteWaterTimeseriesSummaryDataset } from './types';
 import { formatDate, getTicks } from './WasteWaterTimeChart';
-import Metric, { MetricsSpacing, MetricsWrapper } from '../../charts/Metrics';
 
 interface Props {
   wasteWaterPlants: {
@@ -78,15 +77,6 @@ export const WasteWaterSummaryTimeChart = React.memo(
               </ComposedChart>
             </ResponsiveContainer>
           </ChartWrapper>
-          <MetricsWrapper>
-            <MetricsSpacing />
-            <Metric
-              value={locations.length}
-              title='Locations'
-              helpText={`Samples were gathered from ${locations.length} waste water plants.`}
-              color={colors.active}
-            />
-          </MetricsWrapper>
         </ChartAndMetricsWrapper>
       </Wrapper>
     );

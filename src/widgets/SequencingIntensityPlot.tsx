@@ -7,6 +7,7 @@ import * as zod from 'zod';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import TimeIntensityChart, { TimeIntensityEntry } from '../charts/TimeIntensityChart';
 import Loader from '../components/Loader';
+import DownloadWrapper from '../charts/DownloadWrapper';
 
 interface Props {
   country: Country;
@@ -29,6 +30,9 @@ const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[]
       quantity: _.sumBy(monthData, 'quantity'),
     }))
     .value();
+  if (groupedEntries[groupedEntries.length - 1].quantity === 0) {
+    groupedEntries.pop();
+  }
   return groupedEntries;
 };
 
@@ -62,7 +66,9 @@ export const SequencingIntensityPlot = ({ country }: Props) => {
   return data === undefined || isLoading ? (
     <Loader />
   ) : (
-    <TimeIntensityChart data={processData(data)} onClickHandler={(e: unknown) => true} />
+    <DownloadWrapper name='SequencingIntensityPlot'>
+      <TimeIntensityChart data={processData(data)} onClickHandler={(e: unknown) => true} />
+    </DownloadWrapper>
   );
 };
 

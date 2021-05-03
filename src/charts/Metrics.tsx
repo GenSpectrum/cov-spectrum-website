@@ -6,6 +6,8 @@ import styled from 'styled-components';
 export const METRIC_RIGHT_PADDING_PX = 32;
 export const METRIC_WIDTH_PX = 160;
 
+const TOOLTIP_DALAY = 500;
+
 export const MetricsWrapper = styled.div`
   padding: 0 0 1.4rem 0rem;
   display: flex;
@@ -75,7 +77,7 @@ export type MetricProps = {
   helpText: string;
   percent?: string | number | boolean;
   fontSize?: 'normal' | 'small';
-  showPercent?: number | string;
+  showPercent?: number | string | undefined;
 };
 
 const ValueAndPercentWrapper = styled.div`
@@ -109,7 +111,7 @@ const Metric = ({
           </IconWrapper>
         </MetricTitleWrapper>
       </div>
-      <ReactTooltip id={tooltipId} />
+      <ReactTooltip id={tooltipId} delayShow={TOOLTIP_DALAY} />
     </MetricWrapper>
   );
 };

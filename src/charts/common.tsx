@@ -1,12 +1,15 @@
 import styled from 'styled-components';
 
 export const colors = {
-  active: '#3498db',
+  active: '#2980b9',
+  activeSecondary: '#3498db',
   inactive: '#bdc3c7',
+  inactiveSecondary: '#ecf0f1',
   secondary: '#7f8c8d',
-  secondaryLight: '#ecf0f1',
+  secondaryLight: '#95a5a6',
   highlight: '#c0392b',
   highlight2: '#e74c3c',
+  transparent: '#ffffff80',
 };
 
 export const Wrapper = styled.div`
@@ -15,7 +18,7 @@ export const Wrapper = styled.div`
   height: 100%;
 `;
 export const TitleWrapper = styled.div`
-  padding: 0.5rem 0rem 1rem 0rem;
+  padding: 0rem 0rem 1rem 0rem;
   font-size: 1.2rem;
   line-height: 1.3;
   color: ${colors.secondary};

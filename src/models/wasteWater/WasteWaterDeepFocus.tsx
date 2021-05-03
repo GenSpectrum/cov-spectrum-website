@@ -6,6 +6,7 @@ import { WasteWaterDataset } from './types';
 import { WasteWaterHeatMapWidget } from './WasteWaterHeatMapWidget';
 import { GridCell, PackedGrid } from '../../components/PackedGrid';
 import { ExternalLink } from '../../components/ExternalLink';
+import { AccountService } from '../../services/AccountService';
 
 interface Props {
   country: string;
@@ -24,6 +25,11 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
       variantName,
     }).then(d => setData(d));
   }, [country, variantName]);
+
+  const loggedIn = AccountService.isLoggedIn();
+  if (!loggedIn) {
+    window.location.href = '/login';
+  }
 
   if (country !== 'Switzerland' || !variantName || variantName !== 'B.1.1.7') {
     return <>Nothing to see here.</>;
