@@ -59,3 +59,31 @@ export class AsyncZodQueryEncoder<
     return this.decodeFromInternal(this.zodQueryEncoder.decode(encoded));
   }
 }
+
+type MergedDecodedType<Encoders extends { [key: string]: AsyncQueryEncoder<any> }> = {
+  [K in keyof Encoders]: Encoders[K]['_decodedType'];
+};
+
+export class MergedAsyncQueryEncoder<Encoders extends { [key: string]: AsyncQueryEncoder<any> }> {
+  _decodedType!: MergedDecodedType<Encoders>;
+
+  constructor(private encoders: Encoders) {}
+
+  async encode(decoded: MergedDecodedType<Encoders>): Promise<URLSearchParams> {
+    const separateParams = await Promise.all(
+      Object.entries(this.encoders).map(([k, encoder]) => encoder.encode(decoded[k]))
+    );
+    return new URLSearchParams(Object.assign({}, ...separateParams.map(p => Object.fromEntries(p))));
+  }
+
+  async decode(
+    encoded: URLSearchParams,
+    signal: AbortSignal | undefined
+  ): Promise<MergedDecodedType<Encoders>> {
+    const mergedDecoded: Partial<MergedDecodedType<Encoders>> = {};
+    for (const [k, encoder] of Object.entries(this.encoders)) {
+      mergedDecoded[k as keyof Encoders] = await encoder.decode(encoded, signal);
+    }
+    return mergedDecoded as MergedDecodedType<Encoders>;
+  }
+}
