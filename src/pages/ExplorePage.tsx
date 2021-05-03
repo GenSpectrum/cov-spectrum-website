@@ -67,7 +67,7 @@ export const ExplorePage = ({
                 <MutationLookup onVariantSelect={onVariantSelect} />
               </NamedSection>
               {!isRegion(country) && (
-                <NamedSection title='Interesting variants'>
+                <NamedSection title='Interesting mutations'>
                   <NewVariantTable
                     country={country}
                     onVariantSelect={variant => onVariantSelect({ variant, matchPercentage: 1 })}
