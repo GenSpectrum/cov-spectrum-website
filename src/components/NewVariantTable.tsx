@@ -132,7 +132,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                     <ReactTooltip id='new-variant-table-mutations-help' />
                   </th>
                   <th># Sequences in last 3 months</th>
-                  <th>Est. fitness advantage</th>
+                  <th>Estimated transmission advantage</th>
                   <th></th>
                 </tr>
               </thead>

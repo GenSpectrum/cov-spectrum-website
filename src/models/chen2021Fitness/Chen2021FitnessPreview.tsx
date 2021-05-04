@@ -28,7 +28,7 @@ export const Chen2021FitnessPreview = ({
   }
 
   if (!modelData) {
-    return <>A fitness advantage cannot be estimated for this variant.</>;
+    return <>A transmission advantage cannot be estimated for this variant.</>;
   }
 
   return (
@@ -46,9 +46,9 @@ export const Chen2021FitnessPreview = ({
           <MetricsSpacing />
           <Metric
             value={(modelData.params.fd.value * 100).toFixed(2)}
-            title={'Fitness adv.'}
+            title={'Transm. adv.'}
             helpText={
-              'The estimated fitness advantage under a discrete model assuming a generation time of 4.8 days.'
+              'The estimated transmission advantage under a discrete model assuming a generation time of 4.8 days.'
             }
             percent={true}
             color={colors.active}

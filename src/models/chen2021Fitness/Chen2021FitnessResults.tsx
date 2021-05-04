@@ -19,7 +19,7 @@ export const Chen2021FitnessResults = ({ request }: ResultsProps) => {
   }
 
   if (!modelData) {
-    return <>A fitness advantage cannot be estimated for this variant.</>;
+    return <>A transmission advantage cannot be estimated for this variant.</>;
   }
 
   return (
@@ -27,8 +27,8 @@ export const Chen2021FitnessResults = ({ request }: ResultsProps) => {
       <div>Logistic growth rate a: {modelData && formatValueWithCI(modelData.params.a)}</div>
       {/*TODO t_0 is currently difficult (or impossible?) to interpret.*/}
       {/*<div>Sigmoid's midpoint t_0: {modelData && formatValueWithCI(modelData.params.t0, 0)}</div>*/}
-      <div>Fitness advantage f_c: {modelData && formatValueWithCI(modelData.params.fc)}</div>
-      <div>Fitness advantage f_d: {modelData && formatValueWithCI(modelData.params.fd)}</div>
+      <div>Transmission advantage f_c: {modelData && formatValueWithCI(modelData.params.fc)}</div>
+      <div>Transmission advantage f_d: {modelData && formatValueWithCI(modelData.params.fd)}</div>
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <Chen2021ProportionPlot
