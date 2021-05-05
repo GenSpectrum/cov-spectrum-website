@@ -68,7 +68,7 @@ export class AccountService {
   }
 
   static updateCachedAuth() {
-    const token = localStorage.getItem(localStorageKey);
+    const token = getLocalStorageItem(localStorageKey);
     this.cachedAuth = token ? { token, data: this.parseJwt(token) } : undefined;
   }
 
@@ -83,6 +83,15 @@ export class AccountService {
         .join('')
     );
     return JwtDataSchema.parse(JSON.parse(jsonPayload));
+  }
+}
+
+const getLocalStorageItem = (key: string): string | null => {
+  try {
+   return localStorage.getItem(key);
+  }
+  catch (e) {
+    return (null);
   }
 }
 
