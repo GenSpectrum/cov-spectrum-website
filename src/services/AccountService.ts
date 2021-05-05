@@ -88,11 +88,10 @@ export class AccountService {
 
 const getLocalStorageItem = (key: string): string | null => {
   try {
-   return localStorage.getItem(key);
+    return localStorage.getItem(key);
+  } catch (e) {
+    return null;
   }
-  catch (e) {
-    return (null);
-  }
-}
+};
 
 AccountService.updateCachedAuth();
