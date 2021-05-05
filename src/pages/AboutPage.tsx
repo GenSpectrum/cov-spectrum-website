@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import React from 'react';
 import { ExternalLink } from '../components/ExternalLink';
 import { EmailLink } from '../components/EmailLink';
+import GitHubButton from 'react-github-btn';
 
 const Wrapper = styled.div`
   max-width: 1200px;
@@ -18,11 +19,40 @@ export const AboutPage = () => {
   return (
     <Wrapper>
       <h1>CoV-Spectrum</h1>
+      <div>
+        <GitHubButton
+          href='https://github.com/cevo-public/cov-spectrum-website/subscription'
+          data-size='large'
+          data-show-count='true'
+          aria-label='Watch cevo-public/cov-spectrum-website on GitHub'
+        >
+          Watch
+        </GitHubButton>{' '}
+        <GitHubButton
+          href='https://github.com/cevo-public/cov-spectrum-website'
+          data-size='large'
+          data-icon='octicon-star'
+          aria-label='Star cevo-public/cov-spectrum-website on GitHub'
+          data-show-count='true'
+        >
+          Star
+        </GitHubButton>
+      </div>
       <p>
         Explore up-to-date genome data and monitor variants of SARS-CoV-2! CoV-Spectrum is a fully interactive
         platform aiming to help scientists investigate known variants as well as identifying new ones. It is
         in an early stage of development. Suggestions for improvements, bug reports as well as active
-        contributions are highly welcome. Please create an issue in our{' '}
+        contributions are highly welcome. Please create an{' '}
+        {
+          <GitHubButton
+            href='https://github.com/cevo-public/cov-spectrum-website/issues'
+            data-icon='octicon-issue-opened'
+            aria-label='Issue cevo-public/cov-spectrum-website on GitHub'
+          >
+            Issue
+          </GitHubButton>
+        }{' '}
+        in our{' '}
         <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website'>
           Github repository
         </ExternalLink>{' '}
