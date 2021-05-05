@@ -8,6 +8,7 @@ import styled, { css } from 'styled-components';
 import { CSVLink } from 'react-csv';
 
 const BUTTON_SIZE = '2.5em';
+const DELAY_SHOW = 0;
 
 const baseButtonStyles = css`
   position: absolute;
@@ -88,8 +89,8 @@ const DownloadWrapper = ({
           {children}
         </DownloadContainer>
       </Wrapper>
-      <ReactTooltip id='downloadPNG' delayShow={500} />
-      <ReactTooltip id='downloadCSV' delayShow={500} />
+      <ReactTooltip id='downloadPNG' delayShow={DELAY_SHOW} />
+      <ReactTooltip id='downloadCSV' delayShow={DELAY_SHOW} />
     </>
   );
 };
