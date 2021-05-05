@@ -4,7 +4,7 @@ import * as zod from 'zod';
 import { fillFromWeeklyMap } from '../helpers/fill-missing';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
-import { SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
+import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import { getNewSamples, isRegion } from '../services/api';
 import { Country, CountrySchema, Place } from '../services/api-types';
 import { Widget } from './Widget';
@@ -75,10 +75,12 @@ const getPlacesMostVariantSamples = (
   n = DEFAULT_SHOW
 ): string[] => {
   const result = Array.from(variantSamplesByPlace)
-    .map((entry: [Place, unknown[]]) => ({
-      place: entry[0],
-      count: entry[1]?.length,
-    }))
+    .map(
+      (entry: [Place, ParsedMultiSample[]]): PlaceCount => ({
+        place: entry[0],
+        count: entry[1].reduce((total: number, entry: ParsedMultiSample) => total + entry.count, 0),
+      })
+    )
     .filter((a: PlaceCount) => a.place !== exclude)
     .sort((a: PlaceCount, b: PlaceCount) => b.count - a.count)
     .slice(0, n - 1)
@@ -153,12 +155,10 @@ const VariantInternationalComparisonPlot = ({
         const filledData = fillFromWeeklyMap(variantSampleSet.proportionByWeek(wholeSampleSet), {
           count: 0,
           proportion: 0,
-        })
-          .filter(({ value: { proportion } }) => proportion !== undefined && (!logScale || proportion > 0))
-          .map(({ value: { proportion, ...restValue }, key }) => ({
-            key,
-            value: { ...restValue, proportion: proportion! },
-          }));
+        }).map(({ value: { proportion, ...restValue }, key }) => ({
+          key,
+          value: { ...restValue, proportion: proportion! },
+        }));
         return {
           countryName: country,
           data: filledData.map(entry => ({
@@ -178,13 +178,16 @@ const VariantInternationalComparisonPlot = ({
             dateString,
           });
         }
+        if (logScale && proportion <= 0) {
+          continue;
+        }
         dateMap.get(dateString)[countryName] = Math.max(proportion, 0);
       }
     }
 
     const result = [...dateMap.values()].sort((a, b) => Date.parse(a.dateString) - Date.parse(b.dateString));
     return result;
-  }, [selectedPlaceOptions, variantSamplesByCountry, wholeSamplesByCountry, logScale]);
+  }, [logScale, selectedPlaceOptions, variantSamplesByCountry, wholeSamplesByCountry]);
 
   const onChange = (value: any, { action, removedValue }: any) => {
     switch (action) {
@@ -218,8 +221,12 @@ const VariantInternationalComparisonPlot = ({
         <ChartWrapper>
           <ResponsiveContainer>
             <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
-              <XAxis dataKey='dateString' />
-              <YAxis />
+              <XAxis dataKey='dateString' xAxisId='date' />
+              <YAxis
+                yAxisId='variant-proportion'
+                scale={logScale ? 'log' : 'auto'}
+                domain={logScale ? ['auto', 'auto'] : [0, 'auto']}
+              />
               <Tooltip
                 formatter={(value: number, name: string, props: unknown) => (value * 100).toFixed(2) + '%'}
                 labelFormatter={label => {
@@ -228,6 +235,8 @@ const VariantInternationalComparisonPlot = ({
               />
               {selectedPlaceOptions.map((place: PlaceOption) => (
                 <Line
+                  yAxisId='variant-proportion'
+                  xAxisId='date'
                   type='monotone'
                   dataKey={place.value}
                   strokeWidth={3}

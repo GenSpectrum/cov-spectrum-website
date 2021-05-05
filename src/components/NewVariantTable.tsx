@@ -8,6 +8,7 @@ import ReactTooltip from 'react-tooltip';
 import { NewVariantMutationList } from './NewVariantMutationList';
 import styled from 'styled-components';
 import { sortMutationList } from '../helpers/mutation-list';
+import { AccountService } from '../services/AccountService';
 
 // We consider mutations with a uniquenessScore of at least the following value as characteristic/important for a
 // variant.
@@ -76,37 +77,45 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
       .slice(0, 200);
   }, [data, geneFilter, characteristicMutationsFilter]);
 
+  const loggedIn = AccountService.isLoggedIn();
+
   return (
     <div>
       {data && (
         <>
-          <FilterBar>
-            <Form.Control
-              as='select'
-              custom
-              style={{ width: '200px', marginRight: '20px' }}
-              onChange={e => setGeneFilter(e.target.value)}
-            >
-              <option value={'-'}>Filter gene</option>
-              <option value={'S'}>S</option>
-              <option value={'N'}>N</option>
-              <option value={'M'}>M</option>
-              <option value={'E'}>E</option>
-              <option value={'ORF1a'}>ORF1a</option>
-              <option value={'ORF1b'}>ORF1b</option>
-              <option value={'ORF3a'}>ORF3a</option>
-              <option value={'ORF6'}>ORF6</option>
-              <option value={'ORF7a'}>ORF7a</option>
-              <option value={'ORF7b'}>ORF7b</option>
-              <option value={'ORF8'}>ORF8</option>
-              <option value={'ORF9b'}>ORF9b</option>
-            </Form.Control>
-            <Form.Check
-              type='checkbox'
-              label='Characteristic mutations only'
-              onChange={e => setCharacteristicMutationsFilter(e.target.checked)}
-            />
-          </FilterBar>
+          {
+            // We only show the filter bar internally because its function is not straight-forward and it lacks a good
+            // explanation
+            loggedIn && (
+              <FilterBar>
+                <Form.Control
+                  as='select'
+                  custom
+                  style={{ width: '200px', marginRight: '20px' }}
+                  onChange={e => setGeneFilter(e.target.value)}
+                >
+                  <option value={'-'}>Filter gene</option>
+                  <option value={'S'}>S</option>
+                  <option value={'N'}>N</option>
+                  <option value={'M'}>M</option>
+                  <option value={'E'}>E</option>
+                  <option value={'ORF1a'}>ORF1a</option>
+                  <option value={'ORF1b'}>ORF1b</option>
+                  <option value={'ORF3a'}>ORF3a</option>
+                  <option value={'ORF6'}>ORF6</option>
+                  <option value={'ORF7a'}>ORF7a</option>
+                  <option value={'ORF7b'}>ORF7b</option>
+                  <option value={'ORF8'}>ORF8</option>
+                  <option value={'ORF9b'}>ORF9b</option>
+                </Form.Control>
+                <Form.Check
+                  type='checkbox'
+                  label='Characteristic mutations only'
+                  onChange={e => setCharacteristicMutationsFilter(e.target.checked)}
+                />
+              </FilterBar>
+            )
+          }
           <div style={{ height: '400px', overflow: 'auto' }}>
             <Table striped bordered hover>
               <thead>
@@ -123,7 +132,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                     <ReactTooltip id='new-variant-table-mutations-help' />
                   </th>
                   <th># Sequences in last 3 months</th>
-                  <th>Est. fitness advantage</th>
+                  <th>Estimated transmission advantage</th>
                   <th></th>
                 </tr>
               </thead>

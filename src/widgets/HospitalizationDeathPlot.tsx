@@ -53,10 +53,12 @@ const makeDeceasedTexts = (variant: string): SubgroupTexts => ({
 
 const makeTexts = (variantName: string): { hospitalized: TopLevelTexts; deceased: TopLevelTexts } => ({
   hospitalized: {
+    title: 'Estimated hospitalization probabilities by age group',
     subject: makeHospitalizedTexts(variantName),
     reference: makeHospitalizedTexts('other variants'),
   },
   deceased: {
+    title: 'Estimated death probabilities by age group',
     subject: makeDeceasedTexts(variantName),
     reference: makeDeceasedTexts('other variants'),
   },
@@ -177,16 +179,18 @@ export const HospitalizationDeathPlot = ({
     return total;
   }, [processedData]);
 
+  const texts = makeTexts(variantName)[field];
+
   return (
     <DownloadWrapper name='HospitalizationDeathPlot' rawData={processedData} dataProcessor={dataProcessor}>
       <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '300px' }}>
         {width && height && (
           <>
-            <TitleWrapper>Estimated hospitalization rate by age group</TitleWrapper>
+            <TitleWrapper>{texts.title}</TitleWrapper>
             <GroupedProportionComparisonChart
               data={processedData}
               total={total}
-              texts={makeTexts(variantName)[field]}
+              texts={texts}
               width={width}
               height={height}
               extendedMetrics={extendedMetrics}

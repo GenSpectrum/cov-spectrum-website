@@ -88,6 +88,7 @@ export interface ValueWithConfidence {
 }
 
 export interface TopLevelTexts {
+  title: string;
   subject: SubgroupTexts;
   reference: SubgroupTexts;
 }
