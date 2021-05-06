@@ -35,7 +35,7 @@ export const LoginPage = () => {
 
   return (
     <>
-      <h1>Login</h1>
+      <h1>Login (Private Switzerland data)</h1>
       <Form>
         <Form.Group controlId='loginUsername'>
           <Form.Label>Username</Form.Label>

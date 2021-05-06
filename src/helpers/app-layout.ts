@@ -5,7 +5,7 @@ export const OuterWrapper = styled.div`
   display: grid;
   height: 100vh;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 60px auto;
+  grid-template-rows: 100px auto;
   grid-template-areas:
     'header header'
     'left right';

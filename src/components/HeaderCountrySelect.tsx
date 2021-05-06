@@ -12,9 +12,6 @@ export const HeaderCountrySelect = () => {
 
   return (
     <Form inline className='mr-3'>
-      <Form.Label htmlFor='countrySelect' className='mr-2'>
-        Country or Region
-      </Form.Label>
       <RequiredPlaceSelect
         id='countrySelect'
         selected={exploreUrl.country}

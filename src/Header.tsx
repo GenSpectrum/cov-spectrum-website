@@ -6,6 +6,34 @@ import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrateg
 import { AccountService } from './services/AccountService';
 import { HeaderDateRangeSelect } from './components/HeaderDateRangeSelect';
 import { ExternalLink } from './components/ExternalLink';
+import styled from 'styled-components';
+
+const Wrapper = styled.div`
+  flex-flow: column;
+  height: 100%;
+`
+
+const TopNavbar = styled(Navbar)`
+  height: 50%;
+`
+
+const BottomNavbar = styled(Navbar)`
+  height: 50%;
+`
+
+const Logo = (
+  <Navbar.Brand as={Link} to='/'>
+    <span style={{ color: 'darkgray', fontWeight: 'bold' }}>cov</span>
+    <span style={{ color: '#0D4A70', fontWeight: 'bold' }}>S</span>
+    <span style={{ color: '#245C70', fontWeight: 'bold' }}>P</span>
+    <span style={{ color: '#3A6E6F', fontWeight: 'bold' }}>E</span>
+    <span style={{ color: '#67916E', fontWeight: 'bold' }}>C</span>
+    <span style={{ color: '#AC8D3A', fontWeight: 'bold' }}>T</span>
+    <span style={{ color: '#CF8B20', fontWeight: 'bold' }}>R</span>
+    <span style={{ color: '#E08A13', fontWeight: 'bold' }}>U</span>
+    <span style={{ color: '#F18805', fontWeight: 'bold' }}>M</span>
+  </Navbar.Brand>
+);
 
 export const Header = () => {
   const loggedIn = AccountService.isLoggedIn();
@@ -15,62 +43,56 @@ export const Header = () => {
   }
 
   return (
-    <Navbar bg='light' expand='md' style={{ height: '100%' }}>
-      <Navbar.Brand as={Link} to='/'>
-        <span style={{ color: 'darkgray', fontWeight: 'bold' }}>cov</span>
-        <span style={{ color: '#0D4A70', fontWeight: 'bold' }}>S</span>
-        <span style={{ color: '#245C70', fontWeight: 'bold' }}>P</span>
-        <span style={{ color: '#3A6E6F', fontWeight: 'bold' }}>E</span>
-        <span style={{ color: '#67916E', fontWeight: 'bold' }}>C</span>
-        <span style={{ color: '#AC8D3A', fontWeight: 'bold' }}>T</span>
-        <span style={{ color: '#CF8B20', fontWeight: 'bold' }}>R</span>
-        <span style={{ color: '#E08A13', fontWeight: 'bold' }}>U</span>
-        <span style={{ color: '#F18805', fontWeight: 'bold' }}>M</span>
-      </Navbar.Brand>
-      <div style={{ fontSize: 'small' }}>
-        Enabled by data from{' '}
-        <ExternalLink url='https://gisaid.org/'>
-          <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />
-        </ExternalLink>
-      </div>
-      <Navbar.Toggle aria-controls='basic-navbar-nav' />
-      <Navbar.Collapse>
-        <Nav className='ml-4 mr-auto'>
-          <HeaderCountrySelect />
-          <HeaderSamplingStrategySelect />
-          <HeaderDateRangeSelect />
-          <Nav.Link href='/acknowledgements' style={{ textDecoration: 'underline' }}>
-            Acknowledgements
-          </Nav.Link>
-          <Nav.Link href='/about' style={{ textDecoration: 'underline' }}>
-            About
-          </Nav.Link>
-        </Nav>
-        <Nav>
-          {loggedIn ? (
-            <>
-              <Navbar.Text>Signed in as {username}</Navbar.Text>
-              <Nav.Link>
-                <button
-                  onClick={() => {
-                    AccountService.logout();
-                    window.location.href = '/login?left';
-                  }}
-                  style={{
-                    background: 'none',
-                    outline: 'none',
-                    border: 'none',
-                  }}
-                >
-                  Logout
-                </button>
-              </Nav.Link>
-            </>
-          ) : (
-            <Nav.Link href='/login'>Private Switzerland Login</Nav.Link>
-          )}
-        </Nav>
-      </Navbar.Collapse>
-    </Navbar>
+    <Wrapper>
+      <TopNavbar bg='light' expand='md'>
+        {Logo}
+        <div style={{ fontSize: 'small' }}>
+          Enabled by data from{' '}
+          <ExternalLink url='https://gisaid.org/'>
+            <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />
+          </ExternalLink>
+        </div>
+        <Navbar.Toggle aria-controls='basic-navbar-nav' />
+        <Navbar.Collapse>
+          <Nav className='ml-4 mr-auto'>
+            <Nav.Link href='/acknowledgements' style={{ textDecoration: 'underline' }}>
+              Acknowledgements
+            </Nav.Link>
+            <Nav.Link href='/about' style={{ textDecoration: 'underline' }}>
+              About
+            </Nav.Link>
+          </Nav>
+          <Nav>
+            {loggedIn ? (
+              <>
+                <Navbar.Text>Signed in as {username}</Navbar.Text>
+                <Nav.Link>
+                  <button
+                    onClick={() => {
+                      AccountService.logout();
+                      window.location.href = '/login?left';
+                    }}
+                    style={{
+                      background: 'none',
+                      outline: 'none',
+                      border: 'none',
+                    }}
+                  >
+                    Logout
+                  </button>
+                </Nav.Link>
+              </>
+            ) : (
+              <Nav.Link href='/login'>Login</Nav.Link>
+            )}
+          </Nav>
+        </Navbar.Collapse>
+      </TopNavbar>
+      <BottomNavbar bg='light' expand='md'>
+        <HeaderCountrySelect />
+        <HeaderSamplingStrategySelect />
+        <HeaderDateRangeSelect />
+      </BottomNavbar>
+    </Wrapper>
   );
 };
