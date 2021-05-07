@@ -27,7 +27,12 @@ export function approximateBinomialRatioConfidence(
   assert(x >= 0 && x <= m);
   assert(y >= 0 && y <= n);
 
-  if (x === 0 && y === 0) {
+  if (
+    (x === 0 && y === 0) ||
+    (x === 0 && m < 0.5) ||
+    (y === 0 && n < 0.5) ||
+    (x === m && y === n && (x < 0.5 || y < 0.5))
+  ) {
     return [0, Infinity];
   } else if (x === 0) {
     return [0, approximateBinomialRatioConfidence(0.5, m, y, n)[1]];

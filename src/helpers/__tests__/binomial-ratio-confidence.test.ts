@@ -16,6 +16,11 @@ test('approximateBinomialRatioConfidence', () => {
     { x: 0, m: 91, y: 114, n: 1158, low: 0, high: 0.89040097 },
     { x: 21, m: 91, y: 0, n: 1158, low: 32.61516936, high: Infinity },
     { x: 91, m: 91, y: 1158, n: 1158, low: 0.97981025, high: 1.0102934 },
+
+    // These cases are not so meaningful, but at least they should not crash
+    { x: 0, m: 0, y: 114, n: 1158, low: 0, high: Infinity },
+    { x: 21, m: 91, y: 0, n: 0, low: 0, high: Infinity },
+    { x: 0.25, m: 0.25, y: 0.4, n: 0.4, low: 0, high: Infinity },
   ];
 
   for (const c of cases) {
