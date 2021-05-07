@@ -14,6 +14,10 @@ interface Props {
   variantName: string;
 }
 
+const Toolbar = styled.div`
+  margin: 15px;
+`;
+
 const Info = styled.div`
   margin: 15px;
 `;
@@ -24,6 +28,8 @@ export const HospitalizationDeathDeepFocus = ({
   wholeSampleSet,
   variantName,
 }: Props) => {
+  const [relative, setRelative] = useState(false);
+
   if (country !== 'Switzerland') {
     return <Alert variant='danger'>Hospitalization and death rates are only available for Switzerland</Alert>;
   }
@@ -39,7 +45,7 @@ export const HospitalizationDeathDeepFocus = ({
               wholeSampleSet={wholeSampleSet}
               variantName={variantName}
               extendedMetrics
-              relativeToOtherVariants
+              relativeToOtherVariants={relative}
             />
           </NamedCard>
         </GridCell>
@@ -51,10 +57,17 @@ export const HospitalizationDeathDeepFocus = ({
               wholeSampleSet={wholeSampleSet}
               variantName={variantName}
               extendedMetrics
+              relativeToOtherVariants={relative}
             />
           </NamedCard>
         </GridCell>
       </PackedGrid>
+
+      <Toolbar>
+        <Button variant='secondary' onClick={() => setRelative(v => !v)}>
+          Show {relative ? 'absolute' : 'relative'} data
+        </Button>
+      </Toolbar>
 
       <Info>
         <p>
