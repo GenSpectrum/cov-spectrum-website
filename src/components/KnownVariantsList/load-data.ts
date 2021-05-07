@@ -63,16 +63,16 @@ export function convertKnownVariantChartData<T extends VariantSelector>({
   variantSampleSets: KnownVariantWithSampleSet<T>[];
   wholeSampleSet: SampleSetWithSelector;
 }): KnownVariantWithChartData<T>[] {
-  if (!variantsSampleSets.length) {
-    return [];
-  }
-
   const variantWeeklyCounts = variantsSampleSets.flatMap(s => s.sampleSet.countByWeek());
   const wholeWeeklyCounts = wholeSampleSet.countByWeek();
 
   const dataWeekRange = globalDateCache.rangeFromWeeks(
     [...variantWeeklyCounts.values()].flatMap(map => [...map.keys()])
-  )!;
+  );
+  if (!dataWeekRange) {
+    return [];
+  }
+
   const plotWeekRange = {
     min: globalDateCache.getDayUsingDayjs(dataWeekRange.max.firstDay.dayjs.subtract(2, 'months')).isoWeek,
     max: dataWeekRange.max,
