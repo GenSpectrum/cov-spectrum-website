@@ -109,7 +109,7 @@ export type Props = {
   width: number;
   height: number;
   extendedMetrics?: boolean;
-  rawY?: boolean;
+  maxY?: number; // percentage formatting is disabled if maxY is used
   hideReferenceScatter?: boolean;
   onClickHandler?: OnClickHandler;
 };
@@ -122,7 +122,7 @@ export const GroupedProportionComparisonChart = React.memo(
     width,
     height,
     extendedMetrics,
-    rawY,
+    maxY,
     hideReferenceScatter,
     onClickHandler,
   }: Props): JSX.Element => {
@@ -148,15 +148,14 @@ export const GroupedProportionComparisonChart = React.memo(
 
     const makeScatterData = (side: 'subject' | 'reference', fill: { active: string; inactive: string }) =>
       data
-        .filter(({ [side]: sideData }) => sideData.proportion !== undefined)
         .map(entry => {
           const { label, [side]: sideData } = entry;
-          return { label, proportion: sideData.proportion!, isActive: entry === currentData || !currentData };
+          return { label, proportion: sideData.proportion, isActive: entry === currentData || !currentData };
         })
         .map(({ label, proportion, isActive }) => ({
           label,
-          y: proportion.value,
-          [isActive ? 'yErrorActive' : 'yErrorInactive']: proportion.confidenceInterval.map(v =>
+          y: proportion?.value,
+          [isActive ? 'yErrorActive' : 'yErrorInactive']: proportion?.confidenceInterval.map(v =>
             Math.abs(proportion.value - v)
           ),
           fill: isActive ? fill.active : fill.inactive,
@@ -165,7 +164,7 @@ export const GroupedProportionComparisonChart = React.memo(
 
     // HACK Render transparent "bars" in the chart so that hovers
     // work anywhere, instead of only exactly on the scatter markers
-    const hoverBarData = data.map(({ label }) => ({ label, y: 1 }));
+    const hoverBarData = data.map(({ label }) => ({ label, y: maxY ?? 1 }));
 
     const metricData = currentData || total;
 
@@ -225,10 +224,13 @@ export const GroupedProportionComparisonChart = React.memo(
                 axisLine={false}
                 tickLine={false}
                 domain={
-                  rawY ? undefined : [0, (dataMax: number) => Math.min(1, Math.ceil(dataMax * 10) / 10)]
+                  typeof maxY === 'number'
+                    ? [0, maxY]
+                    : [0, (dataMax: number) => Math.min(1, Math.ceil(dataMax * 10) / 10)]
                 }
+                allowDataOverflow={typeof maxY === 'number'}
                 scale='linear'
-                tickFormatter={rawY ? undefined : v => `${(v * 100).toFixed(0)}%`}
+                tickFormatter={typeof maxY === 'number' ? undefined : v => `${(v * 100).toFixed(0)}%`}
               />
               <CartesianGrid vertical={false} />
               <Bar {...commonProps} dataKey='y' fill='transparent' />

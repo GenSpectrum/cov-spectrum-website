@@ -54,14 +54,21 @@ const makeDeceasedTexts = (variant: string): SubgroupTexts => ({
   },
 });
 
-const makeTexts = (variantName: string): { hospitalized: TopLevelTexts; deceased: TopLevelTexts } => ({
+const makeTexts = (
+  variantName: string,
+  relativeToOtherVariants: boolean
+): { hospitalized: TopLevelTexts; deceased: TopLevelTexts } => ({
   hospitalized: {
-    title: 'Estimated hospitalization probabilities by age group',
+    title:
+      'Estimated hospitalization probabilities by age group' +
+      (relativeToOtherVariants ? ', relative to other variants' : ''),
     subject: makeHospitalizedTexts(variantName),
     reference: makeHospitalizedTexts('other variants'),
   },
   deceased: {
-    title: 'Estimated death probabilities by age group',
+    title:
+      'Estimated death probabilities by age group' +
+      (relativeToOtherVariants ? ', relative to other variants' : ''),
     subject: makeDeceasedTexts(variantName),
     reference: makeDeceasedTexts('other variants'),
   },
@@ -136,7 +143,7 @@ export const HospitalizationDeathPlot = ({
   field,
   variantName,
   extendedMetrics,
-  relativeToOtherVariants,
+  relativeToOtherVariants = false,
 }: Props) => {
   const { width, height, ref } = useResizeDetector();
   const widthIsSmall = !!width && width < 700;
@@ -216,7 +223,7 @@ export const HospitalizationDeathPlot = ({
     return total;
   }, [processedData]);
 
-  const texts = makeTexts(variantName)[field];
+  const texts = makeTexts(variantName, relativeToOtherVariants)[field];
 
   return (
     <DownloadWrapper name='HospitalizationDeathPlot' rawData={processedData} dataProcessor={dataProcessor}>
@@ -232,7 +239,15 @@ export const HospitalizationDeathPlot = ({
               height={height}
               extendedMetrics={extendedMetrics}
               onClickHandler={noopOnClickHandler}
-              rawY={relativeToOtherVariants}
+              maxY={
+                relativeToOtherVariants
+                  ? Math.max(
+                      ...processedData
+                        .filter(v => v.subject.proportion)
+                        .map(v => v.subject.proportion!.value * 2)
+                    ) || 5
+                  : undefined
+              }
               hideReferenceScatter={relativeToOtherVariants}
             />
           </>
