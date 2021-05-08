@@ -339,7 +339,6 @@ export const getSequencingIntensity = ({
   signal,
 }: {
   country: Country;
-  dataType?: SamplingStrategy;
   signal: AbortSignal;
 }): Promise<SequencingIntensityEntry[]> => {
   let url = HOST + `/plot/sequencing/time-intensity-distribution?`;
