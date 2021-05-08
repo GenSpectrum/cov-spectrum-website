@@ -22,7 +22,7 @@ export const AboutPage = () => {
         Explore up-to-date genome data and monitor variants of SARS-CoV-2! CoV-Spectrum is a fully interactive
         platform aiming to help scientists investigate known variants as well as identifying new ones. It is
         in an early stage of development. Suggestions for improvements, bug reports as well as active
-        contributions are highly welcome. Please create an in our{' '}
+        contributions are highly welcome. Please create an issue in our{' '}
         <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website'>
           Github repository
         </ExternalLink>{' '}
