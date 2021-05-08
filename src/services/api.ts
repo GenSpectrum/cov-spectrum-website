@@ -339,7 +339,6 @@ export const getSequencingIntensity = ({
   signal,
 }: {
   country: Country;
-  dataType?: SamplingStrategy;
   signal: AbortSignal;
 }): Promise<SequencingIntensityEntry[]> => {
   let url = HOST + `/plot/sequencing/time-intensity-distribution?`;
@@ -406,3 +405,15 @@ export const getPlaces = async (): Promise<Place[]> => {
 };
 
 export const fetchTimeDistributionData = () => {};
+
+export const getWikiExtract = (title: string) => {
+  const url = `https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro&explaintext&redirects=1&titles=${title}`;
+  fetch(url, {
+    method: 'GET',
+    redirect: 'follow',
+    headers: { Origin: 'https://cov-spectrum.ethz.ch/' },
+  })
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+};

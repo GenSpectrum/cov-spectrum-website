@@ -13,7 +13,13 @@ import { getFocusPageLink } from '../helpers/explore-url';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { AccountService } from '../services/AccountService';
-import { DateRange, isRegion, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import {
+  DateRange,
+  isRegion,
+  SamplingStrategy,
+  toLiteralSamplingStrategy,
+  getWikiExtract,
+} from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
@@ -111,6 +117,13 @@ export const FocusPage = ({
         </p>
       )}
       {(!variant.name || variant.name.endsWith('*')) && <VariantLineages {...forwardedProps} />}
+      <Button
+        onClick={() => {
+          variant.name && getWikiExtract(`Lineage_${variant.name}`);
+        }}
+      >
+        Wiki
+      </Button>
       {variant.name && (
         <VariantMutations
           country={forwardedProps.country}

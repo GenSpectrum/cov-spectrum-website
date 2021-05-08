@@ -183,7 +183,7 @@ export const GroupedProportionComparisonChart = React.memo(
     const referenceLegendItem: ScatterLegendItem = {
       ...referenceErrorBarSizes,
       name: texts.reference.legend,
-      color: colors.secondary,
+      color: colors.inactive,
       textColor: colors.secondary,
       shape: ScatterBarShape,
     };
@@ -221,8 +221,8 @@ export const GroupedProportionComparisonChart = React.memo(
               <Scatter
                 {...commonProps}
                 data={makeScatterData('reference', {
-                  active: colors.secondary,
-                  inactive: colors.inactiveSecondary,
+                  active: colors.inactive,
+                  inactive: colors.inactive,
                 })}
                 shape={ScatterBarShape}
               >
@@ -235,7 +235,7 @@ export const GroupedProportionComparisonChart = React.memo(
                 <ErrorBar
                   direction='y'
                   dataKey='yErrorInactive'
-                  stroke={colors.inactiveSecondary}
+                  stroke={colors.inactive}
                   {...referenceErrorBarSizes}
                 />
               </Scatter>
@@ -246,13 +246,13 @@ export const GroupedProportionComparisonChart = React.memo(
                 <ErrorBar
                   direction='y'
                   dataKey='yErrorActive'
-                  stroke={colors.activeSecondary}
+                  stroke={colors.active}
                   {...subjectErrorBarSizes}
                 />
                 <ErrorBar
                   direction='y'
                   dataKey='yErrorInactive'
-                  stroke={colors.inactiveSecondary}
+                  stroke={colors.inactive}
                   {...subjectErrorBarSizes}
                 />
               </Scatter>
