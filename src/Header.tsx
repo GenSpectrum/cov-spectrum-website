@@ -6,6 +6,7 @@ import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrateg
 import { AccountService } from './services/AccountService';
 import { HeaderDateRangeSelect } from './components/HeaderDateRangeSelect';
 import { ExternalLink } from './components/ExternalLink';
+import { AiOutlineGithub } from 'react-icons/ai';
 
 export const Header = () => {
   const loggedIn = AccountService.isLoggedIn();
@@ -69,6 +70,18 @@ export const Header = () => {
           ) : (
             <Nav.Link href='/login'>Private Switzerland Login</Nav.Link>
           )}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              cursor: 'pointer',
+              padding: '0 0.5rem 0 0.5rem',
+            }}
+            onClick={() => window.open('https://github.com/cevo-public/cov-spectrum-website', '_blank')}
+          >
+            <AiOutlineGithub size={'1.5em'} />
+          </div>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
