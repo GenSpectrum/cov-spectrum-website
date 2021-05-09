@@ -21,9 +21,7 @@ import {
 } from '../services/api';
 import { Country } from '../services/api-types';
 import dayjs from 'dayjs';
-import {
-  SequencingIntensityEntrySetWithSelector,
-} from '../helpers/sequencing-intensity-entry-set';
+import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 
 // a promise which is never resolved or rejected
 const waitForever = new Promise<never>(() => {});
@@ -139,7 +137,7 @@ export const ExploreFocusSplit = () => {
   ) {
     explorePage = <Loader />;
   } else if (sequencingIntensityEntrySetState.status === 'rejected') {
-    return <Alert variant='danger'>Failed to load data</Alert>;
+    explorePage = <Alert variant='danger'>Failed to load data</Alert>;
   } else {
     explorePage = (
       <ExploreWrapper>
@@ -182,12 +180,18 @@ export const ExploreFocusSplit = () => {
     variantSampleSetState.status === 'initial' ||
     variantSampleSetState.status === 'pending' ||
     wholeSampleSetState.status === 'initial' ||
-    wholeSampleSetState.status === 'pending'
+    wholeSampleSetState.status === 'pending' ||
+    sequencingIntensityEntrySetState.status === 'initial' ||
+    sequencingIntensityEntrySetState.status === 'pending'
   ) {
     return makeLayout(<Loader />, <Loader />);
   }
 
-  if (variantSampleSetState.status === 'rejected' || wholeSampleSetState.status === 'rejected') {
+  if (
+    variantSampleSetState.status === 'rejected' ||
+    wholeSampleSetState.status === 'rejected' ||
+    sequencingIntensityEntrySetState.status === 'rejected'
+  ) {
     const alert = <Alert variant='danger'>Failed to load samples</Alert>;
     return makeLayout(alert, alert);
   }
@@ -204,6 +208,7 @@ export const ExploreFocusSplit = () => {
         wholeSampleSet={wholeSampleSetState.data}
         variantInternationalSampleSetState={variantInternationalSampleSetState}
         wholeInternationalSampleSetState={wholeInternationalSampleSetState}
+        sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
       />
     ),
     variantSelector && (
