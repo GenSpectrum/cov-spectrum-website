@@ -70,9 +70,9 @@ export const EstimatedCasesChart = React.memo(
         const sum = (accumulator: number, currentValue: number) => accumulator + currentValue;
         smoothedData.push({
           date: filteredData[i].date,
-          cases: window.map(d => d.cases).reduce(sum),
-          sequenced: window.map(d => d.sequenced).reduce(sum),
-          variantCount: window.map(d => d.variantCount).reduce(sum),
+          cases: window.map(d => d.cases).reduce(sum) / 7,
+          sequenced: window.map(d => d.sequenced).reduce(sum) / 7,
+          variantCount: window.map(d => d.variantCount).reduce(sum) / 7,
         });
       }
 
@@ -96,7 +96,7 @@ export const EstimatedCasesChart = React.memo(
         });
       }
       const ticks = getTicks(
-        filteredData.map(d => ({
+        smoothedData.map(d => ({
           date: d.date.dayjs.toDate(),
         }))
       );
