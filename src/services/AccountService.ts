@@ -35,7 +35,7 @@ export class AccountService {
   }
 
   static logout() {
-    localStorage.removeItem(localStorageKey);
+    removeLocalStorageItem(localStorageKey);
     this.updateCachedAuth();
   }
 
@@ -68,7 +68,7 @@ export class AccountService {
   }
 
   static updateCachedAuth() {
-    const token = localStorage.getItem(localStorageKey);
+    const token = getLocalStorageItem(localStorageKey);
     this.cachedAuth = token ? { token, data: this.parseJwt(token) } : undefined;
   }
 
@@ -85,5 +85,24 @@ export class AccountService {
     return JwtDataSchema.parse(JSON.parse(jsonPayload));
   }
 }
+
+//May fail due to security policies in Chrome's incognito mode
+const getLocalStorageItem = (key: string): string | null => {
+  try {
+    return localStorage.getItem(key);
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
+
+const removeLocalStorageItem = (key: string): void | null => {
+  try {
+    localStorage.removeItem(key);
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
 
 AccountService.updateCachedAuth();

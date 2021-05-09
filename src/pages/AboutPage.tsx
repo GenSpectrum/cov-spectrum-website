@@ -31,7 +31,10 @@ export const AboutPage = () => {
       <h2>FAQ</h2>
       <Question>What is a variant?</Question>
       <p>
-        We define a variant as a set of amino acid mutations. On{' '}
+        We distinguish between two ways to specify a variant. A variant can be defined as a clade on the
+        phylogenetic tree. This approach is followed by the{' '}
+        <ExternalLink url='https://cov-lineages.org/'>pangolin lineages</ExternalLink> which we consider as
+        "known variants." Additionally, a variant can be defined as a set of amino acid mutations. On{' '}
         <ExternalLink url='https://covariants.org/'>CoVariants</ExternalLink> and{' '}
         <ExternalLink url='https://cov-lineages.org/global_report.html'>PANGO lineages</ExternalLink> , you
         can find detailed information about variants that are currently of particular interest. Different to
@@ -40,9 +43,9 @@ export const AboutPage = () => {
       </p>
       <Question>Which data do you use?</Question>
       <p>
-        For the public part of the website, we use data from GISAID and unreleased/not yet released sequences
-        from the Swiss SARS-CoV-2 Sequencing Consortium (S3C). For the private part (see below), we provide an
-        additional set of metadata for sequences from Switzerland.
+        We use genomic data from GISAID and unreleased/not yet released sequences from the Swiss SARS-CoV-2
+        Sequencing Consortium (S3C) complemented by metadata provided by the Federal Office of Public Health
+        (FOPH) of Switzerland.
       </p>
       <Question>What is the "Private Switzerland Login" and can I gain access?</Question>
       For Switzerland, we have some confidential data. The access can only be provided to very few people.
@@ -51,12 +54,8 @@ export const AboutPage = () => {
       You can embed all the interactive plots of CoV-Spectrum on your own website. Just click on the "Share"
       button and copy and paste the code to your page. The plots will be automatically updated whenever new
       data arrives.
-      <Question>Can I get the numbers behind the plots in a machine-readable format?</Question>
-      <p>
-        Yes! We offer an open API and will try to make as much data public and easily accessible as we are
-        allowed to. A documentation will be released soon. Please contact us if you would like to use it in
-        the meantime.
-      </p>
+      <Question>Can I download the numbers behind the plots?</Question>
+      <p>For some of the plots, there is a button next to the plot to download the data as a CSV file.</p>
       <h2>Contact</h2>
       <p>
         This project is developed by the{' '}
