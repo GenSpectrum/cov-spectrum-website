@@ -3,8 +3,8 @@ import { UnifiedDay } from '../helpers/date-cache';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from './common';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import Metric, { MetricsSpacing, MetricsWrapper } from './Metrics';
-import { getTicks } from '../models/wasteWater/WasteWaterTimeChart';
 import calculateWilsonInterval from 'wilson-interval';
+import { getTicks } from '../helpers/ticks';
 
 export type EstimatedCasesTimeEntry = {
   date: UnifiedDay;
