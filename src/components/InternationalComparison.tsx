@@ -4,7 +4,7 @@ import { SampleSetWithSelector } from '../helpers/sample-set';
 import { AccountService } from '../services/AccountService';
 import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
-import { NextcladeService } from '../services/NextcladeService';
+import { NextcladeIntegration } from '../services/external-integrations/NextcladeIntegration';
 import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
 import { InternationalComparisonTable } from './InternationalComparisonTable';
 import { LazySampleButton } from './LazySampleButton';
@@ -62,7 +62,7 @@ export const InternationalComparison = ({
                   size='sm'
                   className='ml-1'
                   onClick={() =>
-                    NextcladeService.showVariantOnNextclade({
+                    new NextcladeIntegration().open({
                       variant,
                       matchPercentage,
                       country: undefined,
