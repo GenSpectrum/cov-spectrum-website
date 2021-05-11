@@ -9,6 +9,7 @@ import {
   SubgroupTexts,
   SubgroupValue,
   TopLevelTexts,
+  ValueWithConfidence,
 } from '../charts/GroupedProportionComparisonChart';
 import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
@@ -16,6 +17,7 @@ import dayjs from 'dayjs';
 import { globalDateCache } from '../helpers/date-cache';
 import { TitleWrapper } from '../charts/common';
 import DownloadWrapper from '../charts/DownloadWrapper';
+import { approximateBinomialRatioConfidence } from '../helpers/binomial-ratio-confidence';
 
 export const OMIT_LAST_N_WEEKS = 4;
 
@@ -25,6 +27,7 @@ interface Props {
   field: 'hospitalized' | 'deceased';
   variantName: string;
   extendedMetrics?: boolean;
+  relativeToOtherVariants?: boolean;
 }
 
 const makeHospitalizedTexts = (variant: string): SubgroupTexts => ({
@@ -51,14 +54,21 @@ const makeDeceasedTexts = (variant: string): SubgroupTexts => ({
   },
 });
 
-const makeTexts = (variantName: string): { hospitalized: TopLevelTexts; deceased: TopLevelTexts } => ({
+const makeTexts = (
+  variantName: string,
+  relativeToOtherVariants: boolean
+): { hospitalized: TopLevelTexts; deceased: TopLevelTexts } => ({
   hospitalized: {
-    title: 'Estimated hospitalization probabilities by age group',
+    title:
+      'Estimated hospitalization probabilities by age group' +
+      (relativeToOtherVariants ? ', relative to other variants' : ''),
     subject: makeHospitalizedTexts(variantName),
     reference: makeHospitalizedTexts('other variants'),
   },
   deceased: {
-    title: 'Estimated death probabilities by age group',
+    title:
+      'Estimated death probabilities by age group' +
+      (relativeToOtherVariants ? ', relative to other variants' : ''),
     subject: makeDeceasedTexts(variantName),
     reference: makeDeceasedTexts('other variants'),
   },
@@ -133,6 +143,7 @@ export const HospitalizationDeathPlot = ({
   field,
   variantName,
   extendedMetrics,
+  relativeToOtherVariants = false,
 }: Props) => {
   const { width, height, ref } = useResizeDetector();
   const widthIsSmall = !!width && width < 700;
@@ -157,13 +168,46 @@ export const HospitalizationDeathPlot = ({
       assert(!!wholeEntry && wholeEntry.key === key);
       const wholeSamples = wholeEntry.value;
 
-      return {
-        label: widthIsSmall ? (key ? key.replace(/-\d+$/, '-') : '?') : key ? key : 'Unk.',
+      const label = widthIsSmall ? (key ? key.replace(/-\d+$/, '-') : '?') : key ? key : 'Unk.';
+
+      const baseCounts = {
         subject: processCounts(variantSamples, [], field),
         reference: processCounts(wholeSamples, variantSamples, field),
       };
+
+      if (relativeToOtherVariants) {
+        const x = baseCounts.subject.count.true;
+        const m = baseCounts.subject.count.true + baseCounts.subject.count.false;
+        const y = baseCounts.reference.count.true;
+        const n = baseCounts.reference.count.true + baseCounts.reference.count.false;
+
+        let relativeProportion: ValueWithConfidence | undefined = {
+          value: x / m / (y / n),
+          confidenceInterval: approximateBinomialRatioConfidence(x, m, y, n),
+        };
+        if (
+          !isFinite(relativeProportion.value) ||
+          !relativeProportion.confidenceInterval.every(v => isFinite(v))
+        ) {
+          relativeProportion = undefined;
+        }
+
+        return {
+          label,
+          subject: {
+            count: baseCounts.subject.count,
+            proportion: relativeProportion,
+          },
+          reference: { count: baseCounts.reference.count },
+        };
+      }
+
+      return {
+        ...baseCounts,
+        label,
+      };
     });
-  }, [variantSampleSet, wholeSampleSet, field, widthIsSmall]);
+  }, [variantSampleSet, wholeSampleSet, field, widthIsSmall, relativeToOtherVariants]);
 
   const total = useMemo(() => {
     const total = { subject: { count: { true: 0, false: 0 } }, reference: { count: { true: 0, false: 0 } } };
@@ -179,7 +223,7 @@ export const HospitalizationDeathPlot = ({
     return total;
   }, [processedData]);
 
-  const texts = makeTexts(variantName)[field];
+  const texts = makeTexts(variantName, relativeToOtherVariants)[field];
 
   return (
     <DownloadWrapper name='HospitalizationDeathPlot' rawData={processedData} dataProcessor={dataProcessor}>
@@ -195,6 +239,16 @@ export const HospitalizationDeathPlot = ({
               height={height}
               extendedMetrics={extendedMetrics}
               onClickHandler={noopOnClickHandler}
+              maxY={
+                relativeToOtherVariants
+                  ? Math.max(
+                      ...processedData
+                        .filter(v => v.subject.proportion)
+                        .map(v => v.subject.proportion!.value * 2)
+                    ) || 5
+                  : undefined
+              }
+              hideReferenceScatter={relativeToOtherVariants}
             />
           </>
         )}
