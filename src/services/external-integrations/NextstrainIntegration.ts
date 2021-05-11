@@ -1,16 +1,11 @@
-import { Integration, IntegrationSelector } from './Integration';
+import { getPangolinLineageIfPure, Integration, IntegrationSelector } from './Integration';
 
 export class NextstrainIntegration implements Integration {
   name = 'Nextstrain';
 
   isAvailable(selector: IntegrationSelector): boolean {
     // TODO Nextstrain is available for so much more...
-    return (
-      selector.variant.mutations.length === 0 &&
-      !!selector.variant.name &&
-      !selector.variant.name.endsWith('*') &&
-      selector.country === 'Switzerland'
-    );
+    return selector.country === 'Switzerland' && !!getPangolinLineageIfPure(selector);
   }
 
   open(selector: IntegrationSelector): void {

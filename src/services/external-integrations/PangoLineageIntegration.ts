@@ -1,14 +1,10 @@
-import { Integration, IntegrationSelector } from './Integration';
+import { getPangolinLineageIfPure, Integration, IntegrationSelector } from './Integration';
 
 export class PangoLineageIntegration implements Integration {
   name = 'PANGO Lineages';
 
   isAvailable(selector: IntegrationSelector): boolean {
-    return (
-      selector.variant.mutations.length === 0 &&
-      !!selector.variant.name &&
-      !selector.variant.name.endsWith('*')
-    );
+    return !!getPangolinLineageIfPure(selector);
   }
 
   open(selector: IntegrationSelector): void {

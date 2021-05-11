@@ -1,4 +1,4 @@
-import { Integration, IntegrationSelector } from './Integration';
+import { getPangolinLineageIfPure, Integration, IntegrationSelector } from './Integration';
 
 const pangolinLineagesMap = new Map([
   ['B.1.177', 'https://covariants.org/variants/20A.EU1'],
@@ -23,11 +23,8 @@ export class CoVariantsIntegration implements Integration {
   name = 'CoVariants';
 
   isAvailable(selector: IntegrationSelector): boolean {
-    return (
-      selector.variant.mutations.length === 0 &&
-      !!selector.variant.name &&
-      pangolinLineagesMap.has(selector.variant.name)
-    );
+    const lineage = getPangolinLineageIfPure(selector);
+    return !!lineage && pangolinLineagesMap.has(lineage);
   }
 
   open(selector: IntegrationSelector): void {

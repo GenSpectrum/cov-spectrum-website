@@ -1,4 +1,4 @@
-import { Integration, IntegrationSelector } from './Integration';
+import { getPangolinLineageIfPure, Integration, IntegrationSelector } from './Integration';
 
 const wikiLinks = new Map([
   ['B.1.1.7', 'https://en.wikipedia.org/wiki/Lineage_B.1.1.7'],
@@ -13,11 +13,8 @@ export class WikipediaIntegration implements Integration {
   name = 'Wikipedia';
 
   isAvailable(selector: IntegrationSelector): boolean {
-    return (
-      selector.variant.mutations.length === 0 &&
-      !!selector.variant.name &&
-      wikiLinks.has(selector.variant.name)
-    );
+    const lineage = getPangolinLineageIfPure(selector);
+    return !!lineage && wikiLinks.has(lineage);
   }
 
   open(selector: IntegrationSelector): void {
