@@ -14,6 +14,9 @@ export class NextstrainIntegration implements Integration {
     if (selector.country !== 'Switzerland') {
       return false;
     }
+    if (selector.variant.name && selector.variant.name.endsWith('*')) {
+      return false;
+    }
     // Nextstrain does not seem to support mutations that do not define the mutated base.
     const mutatedBasePresent = selector.variant.mutations.every(x => !!decodeMutation(x).mutatedBase);
     if (!mutatedBasePresent) {
