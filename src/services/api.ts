@@ -13,13 +13,16 @@ import {
   SampleResultList,
   SampleResultListSchema,
   SequencingIntensityEntrySchema,
-  SequencingIntensityEntry,
   PangolinLineageListSchema,
   PangolinLineageList,
   PangolinLineageInformationSchema,
   PangolinLineageInformation,
 } from './api-types';
 import dayjs from 'dayjs';
+import {
+  SequencingIntensityEntrySetSelector,
+  SequencingIntensityEntrySetWithSelector,
+} from '../helpers/sequencing-intensity-entry-set';
 
 // WARNING These values are used in URLs - be careful when changing them
 export enum SamplingStrategy {
@@ -334,23 +337,30 @@ export async function getInformationOfPangolinLineage(
   return PangolinLineageInformationSchema.parse(await res.json());
 }
 
-export const getSequencingIntensity = ({
-  country,
-  signal,
-}: {
-  country: Country;
-  signal: AbortSignal;
-}): Promise<SequencingIntensityEntry[]> => {
+export const getSequencingIntensity = (
+  selector: SequencingIntensityEntrySetSelector,
+  signal?: AbortSignal
+): Promise<SequencingIntensityEntrySetWithSelector> => {
   let url = HOST + `/plot/sequencing/time-intensity-distribution?`;
-  if (isRegion(country)) {
-    url += `region=${country}`;
+  if (!selector.country) {
+    // TODO should be addressed in #101
+    return Promise.resolve({
+      data: [],
+      selector,
+    });
+  }
+  if (isRegion(selector.country)) {
+    url += `region=${selector.country}`;
   } else {
-    url += `country=${country}`;
+    url += `country=${selector.country}`;
   }
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
     .then(data => {
-      return zod.array(SequencingIntensityEntrySchema).parse(data);
+      return {
+        data: zod.array(SequencingIntensityEntrySchema).parse(data),
+        selector,
+      };
     });
 };
 

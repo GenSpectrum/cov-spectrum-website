@@ -15,11 +15,13 @@ import {
   DateRange,
   dateRangeToDates,
   getNewSamples,
+  getSequencingIntensity,
   SamplingStrategy,
   toLiteralSamplingStrategy,
 } from '../services/api';
 import { Country } from '../services/api-types';
 import dayjs from 'dayjs';
+import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 
 // a promise which is never resolved or rejected
 const waitForever = new Promise<never>(() => {});
@@ -91,6 +93,16 @@ function useWholeSampleSet({
   return useAsync(promiseFn);
 }
 
+function useSequencingIntensityEntrySet({ country }: { country: string | undefined }) {
+  const promiseFn = useMemo<PromiseFn<SequencingIntensityEntrySetWithSelector>>(
+    () => async (options, { signal }) => {
+      return getSequencingIntensity({ country }, signal);
+    },
+    [country]
+  );
+  return useAsync(promiseFn);
+}
+
 export const ExploreFocusSplit = () => {
   const { country, samplingStrategy, dateRange, variantSelector, focusKey } = useExploreUrl() || {};
 
@@ -107,6 +119,7 @@ export const ExploreFocusSplit = () => {
     variantSelector,
   });
   const wholeInternationalSampleSetState = useWholeSampleSet({ samplingStrategy, dateRange });
+  const sequencingIntensityEntrySetState = useSequencingIntensityEntrySet({ country });
 
   const { path } = useRouteMatch();
 
@@ -117,20 +130,31 @@ export const ExploreFocusSplit = () => {
     return null;
   }
 
-  const explorePage = (
-    <ExploreWrapper>
-      <ExplorePage
-        country={country}
-        samplingStrategy={samplingStrategy}
-        dateRange={dateRange}
-        onVariantSelect={variantSelector =>
-          history.push(getFocusPageLink({ variantSelector, country, samplingStrategy, dateRange }))
-        }
-        selection={variantSelector}
-        wholeSampleSetState={wholeSampleSetState}
-      />
-    </ExploreWrapper>
-  );
+  let explorePage: React.ReactNode;
+  if (
+    sequencingIntensityEntrySetState.status === 'initial' ||
+    sequencingIntensityEntrySetState.status === 'pending'
+  ) {
+    explorePage = <Loader />;
+  } else if (sequencingIntensityEntrySetState.status === 'rejected') {
+    explorePage = <Alert variant='danger'>Failed to load data</Alert>;
+  } else {
+    explorePage = (
+      <ExploreWrapper>
+        <ExplorePage
+          country={country}
+          samplingStrategy={samplingStrategy}
+          dateRange={dateRange}
+          onVariantSelect={variantSelector =>
+            history.push(getFocusPageLink({ variantSelector, country, samplingStrategy, dateRange }))
+          }
+          selection={variantSelector}
+          wholeSampleSetState={wholeSampleSetState}
+          sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
+        />
+      </ExploreWrapper>
+    );
+  }
 
   const makeLayout = (focusContent: React.ReactNode, deepFocusContent: React.ReactNode): JSX.Element => (
     <>
@@ -156,12 +180,18 @@ export const ExploreFocusSplit = () => {
     variantSampleSetState.status === 'initial' ||
     variantSampleSetState.status === 'pending' ||
     wholeSampleSetState.status === 'initial' ||
-    wholeSampleSetState.status === 'pending'
+    wholeSampleSetState.status === 'pending' ||
+    sequencingIntensityEntrySetState.status === 'initial' ||
+    sequencingIntensityEntrySetState.status === 'pending'
   ) {
     return makeLayout(<Loader />, <Loader />);
   }
 
-  if (variantSampleSetState.status === 'rejected' || wholeSampleSetState.status === 'rejected') {
+  if (
+    variantSampleSetState.status === 'rejected' ||
+    wholeSampleSetState.status === 'rejected' ||
+    sequencingIntensityEntrySetState.status === 'rejected'
+  ) {
     const alert = <Alert variant='danger'>Failed to load samples</Alert>;
     return makeLayout(alert, alert);
   }
@@ -178,6 +208,7 @@ export const ExploreFocusSplit = () => {
         wholeSampleSet={wholeSampleSetState.data}
         variantInternationalSampleSetState={variantInternationalSampleSetState}
         wholeInternationalSampleSetState={wholeInternationalSampleSetState}
+        sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
       />
     ),
     variantSelector && (

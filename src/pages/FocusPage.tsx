@@ -23,6 +23,8 @@ import { VariantMutations } from '../components/VariantMutations';
 import WasteWaterSummaryTimeChart from '../models/wasteWater/WasteWaterSummaryTimeChart';
 import { WasteWaterDataset } from '../models/wasteWater/types';
 import { getData } from '../models/wasteWater/loading';
+import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
+import { EstimatedCasesPlotWidget } from '../widgets/EstimatedCasesPlot';
 
 interface Props {
   country: Country;
@@ -34,6 +36,7 @@ interface Props {
   wholeSampleSet: SampleSetWithSelector;
   variantInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
   wholeInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
+  sequencingIntensityEntrySet: SequencingIntensityEntrySetWithSelector;
 }
 
 const deepFocusPaths = {
@@ -48,6 +51,7 @@ export const FocusPage = ({
   wholeSampleSet,
   variantInternationalSampleSetState,
   wholeInternationalSampleSetState,
+  sequencingIntensityEntrySet,
   ...forwardedProps
 }: Props) => {
   const { country, matchPercentage, variant, samplingStrategy, dateRange } = forwardedProps;
@@ -125,6 +129,14 @@ export const FocusPage = ({
             wholeSampleSet={wholeSampleSet}
             height={300}
             title='Sequences over time'
+          />
+        </GridCell>
+        <GridCell minWidth={600}>
+          <EstimatedCasesPlotWidget.ShareableComponent
+            variantSampleSet={variantSampleSet}
+            sequencingIntensityEntrySet={sequencingIntensityEntrySet}
+            height={300}
+            title='Estimated cases'
           />
         </GridCell>
         <GridCell minWidth={600}>

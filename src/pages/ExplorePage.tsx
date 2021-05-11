@@ -13,6 +13,7 @@ import { isRegion } from '../services/api';
 import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
 import styled from 'styled-components';
 import { ExternalLink } from '../components/ExternalLink';
+import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 
 interface Props {
   country: Country;
@@ -21,6 +22,7 @@ interface Props {
   onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
   wholeSampleSetState: AsyncState<SampleSetWithSelector>;
+  sequencingIntensityEntrySet: SequencingIntensityEntrySetWithSelector;
 }
 
 const Footer = styled.footer`
@@ -37,6 +39,7 @@ export const ExplorePage = ({
   onVariantSelect,
   selection,
   wholeSampleSetState,
+  sequencingIntensityEntrySet,
 }: Props) => {
   return (
     <ScrollableTabs
@@ -49,7 +52,7 @@ export const ExplorePage = ({
               <NamedSection title=''>
                 <SequencingIntensityPlotWidget.ShareableComponent
                   title='Sequencing Intensity'
-                  country={country}
+                  sequencingIntensityEntrySet={sequencingIntensityEntrySet}
                   height={300}
                   widgetLayout={NamedSection}
                 />
