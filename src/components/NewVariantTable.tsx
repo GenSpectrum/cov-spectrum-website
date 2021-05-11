@@ -7,7 +7,7 @@ import { BiHelpCircle } from 'react-icons/bi';
 import ReactTooltip from 'react-tooltip';
 import { NewVariantMutationList } from './NewVariantMutationList';
 import styled from 'styled-components';
-import { sortMutationList } from '../helpers/mutation-list';
+import { sortMutationList } from '../helpers/mutation';
 import { AccountService } from '../services/AccountService';
 
 // We consider mutations with a uniquenessScore of at least the following value as characteristic/important for a

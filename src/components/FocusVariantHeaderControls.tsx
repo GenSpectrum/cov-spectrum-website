@@ -22,61 +22,57 @@ export interface Props {
 }
 
 const integrations: Integration[] = [
-  new NextcladeIntegration(),
   new WikipediaIntegration(),
   new PangoLineageIntegration(),
+  new NextcladeIntegration(),
+  new NextstrainIntegration(),
   new CoVariantsIntegration(),
   new OutbreakInfoIntegration(),
-  new NextstrainIntegration(),
 ];
 
-export const FocusVariantHeaderControls = ({
-  country,
-  matchPercentage,
-  variant,
-  samplingStrategy,
-  dateRange,
-}: Props) => {
-  const integrationSelector = {
-    variant,
-    matchPercentage,
-    country,
-    samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
-  };
+export const FocusVariantHeaderControls = React.memo(
+  ({ country, matchPercentage, variant, samplingStrategy, dateRange }: Props): JSX.Element => {
+    const integrationSelector = {
+      variant,
+      matchPercentage,
+      country,
+      samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
+    };
 
-  const integrationButtons = (
-    <>
-      <DropdownButton
-        as={ButtonGroup}
-        title='Show on other websites'
-        variant='secondary'
-        size='sm'
-        className='mr-2'
-      >
-        {integrations.map(
-          integration =>
-            integration.isAvailable(integrationSelector) && (
-              <Dropdown.Item key={integration.name} onClick={() => integration.open(integrationSelector)}>
-                {integration.name}
-              </Dropdown.Item>
-            )
-        )}
-      </DropdownButton>
-    </>
-  );
-
-  return (
-    <>
-      {integrationButtons}
-      {AccountService.isLoggedIn() && (
-        <LazySampleButton
-          query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy, dateRange }}
+    const integrationButtons = (
+      <>
+        <DropdownButton
+          as={ButtonGroup}
+          title='Show on other websites'
           variant='secondary'
           size='sm'
+          className='mr-2'
         >
-          Show samples
-        </LazySampleButton>
-      )}
-    </>
-  );
-};
+          {integrations.map(
+            integration =>
+              integration.isAvailable(integrationSelector) && (
+                <Dropdown.Item key={integration.name} onClick={() => integration.open(integrationSelector)}>
+                  {integration.name}
+                </Dropdown.Item>
+              )
+          )}
+        </DropdownButton>
+      </>
+    );
+
+    return (
+      <>
+        {integrationButtons}
+        {AccountService.isLoggedIn() && (
+          <LazySampleButton
+            query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy, dateRange }}
+            variant='secondary'
+            size='sm'
+          >
+            Show samples
+          </LazySampleButton>
+        )}
+      </>
+    );
+  }
+);

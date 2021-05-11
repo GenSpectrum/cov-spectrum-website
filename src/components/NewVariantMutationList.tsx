@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { sortListByMutation } from '../helpers/mutation-list';
+import { sortListByMutation } from '../helpers/mutation';
 import styled from 'styled-components';
 import { UNIQUENESS_SCORE_IMPORTANCE_THRESHOLD } from './NewVariantTable';
 
