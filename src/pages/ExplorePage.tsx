@@ -42,7 +42,7 @@ export const ExplorePage = ({
   sequencingIntensityEntrySet,
 }: Props) => {
   return (
-    <>
+    <div className="p-2">
       <NamedSection title=''>
         <SequencingIntensityPlotWidget.ShareableComponent
           title='Sequencing Intensity'
@@ -75,6 +75,6 @@ export const ExplorePage = ({
         Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
         <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
       </Footer>
-    </>
+    </div>
   );
 };
