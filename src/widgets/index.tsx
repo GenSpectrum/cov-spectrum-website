@@ -5,6 +5,7 @@ import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021Fitness
 import { SequencingIntensityPlotWidget } from './SequencingIntensityPlot';
 import { WasteWaterTimeWidget } from '../models/wasteWater/WasteWaterTimeWidget';
 import { WasteWaterHeatMapWidget } from '../models/wasteWater/WasteWaterHeatMapWidget';
+import { EstimatedCasesPlotWidget } from './EstimatedCasesPlot';
 
 export const allWidgets = [
   VariantAgeDistributionPlotWidget,
@@ -14,4 +15,5 @@ export const allWidgets = [
   Chen2021FitnessWidget,
   WasteWaterTimeWidget,
   WasteWaterHeatMapWidget,
+  EstimatedCasesPlotWidget,
 ];

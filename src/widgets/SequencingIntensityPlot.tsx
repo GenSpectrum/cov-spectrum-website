@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react';
 import _ from 'lodash';
 import { getSequencingIntensity } from '../services/api';
-import { SequencingIntensityEntry, Country, CountrySchema } from '../services/api-types';
+import { SequencingIntensityEntry } from '../services/api-types';
 import { Widget } from './Widget';
-import * as zod from 'zod';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import TimeIntensityChart, { TimeIntensityEntry } from '../charts/TimeIntensityChart';
-import Loader from '../components/Loader';
 import DownloadWrapper from '../charts/DownloadWrapper';
+import {
+  SequencingIntensityEntrySetSelectorSchema,
+  SequencingIntensityEntrySetWithSelector,
+} from '../helpers/sequencing-intensity-entry-set';
 
 interface Props {
-  country: Country;
+  sequencingIntensityEntrySet: SequencingIntensityEntrySetWithSelector;
 }
 
 const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[] => {
@@ -38,47 +39,25 @@ const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[]
 
 const processData = (data: SequencingIntensityEntry[]): any => groupByMonth(data);
 
-export const SequencingIntensityPlot = ({ country }: Props) => {
-  const [data, setData] = useState<SequencingIntensityEntry[] | undefined>(undefined);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    let isSubscribed = true;
-    const controller = new AbortController();
-    const signal = controller.signal;
-    setIsLoading(true);
-    if (country) {
-      getSequencingIntensity({ country, signal }).then(newSequencingData => {
-        if (isSubscribed) {
-          setData(newSequencingData);
-        }
-        setIsLoading(false);
-      });
-    }
-
-    return () => {
-      isSubscribed = false;
-      controller.abort();
-      setIsLoading(false);
-    };
-  }, [country]);
-
-  return data === undefined || isLoading ? (
-    <Loader />
-  ) : (
+export const SequencingIntensityPlot = ({ sequencingIntensityEntrySet }: Props) => {
+  return (
     <DownloadWrapper name='SequencingIntensityPlot'>
-      <TimeIntensityChart data={processData(data)} onClickHandler={(e: unknown) => true} />
+      <TimeIntensityChart
+        data={processData(sequencingIntensityEntrySet.data)}
+        onClickHandler={(e: unknown) => true}
+      />
     </DownloadWrapper>
   );
 };
 
 export const SequencingIntensityPlotWidget = new Widget(
   new AsyncZodQueryEncoder(
-    zod.object({
-      country: CountrySchema,
-    }),
-    async (decoded: Props) => decoded,
-    async encoded => encoded
+    SequencingIntensityEntrySetSelectorSchema,
+
+    async (decoded: Props) => decoded.sequencingIntensityEntrySet.selector,
+    async (encoded, signal) => ({
+      sequencingIntensityEntrySet: await getSequencingIntensity(encoded, signal),
+    })
   ),
   SequencingIntensityPlot,
   'SequencingIntensityPlot'

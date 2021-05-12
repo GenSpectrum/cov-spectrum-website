@@ -77,6 +77,15 @@ export class SampleSet<S extends NewSampleSelector | null = NewSampleSelector | 
     return output;
   }
 
+  countByDate(): Map<UnifiedDay, number> {
+    const output = new Map<UnifiedDay, number>();
+    for (const multiSample of this.data) {
+      const oldCount = output.get(multiSample.date) ?? 0;
+      output.set(multiSample.date, oldCount + multiSample.count);
+    }
+    return output;
+  }
+
   groupByField<F extends CountableMultiSampleField>(
     field: F
   ): Map<ParsedMultiSample[F], ParsedMultiSample[]> {

@@ -76,6 +76,34 @@ function selectPreviewVariants(
       },
       matchPercentage: 1,
     },
+    {
+      variant: {
+        name: 'B.1.617',
+        mutations: [],
+      },
+      matchPercentage: 1,
+    },
+    {
+      variant: {
+        name: 'B.1.617.1',
+        mutations: [],
+      },
+      matchPercentage: 1,
+    },
+    {
+      variant: {
+        name: 'B.1.617.2',
+        mutations: [],
+      },
+      matchPercentage: 1,
+    },
+    {
+      variant: {
+        name: 'B.1.617.3',
+        mutations: [],
+      },
+      matchPercentage: 1,
+    },
   ];
   for (let pangolinLineage of pangolinLineages) {
     if (variants.length >= numberVariants) {
@@ -141,7 +169,7 @@ export const KnownVariantsList = ({
             count: number;
           }[];
           setPangolinLineages(lineages);
-          setKnownVariantSelectors(selectPreviewVariants(lineages, 8));
+          setKnownVariantSelectors(selectPreviewVariants(lineages, 12));
         }
       })
       .catch(err => {

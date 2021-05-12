@@ -1,19 +1,15 @@
-import { Variant } from './api-types';
-import { AccountService } from './AccountService';
-import { getSampleFastaUrl, LiteralSamplingStrategy } from './api';
+import { AccountService } from '../AccountService';
+import { getSampleFastaUrl } from '../api';
+import { Integration, IntegrationSelector } from './Integration';
 
-export class NextcladeService {
-  static async showVariantOnNextclade({
-    variant,
-    matchPercentage,
-    country,
-    samplingStrategy,
-  }: {
-    variant: Variant;
-    matchPercentage: number;
-    country: string | undefined | null;
-    samplingStrategy: LiteralSamplingStrategy;
-  }) {
+export class NextcladeIntegration implements Integration {
+  name = 'Nextclade';
+
+  isAvailable({ country }: IntegrationSelector): boolean {
+    return AccountService.isLoggedIn() || country === 'Switzerland';
+  }
+
+  async open({ variant, matchPercentage, country, samplingStrategy }: IntegrationSelector) {
     const mutationsString = variant.mutations.join(',');
     let endpoint = getSampleFastaUrl({
       pangolinLineage: variant.name,

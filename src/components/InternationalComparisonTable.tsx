@@ -7,7 +7,7 @@ import { SampleSet } from '../helpers/sample-set';
 import { AccountService } from '../services/AccountService';
 import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Variant } from '../services/api-types';
-import { NextcladeService } from '../services/NextcladeService';
+import { NextcladeIntegration } from '../services/external-integrations/NextcladeIntegration';
 
 interface Props {
   dateRange: DateRange;
@@ -67,7 +67,7 @@ export const InternationalComparisonTable = ({
                 <>
                   <Button
                     onClick={() =>
-                      NextcladeService.showVariantOnNextclade({
+                      new NextcladeIntegration().open({
                         variant,
                         matchPercentage,
                         country: c.country,

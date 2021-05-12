@@ -1,6 +1,6 @@
 import React from 'react';
 import { MutationName } from './MutationName';
-import { sortMutationList } from '../helpers/mutation-list';
+import { sortMutationList } from '../helpers/mutation';
 
 interface Props {
   mutations: string[];

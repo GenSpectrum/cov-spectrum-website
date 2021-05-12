@@ -13,7 +13,7 @@ import { isRegion } from '../services/api';
 import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
 import styled from 'styled-components';
 import { ExternalLink } from '../components/ExternalLink';
-import GitHubButton from 'react-github-btn';
+import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 
 interface Props {
   country: Country;
@@ -22,6 +22,7 @@ interface Props {
   onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
   wholeSampleSetState: AsyncState<SampleSetWithSelector>;
+  sequencingIntensityEntrySet: SequencingIntensityEntrySetWithSelector;
 }
 
 const Footer = styled.footer`
@@ -38,6 +39,7 @@ export const ExplorePage = ({
   onVariantSelect,
   selection,
   wholeSampleSetState,
+  sequencingIntensityEntrySet,
 }: Props) => {
   return (
     <ScrollableTabs
@@ -50,7 +52,7 @@ export const ExplorePage = ({
               <NamedSection title=''>
                 <SequencingIntensityPlotWidget.ShareableComponent
                   title='Sequencing Intensity'
-                  country={country}
+                  sequencingIntensityEntrySet={sequencingIntensityEntrySet}
                   height={300}
                   widgetLayout={NamedSection}
                 />
@@ -76,25 +78,6 @@ export const ExplorePage = ({
                 </NamedSection>
               )}
               <Footer>
-                <div>
-                  <GitHubButton
-                    href='https://github.com/cevo-public/cov-spectrum-website/subscription'
-                    data-size='large'
-                    data-show-count='true'
-                    aria-label='Watch cevo-public/cov-spectrum-website on GitHub'
-                  >
-                    Watch
-                  </GitHubButton>{' '}
-                  <GitHubButton
-                    href='https://github.com/cevo-public/cov-spectrum-website'
-                    data-icon='octicon-star'
-                    data-size='large'
-                    aria-label='Star cevo-public/cov-spectrum-website on GitHub'
-                    data-show-count='true'
-                  >
-                    Star
-                  </GitHubButton>{' '}
-                </div>
                 Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
                 <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
               </Footer>

@@ -1,10 +1,17 @@
 import React from 'react';
-import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Dropdown } from 'react-bootstrap';
+import { ButtonGroup, DropdownButton } from 'react-bootstrap';
 import { AccountService } from '../services/AccountService';
 import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
-import { NextcladeService } from '../services/NextcladeService';
+import { NextcladeIntegration } from '../services/external-integrations/NextcladeIntegration';
 import { LazySampleButton } from './LazySampleButton';
+import { Integration } from '../services/external-integrations/Integration';
+import { PangoLineageIntegration } from '../services/external-integrations/PangoLineageIntegration';
+import { OutbreakInfoIntegration } from '../services/external-integrations/OutbreakInfoIntegration';
+import { NextstrainIntegration } from '../services/external-integrations/NextstrainIntegration';
+import { WikipediaIntegration } from '../services/external-integrations/WikipediaIntegration';
+import { CoVariantsIntegration } from '../services/external-integrations/CoVariantsIntegration';
 
 export interface Props {
   country: Country;
@@ -14,55 +21,58 @@ export interface Props {
   dateRange: DateRange;
 }
 
-export const FocusVariantHeaderControls = ({
-  country,
-  matchPercentage,
-  variant,
-  samplingStrategy,
-  dateRange,
-}: Props) => {
-  const nextcladeButton = (
-    <Button
-      onClick={() =>
-        NextcladeService.showVariantOnNextclade({
-          variant,
-          matchPercentage,
-          country,
-          samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
-        })
-      }
-      variant='secondary'
-      size='sm'
-      className='mr-2'
-    >
-      Show on Nextclade
-    </Button>
-  );
+const integrations: Integration[] = [
+  new WikipediaIntegration(),
+  new PangoLineageIntegration(),
+  new NextcladeIntegration(),
+  new NextstrainIntegration(),
+  new CoVariantsIntegration(),
+  new OutbreakInfoIntegration(),
+];
 
-  return (
-    <>
-      {AccountService.isLoggedIn() && nextcladeButton}
-      {!AccountService.isLoggedIn() && country === 'Switzerland' && (
-        <OverlayTrigger
-          placement='bottom'
-          overlay={
-            <Tooltip id='tooltip-show-on-nextclade'>
-              Note: We can only use our own sequences for the Nextclade analysis.
-            </Tooltip>
-          }
-        >
-          {nextcladeButton}
-        </OverlayTrigger>
-      )}
-      {AccountService.isLoggedIn() && (
-        <LazySampleButton
-          query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy, dateRange }}
+export const FocusVariantHeaderControls = React.memo(
+  ({ country, matchPercentage, variant, samplingStrategy, dateRange }: Props): JSX.Element => {
+    const integrationSelector = {
+      variant,
+      matchPercentage,
+      country,
+      samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
+    };
+
+    const integrationButtons = (
+      <>
+        <DropdownButton
+          as={ButtonGroup}
+          title='Show on other websites'
           variant='secondary'
           size='sm'
+          className='mr-2'
         >
-          Show samples
-        </LazySampleButton>
-      )}
-    </>
-  );
-};
+          {integrations.map(
+            integration =>
+              integration.isAvailable(integrationSelector) && (
+                <Dropdown.Item key={integration.name} onClick={() => integration.open(integrationSelector)}>
+                  {integration.name}
+                </Dropdown.Item>
+              )
+          )}
+        </DropdownButton>
+      </>
+    );
+
+    return (
+      <>
+        {integrationButtons}
+        {AccountService.isLoggedIn() && (
+          <LazySampleButton
+            query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy, dateRange }}
+            variant='secondary'
+            size='sm'
+          >
+            Show samples
+          </LazySampleButton>
+        )}
+      </>
+    );
+  }
+);

@@ -4,7 +4,8 @@ import { schemeCategory10 } from 'd3-scale-chromatic';
 import { ChartAndMetricsWrapper, ChartWrapper, TitleWrapper, Wrapper } from '../../charts/common';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { WasteWaterTimeseriesSummaryDataset } from './types';
-import { formatDate, getTicks } from './WasteWaterTimeChart';
+import { formatDate } from './WasteWaterTimeChart';
+import { getTicks } from '../../helpers/ticks';
 
 interface Props {
   wasteWaterPlants: {
