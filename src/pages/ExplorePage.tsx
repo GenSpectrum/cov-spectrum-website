@@ -42,49 +42,39 @@ export const ExplorePage = ({
   sequencingIntensityEntrySet,
 }: Props) => {
   return (
-    <ScrollableTabs
-      tabs={[
-        {
-          key: 'explore',
-          title: 'Explore',
-          content: (
-            <>
-              <NamedSection title=''>
-                <SequencingIntensityPlotWidget.ShareableComponent
-                  title='Sequencing Intensity'
-                  sequencingIntensityEntrySet={sequencingIntensityEntrySet}
-                  height={300}
-                  widgetLayout={NamedSection}
-                />
-              </NamedSection>
-              <NamedSection title='Known variants'>
-                <KnownVariantsList
-                  country={country}
-                  samplingStrategy={samplingStrategy}
-                  onVariantSelect={onVariantSelect}
-                  selection={selection}
-                  wholeSampleSetState={wholeSampleSetState}
-                />
-              </NamedSection>
-              <NamedSection title='Search by mutations'>
-                <MutationLookup onVariantSelect={onVariantSelect} />
-              </NamedSection>
-              {!isRegion(country) && (
-                <NamedSection title='Interesting mutations'>
-                  <NewVariantTable
-                    country={country}
-                    onVariantSelect={variant => onVariantSelect({ variant, matchPercentage: 1 })}
-                  />
-                </NamedSection>
-              )}
-              <Footer>
-                Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
-                <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
-              </Footer>
-            </>
-          ),
-        },
-      ]}
-    />
+    <>
+      <NamedSection title=''>
+        <SequencingIntensityPlotWidget.ShareableComponent
+          title='Sequencing Intensity'
+          sequencingIntensityEntrySet={sequencingIntensityEntrySet}
+          height={300}
+          widgetLayout={NamedSection}
+        />
+      </NamedSection>
+      <NamedSection title='Known variants'>
+        <KnownVariantsList
+          country={country}
+          samplingStrategy={samplingStrategy}
+          onVariantSelect={onVariantSelect}
+          selection={selection}
+          wholeSampleSetState={wholeSampleSetState}
+        />
+      </NamedSection>
+      <NamedSection title='Search by mutations'>
+        <MutationLookup onVariantSelect={onVariantSelect} />
+      </NamedSection>
+      {!isRegion(country) && (
+        <NamedSection title='Interesting mutations'>
+          <NewVariantTable
+            country={country}
+            onVariantSelect={variant => onVariantSelect({ variant, matchPercentage: 1 })}
+          />
+        </NamedSection>
+      )}
+      <Footer>
+        Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
+        <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
+      </Footer>
+    </>
   );
 };
