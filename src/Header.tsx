@@ -12,15 +12,15 @@ import { AiOutlineGithub } from 'react-icons/ai';
 const Wrapper = styled.div`
   flex-flow: column;
   height: 100%;
-`
+`;
 
 const TopNavbar = styled(Navbar)`
   height: 50%;
-`
+`;
 
 const BottomNavbar = styled(Navbar)`
   height: 50%;
-`
+`;
 
 const Logo = (
   <div>
@@ -57,14 +57,6 @@ export const Header = () => {
         </div>
         <Navbar.Toggle aria-controls='basic-navbar-nav' />
         <Navbar.Collapse>
-          <Nav className='ml-4 mr-auto'>
-            <Nav.Link href='/acknowledgements' style={{ textDecoration: 'underline' }}>
-              Acknowledgements
-            </Nav.Link>
-            <Nav.Link href='/about' style={{ textDecoration: 'underline' }}>
-              About
-            </Nav.Link>
-          </Nav>
           <Nav>
             {loggedIn ? (
               <>
@@ -106,10 +98,20 @@ export const Header = () => {
           </Nav>
         </Navbar.Collapse>
       </TopNavbar>
-      <BottomNavbar bg='light' expand='md'>
+      <BottomNavbar bg='light' expand='md' className='text-xs flex flex-row'>
         <HeaderCountrySelect />
-        <HeaderSamplingStrategySelect />
         <HeaderDateRangeSelect />
+        <Navbar.Collapse>
+          <HeaderSamplingStrategySelect />
+          <Nav className='ml-4 mr-auto'>
+            <Nav.Link href='/acknowledgements' style={{ textDecoration: 'underline' }}>
+              Acknowledgements
+            </Nav.Link>
+            <Nav.Link href='/about' style={{ textDecoration: 'underline' }}>
+              About
+            </Nav.Link>
+          </Nav>
+        </Navbar.Collapse>
       </BottomNavbar>
     </Wrapper>
   );

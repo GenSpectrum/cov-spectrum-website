@@ -56,7 +56,7 @@ export const PackedGrid = ({ children, maxColumns }: Props) => {
   });
 
   return (
-    <div ref={ref}>
+    <div ref={ref} >
       {placedGridCells.map((row, i) => (
         <Row key={i}>
           {row.map((cell, j) => (
