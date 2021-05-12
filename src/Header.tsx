@@ -46,59 +46,63 @@ export const Header = () => {
   }
 
   return (
-    <Wrapper>
-      <TopNavbar bg='light' expand='md'>
-        {Logo}
-        <div className='text-xs flex flex-row'>
-          <div className='self-end mr-1'>Enabled by data from </div>
-          <ExternalLink url='https://gisaid.org/'>
-            <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />
-          </ExternalLink>
+    <Wrapper className="bg-white">
+      <TopNavbar bg='light' expand='md' className='bg-white flex items-center justify-between h-16'>
+        <div className="w-full justify-between flex items-center">
+          {Logo}
+          <div className='text-xs flex flex-row'>
+            <div className='self-end mr-1'>Enabled by data from </div>
+            <ExternalLink url='https://gisaid.org/'>
+              <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />
+            </ExternalLink>
+          </div>
         </div>
-        <Navbar.Toggle aria-controls='basic-navbar-nav' />
-        <Navbar.Collapse>
-          <Nav>
-            {loggedIn ? (
-              <>
-                <Navbar.Text>Signed in as {username}</Navbar.Text>
-                <Nav.Link>
-                  <button
-                    onClick={() => {
-                      AccountService.logout();
-                      window.location.href = '/login?left';
-                    }}
-                    style={{
-                      background: 'none',
-                      outline: 'none',
-                      border: 'none',
-                    }}
-                  >
-                    Logout
-                  </button>
-                </Nav.Link>
-              </>
-            ) : (
-              <Nav.Link href='/login'>Login</Nav.Link>
-            )}
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                cursor: 'pointer',
-                padding: '0 0.5rem 0 0.5rem',
-              }}
-              onClick={() => window.open('https://github.com/cevo-public/cov-spectrum-website', '_blank')}
-            >
-              <AiOutlineGithub
-                className='fill-current hover:text-gray-500 rounded-xl filter shadow-xl hover:bg-gray-200'
-                size={'1.5em'}
-              />
-            </div>
-          </Nav>
-        </Navbar.Collapse>
+        <div>
+          <Navbar.Toggle aria-controls='basic-navbar-nav' />
+          <Navbar.Collapse>
+            <Nav>
+              {loggedIn ? (
+                <>
+                  <Navbar.Text>Signed in as {username}</Navbar.Text>
+                  <Nav.Link>
+                    <button
+                      onClick={() => {
+                        AccountService.logout();
+                        window.location.href = '/login?left';
+                      }}
+                      style={{
+                        background: 'none',
+                        outline: 'none',
+                        border: 'none',
+                      }}
+                    >
+                      Logout
+                    </button>
+                  </Nav.Link>
+                </>
+              ) : (
+                <Nav.Link href='/login'>Login</Nav.Link>
+              )}
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  padding: '0 0.5rem 0 0.5rem',
+                }}
+                onClick={() => window.open('https://github.com/cevo-public/cov-spectrum-website', '_blank')}
+              >
+                <AiOutlineGithub
+                  className='fill-current hover:text-gray-500 rounded-xl filter shadow-xl '
+                  size={'1.5em'}
+                />
+              </div>
+            </Nav>
+          </Navbar.Collapse>
+        </div>
       </TopNavbar>
-      <BottomNavbar bg='light' expand='md' className='text-xs flex flex-row'>
+      <BottomNavbar bg='light' expand='md' className='bg-white text-xs flex flex-row'>
         <HeaderCountrySelect />
         <HeaderDateRangeSelect />
         <Navbar.Collapse>
