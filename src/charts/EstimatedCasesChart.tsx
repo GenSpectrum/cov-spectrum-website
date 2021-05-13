@@ -3,8 +3,8 @@ import { UnifiedDay } from '../helpers/date-cache';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from './common';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import Metric, { MetricsSpacing, MetricsWrapper } from './Metrics';
-import calculateWilsonInterval from 'wilson-interval';
 import { getTicks } from '../helpers/ticks';
+import { calculateWilsonInterval } from '../helpers/wilson-interval';
 
 export type EstimatedCasesTimeEntry = {
   date: UnifiedDay;
@@ -81,18 +81,12 @@ export const EstimatedCasesChart = React.memo(
         if (sequenced === 0) {
           continue;
         }
-        const wilsonInterval = calculateWilsonInterval(variantCount, sequenced, false, {
-          confidence: 0.95,
-          precision: 10,
-        });
+        const wilsonInterval = calculateWilsonInterval(variantCount, sequenced);
         // Math.max(..., 0) compensates for numerical inaccuracies which can lead to negative values.
         plotData.push({
           date: date.dayjs.toDate(),
           estimatedCases: Math.max(variantCount / sequenced, 0) * cases,
-          estimatedCasesCI: [
-            Math.max(+wilsonInterval.low, 0) * cases,
-            Math.max(+wilsonInterval.high, 0) * cases,
-          ],
+          estimatedCasesCI: [Math.max(wilsonInterval[0], 0) * cases, Math.max(wilsonInterval[1], 0) * cases],
         });
       }
       const ticks = getTicks(
