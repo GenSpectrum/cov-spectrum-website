@@ -44,13 +44,13 @@ export const LoginWrapper = styled.div`
   overflow-y: auto;
 `;
 
-export const ExploreWrapper = styled.div`
+export const SplitExploreWrapper = styled.div`
   grid-area: left;
   overflow: hidden;
   border-right: 1px solid #dee2e6;
 `;
 
-export const FocusWrapper = styled.div`
+export const SplitFocusWrapper = styled.div`
   ${scrollableContainerStyle}
   grid-area: right;
 `;

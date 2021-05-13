@@ -3,7 +3,12 @@ import { AsyncState, PromiseFn, useAsync } from 'react-async';
 import { Alert } from 'react-bootstrap';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
 import Loader from '../components/Loader';
-import { ExploreWrapper, FocusWrapper, RawFullContentWrapper } from '../helpers/app-layout';
+import {
+  SplitExploreWrapper,
+  SplitFocusWrapper,
+  RawFullContentWrapper,
+  ScrollableFullContentWrapper,
+} from '../helpers/app-layout';
 import { getFocusPageLink, useExploreUrl } from '../helpers/explore-url';
 import { VariantSelector } from '../helpers/sample-selector';
 import { SampleSetWithSelector } from '../helpers/sample-set';
@@ -166,20 +171,20 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
             <RawFullContentWrapper>{explorePage}</RawFullContentWrapper>
           ) : (
             <>
-              <ExploreWrapper>{explorePage}</ExploreWrapper>
-              <FocusWrapper>
+              <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
+              <SplitFocusWrapper>
                 <FocusEmptyPage />
-              </FocusWrapper>
+              </SplitFocusWrapper>
             </>
           )}
         </Route>
         <Route exact path={`${path}/variants/:variantSelector`}>
           {isSmallScreen ? (
-            <RawFullContentWrapper>{focusContent}</RawFullContentWrapper>
+            <ScrollableFullContentWrapper>{focusContent}</ScrollableFullContentWrapper>
           ) : (
             <>
-              <ExploreWrapper>{explorePage}</ExploreWrapper>
-              <FocusWrapper>{focusContent}</FocusWrapper>
+              <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
+              <SplitFocusWrapper>{focusContent}</SplitFocusWrapper>
             </>
           )}
         </Route>
