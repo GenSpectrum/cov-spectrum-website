@@ -7,6 +7,38 @@ import { AccountService } from './services/AccountService';
 import { HeaderDateRangeSelect } from './components/HeaderDateRangeSelect';
 import { ExternalLink } from './components/ExternalLink';
 import { AiOutlineGithub } from 'react-icons/ai';
+import styled, { createGlobalStyle } from 'styled-components';
+import { headerHeightPx } from './helpers/app-layout';
+
+// HACK There is no way to style Navbar.Collapse without using class names
+const navbarCollapseClassName = 'styled-navbar-collapse';
+const NavbarCollapseGlobalStyle = createGlobalStyle`
+  @media not screen and (min-width: 768px) {
+    .${navbarCollapseClassName} {
+      position: fixed;
+      top: ${headerHeightPx}px;
+      left: 0;
+      width: 100%;
+      max-height: calc(100vh - ${headerHeightPx}px);
+      overflow: hidden auto;
+      z-index: 30;
+      background: var(--light);
+      padding: 10px 30px;
+      border-bottom: 1px solid #dee2e6;
+
+      form {
+        margin: 5px 0;
+      }
+    }
+  }
+`;
+
+const LeftNavGroup = styled.div`
+  @media (min-width: 768px) {
+    margin-left: 1.5rem;
+    margin-right: auto;
+  }
+`;
 
 export const Header = () => {
   const loggedIn = AccountService.isLoggedIn();
@@ -35,8 +67,9 @@ export const Header = () => {
         </ExternalLink>
       </div>
       <Navbar.Toggle aria-controls='basic-navbar-nav' />
-      <Navbar.Collapse>
-        <Nav className='ml-4 mr-auto'>
+      <NavbarCollapseGlobalStyle />
+      <Navbar.Collapse className={navbarCollapseClassName}>
+        <Nav as={LeftNavGroup}>
           <HeaderCountrySelect />
           <HeaderSamplingStrategySelect />
           <HeaderDateRangeSelect />

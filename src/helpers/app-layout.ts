@@ -1,11 +1,13 @@
 import styled, { css } from 'styled-components';
 import { scrollableContainerStyle } from './scrollable-container';
 
+export const headerHeightPx = 60;
+
 export const OuterWrapper = styled.div`
   display: grid;
   height: 100vh;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 60px auto;
+  grid-template-rows: ${headerHeightPx}px auto;
   grid-template-areas:
     'header header'
     'left right';
