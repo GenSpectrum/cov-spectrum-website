@@ -3,7 +3,12 @@ import { AsyncState, PromiseFn, useAsync } from 'react-async';
 import { Alert } from 'react-bootstrap';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
 import Loader from '../components/Loader';
-import { ExploreWrapper, FocusWrapper, RawFullContentWrapper } from '../helpers/app-layout';
+import {
+  SplitExploreWrapper,
+  SplitFocusWrapper,
+  RawFullContentWrapper,
+  ScrollableFullContentWrapper,
+} from '../helpers/app-layout';
 import { getFocusPageLink, useExploreUrl } from '../helpers/explore-url';
 import { VariantSelector } from '../helpers/sample-selector';
 import { SampleSetWithSelector } from '../helpers/sample-set';
@@ -103,7 +108,11 @@ function useSequencingIntensityEntrySet({ country }: { country: string | undefin
   return useAsync(promiseFn);
 }
 
-export const ExploreFocusSplit = () => {
+interface Props {
+  isSmallScreen: boolean;
+}
+
+export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   const { country, samplingStrategy, dateRange, variantSelector, focusKey } = useExploreUrl() || {};
 
   const variantSampleSetState = useVariantSampleSet({
@@ -140,19 +149,16 @@ export const ExploreFocusSplit = () => {
     explorePage = <Alert variant='danger'>Failed to load data</Alert>;
   } else {
     explorePage = (
-      <ExploreWrapper>
-        <ExplorePage
-          country={country}
-          samplingStrategy={samplingStrategy}
-          dateRange={dateRange}
-          onVariantSelect={variantSelector =>
-            history.push(getFocusPageLink({ variantSelector, country, samplingStrategy, dateRange }))
-          }
-          selection={variantSelector}
-          wholeSampleSetState={wholeSampleSetState}
-          sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
-        />
-      </ExploreWrapper>
+      <ExplorePage
+        country={country}
+        samplingStrategy={samplingStrategy}
+        onVariantSelect={variantSelector =>
+          history.push(getFocusPageLink({ variantSelector, country, samplingStrategy, dateRange }))
+        }
+        selection={variantSelector}
+        wholeSampleSetState={wholeSampleSetState}
+        sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
+      />
     );
   }
 
@@ -160,14 +166,26 @@ export const ExploreFocusSplit = () => {
     <>
       <Switch>
         <Route exact path={`${path}`}>
-          {explorePage}
-          <FocusWrapper>
-            <FocusEmptyPage />
-          </FocusWrapper>
+          {isSmallScreen ? (
+            <ScrollableFullContentWrapper>{explorePage}</ScrollableFullContentWrapper>
+          ) : (
+            <>
+              <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
+              <SplitFocusWrapper>
+                <FocusEmptyPage />
+              </SplitFocusWrapper>
+            </>
+          )}
         </Route>
         <Route exact path={`${path}/variants/:variantSelector`}>
-          {explorePage}
-          <FocusWrapper>{focusContent}</FocusWrapper>
+          {isSmallScreen ? (
+            <ScrollableFullContentWrapper>{focusContent}</ScrollableFullContentWrapper>
+          ) : (
+            <>
+              <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
+              <SplitFocusWrapper>{focusContent}</SplitFocusWrapper>
+            </>
+          )}
         </Route>
         <Route path={`${path}/variants/:variantSelector`}>
           <RawFullContentWrapper>{deepFocusContent}</RawFullContentWrapper>
