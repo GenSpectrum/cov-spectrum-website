@@ -13,10 +13,14 @@ import { GlobalSamplePage } from './pages/GlobalSamplePage';
 import { LoginPage } from './pages/LoginPage';
 import { SamplingStrategy } from './services/api';
 import { AcknowledgementsPage } from './pages/AcknowledgementsPage';
+import { useResizeDetector } from 'react-resize-detector';
 
 export const App = () => {
+  const { width, ref } = useResizeDetector<HTMLDivElement>();
+  const isSmallScreen = width !== undefined && width <= 1000;
+
   return (
-    <OuterWrapper>
+    <OuterWrapper ref={ref}>
       <HeaderWrapper>
         <Header />
       </HeaderWrapper>
@@ -35,7 +39,7 @@ export const App = () => {
           </LoginWrapper>
         </Route>
         <Route path='/explore/:country/:samplingStrategy/:dateRange'>
-          <ExploreFocusSplit />
+          <ExploreFocusSplit isSmallScreen={isSmallScreen} />
         </Route>
         <Route path='/global-samples'>
           <ScrollableFullContentWrapper>

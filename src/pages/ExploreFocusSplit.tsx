@@ -103,7 +103,11 @@ function useSequencingIntensityEntrySet({ country }: { country: string | undefin
   return useAsync(promiseFn);
 }
 
-export const ExploreFocusSplit = () => {
+interface Props {
+  isSmallScreen: boolean;
+}
+
+export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   const { country, samplingStrategy, dateRange, variantSelector, focusKey } = useExploreUrl() || {};
 
   const variantSampleSetState = useVariantSampleSet({
@@ -140,19 +144,17 @@ export const ExploreFocusSplit = () => {
     explorePage = <Alert variant='danger'>Failed to load data</Alert>;
   } else {
     explorePage = (
-      <ExploreWrapper>
-        <ExplorePage
-          country={country}
-          samplingStrategy={samplingStrategy}
-          dateRange={dateRange}
-          onVariantSelect={variantSelector =>
-            history.push(getFocusPageLink({ variantSelector, country, samplingStrategy, dateRange }))
-          }
-          selection={variantSelector}
-          wholeSampleSetState={wholeSampleSetState}
-          sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
-        />
-      </ExploreWrapper>
+      <ExplorePage
+        country={country}
+        samplingStrategy={samplingStrategy}
+        dateRange={dateRange}
+        onVariantSelect={variantSelector =>
+          history.push(getFocusPageLink({ variantSelector, country, samplingStrategy, dateRange }))
+        }
+        selection={variantSelector}
+        wholeSampleSetState={wholeSampleSetState}
+        sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
+      />
     );
   }
 
@@ -160,14 +162,26 @@ export const ExploreFocusSplit = () => {
     <>
       <Switch>
         <Route exact path={`${path}`}>
-          {explorePage}
-          <FocusWrapper>
-            <FocusEmptyPage />
-          </FocusWrapper>
+          {isSmallScreen ? (
+            <RawFullContentWrapper>{explorePage}</RawFullContentWrapper>
+          ) : (
+            <>
+              <ExploreWrapper>{explorePage}</ExploreWrapper>
+              <FocusWrapper>
+                <FocusEmptyPage />
+              </FocusWrapper>
+            </>
+          )}
         </Route>
         <Route exact path={`${path}/variants/:variantSelector`}>
-          {explorePage}
-          <FocusWrapper>{focusContent}</FocusWrapper>
+          {isSmallScreen ? (
+            <RawFullContentWrapper>{focusContent}</RawFullContentWrapper>
+          ) : (
+            <>
+              <ExploreWrapper>{explorePage}</ExploreWrapper>
+              <FocusWrapper>{focusContent}</FocusWrapper>
+            </>
+          )}
         </Route>
         <Route path={`${path}/variants/:variantSelector`}>
           <RawFullContentWrapper>{deepFocusContent}</RawFullContentWrapper>
