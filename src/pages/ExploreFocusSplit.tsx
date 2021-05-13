@@ -152,7 +152,6 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
       <ExplorePage
         country={country}
         samplingStrategy={samplingStrategy}
-        dateRange={dateRange}
         onVariantSelect={variantSelector =>
           history.push(getFocusPageLink({ variantSelector, country, samplingStrategy, dateRange }))
         }
@@ -168,7 +167,7 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
       <Switch>
         <Route exact path={`${path}`}>
           {isSmallScreen ? (
-            <RawFullContentWrapper>{explorePage}</RawFullContentWrapper>
+            <ScrollableFullContentWrapper>{explorePage}</ScrollableFullContentWrapper>
           ) : (
             <>
               <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>

@@ -45,8 +45,8 @@ export const LoginWrapper = styled.div`
 `;
 
 export const SplitExploreWrapper = styled.div`
+  ${scrollableContainerStyle}
   grid-area: left;
-  overflow: hidden;
   border-right: 1px solid #dee2e6;
 `;
 
