@@ -40,6 +40,12 @@ const LeftNavGroup = styled.div`
   }
 `;
 
+const GisaidText = styled.span`
+  @media (max-width: 450px) {
+    display: none;
+  }
+`;
+
 export const Header = () => {
   const loggedIn = AccountService.isLoggedIn();
   let username = null;
@@ -61,7 +67,7 @@ export const Header = () => {
         <span style={{ color: '#F18805', fontWeight: 'bold' }}>M</span>
       </Navbar.Brand>
       <div style={{ fontSize: 'small' }}>
-        Enabled by data from{' '}
+        <GisaidText>Enabled by data from </GisaidText>
         <ExternalLink url='https://gisaid.org/'>
           <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />
         </ExternalLink>
