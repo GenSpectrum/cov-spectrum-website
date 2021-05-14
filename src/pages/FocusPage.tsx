@@ -214,7 +214,10 @@ export const FocusPage = ({
         )}
         {variant.name && variant.mutations.length === 0 && (
           <GridCell minWidth={800}>
-            <ArticleListWidget.ShareableComponent title='Publications' pangolinLineage={variant.name} />
+            <ArticleListWidget.ShareableComponent
+              title='Publications and Pre-Prints'
+              pangolinLineage={variant.name}
+            />
           </GridCell>
         )}
       </PackedGrid>
