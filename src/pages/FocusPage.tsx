@@ -107,7 +107,7 @@ export const FocusPage = ({
   }
 
   return (
-    <>
+    <div className="overflow-y-hidden">
       {header}
       {variant.mutations.length > 0 && (
         <p style={{ marginBottom: '30px' }}>
@@ -232,6 +232,6 @@ export const FocusPage = ({
           </GridCell>
         )}
       </PackedGrid>
-    </>
+    </div>
   );
 };

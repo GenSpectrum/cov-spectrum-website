@@ -10,30 +10,6 @@ import { AiOutlineGithub } from 'react-icons/ai';
 import styled, { createGlobalStyle } from 'styled-components';
 import { headerHeightPx } from './helpers/app-layout';
 
-// HACK There is no way to style Navbar.Collapse without using class names
-const navbarCollapseClassName = 'styled-navbar-collapse';
-const NavbarCollapseGlobalStyle = createGlobalStyle`
-  @media not screen and (min-width: 768px) {
-    .${navbarCollapseClassName} {
-      position: fixed;
-      top: ${headerHeightPx}px;
-      left: 0;
-      width: 100%;
-      max-height: calc(100vh - ${headerHeightPx}px);
-      overflow: hidden auto;
-      z-index: 30;
-      background: var(--light);
-      padding: 10px 30px;
-      border-bottom: 1px solid #dee2e6;
-
-      form {
-        margin: 5px 0;
-      }
-    }
-  }
-`;
-
-
 const Logo = (
   <div>
     <Navbar.Brand as={Link} to='/'>
@@ -50,7 +26,7 @@ const Logo = (
   </div>
 );
 
- const Header = () => {
+const Header = () => {
   const loggedIn = AccountService.isLoggedIn();
   let username = null;
   if (loggedIn) {
@@ -59,10 +35,10 @@ const Logo = (
 
   return (
     <>
-      <div className='shadow'>
-        <div id='nav-top'>
+      <div className='border-b-2 z-30'>
+        <div id='nav-top shaddow-sm'>
           <nav className='bg-blue '>
-            <div className='max-w-9xl mx-auto px-8'>
+            <div className='max-w-9xl mx-auto px-4'>
               <div className='flex items-center justify-between h-8'>
                 <div className='w-full justify-between flex items-center'>
                   <div id='logo-and-gsid' className='flex flex-row items-center justify-center'>
@@ -128,48 +104,53 @@ const Logo = (
                 </div>
               </div>
             </div>
-            <div className='md:hidden'>
-              <div className='px-2 pt-2 pb-3 space-y-1 sm:px-3'>
-                <a
-                  className='text-gray-300 hover:text-gray-800 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium'
-                  href='/#'
-                >
-                  Home
-                </a>
-                <a
-                  className='text-gray-800 dark:text-white block px-3 py-2 rounded-md text-base font-medium'
-                  href='/#'
-                >
-                  Gallery
-                </a>
-                <a
-                  className='text-gray-300 hover:text-gray-800 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium'
-                  href='/#'
-                >
-                  Content
-                </a>
-                <a
-                  className='text-gray-300 hover:text-gray-800 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium'
-                  href='/#'
-                >
-                  Contact
-                </a>
-              </div>
-            </div>
           </nav>
         </div>
         <div id='navbar-bottom'>
           <nav className='bg-blue '>
-            <div className='max-w-9xl mx-auto px-8'>
+            <div className='max-w-9xl mx-auto px-4'>
               <div className='flex items-center justify-between h-12'>
                 <div className='w-full flex items-center z-20'>
                   <HeaderCountrySelect />
                   <HeaderDateRangeSelect />
-                  <HeaderSamplingStrategySelect />
+                  <div className='hidden md:block'>
+                    <HeaderSamplingStrategySelect />
+                  </div>
+                </div>
+                <div className='hidden md:block items-center justify-center'>
+                  <div className='ml-10 flex items-center space-x-4'></div>
                 </div>
               </div>
             </div>
           </nav>
+        </div>
+      </div>
+      <div className='md:hidden z-50'>
+        <div className='px-2 pt-2 pb-3 space-y-1 sm:px-3'>
+          <a
+            className='text-gray-300 hover:text-gray-800 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium'
+            href='/#'
+          >
+            Home
+          </a>
+          <a
+            className='text-gray-800 dark:text-white block px-3 py-2 rounded-md text-base font-medium'
+            href='/#'
+          >
+            Gallery
+          </a>
+          <a
+            className='text-gray-300 hover:text-gray-800 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium'
+            href='/#'
+          >
+            Content
+          </a>
+          <a
+            className='text-gray-300 hover:text-gray-800 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium'
+            href='/#'
+          >
+            Contact
+          </a>
         </div>
       </div>
     </>
