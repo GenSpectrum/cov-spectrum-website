@@ -25,6 +25,7 @@ import { WasteWaterDataset } from '../models/wasteWater/types';
 import { getData } from '../models/wasteWater/loading';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 import { EstimatedCasesPlotWidget } from '../widgets/EstimatedCasesPlot';
+import { ArticleListWidget } from '../widgets/ArticleList';
 
 interface Props {
   country: Country;
@@ -209,6 +210,11 @@ export const FocusPage = ({
               variantInternationalSampleSetState={variantInternationalSampleSetState}
               wholeInternationalSampleSetState={wholeInternationalSampleSetState}
             />
+          </GridCell>
+        )}
+        {variant.name && variant.mutations.length === 0 && (
+          <GridCell minWidth={800}>
+            <ArticleListWidget.ShareableComponent title='Publications' pangolinLineage={variant.name} />
           </GridCell>
         )}
       </PackedGrid>
