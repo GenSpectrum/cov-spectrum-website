@@ -8,6 +8,10 @@ import Loader from '../components/Loader';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import { ExternalLink } from '../components/ExternalLink';
+import { Pagination } from 'react-bootstrap';
+import { createBootstrapPaginationControl } from '../helpers/bootstrap-pagination';
+
+const ENTRIES_PER_PAGE = 10;
 
 interface Props {
   pangolinLineage: string;
@@ -21,6 +25,7 @@ const InfoText = styled.div`
 const List = styled.div`
   display: flex;
   flex-direction: column;
+  margin-bottom: 10px;
 `;
 
 const Entry = styled.div`
@@ -51,6 +56,7 @@ function formatAuthorList(authors: string[]): string {
 
 export const ArticleList = ({ pangolinLineage }: Props) => {
   const [articles, setArticles] = useState<(Omit<Article, 'date'> & { date: Date })[] | undefined>(undefined);
+  const [page, setPage] = useState<number>(1);
   useEffect(() => {
     let isSubscribed = true;
     const controller = new AbortController();
@@ -76,11 +82,18 @@ export const ArticleList = ({ pangolinLineage }: Props) => {
     return <Loader />;
   }
 
+  const paginationControl = createBootstrapPaginationControl(
+    articles.length,
+    ENTRIES_PER_PAGE,
+    page,
+    setPage
+  );
+
   return (
     <>
       <InfoText>Found {articles.length} articles on medRxiv and bioRxiv</InfoText>
       <List>
-        {articles?.slice(0, 10).map(article => (
+        {articles.slice(ENTRIES_PER_PAGE * (page - 1), ENTRIES_PER_PAGE * page).map(article => (
           <Entry>
             <EntryTitle>
               <ExternalLink url={'https://doi.org/' + (article.published || article.doi)}>
@@ -102,6 +115,7 @@ export const ArticleList = ({ pangolinLineage }: Props) => {
           </Entry>
         ))}
       </List>
+      <Pagination size='sm'>{paginationControl.elements}</Pagination>
     </>
   );
 };
