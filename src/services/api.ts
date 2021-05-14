@@ -17,6 +17,8 @@ import {
   PangolinLineageList,
   PangolinLineageInformationSchema,
   PangolinLineageInformation,
+  Article,
+  ArticleSchema,
 } from './api-types';
 import dayjs from 'dayjs';
 import {
@@ -415,3 +417,15 @@ export const getPlaces = async (): Promise<Place[]> => {
 };
 
 export const fetchTimeDistributionData = () => {};
+
+export async function getArticles(
+  { pangolinLineage }: { pangolinLineage: string },
+  signal?: AbortSignal
+): Promise<Article[]> {
+  const url = '/resource/article?pangolinLineage=' + pangolinLineage;
+  const res = await get(url, signal);
+  if (!res.ok) {
+    throw new Error('server responded with non-200 status code');
+  }
+  return zod.array(ArticleSchema).parse(await res.json());
+}
