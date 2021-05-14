@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { Header } from './Header';
+import  Header  from './Header';
 import {
   HeaderWrapper,
   LoginWrapper,
