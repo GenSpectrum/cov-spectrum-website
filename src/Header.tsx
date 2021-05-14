@@ -33,47 +33,6 @@ const NavbarCollapseGlobalStyle = createGlobalStyle`
   }
 `;
 
-const LeftNavGroup = styled.div`
-  @media (min-width: 768px) {
-    margin-left: 1.5rem;
-    margin-right: auto;
-  }
-`;
-
-const BrandGisaidWrapper = styled.div`
-  display: flex;
-  align-items: center;
-
-  @media (max-width: 1550px) {
-    height: ${headerHeightPx - 1}px;
-    margin-top: calc(-0.5rem - 3px);
-    margin-bottom: -0.5rem;
-    flex-direction: column;
-    align-items: initial;
-  }
-`;
-
-const GisaidWrapper = styled.div`
-  font-size: small;
-
-  @media (max-width: 1550px) {
-    margin-top: -7px;
-    white-space: nowrap;
-  }
-`;
-
-const Wrapper = styled.div`
-  flex-flow: column;
-  height: 100%;
-`;
-
-const TopNavbar = styled(Navbar)`
-  height: 50%;
-`;
-
-const BottomNavbar = styled(Navbar)`
-  height: 50%;
-`;
 
 const Logo = (
   <div>

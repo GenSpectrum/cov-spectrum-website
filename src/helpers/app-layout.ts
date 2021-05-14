@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { scrollableContainerStyle } from './scrollable-container';
 
-export const headerHeightPx = 60;
+export const headerHeightPx = 80;
 
 export const OuterWrapper = styled.div`
   display: grid;
@@ -19,7 +19,7 @@ export const OuterWrapper = styled.div`
 
 export const HeaderWrapper = styled.div`
   grid-area: header;
-  border-bottom: 1px solid #dee2e6;
+  /* border-bottom: 1px solid #dee2e6; */
 `;
 
 export const fullGridStyle = css`
