@@ -6,6 +6,7 @@ import { SequencingIntensityPlotWidget } from './SequencingIntensityPlot';
 import { WasteWaterTimeWidget } from '../models/wasteWater/WasteWaterTimeWidget';
 import { WasteWaterHeatMapWidget } from '../models/wasteWater/WasteWaterHeatMapWidget';
 import { EstimatedCasesPlotWidget } from './EstimatedCasesPlot';
+import { ArticleListWidget } from './ArticleList';
 
 export const allWidgets = [
   VariantAgeDistributionPlotWidget,
@@ -16,4 +17,5 @@ export const allWidgets = [
   WasteWaterTimeWidget,
   WasteWaterHeatMapWidget,
   EstimatedCasesPlotWidget,
+  ArticleListWidget,
 ];

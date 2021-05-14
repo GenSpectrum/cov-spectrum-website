@@ -168,6 +168,16 @@ export const PangolinLineageInformationSchema = zod.object({
   ),
 });
 
+export const ArticleSchema = zod.object({
+  doi: zod.string(),
+  title: zod.string(),
+  authors: zod.array(zod.string()),
+  date: DateStringSchema,
+  category: zod.string().nullable(),
+  published: zod.string().nullable(),
+  server: zod.string(),
+});
+
 // TypeScript types from schemas
 export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
 export type CountAndProportionWithCI = zod.infer<typeof CountAndProportionWithCISchema>;
@@ -183,5 +193,6 @@ export type InterestingVariantResult = zod.infer<typeof InterestingVariantResult
 export type LoginResponse = zod.infer<typeof LoginResponseSchema>;
 export type SequencingIntensityEntry = zod.infer<typeof SequencingIntensityEntrySchema>;
 export type PangolinLineageInformation = zod.infer<typeof PangolinLineageInformationSchema>;
+export type Article = zod.infer<typeof ArticleSchema>;
 
 export type Place = Country | Region;

@@ -1,24 +1,21 @@
 import React from 'react';
 import { AsyncState } from 'react-async';
+import styled from 'styled-components';
+import { ExternalLink } from '../components/ExternalLink';
 import { KnownVariantsList } from '../components/KnownVariantsList/KnownVariantsList';
 import { MutationLookup } from '../components/MutationLookup';
 import { NamedSection } from '../components/NamedSection';
 import { NewVariantTable } from '../components/NewVariantTable';
-import { ScrollableTabs } from '../components/ScrollableTabs';
 import { VariantSelector } from '../helpers/sample-selector';
 import { SampleSetWithSelector } from '../helpers/sample-set';
-import { DateRange, SamplingStrategy } from '../services/api';
-import { Country } from '../services/api-types';
-import { isRegion } from '../services/api';
-import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
-import styled from 'styled-components';
-import { ExternalLink } from '../components/ExternalLink';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
+import { isRegion, SamplingStrategy } from '../services/api';
+import { Country } from '../services/api-types';
+import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
 
 interface Props {
   country: Country;
   samplingStrategy: SamplingStrategy;
-  dateRange: DateRange;
   onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
   wholeSampleSetState: AsyncState<SampleSetWithSelector>;
@@ -35,22 +32,19 @@ const Footer = styled.footer`
 export const ExplorePage = ({
   country,
   samplingStrategy,
-  dateRange,
   onVariantSelect,
   selection,
   wholeSampleSetState,
   sequencingIntensityEntrySet,
 }: Props) => {
   return (
-    <div className="p-2">
-      <NamedSection title=''>
-        <SequencingIntensityPlotWidget.ShareableComponent
-          title='Sequencing Intensity'
-          sequencingIntensityEntrySet={sequencingIntensityEntrySet}
-          height={300}
-          widgetLayout={NamedSection}
-        />
-      </NamedSection>
+    <>
+      <SequencingIntensityPlotWidget.ShareableComponent
+        title='Sequencing Intensity'
+        sequencingIntensityEntrySet={sequencingIntensityEntrySet}
+        height={300}
+        widgetLayout={NamedSection}
+      />
       <NamedSection title='Known variants'>
         <KnownVariantsList
           country={country}
@@ -75,6 +69,6 @@ export const ExplorePage = ({
         Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
         <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
       </Footer>
-    </div>
+    </>
   );
 };

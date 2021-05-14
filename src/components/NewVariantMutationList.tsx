@@ -2,18 +2,11 @@ import React, { useState } from 'react';
 import { sortListByMutation } from '../helpers/mutation';
 import styled from 'styled-components';
 import { UNIQUENESS_SCORE_IMPORTANCE_THRESHOLD } from './NewVariantTable';
+import { ShowMoreOrLessButton } from './ExpandableTextBox';
 
 interface Props {
   mutations: Array<{ mutation: string; uniquenessScore: number }>;
 }
-
-const ShowMoreOrLessButton = styled.button`
-  background: none;
-  border: none;
-  outline: none;
-  font-size: small;
-  margin-left: 5px;
-`;
 
 const ImportantMutation = styled.span`
   font-weight: bold;

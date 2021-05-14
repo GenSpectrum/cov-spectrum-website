@@ -45,7 +45,7 @@ export const Chen2021FitnessPreview = ({
         <MetricsWrapper>
           <MetricsSpacing />
           <Metric
-            value={(modelData.params.fd.value * 100).toFixed(2)}
+            value={(modelData.params.fd.value * 100).toFixed(0)}
             title={'Transm. adv.'}
             helpText={
               'The estimated transmission advantage under a discrete model assuming a generation time of 4.8 days.'

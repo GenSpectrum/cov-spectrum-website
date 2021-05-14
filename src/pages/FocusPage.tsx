@@ -25,6 +25,7 @@ import { WasteWaterDataset } from '../models/wasteWater/types';
 import { getData } from '../models/wasteWater/loading';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 import { EstimatedCasesPlotWidget } from '../widgets/EstimatedCasesPlot';
+import { ArticleListWidget } from '../widgets/ArticleList';
 
 interface Props {
   country: Country;
@@ -164,7 +165,18 @@ export const FocusPage = ({
         )}
         {!isRegion(country) && (
           <GridCell minWidth={600}>
-            <NamedCard title='Transmission advantage estimation' toolbar={deepFocusButtons.chen2021Fitness}>
+            <NamedCard
+              title='Estimation of the current advantage'
+              toolbar={deepFocusButtons.chen2021Fitness}
+              description='
+              If variants spread pre-dominantly by local transmission across demographic groups, this
+              estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
+               advantage estimate reflects the advantage compared to co-circulating strains. Thus, as new variants
+                spread, the advantage of the focal variant may decrease. When absolute numbers of a variant are
+                low, the advantage may merely reflect the current importance of introductions from abroad or
+                 the variant spreading in a particular demographic group. In this case, the estimate does not
+                  provide information on the transmission advantage.'
+            >
               <div style={{ height: 300 }}>
                 <Chen2021FitnessPreview {...plotProps} />
               </div>
@@ -208,6 +220,14 @@ export const FocusPage = ({
               country={country}
               variantInternationalSampleSetState={variantInternationalSampleSetState}
               wholeInternationalSampleSetState={wholeInternationalSampleSetState}
+            />
+          </GridCell>
+        )}
+        {variant.name && variant.mutations.length === 0 && (
+          <GridCell minWidth={800}>
+            <ArticleListWidget.ShareableComponent
+              title='Publications and Pre-Prints'
+              pangolinLineage={variant.name}
             />
           </GridCell>
         )}

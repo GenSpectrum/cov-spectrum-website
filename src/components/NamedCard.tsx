@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { ExpandableTextBox } from './ExpandableTextBox';
 
 export enum NamedCardStyle {
   NORMAL,
@@ -12,6 +13,7 @@ interface Props {
   toolbar?: React.ReactChild | React.ReactChild[];
   children: React.ReactChild | React.ReactChild[];
   style?: NamedCardStyle;
+  description?: string;
 }
 
 const Card = styled.div<{ namedCardStyle: NamedCardStyle }>`
@@ -42,11 +44,23 @@ const ToolbarWrapper = styled.div`
   right: 12px;
 `;
 
+const Description = styled.div`
+  padding-left: 10px;
+  padding-right: 10px;
+  margin-bottom: 10px;
+`;
+
 const ContentWrapper = styled.div`
   margin-bottom: 30px;
 `;
 
-export const NamedCard = ({ title, toolbar, children, style = NamedCardStyle.NORMAL }: Props) => {
+export const NamedCard = ({
+  title,
+  toolbar,
+  children,
+  style = NamedCardStyle.NORMAL,
+  description,
+}: Props) => {
   return (
     <Card namedCardStyle={style}>
       <Title>
@@ -64,6 +78,11 @@ export const NamedCard = ({ title, toolbar, children, style = NamedCardStyle.NOR
           </OverlayTrigger>
         )}
       </Title>
+      {description && (
+        <Description>
+          <ExpandableTextBox text={description} maxChars={160} />
+        </Description>
+      )}
       <ToolbarWrapper>{toolbar}</ToolbarWrapper>
       <ContentWrapper>{children}</ContentWrapper>
     </Card>

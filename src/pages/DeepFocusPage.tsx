@@ -77,7 +77,7 @@ const routes: DeepFocusRoute[] = [
   },
   {
     key: 'chen-2021-fitness',
-    title: 'Transmission advantage estimation',
+    title: 'Estimation of the current advantage',
     content: props => (
       <Chen2021FitnessWidget.ShareableComponent
         country={props.country}
@@ -86,7 +86,7 @@ const routes: DeepFocusRoute[] = [
         pangolinLineage={props.variant.name}
         samplingStrategy={toLiteralSamplingStrategy(props.samplingStrategy)}
         widgetLayout={MinimalWidgetLayout}
-        title='Transmission advantage estimation'
+        title='Estimation of the current advantage'
       />
     ),
   },

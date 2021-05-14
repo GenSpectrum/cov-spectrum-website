@@ -2,7 +2,6 @@ import assert from 'assert';
 import { capitalize } from 'lodash';
 import React, { useMemo } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
-import calculateWilsonInterval from 'wilson-interval';
 import {
   GroupedProportionComparisonChart,
   GroupValue,
@@ -18,6 +17,7 @@ import { globalDateCache } from '../helpers/date-cache';
 import { TitleWrapper } from '../charts/common';
 import DownloadWrapper from '../charts/DownloadWrapper';
 import { approximateBinomialRatioConfidence } from '../helpers/binomial-ratio-confidence';
+import { calculateWilsonInterval } from '../helpers/wilson-interval';
 
 export const OMIT_LAST_N_WEEKS = 4;
 
@@ -99,15 +99,11 @@ function processCounts(
     return { count };
   }
 
-  const wilsonInterval = calculateWilsonInterval(count.true, count.true + count.false, false, {
-    confidence: 0.95,
-    precision: 10,
-  });
   return {
     count,
     proportion: {
       value: count.true / (count.true + count.false),
-      confidenceInterval: [+wilsonInterval.low, +wilsonInterval.high],
+      confidenceInterval: calculateWilsonInterval(count.true, count.true + count.false),
     },
   };
 }
