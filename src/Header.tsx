@@ -104,11 +104,19 @@ export const Header = () => {
       <div>
         <nav className='bg-white dark:bg-gray-800  shadow '>
           <div className='max-w-9xl mx-auto px-8'>
-            <div className='flex items-center justify-between h-16'>
+            <div className='flex items-center justify-between h-8'>
               <div className='w-full justify-between flex items-center'>
-                <a className='flex-shrink-0' href='/'>
-                  {Logo}
-                </a>
+                <div id="logo-and-gsid" className="flex flex-row items-center justify-center">
+                  <a className='flex-shrink-0 flex items-center justify-center' href='/'>
+                    {Logo}
+                  </a>
+                  <div className='text-xs flex flex-row'>
+                    <div className='self-end mr-1'>Enabled by data from </div>{' '}
+                    <ExternalLink url='https://gisaid.org/'>
+                      <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />{' '}
+                    </ExternalLink>
+                  </div>
+                </div>
                 <div className='hidden md:block items-center justify-center'>
                   <div className='ml-10 flex items-center space-x-4'>
                     <a
