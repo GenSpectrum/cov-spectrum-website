@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Widget } from './Widget';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import * as zod from 'zod';
@@ -8,7 +8,7 @@ import Loader from '../components/Loader';
 import styled from 'styled-components';
 import dayjs from 'dayjs';
 import { ExternalLink } from '../components/ExternalLink';
-import { Pagination } from 'react-bootstrap';
+import { Pagination, Form } from 'react-bootstrap';
 import { createBootstrapPaginationControl } from '../helpers/bootstrap-pagination';
 
 const ENTRIES_PER_PAGE = 10;
@@ -17,9 +17,19 @@ interface Props {
   pangolinLineage: string;
 }
 
+const TopPanel = styled.div`
+  display: flex;
+  margin-bottom: 10px;
+  align-items: center;
+  justify-content: space-between;
+`;
+
 const InfoText = styled.div`
   font-size: 0.9rem;
-  margin-bottom: 10px;
+`;
+
+const SearchField = styled.div`
+  width: 300px;
 `;
 
 const List = styled.div`
@@ -57,6 +67,8 @@ function formatAuthorList(authors: string[]): string {
 export const ArticleList = ({ pangolinLineage }: Props) => {
   const [articles, setArticles] = useState<(Omit<Article, 'date'> & { date: Date })[] | undefined>(undefined);
   const [page, setPage] = useState<number>(1);
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
   useEffect(() => {
     let isSubscribed = true;
     const controller = new AbortController();
@@ -78,22 +90,51 @@ export const ArticleList = ({ pangolinLineage }: Props) => {
     };
   }, [pangolinLineage]);
 
-  if (!articles) {
+  let filteredArticles = useMemo(() => {
+    if (!articles) {
+      return undefined;
+    }
+    let filtered = articles;
+    if (searchQuery.length > 0) {
+      filtered = filtered.filter(a => {
+        const query = searchQuery.toLowerCase();
+        return (
+          a.title.toLowerCase().includes(query) ||
+          a.abstract?.toLowerCase().includes(query) ||
+          a.authors.some(a => a.toLowerCase().includes(query))
+        );
+      });
+    }
+    return filtered;
+  }, [articles, searchQuery]);
+
+  if (!articles || !filteredArticles) {
     return <Loader />;
   }
 
   const paginationControl = createBootstrapPaginationControl(
-    articles.length,
+    filteredArticles.length,
     ENTRIES_PER_PAGE,
     page,
     setPage
   );
 
+  const paginatedArticles = filteredArticles.slice(ENTRIES_PER_PAGE * (page - 1), ENTRIES_PER_PAGE * page);
+
   return (
     <>
-      <InfoText>Found {articles.length} articles on medRxiv and bioRxiv</InfoText>
+      <TopPanel>
+        <InfoText>Found {articles.length} articles on medRxiv and bioRxiv</InfoText>
+        <SearchField>
+          <Form.Control
+            placeholder='Search article'
+            size='sm'
+            onChange={e => setSearchQuery(e.target.value)}
+          />
+        </SearchField>
+      </TopPanel>
       <List>
-        {articles.slice(ENTRIES_PER_PAGE * (page - 1), ENTRIES_PER_PAGE * page).map(article => (
+        {paginatedArticles.map(article => (
           <Entry key={article.doi}>
             <EntryTitle>
               <ExternalLink url={'https://doi.org/' + (article.published || article.doi)}>
