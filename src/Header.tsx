@@ -10,20 +10,28 @@ import { AiOutlineGithub } from 'react-icons/ai';
 import styled, { createGlobalStyle } from 'styled-components';
 import { headerHeightPx } from './helpers/app-layout';
 
+const letters = [
+  { color: 'darkgray', text: 'cov' },
+  { color: '#0D4A70', text: 'S' },
+  { color: '#245C70', text: 'P' },
+  { color: '#3A6E6F', text: 'E' },
+  { color: '#67916E', text: 'C' },
+  { color: '#AC8D3A', text: 'T' },
+  { color: '#CF8B20', text: 'R' },
+  { color: '#E08A13', text: 'U' },
+  { color: '#F18805', text: 'M' },
+];
+
 const Logo = (
-  <div>
-    <Navbar.Brand as={Link} to='/'>
-      <span style={{ color: 'darkgray', fontWeight: 'bold' }}>cov</span>
-      <span style={{ color: '#0D4A70', fontWeight: 'bold' }}>S</span>
-      <span style={{ color: '#245C70', fontWeight: 'bold' }}>P</span>
-      <span style={{ color: '#3A6E6F', fontWeight: 'bold' }}>E</span>
-      <span style={{ color: '#67916E', fontWeight: 'bold' }}>C</span>
-      <span style={{ color: '#AC8D3A', fontWeight: 'bold' }}>T</span>
-      <span style={{ color: '#CF8B20', fontWeight: 'bold' }}>R</span>
-      <span style={{ color: '#E08A13', fontWeight: 'bold' }}>U</span>
-      <span style={{ color: '#F18805', fontWeight: 'bold' }}>M</span>
-    </Navbar.Brand>
-  </div>
+  <a href='/' className="flex flex-row items-center hover:no-underline mb-1">
+    <div>
+    {letters.map((l: { color: string; text: string }) => (
+      <span className='text-2xl' style={{ color: l.color, fontWeight: 'bold', fontSize: '1.75rem'}}>
+        {l.text}
+      </span>
+    ))}
+    </div>
+  </a>
 );
 
 const Header = () => {
@@ -35,25 +43,32 @@ const Header = () => {
 
   return (
     <>
-      <div className='border-b-2 z-30'>
-        <div id='nav-top shaddow-sm border-b-2 z-30'>
+      <div className='shadow-sm z-30'>
+        <div id='nav-wrapper'>
           <nav className='bg-blue '>
             <div className='max-w-9xl mx-auto px-4'>
-              <div className='flex items-center justify-between h-8'>
+              <div className='flex items-center justify-between h-20'>
                 <div className='w-full justify-between flex items-center'>
-                  <div id='logo-and-gsid' className='flex flex-row items-center justify-center'>
-                    <a className='flex-shrink-0 flex items-center justify-center' href='/'>
+                  <div className='flex flex-row'>
+                    <div id='logo-and-gsid' className='flex flex-column items-center justify-center'>
                       {Logo}
-                    </a>
-                    <div className='text-xs flex flex-row'>
-                      <div className='self-end mr-1'>Enabled by data from </div>{' '}
-                      <ExternalLink url='https://gisaid.org/'>
-                        <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />{' '}
-                      </ExternalLink>
+                      <div className='text-xs flex flex-row'>
+                        <div className='self-end mr-1'>Enabled by data from </div>{' '}
+                        <ExternalLink url='https://gisaid.org/'>
+                          <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />{' '}
+                        </ExternalLink>
+                      </div>
+                    </div>
+                    <div className='flex items-center z-20 ml-8'>
+                      <HeaderCountrySelect />
+                      <HeaderDateRangeSelect />
+                      <div className='hidden md:block'>
+                        <HeaderSamplingStrategySelect />
+                      </div>
                     </div>
                   </div>
                   <div className='hidden md:block items-center justify-center'>
-                    <div className='ml-10 flex items-center space-x-4'>
+                    <div className='ml-4 flex items-center space-x-4'>
                       <a
                         className='text-gray-400  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium'
                         href='/acknoledgements'
@@ -101,24 +116,6 @@ const Header = () => {
                       <path d='M1664 1344v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45z'></path>
                     </svg>
                   </button>
-                </div>
-              </div>
-            </div>
-          </nav>
-        </div>
-        <div id='navbar-bottom'>
-          <nav className='bg-blue '>
-            <div className='max-w-9xl mx-auto px-4'>
-              <div className='flex items-center justify-between h-12'>
-                <div className='w-full flex items-center z-20'>
-                  <HeaderCountrySelect />
-                  <HeaderDateRangeSelect />
-                  <div className='hidden md:block'>
-                    <HeaderSamplingStrategySelect />
-                  </div>
-                </div>
-                <div className='hidden md:block items-center justify-center'>
-                  <div className='ml-10 flex items-center space-x-4'></div>
                 </div>
               </div>
             </div>
