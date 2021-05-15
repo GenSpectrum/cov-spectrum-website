@@ -20,10 +20,10 @@ code {
 /* define the default styles here */
 @layer base {
   h1 {
-    @apply text-2xl mb-2 mt-3 font-bold;
+    @apply text-2xl mb-1 mt-2 font-bold;
   }
   h2 {
-    @apply text-xl mb-2 mt-3 font-semibold;
+    @apply text-xl mb-1 mt-2 font-semibold;
   }
   h3 {
     @apply text-lg;

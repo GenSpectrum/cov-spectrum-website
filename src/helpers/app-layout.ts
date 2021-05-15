@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { scrollableContainerStyle } from './scrollable-container';
 
-export const headerHeightPx = 80;
+export const headerHeightPx = 0;
 
 export const OuterWrapper = styled.div`
   display: grid;

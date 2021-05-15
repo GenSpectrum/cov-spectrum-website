@@ -47,7 +47,7 @@ const Header = () => {
 
   return (
     <>
-      <nav className='flex content-center shadow-md z-30 h-40 md:h-20'>
+      <nav className='flex content-center shadow-md z-50 bg-white h-40 md:h-20'>
         <div className='w-full mx-auto px-4 flex content-center'>
           <div className='w-full flex items-center'>
             <div className='w-full flex justify-between items-center h-20'>
