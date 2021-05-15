@@ -14,13 +14,13 @@ const SubHeader = styled.h2`
 
 export const AcknowledgementsPage = () => {
   return (
-    <Wrapper>
+    <div className='max-w-4xl mx-auto'>
       <h1>Acknowlegements</h1>
 
-      <SubHeader>
+      <h2>
         Federal Office of Public Health (FOPH) of Switzerland and the Swiss SARS-CoV-2 Sequencing Consortium
         (S3C)
-      </SubHeader>
+      </h2>
       <p>
         We gratefully acknowledge the{' '}
         <ExternalLink url='https://www.bag.admin.ch/'>Federal Office of Public Health (FOPH)</ExternalLink>{' '}
@@ -31,7 +31,7 @@ export const AcknowledgementsPage = () => {
         for providing sequence and metadata for Switzerland.
       </p>
 
-      <SubHeader>GISAID</SubHeader>
+      <h2>GISAID</h2>
       <p>
         We gratefully acknowledge all data contributors, i.e. the Authors and their Originating laboratories
         responsible for obtaining the specimens, and their Submitting laboratories for generating the genetic
@@ -44,6 +44,6 @@ export const AcknowledgementsPage = () => {
         <ExternalLink url='https://dx.doi.org/10.1002/gch2.1018'>10.1002/gch2.1018</ExternalLink>, PMCID:{' '}
         <ExternalLink url='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6607375/'>31565258</ExternalLink>
       </p>
-    </Wrapper>
+    </div>
   );
 };

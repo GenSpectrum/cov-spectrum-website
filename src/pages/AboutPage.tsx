@@ -3,12 +3,6 @@ import React from 'react';
 import { ExternalLink } from '../components/ExternalLink';
 import { EmailLink } from '../components/EmailLink';
 
-const Wrapper = styled.div`
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-`;
-
 const Question = styled.div`
   font-weight: bold;
   margin-top: 20px;
@@ -16,7 +10,7 @@ const Question = styled.div`
 
 export const AboutPage = () => {
   return (
-    <Wrapper>
+    <div className='max-w-4xl mx-auto'>
       <h1>CoV-Spectrum</h1>
       <p>
         Explore up-to-date genome data and monitor variants of SARS-CoV-2! CoV-Spectrum is a fully interactive
@@ -63,6 +57,6 @@ export const AboutPage = () => {
         Zurich. Please contact Chaoran Chen (
         <EmailLink email='chaoran.chen@bsse.ethz.ch' />) for any questions.
       </p>
-    </Wrapper>
+    </div>
   );
 };

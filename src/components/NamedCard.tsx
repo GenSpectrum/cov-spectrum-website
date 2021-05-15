@@ -44,12 +44,6 @@ const ToolbarWrapper = styled.div`
   right: 12px;
 `;
 
-const Description = styled.div`
-  padding-left: 10px;
-  padding-right: 10px;
-  margin-bottom: 10px;
-`;
-
 const ContentWrapper = styled.div`
   margin-bottom: 30px;
 `;
@@ -64,7 +58,7 @@ export const NamedCard = ({
   return (
     <Card namedCardStyle={style}>
       <Title>
-        {title}
+        <h1 className="my-0">{title}</h1>
         {style === NamedCardStyle.CONFIDENTIAL && (
           <OverlayTrigger
             placement='bottom'
@@ -79,9 +73,9 @@ export const NamedCard = ({
         )}
       </Title>
       {description && (
-        <Description>
+        <div className="px-3 mb-3">
           <ExpandableTextBox text={description} maxChars={160} />
-        </Description>
+        </div>
       )}
       <ToolbarWrapper>{toolbar}</ToolbarWrapper>
       <ContentWrapper>{children}</ContentWrapper>

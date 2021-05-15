@@ -14,6 +14,28 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
+/* clear deafult stylings for browser consistencies */
 @tailwind base;
+
+/* define the default styles here */
+@layer base {
+  h1 {
+    @apply text-2xl mb-2 mt-4 font-bold;
+  }
+  h2 {
+    @apply text-xl mb-2 mt-4 font-semibold;
+  }
+  h3 {
+    @apply text-lg;
+  }
+  p {
+    @apply text-base mb-2 text-gray-800 ;
+  }
+  paragraph {
+    @apply max-w-4xl;
+  }
+}
+
+
 @tailwind components;
 @tailwind utilities;
