@@ -2,16 +2,6 @@ import styled from 'styled-components';
 import React from 'react';
 import { ExternalLink } from '../components/ExternalLink';
 
-const Wrapper = styled.div`
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-`;
-
-const SubHeader = styled.h2`
-  font-size: 1.4rem;
-`;
-
 export const AcknowledgementsPage = () => {
   return (
     <div className='max-w-4xl mx-auto'>

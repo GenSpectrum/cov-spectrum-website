@@ -34,9 +34,12 @@ export const LoginPage = () => {
   };
 
   return (
-    <>
-      <h1>Login (Private Switzerland data)</h1>
-      <Form>
+    <div className="flex justify-center mt-2 md:mt-10">
+      <Form className='shadow-lg rounded-2xl w-64 bg-white relative overflow-hidden cursor-pointer p-8'>
+      <p className='mb-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl'>
+        Login
+      </p>
+      <p>Private Switzerland Data</p>
         <Form.Group controlId='loginUsername'>
           <Form.Label>Username</Form.Label>
           <Form.Control required type='text' onChange={e => setUsername(e.target.value)} />
@@ -64,6 +67,6 @@ export const LoginPage = () => {
           You logged out.
         </Alert>
       )}
-    </>
+    </div>
   );
 };

@@ -88,7 +88,7 @@ const Header = () => {
                     }
                   >
                     <AiOutlineGithub
-                      className='fill-current hover:text-gray-500 rounded-xl filter shadow-xl cursor-pointer'
+                      className='fill-current hover:text-gray-500 rounded-xl filter shadow-xl cursor-pointer ml-4 lg:ml-8'
                       size={'1.5em'}
                     />
                   </div>
