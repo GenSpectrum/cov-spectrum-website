@@ -1,3 +1,4 @@
+import { divide } from 'lodash';
 import React from 'react';
 import styled from 'styled-components';
 
@@ -24,10 +25,10 @@ const ToolbarWrapper = styled.div`
 export const NamedSection = ({ title, toolbar, children }: Props) => {
   return (
     <>
-      <Title>
+      <div id="title" className="relative text-xl font-bold text-black sm:text-3xl drop-shadow" >
         {title}
         <ToolbarWrapper>{toolbar}</ToolbarWrapper>
-      </Title>
+      </div>
       <ContentWrapper>{children}</ContentWrapper>
     </>
   );
