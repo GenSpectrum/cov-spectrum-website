@@ -28,8 +28,8 @@ export function createBootstrapPaginationControl(
 ): BootstrapPaginationControl {
   const numberPages = Math.ceil(totalElements / elementsPerPage);
   let elements = [
-    <Pagination.First onClick={() => onPageClick(1)} />,
-    <Pagination.Prev onClick={() => onPageClick(activePage - 1)} />,
+    <Pagination.First key='first' onClick={() => onPageClick(1)} />,
+    <Pagination.Prev key='previous' onClick={() => onPageClick(activePage - 1)} />,
   ];
   if (numberPages < 7) {
     for (let i = 1; i <= numberPages; i++) {
@@ -57,8 +57,8 @@ export function createBootstrapPaginationControl(
     }
   }
 
-  elements.push(<Pagination.Next onClick={() => onPageClick(activePage + 1)} />);
-  elements.push(<Pagination.Last onClick={() => onPageClick(numberPages)} />);
+  elements.push(<Pagination.Next key='next' onClick={() => onPageClick(activePage + 1)} />);
+  elements.push(<Pagination.Last key='last' onClick={() => onPageClick(numberPages)} />);
   return {
     elements,
   };

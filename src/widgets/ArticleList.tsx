@@ -94,7 +94,7 @@ export const ArticleList = ({ pangolinLineage }: Props) => {
       <InfoText>Found {articles.length} articles on medRxiv and bioRxiv</InfoText>
       <List>
         {articles.slice(ENTRIES_PER_PAGE * (page - 1), ENTRIES_PER_PAGE * page).map(article => (
-          <Entry>
+          <Entry key={article.doi}>
             <EntryTitle>
               <ExternalLink url={'https://doi.org/' + (article.published || article.doi)}>
                 {article.title}

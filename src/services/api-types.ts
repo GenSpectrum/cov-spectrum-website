@@ -176,6 +176,7 @@ export const ArticleSchema = zod.object({
   category: zod.string().nullable(),
   published: zod.string().nullable(),
   server: zod.string(),
+  abstract: zod.string().nullable(),
 });
 
 // TypeScript types from schemas
