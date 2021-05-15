@@ -23,13 +23,13 @@ const letters = [
 ];
 
 const Logo = (
-  <a href='/' className="flex flex-row items-center hover:no-underline mb-1">
+  <a href='/' className='flex flex-row items-center hover:no-underline mb-1'>
     <div>
-    {letters.map((l: { color: string; text: string }) => (
-      <span className='text-2xl' style={{ color: l.color, fontWeight: 'bold', fontSize: '1.75rem'}}>
-        {l.text}
-      </span>
-    ))}
+      {letters.map((l: { color: string; text: string }) => (
+        <span className='text-2xl' style={{ color: l.color, fontWeight: 'bold', fontSize: '1.75rem' }}>
+          {l.text}
+        </span>
+      ))}
     </div>
   </a>
 );
@@ -49,11 +49,11 @@ const Header = () => {
             <div className='max-w-9xl mx-auto px-4'>
               <div className='flex items-center justify-between h-20'>
                 <div className='w-full justify-between flex items-center'>
-                  <div className='flex flex-row'>
+                  <div id="logo-and-search" className='flex flex-row'>
                     <div id='logo-and-gsid' className='flex flex-column items-center justify-center'>
                       {Logo}
-                      <div className='text-xs flex flex-row'>
-                        <div className='self-end mr-1'>Enabled by data from </div>{' '}
+                      <div className='w-full text-xs flex flex-row justify-between'>
+                        <div className='self-end text-gray-500 text-sm'>Enabled by data from </div>{' '}
                         <ExternalLink url='https://gisaid.org/'>
                           <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />{' '}
                         </ExternalLink>
@@ -151,79 +151,6 @@ const Header = () => {
         </div>
       </div>
     </>
-
-    // <Wrapper className="bg-white">
-    //   <TopNavbar bg='light' expand='md' className='bg-white flex items-center justify-between h-16'>
-    //     <div className="w-full justify-between flex items-center">
-    //       {Logo}
-    //       <div className='text-xs flex flex-row'>
-    //         <div className='self-end mr-1'>Enabled by data from </div>
-    //         <ExternalLink url='https://gisaid.org/'>
-    //           <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />
-    //         </ExternalLink>
-    //       </div>
-    //     </div>
-    //     <div>
-    //       <Navbar.Toggle aria-controls='basic-navbar-nav' />
-    //       <Navbar.Collapse>
-    //         <Nav>
-    //           {loggedIn ? (
-    //             <>
-    //               <Navbar.Text>Signed in as {username}</Navbar.Text>
-    //               <Nav.Link>
-    //                 <button
-    //                   onClick={() => {
-    //                     AccountService.logout();
-    //                     window.location.href = '/login?left';
-    //                   }}
-    //                   style={{
-    //                     background: 'none',
-    //                     outline: 'none',
-    //                     border: 'none',
-    //                   }}
-    //                 >
-    //                   Logout
-    //                 </button>
-    //               </Nav.Link>
-    //             </>
-    //           ) : (
-    //             <Nav.Link href='/login'>Login</Nav.Link>
-    //           )}
-    //           <div
-    //             style={{
-    //               display: 'flex',
-    //               justifyContent: 'center',
-    //               alignItems: 'center',
-    //               cursor: 'pointer',
-    //               padding: '0 0.5rem 0 0.5rem',
-    //             }}
-    //             onClick={() => window.open('https://github.com/cevo-public/cov-spectrum-website', '_blank')}
-    //           >
-    //             <AiOutlineGithub
-    //               className='fill-current hover:text-gray-500 rounded-xl filter shadow-xl '
-    //               size={'1.5em'}
-    //             />
-    //           </div>
-    //         </Nav>
-    //       </Navbar.Collapse>
-    //     </div>
-    //   </TopNavbar>
-    //   <BottomNavbar bg='light' expand='md' className='bg-white text-xs flex flex-row'>
-    //     <HeaderCountrySelect />
-    //     <HeaderDateRangeSelect />
-    //     <Navbar.Collapse>
-    //       <HeaderSamplingStrategySelect />
-    //       <Nav className='ml-4 mr-auto'>
-    //         <Nav.Link href='/acknowledgements' style={{ textDecoration: 'underline' }}>
-    //           Acknowledgements
-    //         </Nav.Link>
-    //         <Nav.Link href='/about' style={{ textDecoration: 'underline' }}>
-    //           About
-    //         </Nav.Link>
-    //       </Nav>
-    //     </Navbar.Collapse>
-    //   </BottomNavbar>
-    // </Wrapper>
   );
 };
 
