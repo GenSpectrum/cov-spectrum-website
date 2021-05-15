@@ -1,6 +1,6 @@
 import React from 'react';
 import { Nav, Navbar } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrategySelect';
 import { AccountService } from './services/AccountService';
@@ -39,6 +39,12 @@ const Header = () => {
     username = AccountService.getUsername();
   }
 
+  const location = useLocation();
+  const getButtonClasses = (path: string): string =>
+    (`${
+      location.pathname === path ? 'text-gray-800' : 'text-gray-400 hover:text-gray-800'
+    } px-3 py-2 rounded-md text-sm font-medium`);
+
   return (
     <>
       <nav className='flex content-center shadow-md z-30 h-40 md:h-20'>
@@ -65,24 +71,15 @@ const Header = () => {
                   </div>
                 </div>
               </div>
-              <div id="right-nav-buttons" className='hidden md:block items-center justify-center'>
+              <div id='right-nav-buttons' className='hidden md:block items-center justify-center'>
                 <div className='ml-4 flex items-center space-x-4'>
-                  <a
-                    className='text-gray-400  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium'
-                    href='/acknoledgements'
-                  >
+                  <a className={getButtonClasses('/acknowledgements')} href='/acknowledgements'>
                     Acknowledgements
                   </a>
-                  <a
-                    className='text-gray-400  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium'
-                    href='/about'
-                  >
+                  <a className={getButtonClasses('/about')} href='/about'>
                     About
                   </a>
-                  <a
-                    className='text-gray-400  hover:text-gray-800 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium'
-                    href='/login'
-                  >
+                  <a className={getButtonClasses('/login')} href='/login'>
                     Login
                   </a>
                   <div
