@@ -47,12 +47,12 @@ const Header = () => {
 
   return (
     <>
-      <nav className='flex content-center shadow-md z-50 bg-white h-40 md:h-20'>
-        <div className='w-full mx-auto px-4 flex content-center'>
-          <div className='w-full flex items-center'>
-            <div className='w-full flex justify-between items-center h-20'>
-              <div id='logo-and-search' className='flex md:flex-row flex-column'>
-                <div id='logo-and-gsid' className='flex flex-column items-center justify-center'>
+      <nav className='flex h-full content-center shadow-md z-50 bg-white '>
+        <div className='w-full mx-auto px-2 md:px-0 flex content-center'>
+          <div className='md:mx-4 w-full justify-between'>
+            <div className='w-full h-full flex justify-between items-center'>
+              <div id='logo-and-search' className='flex h-full md:flex-row flex-column justify-center'>
+                <div id='logo-and-gsid' className='flex flex-column items-center justify-center md:pr-4'>
                   <div>{Logo}</div>
                   <div className='text-xs flex flex-row justify-between space-x-1'>
                     <div className='self-end text-gray-500 text-sm'>Enabled by data from </div>{' '}
@@ -61,9 +61,9 @@ const Header = () => {
                     </ExternalLink>
                   </div>
                 </div>
-                <div className='flex items-center z-20 ml-8'>
+                <div className='flex items-center z-20 mt-2 md:mt-0'>
                   <HeaderCountrySelect />
-                  <div id='date-range-wrapper' className='hidden sm:block'>
+                  <div id='date-range-wrapper'>
                     <HeaderDateRangeSelect />
                   </div>
                   <div className='hidden md:block'>
@@ -98,51 +98,9 @@ const Header = () => {
             <div className='block'>
               <div className='ml-4 flex items-center md:ml-6'></div>
             </div>
-            <div className='-mr-2 flex md:hidden'>
-              <button className='text-gray-800 dark:text-white hover:text-gray-300 inline-flex items-center justify-center p-2 rounded-md focus:outline-none'>
-                <svg
-                  width={20}
-                  height={20}
-                  fill='currentColor'
-                  className='h-8 w-8'
-                  viewBox='0 0 1792 1792'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <path d='M1664 1344v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45zm0-512v128q0 26-19 45t-45 19h-1408q-26 0-45-19t-19-45v-128q0-26 19-45t45-19h1408q26 0 45 19t19 45z'></path>
-                </svg>
-              </button>
-            </div>
           </div>
         </div>
       </nav>
-      <div className='md:hidden z-50'>
-        <div className='px-2 pt-2 pb-3 space-y-1 sm:px-3'>
-          <a
-            className='text-gray-300 hover:text-gray-800 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium'
-            href='/#'
-          >
-            Home
-          </a>
-          <a
-            className='text-gray-800 dark:text-white block px-3 py-2 rounded-md text-base font-medium'
-            href='/#'
-          >
-            Gallery
-          </a>
-          <a
-            className='text-gray-300 hover:text-gray-800 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium'
-            href='/#'
-          >
-            Content
-          </a>
-          <a
-            className='text-gray-300 hover:text-gray-800 dark:hover:text-white block px-3 py-2 rounded-md text-base font-medium'
-            href='/#'
-          >
-            Contact
-          </a>
-        </div>
-      </div>
     </>
   );
 };

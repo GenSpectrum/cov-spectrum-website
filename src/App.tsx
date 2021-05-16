@@ -20,17 +20,16 @@ export const App = () => {
   const isSmallScreen = width !== undefined && width <= 1000;
 
   return (
-    <div className='py-20'>
-      <div className='fixed top-0 inset-x-0 '>
+    <div className='py-32 md:py-20'>
+      <div className='fixed top-0 inset-x-0 h-32 md:h-20'>
         <Header />
       </div>
-      <div ref={ref} className='w-full h-full overflow-hidden fixed'>
+      <div ref={ref} className='w-full h-full overflow-scroll fixed'>
         <Switch>
           <Route exact path='/'>
             <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}/AllTimes`} />
           </Route>
           <Route path='/variant'>
-            {/* This is so that we don't break old bookmarked links */}
             <Redirect to='/' />
           </Route>
           <Route path='/login'>
