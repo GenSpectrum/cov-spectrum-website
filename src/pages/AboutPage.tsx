@@ -56,6 +56,19 @@ export const AboutPage = () => {
       data arrives.
       <Question>Can I download the numbers behind the plots?</Question>
       <p>For some of the plots, there is a button next to the plot to download the data as a CSV file.</p>
+      <h2>Disclaimer</h2>
+      <ul>
+        <li>
+          Although ETH Zurich takes all possible care to ensure the correctness of published information, no
+          warranty can be accepted regarding the correctness, accuracy, uptodateness, reliability and
+          completeness of the content of this information.
+        </li>
+        <li>
+          Liability claims against ETH Zurich because of tangible or intangible damage arising from accessing,
+          using or not using the published information, through misuse of the connection or as a result of
+          technical breakdowns are excluded.
+        </li>
+      </ul>
       <h2>Contact</h2>
       <p>
         This project is developed by the{' '}
