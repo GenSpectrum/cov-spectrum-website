@@ -46,9 +46,9 @@ export const Chen2021FitnessPreview = ({
           <MetricsSpacing />
           <Metric
             value={(modelData.params.fd.value * 100).toFixed(0)}
-            title={'Transm. adv.'}
+            title={'Current adv.'}
             helpText={
-              'The estimated transmission advantage under a discrete model assuming a generation time of 4.8 days.'
+              'The estimated transmission advantage under a discrete model assuming a generation time of 4.8 days using data from the past 3 months.'
             }
             percent={true}
             color={colors.active}

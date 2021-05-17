@@ -65,7 +65,7 @@ export const Chen2021ProportionPlot = ({
   return (
     <>
       <Plot
-        style={{ width: '100%', height: '100%' }}
+        style={{ width: '100%', height: '90%' }}
         data={[
           {
             name: '95% confidence interval',
@@ -111,7 +111,7 @@ export const Chen2021ProportionPlot = ({
           },
         ]}
         layout={{
-          title: 'Estimated proportion through time',
+          title: 'Estimated proportion through time*',
           xaxis: {
             hoverformat: '%d.%m.%Y',
           },
@@ -130,6 +130,11 @@ export const Chen2021ProportionPlot = ({
           responsive: true,
         }}
       />
+
+      <p>
+        *) It assumes that the current advantage is due to a transmission advantage. If the reasons for the
+        advantage are different, then the proportion should develop differently.
+      </p>
     </>
   );
 };
