@@ -20,11 +20,11 @@ export const App = () => {
   const isSmallScreen = width !== undefined && width <= 1000;
 
   return (
-    <div className='py-32 md:py-20'>
+    <div className='pt-32 md:pt-20 h-full w-full'>
       <div className='fixed top-0 inset-x-0 h-32 md:h-20 z-50'>
         <Header />
       </div>
-      <div ref={ref} className='w-full h-full overflow-scroll fixed z-0'>
+      <div ref={ref} className='static w-full h-full z-0'>
         <Switch>
           <Route exact path='/'>
             <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}/AllTimes`} />
@@ -41,19 +41,13 @@ export const App = () => {
             <ExploreFocusSplit isSmallScreen={isSmallScreen} />
           </Route>
           <Route path='/global-samples'>
-            <ScrollableFullContentWrapper>
               <GlobalSamplePage />
-            </ScrollableFullContentWrapper>
           </Route>
           <Route path='/about'>
-            <ScrollableFullContentWrapper>
               <AboutPage />
-            </ScrollableFullContentWrapper>
           </Route>
           <Route path='/acknowledgements'>
-            <ScrollableFullContentWrapper>
               <AcknowledgementsPage />
-            </ScrollableFullContentWrapper>
           </Route>
         </Switch>
       </div>
