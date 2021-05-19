@@ -46,13 +46,22 @@ export const LoginWrapper = styled.div`
   overflow-y: auto;
 `;
 
-export const SplitExploreWrapper = styled.div`
-  ${scrollableContainerStyle}
-  grid-area: left;
-  border-right: 1px solid #dee2e6;
-`;
+// export const SplitExploreWrapper = styled.div`
+//   ${scrollableContainerStyle}
+//   grid-area: left;
+//   border-right: 1px solid #dee2e6;
+// `;
 
-export const SplitFocusWrapper = styled.div`
-  ${scrollableContainerStyle}
-  grid-area: right;
-`;
+// export const SplitFocusWrapper = styled.div`
+//   ${scrollableContainerStyle}
+//   grid-area: right;
+// `;
+
+export const SplitFocusWrapper = ({children} : {children: React.ReactNode}) => {
+ return (<div className="px-4">{children}</div>)
+}
+
+export const SplitExploreWrapper = ({children}: {children: React.ReactNode}) => {
+ return (<div className="px-4">{children}</div>)
+}
+
