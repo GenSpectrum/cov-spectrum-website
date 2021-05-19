@@ -29,10 +29,9 @@ code {
     @apply text-lg mb-1 mt-2;
   }
   p {
-    @apply text-base mb-2 text-gray-800 ;
+    @apply text-base mb-2 text-gray-800;
   }
 }
-
 
 @tailwind components;
 @tailwind utilities;

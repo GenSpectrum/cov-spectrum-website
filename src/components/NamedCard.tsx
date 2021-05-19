@@ -58,7 +58,7 @@ export const NamedCard = ({
   return (
     <Card namedCardStyle={style}>
       <Title>
-        <h1 className="my-0">{title}</h1>
+        <h1 className='my-0'>{title}</h1>
         {style === NamedCardStyle.CONFIDENTIAL && (
           <OverlayTrigger
             placement='bottom'
@@ -73,7 +73,7 @@ export const NamedCard = ({
         )}
       </Title>
       {description && (
-        <div className="px-3 mb-3">
+        <div className='px-3 mb-3'>
           <ExpandableTextBox text={description} maxChars={160} />
         </div>
       )}

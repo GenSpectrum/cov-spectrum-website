@@ -1,1 +1,1 @@
-export const h1 = ""
+export const h1 = '';

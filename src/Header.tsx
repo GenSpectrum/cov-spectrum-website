@@ -41,9 +41,9 @@ const Header = () => {
 
   const location = useLocation();
   const getButtonClasses = (path: string): string =>
-    (`${
+    `${
       location.pathname === path ? 'text-gray-800' : 'text-gray-400 hover:text-gray-800'
-    } px-3 mr-4 rounded-md text-sm font-medium`);
+    } px-3 mr-4 rounded-md text-sm font-medium`;
 
   return (
     <>
@@ -73,7 +73,10 @@ const Header = () => {
               </div>
               <div id='right-nav-buttons' className='hidden md:block items-center justify-center'>
                 <div className='ml-1 flex items-center'>
-                  <a className={`${getButtonClasses('/acknowledgements')} hidden lg:block`} href='/acknowledgements'>
+                  <a
+                    className={`${getButtonClasses('/acknowledgements')} hidden lg:block`}
+                    href='/acknowledgements'
+                  >
                     Acknowledgements
                   </a>
                   <a className={getButtonClasses('/about')} href='/about'>

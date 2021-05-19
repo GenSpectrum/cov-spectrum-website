@@ -34,12 +34,11 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="flex justify-center mt-2 md:mt-10">
+    <div className='flex justify-center mt-2 md:mt-10'>
       <Form className='shadow-lg rounded-2xl w-64 bg-white relative overflow-hidden cursor-pointer p-8'>
-      <p className='mb-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl'>
-        Login
-      </p>
-      <p>Private Switzerland Data</p>
+        <p className='mb-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl'>Login</p>
+        <p>Private Switzerland Data</p>
+        <div className='mt-6'/>
         <Form.Group controlId='loginUsername'>
           <Form.Label>Username</Form.Label>
           <Form.Control required type='text' onChange={e => setUsername(e.target.value)} />
@@ -48,7 +47,7 @@ export const LoginPage = () => {
           <Form.Label>Password</Form.Label>
           <Form.Control required type='password' onChange={e => setPassword(e.target.value)} />
         </Form.Group>
-        <Button variant='primary' onClick={handleSubmit}>
+        <Button className='w-full' variant='primary' onClick={handleSubmit}>
           Login
         </Button>
       </Form>
