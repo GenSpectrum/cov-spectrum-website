@@ -176,6 +176,11 @@ export const ArticleSchema = zod.object({
   category: zod.string().nullable(),
   published: zod.string().nullable(),
   server: zod.string(),
+  abstract: zod.string().nullable(),
+});
+
+export const DataStatusSchema = zod.object({
+  lastUpdateTimestamp: zod.string(),
 });
 
 // TypeScript types from schemas
@@ -194,5 +199,6 @@ export type LoginResponse = zod.infer<typeof LoginResponseSchema>;
 export type SequencingIntensityEntry = zod.infer<typeof SequencingIntensityEntrySchema>;
 export type PangolinLineageInformation = zod.infer<typeof PangolinLineageInformationSchema>;
 export type Article = zod.infer<typeof ArticleSchema>;
+export type DataStatus = zod.infer<typeof DataStatusSchema>;
 
 export type Place = Country | Region;

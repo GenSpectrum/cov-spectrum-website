@@ -7,11 +7,13 @@ import { WasteWaterTimeWidget } from '../models/wasteWater/WasteWaterTimeWidget'
 import { WasteWaterHeatMapWidget } from '../models/wasteWater/WasteWaterHeatMapWidget';
 import { EstimatedCasesPlotWidget } from './EstimatedCasesPlot';
 import { ArticleListWidget } from './ArticleList';
+import { VariantDivisionDistributionTableWidget } from './VariantDivisionDistributionTable';
 
 export const allWidgets = [
   VariantAgeDistributionPlotWidget,
   VariantInternationalComparisonPlotWidget,
   VariantTimeDistributionPlotWidget,
+  VariantDivisionDistributionTableWidget,
   SequencingIntensityPlotWidget,
   Chen2021FitnessWidget,
   WasteWaterTimeWidget,

@@ -26,6 +26,7 @@ import { getData } from '../models/wasteWater/loading';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 import { EstimatedCasesPlotWidget } from '../widgets/EstimatedCasesPlot';
 import { ArticleListWidget } from '../widgets/ArticleList';
+import { VariantDivisionDistributionTableWidget } from '../widgets/VariantDivisionDistributionTable';
 
 interface Props {
   country: Country;
@@ -183,6 +184,13 @@ export const FocusPage = ({
             </NamedCard>
           </GridCell>
         )}
+        <GridCell minWidth={600}>
+          <VariantDivisionDistributionTableWidget.ShareableComponent
+            variantSampleSet={variantSampleSet}
+            wholeSampleSet={wholeSampleSet}
+            title='Geography'
+          />
+        </GridCell>
         {loggedIn && country === 'Switzerland' && (
           <GridCell minWidth={600}>
             <NamedCard title='Geography' style={NamedCardStyle.CONFIDENTIAL}>
