@@ -43,14 +43,14 @@ const Header = () => {
   const getButtonClasses = (path: string): string =>
     (`${
       location.pathname === path ? 'text-gray-800' : 'text-gray-400 hover:text-gray-800'
-    } px-3 py-2 rounded-md text-sm font-medium`);
+    } px-3 mr-4 rounded-md text-sm font-medium`);
 
   return (
     <>
       <nav className='flex h-full content-center shadow-md z-50 bg-white '>
         <div className='w-full mx-auto px-2 md:px-0 flex content-center'>
           <div className='md:mx-4 w-full justify-between'>
-            <div className='w-full h-full flex justify-between items-center'>
+            <div className='w-full h-full flex justify-center md:justify-between items-center'>
               <div id='logo-and-search' className='flex h-full md:flex-row flex-column justify-center'>
                 <div id='logo-and-gsid' className='flex flex-column items-center justify-center md:pr-4'>
                   <div>{Logo}</div>
@@ -66,14 +66,14 @@ const Header = () => {
                   <div id='date-range-wrapper'>
                     <HeaderDateRangeSelect />
                   </div>
-                  <div className='hidden md:block'>
+                  <div className='hidden xl:block'>
                     <HeaderSamplingStrategySelect />
                   </div>
                 </div>
               </div>
               <div id='right-nav-buttons' className='hidden md:block items-center justify-center'>
-                <div className='ml-4 flex items-center space-x-4'>
-                  <a className={getButtonClasses('/acknowledgements')} href='/acknowledgements'>
+                <div className='ml-1 flex items-center'>
+                  <a className={`${getButtonClasses('/acknowledgements')} hidden lg:block`} href='/acknowledgements'>
                     Acknowledgements
                   </a>
                   <a className={getButtonClasses('/about')} href='/about'>
@@ -88,15 +88,12 @@ const Header = () => {
                     }
                   >
                     <AiOutlineGithub
-                      className='fill-current hover:text-gray-500 rounded-xl filter shadow-xl cursor-pointer ml-4 lg:ml-8'
+                      className='hidden md:block fill-current hover:text-gray-500 rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8'
                       size={'1.5em'}
                     />
                   </div>
                 </div>
               </div>
-            </div>
-            <div className='block'>
-              <div className='ml-4 flex items-center md:ml-6'></div>
             </div>
           </div>
         </div>

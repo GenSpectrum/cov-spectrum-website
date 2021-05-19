@@ -21,10 +21,10 @@ export const App = () => {
 
   return (
     <div className='py-32 md:py-20'>
-      <div className='fixed top-0 inset-x-0 h-32 md:h-20'>
+      <div className='fixed top-0 inset-x-0 h-32 md:h-20 z-50'>
         <Header />
       </div>
-      <div ref={ref} className='w-full h-full overflow-scroll fixed'>
+      <div ref={ref} className='w-full h-full overflow-scroll fixed z-0'>
         <Switch>
           <Route exact path='/'>
             <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}/AllTimes`} />

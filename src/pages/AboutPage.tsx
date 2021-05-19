@@ -15,7 +15,7 @@ const Question = ({ title, children }: { title: string; children: React.ReactNod
 const Disclaimer = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <h1 className='font-bold mb-2 mt-0'>Disclaimer</h1>
+      <h2 className='font-bold mb-2 mt-0'>Disclaimer</h2>
       <div className='w-full bg-gray-100 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-800'>
         <p>{children}</p>
       </div>
@@ -82,7 +82,7 @@ export const AboutPage = () => {
           </li>
         </ul>
       </Disclaimer>
-      <h2>Contact</h2>
+      <h2 className='font-bold mb-2 mt-0'>Contact</h2>
       <p>
         This project is developed by the{' '}
         <ExternalLink url='https://bsse.ethz.ch/cevo'>Computational Evolution group</ExternalLink> at ETH
