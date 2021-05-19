@@ -19,6 +19,8 @@ import {
   PangolinLineageInformation,
   Article,
   ArticleSchema,
+  DataStatus,
+  DataStatusSchema,
 } from './api-types';
 import dayjs from 'dayjs';
 import {
@@ -428,4 +430,13 @@ export async function getArticles(
     throw new Error('server responded with non-200 status code');
   }
   return zod.array(ArticleSchema).parse(await res.json());
+}
+
+export async function getDataStatus(signal?: AbortSignal): Promise<DataStatus> {
+  const url = '/data-status';
+  const res = await get(url, signal);
+  if (!res.ok) {
+    throw new Error('server responded with non-200 status code');
+  }
+  return DataStatusSchema.parse(await res.json());
 }

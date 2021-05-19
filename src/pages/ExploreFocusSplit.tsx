@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { AsyncState, PromiseFn, useAsync } from 'react-async';
-import { Alert } from 'react-bootstrap';
+import { Alert, Button, Modal } from 'react-bootstrap';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
 import Loader from '../components/Loader';
 import {
@@ -19,6 +19,7 @@ import { FocusPage } from '../pages/FocusPage';
 import {
   DateRange,
   dateRangeToDates,
+  getDataStatus,
   getNewSamples,
   getSequencingIntensity,
   SamplingStrategy,
@@ -112,8 +113,24 @@ interface Props {
   isSmallScreen: boolean;
 }
 
+const pageLoadedTimestamp = dayjs();
+
 export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   const { country, samplingStrategy, dateRange, variantSelector, focusKey } = useExploreUrl() || {};
+  const [dataOutdated, setDataOutdated] = useState(false);
+
+  // Check every 4 seconds whether we have new data and ask the user to refresh the page if that's the case.
+  useEffect(() => {
+    const interval = setInterval(() => {
+      getDataStatus().then(dataStatus => {
+        if (dayjs.utc(dataStatus.lastUpdateTimestamp).isAfter(pageLoadedTimestamp)) {
+          setDataOutdated(true);
+          clearInterval(interval);
+        }
+      });
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
 
   const variantSampleSetState = useVariantSampleSet({
     country,
@@ -164,6 +181,16 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
 
   const makeLayout = (focusContent: React.ReactNode, deepFocusContent: React.ReactNode): JSX.Element => (
     <>
+      <Modal show={dataOutdated} backdrop='static' keyboard={false}>
+        <Modal.Body>
+          <b>Good news - we have updated data! Please reload the page.</b>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant='primary' style={{ width: '100%' }} onClick={() => window.location.reload()}>
+            Reload
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <Switch>
         <Route exact path={`${path}`}>
           {isSmallScreen ? (

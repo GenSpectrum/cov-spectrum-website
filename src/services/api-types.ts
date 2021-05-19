@@ -179,6 +179,10 @@ export const ArticleSchema = zod.object({
   abstract: zod.string().nullable(),
 });
 
+export const DataStatusSchema = zod.object({
+  lastUpdateTimestamp: zod.string(),
+});
+
 // TypeScript types from schemas
 export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
 export type CountAndProportionWithCI = zod.infer<typeof CountAndProportionWithCISchema>;
@@ -195,5 +199,6 @@ export type LoginResponse = zod.infer<typeof LoginResponseSchema>;
 export type SequencingIntensityEntry = zod.infer<typeof SequencingIntensityEntrySchema>;
 export type PangolinLineageInformation = zod.infer<typeof PangolinLineageInformationSchema>;
 export type Article = zod.infer<typeof ArticleSchema>;
+export type DataStatus = zod.infer<typeof DataStatusSchema>;
 
 export type Place = Country | Region;
