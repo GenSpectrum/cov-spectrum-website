@@ -8,6 +8,7 @@ import {
   SplitFocusWrapper,
   RawFullContentWrapper,
   ScrollableFullContentWrapper,
+  SplitParentWrapper,
 } from '../helpers/app-layout';
 import { getFocusPageLink, useExploreUrl } from '../helpers/explore-url';
 import { VariantSelector } from '../helpers/sample-selector';
@@ -193,26 +194,18 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
       </Modal>
       <Switch>
         <Route exact path={`${path}`}>
-          {isSmallScreen ? (
-            <ScrollableFullContentWrapper>{explorePage}</ScrollableFullContentWrapper>
-          ) : (
-            <>
-              <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
-              <SplitFocusWrapper>
-                <FocusEmptyPage />
-              </SplitFocusWrapper>
-            </>
-          )}
+          <SplitParentWrapper>
+            <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
+            <SplitFocusWrapper>
+              <FocusEmptyPage />
+            </SplitFocusWrapper>
+          </SplitParentWrapper>
         </Route>
         <Route exact path={`${path}/variants/:variantSelector`}>
-          {isSmallScreen ? (
-            <ScrollableFullContentWrapper>{focusContent}</ScrollableFullContentWrapper>
-          ) : (
-            <>
-              <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
-              <SplitFocusWrapper>{focusContent}</SplitFocusWrapper>
-            </>
-          )}
+          <SplitParentWrapper>
+            <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
+            <SplitFocusWrapper>{focusContent}</SplitFocusWrapper>
+          </SplitParentWrapper>
         </Route>
         <Route path={`${path}/variants/:variantSelector`}>
           <RawFullContentWrapper>{deepFocusContent}</RawFullContentWrapper>

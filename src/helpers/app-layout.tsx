@@ -57,11 +57,15 @@ export const LoginWrapper = styled.div`
 //   grid-area: right;
 // `;
 
-export const SplitFocusWrapper = ({children} : {children: React.ReactNode}) => {
- return (<div className="px-4">{children}</div>)
-}
+export const SplitParentWrapper = ({ children }: { children: React.ReactNode }) => {
+  return <div className='grid grid-cols-2 md:grid-cols-5'>{children}</div>;
+};
 
 export const SplitExploreWrapper = ({children}: {children: React.ReactNode}) => {
- return (<div className="px-4">{children}</div>)
+ return (<div className="px-0 md:px-4 md:col-span-2">{children}</div>)
 }
+
+export const SplitFocusWrapper = ({children} : {children: React.ReactNode}) => {
+ return (<div className="px-0 md:px-4 md:col-span-3">{children}</div>) 
+} 
 
