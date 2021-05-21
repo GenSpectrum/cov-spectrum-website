@@ -46,7 +46,7 @@ export const FocusVariantHeaderControls = React.memo(
           title='Show on other websites'
           variant='secondary'
           size='sm'
-          className='mr-2'
+          className='mr-2 mt-3'
         >
           {integrations.map(
             integration =>

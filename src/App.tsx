@@ -20,7 +20,7 @@ export const App = () => {
   const isSmallScreen = width !== undefined && width <= 1000;
 
   return (
-    <div className='pt-32 md:pt-20 h-full w-full'>
+    <div className='pt-32 md:pt-20 h-screen w-full'>
       <div className='fixed top-0 inset-x-0 h-32 md:h-20 z-50'>
         <Header />
       </div>

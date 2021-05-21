@@ -121,6 +121,7 @@ export const DeepFocusPage = ({
       <HeaderWrapper>
         <VariantHeader
           variant={syncProps.variant}
+          place={syncProps.country}
           controls={
             <Button variant='secondary' as={Link} to={url}>
               Back to overview

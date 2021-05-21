@@ -100,7 +100,7 @@ export const FocusPage = ({
   }, [country, variant.name]);
 
   const header = (
-    <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...forwardedProps} />} />
+    <VariantHeader variant={variant} place={country} controls={<FocusVariantHeaderControls {...forwardedProps} />} />
   );
 
   if (variantSampleSet.isEmpty()) {
@@ -108,7 +108,7 @@ export const FocusPage = ({
   }
 
   return (
-    <div className='overflow-y-hidden'>
+    <div>
       {header}
       {variant.mutations.length > 0 && (
         <p style={{ marginBottom: '30px' }}>
