@@ -20,11 +20,11 @@ export const App = () => {
   const isSmallScreen = width !== undefined && width <= 1000;
 
   return (
-    <div className='pt-32 md:pt-20 h-screen w-full'>
+    <div className='pt-32 md:pt-20 h-screen w-full overflow-hidden'>
       <div className='fixed top-0 inset-x-0 h-32 md:h-20 z-50'>
         <Header />
       </div>
-      <div ref={ref} className='static w-full h-full z-0'>
+      <div ref={ref} className='static w-full h-full z-0 overflow-auto'>
         <Switch>
           <Route exact path='/'>
             <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}/AllTimes`} />

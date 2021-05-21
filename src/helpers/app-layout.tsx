@@ -30,11 +30,7 @@ export const fullGridStyle = css`
 export const RawFullContentWrapper = styled.div`
   ${fullGridStyle}
   width: 100vw;
-`;
-
-export const ScrollableFullContentWrapper = styled.div`
-  ${scrollableContainerStyle}
-  ${fullGridStyle}
+  height: 100%;
 `;
 
 export const LoginWrapper = styled.div`
@@ -46,26 +42,18 @@ export const LoginWrapper = styled.div`
   overflow-y: auto;
 `;
 
-// export const SplitExploreWrapper = styled.div`
-//   ${scrollableContainerStyle}
-//   grid-area: left;
-//   border-right: 1px solid #dee2e6;
-// `;
-
-// export const SplitFocusWrapper = styled.div`
-//   ${scrollableContainerStyle}
-//   grid-area: right;
-// `;
-
 export const SplitParentWrapper = ({ children }: { children: React.ReactNode }) => {
-  return <div className='grid grid-cols-2 md:grid-cols-5 h-full'>{children}</div>;
+  return <div className='grid md:grid-cols-2 lg:grid-cols-5 h-full'>{children}</div>;
 };
 
 export const SplitExploreWrapper = ({children}: {children: React.ReactNode}) => {
- return (<div className="px-0 md:px-4 md:col-span-2 overflow-auto">{children}</div>)
+ return <div className='px-2 md:px-4 lg:col-span-2 overflow-auto'>{children}</div>;
 }
 
 export const SplitFocusWrapper = ({children} : {children: React.ReactNode}) => {
- return (<div className="px-0 md:px-4 md:col-span-3 overflow-auto">{children}</div>) 
+ return <div className='px-2 md:px-4 lg:col-span-3 overflow-auto'>{children}</div>; 
 } 
 
+export const ScrollableFullContentWrapper = ({ children }: { children: React.ReactNode }) => {
+  return <div className='h-full'>{children}</div>;
+}; 

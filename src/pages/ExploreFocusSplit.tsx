@@ -194,18 +194,26 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
       </Modal>
       <Switch>
         <Route exact path={`${path}`}>
-          <SplitParentWrapper>
-            <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
-            <SplitFocusWrapper>
-              <FocusEmptyPage />
-            </SplitFocusWrapper>
-          </SplitParentWrapper>
+          {isSmallScreen ? (
+            <ScrollableFullContentWrapper>{explorePage}</ScrollableFullContentWrapper>
+          ) : (
+            <SplitParentWrapper>
+              <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
+              <SplitFocusWrapper>
+                <FocusEmptyPage />
+              </SplitFocusWrapper>
+            </SplitParentWrapper>
+          )}
         </Route>
         <Route exact path={`${path}/variants/:variantSelector`}>
-          <SplitParentWrapper>
-            <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
-            <SplitFocusWrapper>{focusContent}</SplitFocusWrapper>
-          </SplitParentWrapper>
+          {isSmallScreen ? (
+            <ScrollableFullContentWrapper>{focusContent}</ScrollableFullContentWrapper>
+          ) : (
+            <SplitParentWrapper>
+              <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
+              <SplitFocusWrapper>{focusContent}</SplitFocusWrapper>
+            </SplitParentWrapper>
+          )}
         </Route>
         <Route path={`${path}/variants/:variantSelector`}>
           <RawFullContentWrapper>{deepFocusContent}</RawFullContentWrapper>
