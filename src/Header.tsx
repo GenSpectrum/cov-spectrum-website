@@ -84,7 +84,7 @@ const Header = () => {
                       Login
                     </a>
                   ) : (
-                    'Logged in as' + username
+                    'Logged in as ' + username
                   )}
                   <div
                     onClick={() =>
