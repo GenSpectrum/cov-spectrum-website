@@ -20,16 +20,16 @@ code {
 /* define the default styles here */
 @layer base {
   h1 {
-    @apply text-2xl mb-1 mt-3 font-bold;
+    @apply text-xl md:text-2xl mb-1 mt-3 font-bold;
   }
   h2 {
-    @apply text-xl mb-1 mt-2 font-semibold;
+    @apply text-lg md:text-xl mb-1 mt-2 font-semibold;
   }
   h3 {
-    @apply text-lg mb-1 mt-2;
+    @apply text-base md:text-lg mb-1 mt-2;
   }
   p {
-    @apply text-base mb-2 text-gray-800;
+    @apply text-sm md:text-base mb-2 text-gray-800;
   }
 }
 

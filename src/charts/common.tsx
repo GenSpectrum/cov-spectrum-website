@@ -17,12 +17,15 @@ export const Wrapper = styled.div`
   flex-direction: column;
   height: 100%;
 `;
-export const TitleWrapper = styled.div`
-  padding: 0rem 0rem 1rem 0rem;
-  font-size: 1.2rem;
-  line-height: 1.3;
-  color: ${colors.secondary};
-`;
+
+export const TitleWrapper = ({ children , id}: { children: React.ReactNode, id?: string }) => {
+  return (
+    <h3 id={id} className='my-0 pb-4 pt-0 text-gray-500'>
+      {children}
+    </h3>
+  );
+};
+
 export const ChartAndMetricsWrapper = styled.div`
   display: flex;
   flex: 1;

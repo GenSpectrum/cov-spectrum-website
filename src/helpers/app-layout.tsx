@@ -55,5 +55,5 @@ export const SplitFocusWrapper = ({children} : {children: React.ReactNode}) => {
 } 
 
 export const ScrollableFullContentWrapper = ({ children }: { children: React.ReactNode }) => {
-  return <div className='h-full'>{children}</div>;
+  return <div className='h-full px-2 overflow-auto'>{children}</div>;
 }; 
