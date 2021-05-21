@@ -100,7 +100,11 @@ export const FocusPage = ({
   }, [country, variant.name]);
 
   const header = (
-    <VariantHeader variant={variant} place={country} controls={<FocusVariantHeaderControls {...forwardedProps} />} />
+    <VariantHeader
+      variant={variant}
+      place={country}
+      controls={<FocusVariantHeaderControls {...forwardedProps} />}
+    />
   );
 
   if (variantSampleSet.isEmpty()) {

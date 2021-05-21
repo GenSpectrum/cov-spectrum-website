@@ -1,14 +1,11 @@
 import React from 'react';
-import { Nav, Navbar } from 'react-bootstrap';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrategySelect';
 import { AccountService } from './services/AccountService';
 import { HeaderDateRangeSelect } from './components/HeaderDateRangeSelect';
 import { ExternalLink } from './components/ExternalLink';
 import { AiOutlineGithub } from 'react-icons/ai';
-import styled, { createGlobalStyle } from 'styled-components';
-import { headerHeightPx } from './helpers/app-layout';
 
 const letters = [
   { color: 'darkgray', text: 'cov' },
@@ -82,9 +79,13 @@ const Header = () => {
                   <a className={getButtonClasses('/about')} href='/about'>
                     About
                   </a>
-                  <a className={getButtonClasses('/login')} href='/login'>
-                    Login
-                  </a>
+                  {username === null ? (
+                    <a className={getButtonClasses('/login')} href='/login'>
+                      Login
+                    </a>
+                  ) : (
+                    'Logged in as' + username
+                  )}
                   <div
                     onClick={() =>
                       window.open('https://github.com/cevo-public/cov-spectrum-website', '_blank')

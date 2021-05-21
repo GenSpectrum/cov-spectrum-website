@@ -1,12 +1,7 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import Header from './Header';
-import {
-  HeaderWrapper,
-  LoginWrapper,
-  OuterWrapper,
-  ScrollableFullContentWrapper,
-} from './helpers/app-layout';
+import { LoginWrapper } from './helpers/app-layout';
 import { AboutPage } from './pages/AboutPage';
 import { ExploreFocusSplit } from './pages/ExploreFocusSplit';
 import { GlobalSamplePage } from './pages/GlobalSamplePage';
@@ -41,13 +36,13 @@ export const App = () => {
             <ExploreFocusSplit isSmallScreen={isSmallScreen} />
           </Route>
           <Route path='/global-samples'>
-              <GlobalSamplePage />
+            <GlobalSamplePage />
           </Route>
           <Route path='/about'>
-              <AboutPage />
+            <AboutPage />
           </Route>
           <Route path='/acknowledgements'>
-              <AcknowledgementsPage />
+            <AcknowledgementsPage />
           </Route>
         </Switch>
       </div>

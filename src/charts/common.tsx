@@ -18,7 +18,7 @@ export const Wrapper = styled.div`
   height: 100%;
 `;
 
-export const TitleWrapper = ({ children , id}: { children: React.ReactNode, id?: string }) => {
+export const TitleWrapper = ({ children, id }: { children: React.ReactNode; id?: string }) => {
   return (
     <h3 id={id} className='my-0 pb-4 pt-0 text-gray-500'>
       {children}

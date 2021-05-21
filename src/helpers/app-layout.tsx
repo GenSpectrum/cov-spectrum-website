@@ -46,14 +46,14 @@ export const SplitParentWrapper = ({ children }: { children: React.ReactNode }) 
   return <div className='grid md:grid-cols-2 lg:grid-cols-5 h-full'>{children}</div>;
 };
 
-export const SplitExploreWrapper = ({children}: {children: React.ReactNode}) => {
- return <div className='px-2 md:px-4 lg:col-span-2 overflow-auto'>{children}</div>;
-}
+export const SplitExploreWrapper = ({ children }: { children: React.ReactNode }) => {
+  return <div className='px-2 md:px-4 lg:col-span-2 overflow-auto'>{children}</div>;
+};
 
-export const SplitFocusWrapper = ({children} : {children: React.ReactNode}) => {
- return <div className='px-2 md:px-4 lg:col-span-3 overflow-auto'>{children}</div>; 
-} 
+export const SplitFocusWrapper = ({ children }: { children: React.ReactNode }) => {
+  return <div className='px-2 md:px-4 lg:col-span-3 overflow-auto'>{children}</div>;
+};
 
 export const ScrollableFullContentWrapper = ({ children }: { children: React.ReactNode }) => {
   return <div className='h-full px-2 overflow-auto'>{children}</div>;
-}; 
+};
