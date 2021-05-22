@@ -5,6 +5,7 @@ import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis }
 import Metric, { MetricsSpacing, MetricsWrapper } from './Metrics';
 import { getTicks } from '../helpers/ticks';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
+import dayjs from 'dayjs';
 
 export type EstimatedCasesTimeEntry = {
   date: UnifiedDay;
@@ -25,7 +26,7 @@ type PlotEntry = {
 
 export function formatDate(date: number) {
   const d = new Date(date);
-  return d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
+  return dayjs(d).format('YYYY-MM-DD');
 }
 
 const CHART_MARGIN_RIGHT = 15;
