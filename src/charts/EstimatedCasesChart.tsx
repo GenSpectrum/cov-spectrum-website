@@ -145,8 +145,8 @@ export const EstimatedCasesChart = React.memo(
                 <Area
                   type='monotone'
                   dataKey='estimatedCasesCI'
-                  fill={colors.secondaryLight}
-                  stroke={colors.secondary}
+                  fill={colors.activeSecondary}
+                  stroke="transparent"
                   isAnimationActive={false}
                 />
                 <Line

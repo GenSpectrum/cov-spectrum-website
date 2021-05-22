@@ -10,6 +10,9 @@ export const colors = {
   highlight: '#c0392b',
   highlight2: '#e74c3c',
   transparent: '#ffffff80',
+  bright: '#F18805',
+  bright2: '#E08A13',
+  bright3: '#CF8B20',
 };
 
 export const Wrapper = styled.div`
