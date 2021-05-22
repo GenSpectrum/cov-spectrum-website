@@ -37,9 +37,9 @@ const Header = () => {
   }
 
   const location = useLocation();
-  const getButtonClasses = (path: string): string =>
+  const getButtonClasses = (path?: string): string =>
     `${
-      location.pathname === path ? 'text-gray-800' : 'text-gray-400 hover:text-gray-800'
+      path && location.pathname === path ? 'text-gray-800' : 'text-gray-400 hover:text-gray-800'
     } px-3 mr-4 rounded-md text-sm font-medium`;
 
   return (
@@ -84,7 +84,15 @@ const Header = () => {
                       Login
                     </a>
                   ) : (
-                    'Logged in as ' + username
+                    <a
+                      className={getButtonClasses()}
+                      href='/login?left'
+                      onClick={() => {
+                        AccountService.logout();
+                      }}
+                    >
+                      Logout {username}
+                    </a>
                   )}
                   <div
                     onClick={() =>

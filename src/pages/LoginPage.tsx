@@ -34,7 +34,22 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className='flex justify-center mt-2 md:mt-10'>
+    <div className='flex flex-col justify-center items-center mt-2 md:mt-10'>
+      {loginFailed && (
+        <Alert variant='info' style={{ marginTop: '20px' }}>
+          The login attempt was not successful.
+        </Alert>
+      )}
+      {sessionExpired && (
+        <Alert variant='info' style={{ marginTop: '20px' }}>
+          The session has expired. Please login again.
+        </Alert>
+      )}
+      {loggedOut && (
+        <Alert variant='info' style={{ marginTop: '20px' }}>
+          You logged out.
+        </Alert>
+      )}
       <Form className='shadow-lg rounded-2xl w-64 bg-white relative overflow-hidden cursor-pointer p-8'>
         <p className='mb-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl'>Login</p>
         <p>Private Switzerland Data</p>
@@ -51,21 +66,6 @@ export const LoginPage = () => {
           Login
         </Button>
       </Form>
-      {loginFailed && (
-        <Alert variant='info' style={{ marginTop: '20px' }}>
-          The login attempt was not successful.
-        </Alert>
-      )}
-      {sessionExpired && (
-        <Alert variant='info' style={{ marginTop: '20px' }}>
-          The session has expired. Please login again.
-        </Alert>
-      )}
-      {loggedOut && (
-        <Alert variant='info' style={{ marginTop: '20px' }}>
-          You logged out.
-        </Alert>
-      )}
     </div>
   );
 };
