@@ -2,10 +2,12 @@ import assert from 'assert';
 import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import utc from 'dayjs/plugin/utc';
+import minMax from 'dayjs/plugin/minMax';
 import { yearWeekRegex } from '../services/api-types';
 
 dayjs.extend(isoWeek);
 dayjs.extend(utc);
+dayjs.extend(minMax);
 
 export interface UnifiedDay {
   string: string;

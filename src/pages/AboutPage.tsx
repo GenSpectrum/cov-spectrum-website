@@ -56,6 +56,32 @@ export const AboutPage = () => {
       data arrives.
       <Question>Can I download the numbers behind the plots?</Question>
       <p>For some of the plots, there is a button next to the plot to download the data as a CSV file.</p>
+      <h2>Components</h2>
+      <h3>Known variants list</h3>
+      <p>
+        <img
+          src='/img/about-known-variants-list.png'
+          alt='The known variants list component'
+          style={{
+            width: '100%',
+            maxWidth: '500px',
+            border: '1px solid black',
+            padding: '10px',
+          }}
+        />
+      </p>
+      <p>
+        The known variants are variants defined by the pangolin lineages. With the search (1), it is possible
+        to search for a pangolin lineage. To include the sub-lineages of a pangolin lineage, write a "*" at
+        the end. For example, "B.1.*" and "B.1*" will use all samples that were classified as "B.1" or as a
+        pangolin lineage that starts with "B.1.".
+      </p>
+      <p>
+        In (2), we show a preview of 12 known variants. Currently, the first 8 are the WHO variants of
+        concerns and are fixed for all countries. The remaining 4 are the variants with the most sequenced
+        samples in the past 3 months. The proportion number in the preview plots (3) is the prevalence of the
+        variant in the most recent 14 days for which sequencing data are available in the selected country.
+      </p>
       <h2>Disclaimer</h2>
       <ul>
         <li>

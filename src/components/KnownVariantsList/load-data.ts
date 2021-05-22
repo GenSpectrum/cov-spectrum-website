@@ -9,6 +9,7 @@ import { Country } from '../../services/api-types';
 export interface KnownVariantWithChartData<T extends VariantSelector> {
   selector: T;
   chartData: number[]; // proportion (0-1) per week
+  recentProportion: number; // the proportion of the last 14 days
 }
 
 export interface KnownVariantWithSampleSet<T extends VariantSelector> {
@@ -56,6 +57,8 @@ export async function loadKnownVariantSampleSets<T extends VariantSelector>(
 // by the known variant plots. It takes the latest 2 month window of data
 // in which the proportion for some variants was known. Data for every variant
 // is clipped to the same window.
+// Further, it computes the proportion from the sequencing data of the last 14
+// days, again ensuring that the same time window is used for every variant.
 export function convertKnownVariantChartData<T extends VariantSelector>({
   variantSampleSets: variantsSampleSets,
   wholeSampleSet,
@@ -63,6 +66,7 @@ export function convertKnownVariantChartData<T extends VariantSelector>({
   variantSampleSets: KnownVariantWithSampleSet<T>[];
   wholeSampleSet: SampleSetWithSelector;
 }): KnownVariantWithChartData<T>[] {
+  // Compute the weekly chart data
   const variantWeeklyCounts = variantsSampleSets.flatMap(s => s.sampleSet.countByWeek());
   const wholeWeeklyCounts = wholeSampleSet.countByWeek();
 
@@ -96,5 +100,23 @@ export function convertKnownVariantChartData<T extends VariantSelector>({
 
   assert(new Set(filledData.map(d => d.length)).size === 1);
 
-  return variantsSampleSets.map(({ selector }, i) => ({ selector, chartData: filledData[i] }));
+  // Compute the proportion during the last 14 days
+  const variantDailyCounts = variantsSampleSets.flatMap(s => s.sampleSet.countByDate());
+  const wholeDateCounts = wholeSampleSet.countByDate();
+  const maxDate = dayjs.max([...wholeDateCounts.keys()].map(d => d.dayjs));
+  let recentVariantTotal = variantDailyCounts.map(_ => 0);
+  let recentWholeTotal = 0;
+  for (let i = 0; i < 14; i++) {
+    const d = globalDateCache.getDayUsingDayjs(maxDate.subtract(i, 'day'));
+    recentWholeTotal += wholeDateCounts.get(d) ?? 0;
+    variantDailyCounts.forEach((counts, index) => {
+      recentVariantTotal[index] += counts.get(d) ?? 0;
+    });
+  }
+
+  return variantsSampleSets.map(({ selector }, i) => ({
+    selector,
+    chartData: filledData[i],
+    recentProportion: recentVariantTotal[i] / recentWholeTotal,
+  }));
 }

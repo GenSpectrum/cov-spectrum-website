@@ -7,6 +7,7 @@ import styled from 'styled-components';
 interface Props {
   name: string;
   chartData?: number[];
+  recentProportion?: number;
   selected?: boolean;
   onClick: () => void;
 }
@@ -54,13 +55,13 @@ const SimpleAreaPlot = React.memo(
   }
 );
 
-export const KnownVariantCard = ({ name, chartData, onClick, selected }: Props) => {
+export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, selected }: Props) => {
   return (
     <Card as={StyledCard} className='bg-light' onClick={onClick} selected={selected}>
       <Title>
         {name}
         {chartData?.length && (
-          <Percentage className='text-muted'>{(last(chartData)! * 100).toFixed(1)}%</Percentage>
+          <Percentage className='text-muted'>{(recentProportion! * 100).toFixed(1)}%</Percentage>
         )}
       </Title>
       <SimpleAreaPlot data={chartData} selected={selected} />

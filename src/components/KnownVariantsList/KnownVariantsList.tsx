@@ -147,6 +147,7 @@ export const KnownVariantsList = ({
   const knownVariantsWithoutData: {
     selector: NamedVariantSelector;
     chartData?: number[];
+    recentProportion?: number;
   }[] = knownVariantSelectors.map(selector => ({ selector }));
 
   useEffect(() => {
@@ -237,12 +238,14 @@ export const KnownVariantsList = ({
           allowNew={true}
         />
       </SearchWrapper>
+
       <Grid>
-        {knownVariants.map(({ selector, chartData }) => (
+        {knownVariants.map(({ selector, chartData, recentProportion }) => (
           <KnownVariantCard
             key={selector.variant.name}
             name={selector.variant.name}
             chartData={chartData}
+            recentProportion={recentProportion}
             onClick={() => onVariantSelect(selector)}
             selected={selection?.variant.name === selector.variant.name}
           />
