@@ -8,14 +8,13 @@ import { colors } from '../charts/common';
 const Wrapper = styled.div`
   & .rbt-input-main {
     color: ${colors.bright};
-    border-width: 2px;
     border-color: ${colors.bright2};
     font-weight: bold;
   }
-  
+
   &:hover .rbt-input-main {
-    color: ${colors.active};
     border-color: ${colors.active};
+    border-width: 2px;
   }
   & .rbt-input-hint {
     border-color: black;
