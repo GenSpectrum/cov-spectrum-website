@@ -20,31 +20,52 @@ const Wrapper = styled.div`
 `;
 
 const VariantDivisionDistributionTable = ({ variantSampleSet, wholeSampleSet }: Props) => {
-  const processedData = useMemo(() => variantSampleSet.proportionByField('division', wholeSampleSet), [
-    variantSampleSet,
-    wholeSampleSet,
-  ]);
+  const processedData = useMemo(() => {
+    const variantDivisions = variantSampleSet.proportionByField('division', wholeSampleSet);
+    const wholeDivisions = wholeSampleSet.proportionByField('division', wholeSampleSet);
+    const plotData: {
+      division: string | null;
+      count: number;
+      prevalence?: number;
+    }[] = [...variantDivisions.entries()]
+      .sort((a, b) => {
+        if (!a[0]) {
+          return 1;
+        }
+        if (!b[0]) {
+          return -1;
+        }
+        return a[0] > b[0] ? 1 : -1;
+      })
+      .map(([division, value]) => {
+        const whole = wholeDivisions.get(division);
+        return {
+          division,
+          count: value.count,
+          prevalence: whole ? value.count / whole.count : undefined,
+        };
+      });
+    return plotData;
+  }, [variantSampleSet, wholeSampleSet]);
 
   return (
     <Wrapper>
       <Table striped bordered hover>
+        <thead>
+          <tr>
+            <th>Division</th>
+            <th>Number of sequences</th>
+            <th>Prevalence</th>
+          </tr>
+        </thead>
         <tbody>
-          {Array.from(processedData.entries())
-            .sort((a, b) => {
-              if (!a[0]) {
-                return 1;
-              }
-              if (!b[0]) {
-                return -1;
-              }
-              return a[0] > b[0] ? 1 : -1;
-            })
-            .map(([division, value]) => (
-              <tr>
-                <td>{division || 'Unknown'}</td>
-                <td>{value.count}</td>
-              </tr>
-            ))}
+          {processedData.map(({ division, count, prevalence }) => (
+            <tr key={division}>
+              <td>{division ?? 'Unknown'}</td>
+              <td>{count}</td>
+              <td>{prevalence ? (prevalence * 100).toFixed(2) + '%' : '-'}</td>
+            </tr>
+          ))}
         </tbody>
       </Table>
     </Wrapper>
