@@ -114,6 +114,7 @@ export const TimeIntensityChart = React.memo(
                       activeIndex={activeIndex}
                       dataLength={data.length}
                       currentValue={currentData.month}
+                      unit='month'
                     />
                   }
                 />

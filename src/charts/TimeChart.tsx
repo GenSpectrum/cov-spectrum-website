@@ -106,6 +106,7 @@ export const TimeChart = React.memo(
                       activeIndex={activeIndex}
                       dataLength={data.length}
                       currentValue={currentData.yearWeek}
+                      unit='week'
                     />
                   }
                 />

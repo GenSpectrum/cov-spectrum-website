@@ -34,7 +34,7 @@ export const ChartWrapper = styled.div`
   width: 10rem;
 `;
 
-const getTimeTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
+const getWeeklyTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
   // minDistanceBetweenTicks tries to avoid that the fixed ticks overlap with the tick of the active entry. This
   // seems to work good enough for now but a perfect implementation probably has to consider the width of the
   // plot.
@@ -55,6 +55,24 @@ const getTimeTickText = (value: string, dataLength: number, activeIndex: number,
   }
 };
 
+const getMonthlyTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
+  // minDistanceBetweenTicks tries to avoid that the fixed ticks overlap with the tick of the active entry. This
+  // seems to work good enough for now but a perfect implementation probably has to consider the width of the
+  // plot.
+  const minDistanceBetweenTicks = Math.ceil(dataLength / 15);
+  if (activeIndex !== index && Math.abs(activeIndex - index) <= minDistanceBetweenTicks) {
+    return undefined;
+  }
+  if (
+    index === activeIndex ||
+    index === 0 ||
+    index === dataLength - 1 ||
+    index === Math.floor(dataLength / 2)
+  ) {
+    return value;
+  }
+};
+
 export type CustomTimeTickProps = {
   x?: number;
   y?: number;
@@ -63,6 +81,7 @@ export type CustomTimeTickProps = {
   activeIndex: number;
   dataLength: number;
   currentValue: string;
+  unit: 'week' | 'month';
 };
 
 export const CustomTimeTick = ({
@@ -72,33 +91,61 @@ export const CustomTimeTick = ({
   activeIndex,
   dataLength,
   currentValue,
+  unit,
 }: CustomTimeTickProps): JSX.Element => {
-  const text = payload ? getTimeTickText(payload.value, dataLength, activeIndex, payload.index) : undefined;
-  if (!payload || !text) {
-    return <g transform={`translate(${x},${y})`} />;
+  let content;
+  if (!payload) {
+    content = <></>;
+  } else if (unit === 'week') {
+    const text = getWeeklyTickText(payload.value, dataLength, activeIndex, payload.index);
+    if (!text) {
+      content = <></>;
+    } else {
+      content = (
+        <>
+          <text
+            x={0}
+            y={0}
+            dx={0}
+            dy={10}
+            textAnchor='middle'
+            fill={payload.value === currentValue ? colors.active : colors.inactive}
+          >
+            {text.line1}
+          </text>
+          <text
+            x={0}
+            y={0}
+            dx={0}
+            dy={30}
+            textAnchor='middle'
+            fill={payload.value === currentValue ? colors.active : colors.inactive}
+          >
+            {text.line2}
+          </text>
+        </>
+      );
+    }
+  } else if (unit === 'month') {
+    const text = getMonthlyTickText(payload.value, dataLength, activeIndex, payload.index);
+    if (!text) {
+      content = <></>;
+    } else {
+      content = (
+        <>
+          <text
+            x={0}
+            y={0}
+            dx={0}
+            dy={10}
+            textAnchor='middle'
+            fill={payload.value === currentValue ? colors.active : colors.inactive}
+          >
+            {text}
+          </text>
+        </>
+      );
+    }
   }
-  return (
-    <g transform={`translate(${x},${y})`}>
-      <text
-        x={0}
-        y={0}
-        dx={0}
-        dy={10}
-        textAnchor='middle'
-        fill={payload.value === currentValue ? colors.active : colors.inactive}
-      >
-        {text.line1}
-      </text>
-      <text
-        x={0}
-        y={0}
-        dx={0}
-        dy={30}
-        textAnchor='middle'
-        fill={payload.value === currentValue ? colors.active : colors.inactive}
-      >
-        {text.line2}
-      </text>
-    </g>
-  );
+  return <g transform={`translate(${x},${y})`}>{content}</g>;
 };
