@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import { getPlaces } from '../services/api';
 import { Place } from '../services/api-types';
+import ReactCountryFlag from 'react-country-flag';
 
 export interface Props {
   id?: string;
@@ -26,13 +27,16 @@ export const PlaceSelect = ({ id, selected, onSelect, onMenuToggle }: Props) => 
   }, []);
 
   return (
-    <Typeahead
-      id={id}
-      selected={selected ? [selected] : []}
-      placeholder='Select country/region'
-      onChange={selected => onSelect(selected.length === 1 ? selected[0] : undefined)}
-      onMenuToggle={onMenuToggle}
-      options={places}
-    />
+    <>
+      <Typeahead
+        id={id}
+        selected={selected ? [selected] : []}
+        placeholder='Select country/region'
+        onChange={selected => onSelect(selected.length === 1 ? selected[0] : undefined)}
+        onMenuToggle={onMenuToggle}
+        options={places}
+      >
+      </Typeahead>
+    </>
   );
 };

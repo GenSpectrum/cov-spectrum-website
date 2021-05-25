@@ -49,16 +49,20 @@ const ValueWrapper = styled('div')<{ fontSize: 'small' | 'normal' }>`
   color: ${props => props.color ?? colors.inactive};
 `;
 
-const MetricWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  height: 100%;
-  padding-right: ${METRIC_RIGHT_PADDING_PX}px;
-  width: ${METRIC_WIDTH_PX}px;
-  flex: 1;
-  flex-grow: 0;
-`;
+// const MetricWrapper = styled.div`
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: flex-end;
+//   height: 100%;
+//   /* padding-right: ${METRIC_RIGHT_PADDING_PX}px; */
+//   /* width: ${METRIC_WIDTH_PX}px; */
+//   flex: 1;
+//   flex-grow: 0;
+// `;
+
+export const MetricWrapper = ({ id, children }: {id: string, children: React.ReactNode }) => {
+  return <div id={id} className='flex flex-col justify-end h-full flex-grow pr-8 w-40'>{children}</div>;
+};
 
 const PercentWrapper = styled.div`
   font-size: 1rem;

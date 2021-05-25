@@ -39,6 +39,7 @@
     "react-bootstrap": "^1.4.3",
     "react-bootstrap-typeahead": "^5.1.4",
     "react-component-export-image": "^1.0.6",
+    "react-country-flag": "^2.3.0",
     "react-csv": "^2.0.3",
     "react-dom": "^17.0.1",
     "react-icons": "^4.2.0",

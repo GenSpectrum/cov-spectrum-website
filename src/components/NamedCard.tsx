@@ -29,7 +29,8 @@ const Card = styled.div<{ namedCardStyle: NamedCardStyle }>`
 
 const Title = styled.h3`
   font-size: 1.5rem;
-  margin-bottom: 15px;
+  margin-top: 0px;
+  margin-bottom: 0.5rem;
 `;
 
 const TitleConfidential = styled.span`

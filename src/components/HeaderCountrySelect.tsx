@@ -7,14 +7,12 @@ import { colors } from '../charts/common';
 
 const Wrapper = styled.div`
   & .rbt-input-main {
-    color: ${colors.bright};
-    border-color: ${colors.bright2};
     font-weight: bold;
+    border-color: #34495e;
   }
 
   &:hover .rbt-input-main {
-    border-color: ${colors.active};
-    border-width: 2px;
+    border-color: black;
   }
   & .rbt-input-hint {
     border-color: black;
@@ -30,7 +28,7 @@ export const HeaderCountrySelect = () => {
   }
 
   return (
-    <Form inline className='mr-3'>
+    <Form inline className='mr-3 shadow-md'>
       <Wrapper>
         <RequiredPlaceSelect
           id='countrySelect'
