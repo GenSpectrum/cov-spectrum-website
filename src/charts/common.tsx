@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { globalDateCache } from '../helpers/date-cache';
 
 export const colors = {
   active: '#2980b9',
@@ -39,28 +40,41 @@ export const ChartWrapper = styled.div`
   width: 10rem;
 `;
 
-const getTimeTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
-  if (dataLength > 25) {
-    if (activeIndex === index) {
-      return value.slice(5);
-    } else if (Math.abs(activeIndex - index) <= 2) {
-      return '';
-    } else if (index % 5 === 0) {
-      return value.slice(5);
-    }
-  } else if (dataLength > 15) {
-    if (activeIndex === index) {
-      return value.slice(5);
-    } else if (Math.abs(activeIndex - index) <= 1) {
-      return '';
-    } else if (index % 2 === 0) {
-      return value.slice(5);
-    }
-  } else if (dataLength > 12) {
-    return value.slice(5);
-  } else if (dataLength > 5) {
-    return value.slice(2);
-  } else {
+const getWeeklyTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
+  // minDistanceBetweenTicks tries to avoid that the fixed ticks overlap with the tick of the active entry. This
+  // seems to work good enough for now but a perfect implementation probably has to consider the width of the
+  // plot.
+  const minDistanceBetweenTicks = Math.ceil(dataLength / 15);
+  if (activeIndex !== index && Math.abs(activeIndex - index) <= minDistanceBetweenTicks) {
+    return undefined;
+  }
+  if (
+    index === activeIndex ||
+    index === 0 ||
+    index === dataLength - 1 ||
+    index === Math.floor(dataLength / 2)
+  ) {
+    return {
+      line1: 'Week ' + value.slice(5),
+      line2: globalDateCache.getIsoWeek(value).firstDay.string,
+    };
+  }
+};
+
+const getMonthlyTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
+  // minDistanceBetweenTicks tries to avoid that the fixed ticks overlap with the tick of the active entry. This
+  // seems to work good enough for now but a perfect implementation probably has to consider the width of the
+  // plot.
+  const minDistanceBetweenTicks = Math.ceil(dataLength / 15);
+  if (activeIndex !== index && Math.abs(activeIndex - index) <= minDistanceBetweenTicks) {
+    return undefined;
+  }
+  if (
+    index === activeIndex ||
+    index === 0 ||
+    index === dataLength - 1 ||
+    index === Math.floor(dataLength / 2)
+  ) {
     return value;
   }
 };
@@ -73,6 +87,7 @@ export type CustomTimeTickProps = {
   activeIndex: number;
   dataLength: number;
   currentValue: string;
+  unit: 'week' | 'month';
 };
 
 export const CustomTimeTick = ({
@@ -82,23 +97,61 @@ export const CustomTimeTick = ({
   activeIndex,
   dataLength,
   currentValue,
+  unit,
 }: CustomTimeTickProps): JSX.Element => {
-  return (
-    <g transform={`translate(${x},${y})`}>
-      {payload ? (
-        <text
-          x={0}
-          y={0}
-          dx={0}
-          dy={10}
-          textAnchor='middle'
-          fill={payload.value === currentValue ? colors.active : colors.inactive}
-        >
-          {getTimeTickText(payload.value, dataLength, activeIndex, payload.index)}
-        </text>
-      ) : (
-        <></>
-      )}
-    </g>
-  );
+  let content;
+  if (!payload) {
+    content = <></>;
+  } else if (unit === 'week') {
+    const text = getWeeklyTickText(payload.value, dataLength, activeIndex, payload.index);
+    if (!text) {
+      content = <></>;
+    } else {
+      content = (
+        <>
+          <text
+            x={0}
+            y={0}
+            dx={0}
+            dy={10}
+            textAnchor='middle'
+            fill={payload.value === currentValue ? colors.active : colors.inactive}
+          >
+            {text.line1}
+          </text>
+          <text
+            x={0}
+            y={0}
+            dx={0}
+            dy={30}
+            textAnchor='middle'
+            fill={payload.value === currentValue ? colors.active : colors.inactive}
+          >
+            {text.line2}
+          </text>
+        </>
+      );
+    }
+  } else if (unit === 'month') {
+    const text = getMonthlyTickText(payload.value, dataLength, activeIndex, payload.index);
+    if (!text) {
+      content = <></>;
+    } else {
+      content = (
+        <>
+          <text
+            x={0}
+            y={0}
+            dx={0}
+            dy={10}
+            textAnchor='middle'
+            fill={payload.value === currentValue ? colors.active : colors.inactive}
+          >
+            {text}
+          </text>
+        </>
+      );
+    }
+  }
+  return <g transform={`translate(${x},${y})`}>{content}</g>;
 };

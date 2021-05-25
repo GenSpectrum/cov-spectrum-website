@@ -11,7 +11,8 @@ import {
 } from './common';
 import { kFormat } from '../helpers/number';
 
-const CHART_MARGIN_RIGHT = 15;
+const CHART_MARGIN_RIGHT = 30;
+const CHART_MARGIN_BOTTOM = 10;
 
 export type OnClickHandler = (index: number) => boolean;
 
@@ -100,7 +101,7 @@ export const TimeIntensityChart = React.memo(
               <BarChart
                 data={data}
                 barCategoryGap='5%'
-                margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
+                margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: CHART_MARGIN_BOTTOM }}
                 onMouseLeave={handleMouseLeave}
               >
                 <XAxis
@@ -113,6 +114,7 @@ export const TimeIntensityChart = React.memo(
                       activeIndex={activeIndex}
                       dataLength={data.length}
                       currentValue={currentData.month}
+                      unit='month'
                     />
                   }
                 />
