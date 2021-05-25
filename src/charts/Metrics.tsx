@@ -9,7 +9,7 @@ export const METRIC_WIDTH_PX = 160;
 const TOOLTIP_DALAY = 500;
 
 export const MetricsWrapper = styled.div`
-  padding: 0 0 1.4rem 0rem;
+  padding: 0 0 1.7rem 0rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -27,41 +27,32 @@ export const colors = {
   secondary: '#7f8c8d',
 };
 
-const IconWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  padding-left: 0.2rem;
-  flex-grow: 1;
-`;
+export const IconWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
+  return (
+    <div id={id} className='flex items-center pl-1 grow'>
+    {children}
+    </div>
+  );
+};
 
-const MetricTitleWrapper = styled.div`
-  font-size: 1rem;
-  display: flex;
-  color: ${colors.inactive};
-  height: 1.6rem;
-`;
+export const MetricTitleWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
+  return (
+    <div id={id} className='flex text-base text-gray-400 h-7'>
+      {children}
+    </div>
+  );
+};
 
-const ValueWrapper = styled('div')<{ fontSize: 'small' | 'normal' }>`
-  font-size: ${props => (props.fontSize === 'small' ? '2rem' : '3rem')};
-  width: auto;
-  flex-grow: 0;
-  line-height: 1;
-  color: ${props => props.color ?? colors.inactive};
-`;
-
-// const MetricWrapper = styled.div`
-//   display: flex;
-//   flex-direction: column;
-//   justify-content: flex-end;
-//   height: 100%;
-//   /* padding-right: ${METRIC_RIGHT_PADDING_PX}px; */
-//   /* width: ${METRIC_WIDTH_PX}px; */
-//   flex: 1;
-//   flex-grow: 0;
-// `;
+export const ValueWrapper = ({ color, children }: { color: string | undefined, children: React.ReactNode }) => {
+  return (
+    <div className='w-auto grow-0 text-3xl md:text-4xl leading-7' style={{color: color}}>
+      {children}
+    </div>
+  );
+};
 
 export const MetricWrapper = ({ id, children }: {id: string, children: React.ReactNode }) => {
-  return <div id={id} className='flex flex-col justify-end h-full flex-grow pr-8 w-40'>{children}</div>;
+  return <div id={id} className='flex flex-col justify-end h-full flex-grow pr-4 w-28 md:pr-8 md:w-40'>{children}</div>;
 };
 
 const PercentWrapper = styled.div`
@@ -70,7 +61,6 @@ const PercentWrapper = styled.div`
   flex-grow: 1;
   line-height: 1;
   color: #95a5a6;
-  margin-top: 1.8rem;
   margin-left: 0.4rem;
 `;
 
@@ -84,13 +74,8 @@ export type MetricProps = {
   showPercent?: number | string | undefined;
 };
 
-const ValueAndPercentWrapper = styled.div`
-  display: flex;
-`;
-
 const Metric = ({
   percent = false,
-  fontSize = 'normal',
   value,
   title,
   color,
@@ -101,13 +86,13 @@ const Metric = ({
   return (
     <MetricWrapper id='metric-with-tooltip'>
       <div data-for={tooltipId} data-tip={helpText}>
-        <ValueAndPercentWrapper>
-          <ValueWrapper color={color} fontSize={fontSize}>
+        <div className="flex w-full">
+          <ValueWrapper color={color}>
             {value}
             {percent && '%'}
           </ValueWrapper>
-          <PercentWrapper>{showPercent && '' + showPercent + '%'}</PercentWrapper>
-        </ValueAndPercentWrapper>
+          <PercentWrapper className="self-end">{showPercent && '' + showPercent + '%'}</PercentWrapper>
+        </div>
         <MetricTitleWrapper id='metric-title'>
           {title + ' '}
           <IconWrapper id='info-wrapper'>
