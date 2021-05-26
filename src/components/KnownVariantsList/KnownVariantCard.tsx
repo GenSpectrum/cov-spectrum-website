@@ -56,7 +56,7 @@ const SimpleAreaPlot = React.memo(
 
 export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, selected }: Props) => {
   return (
-    <Card as={StyledCard} className='bg-light' onClick={onClick} selected={selected}>
+    <Card className='bg-light' onClick={onClick} selected={selected}>
       <Title>
         {name}
         {chartData?.length && (
