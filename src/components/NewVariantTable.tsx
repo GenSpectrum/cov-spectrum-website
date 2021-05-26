@@ -161,7 +161,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                           variant='secondary'
                           size='sm'
                         >
-                          Show Details
+                          Details
                         </Button>
                       </td>
                     </tr>

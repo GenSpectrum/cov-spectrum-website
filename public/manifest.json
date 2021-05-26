@@ -1,6 +1,6 @@
 {
   "short_name": "CoV-Spectrum",
-  "name": "CoV-Spectrum",
+  "name": "Covid19 Variant Tracker - CoV-Spectrum",
   "icons": [],
   "start_url": ".",
   "display": "standalone",
