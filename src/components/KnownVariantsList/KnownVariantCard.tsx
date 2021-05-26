@@ -92,11 +92,11 @@ export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, s
   return (
     <Card
       as={StyledCard}
-      className='shadow-xs hover:border-4 transition delay-50 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl'
+      className={`shadow-md border-0 m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl`}
       onClick={onClick}
       selected={selected}
     >
-      <Title>
+      <Title className={`${selected ? 'font-bold' : ''}`}>
         {name}
         {chartData?.length && (
           <Percentage className='text-muted'>{(recentProportion! * 100).toFixed(1)}%</Percentage>
