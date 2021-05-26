@@ -47,7 +47,7 @@ const ToolbarWrapper = styled.div`
 `;
 
 const ContentWrapper = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: 0px;
 `;
 
 export const NamedCard = ({
