@@ -19,7 +19,7 @@ export const WasteWaterHeatMapWidget = new Widget(
       variantName,
       location,
     }),
-    async (encoded) => ({
+    async encoded => ({
       country: encoded.country,
       variantName: encoded.variantName,
       location: encoded.location,
