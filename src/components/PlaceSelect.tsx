@@ -35,8 +35,7 @@ export const PlaceSelect = ({ id, selected, onSelect, onMenuToggle }: Props) => 
         onChange={selected => onSelect(selected.length === 1 ? selected[0] : undefined)}
         onMenuToggle={onMenuToggle}
         options={places}
-      >
-      </Typeahead>
+      ></Typeahead>
     </>
   );
 };

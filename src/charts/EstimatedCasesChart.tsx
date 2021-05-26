@@ -176,7 +176,6 @@ export const EstimatedCasesChart = React.memo(
                   ? active.estimatedCasesCI[0].toFixed(0) + '-' + active.estimatedCasesCI[1].toFixed(0)
                   : 'NA'
               }
-              fontSize='small'
               title='Confidence interval'
               color={colors.active}
               helpText='The 95% confidence interval'

@@ -3,13 +3,13 @@ import ReactTooltip from 'react-tooltip';
 import { BiHelpCircle } from 'react-icons/bi';
 import styled from 'styled-components';
 
-export const METRIC_RIGHT_PADDING_PX = 32;
+export const METRIC_RIGHT_PADDING_PX = 16;
 export const METRIC_WIDTH_PX = 160;
 
 const TOOLTIP_DALAY = 500;
 
 export const MetricsWrapper = styled.div`
-  padding: 0 0 1.7rem 0rem;
+  padding: 0 0 1.8rem 0rem;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -30,7 +30,7 @@ export const colors = {
 export const IconWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
   return (
     <div id={id} className='flex items-center pl-1 grow'>
-    {children}
+      {children}
     </div>
   );
 };
@@ -43,16 +43,26 @@ export const MetricTitleWrapper = ({ id, children }: { id: string; children: Rea
   );
 };
 
-export const ValueWrapper = ({ color, children }: { color: string | undefined, children: React.ReactNode }) => {
+export const ValueWrapper = ({
+  color,
+  children,
+}: {
+  color: string | undefined;
+  children: React.ReactNode;
+}) => {
   return (
-    <div className='w-auto grow-0 text-3xl md:text-4xl leading-7' style={{color: color}}>
+    <div className='w-auto grow-0 text-3xl md:text-5xl' style={{ color: color }}>
       {children}
     </div>
   );
 };
 
-export const MetricWrapper = ({ id, children }: {id: string, children: React.ReactNode }) => {
-  return <div id={id} className='flex flex-col justify-end h-full flex-grow pr-4 w-28 md:pr-8 md:w-40'>{children}</div>;
+export const MetricWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
+  return (
+    <div id={id} className='flex flex-col justify-end h-full flex-grow w-28 pr-1 md:w-40'>
+      {children}
+    </div>
+  );
 };
 
 const PercentWrapper = styled.div`
@@ -86,12 +96,12 @@ const Metric = ({
   return (
     <MetricWrapper id='metric-with-tooltip'>
       <div data-for={tooltipId} data-tip={helpText}>
-        <div className="flex w-full">
+        <div className='flex w-full'>
           <ValueWrapper color={color}>
             {value}
             {percent && '%'}
           </ValueWrapper>
-          <PercentWrapper className="self-end">{showPercent && '' + showPercent + '%'}</PercentWrapper>
+          <PercentWrapper className='self-end'>{showPercent && '' + showPercent + '%'}</PercentWrapper>
         </div>
         <MetricTitleWrapper id='metric-title'>
           {title + ' '}

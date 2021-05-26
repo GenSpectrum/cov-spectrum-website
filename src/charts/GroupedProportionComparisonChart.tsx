@@ -205,6 +205,7 @@ export const GroupedProportionComparisonChart = React.memo(
           <ChartWrapper>
             <ComposedChart
               width={width - (extendedMetrics ? 2 : 1) * METRIC_WIDTH_PX - METRIC_RIGHT_PADDING_PX}
+              // width="100%"
               height={height}
               margin={{ top: 6, right: 0, left: 0, bottom: 0 }}
               onMouseLeave={handleMouseLeave}

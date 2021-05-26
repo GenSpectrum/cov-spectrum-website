@@ -16,16 +16,28 @@ interface Props {
   description?: string;
 }
 
-const Card = styled.div<{ namedCardStyle: NamedCardStyle }>`
-  position: relative;
-  margin: 5px;
-  background: 'white';
-  padding: 12px 15px;
-  border: 1px solid #0000001f;
-  border: ${props =>
-    props.namedCardStyle === NamedCardStyle.NORMAL ? '1px solid #0000001f' : '4px solid #e74c3c'};
-  box-shadow: #00000059 0 2px 3px 0px;
-`;
+// const Card = styled.div<{ namedCardStyle: NamedCardStyle }>`
+//   position: relative;
+//   margin: 5px;
+//   background: 'white';
+//   padding: 12px 15px;
+//   border: 1px solid #0000001f;
+//   border: ${props =>
+//     props.namedCardStyle === NamedCardStyle.NORMAL ? '1px solid #0000001f' : '4px solid #e74c3c'};
+//   box-shadow: #00000059 0 2px 3px 0px;
+// `;
+
+export const Card = ({ children, namedCardStyle}: { children: React.ReactNode, namedCardStyle: NamedCardStyle}) => {
+  return (
+    <div
+      className={`relative mx-0.5 my-3 md:m-3 shadow-lg rounded-lg bg-white p-4  border ${
+        namedCardStyle === NamedCardStyle.NORMAL ? ' border-gray-100' : 'border-red-500'
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
 
 const Title = styled.h3`
   font-size: 1.5rem;
