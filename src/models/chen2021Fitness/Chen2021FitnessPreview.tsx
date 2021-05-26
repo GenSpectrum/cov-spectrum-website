@@ -60,7 +60,7 @@ export const Chen2021FitnessPreview = ({
               Math.round(modelData.params.fd.ciUpper * 100) +
               '%'
             }
-            title={'Confidence interval'}
+            title={'Conf. interval'}
             helpText={'The 95% confidence interval'}
             color={colors.secondary}
           />

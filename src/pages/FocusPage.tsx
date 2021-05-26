@@ -121,7 +121,7 @@ export const FocusPage = ({
             variantSampleSet={variantSampleSet}
             wholeSampleSet={wholeSampleSet}
             height={300}
-            title='Sequences over time'
+            title='Prevalence of variant'
           />
         </GridCell>
         <GridCell minWidth={600}>
@@ -129,7 +129,7 @@ export const FocusPage = ({
             variantSampleSet={variantSampleSet}
             sequencingIntensityEntrySet={sequencingIntensityEntrySet}
             height={300}
-            title='Estimated cases'
+            title='New cases'
           />
         </GridCell>
         <GridCell minWidth={600}>
@@ -143,7 +143,7 @@ export const FocusPage = ({
         {country === 'Switzerland' && (
           <GridCell minWidth={600}>
             <NamedCard
-              title='Hospitalization probabilities'
+              title='Hospitalization'
               toolbar={deepFocusButtons.hospitalizationAndDeath}
             >
               <HospitalizationDeathPlot

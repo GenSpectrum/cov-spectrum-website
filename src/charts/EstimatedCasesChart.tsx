@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { UnifiedDay } from '../helpers/date-cache';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from './common';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
@@ -6,6 +6,7 @@ import Metric, { MetricsSpacing, MetricsWrapper } from './Metrics';
 import { getTicks } from '../helpers/ticks';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import dayjs from 'dayjs';
+import { active } from 'd3';
 
 export type EstimatedCasesTimeEntry = {
   date: UnifiedDay;
@@ -34,7 +35,7 @@ const CHART_MARGIN_RIGHT = 15;
 export const EstimatedCasesChart = React.memo(
   ({ data }: EstimatedCasesChartProps): JSX.Element => {
     const [active, setActive] = useState<PlotEntry | undefined>(undefined);
-
+     
     const {
       plotData,
       ticks,
@@ -90,6 +91,7 @@ export const EstimatedCasesChart = React.memo(
           estimatedCasesCI: [Math.max(wilsonInterval[0], 0) * cases, Math.max(wilsonInterval[1], 0) * cases],
         });
       }
+
       const ticks = getTicks(
         smoothedData.map(d => ({
           date: d.date.dayjs.toDate(),
@@ -97,6 +99,17 @@ export const EstimatedCasesChart = React.memo(
       );
       return { plotData, ticks };
     }, [data]);
+
+    const setDefaultActive = () => {
+      if (plotData) {
+        const defaultActive = plotData[plotData.length - 1];
+        defaultActive !== undefined && setActive(defaultActive);
+      }
+    }
+
+    useEffect(() => {
+      setDefaultActive();
+    }, []);
 
     return (
       <Wrapper>
@@ -138,7 +151,7 @@ export const EstimatedCasesChart = React.memo(
                       }
                     }
                     if (!e.active) {
-                      setActive(undefined);
+                     setDefaultActive(); 
                     }
                     return <></>;
                   }}
@@ -176,8 +189,8 @@ export const EstimatedCasesChart = React.memo(
                   ? active.estimatedCasesCI[0].toFixed(0) + '-' + active.estimatedCasesCI[1].toFixed(0)
                   : 'NA'
               }
-              title='Confidence interval'
-              color={colors.active}
+              title='Conf. interval'
+              color={colors.secondary}
               helpText='The 95% confidence interval'
               percent={false}
             />

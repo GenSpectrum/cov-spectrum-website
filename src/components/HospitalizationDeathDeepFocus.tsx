@@ -38,7 +38,7 @@ export const HospitalizationDeathDeepFocus = ({
     <>
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={800}>
-          <NamedCard title='Hospitalization probabilities'>
+          <NamedCard title='Hospitalization'>
             <HospitalizationDeathPlot
               field='hospitalized'
               variantSampleSet={variantSampleSet}
