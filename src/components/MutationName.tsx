@@ -165,7 +165,7 @@ export const MutationName = ({ mutation }: Props) => {
         overlay={popover}
         rootClose={true}
         transition={false}
-        placement='bottom'
+        placement='top'
       >
         <Mut>{mutation}</Mut>
       </OverlayTrigger>

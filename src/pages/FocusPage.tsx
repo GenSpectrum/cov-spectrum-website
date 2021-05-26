@@ -114,20 +114,7 @@ export const FocusPage = ({
   return (
     <div>
       {header}
-      {variant.mutations.length > 0 && (
-        <p style={{ marginBottom: '30px' }}>
-          The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
-          mutations.
-        </p>
-      )}
-      {(!variant.name || variant.name.endsWith('*')) && <VariantLineages {...forwardedProps} />}
-      {variant.name && (
-        <VariantMutations
-          country={forwardedProps.country}
-          pangolinLineage={variant.name}
-          dateRange={forwardedProps.dateRange}
-        />
-      )}
+
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <VariantTimeDistributionPlotWidget.ShareableComponent
@@ -244,6 +231,28 @@ export const FocusPage = ({
           </GridCell>
         )}
       </PackedGrid>
+      {variant.mutations.length > 0 && (
+        <p style={{ marginBottom: '30px' }}>
+          The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
+          mutations.
+        </p>
+      )}
+
+      {(!variant.name || variant.name.endsWith('*')) && (
+        <div className='m-4'>
+          <VariantLineages {...forwardedProps} />{' '}
+        </div>
+      )}
+
+      {variant.name && (
+        <div className='m-4'>
+          <VariantMutations
+            country={forwardedProps.country}
+            pangolinLineage={variant.name}
+            dateRange={forwardedProps.dateRange}
+          />
+        </div>
+      )}
     </div>
   );
 };
