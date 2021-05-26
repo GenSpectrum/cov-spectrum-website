@@ -14,6 +14,9 @@ export const colors = {
   bright: '#F18805',
   bright2: '#E08A13',
   bright3: '#CF8B20',
+  good: '#27ae60',
+  neutral: '#e67e22',
+  bad: '#c0392b',
 };
 
 export const Wrapper = styled.div`

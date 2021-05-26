@@ -3,7 +3,6 @@ import { Form } from 'react-bootstrap';
 import { useExploreUrl } from '../helpers/explore-url';
 import { RequiredPlaceSelect } from './RequiredPlaceSelect';
 import styled from 'styled-components';
-import { colors } from '../charts/common';
 
 const Wrapper = styled.div`
   & .rbt-input-main {

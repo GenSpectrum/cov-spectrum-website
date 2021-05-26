@@ -46,12 +46,6 @@ interface DeepFocusRoute {
   content: (props: LoadedProps) => JSX.Element;
 }
 
-const OuterWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
 const HeaderWrapper = styled.div`
   padding: ${scrollableContainerPaddingPx}px;
   border-bottom: 1px solid #dee2e6;
@@ -117,7 +111,7 @@ export const DeepFocusPage = ({
   const { path, url } = useRouteMatch();
 
   const makeLayout = (content: JSX.Element) => (
-    <OuterWrapper>
+    <div className='flex flex-col h-full bg-gray-300'>
       <HeaderWrapper>
         <VariantHeader
           variant={syncProps.variant}
@@ -135,7 +129,7 @@ export const DeepFocusPage = ({
         />
       </HeaderWrapper>
       <ContentWrapper>{content}</ContentWrapper>
-    </OuterWrapper>
+    </div>
   );
 
   if (
