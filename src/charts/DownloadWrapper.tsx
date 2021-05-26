@@ -14,7 +14,7 @@ const baseButtonStyles = css`
   position: absolute;
   z-index: 10;
   top: 0px;
-  right: 8px;
+  right: 0px;
   padding: 8px 8px 8px 8px;
   transform: translate(0%, 0%);
   transition: 0.1s ease-in;
@@ -30,7 +30,7 @@ const DownloadButton = styled(FaCloudDownloadAlt)`
 `;
 const DownloadDataButton = styled(BiTable)`
   ${baseButtonStyles}
-  right: 38px;
+  right: 30px;
 `;
 
 const Wrapper = styled.div`

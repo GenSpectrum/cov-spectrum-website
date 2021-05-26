@@ -81,7 +81,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
 
   return (
     <div>
-      {data && (
+      {data ? (
         <>
           {
             // We only show the filter bar internally because its function is not straight-forward and it lacks a good
@@ -132,7 +132,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                     <ReactTooltip id='new-variant-table-mutations-help' />
                   </th>
                   <th># Sequences in last 3 months</th>
-                  <th>Current advantage</th>
+                  <th>Transmission advantage</th>
                   <th></th>
                 </tr>
               </thead>
@@ -171,7 +171,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
             </Table>
           </div>
         </>
-      )}
+      ) : <p>No data available</p>}
     </div>
   );
 };
