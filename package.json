@@ -71,7 +71,23 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "plugins": [
+      "unused-imports"
+    ],
+    "rules": {
+      "no-unused-vars": "off",
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          "vars": "all",
+          "varsIgnorePattern": "^_",
+          "args": "after-used",
+          "argsIgnorePattern": "^_"
+        }
+      ]
+    }
   },
   "browserslist": {
     "production": [
@@ -90,6 +106,7 @@
     "@types/react-bootstrap-typeahead": "^5.1.2",
     "@types/react-plotly.js": "^2.2.4",
     "autoprefixer": "^9.8.6",
+    "eslint-plugin-unused-imports": "^1.1.1",
     "postcss": "^7.0.35",
     "prettier": "^2.2.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2"

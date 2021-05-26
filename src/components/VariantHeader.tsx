@@ -12,7 +12,7 @@ export interface Props {
 export const VariantHeader = ({ variant, titleSuffix, controls, place }: Props) => {
   return (
     <>
-      <div className="flex ml-3">
+      <div className='flex ml-3'>
         <h1 style={{ flexGrow: 1 }}>
           {variant.name ?? 'Unnamed Variant'}
           {!!titleSuffix && ' - '}

@@ -6,7 +6,6 @@ import Metric, { MetricsSpacing, MetricsWrapper } from './Metrics';
 import { getTicks } from '../helpers/ticks';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import dayjs from 'dayjs';
-import { active } from 'd3';
 
 export type EstimatedCasesTimeEntry = {
   date: UnifiedDay;
@@ -35,7 +34,7 @@ const CHART_MARGIN_RIGHT = 15;
 export const EstimatedCasesChart = React.memo(
   ({ data }: EstimatedCasesChartProps): JSX.Element => {
     const [active, setActive] = useState<PlotEntry | undefined>(undefined);
-     
+
     const {
       plotData,
       ticks,
@@ -100,16 +99,16 @@ export const EstimatedCasesChart = React.memo(
       return { plotData, ticks };
     }, [data]);
 
-    const setDefaultActive = () => {
+    const setDefaultActive = (plotData: PlotEntry[]) => {
       if (plotData) {
         const defaultActive = plotData[plotData.length - 1];
         defaultActive !== undefined && setActive(defaultActive);
       }
-    }
+    };
 
     useEffect(() => {
-      setDefaultActive();
-    }, []);
+      setDefaultActive(plotData);
+    }, [plotData]);
 
     return (
       <Wrapper>
@@ -151,7 +150,7 @@ export const EstimatedCasesChart = React.memo(
                       }
                     }
                     if (!e.active) {
-                     setDefaultActive(); 
+                      setDefaultActive(plotData);
                     }
                     return <></>;
                   }}
@@ -160,7 +159,7 @@ export const EstimatedCasesChart = React.memo(
                   type='monotone'
                   dataKey='estimatedCasesCI'
                   fill={colors.activeSecondary}
-                  stroke="transparent"
+                  stroke='transparent'
                   isAnimationActive={false}
                 />
                 <Line

@@ -93,7 +93,7 @@ export const TimeIntensityChart = React.memo(
     ];
 
     return currentData ? (
-      <Wrapper id="sequencing-intensity-chart">
+      <Wrapper id='sequencing-intensity-chart'>
         <TitleWrapper id='graph_title'>Number of sequenced samples on {currentData.month}</TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>

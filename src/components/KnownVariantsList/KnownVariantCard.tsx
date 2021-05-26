@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from 'react-bootstrap';
 import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import styled from 'styled-components';
-import {mean} from "lodash"
+import { mean } from 'lodash';
 import { colors } from '../../charts/common';
 
 interface Props {
@@ -42,26 +42,26 @@ const getTrend = (data: number[]): TREND => {
   const middle = mean(data.slice(Math.max(data.length - 8, 0), Math.max(data.length - 2, 1)));
   const final = mean(data.slice(Math.max(data.length - 2, 0)));
   const difference = final - middle;
-  if (Math.abs(difference) < (0.015 * middle) || Math.abs(difference) < 0.0001) {
-    return TREND.NEUTRAL
+  if (Math.abs(difference) < 0.015 * middle || Math.abs(difference) < 0.0001) {
+    return TREND.NEUTRAL;
   } else if (difference > 0) {
-    return TREND.POSITIVE
+    return TREND.POSITIVE;
   } else {
-    return TREND.NEGATIVE
+    return TREND.NEGATIVE;
   }
-}
+};
 
 const getTrendColor = (data: number[]): string => {
   const trend = getTrend(data);
   switch (trend) {
     case TREND.POSITIVE:
-      return colors.bad
+      return colors.bad;
     case TREND.NEGATIVE:
-      return colors.good
+      return colors.good;
     default:
-      return colors.neutral
+      return colors.neutral;
   }
-}
+};
 
 const SimpleAreaPlot = React.memo(
   ({ data, selected }: { data: number[] | undefined; selected?: boolean }) => {

@@ -16,7 +16,13 @@ interface Props {
   description?: string;
 }
 
-export const Card = ({ children, namedCardStyle}: { children: React.ReactNode, namedCardStyle: NamedCardStyle}) => {
+export const Card = ({
+  children,
+  namedCardStyle,
+}: {
+  children: React.ReactNode;
+  namedCardStyle: NamedCardStyle;
+}) => {
   return (
     <div
       className={`relative mx-0.5 mt-1 mb-5 md:mx-3 shadow-lg rounded-lg bg-white p-4  border ${

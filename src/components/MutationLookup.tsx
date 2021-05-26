@@ -36,8 +36,8 @@ export const MutationLookup = ({ onVariantSelect }: Props) => {
       </Form.Group>
       <Form.Group controlId='matchPercentageGroup'>
         <div id='range-with-title' className='flex flex-row '>
-          <div className='flex flex-col items-center flex-grow mr-5 md:mr-10'>
-            <span className='mx-auto'>Match Percentage: {selectedMatchPercentage}%</span>
+          <div className='flex flex-col flex-grow mr-5 md:mr-10'>
+            <span className=''>Match Percentage: {selectedMatchPercentage}%</span>
             <Form.Control
               type='range'
               value={selectedMatchPercentage}

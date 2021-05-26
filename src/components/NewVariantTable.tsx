@@ -171,7 +171,9 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
             </Table>
           </div>
         </>
-      ) : <p>No data available</p>}
+      ) : (
+        <p>No data available</p>
+      )}
     </div>
   );
 };

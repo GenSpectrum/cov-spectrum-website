@@ -160,13 +160,7 @@ export const MutationName = ({ mutation }: Props) => {
 
   return (
     <>
-      <OverlayTrigger
-        trigger='click'
-        overlay={popover}
-        rootClose={true}
-        transition={false}
-        placement='top'
-      >
+      <OverlayTrigger trigger='click' overlay={popover} rootClose={true} transition={false} placement='top'>
         <Mut>{mutation}</Mut>
       </OverlayTrigger>
     </>

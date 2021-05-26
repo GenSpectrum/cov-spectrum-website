@@ -142,10 +142,7 @@ export const FocusPage = ({
         </GridCell>
         {country === 'Switzerland' && (
           <GridCell minWidth={600}>
-            <NamedCard
-              title='Hospitalization'
-              toolbar={deepFocusButtons.hospitalizationAndDeath}
-            >
+            <NamedCard title='Hospitalization' toolbar={deepFocusButtons.hospitalizationAndDeath}>
               <HospitalizationDeathPlot
                 field='hospitalized'
                 variantSampleSet={variantSampleSet}
