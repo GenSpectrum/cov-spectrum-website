@@ -75,7 +75,7 @@ export const NamedCard = ({
         )}
       </Title>
       {description && (
-        <div className='px-3 mb-3'>
+        <div className='pr-3 mb-3 text-gray-500'>
           <ExpandableTextBox text={description} maxChars={160} />
         </div>
       )}

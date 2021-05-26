@@ -158,11 +158,11 @@ export const FocusPage = ({
         {!isRegion(country) && (
           <GridCell minWidth={600}>
             <NamedCard
-              title='Estimation of the current advantage'
+              title='Transmission advantage'
               toolbar={deepFocusButtons.chen2021Fitness}
               description='
-              If variants spread pre-dominantly by local transmission across demographic groups, this
-              estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
+              How easily does this variant spread? If variants spread pre-dominantly by local transmission across demographic groups, this
+              estimate reflects the so-called "transmission advantage" of the local variant. Importantly, the transmission
                advantage estimate reflects the advantage compared to co-circulating strains. Thus, as new variants
                 spread, the advantage of the focal variant may decrease. When absolute numbers of a variant are
                 low, the advantage may merely reflect the current importance of introductions from abroad or
