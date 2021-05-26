@@ -19,7 +19,7 @@ export const WasteWaterTimeWidget = new Widget(
       variantName,
       location,
     }),
-    async (encoded, signal) => ({
+    async (encoded) => ({
       country: encoded.country,
       variantName: encoded.variantName,
       location: encoded.location,

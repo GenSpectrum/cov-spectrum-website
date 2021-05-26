@@ -6,7 +6,7 @@ interface Props {
   children: React.ReactChild | React.ReactChild[];
 }
 
-export const MinimalWidgetLayout = ({ title, toolbar, children }: Props) => {
+export const MinimalWidgetLayout = ({ toolbar, children }: Props) => {
   return (
     <div>
       {toolbar}

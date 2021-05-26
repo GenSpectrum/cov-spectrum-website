@@ -222,7 +222,7 @@ export const FocusPage = ({
         {variant.name && variant.mutations.length === 0 && (
           <GridCell minWidth={800}>
             <ArticleListWidget.ShareableComponent
-              title='Publications and Pre-Prints'
+              title='Publications and pre-Prints'
               pangolinLineage={variant.name}
             />
           </GridCell>
