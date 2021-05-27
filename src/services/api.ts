@@ -358,6 +358,9 @@ export const getSequencingIntensity = (
   } else {
     url += `country=${selector.country}`;
   }
+  if (selector.samplingStrategy) {
+    url += `&dataType=${selector.samplingStrategy}`;
+  }
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
     .then(data => {
