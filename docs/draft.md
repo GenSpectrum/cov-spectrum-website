@@ -1,0 +1,11 @@
+- Widgets
+- Routing
+- API file
+- Auth
+- Date cache
+- Data loading using samples
+- Folder structure
+- Plotly and recharts
+- Models (fitness, wastewater)
+- Mobile
+- Gotchas
