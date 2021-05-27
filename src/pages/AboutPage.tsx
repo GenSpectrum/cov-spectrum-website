@@ -99,8 +99,11 @@ export const AboutPage = () => {
       <p>
         This project is developed by the{' '}
         <ExternalLink url='https://bsse.ethz.ch/cevo'>Computational Evolution group</ExternalLink> at ETH
-        Zurich. Please contact Chaoran Chen (
-        <EmailLink email='chaoran.chen@bsse.ethz.ch' />) for any questions.
+        Zurich. For general questions, please contact Chaoran Chen (
+        <EmailLink email='chaoran.chen@bsse.ethz.ch' />
+        ). For media requests, please reach out to ETH Zurich Media Relations (
+        <EmailLink email='mediarelations@hk.ethz.ch' />
+        ).
       </p>
     </Wrapper>
   );
