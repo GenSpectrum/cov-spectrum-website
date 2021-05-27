@@ -26,10 +26,6 @@ const StyledCard = styled.div`
   overflow: hidden;
   cursor: pointer;
   user-select: none;
-  transition: background-color 0.15s ease-in-out;
-  /* &:hover {
-    background-color: #e2e6ea !important;
-  } */
 `;
 
 enum TREND {

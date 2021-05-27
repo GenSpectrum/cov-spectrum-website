@@ -6,9 +6,11 @@ import { BiTable } from 'react-icons/bi';
 import ReactTooltip from 'react-tooltip';
 import styled, { css } from 'styled-components';
 import { CSVLink } from 'react-csv';
+import { colors } from './common';
 
 const BUTTON_SIZE = '2.5em';
 const DELAY_SHOW = 0;
+const CLASS_STYLE = 'fill-current text-gray-300 hover:text-gray-500 cursor-pointer';
 
 const baseButtonStyles = css`
   position: absolute;
@@ -16,13 +18,6 @@ const baseButtonStyles = css`
   top: 0px;
   right: 0px;
   padding: 8px 8px 8px 8px;
-  transform: translate(0%, 0%);
-  transition: 0.1s ease-in;
-  &:hover {
-    cursor: pointer;
-    transform: translate(0%, -10%);
-    transition: 0.2s ease-out;
-  }
 `;
 
 const DownloadButton = styled(FaCloudDownloadAlt)`
@@ -74,7 +69,7 @@ const DownloadWrapper = ({
               data-for='downloadCSV'
               data-tip='Download chart data as CSV.'
               size={BUTTON_SIZE}
-              color='#95a5a6'
+              className={CLASS_STYLE}
             />
           </CSVLink>
         )}
@@ -82,7 +77,7 @@ const DownloadWrapper = ({
           data-for='downloadPNG'
           data-tip='Download this chart as PNG image.'
           size={BUTTON_SIZE}
-          color='#95a5a6'
+          className={CLASS_STYLE}
           onClick={() => exportComponentAsPNG(componentRef, exportOptions)}
         />
         <DownloadContainer id='image-download-container' ref={componentRef}>
