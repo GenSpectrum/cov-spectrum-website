@@ -31,6 +31,9 @@ code {
   p {
     @apply text-sm md:text-base mb-2 text-gray-800;
   }
+  li {
+    @apply ml-8;
+  }
 }
 
 @tailwind components;

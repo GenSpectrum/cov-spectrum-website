@@ -121,7 +121,7 @@ export const FocusPage = ({
             variantSampleSet={variantSampleSet}
             wholeSampleSet={wholeSampleSet}
             height={300}
-            title='Prevalence of variant'
+            title='Sequences over time'
           />
         </GridCell>
         <GridCell minWidth={600}>
@@ -129,7 +129,7 @@ export const FocusPage = ({
             variantSampleSet={variantSampleSet}
             sequencingIntensityEntrySet={sequencingIntensityEntrySet}
             height={300}
-            title='New cases'
+            title='Estimated cases'
           />
         </GridCell>
         <GridCell minWidth={600}>
@@ -142,7 +142,10 @@ export const FocusPage = ({
         </GridCell>
         {country === 'Switzerland' && (
           <GridCell minWidth={600}>
-            <NamedCard title='Hospitalization' toolbar={deepFocusButtons.hospitalizationAndDeath}>
+            <NamedCard
+              title='Hospitalization probabilities'
+              toolbar={deepFocusButtons.hospitalizationAndDeath}
+            >
               <HospitalizationDeathPlot
                 field='hospitalized'
                 variantSampleSet={variantSampleSet}
@@ -155,7 +158,7 @@ export const FocusPage = ({
         {!isRegion(country) && (
           <GridCell minWidth={600}>
             <NamedCard
-              title='Transmission advantage'
+              title='Estimation of the current advantage'
               toolbar={deepFocusButtons.chen2021Fitness}
               description='
               How easily does this variant spread? If variants spread pre-dominantly by local transmission across demographic groups, this

@@ -120,7 +120,7 @@ export const Chen2021FitnessContainer = ({
       <Chen2021FitnessResults request={paramData} />
       <div className='ml-6'>
         <h1>References</h1>
-        <ul>
+        <ul className='list-disc'>
           <li>
             Chen, Chaoran, et al. "Quantification of the spread of SARS-CoV-2 variant B. 1.1. 7 in
             Switzerland." medRxiv (2021); doi:{' '}

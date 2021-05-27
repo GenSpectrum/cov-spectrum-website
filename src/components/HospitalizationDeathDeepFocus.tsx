@@ -38,7 +38,7 @@ export const HospitalizationDeathDeepFocus = ({
     <>
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={800}>
-          <NamedCard title='Hospitalization'>
+          <NamedCard title='Hospitalization probabilities'>
             <HospitalizationDeathPlot
               field='hospitalized'
               variantSampleSet={variantSampleSet}
@@ -82,7 +82,7 @@ export const HospitalizationDeathDeepFocus = ({
           )}
         </p>
         <p>The following samples are omitted from the plots:</p>
-        <ul>
+        <ul className='list-disc'>
           <li>Samples from the last {OMIT_LAST_N_WEEKS} weeks</li>
           <li>Samples for which no hospitalization or death outcome is known</li>
         </ul>

@@ -81,7 +81,7 @@ export const AboutPage = () => {
           <img
             src='/img/about-known-variants-list.png'
             alt='The known variants list component'
-            className="w-full max-w-xl"
+            className='w-full max-w-xl'
             // style={{
             //   width: '100%',
             //   maxWidth: '500px',
@@ -105,7 +105,7 @@ export const AboutPage = () => {
       </Component>
 
       <Disclaimer>
-        <ul>
+        <ul className='list-disc'>
           <li>
             Although ETH Zurich takes all possible care to ensure the correctness of published information, no
             warranty can be accepted regarding the correctness, accuracy, uptodateness, reliability and
