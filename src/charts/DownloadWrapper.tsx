@@ -6,7 +6,6 @@ import { BiTable } from 'react-icons/bi';
 import ReactTooltip from 'react-tooltip';
 import styled, { css } from 'styled-components';
 import { CSVLink } from 'react-csv';
-import { colors } from './common';
 
 const BUTTON_SIZE = '2.5em';
 const DELAY_SHOW = 0;
@@ -14,7 +13,7 @@ const CLASS_STYLE = 'fill-current text-gray-300 hover:text-gray-500 cursor-point
 
 const baseButtonStyles = css`
   position: absolute;
-  z-index: 10;
+  z-index: 5;
   top: 0px;
   right: 0px;
   padding: 8px 8px 8px 8px;
@@ -27,17 +26,6 @@ const DownloadDataButton = styled(BiTable)`
   ${baseButtonStyles}
   right: 30px;
 `;
-
-const Wrapper = styled.div`
-  position: relative;
-  height: 100%;
-`;
-
-const DownloadContainer = styled.div`
-  position: relative;
-  height: 100%;
-`;
-
 interface Props {
   name: string;
   rawData?: any[];
@@ -62,7 +50,7 @@ const DownloadWrapper = ({
 
   return (
     <>
-      <Wrapper id='download wrapper wrapper'>
+      <div className="relative h-full" id='download wrapper wrapper'>
         {rawData.length > 0 && (
           <CSVLink data={dataProcessor(rawData)} filename={`${name}.csv`}>
             <DownloadDataButton
@@ -80,10 +68,10 @@ const DownloadWrapper = ({
           className={CLASS_STYLE}
           onClick={() => exportComponentAsPNG(componentRef, exportOptions)}
         />
-        <DownloadContainer id='image-download-container' ref={componentRef}>
+        <div className="relative h-full" id='image-download-container' ref={componentRef}>
           {children}
-        </DownloadContainer>
-      </Wrapper>
+        </div>
+      </div>
       <ReactTooltip id='downloadPNG' delayShow={DELAY_SHOW} />
       <ReactTooltip id='downloadCSV' delayShow={DELAY_SHOW} />
     </>

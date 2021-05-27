@@ -111,7 +111,7 @@ export const DeepFocusPage = ({
   const { path, url } = useRouteMatch();
 
   const makeLayout = (content: JSX.Element) => (
-    <div className='flex flex-col h-full bg-gray-300'>
+    <div className='flex flex-col h-full bg-white'>
       <HeaderWrapper>
         <VariantHeader
           variant={syncProps.variant}

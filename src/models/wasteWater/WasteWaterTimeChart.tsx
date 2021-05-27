@@ -98,7 +98,7 @@ export const WasteWaterTimeChart = React.memo(
                     '%'
                   : 'NA'
               }
-              title='Conf. interval'
+              title='Confidence int.'
               color={colors.active}
               helpText='The 95% confidence interval'
               percent={false}
