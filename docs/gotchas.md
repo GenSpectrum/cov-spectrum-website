@@ -1,2 +1,3 @@
 - Don't break embed and routing URLs
 - Don't ignore counts in sample set entries
+- Zod is not used for some API responses
