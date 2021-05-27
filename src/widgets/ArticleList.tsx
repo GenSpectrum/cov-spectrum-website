@@ -167,7 +167,7 @@ export const ArticleListWidget = new Widget(
       pangolinLineage: zod.string(),
     }),
     async (decoded: Props) => decoded,
-    async (encoded, signal) => encoded
+    async (encoded, _) => encoded
   ),
   ArticleList,
   'ArticleList'

@@ -44,7 +44,7 @@ export const SequencingIntensityPlot = ({ sequencingIntensityEntrySet }: Props) 
     <DownloadWrapper name='SequencingIntensityPlot'>
       <TimeIntensityChart
         data={processData(sequencingIntensityEntrySet.data)}
-        onClickHandler={(e: unknown) => true}
+        onClickHandler={(_) => true}
       />
     </DownloadWrapper>
   );
