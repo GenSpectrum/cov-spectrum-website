@@ -1,4 +1,5 @@
 import React from 'react';
+import { TitleWrapper } from '../../charts/common';
 import { Plot } from '../../components/Plot';
 import { Chen2021FitnessResponse } from './chen2021Fitness-types';
 
@@ -9,6 +10,7 @@ interface Props {
 export const Chen2021AbsolutePlot = ({ modelData }: Props) => {
   return (
     <>
+      <TitleWrapper id='graph_title'>Changes in absolute case numbers through time**</TitleWrapper>
       <Plot
         style={{ width: '100%', height: '90%' }}
         data={[
@@ -30,7 +32,6 @@ export const Chen2021AbsolutePlot = ({ modelData }: Props) => {
           },
         ]}
         layout={{
-          title: 'Changes in absolute case numbers through time**',
           xaxis: {
             hoverformat: '%d.%m.%Y',
           },
@@ -48,8 +49,8 @@ export const Chen2021AbsolutePlot = ({ modelData }: Props) => {
           responsive: true,
         }}
       />
-      <p>
-        **) If the estimated advantage is a transmission advantage and if nothing on measures, behavior,
+      <p className='text-gray-500 text-xs'>
+        (**) If the estimated advantage is a transmission advantage and if nothing on measures, behavior,
         population immunity, seasonality etc. changes, then the number of cases would develop as shown.
         However, the above-mentioned variables change and thus the plot must be taken as a null model scenario
         rather than a projection of what will happen.
