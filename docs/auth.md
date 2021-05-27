@@ -1,3 +1,4 @@
+- Most data is public (no API key required)
 - Very few users with logins
 - Auth automatically added to API calls
   - Reload necessary on login
