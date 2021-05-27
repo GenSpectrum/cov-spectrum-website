@@ -33,7 +33,7 @@ const Disclaimer = ({ children }: { children: React.ReactNode }) => {
 
 export const AboutPage = () => {
   return (
-    <div className='max-w-4xl mx-auto'>
+    <div className='max-w-4xl mx-auto px-4 md:px-8'>
       <h1>CoV-Spectrum</h1>
       <p>
         Explore up-to-date genome data and monitor variants of SARS-CoV-2! CoV-Spectrum is a fully interactive
@@ -82,11 +82,6 @@ export const AboutPage = () => {
             src='/img/about-known-variants-list.png'
             alt='The known variants list component'
             className='w-full max-w-xl'
-            // style={{
-            //   width: '100%',
-            //   maxWidth: '500px',
-            //   padding: '10px',
-            // }}
           />
         </p>
         <p>

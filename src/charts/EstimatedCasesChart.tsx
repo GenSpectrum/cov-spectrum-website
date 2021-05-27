@@ -149,9 +149,6 @@ export const EstimatedCasesChart = React.memo(
                         setActive(newActive);
                       }
                     }
-                    if (!e.active) {
-                      setDefaultActive(plotData);
-                    }
                     return <></>;
                   }}
                 />

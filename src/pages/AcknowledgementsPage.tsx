@@ -12,7 +12,7 @@ const Acknowlegement = ({ title, children }: { title: string; children: any }) =
 
 export const AcknowledgementsPage = () => {
   return (
-    <div className='max-w-4xl mx-auto h-full'>
+    <div className='max-w-4xl mx-auto h-full px-4 md:px-8'>
       <h1>Acknowlegements</h1>
       <Acknowlegement title='FOPH and S3C'>
         We gratefully acknowledge the{' '}
