@@ -25,7 +25,7 @@ Most components will take variantSampleSet and wholeSampleSet, then use `SampleS
 
 ## Date handling
 
-The dates in `SampleSet` are `UnifiedDay` and `UnifiedIsoWeek`. These come from the central date cache. See the documentation in [./date-cache](./date-cache).
+The dates in `SampleSet` are `UnifiedDay` and `UnifiedIsoWeek`. These come from the central date cache. See the documentation in [./date-cache.md](./date-cache.md).
 
 ## Widgets and async loading
 

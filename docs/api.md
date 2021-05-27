@@ -16,4 +16,4 @@ The helper functions in [src/services/api.ts](src/services/api.ts) automatically
 
 ## `getNewSamples` endpoint
 
-This endpoint (`/resource/sample2` in REST) is a little special compared to most other endpoints. It can be used to create many different plots. There is a separate documentation page ([./sample-set.ts](./sample-set.ts)) about this and the related `SampleSet` class.
+This endpoint (`/resource/sample2` in REST) is a little special compared to most other endpoints. It can be used to create many different plots. There is a separate documentation page ([./sample-set.md](./sample-set.md)) about this and the related `SampleSet` class.
