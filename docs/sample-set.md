@@ -1,0 +1,3 @@
+- Old: Many specific API endpoints (one for each transformed dataset ready for plotting)
+- New: One generic API endpoint (individual samples, filtered by key fields, grouped by all fields)
+- https://github.com/cevo-public/cov-spectrum-website/pull/78
