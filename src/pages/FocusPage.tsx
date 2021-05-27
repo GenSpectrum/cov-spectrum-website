@@ -27,6 +27,7 @@ import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-i
 import { EstimatedCasesPlotWidget } from '../widgets/EstimatedCasesPlot';
 import { ArticleListWidget } from '../widgets/ArticleList';
 import { VariantDivisionDistributionTableWidget } from '../widgets/VariantDivisionDistributionTable';
+import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
 
 interface Props {
   country: Country;
@@ -198,27 +199,30 @@ export const FocusPage = ({
             </NamedCard>
           </GridCell>
         )}
-        {loggedIn && country === 'Switzerland' && variant.name === 'B.1.1.7' && (
-          <GridCell minWidth={600}>
-            {/* TODO Use a summary plot if available or find another more representative solution. */}
-            <NamedCard
-              title='Waste water prevalence'
-              toolbar={deepFocusButtons.wasteWater}
-              style={NamedCardStyle.CONFIDENTIAL}
-            >
-              <div style={{ height: 300, width: '100%' }}>
-                {wasteWaterData && (
-                  <WasteWaterSummaryTimeChart
-                    wasteWaterPlants={wasteWaterData.data.map(({ location, timeseriesSummary }) => ({
-                      location,
-                      data: timeseriesSummary,
-                    }))}
-                  />
-                )}
-              </div>
-            </NamedCard>
-          </GridCell>
-        )}
+        {loggedIn &&
+          country === 'Switzerland' &&
+          variant.name &&
+          WASTE_WATER_AVAILABLE_LINEAGES.includes(variant.name) && (
+            <GridCell minWidth={600}>
+              {/* TODO Use a summary plot if available or find another more representative solution. */}
+              <NamedCard
+                title='Waste water prevalence'
+                toolbar={deepFocusButtons.wasteWater}
+                style={NamedCardStyle.CONFIDENTIAL}
+              >
+                <div style={{ height: 300, width: '100%' }}>
+                  {wasteWaterData && (
+                    <WasteWaterSummaryTimeChart
+                      wasteWaterPlants={wasteWaterData.data.map(({ location, timeseriesSummary }) => ({
+                        location,
+                        data: timeseriesSummary,
+                      }))}
+                    />
+                  )}
+                </div>
+              </NamedCard>
+            </GridCell>
+          )}
         {samplingStrategy === SamplingStrategy.AllSamples && (
           <GridCell minWidth={600}>
             <AsyncVariantInternationalComparisonPlot
