@@ -38,7 +38,7 @@ const VariantAgeDistributionPlot = ({ variantSampleSet, wholeSampleSet }: Props)
   return (
     <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '100%' }}>
       <DownloadWrapper name='VariantAgeDistributionPlot'>
-        <TypeDistributionChart data={processedData} onClickHandler={(_) => true} />
+        <TypeDistributionChart data={processedData} onClickHandler={_ => true} />
       </DownloadWrapper>
     </div>
   );

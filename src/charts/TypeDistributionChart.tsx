@@ -17,12 +17,7 @@ type CustomTickProps = {
   currentValue: string;
 };
 
-const CustomTick = ({
-  x,
-  y,
-  payload,
-  currentValue,
-}: CustomTickProps): JSX.Element => {
+const CustomTick = ({ x, y, payload, currentValue }: CustomTickProps): JSX.Element => {
   return (
     <g transform={`translate(${x},${y})`}>
       {payload ? (

@@ -117,7 +117,7 @@ export const DeepFocusPage = ({
           variant={syncProps.variant}
           place={syncProps.country}
           controls={
-            <Button className="mt-2" variant='secondary' as={Link} to={url}>
+            <Button className='mt-2' variant='secondary' as={Link} to={url}>
               Back to overview
             </Button>
           }

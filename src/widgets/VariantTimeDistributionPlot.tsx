@@ -28,7 +28,7 @@ export const VariantTimeDistributionPlot = ({ variantSampleSet, wholeSampleSet }
 
   return (
     <DownloadWrapper name='VariantTimeDistributionPlot'>
-      <TimeChart data={processedData} onClickHandler={(_) => true} />
+      <TimeChart data={processedData} onClickHandler={_ => true} />
     </DownloadWrapper>
   );
 };

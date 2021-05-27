@@ -79,7 +79,7 @@ export const FocusVariantHeaderControls = React.memo(
             query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy, dateRange }}
             variant='secondary'
             size='sm'
-            className="mt-3 mr-3"
+            className='mt-3 mr-3'
           >
             Show samples
           </LazySampleButton>

@@ -50,7 +50,7 @@ const DownloadWrapper = ({
 
   return (
     <>
-      <div className="relative h-full" id='download wrapper wrapper'>
+      <div className='relative h-full' id='download wrapper wrapper'>
         {rawData.length > 0 && (
           <CSVLink data={dataProcessor(rawData)} filename={`${name}.csv`}>
             <DownloadDataButton
@@ -68,7 +68,7 @@ const DownloadWrapper = ({
           className={CLASS_STYLE}
           onClick={() => exportComponentAsPNG(componentRef, exportOptions)}
         />
-        <div className="relative h-full" id='image-download-container' ref={componentRef}>
+        <div className='relative h-full' id='image-download-container' ref={componentRef}>
           {children}
         </div>
       </div>
