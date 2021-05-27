@@ -29,7 +29,7 @@ code {
     @apply text-base md:text-lg mb-1 mt-2;
   }
   p {
-    @apply text-sm md:text-base mb-2 text-gray-800;
+    @apply text-sm md:text-base my-1 text-gray-800;
   }
   li {
     @apply ml-8;
