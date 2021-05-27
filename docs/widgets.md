@@ -1,0 +1,4 @@
+- Serializing and deserializing props
+- "Shared" props
+- Lazy embed links
+- Layouts (frames) around widgets

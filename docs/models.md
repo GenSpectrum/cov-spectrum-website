@@ -1,0 +1,4 @@
+- Certain widgets are very self-contained
+  - Different data models and sources than the rest of the application
+- Store these widgets in src/models
+  - Contains stuff typically found in: src/widgets, src/components, src/charts, src/services/api.ts

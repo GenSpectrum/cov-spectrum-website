@@ -3,9 +3,8 @@
 - API file
 - Auth
 - Date cache
-- Data loading using samples
+- Data loading using sample set
 - Folder structure
 - Plotly and recharts
 - Models (fitness, wastewater)
-- Mobile
 - Gotchas

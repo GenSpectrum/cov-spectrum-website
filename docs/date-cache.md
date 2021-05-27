@@ -1,0 +1,3 @@
+- Common date formats pre-calculated
+- Typically use these functions for efficiency
+- UnifiedDay and UnifiedIsoWeek can be compared by reference

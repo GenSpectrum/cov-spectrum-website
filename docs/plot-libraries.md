@@ -1,0 +1,5 @@
+- Originally plotly
+  - Use src/components/Plot.ts
+- Now more Recharts
+  - Separation of loading and transformation from plotting
+  - Plotting mostly done in src/charts

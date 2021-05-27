@@ -1,0 +1,7 @@
+- src/charts - Recharts plots (without data loading and transformation)
+- src/components - Most components
+- src/pages - Components for "top level" pages
+- src/widgets - Sharable plots with data loading logic
+- src/services - Most important is api.ts
+- src/models - Special widgets which are very separate from the rest of the application -> models.md
+- src/helpers - Most shared logic (other docs refer to important files in here)

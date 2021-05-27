@@ -1,0 +1,2 @@
+- Don't break embed and routing URLs
+- Don't ignore counts in sample set entries
