@@ -100,12 +100,24 @@ function useWholeSampleSet({
   return useAsync(promiseFn);
 }
 
-function useSequencingIntensityEntrySet({ country }: { country: string | undefined }) {
+function useSequencingIntensityEntrySet({
+  country,
+  samplingStrategy,
+}: {
+  country: string | undefined;
+  samplingStrategy?: SamplingStrategy;
+}) {
   const promiseFn = useMemo<PromiseFn<SequencingIntensityEntrySetWithSelector>>(
     () => async (options, { signal }) => {
-      return getSequencingIntensity({ country }, signal);
+      return getSequencingIntensity(
+        {
+          country,
+          samplingStrategy: samplingStrategy ? toLiteralSamplingStrategy(samplingStrategy) : undefined,
+        },
+        signal
+      );
     },
-    [country]
+    [country, samplingStrategy]
   );
   return useAsync(promiseFn);
 }
@@ -146,7 +158,7 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     variantSelector,
   });
   const wholeInternationalSampleSetState = useWholeSampleSet({ samplingStrategy, dateRange });
-  const sequencingIntensityEntrySetState = useSequencingIntensityEntrySet({ country });
+  const sequencingIntensityEntrySetState = useSequencingIntensityEntrySet({ country, samplingStrategy });
 
   const { path } = useRouteMatch();
 

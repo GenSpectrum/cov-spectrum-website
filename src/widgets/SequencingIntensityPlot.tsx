@@ -50,7 +50,6 @@ export const SequencingIntensityPlot = ({ sequencingIntensityEntrySet }: Props) 
 export const SequencingIntensityPlotWidget = new Widget(
   new AsyncZodQueryEncoder(
     SequencingIntensityEntrySetSelectorSchema,
-
     async (decoded: Props) => decoded.sequencingIntensityEntrySet.selector,
     async (encoded, signal) => ({
       sequencingIntensityEntrySet: await getSequencingIntensity(encoded, signal),

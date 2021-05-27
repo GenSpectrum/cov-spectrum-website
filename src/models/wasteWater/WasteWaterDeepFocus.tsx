@@ -13,6 +13,8 @@ interface Props {
   variantName: string | undefined;
 }
 
+export const WASTE_WATER_AVAILABLE_LINEAGES = ['B.1.1.7', 'B.1.351', 'P.1', 'B.1.617*'];
+
 export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
   const [data, setData] = useState<WasteWaterDataset | undefined>(undefined);
 
@@ -31,7 +33,7 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
     window.location.href = '/login';
   }
 
-  if (country !== 'Switzerland' || !variantName || variantName !== 'B.1.1.7') {
+  if (country !== 'Switzerland' || !variantName || !WASTE_WATER_AVAILABLE_LINEAGES.includes(variantName)) {
     return <>Nothing to see here.</>;
   }
 
