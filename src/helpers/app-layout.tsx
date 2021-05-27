@@ -43,11 +43,11 @@ export const LoginWrapper = styled.div`
 `;
 
 export const SplitParentWrapper = ({ children }: { children: React.ReactNode }) => {
-  return <div className='grid md:grid-cols-2 lg:grid-cols-5 h-full'>{children}</div>;
+  return <div className='grid md:grid-cols-2 lg:grid-cols-5 2xl:grid-cols-4 h-full'>{children}</div>;
 };
 
 export const SplitExploreWrapper = ({ children }: { children: React.ReactNode }) => {
-  return <div className='px-2 md:px-4 lg:col-span-2 overflow-auto'>{children}</div>;
+  return <div className='px-2 md:px-4 lg:col-span-2 2xl:col-span-1 overflow-auto'>{children}</div>;
 };
 
 export const SplitFocusWrapper = ({ children }: { children: React.ReactNode }) => {
