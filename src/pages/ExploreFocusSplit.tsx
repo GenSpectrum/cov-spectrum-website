@@ -99,10 +99,22 @@ function useWholeSampleSet({
   return useAsync(promiseFn);
 }
 
-function useSequencingIntensityEntrySet({ country, samplingStrategy }: { country: string | undefined, samplingStrategy?: SamplingStrategy }) {
+function useSequencingIntensityEntrySet({
+  country,
+  samplingStrategy,
+}: {
+  country: string | undefined;
+  samplingStrategy?: SamplingStrategy;
+}) {
   const promiseFn = useMemo<PromiseFn<SequencingIntensityEntrySetWithSelector>>(
     () => async (options, { signal }) => {
-      return getSequencingIntensity({ country, samplingStrategy: samplingStrategy ? toLiteralSamplingStrategy(samplingStrategy) : undefined }, signal);
+      return getSequencingIntensity(
+        {
+          country,
+          samplingStrategy: samplingStrategy ? toLiteralSamplingStrategy(samplingStrategy) : undefined,
+        },
+        signal
+      );
     },
     [country, samplingStrategy]
   );

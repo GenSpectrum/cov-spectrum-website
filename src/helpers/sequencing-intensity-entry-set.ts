@@ -1,7 +1,6 @@
 import { SequencingIntensityEntry } from '../services/api-types';
 import * as zod from 'zod';
-import { NewSampleSelector } from './sample-selector';
-import { LiteralSamplingStrategySchema } from "../services/api";
+import { LiteralSamplingStrategySchema } from '../services/api';
 
 export const SequencingIntensityEntrySetSelectorSchema = zod.object({
   country: zod.string().optional(),
@@ -11,5 +10,5 @@ export const SequencingIntensityEntrySetSelectorSchema = zod.object({
 export type SequencingIntensityEntrySet = { data: SequencingIntensityEntry[] };
 export type SequencingIntensityEntrySetSelector = zod.infer<typeof SequencingIntensityEntrySetSelectorSchema>;
 export type SequencingIntensityEntrySetWithSelector = SequencingIntensityEntrySet & {
-  readonly selector: NewSampleSelector;
+  readonly selector: SequencingIntensityEntrySetSelector;
 };
