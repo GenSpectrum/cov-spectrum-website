@@ -101,7 +101,7 @@ export function convertKnownVariantChartData<T extends VariantSelector>({
   assert(new Set(filledData.map(d => d.length)).size === 1);
 
   // Compute the proportion during the last 14 days
-  const variantDailyCounts = variantsSampleSets.flatMap(s => s.sampleSet.countByDate());
+  const variantDailyCounts = variantsSampleSets.map(s => s.sampleSet.countByDate());
   const wholeDateCounts = wholeSampleSet.countByDate();
   const maxDate = dayjs.max([...wholeDateCounts.keys()].map(d => d.dayjs));
   let recentVariantTotal = variantDailyCounts.map(_ => 0);
