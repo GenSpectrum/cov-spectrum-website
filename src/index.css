@@ -34,6 +34,18 @@ code {
   li {
     @apply ml-8;
   }
+  table {
+    @apply table p-4 bg-white shadow rounded-lg;
+  }
+  th {
+    @apply border-b-2 font-normal text-gray-900 text-left;
+  }
+  td {
+    @apply text-gray-700;
+  }
+  tr {
+    @apply border-b-2;
+  }
 }
 
 @tailwind components;
