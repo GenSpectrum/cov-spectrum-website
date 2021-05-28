@@ -46,12 +46,6 @@ interface DeepFocusRoute {
   content: (props: LoadedProps) => JSX.Element;
 }
 
-const OuterWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-`;
-
 const HeaderWrapper = styled.div`
   padding: ${scrollableContainerPaddingPx}px;
   border-bottom: 1px solid #dee2e6;
@@ -77,7 +71,7 @@ const routes: DeepFocusRoute[] = [
   },
   {
     key: 'chen-2021-fitness',
-    title: 'Estimation of the current advantage',
+    title: 'Transmission advantage',
     content: props => (
       <Chen2021FitnessWidget.ShareableComponent
         country={props.country}
@@ -86,7 +80,7 @@ const routes: DeepFocusRoute[] = [
         pangolinLineage={props.variant.name}
         samplingStrategy={toLiteralSamplingStrategy(props.samplingStrategy)}
         widgetLayout={MinimalWidgetLayout}
-        title='Estimation of the current advantage'
+        title='Transmission advantage'
       />
     ),
   },
@@ -117,12 +111,13 @@ export const DeepFocusPage = ({
   const { path, url } = useRouteMatch();
 
   const makeLayout = (content: JSX.Element) => (
-    <OuterWrapper>
+    <div className='flex flex-col h-full bg-white'>
       <HeaderWrapper>
         <VariantHeader
           variant={syncProps.variant}
+          place={syncProps.country}
           controls={
-            <Button variant='secondary' as={Link} to={url}>
+            <Button className='mt-2' variant='secondary' as={Link} to={url}>
               Back to overview
             </Button>
           }
@@ -134,7 +129,7 @@ export const DeepFocusPage = ({
         />
       </HeaderWrapper>
       <ContentWrapper>{content}</ContentWrapper>
-    </OuterWrapper>
+    </div>
   );
 
   if (

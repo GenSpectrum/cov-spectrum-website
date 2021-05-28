@@ -34,21 +34,7 @@ export const LoginPage = () => {
   };
 
   return (
-    <>
-      <h1>Login</h1>
-      <Form>
-        <Form.Group controlId='loginUsername'>
-          <Form.Label>Username</Form.Label>
-          <Form.Control required type='text' onChange={e => setUsername(e.target.value)} />
-        </Form.Group>
-        <Form.Group controlId='loginPassword'>
-          <Form.Label>Password</Form.Label>
-          <Form.Control required type='password' onChange={e => setPassword(e.target.value)} />
-        </Form.Group>
-        <Button variant='primary' onClick={handleSubmit}>
-          Login
-        </Button>
-      </Form>
+    <div className='flex flex-col justify-center items-center mt-2 md:mt-10'>
       {loginFailed && (
         <Alert variant='info' style={{ marginTop: '20px' }}>
           The login attempt was not successful.
@@ -64,6 +50,22 @@ export const LoginPage = () => {
           You logged out.
         </Alert>
       )}
-    </>
+      <Form className='shadow-lg rounded-2xl w-64 bg-white relative overflow-hidden cursor-pointer p-8'>
+        <p className='mb-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl'>Login</p>
+        <p>Private Switzerland Data</p>
+        <div className='mt-6' />
+        <Form.Group controlId='loginUsername'>
+          <Form.Label>Username</Form.Label>
+          <Form.Control required type='text' onChange={e => setUsername(e.target.value)} />
+        </Form.Group>
+        <Form.Group controlId='loginPassword'>
+          <Form.Label>Password</Form.Label>
+          <Form.Control required type='password' onChange={e => setPassword(e.target.value)} />
+        </Form.Group>
+        <Button className='w-full' variant='primary' onClick={handleSubmit}>
+          Login
+        </Button>
+      </Form>
+    </div>
   );
 };

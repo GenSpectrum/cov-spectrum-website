@@ -71,7 +71,7 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
 
           <div style={{ marginTop: '50px' }}>
             <NamedSection title='References'>
-              <ul>
+              <ul className='list-disc'>
                 <li>
                   Jahn, Katharina, et al. "Detection of SARS-CoV-2 variants in Switzerland by genomic analysis
                   of wastewater samples." medRxiv (2021); doi:{' '}

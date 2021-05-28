@@ -12,7 +12,7 @@ import {
 import { kFormat } from '../helpers/number';
 
 const CHART_MARGIN_RIGHT = 30;
-const CHART_MARGIN_BOTTOM = 10;
+const CHART_MARGIN_BOTTOM = 0;
 
 export type OnClickHandler = (index: number) => boolean;
 
@@ -93,7 +93,7 @@ export const TimeIntensityChart = React.memo(
     ];
 
     return currentData ? (
-      <Wrapper>
+      <Wrapper id='sequencing-intensity-chart'>
         <TitleWrapper id='graph_title'>Number of sequenced samples on {currentData.month}</TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
@@ -101,7 +101,7 @@ export const TimeIntensityChart = React.memo(
               <BarChart
                 data={data}
                 barCategoryGap='5%'
-                margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: CHART_MARGIN_BOTTOM }}
+                margin={{ top: 0, right: CHART_MARGIN_RIGHT, left: 0, bottom: CHART_MARGIN_BOTTOM }}
                 onMouseLeave={handleMouseLeave}
               >
                 <XAxis

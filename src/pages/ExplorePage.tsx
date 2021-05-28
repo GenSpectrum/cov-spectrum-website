@@ -40,7 +40,7 @@ export const ExplorePage = ({
   return (
     <>
       <SequencingIntensityPlotWidget.ShareableComponent
-        title='Sequencing Intensity'
+        title='Sequencing intensity'
         sequencingIntensityEntrySet={sequencingIntensityEntrySet}
         height={300}
         widgetLayout={NamedSection}

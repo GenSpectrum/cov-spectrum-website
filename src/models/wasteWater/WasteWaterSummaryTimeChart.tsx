@@ -59,7 +59,7 @@ export const WasteWaterSummaryTimeChart = React.memo(
                 />
                 <YAxis domain={['dataMin', 'auto']} />
                 <Tooltip
-                  formatter={(value: any, name: any, props: any) => (value * 100).toFixed(2) + '%'}
+                  formatter={(value: any) => (value * 100).toFixed(2) + '%'}
                   labelFormatter={label => {
                     return 'Date: ' + formatDate(label);
                   }}

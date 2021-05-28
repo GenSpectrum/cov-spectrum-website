@@ -228,7 +228,7 @@ const VariantInternationalComparisonPlot = ({
                 domain={logScale ? ['auto', 'auto'] : [0, 'auto']}
               />
               <Tooltip
-                formatter={(value: number, name: string, props: unknown) => (value * 100).toFixed(2) + '%'}
+                formatter={(value: number) => (value * 100).toFixed(2) + '%'}
                 labelFormatter={label => {
                   return 'Date: ' + label;
                 }}

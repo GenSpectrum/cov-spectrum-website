@@ -35,17 +35,20 @@ export const MutationLookup = ({ onVariantSelect }: Props) => {
         />
       </Form.Group>
       <Form.Group controlId='matchPercentageGroup'>
-        <Form.Label>Match percentage</Form.Label>
-        <span style={{ marginLeft: '30px' }}>{selectedMatchPercentage}%</span>
-        <Form.Control
-          type='range'
-          value={selectedMatchPercentage}
-          onChange={ev => setSelectedMatchPercentage(+ev.target.value)}
-        />
+        <div id='range-with-title' className='flex flex-row '>
+          <div className='flex flex-col flex-grow mr-5 md:mr-10'>
+            <span className=''>Match Percentage: {selectedMatchPercentage}%</span>
+            <Form.Control
+              type='range'
+              value={selectedMatchPercentage}
+              onChange={ev => setSelectedMatchPercentage(+ev.target.value)}
+            />
+          </div>
+          <Button type='submit' variant='primary'>
+            Search
+          </Button>
+        </div>
       </Form.Group>
-      <Button type='submit' variant='primary'>
-        Search
-      </Button>
     </Form>
   );
 };

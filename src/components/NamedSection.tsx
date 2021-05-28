@@ -24,8 +24,8 @@ const ToolbarWrapper = styled.div`
 export const NamedSection = ({ title, toolbar, children }: Props) => {
   return (
     <>
-      <Title>
-        {title}
+      <Title id='relative section-title'>
+        <h1>{title}</h1>
         <ToolbarWrapper>{toolbar}</ToolbarWrapper>
       </Title>
       <ContentWrapper>{children}</ContentWrapper>

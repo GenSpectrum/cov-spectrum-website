@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { UnifiedDay } from '../helpers/date-cache';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from './common';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
@@ -90,6 +90,7 @@ export const EstimatedCasesChart = React.memo(
           estimatedCasesCI: [Math.max(wilsonInterval[0], 0) * cases, Math.max(wilsonInterval[1], 0) * cases],
         });
       }
+
       const ticks = getTicks(
         smoothedData.map(d => ({
           date: d.date.dayjs.toDate(),
@@ -97,6 +98,17 @@ export const EstimatedCasesChart = React.memo(
       );
       return { plotData, ticks };
     }, [data]);
+
+    const setDefaultActive = (plotData: PlotEntry[]) => {
+      if (plotData) {
+        const defaultActive = plotData[plotData.length - 1];
+        defaultActive !== undefined && setActive(defaultActive);
+      }
+    };
+
+    useEffect(() => {
+      setDefaultActive(plotData);
+    }, [plotData]);
 
     return (
       <Wrapper>
@@ -137,17 +149,14 @@ export const EstimatedCasesChart = React.memo(
                         setActive(newActive);
                       }
                     }
-                    if (!e.active) {
-                      setActive(undefined);
-                    }
                     return <></>;
                   }}
                 />
                 <Area
                   type='monotone'
                   dataKey='estimatedCasesCI'
-                  fill={colors.secondaryLight}
-                  stroke={colors.secondary}
+                  fill={colors.activeSecondary}
+                  stroke='transparent'
                   isAnimationActive={false}
                 />
                 <Line
@@ -176,9 +185,8 @@ export const EstimatedCasesChart = React.memo(
                   ? active.estimatedCasesCI[0].toFixed(0) + '-' + active.estimatedCasesCI[1].toFixed(0)
                   : 'NA'
               }
-              fontSize='small'
-              title='Confidence interval'
-              color={colors.active}
+              title='Confidence int.'
+              color={colors.secondary}
               helpText='The 95% confidence interval'
               percent={false}
             />

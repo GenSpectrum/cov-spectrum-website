@@ -101,7 +101,11 @@ export const FocusPage = ({
   }, [country, variant.name]);
 
   const header = (
-    <VariantHeader variant={variant} controls={<FocusVariantHeaderControls {...forwardedProps} />} />
+    <VariantHeader
+      variant={variant}
+      place={country}
+      controls={<FocusVariantHeaderControls {...forwardedProps} />}
+    />
   );
 
   if (variantSampleSet.isEmpty()) {
@@ -109,22 +113,9 @@ export const FocusPage = ({
   }
 
   return (
-    <>
+    <div>
       {header}
-      {variant.mutations.length > 0 && (
-        <p style={{ marginBottom: '30px' }}>
-          The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
-          mutations.
-        </p>
-      )}
-      {(!variant.name || variant.name.endsWith('*')) && <VariantLineages {...forwardedProps} />}
-      {variant.name && (
-        <VariantMutations
-          country={forwardedProps.country}
-          pangolinLineage={variant.name}
-          dateRange={forwardedProps.dateRange}
-        />
-      )}
+
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <VariantTimeDistributionPlotWidget.ShareableComponent
@@ -172,7 +163,7 @@ export const FocusPage = ({
               toolbar={deepFocusButtons.chen2021Fitness}
               description='
               If variants spread pre-dominantly by local transmission across demographic groups, this
-              estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
+               estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
                advantage estimate reflects the advantage compared to co-circulating strains. Thus, as new variants
                 spread, the advantage of the focal variant may decrease. When absolute numbers of a variant are
                 low, the advantage may merely reflect the current importance of introductions from abroad or
@@ -238,12 +229,34 @@ export const FocusPage = ({
         {variant.name && variant.mutations.length === 0 && (
           <GridCell minWidth={800}>
             <ArticleListWidget.ShareableComponent
-              title='Publications and Pre-Prints'
+              title='Publications and pre-Prints'
               pangolinLineage={variant.name}
             />
           </GridCell>
         )}
       </PackedGrid>
-    </>
+      {variant.mutations.length > 0 && (
+        <p style={{ marginBottom: '30px' }}>
+          The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
+          mutations.
+        </p>
+      )}
+
+      {(!variant.name || variant.name.endsWith('*')) && (
+        <div className='m-4'>
+          <VariantLineages {...forwardedProps} />{' '}
+        </div>
+      )}
+
+      {variant.name && (
+        <div className='m-4'>
+          <VariantMutations
+            country={forwardedProps.country}
+            pangolinLineage={variant.name}
+            dateRange={forwardedProps.dateRange}
+          />
+        </div>
+      )}
+    </div>
   );
 };

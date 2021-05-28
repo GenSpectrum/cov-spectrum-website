@@ -8,6 +8,7 @@ import {
   SplitFocusWrapper,
   RawFullContentWrapper,
   ScrollableFullContentWrapper,
+  SplitParentWrapper,
 } from '../helpers/app-layout';
 import { getFocusPageLink, useExploreUrl } from '../helpers/explore-url';
 import { VariantSelector } from '../helpers/sample-selector';
@@ -208,22 +209,22 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
           {isSmallScreen ? (
             <ScrollableFullContentWrapper>{explorePage}</ScrollableFullContentWrapper>
           ) : (
-            <>
+            <SplitParentWrapper>
               <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
               <SplitFocusWrapper>
                 <FocusEmptyPage />
               </SplitFocusWrapper>
-            </>
+            </SplitParentWrapper>
           )}
         </Route>
         <Route exact path={`${path}/variants/:variantSelector`}>
           {isSmallScreen ? (
             <ScrollableFullContentWrapper>{focusContent}</ScrollableFullContentWrapper>
           ) : (
-            <>
+            <SplitParentWrapper>
               <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
               <SplitFocusWrapper>{focusContent}</SplitFocusWrapper>
-            </>
+            </SplitParentWrapper>
           )}
         </Route>
         <Route path={`${path}/variants/:variantSelector`}>

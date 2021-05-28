@@ -1,12 +1,7 @@
 import React from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
-import { Header } from './Header';
-import {
-  HeaderWrapper,
-  LoginWrapper,
-  OuterWrapper,
-  ScrollableFullContentWrapper,
-} from './helpers/app-layout';
+import Header from './Header';
+import { LoginWrapper } from './helpers/app-layout';
 import { AboutPage } from './pages/AboutPage';
 import { ExploreFocusSplit } from './pages/ExploreFocusSplit';
 import { GlobalSamplePage } from './pages/GlobalSamplePage';
@@ -20,43 +15,37 @@ export const App = () => {
   const isSmallScreen = width !== undefined && width <= 1000;
 
   return (
-    <OuterWrapper ref={ref}>
-      <HeaderWrapper>
+    <div className='pt-32 md:pt-20 h-screen w-full overflow-hidden'>
+      <div className='fixed top-0 inset-x-0 h-32 md:h-20 z-50'>
         <Header />
-      </HeaderWrapper>
-
-      <Switch>
-        <Route exact path='/'>
-          <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}/AllTimes`} />
-        </Route>
-        <Route path='/variant'>
-          {/* This is so that we don't break old bookmarked links */}
-          <Redirect to='/' />
-        </Route>
-        <Route path='/login'>
-          <LoginWrapper>
-            <LoginPage />
-          </LoginWrapper>
-        </Route>
-        <Route path='/explore/:country/:samplingStrategy/:dateRange'>
-          <ExploreFocusSplit isSmallScreen={isSmallScreen} />
-        </Route>
-        <Route path='/global-samples'>
-          <ScrollableFullContentWrapper>
+      </div>
+      <div ref={ref} className='static w-full h-full z-0 overflow-auto'>
+        <Switch>
+          <Route exact path='/'>
+            <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}/AllTimes`} />
+          </Route>
+          <Route path='/variant'>
+            <Redirect to='/' />
+          </Route>
+          <Route path='/login'>
+            <LoginWrapper>
+              <LoginPage />
+            </LoginWrapper>
+          </Route>
+          <Route path='/explore/:country/:samplingStrategy/:dateRange'>
+            <ExploreFocusSplit isSmallScreen={isSmallScreen} />
+          </Route>
+          <Route path='/global-samples'>
             <GlobalSamplePage />
-          </ScrollableFullContentWrapper>
-        </Route>
-        <Route path='/about'>
-          <ScrollableFullContentWrapper>
+          </Route>
+          <Route path='/about'>
             <AboutPage />
-          </ScrollableFullContentWrapper>
-        </Route>
-        <Route path='/acknowledgements'>
-          <ScrollableFullContentWrapper>
+          </Route>
+          <Route path='/acknowledgements'>
             <AcknowledgementsPage />
-          </ScrollableFullContentWrapper>
-        </Route>
-      </Switch>
-    </OuterWrapper>
+          </Route>
+        </Switch>
+      </div>
+    </div>
   );
 };

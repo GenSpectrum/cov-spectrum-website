@@ -12,19 +12,12 @@ type CustomTickProps = {
   y?: number;
   stroke?: unknown;
   payload?: { value: string; index: number };
-  activeIndex: number;
-  dataLength: number;
+  activeIndex?: number;
+  dataLength?: number;
   currentValue: string;
 };
 
-const CustomTick = ({
-  x,
-  y,
-  payload,
-  activeIndex,
-  dataLength,
-  currentValue,
-}: CustomTickProps): JSX.Element => {
+const CustomTick = ({ x, y, payload, currentValue }: CustomTickProps): JSX.Element => {
   return (
     <g transform={`translate(${x},${y})`}>
       {payload ? (
@@ -99,7 +92,7 @@ export const TypeDistributionChart = React.memo(
         onClick={handleClick}
         isAnimationActive={false}
       >
-        {data.map((entry: unknown, index: number) => (
+        {data.map((_, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
             fill={index === activeIndex ? colors.active : colors.inactive}

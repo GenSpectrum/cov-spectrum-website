@@ -16,20 +16,28 @@ interface Props {
   description?: string;
 }
 
-const Card = styled.div<{ namedCardStyle: NamedCardStyle }>`
-  position: relative;
-  margin: 5px;
-  background: 'white';
-  padding: 12px 15px;
-  border: 1px solid #0000001f;
-  border: ${props =>
-    props.namedCardStyle === NamedCardStyle.NORMAL ? '1px solid #0000001f' : '4px solid #e74c3c'};
-  box-shadow: #00000059 0 2px 3px 0px;
-`;
+export const Card = ({
+  children,
+  namedCardStyle,
+}: {
+  children: React.ReactNode;
+  namedCardStyle: NamedCardStyle;
+}) => {
+  return (
+    <div
+      className={`relative mx-0.5 mt-1 mb-5 md:mx-3 shadow-lg rounded-lg bg-white p-4  border ${
+        namedCardStyle === NamedCardStyle.NORMAL ? ' border-gray-100' : 'border-red-500'
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
 
 const Title = styled.h3`
   font-size: 1.5rem;
-  margin-bottom: 15px;
+  margin-top: 0px;
+  margin-bottom: 0.5rem;
 `;
 
 const TitleConfidential = styled.span`
@@ -44,14 +52,8 @@ const ToolbarWrapper = styled.div`
   right: 12px;
 `;
 
-const Description = styled.div`
-  padding-left: 10px;
-  padding-right: 10px;
-  margin-bottom: 10px;
-`;
-
 const ContentWrapper = styled.div`
-  margin-bottom: 30px;
+  margin-bottom: 0px;
 `;
 
 export const NamedCard = ({
@@ -64,7 +66,7 @@ export const NamedCard = ({
   return (
     <Card namedCardStyle={style}>
       <Title>
-        {title}
+        <h1 className='my-0'>{title}</h1>
         {style === NamedCardStyle.CONFIDENTIAL && (
           <OverlayTrigger
             placement='bottom'
@@ -79,9 +81,9 @@ export const NamedCard = ({
         )}
       </Title>
       {description && (
-        <Description>
-          <ExpandableTextBox text={description} maxChars={160} />
-        </Description>
+        <div className='pr-3 mb-3 text-gray-500'>
+          <ExpandableTextBox text={description} maxChars={60} />
+        </div>
       )}
       <ToolbarWrapper>{toolbar}</ToolbarWrapper>
       <ContentWrapper>{children}</ContentWrapper>

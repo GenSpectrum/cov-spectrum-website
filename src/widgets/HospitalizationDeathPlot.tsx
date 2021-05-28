@@ -60,14 +60,14 @@ const makeTexts = (
 ): { hospitalized: TopLevelTexts; deceased: TopLevelTexts } => ({
   hospitalized: {
     title:
-      'Estimated hospitalization probabilities by age group' +
+      'Estimated probability of hospitalization by age group' +
       (relativeToOtherVariants ? ', relative to other variants' : ''),
     subject: makeHospitalizedTexts(variantName),
     reference: makeHospitalizedTexts('other variants'),
   },
   deceased: {
     title:
-      'Estimated death probabilities by age group' +
+      'Estimated probability of death by age group' +
       (relativeToOtherVariants ? ', relative to other variants' : ''),
     subject: makeDeceasedTexts(variantName),
     reference: makeDeceasedTexts('other variants'),

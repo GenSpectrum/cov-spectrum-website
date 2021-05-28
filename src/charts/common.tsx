@@ -11,6 +11,12 @@ export const colors = {
   highlight: '#c0392b',
   highlight2: '#e74c3c',
   transparent: '#ffffff80',
+  bright: '#F18805',
+  bright2: '#E08A13',
+  bright3: '#CF8B20',
+  good: '#27ae60',
+  neutral: '#e67e22',
+  bad: '#c0392b',
 };
 
 export const Wrapper = styled.div`
@@ -18,12 +24,15 @@ export const Wrapper = styled.div`
   flex-direction: column;
   height: 100%;
 `;
-export const TitleWrapper = styled.div`
-  padding: 0rem 0rem 1rem 0rem;
-  font-size: 1.2rem;
-  line-height: 1.3;
-  color: ${colors.secondary};
-`;
+
+export const TitleWrapper = ({ children, id }: { children: React.ReactNode; id?: string }) => {
+  return (
+    <h3 id={id} className='my-0 pb-4 pr-10 pt-0 text-gray-500'>
+      {children}
+    </h3>
+  );
+};
+
 export const ChartAndMetricsWrapper = styled.div`
   display: flex;
   flex: 1;

@@ -12,6 +12,7 @@ import { OutbreakInfoIntegration } from '../services/external-integrations/Outbr
 import { NextstrainIntegration } from '../services/external-integrations/NextstrainIntegration';
 import { WikipediaIntegration } from '../services/external-integrations/WikipediaIntegration';
 import { CoVariantsIntegration } from '../services/external-integrations/CoVariantsIntegration';
+import { useState } from 'react';
 
 export interface Props {
   country: Country;
@@ -38,6 +39,13 @@ export const FocusVariantHeaderControls = React.memo(
       country,
       samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
     };
+    const [show, setShow] = useState(false);
+    const showDropdown = (_: any) => {
+      setShow(!show);
+    };
+    const hideDropdown = (_: any) => {
+      setShow(false);
+    };
 
     const integrationButtons = (
       <>
@@ -46,7 +54,10 @@ export const FocusVariantHeaderControls = React.memo(
           title='Show on other websites'
           variant='secondary'
           size='sm'
-          className='mr-2'
+          className='mr-2 mt-3'
+          onMouseEnter={showDropdown}
+          onMouseLeave={hideDropdown}
+          show={show}
         >
           {integrations.map(
             integration =>
@@ -68,6 +79,7 @@ export const FocusVariantHeaderControls = React.memo(
             query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy, dateRange }}
             variant='secondary'
             size='sm'
+            className='mt-3 mr-3'
           >
             Show samples
           </LazySampleButton>

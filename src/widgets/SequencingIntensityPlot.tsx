@@ -42,10 +42,7 @@ const processData = (data: SequencingIntensityEntry[]): any => groupByMonth(data
 export const SequencingIntensityPlot = ({ sequencingIntensityEntrySet }: Props) => {
   return (
     <DownloadWrapper name='SequencingIntensityPlot'>
-      <TimeIntensityChart
-        data={processData(sequencingIntensityEntrySet.data)}
-        onClickHandler={(e: unknown) => true}
-      />
+      <TimeIntensityChart data={processData(sequencingIntensityEntrySet.data)} onClickHandler={_ => true} />
     </DownloadWrapper>
   );
 };
