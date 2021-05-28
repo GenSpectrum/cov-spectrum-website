@@ -5,7 +5,6 @@ import styled from 'styled-components';
 
 export const METRIC_RIGHT_PADDING_PX = 16;
 export const METRIC_WIDTH_PX = 160;
-
 const TOOLTIP_DALAY = 500;
 
 export const MetricsWrapper = styled.div`

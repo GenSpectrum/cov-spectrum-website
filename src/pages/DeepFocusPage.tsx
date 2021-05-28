@@ -1,6 +1,6 @@
 import React from 'react';
 import { AsyncState } from 'react-async';
-import { Alert, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { Route, useRouteMatch, Switch } from 'react-router';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
@@ -16,6 +16,7 @@ import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../servi
 import { Country, Variant } from '../services/api-types';
 import { HospitalizationDeathDeepFocus } from '../components/HospitalizationDeathDeepFocus';
 import { WasteWaterDeepFocus } from '../models/wasteWater/WasteWaterDeepFocus';
+import { Alert, AlertVariant } from '../helpers/ui';
 
 interface SyncProps {
   country: Country;
@@ -145,7 +146,7 @@ export const DeepFocusPage = ({
     variantInternationalSampleSetState.status === 'rejected' ||
     wholeInternationalSampleSetState.status === 'rejected'
   ) {
-    return makeLayout(<Alert variant='danger'>Failed to load samples</Alert>);
+    return makeLayout(<Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>);
   }
 
   const loadedProps = {

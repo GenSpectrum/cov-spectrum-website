@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Alert, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import { useLocation } from 'react-router-dom';
+import { Alert, AlertVariant} from '../helpers/ui';
 import { AccountService } from '../services/AccountService';
 
 function useQuery() {
@@ -36,17 +37,17 @@ export const LoginPage = () => {
   return (
     <div className='flex flex-col justify-center items-center mt-2 md:mt-10'>
       {loginFailed && (
-        <Alert variant='info' style={{ marginTop: '20px' }}>
+        <Alert variant={AlertVariant.INFO}>
           The login attempt was not successful.
         </Alert>
       )}
       {sessionExpired && (
-        <Alert variant='info' style={{ marginTop: '20px' }}>
+        <Alert variant={AlertVariant.INFO}>
           The session has expired. Please login again.
         </Alert>
       )}
       {loggedOut && (
-        <Alert variant='info' style={{ marginTop: '20px' }}>
+        <Alert variant={AlertVariant.INFO}>
           You logged out.
         </Alert>
       )}

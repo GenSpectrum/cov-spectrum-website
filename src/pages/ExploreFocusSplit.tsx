@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AsyncState, PromiseFn, useAsync } from 'react-async';
-import { Alert, Button, Modal } from 'react-bootstrap';
+import { Button, Modal } from 'react-bootstrap';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router';
 import Loader from '../components/Loader';
 import {
@@ -29,6 +29,7 @@ import {
 import { Country } from '../services/api-types';
 import dayjs from 'dayjs';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
+import { Alert, AlertVariant } from '../helpers/ui';
 
 // a promise which is never resolved or rejected
 const waitForever = new Promise<never>(() => {});
@@ -176,7 +177,7 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   ) {
     explorePage = <Loader />;
   } else if (sequencingIntensityEntrySetState.status === 'rejected') {
-    explorePage = <Alert variant='danger'>Failed to load data</Alert>;
+    explorePage = <Alert variant={AlertVariant.DANGER}>Failed to load data</Alert>;
   } else {
     explorePage = (
       <ExplorePage
@@ -250,7 +251,7 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     wholeSampleSetState.status === 'rejected' ||
     sequencingIntensityEntrySetState.status === 'rejected'
   ) {
-    const alert = <Alert variant='danger'>Failed to load samples</Alert>;
+    const alert = <Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>;
     return makeLayout(alert, alert);
   }
 

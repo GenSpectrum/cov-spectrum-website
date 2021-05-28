@@ -19,7 +19,6 @@ export const OuterWrapper = styled.div`
 
 export const HeaderWrapper = styled.div`
   grid-area: header;
-  /* border-bottom: 1px solid #dee2e6; */
 `;
 
 export const fullGridStyle = css`

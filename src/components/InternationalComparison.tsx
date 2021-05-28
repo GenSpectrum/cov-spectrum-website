@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Alert, Button } from 'react-bootstrap';
+import {  Button } from 'react-bootstrap';
 import { SampleSetWithSelector } from '../helpers/sample-set';
+import { Alert, AlertVariant } from '../helpers/ui';
 import { AccountService } from '../services/AccountService';
 import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
@@ -33,7 +34,7 @@ export const InternationalComparison = ({
 
   if (requestedSamplingStrategy !== SamplingStrategy.AllSamples) {
     return (
-      <Alert variant='warning'>
+      <Alert variant={AlertVariant.WARNING}>
         The selected sampling strategy can not be used for international comparison. Use "All samples"
         instead.
       </Alert>

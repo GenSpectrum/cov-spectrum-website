@@ -1,7 +1,7 @@
 import { mapValues } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { AsyncState } from 'react-async';
-import { Alert, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { AsyncVariantInternationalComparisonPlot } from '../components/AsyncVariantInternationalComparisonPlot';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
@@ -28,6 +28,7 @@ import { EstimatedCasesPlotWidget } from '../widgets/EstimatedCasesPlot';
 import { ArticleListWidget } from '../widgets/ArticleList';
 import { VariantDivisionDistributionTableWidget } from '../widgets/VariantDivisionDistributionTable';
 import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
+import { Alert, AlertVariant } from '../helpers/ui';
 
 interface Props {
   country: Country;
@@ -88,7 +89,6 @@ export const FocusPage = ({
     [country, samplingStrategy, dateRange, matchPercentage, variant]
   );
 
-  // Waste water
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
   useEffect(() => {
     if (!variant.name) {
@@ -109,7 +109,7 @@ export const FocusPage = ({
   );
 
   if (variantSampleSet.isEmpty()) {
-    return <Alert variant='warning'>No samples match your query</Alert>;
+    return <Alert variant={AlertVariant.WARNING}>No samples match your query</Alert>;
   }
 
   return (
