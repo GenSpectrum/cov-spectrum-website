@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Alert, Button } from 'react-bootstrap';
+import { Button } from 'react-bootstrap';
 import styled from 'styled-components';
 import { SampleSetWithSelector } from '../helpers/sample-set';
+import { Alert, AlertVariant } from '../helpers/ui';
 import { Country } from '../services/api-types';
 import { HospitalizationDeathPlot, OMIT_LAST_N_WEEKS } from '../widgets/HospitalizationDeathPlot';
 import { NamedCard } from './NamedCard';
@@ -31,7 +32,11 @@ export const HospitalizationDeathDeepFocus = ({
   const [relative, setRelative] = useState(false);
 
   if (country !== 'Switzerland') {
-    return <Alert variant='danger'>Hospitalization and death rates are only available for Switzerland</Alert>;
+    return (
+      <Alert variant={AlertVariant.DANGER}>
+        Hospitalization and death rates are only available for Switzerland
+      </Alert>
+    );
   }
 
   return (

@@ -1,12 +1,12 @@
 import React from 'react';
 import { IfFulfilled, IfPending, IfRejected } from 'react-async';
-import { Alert } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import Loader from '../components/Loader';
 import { useQueryWithAsyncEncoder } from '../helpers/use-query';
 import { allWidgets } from '../widgets';
 import { DecodedMergedWidgetProps } from '../widgets/Widget';
 import styled from 'styled-components';
+import { Alert, AlertVariant } from '../helpers/ui';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 
@@ -33,7 +33,7 @@ export function EmbedPage() {
 
   if (!widget) {
     // TODO Redirect to a 404 page
-    return <Alert variant='danger'>Widget is unspecified or unsupported</Alert>;
+    return <Alert variant={AlertVariant.DANGER}>Widget is unspecified or unsupported</Alert>;
   }
 
   const renderHeader = (href: string | undefined) => (
@@ -60,7 +60,7 @@ export function EmbedPage() {
           <Loader />
         </IfPending>
         <IfRejected state={asyncWidgetProps}>
-          <Alert variant='danger'>Failed to load widget</Alert>
+          <Alert variant={AlertVariant.DANGER}>Failed to load widget</Alert>
         </IfRejected>
         <IfFulfilled state={asyncWidgetProps}>
           {({ specific }) => <widget.Component {...specific} />}
