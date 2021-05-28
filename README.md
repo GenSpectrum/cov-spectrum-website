@@ -6,7 +6,7 @@ This repository is home to the website (frontend application) of [CoV-Spectrum](
 
 From a technical point of view, CoV-Spectrum is a React app that shows a lot of plots based on read-only data.
 
-There is documentation about different technical aspects of this app in the [./docs](./docs) folder. These next few paragraphs link to parts of that documentation.
+There is documentation about different technical aspects of this app in the [./docs](./docs) folder. These next few paragraphs link to parts of that documentation. If you don't want to read much doc, at least check the the list of gotchas ([./docs/gotchas.md](./docs/gotchas.md)).
 
 There's a short guide on how to get the application running locally in [./docs/building.md](./docs/building.md).
 
@@ -21,5 +21,3 @@ There is a special setup that allows certain plots to be loaded standalone outsi
 Certain models and analyses require very different data than the main application. They are slightly separated from the rest of the code. See [./docs/models.md](./docs/models.md).
 
 There is also some miscellaneous documentation about date handling ([./docs/date-cache.md](./docs/date-cache.md)) and routing ([./docs/routing.md](./docs/routing.md)).
-
-Check the list of gotchas ([./docs/gotchas.md](./docs/gotchas.md)) - it might save you some time in the future.
