@@ -29,7 +29,7 @@ The dates in `SampleSet` are `UnifiedDay` and `UnifiedIsoWeek`. These come from 
 
 ## Widgets and async loading
 
-`SampleSet` is designed to be used with async loaded widgets (see `./widgets.md` about the general topic of async widgets). Most sample sets in the application are `SampleSetWithSelector`. This can be encoded (for embed URLs) by saving the `sampleSelector` field. To decode the data from these URLs, use `getNewSamples` with the saved `sampleSelector`.
+`SampleSet` is designed to be used with async loaded widgets (see `./widgets.md` about the general topic of async widgets). Most sample sets in the application are `SampleSetWithSelector`. This can be encoded (for embed URLs) by saving the `sampleSelector` field. To decode the data from these URLs, use `getNewSamples` with the saved `sampleSelector`. Look at [src/widgets/VariantTimeDistributionPlot.tsx](/src/widgets/VariantTimeDistributionPlot.tsx) for an example of `SampleSetWithSelector` used with a widget.
 
 ## More details
 
