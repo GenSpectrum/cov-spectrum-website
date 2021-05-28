@@ -136,11 +136,11 @@ export const WasteWaterHeatMapChart = React.memo(
         <TitleWrapper>
           {active !== undefined ? (
             <>
-              Occurrence of <b>{active.nucMutation}</b> in waste water samples on{' '}
+              Occurrence of <b>{active.nucMutation}</b> in wastewater samples on{' '}
               <b>{formatDate(active.date)}</b>
             </>
           ) : (
-            'Occurrence of signature mutations in waste water samples through time'
+            'Occurrence of signature mutations in wastewater samples through time'
           )}
         </TitleWrapper>
         <ChartAndMetricsWrapper2>
@@ -164,7 +164,7 @@ export const WasteWaterHeatMapChart = React.memo(
               value={active?.proportion !== undefined ? (active.proportion * 100).toFixed(2) + '%' : 'NA'}
               title='Proportion'
               color={colors.active}
-              helpText='Proportion of waste water samples containing the mutation.'
+              helpText='Proportion of wastewater samples containing the mutation.'
             />
           </MetricsWrapper>
         </ChartAndMetricsWrapper2>

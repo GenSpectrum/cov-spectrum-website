@@ -26,7 +26,7 @@ export const WasteWaterTimeChart = React.memo(
     return (
       <Wrapper>
         <TitleWrapper>
-          Estimated prevalence in waste water samples
+          Estimated prevalence in wastewater samples
           {active !== undefined && (
             <>
               {' '}

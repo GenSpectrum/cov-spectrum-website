@@ -41,7 +41,7 @@ export const WasteWaterSummaryTimeChart = React.memo(
     const colorScale = scaleOrdinal(schemeCategory10);
     return (
       <Wrapper>
-        <TitleWrapper>Estimated prevalence in waste water samples</TitleWrapper>
+        <TitleWrapper>Estimated prevalence in wastewater samples</TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
             <ResponsiveContainer>

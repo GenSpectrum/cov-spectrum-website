@@ -6,7 +6,6 @@ import { WasteWaterDataset } from './types';
 import { WasteWaterHeatMapWidget } from './WasteWaterHeatMapWidget';
 import { GridCell, PackedGrid } from '../../components/PackedGrid';
 import { ExternalLink } from '../../components/ExternalLink';
-import { AccountService } from '../../services/AccountService';
 
 interface Props {
   country: string;
@@ -27,11 +26,6 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
       variantName,
     }).then(d => setData(d));
   }, [country, variantName]);
-
-  const loggedIn = AccountService.isLoggedIn();
-  if (!loggedIn) {
-    window.location.href = '/login';
-  }
 
   if (country !== 'Switzerland' || !variantName || !WASTE_WATER_AVAILABLE_LINEAGES.includes(variantName)) {
     return <>Nothing to see here.</>;
@@ -78,6 +72,10 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
                   <ExternalLink url='https://doi.org/10.1101/2021.01.08.21249379'>
                     10.1101/2021.01.08.21249379
                   </ExternalLink>
+                </li>
+                <li>
+                  Project page:{' '}
+                  <ExternalLink url='https://bsse.ethz.ch/cbg/research/computational-virology/sarscov2-variants-wastewater-surveillance.html' />
                 </li>
               </ul>
             </NamedSection>
