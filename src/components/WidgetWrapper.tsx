@@ -1,6 +1,7 @@
-import { Button, Modal, Form, ButtonToolbar } from 'react-bootstrap';
+import { Modal, Form, ButtonToolbar } from 'react-bootstrap';
 import { useState } from 'react';
 import { NamedCard } from './NamedCard';
+import { Button, ButtonVariant } from '../helpers/ui';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 
@@ -65,7 +66,7 @@ export function WidgetWrapper({
         title={title}
         toolbar={
           <ButtonToolbar className='mb-1'>
-            <Button variant='secondary' size='sm' onClick={onShareClick}>
+            <Button variant={ButtonVariant.SECONDARY} onClick={onShareClick} className="mt-1">
               Share
             </Button>
             {toolbarChildren}

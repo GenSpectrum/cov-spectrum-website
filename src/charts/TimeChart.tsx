@@ -84,8 +84,6 @@ export const TimeChart = React.memo(
       <Wrapper>
         <TitleWrapper id='graph_title'>
           Proportion of all samples sequenced on week {currentData.yearWeek.split('-')[1]}
-          {', '}
-          {currentData.yearWeek.split('-')[0] + ' '}({currentData.firstDayInWeek})
         </TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>

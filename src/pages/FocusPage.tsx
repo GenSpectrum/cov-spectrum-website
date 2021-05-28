@@ -1,8 +1,7 @@
 import { mapValues } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
 import { AsyncState } from 'react-async';
-import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { AsyncVariantInternationalComparisonPlot } from '../components/AsyncVariantInternationalComparisonPlot';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
 import { NamedCard, NamedCardStyle } from '../components/NamedCard';
@@ -28,7 +27,7 @@ import { EstimatedCasesPlotWidget } from '../widgets/EstimatedCasesPlot';
 import { ArticleListWidget } from '../widgets/ArticleList';
 import { VariantDivisionDistributionTableWidget } from '../widgets/VariantDivisionDistributionTable';
 import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
-import { Alert, AlertVariant } from '../helpers/ui';
+import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 
 interface Props {
   country: Country;
@@ -59,6 +58,8 @@ export const FocusPage = ({
   ...forwardedProps
 }: Props) => {
   const { country, matchPercentage, variant, samplingStrategy, dateRange } = forwardedProps;
+  const history = useHistory();
+
   const plotProps = {
     country,
     matchPercentage,
@@ -81,12 +82,10 @@ export const FocusPage = ({
           deepFocusPath: suffix,
         });
         return (
-          <Button as={Link} to={to} size='sm' className='ml-1'>
-            Show more
-          </Button>
+            <Button className="mt-2" variant={ButtonVariant.PRIMARY} onClick={() => {history.push(to)}}>Show more</Button>
         );
       }),
-    [country, samplingStrategy, dateRange, matchPercentage, variant]
+    [country, samplingStrategy, dateRange, matchPercentage, variant, history]
   );
 
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
