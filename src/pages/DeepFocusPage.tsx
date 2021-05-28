@@ -99,7 +99,7 @@ const routes: DeepFocusRoute[] = [
   },
   {
     key: 'waste-water',
-    title: 'Waste water prevalence',
+    title: 'Wastewater prevalence',
     content: props => <WasteWaterDeepFocus country={props.country} variantName={props.variant.name} />,
   },
 ];
