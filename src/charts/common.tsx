@@ -39,7 +39,7 @@ export const ChartAndMetricsWrapper = styled.div`
 `;
 
 export const ChartWrapper = styled.div`
-  flex-grow: 1;
+  flex-grow: 0;
   width: 100%;
 `;
 

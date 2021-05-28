@@ -96,7 +96,7 @@ export const TimeIntensityChart = React.memo(
       <Wrapper id='sequencing-intensity-chart'>
         <TitleWrapper id='graph_title'>Number of sequenced samples on {currentData.month}</TitleWrapper>
         <ChartAndMetricsWrapper>
-          <ChartWrapper className='-mr-6 -ml-3'>
+          <ChartWrapper className='-mr-4 -ml-2'>
             <ResponsiveContainer>
               <BarChart
                 data={data}
@@ -147,7 +147,7 @@ export const TimeIntensityChart = React.memo(
               title='Sequenced'
               color={colors.highlight}
               helpText='Number of samples sequenced among the confirmed cases on this time frame.'
-              showPercent={((currentData.proportion / currentData.quantity) * 100).toFixed(2)}
+              showPercent={Math.round((currentData.proportion / currentData.quantity) * 100).toFixed(0)}
             />
           </MetricsWrapper>
         </ChartAndMetricsWrapper>
