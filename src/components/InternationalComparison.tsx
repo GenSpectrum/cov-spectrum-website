@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import {  Button } from 'react-bootstrap';
 import { SampleSetWithSelector } from '../helpers/sample-set';
-import { Alert, AlertVariant } from '../helpers/ui';
+import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 import { AccountService } from '../services/AccountService';
 import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
@@ -53,15 +52,14 @@ export const InternationalComparison = ({
         wholeInternationalSampleSet={wholeInternationalSampleSet}
         toolbarChildren={
           <>
-            <Button variant='secondary' size='sm' className='ml-1' onClick={() => setLogScale(v => !v)}>
+            <Button variant={ButtonVariant.SECONDARY} className="mt-1 ml-2" onClick={() => setLogScale(v => !v)}>
               Toggle log scale
             </Button>
             {AccountService.isLoggedIn() && (
               <>
                 <Button
-                  variant='secondary'
-                  size='sm'
-                  className='ml-1'
+                  variant={ButtonVariant.SECONDARY}
+                  className='ml-1 mt-1'
                   onClick={() =>
                     new NextcladeIntegration().open({
                       variant,

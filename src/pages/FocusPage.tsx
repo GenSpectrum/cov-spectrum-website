@@ -82,7 +82,7 @@ export const FocusPage = ({
           deepFocusPath: suffix,
         });
         return (
-            <Button className="mt-2" variant={ButtonVariant.PRIMARY} onClick={() => {history.push(to)}}>Show more</Button>
+            <Button className="mt-1" variant={ButtonVariant.PRIMARY} onClick={() => {history.push(to)}}>Show more</Button>
         );
       }),
     [country, samplingStrategy, dateRange, matchPercentage, variant, history]

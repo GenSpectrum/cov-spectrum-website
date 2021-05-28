@@ -63,7 +63,7 @@ export const Button = ({
 }: {
   variant: ButtonVariant;
   children?: React.ReactNode;
-  onClick?: () => Promise<void> | void;
+  onClick?: () => any;
   className?: string;
 }) => {
   return (
