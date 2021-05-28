@@ -107,7 +107,7 @@
     "@types/react-plotly.js": "^2.2.4",
     "autoprefixer": "^9.8.6",
     "eslint-plugin-unused-imports": "^1.1.1",
-    "postcss": "^7.0.35",
+    "postcss": "^8.2.10",
     "prettier": "^2.2.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2"
   }
