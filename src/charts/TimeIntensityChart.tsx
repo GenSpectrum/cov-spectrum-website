@@ -96,7 +96,7 @@ export const TimeIntensityChart = React.memo(
       <Wrapper id='sequencing-intensity-chart'>
         <TitleWrapper id='graph_title'>Number of sequenced samples on {currentData.month}</TitleWrapper>
         <ChartAndMetricsWrapper>
-          <ChartWrapper>
+          <ChartWrapper className='-mr-6'>
             <ResponsiveContainer>
               <BarChart
                 data={data}

@@ -40,7 +40,7 @@ export const ChartAndMetricsWrapper = styled.div`
 
 export const ChartWrapper = styled.div`
   flex-grow: 1;
-  width: 10rem;
+  width: 100%;
 `;
 
 const getWeeklyTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
