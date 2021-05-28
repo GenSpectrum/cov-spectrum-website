@@ -8,13 +8,13 @@ The actual API endpoint (`/resource/sample2`) is described [here](https://github
 
 ## Helper function and `SampleSet`
 
-To query this endpoint you should use the `getNewSamples` helper function from [src/services/api.ts](src/services/api.ts) (see [./api.md](./api.md)). This function returns a `SampleSet` object. It contains helper functions for re-grouping, counting sequences, or calculating proportions. In most cases you should use these functions. Note that in most cases the `SampleSet` you need is **already loaded** - see the next section.
+To query this endpoint you should use the `getNewSamples` helper function from [src/services/api.ts](/src/services/api.ts) (see [./api.md](./api.md)). This function returns a `SampleSet` object. It contains helper functions for re-grouping, counting sequences, or calculating proportions. In most cases you should use these functions. Note that in most cases the `SampleSet` you need is **already loaded** - see the next section.
 
 If you need something else for your use case, you can use `SampleSet.getAll` to get the individual groups of samples that were returned from the API. **Be careful** if you do this: each group (`ParsedMultiSample`) has a `count` field, since it represents multiple samples. If you forget to consider this field your results will be wrong.
 
 ## Centrally loaded sample sets
 
-Most `getNewSamples` calls happen in [src/pages/ExploreFocusSplit.tsx](src/pages/ExploreFocusSplit.tsx), because the data is needed by most components below. Specifically, 4 sample sets are loaded here:
+Most `getNewSamples` calls happen in [src/pages/ExploreFocusSplit.tsx](/src/pages/ExploreFocusSplit.tsx), because the data is needed by most components below. Specifically, 4 sample sets are loaded here:
 
 - `variantSampleSet` - filtered by mutation and country
 - `wholeSampleSet` - filtered by country
