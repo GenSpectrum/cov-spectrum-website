@@ -8,7 +8,6 @@ import { HospitalizationDeathPlot, OMIT_LAST_N_WEEKS } from '../widgets/Hospital
 import { NamedCard } from './NamedCard';
 import { GridCell, PackedGrid } from './PackedGrid';
 
-
 interface Props {
   country: Country;
   variantSampleSet: SampleSetWithSelector;
@@ -33,7 +32,11 @@ export const HospitalizationDeathDeepFocus = ({
   const [relative, setRelative] = useState(false);
 
   if (country !== 'Switzerland') {
-    return <Alert variant={AlertVariant.DANGER}>Hospitalization and death rates are only available for Switzerland</Alert>;
+    return (
+      <Alert variant={AlertVariant.DANGER}>
+        Hospitalization and death rates are only available for Switzerland
+      </Alert>
+    );
   }
 
   return (

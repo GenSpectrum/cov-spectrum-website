@@ -66,7 +66,7 @@ export function WidgetWrapper({
         title={title}
         toolbar={
           <ButtonToolbar className='mb-1'>
-            <Button variant={ButtonVariant.SECONDARY} onClick={onShareClick} className="mt-1">
+            <Button variant={ButtonVariant.SECONDARY} onClick={onShareClick} className='mt-1'>
               Share
             </Button>
             {toolbarChildren}

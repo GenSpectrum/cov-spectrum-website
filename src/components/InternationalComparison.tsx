@@ -52,7 +52,11 @@ export const InternationalComparison = ({
         wholeInternationalSampleSet={wholeInternationalSampleSet}
         toolbarChildren={
           <>
-            <Button variant={ButtonVariant.SECONDARY} className="mt-1 ml-2" onClick={() => setLogScale(v => !v)}>
+            <Button
+              variant={ButtonVariant.SECONDARY}
+              className='mt-1 ml-2'
+              onClick={() => setLogScale(v => !v)}
+            >
               Toggle log scale
             </Button>
             {AccountService.isLoggedIn() && (

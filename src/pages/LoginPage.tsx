@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import { useLocation } from 'react-router-dom';
-import { Alert, AlertVariant} from '../helpers/ui';
+import { Alert, AlertVariant } from '../helpers/ui';
 import { AccountService } from '../services/AccountService';
 
 function useQuery() {
@@ -36,21 +36,11 @@ export const LoginPage = () => {
 
   return (
     <div className='flex flex-col justify-center items-center mt-2 md:mt-10'>
-      {loginFailed && (
-        <Alert variant={AlertVariant.INFO}>
-          The login attempt was not successful.
-        </Alert>
-      )}
+      {loginFailed && <Alert variant={AlertVariant.INFO}>The login attempt was not successful.</Alert>}
       {sessionExpired && (
-        <Alert variant={AlertVariant.INFO}>
-          The session has expired. Please login again.
-        </Alert>
+        <Alert variant={AlertVariant.INFO}>The session has expired. Please login again.</Alert>
       )}
-      {loggedOut && (
-        <Alert variant={AlertVariant.INFO}>
-          You logged out.
-        </Alert>
-      )}
+      {loggedOut && <Alert variant={AlertVariant.INFO}>You logged out.</Alert>}
       <Form className='shadow-lg rounded-2xl w-64 bg-white relative overflow-hidden cursor-pointer p-8'>
         <p className='mb-2 text-3xl leading-8 font-bold tracking-tight text-gray-900 sm:text-4xl'>Login</p>
         <p>Private Switzerland Data</p>
