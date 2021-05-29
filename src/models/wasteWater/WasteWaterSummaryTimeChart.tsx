@@ -6,6 +6,7 @@ import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 
 import { WasteWaterTimeseriesSummaryDataset } from './types';
 import { formatDate } from './WasteWaterTimeChart';
 import { getTicks } from '../../helpers/ticks';
+import { UnifiedDay } from '../../helpers/date-cache';
 
 interface Props {
   wasteWaterPlants: {
@@ -14,28 +15,32 @@ interface Props {
   }[];
 }
 
+interface LocationMap {
+  [key: string]: number;
+}
+
 const CHART_MARGIN_RIGHT = 15;
 
 export const WasteWaterSummaryTimeChart = React.memo(
   ({ wasteWaterPlants }: Props): JSX.Element => {
     const locations = wasteWaterPlants.map(d => d.location);
-    const dateMap: Map<number, any> = new Map();
+    const dateMap: Map<UnifiedDay, { date: number; values: LocationMap }> = new Map();
 
     for (let { location, data } of wasteWaterPlants) {
       for (let { date, proportion } of data) {
-        const timestamp = date.getTime();
-        if (!dateMap.has(timestamp)) {
-          dateMap.set(timestamp, {
-            date,
+        if (!dateMap.has(date)) {
+          dateMap.set(date, {
+            date: date.dayjs.valueOf(),
+            values: {},
           });
         }
-        dateMap.get(timestamp)[location] = Math.max(proportion, 0);
+        dateMap.get(date)!.values[location] = Math.max(proportion, 0);
       }
     }
 
-    const plotData = [...dateMap.values()].sort((a, b) => a.date.getTime() - b.date.getTime());
+    const plotData = [...dateMap.values()].sort((a, b) => a.date - b.date);
     const today = Date.now();
-    const ticks = getTicks(plotData);
+    const ticks = getTicks(plotData.map(({ date }) => ({ date: new Date(date) }))); // TODO This does not seem efficient
     ticks.push(today);
 
     const colorScale = scaleOrdinal(schemeCategory10);
@@ -67,7 +72,7 @@ export const WasteWaterSummaryTimeChart = React.memo(
                 {locations.map(location => (
                   <Line
                     type='monotone'
-                    dataKey={location}
+                    dataKey={'values.' + location}
                     strokeWidth={3}
                     stroke={colorScale(location)}
                     dot={false}

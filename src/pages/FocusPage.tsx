@@ -20,7 +20,7 @@ import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistrib
 import { VariantLineages } from '../components/VariantLineages';
 import { VariantMutations } from '../components/VariantMutations';
 import { WasteWaterDataset } from '../models/wasteWater/types';
-import { getData } from '../models/wasteWater/loading';
+import { filter, getData } from '../models/wasteWater/loading';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 import { EstimatedCasesPlotWidget } from '../widgets/EstimatedCasesPlot';
 import { ArticleListWidget } from '../widgets/ArticleList';
@@ -104,8 +104,7 @@ export const FocusPage = ({
     }
     getData({
       country,
-      variantName: variant.name,
-    }).then(d => setWasteWaterData(d));
+    }).then(dataset => dataset && setWasteWaterData(filter(dataset, variant.name)));
   }, [country, variant.name]);
 
   const header = (
@@ -129,9 +128,9 @@ export const FocusPage = ({
             country={country}
             title='Wastewater prevalence'
             variantName={variant.name}
-            wasteWaterPlants={wasteWaterData.data.map(({ location, timeseriesSummary }) => ({
+            wasteWaterPlants={wasteWaterData.map(({ location, data }) => ({
               location,
-              data: timeseriesSummary,
+              data: data.timeseriesSummary,
             }))}
             height={300}
             toolbarChildren={deepFocusButtons.wasteWater}

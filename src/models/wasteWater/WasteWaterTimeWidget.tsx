@@ -2,7 +2,7 @@ import { Widget } from '../../widgets/Widget';
 import { AsyncZodQueryEncoder } from '../../helpers/query-encoder';
 import WasteWaterTimeChart from './WasteWaterTimeChart';
 import { WasteWaterSelectorSchema, WasteWaterTimeseriesSummaryDataset } from './types';
-import { getData } from './loading';
+import { filterSingle, getData } from './loading';
 
 interface Props {
   country: string;
@@ -23,10 +23,13 @@ export const WasteWaterTimeWidget = new Widget(
       country: encoded.country,
       variantName: encoded.variantName,
       location: encoded.location,
-      data: (await getData({
-        country: encoded.country,
-        variantName: encoded.variantName,
-      }))!.data.filter(({ location }) => location === encoded.location)[0].timeseriesSummary,
+      data: filterSingle(
+        (await getData({
+          country: encoded.country,
+        }))!,
+        encoded.variantName,
+        encoded.location
+      )!.data.timeseriesSummary,
     })
   ),
   WasteWaterTimeChart,
