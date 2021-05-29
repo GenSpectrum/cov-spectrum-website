@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { scaleLinear } from 'd3-scale';
 import styled from 'styled-components';
 import Metric, { MetricsSpacing, MetricsWrapper } from '../../charts/Metrics';
@@ -10,15 +10,20 @@ export type TimeHeatMapChartProps = {
   data: WasteWaterMutationOccurrencesDataset;
 };
 
-const Cell = styled.td<{ backgroundColor?: string; active?: boolean }>`
+const Cell = styled.td<{ backgroundColor?: string }>`
   min-height: 20px;
   height: 20px;
   padding: 0;
   width: 35px;
   min-width: 35px;
   background-color: ${props => props.backgroundColor ?? 'none'};
-  outline: ${props => (props.active ? '3px solid black' : 'none')};
   font-size: small;
+`;
+
+const MainContentCell = styled(Cell)`
+  &:hover {
+    outline: 3px solid black;
+  }
 `;
 
 const XAxisTicksCell = styled(Cell)`
@@ -34,13 +39,6 @@ const ChartWrapper2 = styled(ChartWrapper)`
   margin-right: 20px;
   overflow-y: auto;
 `;
-
-function samePosition(entry1?: WasteWaterHeatMapEntry, entry2?: WasteWaterHeatMapEntry) {
-  if (!entry1 || !entry2) {
-    return false;
-  }
-  return entry1.date === entry2.date && entry1.nucMutation === entry2.nucMutation;
-}
 
 function formatDate(date: UnifiedDay) {
   return date.dayjs.format('DD.MM');
@@ -89,48 +87,48 @@ export const WasteWaterHeatMapChart = React.memo(
   ({ data }: TimeHeatMapChartProps): JSX.Element => {
     const [active, setActive] = useState<WasteWaterHeatMapEntry | undefined>(undefined);
 
-    const processedData: WasteWaterHeatMapEntry[][] = transformDataToTableFormat(data);
-
-    const colorScale = scaleLinear<string>().range(['white', 'blue']).domain([0, 1]);
-
     function handleMouseEnter(cell: WasteWaterHeatMapEntry) {
       setActive(cell);
     }
 
-    const nucMutationsLabelTableRows = [];
-    const heatMapTableRows = [];
-    for (let row of processedData) {
-      const nucMutation = row[0].nucMutation;
+    const { nucMutationsLabelTableRows, heatMapTableRows } = useMemo(() => {
+      const processedData: WasteWaterHeatMapEntry[][] = transformDataToTableFormat(data);
+      const colorScale = scaleLinear<string>().range(['white', 'blue']).domain([0, 1]);
+      const nucMutationsLabelTableRows = [];
+      const heatMapTableRows = [];
+      for (let row of processedData) {
+        const nucMutation = row[0].nucMutation;
+        nucMutationsLabelTableRows.push(
+          <tr key={nucMutation}>
+            <Cell>{nucMutation}</Cell>
+          </tr>
+        );
+        heatMapTableRows.push(
+          <tr key={nucMutation}>
+            {row.map(col => (
+              <MainContentCell
+                key={nucMutation + col.date.string}
+                backgroundColor={col.proportion !== undefined ? colorScale(col.proportion) : 'lightgray'}
+                onMouseEnter={() => handleMouseEnter(col)}
+              />
+            ))}
+          </tr>
+        );
+      }
       nucMutationsLabelTableRows.push(
-        <tr key={nucMutation}>
-          <Cell>{nucMutation}</Cell>
+        <tr key={'lastrow'}>
+          <Cell />
         </tr>
       );
       heatMapTableRows.push(
-        <tr key={nucMutation}>
-          {row.map(col => (
-            <Cell
-              key={nucMutation + col.date.string}
-              backgroundColor={col.proportion !== undefined ? colorScale(col.proportion) : 'lightgray'}
-              active={samePosition(active, col)}
-              onMouseEnter={() => handleMouseEnter(col)}
-            />
+        <tr key={'lastrow'}>
+          {processedData[0].map(col => (
+            <XAxisTicksCell key={col.date.string}>{formatDate(col.date)}</XAxisTicksCell>
           ))}
         </tr>
       );
-    }
-    nucMutationsLabelTableRows.push(
-      <tr key={'lastrow'}>
-        <Cell />
-      </tr>
-    );
-    heatMapTableRows.push(
-      <tr key={'lastrow'}>
-        {processedData[0].map(col => (
-          <XAxisTicksCell key={col.date.string}>{formatDate(col.date)}</XAxisTicksCell>
-        ))}
-      </tr>
-    );
+      return { nucMutationsLabelTableRows, heatMapTableRows };
+    }, [data]);
 
     return (
       <Wrapper>
