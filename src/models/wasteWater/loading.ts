@@ -3,7 +3,6 @@ import {
   WasteWaterDatasetEntry,
   WasteWaterRequest,
   WasteWaterResponse,
-  WasteWaterResponseSchema,
 } from './types';
 import { get } from '../../services/api';
 import { globalDateCache } from '../../helpers/date-cache';
@@ -21,7 +20,9 @@ export async function getData(
   if (!json) {
     return undefined;
   }
-  const responseData: WasteWaterResponse = WasteWaterResponseSchema.parse(json);
+  // TODO HACK don't actually parse because zod is slow
+  // const responseData: WasteWaterResponse = WasteWaterResponseSchema.parse(json);
+  const responseData = json as WasteWaterResponse;
   return responseData.data.map(d => ({
     location: d.location,
     variantName: d.variantName,
