@@ -6,6 +6,7 @@ import { WasteWaterDataset } from './types';
 import { WasteWaterHeatMapWidget } from './WasteWaterHeatMapWidget';
 import { GridCell, PackedGrid } from '../../components/PackedGrid';
 import { ExternalLink } from '../../components/ExternalLink';
+import Loader from '../../components/Loader';
 
 interface Props {
   country: string;
@@ -29,6 +30,10 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
 
   if (country !== 'Switzerland' || !variantName || !WASTE_WATER_AVAILABLE_LINEAGES.includes(variantName)) {
     return <>Nothing to see here.</>;
+  }
+
+  if (!data) {
+    return <Loader />;
   }
 
   return (

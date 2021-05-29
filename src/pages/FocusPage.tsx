@@ -28,6 +28,7 @@ import { ArticleListWidget } from '../widgets/ArticleList';
 import { VariantDivisionDistributionTableWidget } from '../widgets/VariantDivisionDistributionTable';
 import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
+import Loader from '../components/Loader';
 
 interface Props {
   country: Country;
@@ -202,6 +203,7 @@ export const FocusPage = ({
             {/* TODO Use a summary plot if available or find another more representative solution. */}
             <NamedCard title='Wastewater prevalence' toolbar={deepFocusButtons.wasteWater}>
               <div style={{ height: 300, width: '100%' }}>
+                {!wasteWaterData && <Loader />}
                 {wasteWaterData && (
                   <WasteWaterSummaryTimeChart
                     wasteWaterPlants={wasteWaterData.data.map(({ location, timeseriesSummary }) => ({
