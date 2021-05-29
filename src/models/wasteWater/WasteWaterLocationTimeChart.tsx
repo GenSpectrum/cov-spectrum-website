@@ -19,6 +19,10 @@ interface VariantMap {
   [key: string]: number;
 }
 
+interface CIMap {
+  [key: string]: [number, number];
+}
+
 /**
  * The key name that will be passed to recharts may not contain additional dots because dots are used to
  * navigate through nested objects.
@@ -36,17 +40,19 @@ const CHART_MARGIN_RIGHT = 15;
 export const WasteWaterLocationTimeChart = React.memo(
   ({ variants }: Props): JSX.Element => {
     const variantNames = variants.map(d => escapeValueName(d.name));
-    const dateMap: Map<UnifiedDay, { date: number; values: VariantMap }> = new Map();
+    const dateMap: Map<UnifiedDay, { date: number; values: VariantMap; cis: CIMap }> = new Map();
 
     for (let { name, data } of variants) {
-      for (let { date, proportion } of data) {
+      for (let { date, proportion, proportionCI } of data) {
         if (!dateMap.has(date)) {
           dateMap.set(date, {
             date: date.dayjs.valueOf(),
             values: {},
+            cis: {},
           });
         }
         dateMap.get(date)!.values[escapeValueName(name)] = Math.max(proportion, 0);
+        dateMap.get(date)!.cis[escapeValueName(name)] = proportionCI;
       }
     }
 
@@ -76,10 +82,19 @@ export const WasteWaterLocationTimeChart = React.memo(
                 />
                 <YAxis domain={['dataMin', 'auto']} />
                 <Tooltip
-                  formatter={(value: number, name: string) => [
-                    (value * 100).toFixed(2) + '%',
-                    deEscapeValueName(name.replace('values.', '')),
-                  ]}
+                  formatter={(value: number, name: string, props: any) => {
+                    const escapedName = name.replace('values.', '');
+                    const [ciLower, ciUpper] = props.payload.cis[escapedName];
+                    return [
+                      (value * 100).toFixed(2) +
+                        '% [' +
+                        (ciLower * 100).toFixed(2) +
+                        '-' +
+                        (ciUpper * 100).toFixed(2) +
+                        '%]',
+                      deEscapeValueName(escapedName),
+                    ];
+                  }}
                   labelFormatter={label => {
                     return 'Date: ' + formatDate(label);
                   }}
