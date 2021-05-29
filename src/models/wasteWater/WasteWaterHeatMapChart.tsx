@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Metric, { MetricsSpacing, MetricsWrapper } from '../../charts/Metrics';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../../charts/common';
 import { WasteWaterHeatMapEntry, WasteWaterMutationOccurrencesDataset } from './types';
+import { UnifiedDay } from '../../helpers/date-cache';
 
 export type TimeHeatMapChartProps = {
   data: WasteWaterMutationOccurrencesDataset;
@@ -38,26 +39,26 @@ function samePosition(entry1?: WasteWaterHeatMapEntry, entry2?: WasteWaterHeatMa
   if (!entry1 || !entry2) {
     return false;
   }
-  return entry1.date.getTime() === entry2.date.getTime() && entry1.nucMutation === entry2.nucMutation;
+  return entry1.date === entry2.date && entry1.nucMutation === entry2.nucMutation;
 }
 
-function formatDate(date: Date) {
-  return date.getDate() + '.' + (date.getMonth() + 1);
+function formatDate(date: UnifiedDay) {
+  return date.dayjs.format('DD.MM');
 }
 
 function transformDataToTableFormat(data: WasteWaterMutationOccurrencesDataset): WasteWaterHeatMapEntry[][] {
   // Get the unique set of dates (rows) and nucMutations (columns)
-  const dates: Set<number> = new Set();
+  const dates: Set<UnifiedDay> = new Set();
   const nucMutations: Set<string> = new Set();
   for (let d of data) {
-    dates.add(d.date.getTime());
+    dates.add(d.date);
     nucMutations.add(d.nucMutation);
   }
 
   // Sort the labels for the rows and columns, and keep their indices in a map
-  const dateList = Array.from(dates).sort();
-  const nucMutationList = Array.from(nucMutations); // TODO sort the list correctly (by nucleotide position)
-  const dateIndexMap: Map<number, number> = new Map();
+  const dateList = Array.from(dates).sort((a, b) => (a.dayjs.isBefore(b.dayjs) ? -1 : 1));
+  const nucMutationList = Array.from(nucMutations);
+  const dateIndexMap: Map<UnifiedDay, number> = new Map();
   const nucMutationIndexMap: Map<string, number> = new Map();
   dateList.forEach((date, i) => dateIndexMap.set(date, i));
   nucMutationList.forEach((nucMutation, i) => nucMutationIndexMap.set(nucMutation, i));
@@ -68,7 +69,7 @@ function transformDataToTableFormat(data: WasteWaterMutationOccurrencesDataset):
     const row: WasteWaterHeatMapEntry[] = [];
     for (let date of dateList) {
       row.push({
-        date: new Date(date),
+        date,
         nucMutation,
         proportion: undefined,
       });
@@ -78,7 +79,7 @@ function transformDataToTableFormat(data: WasteWaterMutationOccurrencesDataset):
 
   // Fill in the existing data
   for (let d of data) {
-    table[nucMutationIndexMap.get(d.nucMutation)!][dateIndexMap.get(d.date.getTime())!] = d;
+    table[nucMutationIndexMap.get(d.nucMutation)!][dateIndexMap.get(d.date)!] = d;
   }
 
   return table;
@@ -88,7 +89,7 @@ export const WasteWaterHeatMapChart = React.memo(
   ({ data }: TimeHeatMapChartProps): JSX.Element => {
     const [active, setActive] = useState<WasteWaterHeatMapEntry | undefined>(undefined);
 
-    const processedData: WasteWaterHeatMapEntry[][] = transformDataToTableFormat(data); // TODO group by rows and do sorting
+    const processedData: WasteWaterHeatMapEntry[][] = transformDataToTableFormat(data);
 
     const colorScale = scaleLinear<string>().range(['white', 'blue']).domain([0, 1]);
 
@@ -109,7 +110,7 @@ export const WasteWaterHeatMapChart = React.memo(
         <tr key={nucMutation}>
           {row.map(col => (
             <Cell
-              key={nucMutation + col.date.getTime()}
+              key={nucMutation + col.date.string}
               backgroundColor={col.proportion !== undefined ? colorScale(col.proportion) : 'lightgray'}
               active={samePosition(active, col)}
               onMouseEnter={() => handleMouseEnter(col)}
@@ -126,7 +127,7 @@ export const WasteWaterHeatMapChart = React.memo(
     heatMapTableRows.push(
       <tr key={'lastrow'}>
         {processedData[0].map(col => (
-          <XAxisTicksCell key={col.date.getTime()}>{formatDate(col.date)}</XAxisTicksCell>
+          <XAxisTicksCell key={col.date.string}>{formatDate(col.date)}</XAxisTicksCell>
         ))}
       </tr>
     );

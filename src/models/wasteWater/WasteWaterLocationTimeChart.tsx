@@ -1,21 +1,21 @@
 import React from 'react';
+import { WasteWaterTimeseriesSummaryDataset } from './types';
+import { UnifiedDay } from '../../helpers/date-cache';
+import { getTicks } from '../../helpers/ticks';
 import { scaleOrdinal } from 'd3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 import { ChartAndMetricsWrapper, ChartWrapper, TitleWrapper, Wrapper } from '../../charts/common';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { WasteWaterTimeseriesSummaryDataset } from './types';
 import { formatDate } from './WasteWaterTimeChart';
-import { getTicks } from '../../helpers/ticks';
-import { UnifiedDay } from '../../helpers/date-cache';
 
 interface Props {
-  wasteWaterPlants: {
-    location: string;
+  variants: {
+    name: string;
     data: WasteWaterTimeseriesSummaryDataset;
   }[];
 }
 
-interface LocationMap {
+interface VariantMap {
   [key: string]: number;
 }
 
@@ -37,12 +37,12 @@ function deEscapeValueName(escapedName: string): string {
 
 const CHART_MARGIN_RIGHT = 15;
 
-export const WasteWaterSummaryTimeChart = React.memo(
-  ({ wasteWaterPlants }: Props): JSX.Element => {
-    const locations = wasteWaterPlants.map(d => escapeValueName(d.location));
-    const dateMap: Map<UnifiedDay, { date: number; values: LocationMap; cis: CIMap }> = new Map();
+export const WasteWaterLocationTimeChart = React.memo(
+  ({ variants }: Props): JSX.Element => {
+    const variantNames = variants.map(d => escapeValueName(d.name));
+    const dateMap: Map<UnifiedDay, { date: number; values: VariantMap; cis: CIMap }> = new Map();
 
-    for (let { location, data } of wasteWaterPlants) {
+    for (let { name, data } of variants) {
       for (let { date, proportion, proportionCI } of data) {
         if (!dateMap.has(date)) {
           dateMap.set(date, {
@@ -51,8 +51,8 @@ export const WasteWaterSummaryTimeChart = React.memo(
             cis: {},
           });
         }
-        dateMap.get(date)!.values[escapeValueName(location)] = Math.max(proportion, 0);
-        dateMap.get(date)!.cis[escapeValueName(location)] = proportionCI;
+        dateMap.get(date)!.values[escapeValueName(name)] = Math.max(proportion, 0);
+        dateMap.get(date)!.cis[escapeValueName(name)] = proportionCI;
       }
     }
 
@@ -99,15 +99,15 @@ export const WasteWaterSummaryTimeChart = React.memo(
                     return 'Date: ' + formatDate(label);
                   }}
                 />
-                {locations.map(location => (
+                {variantNames.map(variant => (
                   <Line
                     type='monotone'
-                    dataKey={'values.' + location}
+                    dataKey={'values.' + variant}
                     strokeWidth={3}
-                    stroke={colorScale(location)}
+                    stroke={colorScale(variant)}
                     dot={false}
                     isAnimationActive={false}
-                    key={location}
+                    key={variant}
                   />
                 ))}
               </ComposedChart>
@@ -118,5 +118,3 @@ export const WasteWaterSummaryTimeChart = React.memo(
     );
   }
 );
-
-export default WasteWaterSummaryTimeChart;
