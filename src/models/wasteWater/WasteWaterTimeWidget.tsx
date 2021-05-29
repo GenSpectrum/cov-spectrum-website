@@ -11,6 +11,9 @@ interface Props {
   data: WasteWaterTimeseriesSummaryDataset;
 }
 
+/**
+ * This widget is currently not used used on the CoV-Spectrum page itself but will be embedded on external websites.
+ */
 export const WasteWaterTimeWidget = new Widget(
   new AsyncZodQueryEncoder(
     WasteWaterSelectorSchema,

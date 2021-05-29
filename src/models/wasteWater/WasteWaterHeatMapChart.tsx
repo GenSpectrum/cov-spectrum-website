@@ -56,7 +56,7 @@ function transformDataToTableFormat(data: WasteWaterMutationOccurrencesDataset):
   }
 
   // Sort the labels for the rows and columns, and keep their indices in a map
-  const dateList = Array.from(dates).sort((a, b) => a.dayjs.isBefore(b.dayjs) ? -1 : 1);
+  const dateList = Array.from(dates).sort((a, b) => (a.dayjs.isBefore(b.dayjs) ? -1 : 1));
   const nucMutationList = Array.from(nucMutations);
   const dateIndexMap: Map<UnifiedDay, number> = new Map();
   const nucMutationIndexMap: Map<string, number> = new Map();

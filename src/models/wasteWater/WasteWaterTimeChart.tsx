@@ -18,7 +18,9 @@ const CHART_MARGIN_RIGHT = 15;
 
 export const WasteWaterTimeChart = React.memo(
   ({ data }: Props): JSX.Element => {
-    const [active, setActive] = useState<Omit<WasteWaterTimeEntry, 'date'> & {date: number} | undefined>(undefined);
+    const [active, setActive] = useState<(Omit<WasteWaterTimeEntry, 'date'> & { date: number }) | undefined>(
+      undefined
+    );
     const plotData = [...data]
       .map(d => ({
         ...d,
@@ -42,7 +44,10 @@ export const WasteWaterTimeChart = React.memo(
         <ChartAndMetricsWrapper>
           <ChartWrapper>
             <ResponsiveContainer>
-              <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
+              <ComposedChart
+                data={plotData}
+                margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
+              >
                 <XAxis
                   dataKey='date'
                   scale='time'
