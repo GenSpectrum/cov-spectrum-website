@@ -67,11 +67,7 @@ export const TimeIntensityChart = React.memo(
         isAnimationActive={false}
       >
         {data.map((entry: unknown, index: number) => (
-          <Cell
-            cursor={onClickHandler && 'pointer'}
-            fill="black"
-            key={`cell-${index}`}
-          ></Cell>
+          <Cell cursor={onClickHandler && 'pointer'} fill='black' key={`cell-${index}`}></Cell>
         ))}
       </Bar>,
       <Bar
@@ -115,7 +111,7 @@ export const TimeIntensityChart = React.memo(
                       dataLength={data.length}
                       currentValue={currentData.month}
                       unit='month'
-                      activeColor="black"
+                      activeColor='black'
                     />
                   }
                 />
