@@ -1,3 +1,6 @@
+import React from 'react';
+import { Dropdown } from 'react-bootstrap';
+
 export enum AlertVariant {
   DANGER = 'danger',
   WARNING = 'warning',
@@ -55,28 +58,51 @@ const getButtonClasses = (variant: ButtonVariant): string => {
   }
 };
 
-export const Button = ({
-  variant = ButtonVariant.PRIMARY,
-  children,
-  onClick,
-  className,
-}: {
+interface ButtonProps {
   variant: ButtonVariant;
   children?: React.ReactNode;
   onClick?: () => any;
   className?: string;
-}) => {
-  return (
-    <div className={className}>
+}
+
+export const RawButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ variant = ButtonVariant.PRIMARY, children, onClick, className }, ref) => {
+    return (
       <button
-        className={`${getButtonClasses(
+        ref={ref}
+        className={`${className} ${getButtonClasses(
           variant
-        )} "py-2 px-2 text-white w-full transition ease-in duration-100 scale-110 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg `}
-        role='alert'
+        )} px-2 text-white w-full transition ease-in duration-100 scale-110 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg `}
         onClick={onClick}
       >
         {children}
       </button>
+    );
+  }
+);
+
+export const Button = ({ className, ...restProps }: ButtonProps) => {
+  return (
+    <div className={className}>
+      <RawButton {...restProps} />
     </div>
+  );
+};
+
+interface DropdownButtonProps extends Omit<ButtonProps, 'onClick'> {
+  onToggle?: () => void;
+}
+
+// HACK see src/index.css
+const narrowDropdownClassName = 'custom-narrow-dropdown';
+
+export const DropdownButton = ({ onToggle, className, children, ...restProps }: DropdownButtonProps) => {
+  return (
+    <Dropdown onToggle={onToggle} className={`${className} ${narrowDropdownClassName}`}>
+      <Dropdown.Toggle as={RawButton} {...restProps}>
+        Export
+      </Dropdown.Toggle>
+      <Dropdown.Menu>{children}</Dropdown.Menu>
+    </Dropdown>
   );
 };

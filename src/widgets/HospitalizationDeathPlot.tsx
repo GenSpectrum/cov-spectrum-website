@@ -1,7 +1,11 @@
 import assert from 'assert';
-import { capitalize } from 'lodash';
+import dayjs from 'dayjs';
+import { capitalize, omit } from 'lodash';
 import React, { useMemo } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
+import * as zod from 'zod';
+import { TitleWrapper } from '../charts/common';
+import DownloadWrapper from '../charts/DownloadWrapper';
 import {
   GroupedProportionComparisonChart,
   GroupValue,
@@ -10,14 +14,15 @@ import {
   TopLevelTexts,
   ValueWithConfidence,
 } from '../charts/GroupedProportionComparisonChart';
-import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
-import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
-import dayjs from 'dayjs';
-import { globalDateCache } from '../helpers/date-cache';
-import { TitleWrapper } from '../charts/common';
-import DownloadWrapper from '../charts/DownloadWrapper';
 import { approximateBinomialRatioConfidence } from '../helpers/binomial-ratio-confidence';
+import { globalDateCache } from '../helpers/date-cache';
+import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
+import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
+import { NewSampleSelectorSchema } from '../helpers/sample-selector';
+import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
+import { getNewSamples } from '../services/api';
+import { Widget } from './Widget';
 
 export const OMIT_LAST_N_WEEKS = 4;
 
@@ -110,29 +115,6 @@ function processCounts(
 
 const noopOnClickHandler = () => {};
 
-interface CSVEntry {
-  age_class: string;
-  subject_mean: number | undefined;
-  subject_uncertainty_min: number | undefined;
-  subject_uncertainty_max: number | undefined;
-  reference_mean: number | undefined;
-  reference_uncertainty_min: number | undefined;
-  reference_uncertainty_max: number | undefined;
-}
-const dataProcessor = (data: GroupValue[]): CSVEntry[] => {
-  return data.map(entry => {
-    return {
-      age_class: entry.label,
-      subject_mean: entry.subject.proportion?.value,
-      subject_uncertainty_min: entry.subject.proportion?.confidenceInterval[0],
-      subject_uncertainty_max: entry.subject.proportion?.confidenceInterval[1],
-      reference_mean: entry.reference.proportion?.value,
-      reference_uncertainty_min: entry.reference.proportion?.confidenceInterval[0],
-      reference_uncertainty_max: entry.reference.proportion?.confidenceInterval[1],
-    };
-  });
-};
-
 export const HospitalizationDeathPlot = ({
   variantSampleSet,
   wholeSampleSet,
@@ -219,10 +201,24 @@ export const HospitalizationDeathPlot = ({
     return total;
   }, [processedData]);
 
+  const csvData = useMemo(
+    () =>
+      processedData.map(entry => ({
+        age_class: entry.label,
+        subject_mean: entry.subject.proportion?.value,
+        subject_uncertainty_min: entry.subject.proportion?.confidenceInterval[0],
+        subject_uncertainty_max: entry.subject.proportion?.confidenceInterval[1],
+        reference_mean: entry.reference.proportion?.value,
+        reference_uncertainty_min: entry.reference.proportion?.confidenceInterval[0],
+        reference_uncertainty_max: entry.reference.proportion?.confidenceInterval[1],
+      })),
+    [processedData]
+  );
+
   const texts = makeTexts(variantName, relativeToOtherVariants)[field];
 
   return (
-    <DownloadWrapper name='HospitalizationDeathPlot' rawData={processedData} dataProcessor={dataProcessor}>
+    <DownloadWrapper name='HospitalizationDeathPlot' csvData={csvData}>
       <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '300px' }}>
         {width && height && (
           <>
@@ -252,3 +248,28 @@ export const HospitalizationDeathPlot = ({
     </DownloadWrapper>
   );
 };
+
+export const HospitalizationDeathPlotWidget = new Widget(
+  new AsyncZodQueryEncoder(
+    zod.object({
+      variantSampleSelector: NewSampleSelectorSchema,
+      wholeSampleSelector: NewSampleSelectorSchema,
+      field: zod.union([zod.literal('hospitalized'), zod.literal('deceased')]),
+      variantName: zod.string(),
+      extendedMetrics: zod.boolean().optional(),
+      relativeToOtherVariants: zod.boolean().optional(),
+    }),
+    async (decoded: Props) => ({
+      ...omit(decoded, ['variantSampleSet', 'wholeSampleSet']),
+      variantSampleSelector: decoded.variantSampleSet.sampleSelector,
+      wholeSampleSelector: decoded.wholeSampleSet.sampleSelector,
+    }),
+    async (encoded, signal) => ({
+      ...omit(encoded, ['variantSampleSelector', 'wholeSampleSelector']),
+      variantSampleSet: await getNewSamples(encoded.variantSampleSelector, signal),
+      wholeSampleSet: await getNewSamples(encoded.wholeSampleSelector, signal),
+    })
+  ),
+  HospitalizationDeathPlot,
+  'HospitalizationDeathPlot'
+);

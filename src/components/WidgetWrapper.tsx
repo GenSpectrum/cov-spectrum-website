@@ -1,7 +1,8 @@
-import { Modal, Form, ButtonToolbar } from 'react-bootstrap';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ButtonToolbar, Form, Modal } from 'react-bootstrap';
+import { ExportButton } from './CombinedExport/ExportButton';
+import { ExportManager, ExportManagerContext } from './CombinedExport/ExportManager';
 import { NamedCard } from './NamedCard';
-import { Button, ButtonVariant } from '../helpers/ui';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 
@@ -53,28 +54,34 @@ export function WidgetWrapper({
   height,
   widgetLayout: WidgetLayout = NamedCard,
 }: Props) {
+  const exportManagerRef = useRef(new ExportManager());
+
   const [shownEmbeddingCode, setShownEmbeddingCode] = useState<string>();
 
-  const onShareClick = async () => {
-    const embeddingCode = `<iframe src="${host}/embed/${await getShareUrl()}" width="800" height="500" frameborder="0"></iframe>`;
-    setShownEmbeddingCode(embeddingCode);
-  };
+  useEffect(() => {
+    const handle = exportManagerRef.current.register('Embed widget', async () => {
+      const embeddingCode = `<iframe src="${host}/embed/${await getShareUrl()}" width="800" height="500" frameborder="0"></iframe>`;
+      setShownEmbeddingCode(embeddingCode);
+    });
+
+    return handle.deregister;
+  }, [getShareUrl]);
 
   return (
     <>
-      <WidgetLayout
-        title={title}
-        toolbar={
-          <ButtonToolbar className='mb-1'>
-            <Button variant={ButtonVariant.SECONDARY} onClick={onShareClick} className='mt-1'>
-              Share
-            </Button>
-            {toolbarChildren}
-          </ButtonToolbar>
-        }
-      >
-        <div style={height ? { height } : undefined}>{children}</div>
-      </WidgetLayout>
+      <ExportManagerContext.Provider value={exportManagerRef.current}>
+        <WidgetLayout
+          title={title}
+          toolbar={
+            <ButtonToolbar className='mb-1'>
+              <ExportButton className='mt-1 ml-1' />
+              {toolbarChildren}
+            </ButtonToolbar>
+          }
+        >
+          <div style={height ? { height } : undefined}>{children}</div>
+        </WidgetLayout>
+      </ExportManagerContext.Provider>
 
       <Modal size='lg' show={!!shownEmbeddingCode} onHide={() => setShownEmbeddingCode(undefined)}>
         <Modal.Header closeButton>
