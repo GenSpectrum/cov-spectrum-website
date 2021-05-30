@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { IfFulfilled, IfPending, IfRejected } from 'react-async';
 import { useParams } from 'react-router-dom';
 import Loader from '../components/Loader';
@@ -7,6 +7,7 @@ import { allWidgets } from '../widgets';
 import { DecodedMergedWidgetProps } from '../widgets/Widget';
 import styled from 'styled-components';
 import { Alert, AlertVariant } from '../helpers/ui';
+import { ExportManager, ExportManagerContext } from '../components/CombinedExport/ExportManager';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 
@@ -30,6 +31,12 @@ export function EmbedPage() {
   const widget = allWidgets.find(w => w.urlName === widgetUrlName);
 
   const asyncWidgetProps = useQueryWithAsyncEncoder<DecodedMergedWidgetProps>(widget?.mergedPropsEncoder);
+
+  // This export manager is effectively never used, since there is
+  // no "Export" button. It is here to prevent warnings about a
+  // missing "ExportManagerContext.Provider", since there may
+  // be things which use ExportManager.register() inside the widget.
+  const exportManagerRef = useRef(new ExportManager(false));
 
   if (!widget) {
     // TODO Redirect to a 404 page
@@ -63,7 +70,11 @@ export function EmbedPage() {
           <Alert variant={AlertVariant.DANGER}>Failed to load widget</Alert>
         </IfRejected>
         <IfFulfilled state={asyncWidgetProps}>
-          {({ specific }) => <widget.Component {...specific} />}
+          {({ specific }) => (
+            <ExportManagerContext.Provider value={exportManagerRef.current}>
+              <widget.Component {...specific} />
+            </ExportManagerContext.Provider>
+          )}
         </IfFulfilled>
       </div>
     </Wrapper>
