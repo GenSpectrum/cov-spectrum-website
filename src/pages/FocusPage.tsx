@@ -230,7 +230,11 @@ export const FocusPage = ({
         {loggedIn && country === 'Switzerland' && (
           <GridCell minWidth={600}>
             <ExportManagerContext.Provider value={mapExportManagerRef.current}>
-              <NamedCard title='Geography' style={NamedCardStyle.CONFIDENTIAL} toolbar={<ExportButton />}>
+              <NamedCard
+                title='Geography'
+                style={NamedCardStyle.CONFIDENTIAL}
+                toolbar={<ExportButton className='mt-1 ml-1' />}
+              >
                 <Switzerland variantSampleSet={variantSampleSet} />
               </NamedCard>
             </ExportManagerContext.Provider>

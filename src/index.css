@@ -38,3 +38,8 @@ code {
 
 @tailwind components;
 @tailwind utilities;
+
+/* HACK There is no better way to center the little dropdown triangle on our narrow button */
+.custom-narrow-dropdown button.dropdown-toggle::after {
+  vertical-align: 0.15em;
+}
