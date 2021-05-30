@@ -6,13 +6,13 @@ Widgets have a mechanism to serialize their props into a URL, so that the URL co
 
 ## Parts of widgets
 
-Widgets consist of a React component, a "prop encoder", and a unique name. These things are wrapped into a `Widget` object. This `Widget` object can be used to render the widget with a share button. Widgets are centrally registered in [src/widgets/index.tsx](/src/widgets/index.tsx) so that they can be found by the embed page.
+Widgets consist of a React component, a "prop encoder", and a unique name. These things are wrapped into a `Widget` object. This `Widget` object can be used to render the widget with a export button (see [./export.md](./export.md)). Widgets are centrally registered in [src/widgets/index.tsx](/src/widgets/index.tsx) so that they can be found by the embed page.
 
 ## Example of a widget
 
 The "Sequences over time" plot has a widget `VariantTimeDistributionPlot` that is defined in [src/widgets/VariantTimeDistributionPlot.tsx](/src/widgets/VariantTimeDistributionPlot.tsx). This `Widget` object wraps the normal React component `VariantTimeDistributionPlot`, a prop encoder defined with `AsyncZodQueryEncoder` (described below), and the unique name `"VariantTimeDistributionPlot"`.
 
-This widget is used in [src/pages/FocusPage.tsx](/src/pages/FocusPage.tsx) by using `VariantTimeDistributionPlotWidget.ShareableComponent` as a React component. Note that this renders `VariantTimeDistributionPlot`, but also a title, a card and a share button. This `SharableComponent` takes the props of `VariantTimeDistributionPlot`, but also some extra ones ("external" props, described below).
+This widget is used in [src/pages/FocusPage.tsx](/src/pages/FocusPage.tsx) by using `VariantTimeDistributionPlotWidget.ShareableComponent` as a React component. Note that this renders `VariantTimeDistributionPlot`, but also a title, a card and a export button. This `SharableComponent` takes the props of `VariantTimeDistributionPlot`, but also some extra ones ("external" props, described below).
 
 The widget is registered in [src/widgets/index.tsx](/src/widgets/index.tsx) so that the embed page works correctly.
 
@@ -22,9 +22,9 @@ The widget is registered in [src/widgets/index.tsx](/src/widgets/index.tsx) so t
 
 This describes the situation when a widget is shown normally as part of our application (so _not_ standalone). The page containing the widget renders a `Widget.SharableComponent` and passes some props. These are the props that the inner React component expects, plus a few extra ("external props"). The external props are stripped away and the inner component is passed only the props that it expects. Nothing special is done with the values of the props that get passed through (for example reference equality is still preserved).
 
-### When clicking "Share"
+### When clicking "Export" > "Embed widget"
 
-When the user clicks the share button of `Widget.SharableComponent`, the app creates an embed link that can be used to view this widget standalone. Since the widget will be standalone, this link must contain all the information necessary to show the right plot. This includes the unique name of the widget, but also some form of props.
+When the user clicks the "Embed widget" dropdown item of `Widget.SharableComponent` (see [./export.md](./export.md)), the app creates an embed link that can be used to view this widget standalone. Since the widget will be standalone, this link must contain all the information necessary to show the right plot. This includes the unique name of the widget, but also some form of props.
 
 Since our props contain large amounts of data, we can not serialize them directly (raw data as JSON) into the URL. We typically save something that describes the data used for the plot (e.g. country, variant and date range) instead of the actual data. These props that are safe to put in the URL are called _encoded_ props. The original props that the component received (with full data) are called _decoded_ props.
 
@@ -54,4 +54,4 @@ Some props can be passed to any `Widget.SharableComponent` (for example `title` 
 
 ## Custom widget layout (cards, buttons)
 
-Normally `Widget.SharableComponent` will be rendered as a card with a title and a share button. In some cases you don't want a card, or want to tweak some other part of the layout. This can be done by passing `widgetLayout` to `Widget.SharableComponent` (this in an "external" prop, see above). `NamedCard` (default), `NamedWidget` and `MinimalWidgetLayout` are existing layout components that you can use. You can also create your own layout components. If you just want to add an extra button next to "Share", you should pass `toolbarChildren` to `Widget.SharableComponent` instead of creating a custom layout.
+Normally `Widget.SharableComponent` will be rendered as a card with a title and a export button. In some cases you don't want a card, or want to tweak some other part of the layout. This can be done by passing `widgetLayout` to `Widget.SharableComponent` (this in an "external" prop, see above). `NamedCard` (default), `NamedWidget` and `MinimalWidgetLayout` are existing layout components that you can use. You can also create your own layout components. If you just want to add an extra button next to "Export", you should pass `toolbarChildren` to `Widget.SharableComponent` instead of creating a custom layout. If you want to add an entry to the "Export" dropdown see [./export.md](./export.md).
