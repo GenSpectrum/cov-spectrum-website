@@ -1,5 +1,5 @@
 import { mapValues } from 'lodash';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AsyncState } from 'react-async';
 import { useHistory } from 'react-router-dom';
 import { AsyncVariantInternationalComparisonPlot } from '../components/AsyncVariantInternationalComparisonPlot';
@@ -29,6 +29,12 @@ import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterD
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 import Loader from '../components/Loader';
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
+import { ExportButton } from '../components/CombinedExport/ExportButton';
+import {
+  ExportManager,
+  ExportManagerContext,
+  NormalExportManager,
+} from '../components/CombinedExport/ExportManager';
 
 interface Props {
   country: Country;
@@ -106,6 +112,8 @@ export const FocusPage = ({
       country,
     }).then(dataset => dataset && setWasteWaterData(filter(dataset, variant.name)));
   }, [country, variant.name]);
+
+  const mapExportManagerRef = useRef<ExportManager>(new NormalExportManager());
 
   const header = (
     <VariantHeader
@@ -223,9 +231,11 @@ export const FocusPage = ({
         </GridCell>
         {loggedIn && country === 'Switzerland' && (
           <GridCell minWidth={600}>
-            <NamedCard title='Geography' style={NamedCardStyle.CONFIDENTIAL}>
-              <Switzerland variantSampleSet={variantSampleSet} />
-            </NamedCard>
+            <ExportManagerContext.Provider value={mapExportManagerRef.current}>
+              <NamedCard title='Geography' style={NamedCardStyle.CONFIDENTIAL} toolbar={<ExportButton />}>
+                <Switzerland variantSampleSet={variantSampleSet} />
+              </NamedCard>
+            </ExportManagerContext.Provider>
           </GridCell>
         )}
         {wasteWaterSummaryPlot}
