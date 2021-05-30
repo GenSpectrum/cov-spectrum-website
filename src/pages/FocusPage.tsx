@@ -153,7 +153,6 @@ export const FocusPage = ({
   return (
     <div>
       {header}
-
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <VariantTimeDistributionPlotWidget.ShareableComponent

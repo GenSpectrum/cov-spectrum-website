@@ -11,8 +11,8 @@ export interface Props {
 
 export const VariantHeader = ({ variant, titleSuffix, controls, place }: Props) => {
   return (
-    <>
-      <div className='flex ml-3'>
+    <div className='ml-3'>
+      <div className='flex'>
         <h1 style={{ flexGrow: 1 }}>
           {variant.name ?? 'Unnamed Variant'}
           {!!titleSuffix && ' - '}
@@ -27,6 +27,6 @@ export const VariantHeader = ({ variant, titleSuffix, controls, place }: Props) 
           <b>Mutations:</b> <MutationList mutations={variant.mutations} />
         </p>
       )}
-    </>
+    </div>
   );
 };
