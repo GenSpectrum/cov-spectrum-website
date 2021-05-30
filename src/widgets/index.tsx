@@ -10,6 +10,7 @@ import { ArticleListWidget } from './ArticleList';
 import { VariantDivisionDistributionTableWidget } from './VariantDivisionDistributionTable';
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
 import { WasteWaterLocationTimeWidget } from '../models/wasteWater/WasteWaterLocationTimeWidget';
+import { HospitalizationDeathPlotWidget } from './HospitalizationDeathPlot';
 
 export const allWidgets = [
   VariantAgeDistributionPlotWidget,
@@ -24,4 +25,5 @@ export const allWidgets = [
   WasteWaterLocationTimeWidget,
   EstimatedCasesPlotWidget,
   ArticleListWidget,
+  HospitalizationDeathPlotWidget,
 ];

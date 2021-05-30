@@ -1,7 +1,11 @@
 import assert from 'assert';
-import { capitalize } from 'lodash';
+import dayjs from 'dayjs';
+import { capitalize, omit } from 'lodash';
 import React, { useMemo } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
+import * as zod from 'zod';
+import { TitleWrapper } from '../charts/common';
+import DownloadWrapper from '../charts/DownloadWrapper';
 import {
   GroupedProportionComparisonChart,
   GroupValue,
@@ -10,14 +14,15 @@ import {
   TopLevelTexts,
   ValueWithConfidence,
 } from '../charts/GroupedProportionComparisonChart';
-import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
-import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
-import dayjs from 'dayjs';
-import { globalDateCache } from '../helpers/date-cache';
-import { TitleWrapper } from '../charts/common';
-import DownloadWrapper from '../charts/DownloadWrapper';
 import { approximateBinomialRatioConfidence } from '../helpers/binomial-ratio-confidence';
+import { globalDateCache } from '../helpers/date-cache';
+import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
+import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
+import { NewSampleSelectorSchema } from '../helpers/sample-selector';
+import { ParsedMultiSample, SampleSet, SampleSetWithSelector } from '../helpers/sample-set';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
+import { getNewSamples } from '../services/api';
+import { Widget } from './Widget';
 
 export const OMIT_LAST_N_WEEKS = 4;
 
@@ -252,3 +257,28 @@ export const HospitalizationDeathPlot = ({
     </DownloadWrapper>
   );
 };
+
+export const HospitalizationDeathPlotWidget = new Widget(
+  new AsyncZodQueryEncoder(
+    zod.object({
+      variantSampleSelector: NewSampleSelectorSchema,
+      wholeSampleSelector: NewSampleSelectorSchema,
+      field: zod.union([zod.literal('hospitalized'), zod.literal('deceased')]),
+      variantName: zod.string(),
+      extendedMetrics: zod.boolean().optional(),
+      relativeToOtherVariants: zod.boolean().optional(),
+    }),
+    async (decoded: Props) => ({
+      ...omit(decoded, ['variantSampleSet', 'wholeSampleSet']),
+      variantSampleSelector: decoded.variantSampleSet.sampleSelector,
+      wholeSampleSelector: decoded.wholeSampleSet.sampleSelector,
+    }),
+    async (encoded, signal) => ({
+      ...omit(encoded, ['variantSampleSelector', 'wholeSampleSelector']),
+      variantSampleSet: await getNewSamples(encoded.variantSampleSelector, signal),
+      wholeSampleSet: await getNewSamples(encoded.wholeSampleSelector, signal),
+    })
+  ),
+  HospitalizationDeathPlot,
+  'HospitalizationDeathPlot'
+);

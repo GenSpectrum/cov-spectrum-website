@@ -3,38 +3,38 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AsyncState } from 'react-async';
 import { useHistory } from 'react-router-dom';
 import { AsyncVariantInternationalComparisonPlot } from '../components/AsyncVariantInternationalComparisonPlot';
-import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
-import { NamedCard, NamedCardStyle } from '../components/NamedCard';
-import { GridCell, PackedGrid } from '../components/PackedGrid';
-import Switzerland from '../components/Switzerland';
-import { VariantHeader } from '../components/VariantHeader';
-import { getFocusPageLink } from '../helpers/explore-url';
-import { SampleSetWithSelector } from '../helpers/sample-set';
-import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
-import { AccountService } from '../services/AccountService';
-import { DateRange, isRegion, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
-import { Country, Variant } from '../services/api-types';
-import { HospitalizationDeathPlot } from '../widgets/HospitalizationDeathPlot';
-import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
-import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
-import { VariantLineages } from '../components/VariantLineages';
-import { VariantMutations } from '../components/VariantMutations';
-import { WasteWaterDataset } from '../models/wasteWater/types';
-import { filter, getData } from '../models/wasteWater/loading';
-import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
-import { EstimatedCasesPlotWidget } from '../widgets/EstimatedCasesPlot';
-import { ArticleListWidget } from '../widgets/ArticleList';
-import { VariantDivisionDistributionTableWidget } from '../widgets/VariantDivisionDistributionTable';
-import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
-import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
-import Loader from '../components/Loader';
-import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
 import { ExportButton } from '../components/CombinedExport/ExportButton';
 import {
   ExportManager,
   ExportManagerContext,
   NormalExportManager,
 } from '../components/CombinedExport/ExportManager';
+import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
+import Loader from '../components/Loader';
+import { NamedCard, NamedCardStyle } from '../components/NamedCard';
+import { GridCell, PackedGrid } from '../components/PackedGrid';
+import Switzerland from '../components/Switzerland';
+import { VariantHeader } from '../components/VariantHeader';
+import { VariantLineages } from '../components/VariantLineages';
+import { VariantMutations } from '../components/VariantMutations';
+import { getFocusPageLink } from '../helpers/explore-url';
+import { SampleSetWithSelector } from '../helpers/sample-set';
+import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
+import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
+import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
+import { filter, getData } from '../models/wasteWater/loading';
+import { WasteWaterDataset } from '../models/wasteWater/types';
+import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
+import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
+import { AccountService } from '../services/AccountService';
+import { DateRange, isRegion, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { Country, Variant } from '../services/api-types';
+import { ArticleListWidget } from '../widgets/ArticleList';
+import { EstimatedCasesPlotWidget } from '../widgets/EstimatedCasesPlot';
+import { HospitalizationDeathPlotWidget } from '../widgets/HospitalizationDeathPlot';
+import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
+import { VariantDivisionDistributionTableWidget } from '../widgets/VariantDivisionDistributionTable';
+import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 
 interface Props {
   country: Country;
@@ -189,17 +189,15 @@ export const FocusPage = ({
         </GridCell>
         {country === 'Switzerland' && (
           <GridCell minWidth={600}>
-            <NamedCard
+            <HospitalizationDeathPlotWidget.ShareableComponent
+              field='hospitalized'
+              variantSampleSet={variantSampleSet}
+              wholeSampleSet={wholeSampleSet}
+              variantName={variant.name || 'unnamed variant'}
               title='Hospitalization probabilities'
-              toolbar={deepFocusButtons.hospitalizationAndDeath}
-            >
-              <HospitalizationDeathPlot
-                field='hospitalized'
-                variantSampleSet={variantSampleSet}
-                wholeSampleSet={wholeSampleSet}
-                variantName={variant.name || 'unnamed variant'}
-              />
-            </NamedCard>
+              height={300}
+              toolbarChildren={deepFocusButtons.hospitalizationAndDeath}
+            />
           </GridCell>
         )}
         {!isRegion(country) && (

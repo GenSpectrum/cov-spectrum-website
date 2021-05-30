@@ -4,8 +4,7 @@ import styled from 'styled-components';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { Alert, AlertVariant } from '../helpers/ui';
 import { Country } from '../services/api-types';
-import { HospitalizationDeathPlot, OMIT_LAST_N_WEEKS } from '../widgets/HospitalizationDeathPlot';
-import { NamedCard } from './NamedCard';
+import { HospitalizationDeathPlotWidget, OMIT_LAST_N_WEEKS } from '../widgets/HospitalizationDeathPlot';
 import { GridCell, PackedGrid } from './PackedGrid';
 
 interface Props {
@@ -43,28 +42,28 @@ export const HospitalizationDeathDeepFocus = ({
     <>
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={800}>
-          <NamedCard title='Hospitalization probabilities'>
-            <HospitalizationDeathPlot
-              field='hospitalized'
-              variantSampleSet={variantSampleSet}
-              wholeSampleSet={wholeSampleSet}
-              variantName={variantName}
-              extendedMetrics
-              relativeToOtherVariants={relative}
-            />
-          </NamedCard>
+          <HospitalizationDeathPlotWidget.ShareableComponent
+            title='Hospitalization probabilities'
+            height={300}
+            field='hospitalized'
+            variantSampleSet={variantSampleSet}
+            wholeSampleSet={wholeSampleSet}
+            variantName={variantName}
+            extendedMetrics
+            relativeToOtherVariants={relative}
+          />
         </GridCell>
         <GridCell minWidth={800}>
-          <NamedCard title='Death probabilities'>
-            <HospitalizationDeathPlot
-              field='deceased'
-              variantSampleSet={variantSampleSet}
-              wholeSampleSet={wholeSampleSet}
-              variantName={variantName}
-              extendedMetrics
-              relativeToOtherVariants={relative}
-            />
-          </NamedCard>
+          <HospitalizationDeathPlotWidget.ShareableComponent
+            title='Death probabilities'
+            height={300}
+            field='deceased'
+            variantSampleSet={variantSampleSet}
+            wholeSampleSet={wholeSampleSet}
+            variantName={variantName}
+            extendedMetrics
+            relativeToOtherVariants={relative}
+          />
         </GridCell>
       </PackedGrid>
 
