@@ -1,23 +1,29 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { scaleLinear } from 'd3-scale';
 import styled from 'styled-components';
 import Metric, { MetricsSpacing, MetricsWrapper } from '../../charts/Metrics';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../../charts/common';
 import { WasteWaterHeatMapEntry, WasteWaterMutationOccurrencesDataset } from './types';
+import { UnifiedDay } from '../../helpers/date-cache';
 
 export type TimeHeatMapChartProps = {
   data: WasteWaterMutationOccurrencesDataset;
 };
 
-const Cell = styled.td<{ backgroundColor?: string; active?: boolean }>`
+const Cell = styled.td<{ backgroundColor?: string }>`
   min-height: 20px;
   height: 20px;
   padding: 0;
   width: 35px;
   min-width: 35px;
   background-color: ${props => props.backgroundColor ?? 'none'};
-  outline: ${props => (props.active ? '3px solid black' : 'none')};
   font-size: small;
+`;
+
+const MainContentCell = styled(Cell)`
+  &:hover {
+    outline: 3px solid black;
+  }
 `;
 
 const XAxisTicksCell = styled(Cell)`
@@ -34,30 +40,23 @@ const ChartWrapper2 = styled(ChartWrapper)`
   overflow-y: auto;
 `;
 
-function samePosition(entry1?: WasteWaterHeatMapEntry, entry2?: WasteWaterHeatMapEntry) {
-  if (!entry1 || !entry2) {
-    return false;
-  }
-  return entry1.date.getTime() === entry2.date.getTime() && entry1.nucMutation === entry2.nucMutation;
-}
-
-function formatDate(date: Date) {
-  return date.getDate() + '.' + (date.getMonth() + 1);
+function formatDate(date: UnifiedDay) {
+  return date.dayjs.format('DD.MM');
 }
 
 function transformDataToTableFormat(data: WasteWaterMutationOccurrencesDataset): WasteWaterHeatMapEntry[][] {
   // Get the unique set of dates (rows) and nucMutations (columns)
-  const dates: Set<number> = new Set();
+  const dates: Set<UnifiedDay> = new Set();
   const nucMutations: Set<string> = new Set();
   for (let d of data) {
-    dates.add(d.date.getTime());
+    dates.add(d.date);
     nucMutations.add(d.nucMutation);
   }
 
   // Sort the labels for the rows and columns, and keep their indices in a map
-  const dateList = Array.from(dates).sort();
-  const nucMutationList = Array.from(nucMutations); // TODO sort the list correctly (by nucleotide position)
-  const dateIndexMap: Map<number, number> = new Map();
+  const dateList = Array.from(dates).sort((a, b) => (a.dayjs.isBefore(b.dayjs) ? -1 : 1));
+  const nucMutationList = Array.from(nucMutations);
+  const dateIndexMap: Map<UnifiedDay, number> = new Map();
   const nucMutationIndexMap: Map<string, number> = new Map();
   dateList.forEach((date, i) => dateIndexMap.set(date, i));
   nucMutationList.forEach((nucMutation, i) => nucMutationIndexMap.set(nucMutation, i));
@@ -68,7 +67,7 @@ function transformDataToTableFormat(data: WasteWaterMutationOccurrencesDataset):
     const row: WasteWaterHeatMapEntry[] = [];
     for (let date of dateList) {
       row.push({
-        date: new Date(date),
+        date,
         nucMutation,
         proportion: undefined,
       });
@@ -78,7 +77,7 @@ function transformDataToTableFormat(data: WasteWaterMutationOccurrencesDataset):
 
   // Fill in the existing data
   for (let d of data) {
-    table[nucMutationIndexMap.get(d.nucMutation)!][dateIndexMap.get(d.date.getTime())!] = d;
+    table[nucMutationIndexMap.get(d.nucMutation)!][dateIndexMap.get(d.date)!] = d;
   }
 
   return table;
@@ -88,59 +87,59 @@ export const WasteWaterHeatMapChart = React.memo(
   ({ data }: TimeHeatMapChartProps): JSX.Element => {
     const [active, setActive] = useState<WasteWaterHeatMapEntry | undefined>(undefined);
 
-    const processedData: WasteWaterHeatMapEntry[][] = transformDataToTableFormat(data); // TODO group by rows and do sorting
-
-    const colorScale = scaleLinear<string>().range(['white', 'blue']).domain([0, 1]);
-
     function handleMouseEnter(cell: WasteWaterHeatMapEntry) {
       setActive(cell);
     }
 
-    const nucMutationsLabelTableRows = [];
-    const heatMapTableRows = [];
-    for (let row of processedData) {
-      const nucMutation = row[0].nucMutation;
+    const { nucMutationsLabelTableRows, heatMapTableRows } = useMemo(() => {
+      const processedData: WasteWaterHeatMapEntry[][] = transformDataToTableFormat(data);
+      const colorScale = scaleLinear<string>().range(['white', 'blue']).domain([0, 1]);
+      const nucMutationsLabelTableRows = [];
+      const heatMapTableRows = [];
+      for (let row of processedData) {
+        const nucMutation = row[0].nucMutation;
+        nucMutationsLabelTableRows.push(
+          <tr key={nucMutation}>
+            <Cell>{nucMutation}</Cell>
+          </tr>
+        );
+        heatMapTableRows.push(
+          <tr key={nucMutation}>
+            {row.map(col => (
+              <MainContentCell
+                key={nucMutation + col.date.string}
+                backgroundColor={col.proportion !== undefined ? colorScale(col.proportion) : 'lightgray'}
+                onMouseEnter={() => handleMouseEnter(col)}
+              />
+            ))}
+          </tr>
+        );
+      }
       nucMutationsLabelTableRows.push(
-        <tr key={nucMutation}>
-          <Cell>{nucMutation}</Cell>
+        <tr key={'lastrow'}>
+          <Cell />
         </tr>
       );
       heatMapTableRows.push(
-        <tr key={nucMutation}>
-          {row.map(col => (
-            <Cell
-              key={nucMutation + col.date.getTime()}
-              backgroundColor={col.proportion !== undefined ? colorScale(col.proportion) : 'lightgray'}
-              active={samePosition(active, col)}
-              onMouseEnter={() => handleMouseEnter(col)}
-            />
+        <tr key={'lastrow'}>
+          {processedData[0].map(col => (
+            <XAxisTicksCell key={col.date.string}>{formatDate(col.date)}</XAxisTicksCell>
           ))}
         </tr>
       );
-    }
-    nucMutationsLabelTableRows.push(
-      <tr key={'lastrow'}>
-        <Cell />
-      </tr>
-    );
-    heatMapTableRows.push(
-      <tr key={'lastrow'}>
-        {processedData[0].map(col => (
-          <XAxisTicksCell key={col.date.getTime()}>{formatDate(col.date)}</XAxisTicksCell>
-        ))}
-      </tr>
-    );
+      return { nucMutationsLabelTableRows, heatMapTableRows };
+    }, [data]);
 
     return (
       <Wrapper>
         <TitleWrapper>
           {active !== undefined ? (
             <>
-              Occurrence of <b>{active.nucMutation}</b> in waste water samples on{' '}
+              Occurrence of <b>{active.nucMutation}</b> in wastewater samples on{' '}
               <b>{formatDate(active.date)}</b>
             </>
           ) : (
-            'Occurrence of signature mutations in waste water samples through time'
+            'Occurrence of signature mutations in wastewater samples through time'
           )}
         </TitleWrapper>
         <ChartAndMetricsWrapper2>
@@ -164,7 +163,7 @@ export const WasteWaterHeatMapChart = React.memo(
               value={active?.proportion !== undefined ? (active.proportion * 100).toFixed(2) + '%' : 'NA'}
               title='Proportion'
               color={colors.active}
-              helpText='Proportion of waste water samples containing the mutation.'
+              helpText='Proportion of wastewater samples containing the mutation.'
             />
           </MetricsWrapper>
         </ChartAndMetricsWrapper2>

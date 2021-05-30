@@ -2,7 +2,7 @@ import { Widget } from '../../widgets/Widget';
 import { AsyncZodQueryEncoder } from '../../helpers/query-encoder';
 import WasteWaterTimeChart from './WasteWaterTimeChart';
 import { WasteWaterSelectorSchema, WasteWaterTimeseriesSummaryDataset } from './types';
-import { getData } from './loading';
+import { filterSingle, getData } from './loading';
 
 interface Props {
   country: string;
@@ -11,6 +11,9 @@ interface Props {
   data: WasteWaterTimeseriesSummaryDataset;
 }
 
+/**
+ * This widget is currently not used used on the CoV-Spectrum page itself but will be embedded on external websites.
+ */
 export const WasteWaterTimeWidget = new Widget(
   new AsyncZodQueryEncoder(
     WasteWaterSelectorSchema,
@@ -23,10 +26,13 @@ export const WasteWaterTimeWidget = new Widget(
       country: encoded.country,
       variantName: encoded.variantName,
       location: encoded.location,
-      data: (await getData({
-        country: encoded.country,
-        variantName: encoded.variantName,
-      }))!.data.filter(({ location }) => location === encoded.location)[0].timeseriesSummary,
+      data: filterSingle(
+        (await getData({
+          country: encoded.country,
+        }))!,
+        encoded.variantName,
+        encoded.location
+      )!.data.timeseriesSummary,
     })
   ),
   WasteWaterTimeChart,

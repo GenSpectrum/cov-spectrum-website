@@ -19,15 +19,16 @@ import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistribut
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { VariantLineages } from '../components/VariantLineages';
 import { VariantMutations } from '../components/VariantMutations';
-import WasteWaterSummaryTimeChart from '../models/wasteWater/WasteWaterSummaryTimeChart';
 import { WasteWaterDataset } from '../models/wasteWater/types';
-import { getData } from '../models/wasteWater/loading';
+import { filter, getData } from '../models/wasteWater/loading';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 import { EstimatedCasesPlotWidget } from '../widgets/EstimatedCasesPlot';
 import { ArticleListWidget } from '../widgets/ArticleList';
 import { VariantDivisionDistributionTableWidget } from '../widgets/VariantDivisionDistributionTable';
 import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
+import Loader from '../components/Loader';
+import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
 
 interface Props {
   country: Country;
@@ -103,8 +104,7 @@ export const FocusPage = ({
     }
     getData({
       country,
-      variantName: variant.name,
-    }).then(d => setWasteWaterData(d));
+    }).then(dataset => dataset && setWasteWaterData(filter(dataset, variant.name)));
   }, [country, variant.name]);
 
   const header = (
@@ -117,6 +117,37 @@ export const FocusPage = ({
 
   if (variantSampleSet.isEmpty()) {
     return <Alert variant={AlertVariant.WARNING}>No samples match your query</Alert>;
+  }
+
+  let wasteWaterSummaryPlot = <></>;
+  if (country === 'Switzerland' && variant.name && WASTE_WATER_AVAILABLE_LINEAGES.includes(variant.name)) {
+    if (wasteWaterData) {
+      wasteWaterSummaryPlot = (
+        <GridCell minWidth={600}>
+          <WasteWaterSummaryTimeWidget.ShareableComponent
+            country={country}
+            title='Wastewater prevalence'
+            variantName={variant.name}
+            wasteWaterPlants={wasteWaterData.map(({ location, data }) => ({
+              location,
+              data: data.timeseriesSummary,
+            }))}
+            height={300}
+            toolbarChildren={deepFocusButtons.wasteWater}
+          />
+        </GridCell>
+      );
+    } else {
+      wasteWaterSummaryPlot = (
+        <GridCell minWidth={600}>
+          <NamedCard title='Wastewater prevalence' toolbar={deepFocusButtons.wasteWater}>
+            <div style={{ height: 300, width: '100%' }}>
+              <Loader />
+            </div>
+          </NamedCard>
+        </GridCell>
+      );
+    }
   }
 
   return (
@@ -197,30 +228,7 @@ export const FocusPage = ({
             </NamedCard>
           </GridCell>
         )}
-        {loggedIn &&
-          country === 'Switzerland' &&
-          variant.name &&
-          WASTE_WATER_AVAILABLE_LINEAGES.includes(variant.name) && (
-            <GridCell minWidth={600}>
-              {/* TODO Use a summary plot if available or find another more representative solution. */}
-              <NamedCard
-                title='Waste water prevalence'
-                toolbar={deepFocusButtons.wasteWater}
-                style={NamedCardStyle.CONFIDENTIAL}
-              >
-                <div style={{ height: 300, width: '100%' }}>
-                  {wasteWaterData && (
-                    <WasteWaterSummaryTimeChart
-                      wasteWaterPlants={wasteWaterData.data.map(({ location, timeseriesSummary }) => ({
-                        location,
-                        data: timeseriesSummary,
-                      }))}
-                    />
-                  )}
-                </div>
-              </NamedCard>
-            </GridCell>
-          )}
+        {wasteWaterSummaryPlot}
         {samplingStrategy === SamplingStrategy.AllSamples && (
           <GridCell minWidth={600}>
             <AsyncVariantInternationalComparisonPlot

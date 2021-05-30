@@ -1,38 +1,40 @@
 import * as zod from 'zod';
+import { UnifiedDay } from '../../helpers/date-cache';
 
 export const WasteWaterSelectorSchema = zod.object({
   country: zod.string(),
-  variantName: zod.string(),
-  location: zod.string(),
+  variantName: zod.string().optional(),
+  location: zod.string().optional(),
 });
 
 export type WasteWaterSelector = zod.infer<typeof WasteWaterSelectorSchema>;
 
 export type WasteWaterRequest = {
   country: string;
-  variantName: string;
 };
 
 export const WasteWaterResponseSchema = zod.object({
-  updateDate: zod.string(),
   data: zod.array(
     zod.object({
       location: zod.string(),
-      timeseriesSummary: zod.array(
-        zod.object({
-          date: zod.string(),
-          proportion: zod.number(),
-          proportionLower: zod.number(),
-          proportionUpper: zod.number(),
-        })
-      ),
-      mutationOccurrences: zod.array(
-        zod.object({
-          date: zod.string(),
-          nucMutation: zod.string(),
-          proportion: zod.number().nullable(),
-        })
-      ),
+      variantName: zod.string(),
+      data: zod.object({
+        timeseriesSummary: zod.array(
+          zod.object({
+            date: zod.string(),
+            proportion: zod.number(),
+            proportionLower: zod.number(),
+            proportionUpper: zod.number(),
+          })
+        ),
+        mutationOccurrences: zod.array(
+          zod.object({
+            date: zod.string(),
+            nucMutation: zod.string(),
+            proportion: zod.number().nullable(),
+          })
+        ),
+      }),
     })
   ),
 });
@@ -40,7 +42,7 @@ export const WasteWaterResponseSchema = zod.object({
 export type WasteWaterResponse = zod.infer<typeof WasteWaterResponseSchema>;
 
 export type WasteWaterTimeEntry = {
-  date: Date;
+  date: UnifiedDay;
   proportion: number;
   proportionCI: [number, number];
 };
@@ -48,18 +50,20 @@ export type WasteWaterTimeEntry = {
 export type WasteWaterTimeseriesSummaryDataset = WasteWaterTimeEntry[];
 
 export type WasteWaterHeatMapEntry = {
-  date: Date;
+  date: UnifiedDay;
   nucMutation: string;
   proportion?: number;
 };
 
 export type WasteWaterMutationOccurrencesDataset = WasteWaterHeatMapEntry[];
 
-export type WasteWaterDataset = {
-  updateDate: Date;
-  data: Array<{
-    location: string;
+export type WasteWaterDatasetEntry = {
+  location: string;
+  variantName: string;
+  data: {
     timeseriesSummary: WasteWaterTimeseriesSummaryDataset;
     mutationOccurrences: WasteWaterMutationOccurrencesDataset;
-  }>;
+  };
 };
+
+export type WasteWaterDataset = Array<WasteWaterDatasetEntry>;

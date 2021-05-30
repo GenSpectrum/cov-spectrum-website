@@ -35,6 +35,8 @@ export const PlaceSelect = ({ id, selected, onSelect, onMenuToggle }: Props) => 
         onChange={selected => onSelect(selected.length === 1 ? selected[0] : undefined)}
         onMenuToggle={onMenuToggle}
         options={places}
+        maxResults={places.length + 100} // +100 is just to be safe...
+        paginate={false}
       >
         {getFlag(selected)}
       </Typeahead>

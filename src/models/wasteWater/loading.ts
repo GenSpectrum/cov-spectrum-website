@@ -1,11 +1,12 @@
-import { WasteWaterDataset, WasteWaterRequest, WasteWaterResponseSchema } from './types';
+import { WasteWaterDataset, WasteWaterDatasetEntry, WasteWaterRequest, WasteWaterResponse } from './types';
 import { get } from '../../services/api';
+import { globalDateCache } from '../../helpers/date-cache';
 
 export async function getData(
-  { country, variantName }: WasteWaterRequest,
+  { country }: WasteWaterRequest,
   signal?: AbortSignal
 ): Promise<WasteWaterDataset | undefined> {
-  const url = `/plot/waste-water?country=${country}&variantName=${variantName}`;
+  const url = `/plot/waste-water?country=${country}`;
   const response = await get(url, signal);
   if (!response.ok) {
     throw new Error('server responded with non-200 status code');
@@ -14,23 +15,46 @@ export async function getData(
   if (!json) {
     return undefined;
   }
-  const data = WasteWaterResponseSchema.parse(json);
-  return {
-    updateDate: new Date(data.updateDate),
-    data: data.data.map(d => ({
-      location: d.location,
-      timeseriesSummary: d.timeseriesSummary.map(ts => ({
-        date: new Date(ts.date),
+  // TODO HACK don't actually parse because zod is slow
+  // const responseData: WasteWaterResponse = WasteWaterResponseSchema.parse(json);
+  const responseData = json as WasteWaterResponse;
+  return responseData.data.map(d => ({
+    location: d.location,
+    variantName: d.variantName,
+    data: {
+      timeseriesSummary: d.data.timeseriesSummary.map(ts => ({
+        date: globalDateCache.getDay(ts.date),
         proportion: ts.proportion,
         proportionCI: [ts.proportionLower, ts.proportionUpper],
       })),
-      mutationOccurrences: d.mutationOccurrences
+      mutationOccurrences: d.data.mutationOccurrences
         .filter(mo => !!mo.proportion)
         .map(mo => ({
-          date: new Date(mo.date),
+          date: globalDateCache.getDay(mo.date),
           nucMutation: mo.nucMutation,
-          proportion: mo.proportion !== null ? mo.proportion : undefined,
+          proportion: mo.proportion ?? undefined,
         })),
-    })),
-  };
+    },
+  }));
+}
+
+export function filter(data: WasteWaterDataset, variantName?: string, location?: string): WasteWaterDataset {
+  return data.filter(d => {
+    if (variantName && d.variantName !== variantName) {
+      return false;
+    }
+    if (location && d.location !== location) {
+      return false;
+    }
+    return true;
+  });
+}
+
+export function filterSingle(
+  data: WasteWaterDataset,
+  variantName: string,
+  location: string
+): WasteWaterDatasetEntry | undefined {
+  const filtered = filter(data, variantName, location);
+  return filtered.length > 0 ? filtered[0] : undefined;
 }
