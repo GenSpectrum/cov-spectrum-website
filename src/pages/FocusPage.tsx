@@ -4,11 +4,7 @@ import { AsyncState } from 'react-async';
 import { useHistory } from 'react-router-dom';
 import { AsyncVariantInternationalComparisonPlot } from '../components/AsyncVariantInternationalComparisonPlot';
 import { ExportButton } from '../components/CombinedExport/ExportButton';
-import {
-  ExportManager,
-  ExportManagerContext,
-  NormalExportManager,
-} from '../components/CombinedExport/ExportManager';
+import { ExportManager, ExportManagerContext } from '../components/CombinedExport/ExportManager';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
 import Loader from '../components/Loader';
 import { NamedCard, NamedCardStyle } from '../components/NamedCard';
@@ -113,7 +109,7 @@ export const FocusPage = ({
     }).then(dataset => dataset && setWasteWaterData(filter(dataset, variant.name)));
   }, [country, variant.name]);
 
-  const mapExportManagerRef = useRef<ExportManager>(new NormalExportManager());
+  const mapExportManagerRef = useRef(new ExportManager());
 
   const header = (
     <VariantHeader

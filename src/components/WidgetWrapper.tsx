@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ButtonToolbar, Form, Modal } from 'react-bootstrap';
 import { ExportButton } from './CombinedExport/ExportButton';
-import { ExportManager, ExportManagerContext, NormalExportManager } from './CombinedExport/ExportManager';
+import { ExportManager, ExportManagerContext } from './CombinedExport/ExportManager';
 import { NamedCard } from './NamedCard';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
@@ -54,7 +54,7 @@ export function WidgetWrapper({
   height,
   widgetLayout: WidgetLayout = NamedCard,
 }: Props) {
-  const exportManagerRef = useRef<ExportManager>(new NormalExportManager());
+  const exportManagerRef = useRef(new ExportManager());
 
   const [shownEmbeddingCode, setShownEmbeddingCode] = useState<string>();
 

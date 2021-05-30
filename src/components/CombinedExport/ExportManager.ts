@@ -9,15 +9,18 @@ export interface DeregistrationHandle {
   deregister(): void;
 }
 
-export interface ExportManager {
-  register(label: string, doExport: () => void): DeregistrationHandle;
-  getRegistered(): Set<RegisteredExport>;
-}
-
-export class NormalExportManager {
+export class ExportManager {
   private registered = new Set<RegisteredExport>();
 
+  constructor(private warnOnUse: boolean = false) {}
+
   register(label: string, doExport: () => void): DeregistrationHandle {
+    if (this.warnOnUse) {
+      console.warn(
+        `register(label: ${label}) called on ExportManager with warnOnUse. Did you forget ExportManagerContext.Provider?`
+      );
+    }
+
     const registeredExport = { label, doExport };
     this.registered.add(registeredExport);
     return {
@@ -28,28 +31,14 @@ export class NormalExportManager {
   }
 
   getRegistered(): Set<RegisteredExport> {
+    if (this.warnOnUse) {
+      console.warn(
+        `getRegistered() called on ExportManager with warnOnUse. Did you forget ExportManagerContext.Provider?`
+      );
+    }
+
     return this.registered;
   }
 }
 
-export class NoopExportManager {
-  constructor(private warnOnUse: boolean) {}
-
-  register(_label: string, _doExport: () => void): DeregistrationHandle {
-    if (this.warnOnUse) {
-      console.warn(
-        `NoopExportManager.register called (label: ${_label}). Did you forget ExportManagerContext.Provider?`
-      );
-    }
-    return { deregister() {} };
-  }
-
-  getRegistered(): Set<RegisteredExport> {
-    if (this.warnOnUse) {
-      console.warn(`NoopExportManager.getRegistered called. Did you forget ExportManagerContext.Provider?`);
-    }
-    return new Set();
-  }
-}
-
-export const ExportManagerContext = React.createContext<ExportManager>(new NoopExportManager(true));
+export const ExportManagerContext = React.createContext(new ExportManager(true));
