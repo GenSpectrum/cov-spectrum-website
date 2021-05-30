@@ -12,7 +12,7 @@ The mechanism for showing multiple actions in the "Export" dropdown is based on 
 
 ## Export button without widget
 
-Sometimes you want to have plot which is not embeddable, so it is not a widget and is not registered with `Widget.SharableComponent`. In this case you wont have an "Export" and may see warnings like `register(...) called on ExportManager with warnOnUse`. To manually add an export button, you have to add both `ExportManagerContext.Provider` and `ExportButton`. Note that the `Provider` must be placed outside both the button and the plot. Also the `ExportManager` that you provide must be unique to the subtree. For examples see [src/components/WidgetWrapper.tsx](/src/components/WidgetWrapper.tsx) or the Swiss map in [src/pages/FocusPage.tsx](/src/pages/FocusPage.tsx).
+Sometimes you want to have plot which is not embeddable, so it is not a widget and is not rendered by `Widget.SharableComponent`. In this case you wont have an "Export" and may see warnings like `register(...) called on ExportManager with warnOnUse`. To manually add an export button, you have to add both `ExportManagerContext.Provider` and `ExportButton`. Note that the `Provider` must be placed outside both the button and the plot. Also the `ExportManager` that you provide must be unique to the subtree. For examples see [src/components/WidgetWrapper.tsx](/src/components/WidgetWrapper.tsx) or the Swiss map in [src/pages/FocusPage.tsx](/src/pages/FocusPage.tsx).
 
 ## Extra export option
 
