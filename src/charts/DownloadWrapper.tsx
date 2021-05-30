@@ -1,11 +1,10 @@
-import React, { useRef } from 'react';
-
+import React, { useContext, useEffect, useRef } from 'react';
 import { exportComponentAsPNG } from 'react-component-export-image';
-import { FaCloudDownloadAlt } from 'react-icons/fa';
+import { CSVLink } from 'react-csv';
 import { BiTable } from 'react-icons/bi';
 import ReactTooltip from 'react-tooltip';
 import styled, { css } from 'styled-components';
-import { CSVLink } from 'react-csv';
+import { ExportManagerContext } from '../components/CombinedExport/ExportManager';
 
 const BUTTON_SIZE = '2.5em';
 const DELAY_SHOW = 0;
@@ -19,9 +18,6 @@ const baseButtonStyles = css`
   padding: 8px 8px 8px 8px;
 `;
 
-const DownloadButton = styled(FaCloudDownloadAlt)`
-  ${baseButtonStyles}
-`;
 const DownloadDataButton = styled(BiTable)`
   ${baseButtonStyles}
   right: 30px;
@@ -41,12 +37,20 @@ const DownloadWrapper = ({
 }: Props) => {
   const componentRef = useRef(null);
 
-  const exportOptions = {
-    fileName: name + '.png',
-    html2CanvasOptions: {
-      scale: 8,
-    },
-  };
+  const exportManager = useContext(ExportManagerContext);
+
+  useEffect(() => {
+    const handle = exportManager.register('Download PNG', () => {
+      exportComponentAsPNG(componentRef, {
+        fileName: name + '.png',
+        html2CanvasOptions: {
+          scale: 8,
+        },
+      });
+    });
+
+    return handle.deregister;
+  }, [componentRef, exportManager, name]);
 
   return (
     <>
@@ -61,18 +65,10 @@ const DownloadWrapper = ({
             />
           </CSVLink>
         )}
-        <DownloadButton
-          data-for='downloadPNG'
-          data-tip='Download this chart as PNG image.'
-          size={BUTTON_SIZE}
-          className={CLASS_STYLE}
-          onClick={() => exportComponentAsPNG(componentRef, exportOptions)}
-        />
-        <div className='relative h-full' id='image-download-container' ref={componentRef}>
+        <div className='relative h-full' ref={componentRef}>
           {children}
         </div>
       </div>
-      <ReactTooltip id='downloadPNG' delayShow={DELAY_SHOW} />
       <ReactTooltip id='downloadCSV' delayShow={DELAY_SHOW} />
     </>
   );
