@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import {Form } from 'react-bootstrap';
+import { Form } from 'react-bootstrap';
 import { getInterestingVariants } from '../services/api';
 import { Country, InterestingVariantResult, Variant } from '../services/api-types';
 import { BiHelpCircle } from 'react-icons/bi';
@@ -161,7 +161,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                               mutations: v.mutations.map((m: any) => m.mutation),
                             });
                           }}
-                          className="mr-1"
+                          className='mr-1'
                           variant={ButtonVariant.SECONDARY}
                         >
                           Details
