@@ -12,6 +12,7 @@ import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-i
 import { isRegion, SamplingStrategy } from '../services/api';
 import { Country } from '../services/api-types';
 import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
+import { AccountService } from '../services/AccountService';
 
 interface Props {
   country: Country;
@@ -57,7 +58,12 @@ export const ExplorePage = ({
       <NamedSection title='Search by mutations'>
         <MutationLookup onVariantSelect={onVariantSelect} />
       </NamedSection>
-      {!isRegion(country) && (
+      {/* The auto-detection of interesting mutations remains a very important part of the overall concept of
+          CoV-Spectrum. The current algorithm is however not good enough. Further, the program is not automated
+          and it has been a while that it was executed so that the data are quite outdated. Thus, we will show it
+          only to logged-in users for now.
+       */}
+      {AccountService.isLoggedIn() && !isRegion(country) && (
         <NamedSection title='Interesting mutations'>
           <NewVariantTable
             country={country}
