@@ -22,8 +22,10 @@ const letters = [
 const Logo = (
   <a href='/' className='flex flex-row items-center hover:no-underline md:mb-0.5'>
     <div>
-      {letters.map((l: { color: string; text: string }) => (
-        <span style={{ color: l.color, fontWeight: 'bold', fontSize: '1.75rem' }}>{l.text}</span>
+      {letters.map((l: { color: string; text: string }, i) => (
+        <span key={i} style={{ color: l.color, fontWeight: 'bold', fontSize: '1.75rem' }}>
+          {l.text}
+        </span>
       ))}
     </div>
   </a>
