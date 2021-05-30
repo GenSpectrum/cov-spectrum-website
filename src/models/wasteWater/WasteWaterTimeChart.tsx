@@ -75,8 +75,8 @@ export const WasteWaterTimeChart = React.memo(
                 <Area
                   type='monotone'
                   dataKey='proportionCI'
-                  fill={colors.secondaryLight}
-                  stroke={colors.secondary}
+                  fill={colors.activeSecondary}
+                  stroke='transparent'
                   isAnimationActive={false}
                 />
                 <Line

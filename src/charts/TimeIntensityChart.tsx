@@ -67,11 +67,7 @@ export const TimeIntensityChart = React.memo(
         isAnimationActive={false}
       >
         {data.map((entry: unknown, index: number) => (
-          <Cell
-            cursor={onClickHandler && 'pointer'}
-            fill={index === activeIndex ? colors.highlight : colors.highlight2}
-            key={`cell-${index}`}
-          ></Cell>
+          <Cell cursor={onClickHandler && 'pointer'} fill='black' key={`cell-${index}`}></Cell>
         ))}
       </Bar>,
       <Bar
@@ -85,7 +81,7 @@ export const TimeIntensityChart = React.memo(
         {data.map((entry: unknown, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
-            fill={index === activeIndex ? colors.active : colors.inactive}
+            fill={index === activeIndex ? colors.secondary : colors.inactive}
             key={`cell-${index}`}
           ></Cell>
         ))}
@@ -96,7 +92,7 @@ export const TimeIntensityChart = React.memo(
       <Wrapper id='sequencing-intensity-chart'>
         <TitleWrapper id='graph_title'>Number of sequenced samples on {currentData.month}</TitleWrapper>
         <ChartAndMetricsWrapper>
-          <ChartWrapper className='-mr-6'>
+          <ChartWrapper className='-mr-4 -ml-2'>
             <ResponsiveContainer>
               <BarChart
                 data={data}
@@ -115,6 +111,7 @@ export const TimeIntensityChart = React.memo(
                       dataLength={data.length}
                       currentValue={currentData.month}
                       unit='month'
+                      activeColor='black'
                     />
                   }
                 />
@@ -139,15 +136,15 @@ export const TimeIntensityChart = React.memo(
             <Metric
               value={kFormat(currentData.quantity)}
               title='Confirmed'
-              color={colors.active}
+              color={colors.secondary}
               helpText='Number of confirmed cases in this time frame.'
             />
             <Metric
               value={kFormat(currentData.proportion)}
               title='Sequenced'
-              color={colors.highlight}
+              color='black'
               helpText='Number of samples sequenced among the confirmed cases on this time frame.'
-              showPercent={((currentData.proportion / currentData.quantity) * 100).toFixed(2)}
+              showPercent={Math.round((currentData.proportion / currentData.quantity) * 100).toFixed(0)}
             />
           </MetricsWrapper>
         </ChartAndMetricsWrapper>

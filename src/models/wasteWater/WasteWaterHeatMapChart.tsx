@@ -31,7 +31,7 @@ const XAxisTicksCell = styled(Cell)`
 `;
 
 const ChartAndMetricsWrapper2 = styled(ChartAndMetricsWrapper)`
-  overflow-x: auto;
+  overflow-x: hidden;
 `;
 
 const ChartWrapper2 = styled(ChartWrapper)`
@@ -93,7 +93,7 @@ export const WasteWaterHeatMapChart = React.memo(
 
     const { nucMutationsLabelTableRows, heatMapTableRows } = useMemo(() => {
       const processedData: WasteWaterHeatMapEntry[][] = transformDataToTableFormat(data);
-      const colorScale = scaleLinear<string>().range(['white', 'blue']).domain([0, 1]);
+      const colorScale = scaleLinear<string>().range(['white', colors.active]).domain([0, 1]);
       const nucMutationsLabelTableRows = [];
       const heatMapTableRows = [];
       for (let row of processedData) {

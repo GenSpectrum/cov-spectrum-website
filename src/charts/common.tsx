@@ -8,13 +8,14 @@ export const colors = {
   inactiveSecondary: '#ecf0f1',
   secondary: '#7f8c8d',
   secondaryLight: '#95a5a6',
-  highlight: '#c0392b',
-  highlight2: '#e74c3c',
+  highlight: '#f39c12',
+  highlight2: '#f1c40f',
   transparent: '#ffffff80',
   bright: '#F18805',
   bright2: '#E08A13',
   bright3: '#CF8B20',
   good: '#27ae60',
+  good2: '#2ecc71',
   neutral: '#e67e22',
   bad: '#c0392b',
 };
@@ -39,7 +40,7 @@ export const ChartAndMetricsWrapper = styled.div`
 `;
 
 export const ChartWrapper = styled.div`
-  flex-grow: 1;
+  flex-grow: 0;
   width: 100%;
 `;
 
@@ -47,7 +48,7 @@ const getWeeklyTickText = (value: string, dataLength: number, activeIndex: numbe
   // minDistanceBetweenTicks tries to avoid that the fixed ticks overlap with the tick of the active entry. This
   // seems to work good enough for now but a perfect implementation probably has to consider the width of the
   // plot.
-  const minDistanceBetweenTicks = Math.ceil(dataLength / 15);
+  const minDistanceBetweenTicks = Math.ceil(dataLength / 10);
   if (activeIndex !== index && Math.abs(activeIndex - index) <= minDistanceBetweenTicks) {
     return undefined;
   }
@@ -59,7 +60,7 @@ const getWeeklyTickText = (value: string, dataLength: number, activeIndex: numbe
   ) {
     return {
       line1: 'Week ' + value.slice(5),
-      line2: globalDateCache.getIsoWeek(value).firstDay.string,
+      line2: globalDateCache.getIsoWeek(value).firstDay.string.slice(2),
     };
   }
 };
@@ -68,7 +69,7 @@ const getMonthlyTickText = (value: string, dataLength: number, activeIndex: numb
   // minDistanceBetweenTicks tries to avoid that the fixed ticks overlap with the tick of the active entry. This
   // seems to work good enough for now but a perfect implementation probably has to consider the width of the
   // plot.
-  const minDistanceBetweenTicks = Math.ceil(dataLength / 15);
+  const minDistanceBetweenTicks = Math.ceil(dataLength / 10);
   if (activeIndex !== index && Math.abs(activeIndex - index) <= minDistanceBetweenTicks) {
     return undefined;
   }
@@ -91,6 +92,8 @@ export type CustomTimeTickProps = {
   dataLength: number;
   currentValue: string;
   unit: 'week' | 'month';
+  activeColor?: string;
+  inactiveColor?: string;
 };
 
 export const CustomTimeTick = ({
@@ -101,6 +104,8 @@ export const CustomTimeTick = ({
   dataLength,
   currentValue,
   unit,
+  activeColor = colors.active,
+  inactiveColor = colors.inactive,
 }: CustomTimeTickProps): JSX.Element => {
   let content;
   if (!payload) {
@@ -118,7 +123,8 @@ export const CustomTimeTick = ({
             dx={0}
             dy={10}
             textAnchor='middle'
-            fill={payload.value === currentValue ? colors.active : colors.inactive}
+            fill={payload.value === currentValue ? activeColor : inactiveColor}
+            fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
           >
             {text.line1}
           </text>
@@ -128,7 +134,8 @@ export const CustomTimeTick = ({
             dx={0}
             dy={30}
             textAnchor='middle'
-            fill={payload.value === currentValue ? colors.active : colors.inactive}
+            fill={payload.value === currentValue ? activeColor : inactiveColor}
+            fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
           >
             {text.line2}
           </text>
@@ -148,7 +155,8 @@ export const CustomTimeTick = ({
             dx={0}
             dy={10}
             textAnchor='middle'
-            fill={payload.value === currentValue ? colors.active : colors.inactive}
+            fill={payload.value === currentValue ? activeColor : inactiveColor}
+            fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
           >
             {text}
           </text>

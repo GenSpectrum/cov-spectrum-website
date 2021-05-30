@@ -88,7 +88,7 @@ export const TimeChart = React.memo(
           {currentData.yearWeek.split('-')[0] + ' '}
         </TitleWrapper>
         <ChartAndMetricsWrapper>
-          <ChartWrapper>
+          <ChartWrapper className='-mr-4 -ml-1'>
             <ResponsiveContainer>
               <BarChart
                 data={data}

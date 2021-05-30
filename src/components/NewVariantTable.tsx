@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Button, Form } from 'react-bootstrap';
-import Table from 'react-bootstrap/Table';
+import { Form } from 'react-bootstrap';
 import { getInterestingVariants } from '../services/api';
 import { Country, InterestingVariantResult, Variant } from '../services/api-types';
 import { BiHelpCircle } from 'react-icons/bi';
@@ -9,6 +8,7 @@ import { NewVariantMutationList } from './NewVariantMutationList';
 import styled from 'styled-components';
 import { sortMutationList } from '../helpers/mutation';
 import { AccountService } from '../services/AccountService';
+import { Button, ButtonVariant } from '../helpers/ui';
 
 // We consider mutations with a uniquenessScore of at least the following value as characteristic/important for a
 // variant.
@@ -116,23 +116,26 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
               </FilterBar>
             )
           }
-          <div style={{ height: '400px', overflow: 'auto' }}>
-            <Table striped bordered hover>
+          <div style={{ height: '600px', overflow: 'auto' }}>
+            <table className='table-auto'>
               <thead>
                 <tr>
                   <th>
-                    Mutations{' '}
-                    <div
-                      style={{ display: 'inline' }}
-                      data-for='new-variant-table-mutations-help'
-                      data-tip='The mutations in bold are characteristic for the variant.'
-                    >
-                      <BiHelpCircle />
+                    <div className='flex items-center'>
+                      Mutations{' '}
+                      <div
+                        style={{ display: 'inline' }}
+                        data-for='new-variant-table-mutations-help'
+                        data-tip='The mutations in bold are characteristic for the variant.'
+                        className='ml-2'
+                      >
+                        <BiHelpCircle />
+                      </div>
+                      <ReactTooltip id='new-variant-table-mutations-help' />
                     </div>
-                    <ReactTooltip id='new-variant-table-mutations-help' />
                   </th>
-                  <th># Sequences in last 3 months</th>
-                  <th>Estimation of current advantage</th>
+                  <th># Seq. last 3 months</th>
+                  <th>Current advantage estimation</th>
                   <th></th>
                 </tr>
               </thead>
@@ -140,7 +143,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                 {variants?.map((v: any) => {
                   return (
                     <tr key={v.mutations.map((m: any) => m.mutation).join(', ')}>
-                      <td style={{ maxWidth: '400px', lineBreak: 'auto' }}>
+                      <td>
                         <NewVariantMutationList mutations={v.visibleMutations} />
                       </td>
                       <td>
@@ -158,8 +161,8 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                               mutations: v.mutations.map((m: any) => m.mutation),
                             });
                           }}
-                          variant='secondary'
-                          size='sm'
+                          className='mr-1'
+                          variant={ButtonVariant.SECONDARY}
                         >
                           Details
                         </Button>
@@ -168,7 +171,7 @@ export const NewVariantTable = ({ country, onVariantSelect }: Props) => {
                   );
                 })}
               </tbody>
-            </Table>
+            </table>
           </div>
         </>
       ) : (
