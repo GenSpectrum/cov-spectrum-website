@@ -69,7 +69,7 @@ export const TimeIntensityChart = React.memo(
         {data.map((entry: unknown, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
-            fill={index === activeIndex ? colors.highlight : colors.highlight2}
+            fill={index === activeIndex ? colors.highlight : colors.secondary}
             key={`cell-${index}`}
           ></Cell>
         ))}

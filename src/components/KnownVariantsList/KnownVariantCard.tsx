@@ -5,6 +5,9 @@ import styled from 'styled-components';
 import { mean } from 'lodash';
 import { colors } from '../../charts/common';
 
+const TREND_START = 9
+const TREND_END = 3
+
 interface Props {
   name: string;
   chartData?: number[];
@@ -35,8 +38,8 @@ enum TREND {
 }
 
 const getTrend = (data: number[]): TREND => {
-  const middle = mean(data.slice(Math.max(data.length - 8, 0), Math.max(data.length - 2, 1)));
-  const final = mean(data.slice(Math.max(data.length - 2, 0)));
+  const middle = mean(data.slice(Math.max(data.length - TREND_START, 0), Math.max(data.length - TREND_END, 1)));
+  const final = mean(data.slice(Math.max(data.length - TREND_END, 0)));
   const difference = final - middle;
   if (Math.abs(difference) < 0.015 * middle || Math.abs(difference) < 0.0001) {
     return TREND.NEUTRAL;
