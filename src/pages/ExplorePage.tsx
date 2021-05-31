@@ -13,6 +13,7 @@ import { isRegion, SamplingStrategy } from '../services/api';
 import { Country } from '../services/api-types';
 import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
 import { AccountService } from '../services/AccountService';
+import { VercelSponsorshipLogo } from '../components/VercelSponsorshipLogo';
 
 interface Props {
   country: Country;
@@ -72,8 +73,11 @@ export const ExplorePage = ({
         </NamedSection>
       )}
       <Footer>
-        Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
-        <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
+        <div>
+          Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
+          <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
+        </div>
+        <VercelSponsorshipLogo />
       </Footer>
     </>
   );

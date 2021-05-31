@@ -1,5 +1,6 @@
 import React from 'react';
 import { ExternalLink } from '../components/ExternalLink';
+import { VercelSponsorshipLogo } from '../components/VercelSponsorshipLogo';
 
 const Acknowlegement = ({ title, children }: { title: string; children: any }) => {
   return (
@@ -36,6 +37,7 @@ export const AcknowledgementsPage = () => {
         <ExternalLink url='https://dx.doi.org/10.1002/gch2.1018'>10.1002/gch2.1018</ExternalLink>, PMCID:{' '}
         <ExternalLink url='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6607375/'>31565258</ExternalLink>
       </p>
+      <VercelSponsorshipLogo />
     </div>
   );
 };

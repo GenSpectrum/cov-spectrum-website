@@ -1,6 +1,7 @@
 import React from 'react';
 import { ExternalLink } from '../components/ExternalLink';
 import { EmailLink } from '../components/EmailLink';
+import { VercelSponsorshipLogo } from '../components/VercelSponsorshipLogo';
 
 const Question = ({ title, children }: { title: string; children: React.ReactNode }) => {
   return (
@@ -123,6 +124,7 @@ export const AboutPage = () => {
         <EmailLink email='mediarelations@hk.ethz.ch' />
         ).
       </p>
+      <VercelSponsorshipLogo />
     </div>
   );
 };

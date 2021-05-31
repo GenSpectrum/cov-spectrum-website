@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import { useLocation } from 'react-router-dom';
 import { Alert, AlertVariant } from '../helpers/ui';
 import { AccountService } from '../services/AccountService';
+import { VercelSponsorshipLogo } from '../components/VercelSponsorshipLogo';
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -57,6 +58,7 @@ export const LoginPage = () => {
           Login
         </Button>
       </Form>
+      <VercelSponsorshipLogo />
     </div>
   );
 };
