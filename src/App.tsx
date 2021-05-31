@@ -9,6 +9,9 @@ import { LoginPage } from './pages/LoginPage';
 import { SamplingStrategy } from './services/api';
 import { AcknowledgementsPage } from './pages/AcknowledgementsPage';
 import { useResizeDetector } from 'react-resize-detector';
+import { Alert, AlertVariant } from './helpers/ui';
+
+const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
 export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
@@ -20,6 +23,15 @@ export const App = () => {
         <Header />
       </div>
       <div ref={ref} className='static w-full h-full z-0 overflow-auto'>
+        {isPreview && (
+          <Alert variant={AlertVariant.WARNING}>
+            <div className='text-center font-bold'>
+              Note: This is a preview deployment. Please visit{' '}
+              <a href='https://cov-spectrum.ethz.ch'>https://cov-spectrum.ethz.ch</a> for the official
+              website.
+            </div>
+          </Alert>
+        )}
         <Switch>
           <Route exact path='/'>
             <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}/AllTimes`} />
