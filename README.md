@@ -21,3 +21,7 @@ There is a special setup that allows certain plots to be loaded standalone outsi
 Certain models and analyses require very different data than the main application. They are slightly separated from the rest of the code. See [./docs/models.md](./docs/models.md).
 
 There is also some miscellaneous documentation about date handling ([./docs/date-cache.md](./docs/date-cache.md)), routing ([./docs/routing.md](./docs/routing.md)) and export buttons ([./docs/export.md](./docs/export.md)).
+
+## Sponsors
+
+[![Vercel Sponsorship Logo](public/img/powered-by-vercel.svg)](https://vercel.com/?utm_source=cov-spectrum&utm_campaign=oss)
