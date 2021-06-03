@@ -55,3 +55,9 @@ code {
 .custom-narrow-dropdown button.dropdown-toggle::after {
   vertical-align: 0.15em;
 }
+
+/* HACK Temporary fix to show surveillance selection dropdown on smaller laptop screens */
+@media (min-width: 1170px)
+.hidden.xl\:block {
+   display: block!important;
+}
