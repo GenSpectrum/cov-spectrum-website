@@ -57,7 +57,8 @@ code {
 }
 
 /* HACK Temporary fix to show surveillance selection dropdown on smaller laptop screens */
-@media (min-width: 1170px)
-.hidden.xl\:block {
-   display: block!important;
+@media (min-width: 1170px) {
+  .hidden.xl\:block {
+    display: block !important;
+  }
 }
