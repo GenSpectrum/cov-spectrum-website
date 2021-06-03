@@ -123,7 +123,7 @@ export const FocusPage = ({
     return <Alert variant={AlertVariant.WARNING}>No samples match your query</Alert>;
   }
 
-  let wasteWaterSummaryPlot = <></>;
+  let wasteWaterSummaryPlot = undefined;
   if (country === 'Switzerland' && variant.name && WASTE_WATER_AVAILABLE_LINEAGES.includes(variant.name)) {
     if (wasteWaterData) {
       wasteWaterSummaryPlot = (
