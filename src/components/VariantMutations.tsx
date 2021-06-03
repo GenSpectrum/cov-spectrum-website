@@ -29,8 +29,8 @@ export const VariantMutations = ({ region, country, pangolinLineage, dateRange }
       proportion: number;
     }[]
   >([]);
-  const { dateFrom, dateTo } = dateRangeToDates(dateRange);
   useEffect(() => {
+    const { dateFrom, dateTo } = dateRangeToDates(dateRange);
     getInformationOfPangolinLineage({
       pangolinLineage,
       region,
@@ -41,7 +41,7 @@ export const VariantMutations = ({ region, country, pangolinLineage, dateRange }
       commonMutations.sort((a, b) => b.count - a.count);
       setData(commonMutations);
     });
-  }, [pangolinLineage, region, country, dateFrom, dateTo]);
+  }, [pangolinLineage, region, country, dateRange]);
 
   return (
     <>
