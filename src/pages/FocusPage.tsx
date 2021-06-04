@@ -1,7 +1,6 @@
 import { mapValues } from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AsyncState } from 'react-async';
-import { useHistory } from 'react-router-dom';
 import { AsyncVariantInternationalComparisonPlot } from '../components/AsyncVariantInternationalComparisonPlot';
 import { ExportButton } from '../components/CombinedExport/ExportButton';
 import { ExportManager, ExportManagerContext } from '../components/CombinedExport/ExportManager';
@@ -16,7 +15,7 @@ import { VariantMutations } from '../components/VariantMutations';
 import { getFocusPageLink } from '../helpers/explore-url';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
-import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
+import { Alert, AlertVariant, ShowMoreButton } from '../helpers/ui';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { filter, getData } from '../models/wasteWater/loading';
 import { WasteWaterDataset } from '../models/wasteWater/types';
@@ -61,7 +60,6 @@ export const FocusPage = ({
   ...forwardedProps
 }: Props) => {
   const { country, matchPercentage, variant, samplingStrategy, dateRange } = forwardedProps;
-  const history = useHistory();
 
   const plotProps = {
     country,
@@ -84,19 +82,9 @@ export const FocusPage = ({
           dateRange,
           deepFocusPath: suffix,
         });
-        return (
-          <Button
-            className='mt-1 ml-2'
-            variant={ButtonVariant.PRIMARY}
-            onClick={() => {
-              history.push(to);
-            }}
-          >
-            Show more
-          </Button>
-        );
+        return <ShowMoreButton to={to} />;
       }),
-    [country, samplingStrategy, dateRange, matchPercentage, variant, history]
+    [country, samplingStrategy, dateRange, matchPercentage, variant]
   );
 
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
