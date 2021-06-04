@@ -8,11 +8,16 @@ export const METRIC_WIDTH_PX = 160;
 const TOOLTIP_DALAY = 500;
 
 export const MetricsWrapper = styled.div`
-  padding: 0 0 1.8rem 0rem;
+  padding: 0.6rem 0 0 0;
   flex-grow: 1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-between;
+
+  @media (min-width: 640px) {
+    flex-direction: column;
+    padding: 0 0 1.8rem 0rem;
+  }
 `;
 
 export const MetricsSpacing = styled.div`

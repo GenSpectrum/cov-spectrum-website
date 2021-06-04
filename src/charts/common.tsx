@@ -36,11 +36,16 @@ export const TitleWrapper = ({ children, id }: { children: React.ReactNode; id?:
 
 export const ChartAndMetricsWrapper = styled.div`
   display: flex;
+  flex-direction: column;
   flex: 1;
+
+  @media (min-width: 640px) {
+    flex-direction: row;
+  }
 `;
 
 export const ChartWrapper = styled.div`
-  flex-grow: 0;
+  flex-grow: 1;
   width: 100%;
 `;
 
