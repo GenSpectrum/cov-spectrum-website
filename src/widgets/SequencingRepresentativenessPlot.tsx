@@ -1,7 +1,9 @@
 import { Widget } from './Widget';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
-import { SequencingIntensityEntrySetSelectorSchema } from '../helpers/sequencing-intensity-entry-set';
-import { SequencingRepresentativenessSelector } from '../services/api-types';
+import {
+  SequencingRepresentativenessSelector,
+  SequencingRepresentativenessSelectorSchema,
+} from '../services/api-types';
 import { useEffect } from 'react';
 import { getCaseCounts } from '../services/api';
 
@@ -18,7 +20,7 @@ export const SequencingRepresentativenessPlot = ({ selector }: Props) => {
 
 export const SequencingRepresentativenessPlotWidget = new Widget(
   new AsyncZodQueryEncoder(
-    SequencingIntensityEntrySetSelectorSchema,
+    SequencingRepresentativenessSelectorSchema,
     async (decoded: Props) => decoded.selector,
     async encoded => ({
       selector: encoded,

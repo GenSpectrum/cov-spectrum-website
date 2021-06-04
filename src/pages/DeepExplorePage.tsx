@@ -4,7 +4,8 @@ import { DeepRoute, makeLayout, makeSwitch } from '../helpers/deep-page';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import React from 'react';
-import { useRouteMatch } from 'react-router';
+import { Route, useRouteMatch } from 'react-router';
+import { SequencingCoverageDeepExplore } from '../components/SequencingCoverageDeepExplore';
 
 interface Props {
   country: Country;
@@ -12,15 +13,34 @@ interface Props {
   samplingStrategy: SamplingStrategy;
 }
 
-const routes: DeepRoute<Props>[] = [];
+const routes: DeepRoute<Props>[] = [
+  {
+    key: 'sequencing-coverage',
+    title: 'Sequencing Coverage',
+    content: props => <SequencingCoverageDeepExplore country={props.country} dateRange={props.dateRange} />,
+  },
+];
 
 export const DeepExplorePage = (props: Props) => {
   const { path, url } = useRouteMatch();
   const _makeLayout = (content: JSX.Element) =>
     makeLayout(
-      <Button className='mt-2' variant='secondary' as={Link} to={url}>
-        Back to overview
-      </Button>,
+      <div className='ml-3'>
+        <div className='flex'>
+          <h1 style={{ flexGrow: 1 }}>
+            {routes.map(route => (
+              <Route key={route.key} path={`${path}/${route.key}`}>
+                {route.title}
+              </Route>
+            ))}
+          </h1>
+          <div>
+            <Button className='mt-2' variant='secondary' as={Link} to={url}>
+              Back to overview
+            </Button>
+          </div>
+        </div>
+      </div>,
       content
     );
   return _makeLayout(makeSwitch(routes, props, path));

@@ -184,6 +184,7 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
       <ExplorePage
         country={country}
         samplingStrategy={samplingStrategy}
+        dateRange={dateRange}
         onVariantSelect={variantSelector =>
           history.push(getFocusPageLink({ variantSelector, country, samplingStrategy, dateRange }))
         }
