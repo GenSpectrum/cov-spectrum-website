@@ -30,6 +30,7 @@ import { Country } from '../services/api-types';
 import dayjs from 'dayjs';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 import { Alert, AlertVariant } from '../helpers/ui';
+import { DeepExplorePage } from './DeepExplorePage';
 
 // a promise which is never resolved or rejected
 const waitForever = new Promise<never>(() => {});
@@ -193,6 +194,10 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     );
   }
 
+  const deepExplorePage = (
+    <DeepExplorePage country={country} dateRange={dateRange} samplingStrategy={samplingStrategy} />
+  );
+
   const makeLayout = (focusContent: React.ReactNode, deepFocusContent: React.ReactNode): JSX.Element => (
     <>
       <Modal show={dataOutdated} backdrop='static' keyboard={false}>
@@ -230,6 +235,9 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
         </Route>
         <Route path={`${path}/variants/:variantSelector`}>
           <RawFullContentWrapper>{deepFocusContent}</RawFullContentWrapper>
+        </Route>
+        <Route path={`${path}`}>
+          <RawFullContentWrapper>{deepExplorePage}</RawFullContentWrapper>
         </Route>
       </Switch>
     </>
