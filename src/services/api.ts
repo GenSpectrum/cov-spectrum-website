@@ -21,6 +21,9 @@ import {
   ArticleSchema,
   DataStatus,
   DataStatusSchema,
+  SequencingRepresentativenessSelector,
+  CaseCountEntry,
+  CaseCountEntrySchema,
 } from './api-types';
 import dayjs from 'dayjs';
 import {
@@ -442,4 +445,27 @@ export async function getDataStatus(signal?: AbortSignal): Promise<DataStatus> {
     throw new Error('server responded with non-200 status code');
   }
   return DataStatusSchema.parse(await res.json());
+}
+
+export async function getCaseCounts(
+  { dateFrom, dateTo, country }: SequencingRepresentativenessSelector,
+  signal?: AbortSignal
+): Promise<CaseCountEntry[]> {
+  if (country !== 'Switzerland') {
+    throw new Error('getCaseCounts() is currently only available for Switzerland.');
+  }
+  const params = new URLSearchParams();
+  params.set('country', country);
+  if (dateFrom) {
+    params.set('dateFrom', dateFrom);
+  }
+  if (dateTo) {
+    params.set('dateTo', dateTo);
+  }
+  const url = '/resource/case?' + params.toString();
+  const res = await get(url, signal);
+  if (!res.ok) {
+    throw new Error('server responded with non-200 status code');
+  }
+  return zod.array(CaseCountEntrySchema).parse(await res.json());
 }
