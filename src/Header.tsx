@@ -68,7 +68,7 @@ const FilterDropdown = () => {
                   setOpen(false);
                 }}
               >
-                done
+                Done
               </Button>
             </div>
             <div className='py-2'>
