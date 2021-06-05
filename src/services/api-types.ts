@@ -1,4 +1,5 @@
 import * as zod from 'zod';
+import { LiteralSamplingStrategySchema } from './api';
 
 // Small reusable objects that aren't explicitly separate in the API doc
 
@@ -198,6 +199,7 @@ export const SequencingRepresentativenessSelectorSchema = zod.object({
   country: CountrySchema.optional(),
   dateFrom: DateStringSchema.optional(),
   dateTo: DateStringSchema.optional(),
+  samplingStrategy: LiteralSamplingStrategySchema,
 });
 
 // TypeScript types from schemas

@@ -1,7 +1,7 @@
 import React from 'react';
 import { SequencingRepresentativenessPlotWidget } from '../widgets/SequencingRepresentativenessPlot';
 import { Country } from '../services/api-types';
-import { DateRange, dateRangeToDates } from '../services/api';
+import { DateRange, dateRangeToDates, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import dayjs from 'dayjs';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
@@ -11,11 +11,12 @@ import { GridCell, PackedGrid } from './PackedGrid';
 interface Props {
   country: Country;
   dateRange: DateRange;
+  samplingStrategy: SamplingStrategy;
   sequencingIntensityEntrySet: SequencingIntensityEntrySetWithSelector;
 }
 
 export const SequencingCoverageDeepExplore = React.memo(
-  ({ country, dateRange, sequencingIntensityEntrySet }: Props) => {
+  ({ country, dateRange, samplingStrategy, sequencingIntensityEntrySet }: Props) => {
     let { dateFrom, dateTo } = dateRangeToDates(dateRange);
     return (
       <PackedGrid maxColumns={2}>
@@ -35,6 +36,7 @@ export const SequencingCoverageDeepExplore = React.memo(
                 country,
                 dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
                 dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
+                samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
               }}
               height={500}
             />

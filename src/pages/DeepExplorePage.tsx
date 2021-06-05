@@ -23,6 +23,7 @@ const routes: DeepRoute<Props>[] = [
       <SequencingCoverageDeepExplore
         country={props.country}
         dateRange={props.dateRange}
+        samplingStrategy={props.samplingStrategy}
         sequencingIntensityEntrySet={props.sequencingIntensityEntrySet}
       />
     ),

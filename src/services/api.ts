@@ -450,7 +450,7 @@ export async function getDataStatus(signal?: AbortSignal): Promise<DataStatus> {
 }
 
 export async function getSequenceCounts(
-  { dateFrom, dateTo, country }: SequencingRepresentativenessSelector,
+  { dateFrom, dateTo, country, samplingStrategy }: SequencingRepresentativenessSelector,
   signal?: AbortSignal
 ): Promise<SequenceCountEntry[]> {
   const params = new URLSearchParams();
@@ -462,6 +462,9 @@ export async function getSequenceCounts(
   }
   if (dateTo) {
     params.set('dateTo', dateTo);
+  }
+  if (samplingStrategy) {
+    params.set('dataType', samplingStrategy);
   }
   const res = await get(
     `/resource/sample2?fields=division,ageGroup,sex,hospitalized,deceased&${params.toString()}`,
