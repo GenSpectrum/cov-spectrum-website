@@ -6,18 +6,26 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 import { Route, useRouteMatch } from 'react-router';
 import { SequencingCoverageDeepExplore } from '../components/SequencingCoverageDeepExplore';
+import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 
 interface Props {
   country: Country;
   dateRange: DateRange;
   samplingStrategy: SamplingStrategy;
+  sequencingIntensityEntrySet: SequencingIntensityEntrySetWithSelector;
 }
 
 const routes: DeepRoute<Props>[] = [
   {
     key: 'sequencing-coverage',
     title: 'Sequencing Coverage',
-    content: props => <SequencingCoverageDeepExplore country={props.country} dateRange={props.dateRange} />,
+    content: props => (
+      <SequencingCoverageDeepExplore
+        country={props.country}
+        dateRange={props.dateRange}
+        sequencingIntensityEntrySet={props.sequencingIntensityEntrySet}
+      />
+    ),
   },
 ];
 

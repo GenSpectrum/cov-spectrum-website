@@ -172,13 +172,16 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   }
 
   let explorePage: React.ReactNode;
+  let deepExplorePage: React.ReactNode;
   if (
     sequencingIntensityEntrySetState.status === 'initial' ||
     sequencingIntensityEntrySetState.status === 'pending'
   ) {
     explorePage = <Loader />;
+    deepExplorePage = <Loader />;
   } else if (sequencingIntensityEntrySetState.status === 'rejected') {
     explorePage = <Alert variant={AlertVariant.DANGER}>Failed to load data</Alert>;
+    deepExplorePage = <Alert variant={AlertVariant.DANGER}>Failed to load data</Alert>;
   } else {
     explorePage = (
       <ExplorePage
@@ -193,11 +196,15 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
         sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
       />
     );
+    deepExplorePage = (
+      <DeepExplorePage
+        country={country}
+        dateRange={dateRange}
+        samplingStrategy={samplingStrategy}
+        sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
+      />
+    );
   }
-
-  const deepExplorePage = (
-    <DeepExplorePage country={country} dateRange={dateRange} samplingStrategy={samplingStrategy} />
-  );
 
   const makeLayout = (focusContent: React.ReactNode, deepFocusContent: React.ReactNode): JSX.Element => (
     <>
