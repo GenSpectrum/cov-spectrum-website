@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrategySelect';
@@ -6,6 +6,8 @@ import { AccountService } from './services/AccountService';
 import { HeaderDateRangeSelect } from './components/HeaderDateRangeSelect';
 import { ExternalLink } from './components/ExternalLink';
 import { AiOutlineGithub } from 'react-icons/ai';
+import { FaFilter } from 'react-icons/fa';
+import { Button, ButtonVariant } from './helpers/ui';
 
 const letters = [
   { color: 'darkgray', text: 'cov' },
@@ -30,6 +32,57 @@ const Logo = (
     </div>
   </a>
 );
+
+const FilterDropdown = () => {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className='relative inline-block text-left'>
+      {' '}
+      <div>
+        <button
+          type='button'
+          className='border border-gray-300 bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center w-full rounded-md  px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500'
+          id='options-menu'
+          onClick={() => {
+            setOpen(!open);
+          }}
+        >
+          <div className={open ? 'fill-current animate-pulse bg-red' : ''}>
+            <FaFilter />
+          </div>
+        </button>
+      </div>
+      {open && (
+        <div className='origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-xl bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5'>
+          <div
+            className='py-2 px-4 flex flex-col items-start'
+            role='menu'
+            aria-orientation='vertical'
+            aria-labelledby='options-menu'
+          >
+            <div className='flex w-full justify-between items-center'>
+              <h2>Filter</h2>
+              <Button
+                variant={ButtonVariant.SECONDARY}
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                done
+              </Button>
+            </div>
+            <div className='py-2'>
+              <HeaderDateRangeSelect />
+            </div>
+            <div className='py-2'>
+              <HeaderSamplingStrategySelect />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Header = () => {
   const loggedIn = AccountService.isLoggedIn();
@@ -62,10 +115,13 @@ const Header = () => {
                 </div>
                 <div className='flex items-center z-20 mt-2 md:mt-0'>
                   <HeaderCountrySelect />
-                  <div id='date-range-wrapper'>
+                  <div className='lg:hidden'>
+                    <FilterDropdown />
+                  </div>
+                  <div id='date-range-wrapper' className='hidden lg:block'>
                     <HeaderDateRangeSelect />
                   </div>
-                  <div className='hidden xl:block'>
+                  <div className='hidden lg:block'>
                     <HeaderSamplingStrategySelect />
                   </div>
                 </div>
