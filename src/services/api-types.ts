@@ -187,8 +187,12 @@ export const CaseCountEntrySchema = zod.object({
   division: zod.string().nullable(),
   ageGroup: zod.string().nullable(),
   sex: zod.string().nullable(),
+  hospitalized: zod.boolean().nullable(),
+  deceased: zod.boolean().nullable(),
   count: zod.number(),
 });
+
+export const SequenceCountEntrySchema = CaseCountEntrySchema;
 
 export const SequencingRepresentativenessSelectorSchema = zod.object({
   country: CountrySchema.optional(),
@@ -214,6 +218,7 @@ export type PangolinLineageInformation = zod.infer<typeof PangolinLineageInforma
 export type Article = zod.infer<typeof ArticleSchema>;
 export type DataStatus = zod.infer<typeof DataStatusSchema>;
 export type CaseCountEntry = zod.infer<typeof CaseCountEntrySchema>;
+export type SequenceCountEntry = zod.infer<typeof SequenceCountEntrySchema>;
 export type SequencingRepresentativenessSelector = zod.infer<
   typeof SequencingRepresentativenessSelectorSchema
 >;

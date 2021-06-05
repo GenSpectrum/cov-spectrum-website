@@ -13,12 +13,13 @@ export const SequencingCoverageDeepExplore = React.memo(({ country, dateRange }:
   let { dateFrom, dateTo } = dateRangeToDates(dateRange);
   return (
     <SequencingRepresentativenessPlotWidget.ShareableComponent
-      title='Representativeness of Samples'
+      title='Sequencing Intensity by Attribute'
       selector={{
         country,
         dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
         dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
       }}
+      height={500}
     />
   );
 });

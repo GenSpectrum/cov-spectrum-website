@@ -24,6 +24,8 @@ import {
   SequencingRepresentativenessSelector,
   CaseCountEntry,
   CaseCountEntrySchema,
+  SequenceCountEntry,
+  SequenceCountEntrySchema,
 } from './api-types';
 import dayjs from 'dayjs';
 import {
@@ -445,6 +447,30 @@ export async function getDataStatus(signal?: AbortSignal): Promise<DataStatus> {
     throw new Error('server responded with non-200 status code');
   }
   return DataStatusSchema.parse(await res.json());
+}
+
+export async function getSequenceCounts(
+  { dateFrom, dateTo, country }: SequencingRepresentativenessSelector,
+  signal?: AbortSignal
+): Promise<SequenceCountEntry[]> {
+  const params = new URLSearchParams();
+  if (country) {
+    params.set('country', country);
+  }
+  if (dateFrom) {
+    params.set('dateFrom', dateFrom);
+  }
+  if (dateTo) {
+    params.set('dateTo', dateTo);
+  }
+  const res = await get(
+    `/resource/sample2?fields=division,ageGroup,sex,hospitalized,deceased&${params.toString()}`,
+    signal
+  );
+  if (!res.ok) {
+    throw new Error('server responded with non-200 status code');
+  }
+  return zod.array(SequenceCountEntrySchema).parse(await res.json());
 }
 
 export async function getCaseCounts(
