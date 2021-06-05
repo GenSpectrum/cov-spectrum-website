@@ -74,6 +74,9 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
   const [selectedAttributes, setSelectedAttributes] = useState<Attribute[]>(['division']);
 
   useEffect(() => {
+    if (selector.country !== 'Switzerland') {
+      return;
+    }
     const caseCountsPromise = getCaseCounts(selector).then(counts =>
       prepareCountsData(counts, selectedAttributes)
     );
@@ -95,6 +98,10 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
       setData(_data);
     });
   }, [selector, selectedAttributes]);
+
+  if (selector.country !== 'Switzerland') {
+    return <>This plot is only available for Switzerland.</>;
+  }
 
   const YAxisLeftTick = ({ y, payload: { value } }: any) => {
     return (

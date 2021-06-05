@@ -3,6 +3,7 @@ import { SequencingRepresentativenessPlotWidget } from '../widgets/SequencingRep
 import { Country } from '../services/api-types';
 import { DateRange, dateRangeToDates } from '../services/api';
 import dayjs from 'dayjs';
+import { Alert, AlertVariant } from '../helpers/ui';
 
 interface Props {
   country: Country;
@@ -12,14 +13,23 @@ interface Props {
 export const SequencingCoverageDeepExplore = React.memo(({ country, dateRange }: Props) => {
   let { dateFrom, dateTo } = dateRangeToDates(dateRange);
   return (
-    <SequencingRepresentativenessPlotWidget.ShareableComponent
-      title='Sequencing Intensity by Attribute'
-      selector={{
-        country,
-        dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
-        dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
-      }}
-      height={500}
-    />
+    <>
+      {country !== 'Switzerland' && (
+        <Alert variant={AlertVariant.WARNING}>
+          Currently, detailed sequencing coverage data are only available for Switzerland.
+        </Alert>
+      )}
+      {country === 'Switzerland' && (
+        <SequencingRepresentativenessPlotWidget.ShareableComponent
+          title='Sequencing Intensity by Attribute'
+          selector={{
+            country,
+            dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
+            dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
+          }}
+          height={500}
+        />
+      )}
+    </>
   );
 });
