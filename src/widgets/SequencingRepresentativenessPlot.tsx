@@ -27,17 +27,17 @@ interface PlotEntry {
   cases: number;
 }
 
-type Attribute = 'division' | 'ageGroup' | 'sex' | 'hospitalized' | 'deceased';
+export type Attribute = 'division' | 'ageGroup' | 'sex' | 'hospitalized' | 'deceased';
 
-const attributes: {
+export const attributes: {
   key: Attribute;
   label: string;
 }[] = [
   { key: 'division', label: 'Division' },
   { key: 'ageGroup', label: 'Age group' },
   { key: 'sex', label: 'Sex' },
-  { key: 'hospitalized', label: 'Hospitalized' },
-  { key: 'deceased', label: 'Deceased' },
+  { key: 'hospitalized', label: 'Hospitalization status' },
+  { key: 'deceased', label: 'Death status' },
 ];
 
 function prepareCountsData(

@@ -7,6 +7,7 @@ import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-i
 import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
 import { NamedCard } from './NamedCard';
 import { GridCell, PackedGrid } from './PackedGrid';
+import { MetadataAvailabilityPlotWidget } from '../widgets/MetadataAvailabilityPlot';
 
 interface Props {
   country: Country;
@@ -26,6 +27,18 @@ export const SequencingCoverageDeepExplore = React.memo(
             sequencingIntensityEntrySet={sequencingIntensityEntrySet}
             height={300}
             widgetLayout={NamedCard}
+          />
+        </GridCell>
+        <GridCell minWidth={600}>
+          <MetadataAvailabilityPlotWidget.ShareableComponent
+            title='Metadata Availability'
+            selector={{
+              country,
+              dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
+              dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
+              samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
+            }}
+            height={300}
           />
         </GridCell>
         {country === 'Switzerland' && (
