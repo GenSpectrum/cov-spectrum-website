@@ -56,7 +56,7 @@ const Header = () => {
     const [filterOpen, setFilterOpen] = useState(false);
     const [infoOpen, setInfoOpen] = useState(false);
     return (
-      <div className="flex ">
+      <div className='flex '>
         <div id='filter-dropdown' className='relative inline-block text-left xl:hidden'>
           {' '}
           <div>
@@ -198,7 +198,7 @@ const Header = () => {
                 </div>
                 <div className='flex items-center z-20 mt-2 md:mt-0'>
                   <HeaderCountrySelect />
-                    <FilterDropdown />
+                  <FilterDropdown />
                   <div id='date-range-wrapper' className='hidden xl:block'>
                     <HeaderDateRangeSelect />
                   </div>
@@ -209,10 +209,7 @@ const Header = () => {
               </div>
               <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>
                 <div className='ml-1 flex items-center'>
-                  <a
-                    className={`${getButtonClasses('/acknowledgements')}`}
-                    href='/acknowledgements'
-                  >
+                  <a className={`${getButtonClasses('/acknowledgements')}`} href='/acknowledgements'>
                     Acknowledgements
                   </a>
                   <a className={getButtonClasses('/about')} href='/about'>
