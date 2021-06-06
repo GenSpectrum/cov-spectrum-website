@@ -146,7 +146,7 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
       <div className='flex-grow overflow-auto'>
         {!data && <Loader />}
         {data && (
-          <div style={{ height: `${data.length * 25}px` }} key={data.length}>
+          <div style={{ height: `${30 + data.length * 25}px` }} key={data.length}>
             <Wrapper>
               <ChartAndMetricsWrapper>
                 <ChartWrapper className='-mr-4 -ml-1'>
