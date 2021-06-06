@@ -104,7 +104,7 @@ export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, s
         )}
       </Title>
       <div>
-        <SimpleAreaPlot data={chartData} selected={selected} />
+        <SimpleAreaPlot data={chartData} selected={selected ? selected : false} />
       </div>
     </Card>
   );

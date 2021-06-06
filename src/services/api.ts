@@ -169,7 +169,7 @@ export const getSamples = (
   }
   if (country && isRegion(country)) {
     url += `&region=${country}`;
-  } else if (country) {
+  } else if (country && !isWorld(country)) {
     url += `&country=${country}`;
   }
   if (samplingStrategy) {
@@ -201,7 +201,7 @@ export async function getNewSamples(
       const newParam = selector[k]!.toString();
       if (k === 'country' && isRegion(newParam)) {
         params.set('region', newParam);
-      } else {
+      } else if (!isWorld(newParam)){
         params.set(k, newParam);
       }
     }
@@ -241,7 +241,7 @@ export const getSampleFastaUrl = ({
   }
   if (country && isRegion(country)) {
     url += `&region=${country}`;
-  } else if (country) {
+  } else if (country && !isWorld(country)) {
     url += `&country=${country}`;
   }
   if (samplingStrategy) {
@@ -355,7 +355,7 @@ export const getSequencingIntensity = (
   }
   if (isRegion(selector.country)) {
     url += `region=${selector.country}`;
-  } else {
+  } else if (!isWorld(selector.country)) {
     url += `country=${selector.country}`;
   }
   if (selector.samplingStrategy) {
@@ -382,6 +382,8 @@ export const getInterestingVariants = (
   let endpoint = `/computed/find-interesting-variants?`;
   if (isRegion(country)) {
     endpoint += `region=${country}`;
+  } else if (isWorld(country)){
+    endpoint += `country=Switzerland`
   } else {
     endpoint += `country=${country}`;
   }
@@ -414,6 +416,8 @@ export const isRegion = (place: Place): boolean => {
   const regions = ['Africa', 'Europe', 'Asia', 'North America', 'South America', 'Oceania'];
   return regions.includes(place);
 };
+
+export const isWorld = (place: Place): boolean => place === 'World';
 
 export const getPlaces = async (): Promise<Place[]> => {
   const countries = await getCountries();
