@@ -7,6 +7,7 @@ import { HeaderDateRangeSelect } from './components/HeaderDateRangeSelect';
 import { ExternalLink } from './components/ExternalLink';
 import { AiOutlineGithub } from 'react-icons/ai';
 import { FaFilter } from 'react-icons/fa';
+import { BsFillInfoCircleFill } from 'react-icons/bs';
 import { Button, ButtonVariant } from './helpers/ui';
 
 const letters = [
@@ -33,60 +34,9 @@ const Logo = (
   </a>
 );
 
-const FilterDropdown = () => {
-  const [open, setOpen] = useState(false);
-  return (
-    <div className='relative inline-block text-left'>
-      {' '}
-      <div>
-        <button
-          type='button'
-          className='border border-gray-300 bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center w-full rounded-md  px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500'
-          id='options-menu'
-          onClick={() => {
-            setOpen(!open);
-          }}
-        >
-          <div className={open ? 'fill-current animate-pulse bg-red' : ''}>
-            <FaFilter />
-          </div>
-        </button>
-      </div>
-      {open && (
-        <div className='origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-xl bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5'>
-          <div
-            className='py-2 px-4 flex flex-col items-start'
-            role='menu'
-            aria-orientation='vertical'
-            aria-labelledby='options-menu'
-          >
-            <div className='flex w-full justify-between items-center'>
-              <h2>Filter</h2>
-              <Button
-                variant={ButtonVariant.SECONDARY}
-                onClick={() => {
-                  setOpen(false);
-                }}
-              >
-                Done
-              </Button>
-            </div>
-            <div className='py-2'>
-              <HeaderDateRangeSelect />
-            </div>
-            <div className='py-2'>
-              <HeaderSamplingStrategySelect />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
 const Header = () => {
   const loggedIn = AccountService.isLoggedIn();
-  let username = null;
+  let username: string | null | undefined = null;
   if (loggedIn) {
     username = AccountService.getUsername();
   }
@@ -96,6 +46,139 @@ const Header = () => {
     `${
       path && location.pathname === path ? 'text-gray-800' : 'text-gray-400 hover:text-gray-800'
     } px-3 mr-4 rounded-md text-sm font-medium`;
+
+  const getDropdownButtonClasses = (path?: string): string =>
+    `${
+      path && location.pathname === path ? 'text-gray-800' : 'text-gray-400 hover:text-gray-800'
+    } mr-4 rounded-md text-lg font-medium`;
+
+  const FilterDropdown = () => {
+    const [filterOpen, setFilterOpen] = useState(false);
+    const [infoOpen, setInfoOpen] = useState(false);
+    return (
+      <div className="flex ">
+        <div id='filter-dropdown' className='relative inline-block text-left xl:hidden'>
+          {' '}
+          <div>
+            <button
+              type='button'
+              className='border border-gray-300 bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center w-full rounded-md  px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500'
+              id='options-menu'
+              onClick={() => {
+                setFilterOpen(!filterOpen);
+                setInfoOpen(false);
+              }}
+            >
+              <div className={filterOpen ? 'fill-current animate-pulse bg-red' : ''}>
+                <FaFilter />
+              </div>
+            </button>
+          </div>
+          {filterOpen && (
+            <div className='origin-top-right absolute right-0 mt-4 w-48 rounded-md shadow-xl bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5'>
+              <div
+                className='py-2 px-4 flex flex-col items-start'
+                role='menu'
+                aria-orientation='vertical'
+                aria-labelledby='options-menu'
+              >
+                <div className='flex w-full justify-between items-center'>
+                  <h2>Filter</h2>
+                  <Button
+                    variant={ButtonVariant.SECONDARY}
+                    onClick={() => {
+                      setFilterOpen(false);
+                    }}
+                  >
+                    Done
+                  </Button>
+                </div>
+                <div className='py-2'>
+                  <HeaderDateRangeSelect />
+                </div>
+                <div className='py-2'>
+                  <HeaderSamplingStrategySelect />
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+        <div id='info-dropdown' className='relative text-left mx-3 lg:hidden'>
+          {' '}
+          <div>
+            <button
+              type='button'
+              className='border border-gray-300 bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center w-full rounded-md  px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500'
+              id='options-menu'
+              onClick={() => {
+                setInfoOpen(!infoOpen);
+                setFilterOpen(false);
+              }}
+            >
+              <div className={infoOpen ? 'fill-current animate-pulse bg-red' : ''}>
+                <BsFillInfoCircleFill />
+              </div>
+            </button>
+          </div>
+          {infoOpen && (
+            <div className='origin-top-right absolute right-0 mt-4 w-48 rounded-md shadow-xl bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5'>
+              <div
+                className='py-2 px-4 flex flex-col items-start'
+                role='menu'
+                aria-orientation='vertical'
+                aria-labelledby='options-menu'
+              >
+                <div className='flex w-full justify-between items-center mb-2'>
+                  <h2>Links</h2>
+                  <Button
+                    variant={ButtonVariant.SECONDARY}
+                    onClick={() => {
+                      setInfoOpen(false);
+                    }}
+                  >
+                    Done
+                  </Button>
+                </div>
+                <a className={`${getDropdownButtonClasses('/acknowledgements')} `} href='/acknowledgements'>
+                  Acknowledgements
+                </a>
+                <a className={getDropdownButtonClasses('/about')} href='/about'>
+                  About
+                </a>
+                {username === null ? (
+                  <a className={getDropdownButtonClasses('/login')} href='/login'>
+                    Login
+                  </a>
+                ) : (
+                  <a
+                    className={getDropdownButtonClasses()}
+                    href='/login?left'
+                    onClick={() => {
+                      AccountService.logout();
+                    }}
+                  >
+                    Logout {username}
+                  </a>
+                )}
+                <a
+                  className={getDropdownButtonClasses('')}
+                  href='https://github.com/cevo-public/cov-spectrum-website'
+                  rel='noopener noreferrer'
+                  target='_blank'
+                >
+                  Github
+                  {/* <AiOutlineGithub
+                    className='hidden md:block fill-current hover:text-gray-500 rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8'
+                    size={'1.5em'}
+                  /> */}
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   return (
     <>
@@ -115,21 +198,19 @@ const Header = () => {
                 </div>
                 <div className='flex items-center z-20 mt-2 md:mt-0'>
                   <HeaderCountrySelect />
-                  <div className='lg:hidden'>
                     <FilterDropdown />
-                  </div>
-                  <div id='date-range-wrapper' className='hidden lg:block'>
+                  <div id='date-range-wrapper' className='hidden xl:block'>
                     <HeaderDateRangeSelect />
                   </div>
-                  <div className='hidden lg:block'>
+                  <div className='hidden xl:block'>
                     <HeaderSamplingStrategySelect />
                   </div>
                 </div>
               </div>
-              <div id='right-nav-buttons' className='hidden md:block items-center justify-center'>
+              <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>
                 <div className='ml-1 flex items-center'>
                   <a
-                    className={`${getButtonClasses('/acknowledgements')} hidden lg:block`}
+                    className={`${getButtonClasses('/acknowledgements')}`}
                     href='/acknowledgements'
                   >
                     Acknowledgements
