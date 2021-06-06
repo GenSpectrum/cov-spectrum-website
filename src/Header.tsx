@@ -173,10 +173,6 @@ const Header = () => {
                   target='_blank'
                 >
                   Github
-                  {/* <AiOutlineGithub
-                    className='hidden md:block fill-current hover:text-gray-500 rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8'
-                    size={'1.5em'}
-                  /> */}
                 </a>
               </div>
             </div>
