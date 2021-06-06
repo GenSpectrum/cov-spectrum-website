@@ -18,7 +18,7 @@ export const PlaceSelect = ({ id, selected, onSelect, onMenuToggle }: Props) => 
     let isSubscribed = true;
     getPlaces().then(places => {
       if (isSubscribed) {
-        places.push("World");
+        places.push('World');
         setPlaces(places);
       }
     });
@@ -30,7 +30,7 @@ export const PlaceSelect = ({ id, selected, onSelect, onMenuToggle }: Props) => 
   return (
     <>
       <Typeahead
-        id={id ? id : "typeahead"}
+        id={id ? id : 'typeahead'}
         selected={selected ? [selected] : []}
         placeholder='Select country/region'
         onChange={selected => onSelect(selected.length === 1 ? selected[0] : undefined)}

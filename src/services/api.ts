@@ -201,7 +201,7 @@ export async function getNewSamples(
       const newParam = selector[k]!.toString();
       if (k === 'country' && isRegion(newParam)) {
         params.set('region', newParam);
-      } else if (!isWorld(newParam)){
+      } else if (!isWorld(newParam)) {
         params.set(k, newParam);
       }
     }
@@ -382,8 +382,8 @@ export const getInterestingVariants = (
   let endpoint = `/computed/find-interesting-variants?`;
   if (isRegion(country)) {
     endpoint += `region=${country}`;
-  } else if (isWorld(country)){
-    endpoint += `country=Switzerland`
+  } else if (isWorld(country)) {
+    endpoint += `country=Switzerland`;
   } else {
     endpoint += `country=${country}`;
   }

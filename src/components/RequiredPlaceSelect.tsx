@@ -14,7 +14,7 @@ export const RequiredPlaceSelect = ({ id, selected, onSelect }: Props) => {
 
   return (
     <PlaceSelect
-      id={id ? id : "place-select"}
+      id={id ? id : 'place-select'}
       selected={menuVisible ? visuallySelected : selected}
       onSelect={place => {
         setVisuallySelected(place);
