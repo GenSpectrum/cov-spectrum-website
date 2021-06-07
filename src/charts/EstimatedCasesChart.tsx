@@ -38,9 +38,11 @@ export const EstimatedCasesChart = React.memo(
     const {
       plotData,
       ticks,
+      yMax,
     }: {
       plotData: PlotEntry[];
       ticks: number[];
+      yMax: number;
     } = useMemo(() => {
       // Only show the data after the variant was first identified
       const sortedData = [...data].sort((a, b) => (a.date.dayjs.isAfter(b.date.dayjs) ? 1 : -1));
@@ -96,7 +98,14 @@ export const EstimatedCasesChart = React.memo(
           date: d.date.dayjs.toDate(),
         }))
       );
-      return { plotData, ticks };
+
+      // To avoid that big confidence intervals render the plot unreadable
+      const yMax = Math.min(
+        Math.max(...plotData.map(d => d.estimatedCases * 3)),
+        Math.max(...plotData.map(d => d.estimatedCasesCI[1]))
+      );
+
+      return { plotData, ticks, yMax };
     }, [data]);
 
     const setDefaultActive = (plotData: PlotEntry[]) => {
@@ -139,7 +148,7 @@ export const EstimatedCasesChart = React.memo(
                   ]}
                   ticks={ticks}
                 />
-                <YAxis />
+                <YAxis domain={[0, yMax]} allowDataOverflow={true} scale='linear' />
                 <Tooltip
                   active={false}
                   content={e => {
