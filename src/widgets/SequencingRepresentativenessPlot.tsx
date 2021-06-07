@@ -77,13 +77,19 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
     if (selector.country !== 'Switzerland') {
       return;
     }
-    const caseCountsPromise = getCaseCounts(selector).then(counts =>
+    let isSubscribed = true;
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const caseCountsPromise = getCaseCounts(selector, signal).then(counts =>
       prepareCountsData(counts, selectedAttributes)
     );
-    const sequenceCountsPromise = getSequenceCounts(selector).then(counts =>
+    const sequenceCountsPromise = getSequenceCounts(selector, signal).then(counts =>
       prepareCountsData(counts, selectedAttributes)
     );
     Promise.all([caseCountsPromise, sequenceCountsPromise]).then(([caseCounts, sequenceCounts]) => {
+      if (!isSubscribed) {
+        return;
+      }
       const _data: PlotEntry[] = [];
       for (let [key, cases] of caseCounts) {
         const sequenced = sequenceCounts.get(key) ?? 0;
@@ -97,6 +103,10 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
       }
       setData(_data);
     });
+    return () => {
+      isSubscribed = false;
+      controller.abort();
+    };
   }, [selector, selectedAttributes]);
 
   if (selector.country !== 'Switzerland') {
@@ -152,9 +162,9 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
                 <ChartWrapper className='-mr-4 -ml-1'>
                   <ResponsiveContainer>
                     <BarChart data={data} layout='vertical' margin={{ left: 250, right: 50 }}>
-                      <XAxis type='number' />
+                      <XAxis type='number' tickFormatter={tick => `${tick}%`} />
                       <YAxis interval={0} dataKey='key' type='category' tick={YAxisLeftTick} />
-                      <Bar dataKey='proportion' fill='#8884d8' isAnimationActive={false}>
+                      <Bar dataKey='proportion' isAnimationActive={false}>
                         {data.map((entry: PlotEntry, index: number) => (
                           <Cell
                             fill={entry.key === active?.key ? colors.active : colors.inactive}

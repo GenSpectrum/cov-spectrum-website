@@ -29,7 +29,13 @@ export const MetadataAvailabilityPlot = ({ selector }: Props) => {
   const [active, setActive] = useState<undefined | PlotEntry>(undefined);
 
   useEffect(() => {
-    getSequenceCounts(selector).then(counts => {
+    let isSubscribed = true;
+    const controller = new AbortController();
+    const signal = controller.signal;
+    getSequenceCounts(selector, signal).then(counts => {
+      if (!isSubscribed) {
+        return;
+      }
       let total = 0;
       const knownOfAttribute: Map<Attribute, number> = new Map(attributes.map(({ key }) => [key, 0]));
       for (let countEntry of counts) {
@@ -48,6 +54,10 @@ export const MetadataAvailabilityPlot = ({ selector }: Props) => {
       }));
       setData(_data);
     });
+    return () => {
+      isSubscribed = false;
+      controller.abort();
+    };
   }, [selector, setData]);
 
   if (!data) {
@@ -60,9 +70,9 @@ export const MetadataAvailabilityPlot = ({ selector }: Props) => {
         <ChartWrapper className='-mr-4 -ml-1'>
           <ResponsiveContainer>
             <BarChart layout='vertical' data={data} margin={{ left: 60, right: 30 }}>
-              <XAxis type='number' domain={[0, 100]} />
+              <XAxis type='number' domain={[0, 100]} tickFormatter={tick => `${tick}%`} />
               <YAxis interval={0} dataKey='attributeLabel' type='category' />
-              <Bar dataKey='proportion' fill='#8884d8' isAnimationActive={false}>
+              <Bar dataKey='proportion' isAnimationActive={false}>
                 {data.map((entry: PlotEntry, index: number) => (
                   <Cell
                     fill={entry.attributeLabel === active?.attributeLabel ? colors.active : colors.inactive}
