@@ -7,7 +7,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import { getSequenceCounts } from '../services/api';
 import { Attribute, attributes } from './SequencingRepresentativenessPlot';
-import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
+import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../charts/common';
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import Metrics, { MetricsSpacing, MetricsWrapper } from '../charts/Metrics';
 import { kFormat } from '../helpers/number';
@@ -66,6 +66,9 @@ export const MetadataAvailabilityPlot = ({ selector }: Props) => {
 
   return (
     <Wrapper>
+      <TitleWrapper id='graph_title'>
+        Proportion of sequences for which we have metadata information
+      </TitleWrapper>
       <ChartAndMetricsWrapper>
         <ChartWrapper className='-mr-4 -ml-1'>
           <ResponsiveContainer>
