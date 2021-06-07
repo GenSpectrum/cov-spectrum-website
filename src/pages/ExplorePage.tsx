@@ -9,15 +9,19 @@ import { NewVariantTable } from '../components/NewVariantTable';
 import { VariantSelector } from '../helpers/sample-selector';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
-import { isRegion, SamplingStrategy } from '../services/api';
+import { DateRange, isRegion, SamplingStrategy } from '../services/api';
 import { Country } from '../services/api-types';
 import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
 import { AccountService } from '../services/AccountService';
 import { VercelSponsorshipLogo } from '../components/VercelSponsorshipLogo';
+import { createLocation } from 'history';
+import { generatePath } from 'react-router';
+import { ShowMoreButton } from '../helpers/ui';
 
 interface Props {
   country: Country;
   samplingStrategy: SamplingStrategy;
+  dateRange: DateRange;
   onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
   wholeSampleSetState: AsyncState<SampleSetWithSelector>;
@@ -34,11 +38,15 @@ const Footer = styled.footer`
 export const ExplorePage = ({
   country,
   samplingStrategy,
+  dateRange,
   onVariantSelect,
   selection,
   wholeSampleSetState,
   sequencingIntensityEntrySet,
 }: Props) => {
+  const toSequencingCoverage = createLocation(
+    generatePath(`/explore/${country}/${samplingStrategy}/${dateRange}/sequencing-coverage`)
+  );
   return (
     <>
       <SequencingIntensityPlotWidget.ShareableComponent
@@ -46,6 +54,7 @@ export const ExplorePage = ({
         sequencingIntensityEntrySet={sequencingIntensityEntrySet}
         height={300}
         widgetLayout={NamedSection}
+        toolbarChildren={<ShowMoreButton to={toSequencingCoverage} />}
       />
       <NamedSection title='Known variants'>
         <KnownVariantsList

@@ -1,4 +1,5 @@
 import * as zod from 'zod';
+import { LiteralSamplingStrategySchema } from './api';
 
 // Small reusable objects that aren't explicitly separate in the API doc
 
@@ -183,6 +184,24 @@ export const DataStatusSchema = zod.object({
   lastUpdateTimestamp: zod.string(),
 });
 
+export const CaseCountEntrySchema = zod.object({
+  division: zod.string().nullable(),
+  ageGroup: zod.string().nullable(),
+  sex: zod.string().nullable(),
+  hospitalized: zod.boolean().nullable(),
+  deceased: zod.boolean().nullable(),
+  count: zod.number(),
+});
+
+export const SequenceCountEntrySchema = CaseCountEntrySchema;
+
+export const SequencingRepresentativenessSelectorSchema = zod.object({
+  country: CountrySchema.optional(),
+  dateFrom: DateStringSchema.optional(),
+  dateTo: DateStringSchema.optional(),
+  samplingStrategy: LiteralSamplingStrategySchema,
+});
+
 // TypeScript types from schemas
 export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
 export type CountAndProportionWithCI = zod.infer<typeof CountAndProportionWithCISchema>;
@@ -200,5 +219,10 @@ export type SequencingIntensityEntry = zod.infer<typeof SequencingIntensityEntry
 export type PangolinLineageInformation = zod.infer<typeof PangolinLineageInformationSchema>;
 export type Article = zod.infer<typeof ArticleSchema>;
 export type DataStatus = zod.infer<typeof DataStatusSchema>;
+export type CaseCountEntry = zod.infer<typeof CaseCountEntrySchema>;
+export type SequenceCountEntry = zod.infer<typeof SequenceCountEntrySchema>;
+export type SequencingRepresentativenessSelector = zod.infer<
+  typeof SequencingRepresentativenessSelectorSchema
+>;
 
 export type Place = Country | Region;

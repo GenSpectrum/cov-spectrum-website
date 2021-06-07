@@ -1,5 +1,7 @@
 import React from 'react';
 import { Dropdown } from 'react-bootstrap';
+import { useHistory } from 'react-router-dom';
+import { Location } from 'history';
 
 export enum AlertVariant {
   DANGER = 'danger',
@@ -104,5 +106,20 @@ export const DropdownButton = ({ onToggle, className, children, ...restProps }: 
       </Dropdown.Toggle>
       <Dropdown.Menu>{children}</Dropdown.Menu>
     </Dropdown>
+  );
+};
+
+export const ShowMoreButton = ({ to }: { to: Location }) => {
+  const history = useHistory();
+  return (
+    <Button
+      className='mt-1 ml-2'
+      variant={ButtonVariant.PRIMARY}
+      onClick={() => {
+        history.push(to);
+      }}
+    >
+      Show more
+    </Button>
   );
 };

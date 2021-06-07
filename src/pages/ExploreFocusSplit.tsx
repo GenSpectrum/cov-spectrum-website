@@ -30,6 +30,7 @@ import { Country } from '../services/api-types';
 import dayjs from 'dayjs';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 import { Alert, AlertVariant } from '../helpers/ui';
+import { DeepExplorePage } from './DeepExplorePage';
 
 // a promise which is never resolved or rejected
 const waitForever = new Promise<never>(() => {});
@@ -171,23 +172,35 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   }
 
   let explorePage: React.ReactNode;
+  let deepExplorePage: React.ReactNode;
   if (
     sequencingIntensityEntrySetState.status === 'initial' ||
     sequencingIntensityEntrySetState.status === 'pending'
   ) {
     explorePage = <Loader />;
+    deepExplorePage = <Loader />;
   } else if (sequencingIntensityEntrySetState.status === 'rejected') {
     explorePage = <Alert variant={AlertVariant.DANGER}>Failed to load data</Alert>;
+    deepExplorePage = <Alert variant={AlertVariant.DANGER}>Failed to load data</Alert>;
   } else {
     explorePage = (
       <ExplorePage
         country={country}
         samplingStrategy={samplingStrategy}
+        dateRange={dateRange}
         onVariantSelect={variantSelector =>
           history.push(getFocusPageLink({ variantSelector, country, samplingStrategy, dateRange }))
         }
         selection={variantSelector}
         wholeSampleSetState={wholeSampleSetState}
+        sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
+      />
+    );
+    deepExplorePage = (
+      <DeepExplorePage
+        country={country}
+        dateRange={dateRange}
+        samplingStrategy={samplingStrategy}
         sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
       />
     );
@@ -230,6 +243,9 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
         </Route>
         <Route path={`${path}/variants/:variantSelector`}>
           <RawFullContentWrapper>{deepFocusContent}</RawFullContentWrapper>
+        </Route>
+        <Route path={`${path}`}>
+          <RawFullContentWrapper>{deepExplorePage}</RawFullContentWrapper>
         </Route>
       </Switch>
     </>
