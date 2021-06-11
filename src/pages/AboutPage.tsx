@@ -92,11 +92,11 @@ export const AboutPage = () => {
           or as a pangolin lineage that starts with "B.1.".
         </p>
         <p>
-          In (2), we show a preview of 12 known variants. Currently, the first 8 are the WHO variants of
-          concerns and are fixed for all countries. The remaining 4 are the variants with the most sequenced
-          samples in the past 3 months. The proportion number in the preview plots (3) is the prevalence of
-          the variant in the most recent 14 days for which sequencing data are available in the selected
-          country.
+          In (2), we show a preview of 12 known variants for the past three months with sequencing data.
+          Currently, the first 8 are the WHO variants of concerns and are fixed for all countries. The
+          remaining 4 are the variants with the most sequenced samples in the past 3 months. The proportion
+          number in the preview plots (3) is the prevalence of the variant in the most recent 14 days for
+          which sequencing data are available in the selected country.
         </p>
       </Component>
 
