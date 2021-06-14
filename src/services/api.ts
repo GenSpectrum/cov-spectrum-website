@@ -26,6 +26,8 @@ import {
   CaseCountEntrySchema,
   SequenceCountEntry,
   SequenceCountEntrySchema,
+  PangolinLineageAlias,
+  PangolinLineageAliasSchema,
 } from './api-types';
 import dayjs from 'dayjs';
 import {
@@ -344,6 +346,15 @@ export async function getInformationOfPangolinLineage(
     throw new Error('server responded with non-200 status code');
   }
   return PangolinLineageInformationSchema.parse(await res.json());
+}
+
+export async function getPangolinLineageAliases(signal?: AbortSignal): Promise<PangolinLineageAlias[]> {
+  const url = '/resource/pangolin-lineage-alias';
+  const res = await get(url, signal);
+  if (!res.ok) {
+    throw new Error('server responded with non-200 status code');
+  }
+  return zod.array(PangolinLineageAliasSchema).parse(await res.json());
 }
 
 export const getSequencingIntensity = (

@@ -169,6 +169,11 @@ export const PangolinLineageInformationSchema = zod.object({
   ),
 });
 
+export const PangolinLineageAliasSchema = zod.object({
+  alias: zod.string(),
+  fullName: zod.string(),
+});
+
 export const ArticleSchema = zod.object({
   doi: zod.string(),
   title: zod.string(),
@@ -217,6 +222,7 @@ export type InterestingVariantResult = zod.infer<typeof InterestingVariantResult
 export type LoginResponse = zod.infer<typeof LoginResponseSchema>;
 export type SequencingIntensityEntry = zod.infer<typeof SequencingIntensityEntrySchema>;
 export type PangolinLineageInformation = zod.infer<typeof PangolinLineageInformationSchema>;
+export type PangolinLineageAlias = zod.infer<typeof PangolinLineageAliasSchema>;
 export type Article = zod.infer<typeof ArticleSchema>;
 export type DataStatus = zod.infer<typeof DataStatusSchema>;
 export type CaseCountEntry = zod.infer<typeof CaseCountEntrySchema>;
