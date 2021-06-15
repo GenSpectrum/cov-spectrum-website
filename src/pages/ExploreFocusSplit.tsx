@@ -171,6 +171,9 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     return null;
   }
 
+  const onVariantSelect = (variantSelector: VariantSelector) =>
+    history.push(getFocusPageLink({ variantSelector, country, samplingStrategy, dateRange }));
+
   let explorePage: React.ReactNode;
   let deepExplorePage: React.ReactNode;
   if (
@@ -188,9 +191,7 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
         country={country}
         samplingStrategy={samplingStrategy}
         dateRange={dateRange}
-        onVariantSelect={variantSelector =>
-          history.push(getFocusPageLink({ variantSelector, country, samplingStrategy, dateRange }))
-        }
+        onVariantSelect={onVariantSelect}
         selection={variantSelector}
         wholeSampleSetState={wholeSampleSetState}
         sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
@@ -284,6 +285,7 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
         variantInternationalSampleSetState={variantInternationalSampleSetState}
         wholeInternationalSampleSetState={wholeInternationalSampleSetState}
         sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
+        onVariantSelect={onVariantSelect}
       />
     ),
     variantSelector && (

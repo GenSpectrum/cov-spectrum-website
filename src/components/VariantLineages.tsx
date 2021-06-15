@@ -3,6 +3,7 @@ import { Country, Variant } from '../services/api-types';
 import { DateRange, dateRangeToDates, getPangolinLineages, SamplingStrategy } from '../services/api';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
+import { VariantSelector } from '../helpers/sample-selector';
 
 export interface Props {
   country: Country;
@@ -10,6 +11,7 @@ export interface Props {
   variant: Variant;
   samplingStrategy: SamplingStrategy;
   dateRange: DateRange;
+  onVariantSelect: (selection: VariantSelector) => void;
 }
 
 const LineageList = styled.ul`
@@ -28,6 +30,7 @@ export const VariantLineages = ({
   variant,
   samplingStrategy,
   dateRange,
+  onVariantSelect,
 }: Props) => {
   // TODO This component is fetching its own data because the pangolinLineages are currently not in variantSampleSet
   //   for two reasons:
@@ -72,7 +75,15 @@ export const VariantLineages = ({
             const label = pangolinLineage || 'Unknown';
             return (
               <LineageEntry key={label}>
-                {label} ({(proportion * 100).toFixed(2)}%)
+                <button
+                  className='underline outline-none'
+                  onClick={() =>
+                    onVariantSelect({ variant: { name: label, mutations: [] }, matchPercentage: 1 })
+                  }
+                >
+                  {label}
+                </button>{' '}
+                ({(proportion * 100).toFixed(2)}%)
               </LineageEntry>
             );
           })}

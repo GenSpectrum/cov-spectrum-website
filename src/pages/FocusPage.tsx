@@ -30,6 +30,7 @@ import { HospitalizationDeathPlotWidget } from '../widgets/HospitalizationDeathP
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantDivisionDistributionTableWidget } from '../widgets/VariantDivisionDistributionTable';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
+import { VariantSelector } from '../helpers/sample-selector';
 
 interface Props {
   country: Country;
@@ -42,6 +43,7 @@ interface Props {
   variantInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
   wholeInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
   sequencingIntensityEntrySet: SequencingIntensityEntrySetWithSelector;
+  onVariantSelect: (selection: VariantSelector) => void;
 }
 
 const deepFocusPaths = {
@@ -57,6 +59,7 @@ export const FocusPage = ({
   variantInternationalSampleSetState,
   wholeInternationalSampleSetState,
   sequencingIntensityEntrySet,
+  onVariantSelect,
   ...forwardedProps
 }: Props) => {
   const { country, matchPercentage, variant, samplingStrategy, dateRange } = forwardedProps;
@@ -154,7 +157,7 @@ export const FocusPage = ({
 
       {(!variant.name || variant.name.endsWith('*')) && (
         <div className='m-4'>
-          <VariantLineages {...forwardedProps} />{' '}
+          <VariantLineages onVariantSelect={onVariantSelect} {...forwardedProps} />{' '}
         </div>
       )}
       <PackedGrid maxColumns={2}>
