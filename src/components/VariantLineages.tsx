@@ -75,14 +75,21 @@ export const VariantLineages = ({
             const label = pangolinLineage || 'Unknown';
             return (
               <LineageEntry key={label}>
-                <button
-                  className='underline outline-none'
-                  onClick={() =>
-                    onVariantSelect({ variant: { name: label, mutations: [] }, matchPercentage: 1 })
-                  }
-                >
-                  {label}
-                </button>{' '}
+                {pangolinLineage ? (
+                  <button
+                    className='underline outline-none'
+                    onClick={() =>
+                      onVariantSelect({
+                        variant: { name: pangolinLineage, mutations: [] },
+                        matchPercentage: 1,
+                      })
+                    }
+                  >
+                    {pangolinLineage}
+                  </button>
+                ) : (
+                  'Unknown'
+                )}{' '}
                 ({(proportion * 100).toFixed(2)}%)
               </LineageEntry>
             );
