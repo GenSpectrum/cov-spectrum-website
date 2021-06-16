@@ -46,6 +46,14 @@ export const AboutPage = () => {
         </ExternalLink>{' '}
         or send an email to <EmailLink email='chaoran.chen@bsse.ethz.ch' />.
       </p>
+      <p>If you would like to reference CoV-Spectrum in scientific works, please cite our pre-print:</p>
+      <div className='p-7 bg-gray-100'>
+        Chen, C., Nadeau, S., Yared, M., Voinov, P., & Stadler, T.:{' '}
+        <ExternalLink url='https://arxiv.org/abs/2106.08106'>
+          CoV-Spectrum: Analysis of globally shared SARS-CoV-2 data to Identify and Characterize New Variants
+        </ExternalLink>{' '}
+        (2021); arXiv: 2106.08106.
+      </div>
       <h1>FAQ</h1>
       <Question title='What is a variant?'>
         We distinguish between two ways to specify a variant. A variant can be defined as a clade on the
