@@ -57,14 +57,14 @@ function selectPreviewVariants(
     },
     {
       variant: {
-        name: 'B.1.351',
+        name: 'B.1.351*',
         mutations: [],
       },
       matchPercentage: 1,
     },
     {
       variant: {
-        name: 'P.1',
+        name: 'P.1*',
         mutations: [],
       },
       matchPercentage: 1,
@@ -72,13 +72,6 @@ function selectPreviewVariants(
     {
       variant: {
         name: 'B.1.617*',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.617',
         mutations: [],
       },
       matchPercentage: 1,
@@ -99,7 +92,7 @@ function selectPreviewVariants(
     },
     {
       variant: {
-        name: 'B.1.617.3',
+        name: 'AY.1',
         mutations: [],
       },
       matchPercentage: 1,
