@@ -3,7 +3,6 @@ import {
   SequencingIntensityEntrySetSelectorSchema,
   SequencingIntensityEntrySetWithSelector,
 } from '../helpers/sequencing-intensity-entry-set';
-import DownloadWrapper from '../charts/DownloadWrapper';
 import { EstimatedCasesChart, EstimatedCasesTimeEntry } from '../charts/EstimatedCasesChart';
 import { globalDateCache, UnifiedDay } from '../helpers/date-cache';
 import { Widget } from './Widget';
@@ -38,11 +37,7 @@ export const EstimatedCasesPlot = ({ variantSampleSet, sequencingIntensityEntryS
     }
     entry.variantCount = count;
   }
-  return (
-    <DownloadWrapper name='EstimatedCasesPlot'>
-      <EstimatedCasesChart data={new Array(...data.values())} />
-    </DownloadWrapper>
-  );
+  return <EstimatedCasesChart data={new Array(...data.values())} />;
 };
 
 export const EstimatedCasesPlotWidget = new Widget(

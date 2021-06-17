@@ -6,6 +6,7 @@ import Metric, { MetricsSpacing, MetricsWrapper } from './Metrics';
 import { getTicks } from '../helpers/ticks';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import dayjs from 'dayjs';
+import DownloadWrapper from './DownloadWrapper';
 
 export type EstimatedCasesTimeEntry = {
   date: UnifiedDay;
@@ -119,89 +120,100 @@ export const EstimatedCasesChart = React.memo(
       setDefaultActive(plotData);
     }, [plotData]);
 
+    const csvData = useMemo(() => {
+      return plotData.map(({ date, estimatedCases, estimatedCasesCI }) => ({
+        date: dayjs(date).format('YYYY-MM-DD'),
+        estimatedCases: estimatedCases.toFixed(0),
+        estimatedCasesCILower: estimatedCasesCI[0].toFixed(0),
+        estimatedCasesCIUpper: estimatedCasesCI[1].toFixed(0),
+      }));
+    }, [plotData]);
+
     return (
-      <Wrapper>
-        <TitleWrapper>
-          Estimated absolute number of cases
-          {active !== undefined && (
-            <>
-              {' '}
-              on <b>{formatDate(active.date.getTime())}</b>
-            </>
-          )}
-        </TitleWrapper>
-        <ChartAndMetricsWrapper>
-          <ChartWrapper>
-            <ResponsiveContainer>
-              <ComposedChart
-                data={plotData}
-                margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
-              >
-                <XAxis
-                  dataKey='date'
-                  scale='time'
-                  type='number'
-                  tickFormatter={formatDate}
-                  domain={[
-                    (dataMin: any) => dataMin,
-                    () => data[data.length - 1].date.dayjs.toDate().getTime(),
-                  ]}
-                  ticks={ticks}
-                />
-                <YAxis domain={[0, yMax]} allowDataOverflow={true} scale='linear' />
-                <Tooltip
-                  active={false}
-                  content={e => {
-                    if (e.active && e.payload !== undefined) {
-                      const newActive = e.payload[0].payload;
-                      if (active === undefined || active.date.getTime() !== newActive.date.getTime()) {
-                        setActive(newActive);
+      <DownloadWrapper name='EstimatedCasesPlot' csvData={csvData}>
+        <Wrapper>
+          <TitleWrapper>
+            Estimated absolute number of cases
+            {active !== undefined && (
+              <>
+                {' '}
+                on <b>{formatDate(active.date.getTime())}</b>
+              </>
+            )}
+          </TitleWrapper>
+          <ChartAndMetricsWrapper>
+            <ChartWrapper>
+              <ResponsiveContainer>
+                <ComposedChart
+                  data={plotData}
+                  margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
+                >
+                  <XAxis
+                    dataKey='date'
+                    scale='time'
+                    type='number'
+                    tickFormatter={formatDate}
+                    domain={[
+                      (dataMin: any) => dataMin,
+                      () => data[data.length - 1].date.dayjs.toDate().getTime(),
+                    ]}
+                    ticks={ticks}
+                  />
+                  <YAxis domain={[0, yMax]} allowDataOverflow={true} scale='linear' />
+                  <Tooltip
+                    active={false}
+                    content={e => {
+                      if (e.active && e.payload !== undefined) {
+                        const newActive = e.payload[0].payload;
+                        if (active === undefined || active.date.getTime() !== newActive.date.getTime()) {
+                          setActive(newActive);
+                        }
                       }
-                    }
-                    return <></>;
-                  }}
-                />
-                <Area
-                  type='monotone'
-                  dataKey='estimatedCasesCI'
-                  fill={colors.activeSecondary}
-                  stroke='transparent'
-                  isAnimationActive={false}
-                />
-                <Line
-                  type='monotone'
-                  dataKey='estimatedCases'
-                  stroke={colors.active}
-                  strokeWidth={3}
-                  dot={false}
-                  isAnimationActive={false}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </ChartWrapper>
-          <MetricsWrapper>
-            <MetricsSpacing />
-            <Metric
-              value={active !== undefined ? active.estimatedCases.toFixed(0) : 'NA'}
-              title='Est. cases'
-              color={colors.active}
-              helpText='The estimated proportion of the variant multiplied with the number of reported cases (smoothed with a 7-days sliding window)'
-              percent={false}
-            />
-            <Metric
-              value={
-                active !== undefined
-                  ? active.estimatedCasesCI[0].toFixed(0) + '-' + active.estimatedCasesCI[1].toFixed(0)
-                  : 'NA'
-              }
-              title='Confidence int.'
-              color={colors.secondary}
-              helpText='The 95% confidence interval'
-              percent={false}
-            />
-          </MetricsWrapper>
-        </ChartAndMetricsWrapper>
-      </Wrapper>
+                      return <></>;
+                    }}
+                  />
+                  <Area
+                    type='monotone'
+                    dataKey='estimatedCasesCI'
+                    fill={colors.activeSecondary}
+                    stroke='transparent'
+                    isAnimationActive={false}
+                  />
+                  <Line
+                    type='monotone'
+                    dataKey='estimatedCases'
+                    stroke={colors.active}
+                    strokeWidth={3}
+                    dot={false}
+                    isAnimationActive={false}
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </ChartWrapper>
+            <MetricsWrapper>
+              <MetricsSpacing />
+              <Metric
+                value={active !== undefined ? active.estimatedCases.toFixed(0) : 'NA'}
+                title='Est. cases'
+                color={colors.active}
+                helpText='The estimated proportion of the variant multiplied with the number of reported cases (smoothed with a 7-days sliding window)'
+                percent={false}
+              />
+              <Metric
+                value={
+                  active !== undefined
+                    ? active.estimatedCasesCI[0].toFixed(0) + '-' + active.estimatedCasesCI[1].toFixed(0)
+                    : 'NA'
+                }
+                title='Confidence int.'
+                color={colors.secondary}
+                helpText='The 95% confidence interval'
+                percent={false}
+              />
+            </MetricsWrapper>
+          </ChartAndMetricsWrapper>
+        </Wrapper>
+      </DownloadWrapper>
     );
   }
 );

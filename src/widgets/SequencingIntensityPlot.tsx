@@ -16,6 +16,7 @@ interface Props {
 
 const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[] => {
   const groupedEntries = _(
+    // TODO HACK: To reuse the TimeIntensityChart, the variables are renamed to "proportion" and "quantity".
     entries.map(d => ({
       firstDayInWeek: d.x,
       yearWeek: d.x.split('-')[0] + '-' + d.x.split('-')[1],
@@ -37,12 +38,19 @@ const groupByMonth = (entries: SequencingIntensityEntry[]): TimeIntensityEntry[]
   return groupedEntries;
 };
 
-const processData = (data: SequencingIntensityEntry[]): any => groupByMonth(data);
+const processData = (data: SequencingIntensityEntry[]) => groupByMonth(data);
 
 export const SequencingIntensityPlot = ({ sequencingIntensityEntrySet }: Props) => {
+  const data = processData(sequencingIntensityEntrySet.data);
+  const csvData = data.map(({ month, proportion, quantity }) => ({
+    month,
+    sequenced: proportion,
+    cases: quantity,
+    proportion: (proportion / quantity).toFixed(6),
+  }));
   return (
-    <DownloadWrapper name='SequencingIntensityPlot'>
-      <TimeIntensityChart data={processData(sequencingIntensityEntrySet.data)} onClickHandler={_ => true} />
+    <DownloadWrapper name='SequencingIntensityPlot' csvData={csvData}>
+      <TimeIntensityChart data={data} onClickHandler={_ => true} />
     </DownloadWrapper>
   );
 };
