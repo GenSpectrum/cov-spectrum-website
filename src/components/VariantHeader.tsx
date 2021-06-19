@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Place, Variant } from '../services/api-types';
 import { MutationList } from './MutationList';
+import { PangolinLineageAliasResolverService } from '../services/PangolinLineageAliasResolverService';
 
 export interface Props {
   variant: Variant;
@@ -10,6 +11,23 @@ export interface Props {
 }
 
 export const VariantHeader = ({ variant, titleSuffix, controls, place }: Props) => {
+  const [resolvedFullName, setResolvedFullName] = useState<string | undefined>();
+  useEffect(() => {
+    let isSubscribed = true;
+    if (variant.name === undefined) {
+      setResolvedFullName(undefined);
+      return;
+    }
+    PangolinLineageAliasResolverService.findFullName(variant.name).then(name => {
+      if (isSubscribed) {
+        setResolvedFullName(name);
+      }
+    });
+    return () => {
+      isSubscribed = false;
+    };
+  }, [variant.name]);
+
   return (
     <div className='ml-3'>
       <div className='flex'>
@@ -22,6 +40,7 @@ export const VariantHeader = ({ variant, titleSuffix, controls, place }: Props) 
         </h1>
         <div>{controls}</div>
       </div>
+      {resolvedFullName && <div>Alias for {resolvedFullName}</div>}
       {variant.mutations.length > 0 && (
         <p>
           <b>Mutations:</b> <MutationList mutations={variant.mutations} />

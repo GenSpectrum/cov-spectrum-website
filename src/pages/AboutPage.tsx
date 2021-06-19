@@ -46,6 +46,14 @@ export const AboutPage = () => {
         </ExternalLink>{' '}
         or send an email to <EmailLink email='chaoran.chen@bsse.ethz.ch' />.
       </p>
+      <p>If you would like to reference CoV-Spectrum in scientific works, please cite our pre-print:</p>
+      <div className='p-7 bg-gray-100'>
+        Chen, C., Nadeau, S., Yared, M., Voinov, P., & Stadler, T.:{' '}
+        <ExternalLink url='https://arxiv.org/abs/2106.08106'>
+          CoV-Spectrum: Analysis of globally shared SARS-CoV-2 data to Identify and Characterize New Variants
+        </ExternalLink>{' '}
+        (2021); arXiv: 2106.08106.
+      </div>
       <h1>FAQ</h1>
       <Question title='What is a variant?'>
         We distinguish between two ways to specify a variant. A variant can be defined as a clade on the
@@ -92,11 +100,11 @@ export const AboutPage = () => {
           or as a pangolin lineage that starts with "B.1.".
         </p>
         <p>
-          In (2), we show a preview of 12 known variants. Currently, the first 8 are the WHO variants of
-          concerns and are fixed for all countries. The remaining 4 are the variants with the most sequenced
-          samples in the past 3 months. The proportion number in the preview plots (3) is the prevalence of
-          the variant in the most recent 14 days for which sequencing data are available in the selected
-          country.
+          In (2), we show a preview of 12 known variants for the past three months with sequencing data.
+          Currently, the first 8 are the WHO variants of concerns and are fixed for all countries. The
+          remaining 4 are the variants with the most sequenced samples in the past 3 months. The proportion
+          number in the preview plots (3) is the prevalence of the variant in the most recent 14 days for
+          which sequencing data are available in the selected country.
         </p>
       </Component>
 

@@ -1,7 +1,6 @@
 import { mapValues } from 'lodash';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AsyncState } from 'react-async';
-import { useHistory } from 'react-router-dom';
 import { AsyncVariantInternationalComparisonPlot } from '../components/AsyncVariantInternationalComparisonPlot';
 import { ExportButton } from '../components/CombinedExport/ExportButton';
 import { ExportManager, ExportManagerContext } from '../components/CombinedExport/ExportManager';
@@ -16,7 +15,7 @@ import { VariantMutations } from '../components/VariantMutations';
 import { getFocusPageLink } from '../helpers/explore-url';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
-import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
+import { Alert, AlertVariant, ShowMoreButton } from '../helpers/ui';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { filter, getData } from '../models/wasteWater/loading';
 import { WasteWaterDataset } from '../models/wasteWater/types';
@@ -31,6 +30,7 @@ import { HospitalizationDeathPlotWidget } from '../widgets/HospitalizationDeathP
 import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistributionPlot';
 import { VariantDivisionDistributionTableWidget } from '../widgets/VariantDivisionDistributionTable';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
+import { VariantSelector } from '../helpers/sample-selector';
 
 interface Props {
   country: Country;
@@ -43,6 +43,7 @@ interface Props {
   variantInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
   wholeInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
   sequencingIntensityEntrySet: SequencingIntensityEntrySetWithSelector;
+  onVariantSelect: (selection: VariantSelector) => void;
 }
 
 const deepFocusPaths = {
@@ -58,10 +59,10 @@ export const FocusPage = ({
   variantInternationalSampleSetState,
   wholeInternationalSampleSetState,
   sequencingIntensityEntrySet,
+  onVariantSelect,
   ...forwardedProps
 }: Props) => {
   const { country, matchPercentage, variant, samplingStrategy, dateRange } = forwardedProps;
-  const history = useHistory();
 
   const plotProps = {
     country,
@@ -84,19 +85,9 @@ export const FocusPage = ({
           dateRange,
           deepFocusPath: suffix,
         });
-        return (
-          <Button
-            className='mt-1 ml-2'
-            variant={ButtonVariant.PRIMARY}
-            onClick={() => {
-              history.push(to);
-            }}
-          >
-            Show more
-          </Button>
-        );
+        return <ShowMoreButton to={to} />;
       }),
-    [country, samplingStrategy, dateRange, matchPercentage, variant, history]
+    [country, samplingStrategy, dateRange, matchPercentage, variant]
   );
 
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
@@ -157,6 +148,18 @@ export const FocusPage = ({
   return (
     <div>
       {header}
+      {variant.mutations.length > 0 && (
+        <p style={{ marginBottom: '30px' }}>
+          The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
+          mutations.
+        </p>
+      )}
+
+      {(!variant.name || variant.name.endsWith('*')) && (
+        <div className='m-4'>
+          <VariantLineages onVariantSelect={onVariantSelect} {...forwardedProps} />{' '}
+        </div>
+      )}
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <VariantTimeDistributionPlotWidget.ShareableComponent
@@ -257,18 +260,6 @@ export const FocusPage = ({
           </GridCell>
         )}
       </PackedGrid>
-      {variant.mutations.length > 0 && (
-        <p style={{ marginBottom: '30px' }}>
-          The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
-          mutations.
-        </p>
-      )}
-
-      {(!variant.name || variant.name.endsWith('*')) && (
-        <div className='m-4'>
-          <VariantLineages {...forwardedProps} />{' '}
-        </div>
-      )}
 
       {variant.name && (
         <div className='m-4'>

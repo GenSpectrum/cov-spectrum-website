@@ -11,6 +11,8 @@ import { VariantDivisionDistributionTableWidget } from './VariantDivisionDistrib
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
 import { WasteWaterLocationTimeWidget } from '../models/wasteWater/WasteWaterLocationTimeWidget';
 import { HospitalizationDeathPlotWidget } from './HospitalizationDeathPlot';
+import { SequencingRepresentativenessPlotWidget } from './SequencingRepresentativenessPlot';
+import { MetadataAvailabilityPlotWidget } from './MetadataAvailabilityPlot';
 
 export const allWidgets = [
   VariantAgeDistributionPlotWidget,
@@ -18,6 +20,8 @@ export const allWidgets = [
   VariantTimeDistributionPlotWidget,
   VariantDivisionDistributionTableWidget,
   SequencingIntensityPlotWidget,
+  SequencingRepresentativenessPlotWidget,
+  MetadataAvailabilityPlotWidget,
   Chen2021FitnessWidget,
   WasteWaterTimeWidget,
   WasteWaterHeatMapWidget,
