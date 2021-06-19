@@ -331,7 +331,7 @@ export async function getInformationOfPangolinLineage(
     params.set('region', region);
   } else if (country && isRegion(country)) {
     params.set('region', country);
-  } else if (country) {
+  } else if (country && !isWorld(country)) {
     params.set('country', country);
   }
   if (dateFrom) {
