@@ -26,8 +26,14 @@ export const VariantTimeDistributionPlot = ({ variantSampleSet, wholeSampleSet }
     quantity: count,
   }));
 
+  const csvData = processedData.map(({ yearWeek, percent, quantity }) => ({
+    yearWeek,
+    numberSamples: quantity,
+    proportion: percent ? (percent / 100).toFixed(6) : undefined,
+  }));
+
   return (
-    <DownloadWrapper name='VariantTimeDistributionPlot'>
+    <DownloadWrapper name='VariantTimeDistributionPlot' csvData={csvData}>
       <TimeChart data={processedData} onClickHandler={_ => true} />
     </DownloadWrapper>
   );

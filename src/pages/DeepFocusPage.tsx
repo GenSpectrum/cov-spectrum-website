@@ -1,22 +1,21 @@
 import React from 'react';
 import { AsyncState } from 'react-async';
 import { Button } from 'react-bootstrap';
-import { Route, useRouteMatch, Switch } from 'react-router';
+import { Route, useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
-import styled from 'styled-components';
 import { InternationalComparison } from '../components/InternationalComparison';
 import Loader from '../components/Loader';
 import { MinimalWidgetLayout } from '../components/MinimalWidgetLayout';
 import { SampleTable } from '../components/SampleTable';
 import { VariantHeader } from '../components/VariantHeader';
 import { SampleSetWithSelector } from '../helpers/sample-set';
-import { scrollableContainerPaddingPx, scrollableContainerStyle } from '../helpers/scrollable-container';
 import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
 import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import { Country, Variant } from '../services/api-types';
 import { HospitalizationDeathDeepFocus } from '../components/HospitalizationDeathDeepFocus';
 import { WasteWaterDeepFocus } from '../models/wasteWater/WasteWaterDeepFocus';
 import { Alert, AlertVariant } from '../helpers/ui';
+import { DeepRoute, makeLayout, makeSwitch } from '../helpers/deep-page';
 
 interface SyncProps {
   country: Country;
@@ -41,25 +40,7 @@ interface LoadedAsyncProps {
 type Props = SyncProps & AsyncProps;
 type LoadedProps = SyncProps & LoadedAsyncProps;
 
-interface DeepFocusRoute {
-  key: string;
-  title: string;
-  content: (props: LoadedProps) => JSX.Element;
-}
-
-const HeaderWrapper = styled.div`
-  padding: ${scrollableContainerPaddingPx}px;
-  border-bottom: 1px solid #dee2e6;
-  background: var(--light);
-`;
-
-const ContentWrapper = styled.div`
-  ${scrollableContainerStyle}
-  height: 100px;
-  flex-grow: 1;
-`;
-
-const routes: DeepFocusRoute[] = [
+const routes: DeepRoute<LoadedProps>[] = [
   {
     key: 'samples',
     title: 'Samples',
@@ -111,27 +92,24 @@ export const DeepFocusPage = ({
 }: Props) => {
   const { path, url } = useRouteMatch();
 
-  const makeLayout = (content: JSX.Element) => (
-    <div className='flex flex-col h-full bg-white'>
-      <HeaderWrapper>
-        <VariantHeader
-          variant={syncProps.variant}
-          place={syncProps.country}
-          controls={
-            <Button className='mt-2' variant='secondary' as={Link} to={url}>
-              Back to overview
-            </Button>
-          }
-          titleSuffix={routes.map(route => (
-            <Route key={route.key} path={`${path}/${route.key}`}>
-              {route.title}
-            </Route>
-          ))}
-        />
-      </HeaderWrapper>
-      <ContentWrapper>{content}</ContentWrapper>
-    </div>
-  );
+  const _makeLayout = (content: JSX.Element) =>
+    makeLayout(
+      <VariantHeader
+        variant={syncProps.variant}
+        place={syncProps.country}
+        controls={
+          <Button className='mt-2' variant='secondary' as={Link} to={url}>
+            Back to overview
+          </Button>
+        }
+        titleSuffix={routes.map(route => (
+          <Route key={route.key} path={`${path}/${route.key}`}>
+            {route.title}
+          </Route>
+        ))}
+      />,
+      content
+    );
 
   if (
     variantInternationalSampleSetState.status === 'initial' ||
@@ -139,14 +117,14 @@ export const DeepFocusPage = ({
     wholeInternationalSampleSetState.status === 'initial' ||
     wholeInternationalSampleSetState.status === 'pending'
   ) {
-    return makeLayout(<Loader />);
+    return _makeLayout(<Loader />);
   }
 
   if (
     variantInternationalSampleSetState.status === 'rejected' ||
     wholeInternationalSampleSetState.status === 'rejected'
   ) {
-    return makeLayout(<Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>);
+    return _makeLayout(<Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>);
   }
 
   const loadedProps = {
@@ -155,13 +133,5 @@ export const DeepFocusPage = ({
     wholeInternationalSampleSet: wholeInternationalSampleSetState.data,
   };
 
-  return makeLayout(
-    <Switch>
-      {routes.map(route => (
-        <Route key={route.key} path={`${path}/${route.key}`}>
-          {route.content(loadedProps)}
-        </Route>
-      ))}
-    </Switch>
-  );
+  return _makeLayout(makeSwitch(routes, loadedProps, path));
 };

@@ -34,10 +34,14 @@ const VariantAgeDistributionPlot = ({ variantSampleSet, wholeSampleSet }: Props)
         percent: proportion === undefined ? undefined : 100 * proportion,
       }));
   }, [variantSampleSet, wholeSampleSet, widthIsSmall]);
-
+  const csvData = processedData.map(({ name, percent, quantity }) => ({
+    ageGroup: name,
+    numberSamples: quantity,
+    proportionWithinAgeGroup: percent ? (percent / 100).toFixed(6) : undefined,
+  }));
   return (
     <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '100%' }}>
-      <DownloadWrapper name='VariantAgeDistributionPlot'>
+      <DownloadWrapper name='VariantAgeDistributionPlot' csvData={csvData}>
         <TypeDistributionChart data={processedData} onClickHandler={_ => true} />
       </DownloadWrapper>
     </div>

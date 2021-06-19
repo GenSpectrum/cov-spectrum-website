@@ -1,12 +1,13 @@
 import { getPangolinLineageIfPure, Integration, IntegrationSelector } from './Integration';
 
 const wikiLinks = new Map([
-  ['B.1.1.7', 'https://en.wikipedia.org/wiki/Lineage_B.1.1.7'],
-  ['B.1.351', 'https://en.wikipedia.org/wiki/Lineage_B.1.351'],
-  ['B.1.526', 'https://en.wikipedia.org/wiki/Lineage_B.1.526'],
-  ['B.1.617', 'https://en.wikipedia.org/wiki/Lineage_B.1.617'],
-  ['P.1', 'https://en.wikipedia.org/wiki/Lineage_P.1'],
-  ['P.3', 'https://en.wikipedia.org/wiki/Lineage_P.3'],
+  ['B.1.1.7', 'https://en.wikipedia.org/wiki/SARS-CoV-2_Alpha_variant'],
+  ['B.1.351', 'https://en.wikipedia.org/wiki/SARS-CoV-2_Beta_variant'],
+  ['B.1.526', 'https://en.wikipedia.org/wiki/SARS-CoV-2_Iota_variant'],
+  ['B.1.617.1', 'https://en.wikipedia.org/wiki/SARS-CoV-2_Kappa_variant'],
+  ['B.1.617.2', 'https://en.wikipedia.org/wiki/SARS-CoV-2_Delta_variant'],
+  ['P.1', 'https://en.wikipedia.org/wiki/SARS-CoV-2_Gamma_variant'],
+  ['P.3', 'https://en.wikipedia.org/wiki/SARS-CoV-2_Theta_variant'],
 ]);
 
 export class WikipediaIntegration implements Integration {

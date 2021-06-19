@@ -8,6 +8,7 @@ import { omit } from 'lodash';
 import { getNewSamples } from '../services/api';
 import Table from 'react-bootstrap/Table';
 import styled from 'styled-components';
+import DownloadWrapper from '../charts/DownloadWrapper';
 
 interface Props {
   variantSampleSet: SampleSetWithSelector;
@@ -47,28 +48,34 @@ const VariantDivisionDistributionTable = ({ variantSampleSet, wholeSampleSet }: 
       });
     return plotData;
   }, [variantSampleSet, wholeSampleSet]);
-
+  const csvData = processedData.map(({ division, prevalence, count }) => ({
+    division,
+    numberSamples: count,
+    proportionWithinDivision: prevalence?.toFixed(6),
+  }));
   return (
-    <Wrapper>
-      <Table striped bordered hover>
-        <thead>
-          <tr>
-            <th>Division</th>
-            <th>Number of sequences</th>
-            <th>Prevalence</th>
-          </tr>
-        </thead>
-        <tbody>
-          {processedData.map(({ division, count, prevalence }) => (
-            <tr key={division}>
-              <td>{division ?? 'Unknown'}</td>
-              <td>{count}</td>
-              <td>{prevalence ? (prevalence * 100).toFixed(2) + '%' : '-'}</td>
+    <DownloadWrapper name='VariantDivisionDistributionTable' csvData={csvData}>
+      <Wrapper>
+        <Table striped bordered hover>
+          <thead>
+            <tr>
+              <th>Division</th>
+              <th>Number of sequences</th>
+              <th>Prevalence</th>
             </tr>
-          ))}
-        </tbody>
-      </Table>
-    </Wrapper>
+          </thead>
+          <tbody>
+            {processedData.map(({ division, count, prevalence }) => (
+              <tr key={division}>
+                <td>{division ?? 'Unknown'}</td>
+                <td>{count}</td>
+                <td>{prevalence ? (prevalence * 100).toFixed(2) + '%' : '-'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </Table>
+      </Wrapper>
+    </DownloadWrapper>
   );
 };
 
