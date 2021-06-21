@@ -115,7 +115,12 @@ export const FocusPage = ({
   }
 
   let wasteWaterSummaryPlot = undefined;
-  if (country === 'Switzerland' && variant.name && WASTE_WATER_AVAILABLE_LINEAGES.includes(variant.name)) {
+  if (
+    country === 'Switzerland' &&
+    variant.name &&
+    WASTE_WATER_AVAILABLE_LINEAGES.includes(variant.name) &&
+    !(variant.name === 'B.1.617.2' && !AccountService.isLoggedIn())
+  ) {
     if (wasteWaterData) {
       wasteWaterSummaryPlot = (
         <GridCell minWidth={600}>
