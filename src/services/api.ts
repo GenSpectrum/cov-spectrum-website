@@ -174,7 +174,13 @@ export const getSamples = (
   if (mutationsString?.length) {
     url += `&mutations=${mutationsString}`;
   }
-  url += getPlaceParamString(country);
+  //HACK - if world then use Europe'
+  const placeUrl = getPlaceParamString(country);
+  if (placeUrl.length > 0) {
+    url += placeUrl;
+  } else {
+    url += '&region=Europe';
+  }
   if (samplingStrategy) {
     url += `&dataType=${samplingStrategy}`;
   }
@@ -481,6 +487,7 @@ const getPlaceParamString = (place: Place | undefined | null) => {
   } else if (place && !isWorld(place)) {
     return `&country=${place}`;
   }
+  return '';
 };
 
 const setPlaceParam = (params: URLSearchParams, place: Place | undefined | null) => {
