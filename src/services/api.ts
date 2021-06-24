@@ -376,7 +376,7 @@ export const getSequencingIntensity = (
     params.set('country', selector.country);
   }
   if (selector.samplingStrategy) {
-    params.set('dataType', selector.samplingStrategy)
+    params.set('dataType', selector.samplingStrategy);
   }
   url = url + params.toString();
   return fetch(url, { headers: getBaseHeaders(), signal })

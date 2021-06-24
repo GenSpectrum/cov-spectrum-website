@@ -6,7 +6,7 @@ import {
 import * as zod from 'zod';
 import { OldSampleSelectorSchema } from '../../helpers/sample-selector';
 import { useEffect, useState } from 'react';
-import { get } from '../../services/api';
+import { get, isRegion, isWorld } from '../../services/api';
 import { dateToString } from './format-value';
 
 export function fillRequestWithDefaults({
@@ -37,7 +37,6 @@ const getData = async (
   signal: AbortSignal
 ): Promise<Chen2021FitnessResponse | undefined> => {
   const urlSearchParams = new URLSearchParams({
-    country: params.country,
     matchPercentage: params.matchPercentage.toString(),
     alpha: params.alpha.toString(),
     generationTime: params.generationTime.toString(),
@@ -47,6 +46,11 @@ const getData = async (
     initialWildtypeCases: params.initialWildtypeCases.toString(),
     initialVariantCases: params.initialVariantCases.toString(),
   });
+  if (isRegion(params.country)) {
+    urlSearchParams.set('region', params.country);
+  } else if (!isWorld(params.country)) {
+    urlSearchParams.set('country', params.country);
+  }
   if (params.mutations?.length) {
     urlSearchParams.set('mutations', params.mutations.join(','));
   }
