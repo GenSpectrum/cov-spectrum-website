@@ -174,11 +174,7 @@ export const getSamples = (
   if (mutationsString?.length) {
     url += `&mutations=${mutationsString}`;
   }
-  if (country && isRegion(country)) {
-    url += `&region=${country}`;
-  } else if (country && !isWorld(country)) {
-    url += `&country=${country}`;
-  }
+  url += getPlaceParamString(country);
   if (samplingStrategy) {
     url += `&dataType=${samplingStrategy}`;
   }
@@ -246,11 +242,7 @@ export const getSampleFastaUrl = ({
   if (mutationsString?.length) {
     url += `&mutations=${mutationsString}`;
   }
-  if (country && isRegion(country)) {
-    url += `&region=${country}`;
-  } else if (country && !isWorld(country)) {
-    url += `&country=${country}`;
-  }
+  url += getPlaceParamString(country);
   if (samplingStrategy) {
     url += `&dataType=${samplingStrategy}`;
   }
@@ -279,11 +271,7 @@ export const getPangolinLineages = (
   signal?: AbortSignal
 ): Promise<PangolinLineageList> => {
   let url = HOST + `/resource/sample2?fields=pangolinLineage`;
-  if (isRegion(country)) {
-    url += `&region=${country}`;
-  } else if (!isWorld(country)) {
-    url += `&country=${country}`;
-  }
+  url += getPlaceParamString(country);
   const literalSamplingStrategy = toLiteralSamplingStrategy(samplingStrategy);
   if (literalSamplingStrategy) {
     url += `&dataType=${literalSamplingStrategy}`;
@@ -491,6 +479,14 @@ export async function getSequenceCounts(
     throw new Error('server responded with non-200 status code');
   }
   return zod.array(SequenceCountEntrySchema).parse(await res.json());
+}
+
+const getPlaceParamString = (place: Place | undefined | null) => {
+  if (place && isRegion(place)) {
+    return `&region=${place}`;
+  } else if (place && !isWorld(place)) {
+    return `&country=${place}`;
+  }
 }
 
 export async function getCaseCounts(
