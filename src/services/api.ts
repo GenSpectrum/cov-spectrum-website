@@ -174,13 +174,8 @@ export const getSamples = (
   if (mutationsString?.length) {
     url += `&mutations=${mutationsString}`;
   }
-  //HACK - if world then use Europe'
-  const placeUrl = getPlaceParamString(country);
-  if (placeUrl.length > 0) {
-    url += placeUrl;
-  } else {
-    url += '&region=Europe';
-  }
+  url += getPlaceParamString(country);
+  console.log('place params are', getPlaceParamString(country));
   if (samplingStrategy) {
     url += `&dataType=${samplingStrategy}`;
   }
