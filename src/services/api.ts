@@ -317,10 +317,8 @@ export async function getInformationOfPangolinLineage(
   const params = new URLSearchParams();
   if (region) {
     params.set('region', region);
-  } else if (country && isRegion(country)) {
-    params.set('region', country);
-  } else if (country && !isWorld(country)) {
-    params.set('country', country);
+  } else {
+    setPlaceParam(params, country);
   }
   if (dateFrom) {
     params.set('dateFrom', dayjs(dateFrom).format('YYYY-MM-DD'));
@@ -358,11 +356,7 @@ export const getSequencingIntensity = (
     });
   }
   const params = new URLSearchParams({});
-  if (isRegion(selector.country)) {
-    params.set('region', selector.country);
-  } else if (!isWorld(selector.country)) {
-    params.set('country', selector.country);
-  }
+  setPlaceParam(params, selector.country);
   if (selector.samplingStrategy) {
     params.set('dataType', selector.samplingStrategy);
   }
@@ -487,7 +481,17 @@ const getPlaceParamString = (place: Place | undefined | null) => {
   } else if (place && !isWorld(place)) {
     return `&country=${place}`;
   }
-}
+};
+
+const setPlaceParam = (params: URLSearchParams, place: Place | undefined | null) => {
+  if (place) {
+    if (isRegion(place)) {
+      params.set('region', place);
+    } else if (!isWorld(place)) {
+      params.set('country', place);
+    }
+  }
+};
 
 export async function getCaseCounts(
   { dateFrom, dateTo, country }: SequencingRepresentativenessSelector,
