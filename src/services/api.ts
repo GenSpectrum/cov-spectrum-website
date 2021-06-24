@@ -281,7 +281,7 @@ export const getPangolinLineages = (
   let url = HOST + `/resource/sample2?fields=pangolinLineage`;
   if (isRegion(country)) {
     url += `&region=${country}`;
-  } else {
+  } else if (!isWorld(country)) {
     url += `&country=${country}`;
   }
   const literalSamplingStrategy = toLiteralSamplingStrategy(samplingStrategy);
@@ -369,14 +369,16 @@ export const getSequencingIntensity = (
       selector,
     });
   }
+  const params = new URLSearchParams({});
   if (isRegion(selector.country)) {
-    url += `region=${selector.country}`;
+    params.set('region', selector.country);
   } else if (!isWorld(selector.country)) {
-    url += `country=${selector.country}`;
+    params.set('country', selector.country);
   }
   if (selector.samplingStrategy) {
-    url += `&dataType=${selector.samplingStrategy}`;
+    params.set('dataType', selector.samplingStrategy)
   }
+  url = url + params.toString();
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
     .then(data => {
