@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import { Variant } from '../services/api-types';
+import { ButtonVariant, Button } from '../helpers/ui';
 
 interface Props {
   onVariantSelect: (selection: { variant: Variant; matchPercentage: number }) => void;
@@ -47,17 +47,19 @@ export const MutationLookup = ({ onVariantSelect }: Props) => {
                 onChange={ev => setSelectedMatchPercentage(+ev.target.value)}
               />
             </div>
-            <Button type='submit' variant='primary'>
-              Search
-            </Button>
+            <div className='flex items-end'>
+              <Button className='mt-1 ml-2' variant={ButtonVariant.PRIMARY} onClick={() => {}}>
+                Search
+              </Button>
+            </div>
           </div>
         </Form.Group>
       </Form>
       <div>
         <div>Examples:</div>
-        <div className='flex flex-wrap'>
+        <div className='flex flex-wrap list-disc	'>
           {examples.map(e => (
-            <div className='w-28 px-2' key={e}>
+            <div className='w-28 pr-2' key={e}>
               <button
                 className='underline outline-none'
                 onClick={() =>

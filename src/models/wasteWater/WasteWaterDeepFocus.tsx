@@ -14,7 +14,15 @@ interface Props {
   variantName: string | undefined;
 }
 
-export const WASTE_WATER_AVAILABLE_LINEAGES = ['B.1.1.7', 'B.1.351', 'P.1', 'B.1.617*'];
+export const WASTE_WATER_AVAILABLE_LINEAGES = [
+  'B.1.1.7',
+  'B.1.351',
+  'P.1',
+  'B.1.617.2',
+  'B.1.617.1',
+  'B.1.617.3',
+  'C.36.3',
+];
 
 export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
   const [data, setData] = useState<WasteWaterDataset | undefined>(undefined);
