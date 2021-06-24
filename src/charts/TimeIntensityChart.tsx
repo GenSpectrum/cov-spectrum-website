@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import Metric, { MetricsWrapper, MetricsSpacing } from './Metrics';
+import Metric, { MetricsWrapper } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
 import {
   colors,
@@ -132,7 +132,6 @@ export const TimeIntensityChart = React.memo(
             </ResponsiveContainer>
           </ChartWrapper>
           <MetricsWrapper>
-            <MetricsSpacing />
             <Metric
               value={kFormat(currentData.quantity)}
               title='Confirmed'

@@ -7,18 +7,26 @@ export const METRIC_RIGHT_PADDING_PX = 16;
 export const METRIC_WIDTH_PX = 160;
 const TOOLTIP_DALAY = 500;
 
-export const MetricsWrapper = styled.div`
-  padding: 0 0 1.8rem 0rem;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-`;
-
-export const MetricsSpacing = styled.div`
-  display: flex;
-  flex-grow: 1;
-`;
+export const MetricsWrapper = ({
+  id,
+  children,
+  className,
+}: {
+  id?: string;
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  return (
+    <div
+      id={id}
+      className={`pl-2 pt-1 flex-grow flex flex-row sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8 ${
+        className ? className : ''
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
 
 export const colors = {
   active: '#2980b9',

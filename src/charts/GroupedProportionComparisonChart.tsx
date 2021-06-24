@@ -5,14 +5,15 @@ import {
   CartesianGrid,
   ComposedChart,
   ErrorBar,
+  ResponsiveContainer,
   Scatter,
   ScatterProps,
   XAxis,
   YAxis,
 } from 'recharts';
 import styled from 'styled-components';
-import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from './common';
-import Metric, { MetricsSpacing, MetricsWrapper, METRIC_RIGHT_PADDING_PX, METRIC_WIDTH_PX } from './Metrics';
+import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from './common';
+import Metric, { MetricsWrapper } from './Metrics';
 import { ScatterLegendItem, ScatterLegend } from './ScatterLegend';
 
 const CHART_MARGIN_BOTTOM = 30;
@@ -108,8 +109,6 @@ export type Props = {
   data: GroupValue[];
   total: { subject: SubgroupValue; reference: SubgroupValue };
   texts: TopLevelTexts;
-  width: number;
-  height: number;
   extendedMetrics?: boolean;
   maxY?: number; // percentage formatting is disabled if maxY is used
   hideReferenceScatter?: boolean;
@@ -121,8 +120,6 @@ export const GroupedProportionComparisonChart = React.memo(
     data,
     total,
     texts,
-    width,
-    height,
     extendedMetrics,
     maxY,
     hideReferenceScatter,
@@ -203,86 +200,85 @@ export const GroupedProportionComparisonChart = React.memo(
 
     return (
       <Wrapper>
+        <TitleWrapper>{texts.title}</TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
-            <ComposedChart
-              width={width - (extendedMetrics ? 2 : 1) * METRIC_WIDTH_PX - METRIC_RIGHT_PADDING_PX}
-              // width="100%"
-              height={height}
-              margin={{ top: 6, right: 0, left: 0, bottom: CHART_MARGIN_BOTTOM }}
-              onMouseLeave={handleMouseLeave}
-              data={hoverBarData}
-              barCategoryGap='0%'
-            >
-              <XAxis
-                dataKey='label'
-                allowDuplicatedCategory={false}
-                axisLine={false}
-                tickLine={false}
-                interval={0}
-                tick={<CustomTick currentValue={currentData?.label} />}
-              />
-              <YAxis
-                dataKey='y'
-                axisLine={false}
-                tickLine={false}
-                domain={
-                  typeof maxY === 'number'
-                    ? [0, maxY]
-                    : [0, (dataMax: number) => Math.min(1, Math.ceil(dataMax * 10) / 10)]
-                }
-                allowDataOverflow={typeof maxY === 'number'}
-                scale='linear'
-                tickFormatter={typeof maxY === 'number' ? undefined : v => `${(v * 100).toFixed(0)}%`}
-              />
-              <CartesianGrid vertical={false} />
-              <Bar {...commonProps} dataKey='y' fill='transparent' />
-              {!hideReferenceScatter && (
+            <ResponsiveContainer>
+              <ComposedChart
+                margin={{ top: 6, right: 0, left: 0, bottom: CHART_MARGIN_BOTTOM }}
+                onMouseLeave={handleMouseLeave}
+                data={hoverBarData}
+                barCategoryGap='0%'
+              >
+                <XAxis
+                  dataKey='label'
+                  allowDuplicatedCategory={false}
+                  axisLine={false}
+                  tickLine={false}
+                  interval={0}
+                  tick={<CustomTick currentValue={currentData?.label} />}
+                />
+                <YAxis
+                  dataKey='y'
+                  axisLine={false}
+                  tickLine={false}
+                  domain={
+                    typeof maxY === 'number'
+                      ? [0, maxY]
+                      : [0, (dataMax: number) => Math.min(1, Math.ceil(dataMax * 10) / 10)]
+                  }
+                  allowDataOverflow={typeof maxY === 'number'}
+                  scale='linear'
+                  tickFormatter={typeof maxY === 'number' ? undefined : v => `${(v * 100).toFixed(0)}%`}
+                />
+                <CartesianGrid vertical={false} />
+                <Bar {...commonProps} dataKey='y' fill='transparent' />
+                {!hideReferenceScatter && (
+                  <Scatter
+                    {...commonProps}
+                    data={makeScatterData('reference', {
+                      active: colors.inactive,
+                      inactive: colors.inactive,
+                    })}
+                    shape={ScatterBarShape}
+                  >
+                    <ErrorBar
+                      direction='y'
+                      dataKey='yErrorActive'
+                      stroke={colors.inactive}
+                      {...referenceErrorBarSizes}
+                    />
+                    <ErrorBar
+                      direction='y'
+                      dataKey='yErrorInactive'
+                      stroke={colors.inactive}
+                      {...referenceErrorBarSizes}
+                    />
+                  </Scatter>
+                )}
                 <Scatter
                   {...commonProps}
-                  data={makeScatterData('reference', {
-                    active: colors.inactive,
-                    inactive: colors.inactive,
-                  })}
-                  shape={ScatterBarShape}
+                  data={makeScatterData('subject', { active: colors.active, inactive: colors.inactive })}
                 >
                   <ErrorBar
                     direction='y'
                     dataKey='yErrorActive'
-                    stroke={colors.inactive}
-                    {...referenceErrorBarSizes}
+                    stroke={colors.active}
+                    {...subjectErrorBarSizes}
                   />
                   <ErrorBar
                     direction='y'
                     dataKey='yErrorInactive'
                     stroke={colors.inactive}
-                    {...referenceErrorBarSizes}
+                    {...subjectErrorBarSizes}
                   />
                 </Scatter>
-              )}
-              <Scatter
-                {...commonProps}
-                data={makeScatterData('subject', { active: colors.active, inactive: colors.inactive })}
-              >
-                <ErrorBar
-                  direction='y'
-                  dataKey='yErrorActive'
-                  stroke={colors.active}
-                  {...subjectErrorBarSizes}
-                />
-                <ErrorBar
-                  direction='y'
-                  dataKey='yErrorInactive'
-                  stroke={colors.inactive}
-                  {...subjectErrorBarSizes}
-                />
-              </Scatter>
-            </ComposedChart>
+              </ComposedChart>
+            </ResponsiveContainer>
           </ChartWrapper>
           <MetricsWrapper>
             {extendedMetrics ? (
               <>
-                <MetricsSpacing />
                 <ExtendedScatterLegendWrapper>
                   <ScatterLegend items={[subjectLegendItem]} />
                 </ExtendedScatterLegendWrapper>
@@ -290,7 +286,6 @@ export const GroupedProportionComparisonChart = React.memo(
             ) : (
               <>
                 <ScatterLegend items={[subjectLegendItem, referenceLegendItem]} />
-                <MetricsSpacing />
               </>
             )}
             <Metric
@@ -308,7 +303,6 @@ export const GroupedProportionComparisonChart = React.memo(
           </MetricsWrapper>
           {extendedMetrics && (
             <MetricsWrapper>
-              <MetricsSpacing />
               <ExtendedScatterLegendWrapper>
                 <ScatterLegend items={[referenceLegendItem]} />
               </ExtendedScatterLegendWrapper>

@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { UnifiedDay } from '../helpers/date-cache';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from './common';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import Metric, { MetricsSpacing, MetricsWrapper } from './Metrics';
+import Metric, { MetricsWrapper } from './Metrics';
 import { getTicks } from '../helpers/ticks';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import dayjs from 'dayjs';
@@ -191,7 +191,6 @@ export const EstimatedCasesChart = React.memo(
               </ResponsiveContainer>
             </ChartWrapper>
             <MetricsWrapper>
-              <MetricsSpacing />
               <Metric
                 value={active !== undefined ? active.estimatedCases.toFixed(0) : 'NA'}
                 title='Est. cases'

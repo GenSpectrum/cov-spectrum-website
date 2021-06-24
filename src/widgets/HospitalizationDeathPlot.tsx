@@ -4,7 +4,6 @@ import { capitalize, omit } from 'lodash';
 import React, { useMemo } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
 import * as zod from 'zod';
-import { TitleWrapper } from '../charts/common';
 import DownloadWrapper from '../charts/DownloadWrapper';
 import {
   GroupedProportionComparisonChart,
@@ -219,16 +218,13 @@ export const HospitalizationDeathPlot = ({
 
   return (
     <DownloadWrapper name='HospitalizationDeathPlot' csvData={csvData}>
-      <div ref={ref as React.MutableRefObject<HTMLDivElement>} style={{ height: '300px' }}>
+      <div ref={ref as React.MutableRefObject<HTMLDivElement>} className='h-full'>
         {width && height && (
           <>
-            <TitleWrapper>{texts.title}</TitleWrapper>
             <GroupedProportionComparisonChart
               data={processedData}
               total={total}
               texts={texts}
-              width={width}
-              height={height}
               extendedMetrics={extendedMetrics}
               onClickHandler={noopOnClickHandler}
               maxY={

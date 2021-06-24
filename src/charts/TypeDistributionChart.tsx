@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import Metric, { MetricsWrapper, MetricsSpacing } from './Metrics';
+import Metric, { MetricsWrapper } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
 import { colors, Wrapper, TitleWrapper, ChartAndMetricsWrapper, ChartWrapper } from './common';
 
@@ -144,7 +144,6 @@ export const TypeDistributionChart = React.memo(
             </ResponsiveContainer>
           </ChartWrapper>
           <MetricsWrapper>
-            <MetricsSpacing />
             <Metric
               value={currentData.percent === undefined ? '-' : currentData.percent.toFixed(2)}
               title='Proportion'
