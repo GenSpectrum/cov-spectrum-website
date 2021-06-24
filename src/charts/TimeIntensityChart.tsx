@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import Metric, { MetricsWrapper } from './Metrics';
-import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
 import {
   colors,
   Wrapper,
@@ -30,12 +30,10 @@ export type Props = {
 
 export const TimeIntensityChart = React.memo(
   ({ data, onClickHandler }: Props): JSX.Element => {
-    const [activeIndex, setActiveIndex] = useState<number>(data.length - 1);
     const [currentData, setCurrentData] = useState<TimeIntensityEntry>(data[data.length - 1]);
 
     const resetDefault = useCallback(() => {
       setCurrentData(data[data.length - 1]);
-      setActiveIndex(data.length - 1);
     }, [data]);
 
     useEffect(() => {
@@ -44,7 +42,6 @@ export const TimeIntensityChart = React.memo(
 
     const handleMouseEnter = (context: unknown, index: number): void => {
       setCurrentData(data[index]);
-      setActiveIndex(index);
     };
 
     const handleClick = (context: unknown, index: number): void => {
@@ -66,9 +63,9 @@ export const TimeIntensityChart = React.memo(
         onClick={handleClick}
         isAnimationActive={false}
       >
-        {data.map((entry: unknown, index: number) => (
-          <Cell cursor={onClickHandler && 'pointer'} fill='black' key={`cell-${index}`}></Cell>
-        ))}
+        {data.map((_, index: number) => {
+          return <Cell cursor={onClickHandler && 'pointer'} fill='black' key={`cell-${index}`}></Cell>;
+        })}
       </Bar>,
       <Bar
         dataKey='quantity'
@@ -78,10 +75,10 @@ export const TimeIntensityChart = React.memo(
         onClick={handleClick}
         isAnimationActive={false}
       >
-        {data.map((entry: unknown, index: number) => (
+        {data.map((entry: TimeIntensityEntry, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
-            fill={index === activeIndex ? colors.secondary : colors.inactive}
+            fill={entry.id === currentData.id ? colors.secondary : colors.inactive}
             key={`cell-${index}`}
           ></Cell>
         ))}
@@ -107,7 +104,7 @@ export const TimeIntensityChart = React.memo(
                   interval={0}
                   tick={
                     <CustomTimeTick
-                      activeIndex={activeIndex}
+                      activeIndex={Math.round(data.length / 2)}
                       dataLength={data.length}
                       currentValue={currentData.month}
                       unit='month'
@@ -128,6 +125,18 @@ export const TimeIntensityChart = React.memo(
                 />
                 <CartesianGrid vertical={false} />
                 {bars}
+                <Tooltip
+                  active={false}
+                  cursor={false}
+                  content={(e: any )=> {
+                    console.log("tooltip event")
+                    if (e?.payload.length > 0) {
+                      setCurrentData(e.payload[0].payload)
+                    }
+                  
+                    return <></>;
+                  }}
+                />
               </BarChart>
             </ResponsiveContainer>
           </ChartWrapper>
