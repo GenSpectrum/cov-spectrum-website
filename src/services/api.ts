@@ -174,11 +174,8 @@ export const getSamples = (
   if (mutationsString?.length) {
     url += `&mutations=${mutationsString}`;
   }
-  if (country && isRegion(country)) {
-    url += `&region=${country}`;
-  } else if (country) {
-    url += `&country=${country}`;
-  }
+  url += getPlaceParamString(country);
+  console.log('place params are', getPlaceParamString(country));
   if (samplingStrategy) {
     url += `&dataType=${samplingStrategy}`;
   }
@@ -208,7 +205,7 @@ export async function getNewSamples(
       const newParam = selector[k]!.toString();
       if (k === 'country' && isRegion(newParam)) {
         params.set('region', newParam);
-      } else {
+      } else if (!isWorld(newParam)) {
         params.set(k, newParam);
       }
     }
@@ -246,11 +243,7 @@ export const getSampleFastaUrl = ({
   if (mutationsString?.length) {
     url += `&mutations=${mutationsString}`;
   }
-  if (country && isRegion(country)) {
-    url += `&region=${country}`;
-  } else if (country) {
-    url += `&country=${country}`;
-  }
+  url += getPlaceParamString(country);
   if (samplingStrategy) {
     url += `&dataType=${samplingStrategy}`;
   }
@@ -279,11 +272,7 @@ export const getPangolinLineages = (
   signal?: AbortSignal
 ): Promise<PangolinLineageList> => {
   let url = HOST + `/resource/sample2?fields=pangolinLineage`;
-  if (isRegion(country)) {
-    url += `&region=${country}`;
-  } else {
-    url += `&country=${country}`;
-  }
+  url += getPlaceParamString(country);
   const literalSamplingStrategy = toLiteralSamplingStrategy(samplingStrategy);
   if (literalSamplingStrategy) {
     url += `&dataType=${literalSamplingStrategy}`;
@@ -329,10 +318,8 @@ export async function getInformationOfPangolinLineage(
   const params = new URLSearchParams();
   if (region) {
     params.set('region', region);
-  } else if (country && isRegion(country)) {
-    params.set('region', country);
-  } else if (country) {
-    params.set('country', country);
+  } else {
+    setPlaceParam(params, country);
   }
   if (dateFrom) {
     params.set('dateFrom', dayjs(dateFrom).format('YYYY-MM-DD'));
@@ -369,14 +356,12 @@ export const getSequencingIntensity = (
       selector,
     });
   }
-  if (isRegion(selector.country)) {
-    url += `region=${selector.country}`;
-  } else {
-    url += `country=${selector.country}`;
-  }
+  const params = new URLSearchParams({});
+  setPlaceParam(params, selector.country);
   if (selector.samplingStrategy) {
-    url += `&dataType=${selector.samplingStrategy}`;
+    params.set('dataType', selector.samplingStrategy);
   }
+  url = url + params.toString();
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
     .then(data => {
@@ -398,6 +383,8 @@ export const getInterestingVariants = (
   let endpoint = `/computed/find-interesting-variants?`;
   if (isRegion(country)) {
     endpoint += `region=${country}`;
+  } else if (isWorld(country)) {
+    endpoint += `country=Switzerland`;
   } else {
     endpoint += `country=${country}`;
   }
@@ -430,6 +417,8 @@ export const isRegion = (place: Place): boolean => {
   const regions = ['Africa', 'Europe', 'Asia', 'North America', 'South America', 'Oceania'];
   return regions.includes(place);
 };
+
+export const isWorld = (place: Place): boolean => place === 'World';
 
 export const getPlaces = async (): Promise<Place[]> => {
   const countries = await getCountries();
@@ -486,6 +475,25 @@ export async function getSequenceCounts(
   }
   return zod.array(SequenceCountEntrySchema).parse(await res.json());
 }
+
+const getPlaceParamString = (place: Place | undefined | null) => {
+  if (place && isRegion(place)) {
+    return `&region=${place}`;
+  } else if (place && !isWorld(place)) {
+    return `&country=${place}`;
+  }
+  return '';
+};
+
+const setPlaceParam = (params: URLSearchParams, place: Place | undefined | null) => {
+  if (place) {
+    if (isRegion(place)) {
+      params.set('region', place);
+    } else if (!isWorld(place)) {
+      params.set('country', place);
+    }
+  }
+};
 
 export async function getCaseCounts(
   { dateFrom, dateTo, country }: SequencingRepresentativenessSelector,
