@@ -7,22 +7,22 @@ export const METRIC_RIGHT_PADDING_PX = 16;
 export const METRIC_WIDTH_PX = 160;
 const TOOLTIP_DALAY = 500;
 
-// export const MetricsWrapper = styled.div`
-//   padding: 0.6rem 0 0 0;
-//   flex-grow: 1;
-//   display: flex;
-//   flex-direction: row;
-//   justify-content: space-between;
-
-//   @media (min-width: 640px) {
-//     flex-direction: column;
-//     padding: 0 0 1.8rem 0rem;
-//   }
-// `;
-
-export const MetricsWrapper = ({ id, children, className }: { id?: string; children: React.ReactNode, className?: string}) => {
+export const MetricsWrapper = ({
+  id,
+  children,
+  className,
+}: {
+  id?: string;
+  children: React.ReactNode;
+  className?: string;
+}) => {
   return (
-    <div id={id} className={`pl-1 flex-grow flex flex-row sm:flex-col sm:pb-8 ${className ? className : ""}`}>
+    <div
+      id={id}
+      className={`pl-2 pt-1 flex-grow flex flex-row sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8 ${
+        className ? className : ''
+      }`}
+    >
       {children}
     </div>
   );
@@ -67,7 +67,7 @@ export const ValueWrapper = ({
 
 export const MetricWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
   return (
-    <div id={id} className='ml-2 sm:pl-0 flex flex-col justify-end h-full flex-grow w-28 pr-1 md:w-40'>
+    <div id={id} className='flex flex-col justify-end h-full flex-grow w-28 pr-1 md:w-40'>
       {children}
     </div>
   );

@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 import styled from 'styled-components';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from './common';
-import Metric, {  MetricsWrapper } from './Metrics';
+import Metric, { MetricsWrapper } from './Metrics';
 import { ScatterLegendItem, ScatterLegend } from './ScatterLegend';
 
 const CHART_MARGIN_BOTTOM = 30;
