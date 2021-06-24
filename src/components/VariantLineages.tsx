@@ -68,7 +68,7 @@ export const VariantLineages = ({
   return (
     <>
       <div>Sequences of this variant belong to the following pangolin lineages:</div>
-      <LineageList>
+      <LineageList className='list-disc	'>
         {data
           .sort((a, b) => b.count - a.count)
           .map(({ pangolinLineage, proportion }) => {
