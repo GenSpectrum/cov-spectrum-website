@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { scaleLinear } from 'd3-scale';
 import styled from 'styled-components';
-import Metric, { MetricsSpacing, MetricsWrapper } from '../../charts/Metrics';
+import Metric, {  MetricsWrapper } from '../../charts/Metrics';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../../charts/common';
 import { WasteWaterHeatMapEntry, WasteWaterMutationOccurrencesDataset } from './types';
 import { UnifiedDay } from '../../helpers/date-cache';
@@ -158,7 +158,6 @@ export const WasteWaterHeatMapChart = React.memo(
             </div>
           </ChartWrapper2>
           <MetricsWrapper>
-            <MetricsSpacing />
             <Metric
               value={active?.proportion !== undefined ? (active.proportion * 100).toFixed(2) + '%' : 'NA'}
               title='Proportion'

@@ -13,7 +13,7 @@ import {
 } from 'recharts';
 import styled from 'styled-components';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from './common';
-import Metric, { MetricsSpacing, MetricsWrapper } from './Metrics';
+import Metric, {  MetricsWrapper } from './Metrics';
 import { ScatterLegendItem, ScatterLegend } from './ScatterLegend';
 
 const CHART_MARGIN_BOTTOM = 30;
@@ -279,7 +279,6 @@ export const GroupedProportionComparisonChart = React.memo(
           <MetricsWrapper>
             {extendedMetrics ? (
               <>
-                <MetricsSpacing />
                 <ExtendedScatterLegendWrapper>
                   <ScatterLegend items={[subjectLegendItem]} />
                 </ExtendedScatterLegendWrapper>
@@ -287,7 +286,6 @@ export const GroupedProportionComparisonChart = React.memo(
             ) : (
               <>
                 <ScatterLegend items={[subjectLegendItem, referenceLegendItem]} />
-                <MetricsSpacing />
               </>
             )}
             <Metric
@@ -305,7 +303,6 @@ export const GroupedProportionComparisonChart = React.memo(
           </MetricsWrapper>
           {extendedMetrics && (
             <MetricsWrapper>
-              <MetricsSpacing />
               <ExtendedScatterLegendWrapper>
                 <ScatterLegend items={[referenceLegendItem]} />
               </ExtendedScatterLegendWrapper>

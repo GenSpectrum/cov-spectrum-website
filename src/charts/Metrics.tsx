@@ -20,11 +20,6 @@ export const MetricsWrapper = styled.div`
   }
 `;
 
-export const MetricsSpacing = styled.div`
-  display: flex;
-  flex-grow: 1;
-`;
-
 export const colors = {
   active: '#2980b9',
   inactive: '#bdc3c7',

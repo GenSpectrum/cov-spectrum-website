@@ -9,7 +9,7 @@ import { getSequenceCounts } from '../services/api';
 import { Attribute, attributes } from './SequencingRepresentativenessPlot';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../charts/common';
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import Metrics, { MetricsSpacing, MetricsWrapper } from '../charts/Metrics';
+import Metrics, { MetricsWrapper } from '../charts/Metrics';
 import { kFormat } from '../helpers/number';
 import Loader from '../components/Loader';
 
@@ -103,7 +103,6 @@ export const MetadataAvailabilityPlot = ({ selector }: Props) => {
           </ResponsiveContainer>
         </ChartWrapper>
         <MetricsWrapper>
-          <MetricsSpacing />
           <Metrics
             value={active ? kFormat(active.known) : '-'}
             title={'Available'}

@@ -5,7 +5,7 @@ import { OldSampleSelectorSchema } from '../../helpers/sample-selector';
 import { Chen2021ProportionPlot } from './Chen2021ProportionPlot';
 import { fillRequestWithDefaults, useModelData } from './loading';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../../charts/common';
-import Metric, { MetricsSpacing, MetricsWrapper } from '../../charts/Metrics';
+import Metric, {  MetricsWrapper } from '../../charts/Metrics';
 
 type Props = zod.infer<typeof OldSampleSelectorSchema>;
 
@@ -43,7 +43,6 @@ export const Chen2021FitnessPreview = ({
           />
         </ChartWrapper>
         <MetricsWrapper>
-          <MetricsSpacing />
           <Metric
             value={(modelData.params.fd.value * 100).toFixed(0)}
             title={'Current adv.'}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../../charts/common';
-import Metric, { MetricsSpacing, MetricsWrapper } from '../../charts/Metrics';
+import Metric, { MetricsWrapper } from '../../charts/Metrics';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { WasteWaterTimeEntry, WasteWaterTimeseriesSummaryDataset } from './types';
 import { getTicks } from '../../helpers/ticks';
@@ -91,7 +91,6 @@ export const WasteWaterTimeChart = React.memo(
             </ResponsiveContainer>
           </ChartWrapper>
           <MetricsWrapper>
-            <MetricsSpacing />
             <Metric
               value={active !== undefined ? (active.proportion * 100).toFixed(2) + '%' : 'NA'}
               title='Proportion'
