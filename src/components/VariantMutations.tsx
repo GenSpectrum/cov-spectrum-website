@@ -46,7 +46,7 @@ export const VariantMutations = ({ region, country, pangolinLineage, dateRange }
   return (
     <>
       <div>The following mutations are common to this lineage:</div>
-      <MutationList>
+      <MutationList className='list-disc'>
         {data
           .sort((a, b) => b.count - a.count)
           .map(({ mutation, proportion }) => {

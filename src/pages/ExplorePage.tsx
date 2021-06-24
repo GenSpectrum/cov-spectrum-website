@@ -49,13 +49,6 @@ export const ExplorePage = ({
   );
   return (
     <>
-      <SequencingIntensityPlotWidget.ShareableComponent
-        title='Sequencing intensity'
-        sequencingIntensityEntrySet={sequencingIntensityEntrySet}
-        height={300}
-        widgetLayout={NamedSection}
-        toolbarChildren={<ShowMoreButton to={toSequencingCoverage} />}
-      />
       <NamedSection title='Known variants'>
         <KnownVariantsList
           country={country}
@@ -65,6 +58,13 @@ export const ExplorePage = ({
           wholeSampleSetState={wholeSampleSetState}
         />
       </NamedSection>
+      <SequencingIntensityPlotWidget.ShareableComponent
+        title='Sequencing intensity'
+        sequencingIntensityEntrySet={sequencingIntensityEntrySet}
+        height={300}
+        widgetLayout={NamedSection}
+        toolbarChildren={<ShowMoreButton to={toSequencingCoverage} />}
+      />
       <NamedSection title='Search by mutations'>
         <MutationLookup onVariantSelect={onVariantSelect} />
       </NamedSection>
