@@ -4,6 +4,7 @@ import { DateRange, dateRangeToDates, getInformationOfPangolinLineage } from '..
 import styled from 'styled-components';
 import { MutationName } from './MutationName';
 import { ExternalLink } from './ExternalLink';
+import { sortListByMutation } from '../helpers/mutation';
 
 export interface Props {
   region?: string;
@@ -27,6 +28,7 @@ export const VariantMutations = ({ region, country, pangolinLineage, dateRange }
     commonMutations: [],
     commonNucMutations: [],
   });
+  const [commonMutationsSort, setCommonMutationsSort] = useState<'proportion' | 'position'>('position');
   const [commonNucMutationsSort, setCommonNucMutationsSort] = useState<'proportion' | 'position'>('position');
 
   useEffect(() => {
@@ -45,16 +47,32 @@ export const VariantMutations = ({ region, country, pangolinLineage, dateRange }
   return (
     <>
       <div>The following (amino acid) mutations are common to this lineage:</div>
+      <div className='ml-4'>
+        <span
+          className={commonMutationsSort === 'proportion' ? 'font-bold' : 'underline cursor-pointer'}
+          onClick={() => setCommonMutationsSort('proportion')}
+        >
+          Sort by proportion
+        </span>{' '}
+        |{' '}
+        <span
+          className={commonMutationsSort === 'position' ? 'font-bold' : 'underline cursor-pointer'}
+          onClick={() => setCommonMutationsSort('position')}
+        >
+          Sort by position
+        </span>
+      </div>
       <MutationList className='list-disc'>
-        {data.commonMutations
-          .sort((a, b) => b.count - a.count)
-          .map(({ mutation, proportion }) => {
-            return (
-              <MutationEntry key={mutation}>
-                <MutationName mutation={mutation} /> ({(proportion * 100).toFixed(2)}%)
-              </MutationEntry>
-            );
-          })}
+        {(commonMutationsSort === 'proportion'
+          ? data.commonMutations.sort((a, b) => b.count - a.count)
+          : sortListByMutation(data.commonMutations, x => x.mutation)
+        ).map(({ mutation, proportion }) => {
+          return (
+            <MutationEntry key={mutation}>
+              <MutationName mutation={mutation} /> ({(proportion * 100).toFixed(2)}%)
+            </MutationEntry>
+          );
+        })}
       </MutationList>
       <div className='mt-4'>
         The following nucleotide mutations are common to this lineage (
