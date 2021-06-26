@@ -4,7 +4,7 @@ export enum VariantType {
 }
 
 //from WHO website https://www.who.int/en/activities/tracking-SARS-CoV-2-variants/
-export const WHO_LABELS: { [key: string]: { label: string; type: VariantType } } = {
+export const WHO_LABELS: { [key: string]: { label: string; type: VariantType } | undefined } = {
   'B.1.1.7': {
     label: 'Alpha',
     type: VariantType.CONCERN,
@@ -24,9 +24,9 @@ export const WHO_LABELS: { [key: string]: { label: string; type: VariantType } }
 };
 
 export const getWHOLabel = (pangoLineage: string): string | undefined => {
-  return WHO_LABELS[pangoLineage.trim()].label;
+  return WHO_LABELS[pangoLineage.trim()]?.label;
 };
 
 export const getWHOVariantType = (pangoLineage: string): VariantType | undefined => {
-  return WHO_LABELS[pangoLineage.trim()].type;
+  return WHO_LABELS[pangoLineage.trim()]?.type;
 };

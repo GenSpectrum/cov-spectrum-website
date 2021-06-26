@@ -4,6 +4,7 @@ import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import styled from 'styled-components';
 import { mean } from 'lodash';
 import { colors } from '../../charts/common';
+import { getWHOLabel } from '../../services/who-label';
 
 const TREND_START = 9;
 const TREND_END = 3;
@@ -90,6 +91,7 @@ const SimpleAreaPlot = React.memo(
 );
 
 export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, selected }: Props) => {
+  const WHOLabel: string | undefined = getWHOLabel(name);
   return (
     <Card
       as={StyledCard}
@@ -98,7 +100,7 @@ export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, s
       selected={selected}
     >
       <Title className={`${selected ? 'font-bold' : ''}`}>
-        {name}
+        {name}{WHOLabel !== undefined && ` (${WHOLabel})`}
         {chartData?.length && (
           <Percentage className='text-muted'>{(recentProportion! * 100).toFixed(1)}%</Percentage>
         )}
