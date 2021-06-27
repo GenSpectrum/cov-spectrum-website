@@ -454,9 +454,7 @@ export async function getSequenceCounts(
   signal?: AbortSignal
 ): Promise<SequenceCountEntry[]> {
   const params = new URLSearchParams();
-  if (country) {
-    params.set('country', country);
-  }
+  setPlaceParam(params, country);
   if (dateFrom) {
     params.set('dateFrom', dateFrom);
   }
