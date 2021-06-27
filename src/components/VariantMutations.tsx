@@ -46,7 +46,9 @@ export const VariantMutations = ({ region, country, pangolinLineage, dateRange }
 
   return (
     <>
-      <div>The following (amino acid) mutations are common to this lineage:</div>
+      <div>
+        The following (amino acid) mutations are present in at least 20% of the sequences of this variant:
+      </div>
       <div className='ml-4'>
         <span
           className={commonMutationsSort === 'proportion' ? 'font-bold' : 'underline cursor-pointer'}
@@ -75,7 +77,7 @@ export const VariantMutations = ({ region, country, pangolinLineage, dateRange }
         })}
       </MutationList>
       <div className='mt-4'>
-        The following nucleotide mutations are common to this lineage (
+        The following nucleotide mutations are present in at least 20% of the sequences of this variant (
         <ExternalLink url='https://github.com/W-L/ProblematicSites_SARS-CoV2'>problematic sites</ExternalLink>{' '}
         and leading and tailing deletions are excluded):
       </div>
