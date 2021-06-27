@@ -18,7 +18,6 @@ export const PlaceSelect = ({ id, selected, onSelect, onMenuToggle }: Props) => 
     let isSubscribed = true;
     getPlaces().then(places => {
       if (isSubscribed) {
-        places.push('World');
         setPlaces(places);
       }
     });

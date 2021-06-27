@@ -423,7 +423,7 @@ export const isWorld = (place: Place): boolean => place === 'World';
 export const getPlaces = async (): Promise<Place[]> => {
   const countries = await getCountries();
   const regions = await getRegions();
-  return regions.concat(countries);
+  return ['World'].concat(regions).concat(countries);
 };
 
 export const fetchTimeDistributionData = () => {};
