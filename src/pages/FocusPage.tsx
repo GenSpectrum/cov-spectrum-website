@@ -15,7 +15,7 @@ import { VariantMutations } from '../components/VariantMutations';
 import { getFocusPageLink } from '../helpers/explore-url';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
-import { Alert, AlertVariant, ShowMoreButton } from '../helpers/ui';
+import { Alert, AlertVariant, Button, ButtonVariant, ShowMoreButton } from '../helpers/ui';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { filter, getData } from '../models/wasteWater/loading';
 import { WasteWaterDataset } from '../models/wasteWater/types';
@@ -31,6 +31,7 @@ import { VariantAgeDistributionPlotWidget } from '../widgets/VariantAgeDistribut
 import { VariantDivisionDistributionTableWidget } from '../widgets/VariantDivisionDistributionTable';
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { VariantSelector } from '../helpers/sample-selector';
+import { DivisionModal } from '../components/DivisionModal';
 
 interface Props {
   country: Country;
@@ -53,6 +54,18 @@ const deepFocusPaths = {
   wasteWater: '/waste-water',
 };
 
+const createDivisionBreakdownButton = (setter: (show: boolean) => void) => (
+  <Button
+    className='mt-1 ml-2'
+    variant={ButtonVariant.PRIMARY}
+    onClick={() => {
+      setter(true);
+    }}
+  >
+    Show divisions
+  </Button>
+);
+
 export const FocusPage = ({
   variantSampleSet,
   wholeSampleSet,
@@ -63,6 +76,7 @@ export const FocusPage = ({
   ...forwardedProps
 }: Props) => {
   const { country, matchPercentage, variant, samplingStrategy, dateRange } = forwardedProps;
+  const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
 
   const plotProps = {
     country,
@@ -146,64 +160,66 @@ export const FocusPage = ({
   }
 
   return (
-    <div>
-      {header}
-      {variant.mutations.length > 0 && (
-        <p style={{ marginBottom: '30px' }}>
-          The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
-          mutations.
-        </p>
-      )}
+    <>
+      <div>
+        {header}
+        {variant.mutations.length > 0 && (
+          <p style={{ marginBottom: '30px' }}>
+            The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
+            mutations.
+          </p>
+        )}
 
-      {(!variant.name || variant.name.endsWith('*')) && (
-        <div className='m-4'>
-          <VariantLineages onVariantSelect={onVariantSelect} {...forwardedProps} />{' '}
-        </div>
-      )}
-      <PackedGrid maxColumns={2}>
-        <GridCell minWidth={600}>
-          <VariantTimeDistributionPlotWidget.ShareableComponent
-            variantSampleSet={variantSampleSet}
-            wholeSampleSet={wholeSampleSet}
-            height={300}
-            title='Sequences over time'
-          />
-        </GridCell>
-        <GridCell minWidth={600}>
-          <EstimatedCasesPlotWidget.ShareableComponent
-            variantSampleSet={variantSampleSet}
-            sequencingIntensityEntrySet={sequencingIntensityEntrySet}
-            height={300}
-            title='Estimated cases'
-          />
-        </GridCell>
-        <GridCell minWidth={600}>
-          <VariantAgeDistributionPlotWidget.ShareableComponent
-            variantSampleSet={variantSampleSet}
-            wholeSampleSet={wholeSampleSet}
-            height={300}
-            title='Demographics'
-          />
-        </GridCell>
-        {country === 'Switzerland' && (
+        {(!variant.name || variant.name.endsWith('*')) && (
+          <div className='m-4'>
+            <VariantLineages onVariantSelect={onVariantSelect} {...forwardedProps} />{' '}
+          </div>
+        )}
+        <PackedGrid maxColumns={2}>
           <GridCell minWidth={600}>
-            <HospitalizationDeathPlotWidget.ShareableComponent
-              field='hospitalized'
+            <VariantTimeDistributionPlotWidget.ShareableComponent
               variantSampleSet={variantSampleSet}
               wholeSampleSet={wholeSampleSet}
-              variantName={variant.name || 'unnamed variant'}
-              title='Hospitalization probabilities'
               height={300}
-              toolbarChildren={deepFocusButtons.hospitalizationAndDeath}
+              title='Sequences over time'
+              toolbarChildren={[createDivisionBreakdownButton(setShowVariantTimeDistributionDivGrid)]}
             />
           </GridCell>
-        )}
-        {!isRegion(country) && (
           <GridCell minWidth={600}>
-            <NamedCard
-              title='Estimation of the current advantage'
-              toolbar={deepFocusButtons.chen2021Fitness}
-              description='
+            <EstimatedCasesPlotWidget.ShareableComponent
+              variantSampleSet={variantSampleSet}
+              sequencingIntensityEntrySet={sequencingIntensityEntrySet}
+              height={300}
+              title='Estimated cases'
+            />
+          </GridCell>
+          <GridCell minWidth={600}>
+            <VariantAgeDistributionPlotWidget.ShareableComponent
+              variantSampleSet={variantSampleSet}
+              wholeSampleSet={wholeSampleSet}
+              height={300}
+              title='Demographics'
+            />
+          </GridCell>
+          {country === 'Switzerland' && (
+            <GridCell minWidth={600}>
+              <HospitalizationDeathPlotWidget.ShareableComponent
+                field='hospitalized'
+                variantSampleSet={variantSampleSet}
+                wholeSampleSet={wholeSampleSet}
+                variantName={variant.name || 'unnamed variant'}
+                title='Hospitalization probabilities'
+                height={300}
+                toolbarChildren={deepFocusButtons.hospitalizationAndDeath}
+              />
+            </GridCell>
+          )}
+          {!isRegion(country) && (
+            <GridCell minWidth={600}>
+              <NamedCard
+                title='Estimation of the current advantage'
+                toolbar={deepFocusButtons.chen2021Fitness}
+                description='
               If variants spread pre-dominantly by local transmission across demographic groups, this
                estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
                advantage estimate reflects the advantage compared to co-circulating strains. Thus, as new variants
@@ -211,65 +227,84 @@ export const FocusPage = ({
                 low, the advantage may merely reflect the current importance of introductions from abroad or
                  the variant spreading in a particular demographic group. In this case, the estimate does not
                   provide information on the transmission advantage.'
-            >
-              <div style={{ height: 300 }}>
-                <Chen2021FitnessPreview {...plotProps} />
-              </div>
-            </NamedCard>
-          </GridCell>
-        )}
-        <GridCell minWidth={600}>
-          <VariantDivisionDistributionTableWidget.ShareableComponent
-            variantSampleSet={variantSampleSet}
-            wholeSampleSet={wholeSampleSet}
-            title='Geography'
-          />
-        </GridCell>
-        {loggedIn && country === 'Switzerland' && (
-          <GridCell minWidth={600}>
-            <ExportManagerContext.Provider value={mapExportManagerRef.current}>
-              <NamedCard
-                title='Geography'
-                style={NamedCardStyle.CONFIDENTIAL}
-                toolbar={<ExportButton className='mt-1 ml-1' />}
               >
-                <Switzerland variantSampleSet={variantSampleSet} />
+                <div style={{ height: 300 }}>
+                  <Chen2021FitnessPreview {...plotProps} />
+                </div>
               </NamedCard>
-            </ExportManagerContext.Provider>
-          </GridCell>
-        )}
-        {wasteWaterSummaryPlot}
-        {samplingStrategy === SamplingStrategy.AllSamples && (
+            </GridCell>
+          )}
           <GridCell minWidth={600}>
-            <AsyncVariantInternationalComparisonPlot
-              height={300}
-              title='International comparison'
-              toolbarChildren={deepFocusButtons.internationalComparison}
-              country={country}
-              variantInternationalSampleSetState={variantInternationalSampleSetState}
-              wholeInternationalSampleSetState={wholeInternationalSampleSetState}
+            <VariantDivisionDistributionTableWidget.ShareableComponent
+              variantSampleSet={variantSampleSet}
+              wholeSampleSet={wholeSampleSet}
+              title='Geography'
             />
           </GridCell>
-        )}
-        {variant.name && variant.mutations.length === 0 && (
-          <GridCell minWidth={800}>
-            <ArticleListWidget.ShareableComponent
-              title='Publications and pre-Prints'
-              pangolinLineage={variant.name}
-            />
-          </GridCell>
-        )}
-      </PackedGrid>
+          {loggedIn && country === 'Switzerland' && (
+            <GridCell minWidth={600}>
+              <ExportManagerContext.Provider value={mapExportManagerRef.current}>
+                <NamedCard
+                  title='Geography'
+                  style={NamedCardStyle.CONFIDENTIAL}
+                  toolbar={<ExportButton className='mt-1 ml-1' />}
+                >
+                  <Switzerland variantSampleSet={variantSampleSet} />
+                </NamedCard>
+              </ExportManagerContext.Provider>
+            </GridCell>
+          )}
+          {wasteWaterSummaryPlot}
+          {samplingStrategy === SamplingStrategy.AllSamples && (
+            <GridCell minWidth={600}>
+              <AsyncVariantInternationalComparisonPlot
+                height={300}
+                title='International comparison'
+                toolbarChildren={deepFocusButtons.internationalComparison}
+                country={country}
+                variantInternationalSampleSetState={variantInternationalSampleSetState}
+                wholeInternationalSampleSetState={wholeInternationalSampleSetState}
+              />
+            </GridCell>
+          )}
+          {variant.name && variant.mutations.length === 0 && (
+            <GridCell minWidth={800}>
+              <ArticleListWidget.ShareableComponent
+                title='Publications and pre-Prints'
+                pangolinLineage={variant.name}
+              />
+            </GridCell>
+          )}
+        </PackedGrid>
 
-      {variant.name && (
-        <div className='m-4'>
-          <VariantMutations
-            country={forwardedProps.country}
-            pangolinLineage={variant.name}
-            dateRange={forwardedProps.dateRange}
+        {variant.name && (
+          <div className='m-4'>
+            <VariantMutations
+              country={forwardedProps.country}
+              pangolinLineage={variant.name}
+              dateRange={forwardedProps.dateRange}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* The division breakdown plots */}
+      <DivisionModal
+        variantSampleSet={variantSampleSet}
+        wholeSampleSet={wholeSampleSet}
+        generate={(d, v, w) => (
+          <VariantTimeDistributionPlotWidget.ShareableComponent
+            variantSampleSet={v}
+            wholeSampleSet={w}
+            height={300}
+            title={d}
+            showExport={false}
           />
-        </div>
-      )}
-    </div>
+        )}
+        show={showVariantTimeDistributionDivGrid}
+        handleClose={() => setShowVariantTimeDistributionDivGrid(false)}
+        header='Sequences over time'
+      />
+    </>
   );
 };
