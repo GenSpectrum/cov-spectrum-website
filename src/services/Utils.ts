@@ -26,4 +26,31 @@ export class Utils {
       return element2;
     }
   }
+
+  static trimBy<T>(arr: T[], isBlankFunc: (element: T) => boolean): T[] {
+    let trimmedStart = Utils.trimStartBy(arr, isBlankFunc);
+    return Utils.trimEndBy(trimmedStart, isBlankFunc);
+  }
+
+  static trimStartBy<T>(arr: T[], isBlankFunc: (element: T) => boolean): T[] {
+    let start = 0;
+    let end = arr.length;
+    for (; start < arr.length; start++) {
+      if (!isBlankFunc(arr[start])) {
+        break;
+      }
+    }
+    return arr.slice(start, end);
+  }
+
+  static trimEndBy<T>(arr: T[], isBlankFunc: (element: T) => boolean): T[] {
+    let start = 0;
+    let end = arr.length;
+    for (; end >= 0; end--) {
+      if (!isBlankFunc(arr[end - 1])) {
+        break;
+      }
+    }
+    return arr.slice(start, end);
+  }
 }
