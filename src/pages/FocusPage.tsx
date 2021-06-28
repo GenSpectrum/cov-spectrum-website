@@ -77,6 +77,7 @@ export const FocusPage = ({
 }: Props) => {
   const { country, matchPercentage, variant, samplingStrategy, dateRange } = forwardedProps;
   const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
+  const [showVariantAgeDistributionDivGrid, setShowVariantAgeDistributionDivGrid] = useState(false);
 
   const plotProps = {
     country,
@@ -199,6 +200,7 @@ export const FocusPage = ({
               wholeSampleSet={wholeSampleSet}
               height={300}
               title='Demographics'
+              toolbarChildren={[createDivisionBreakdownButton(setShowVariantAgeDistributionDivGrid)]}
             />
           </GridCell>
           {country === 'Switzerland' && (
@@ -304,6 +306,22 @@ export const FocusPage = ({
         show={showVariantTimeDistributionDivGrid}
         handleClose={() => setShowVariantTimeDistributionDivGrid(false)}
         header='Sequences over time'
+      />
+      <DivisionModal
+        variantSampleSet={variantSampleSet}
+        wholeSampleSet={wholeSampleSet}
+        generate={(d, v, w) => (
+          <VariantAgeDistributionPlotWidget.ShareableComponent
+            variantSampleSet={v}
+            wholeSampleSet={w}
+            height={300}
+            title={d}
+            showExport={false}
+          />
+        )}
+        show={showVariantAgeDistributionDivGrid}
+        handleClose={() => setShowVariantAgeDistributionDivGrid(false)}
+        header='Demographics'
       />
     </>
   );
