@@ -17,15 +17,6 @@ interface Props {
   onClick: () => void;
 }
 
-const Title = styled.div`
-  margin: 5px 10px;
-  font-size: 1rem;
-`;
-
-const Percentage = styled.span`
-  float: right;
-`;
-
 const StyledCard = styled.div`
   overflow: hidden;
   cursor: pointer;
@@ -54,8 +45,7 @@ const getTrend = (data: number[]): TREND => {
 };
 
 const getTrendColor = (data: number[]): string => {
-  const trend = getTrend(data);
-  switch (trend) {
+  switch (getTrend(data)) {
     case TREND.POSITIVE:
       return colors.bad;
     case TREND.NEGATIVE:
@@ -99,12 +89,12 @@ export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, s
       onClick={onClick}
       selected={selected}
     >
-      <Title className={`${selected ? 'font-bold' : ''}`}>
-        {name}{WHOLabel !== undefined && ` (${WHOLabel})`}
+      <div id="variant-title" className={`${selected ? 'font-bold' : ''} mx-2 mt-2`}>
+        {name}{WHOLabel !== undefined && ` ${WHOLabel}`}
         {chartData?.length && (
-          <Percentage className='text-muted'>{(recentProportion! * 100).toFixed(1)}%</Percentage>
+          <div className='text-muted float-right'>{(recentProportion! * 100).toFixed(1)}%</div>
         )}
-      </Title>
+      </div>
       <div>
         <SimpleAreaPlot data={chartData} selected={selected ? selected : false} />
       </div>

@@ -24,7 +24,7 @@ export const WHO_LABELS: { [key: string]: { label: string; type: VariantType } |
 };
 
 export const getWHOLabel = (pangoLineage: string): string | undefined => {
-  return WHO_LABELS[pangoLineage.trim()]?.label;
+  return WHO_LABELS[pangoLineage.trim().replace(/\*/g, '')]?.label;
 };
 
 export const getWHOVariantType = (pangoLineage: string): VariantType | undefined => {

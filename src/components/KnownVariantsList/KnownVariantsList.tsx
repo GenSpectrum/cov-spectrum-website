@@ -233,7 +233,7 @@ export const KnownVariantsList = ({
         />
       </SearchWrapper>
 
-      <Grid>
+      <div className="grid grid-cols-2 md:grid-cols-2 gap-2">
         {knownVariants.map(({ selector, chartData, recentProportion }) => (
           <KnownVariantCard
             key={selector.variant.name}
@@ -244,7 +244,7 @@ export const KnownVariantsList = ({
             selected={selection?.variant.name === selector.variant.name}
           />
         ))}
-      </Grid>
+      </div>
     </>
   );
 };
