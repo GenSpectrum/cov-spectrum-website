@@ -32,6 +32,7 @@ import { VariantDivisionDistributionTableWidget } from '../widgets/VariantDivisi
 import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistributionPlot';
 import { VariantSelector } from '../helpers/sample-selector';
 import { DivisionModal } from '../components/DivisionModal';
+import { SwitzerlandEstimatedCasesDivisionModal } from '../components/SwitzerlandEstimatedCasesDivisionModal';
 
 interface Props {
   country: Country;
@@ -77,6 +78,7 @@ export const FocusPage = ({
 }: Props) => {
   const { country, matchPercentage, variant, samplingStrategy, dateRange } = forwardedProps;
   const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
+  const [showEstimatedCasesDivGrid, setShowEstimatedCasesDivGrid] = useState(false);
   const [showVariantAgeDistributionDivGrid, setShowVariantAgeDistributionDivGrid] = useState(false);
 
   const plotProps = {
@@ -192,6 +194,9 @@ export const FocusPage = ({
               sequencingIntensityEntrySet={sequencingIntensityEntrySet}
               height={300}
               title='Estimated cases'
+              toolbarChildren={
+                country === 'Switzerland' ? [createDivisionBreakdownButton(setShowEstimatedCasesDivGrid)] : []
+              }
             />
           </GridCell>
           <GridCell minWidth={600}>
@@ -291,38 +296,50 @@ export const FocusPage = ({
       </div>
 
       {/* The division breakdown plots */}
-      <DivisionModal
-        variantSampleSet={variantSampleSet}
-        wholeSampleSet={wholeSampleSet}
-        generate={(d, v, w) => (
-          <VariantTimeDistributionPlotWidget.ShareableComponent
-            variantSampleSet={v}
-            wholeSampleSet={w}
-            height={300}
-            title={d}
-            showExport={false}
-          />
-        )}
-        show={showVariantTimeDistributionDivGrid}
-        handleClose={() => setShowVariantTimeDistributionDivGrid(false)}
-        header='Sequences over time'
-      />
-      <DivisionModal
-        variantSampleSet={variantSampleSet}
-        wholeSampleSet={wholeSampleSet}
-        generate={(d, v, w) => (
-          <VariantAgeDistributionPlotWidget.ShareableComponent
-            variantSampleSet={v}
-            wholeSampleSet={w}
-            height={300}
-            title={d}
-            showExport={false}
-          />
-        )}
-        show={showVariantAgeDistributionDivGrid}
-        handleClose={() => setShowVariantAgeDistributionDivGrid(false)}
-        header='Demographics'
-      />
+      {showVariantTimeDistributionDivGrid && (
+        <DivisionModal
+          variantSampleSet={variantSampleSet}
+          wholeSampleSet={wholeSampleSet}
+          generate={(d, v, w) => (
+            <VariantTimeDistributionPlotWidget.ShareableComponent
+              variantSampleSet={v}
+              wholeSampleSet={w}
+              height={300}
+              title={d}
+              showExport={false}
+            />
+          )}
+          show={showVariantTimeDistributionDivGrid}
+          handleClose={() => setShowVariantTimeDistributionDivGrid(false)}
+          header='Sequences over time'
+        />
+      )}
+      {showEstimatedCasesDivGrid && country === 'Switzerland' && (
+        <SwitzerlandEstimatedCasesDivisionModal
+          variantSampleSet={variantSampleSet}
+          wholeSampleSet={wholeSampleSet}
+          show={showEstimatedCasesDivGrid}
+          handleClose={() => setShowEstimatedCasesDivGrid(false)}
+        />
+      )}
+      {showVariantAgeDistributionDivGrid && (
+        <DivisionModal
+          variantSampleSet={variantSampleSet}
+          wholeSampleSet={wholeSampleSet}
+          generate={(d, v, w) => (
+            <VariantAgeDistributionPlotWidget.ShareableComponent
+              variantSampleSet={v}
+              wholeSampleSet={w}
+              height={300}
+              title={d}
+              showExport={false}
+            />
+          )}
+          show={showVariantAgeDistributionDivGrid}
+          handleClose={() => setShowVariantAgeDistributionDivGrid(false)}
+          header='Demographics'
+        />
+      )}
     </>
   );
 };

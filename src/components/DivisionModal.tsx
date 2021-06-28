@@ -29,10 +29,7 @@ const splitByDivision = (variantSampleSet: SampleSetWithSelector, wholeSampleSet
         divisionVariantSampleSetMap.get(division)!,
         variantSampleSet.sampleSelector
       ),
-      wholeSampleSet: new SampleSet(
-        divisionWholeSampleSetMap.get(division)!,
-        wholeSampleSet.sampleSelector
-      ),
+      wholeSampleSet: new SampleSet(divisionWholeSampleSetMap.get(division)!, wholeSampleSet.sampleSelector),
     }));
 };
 
