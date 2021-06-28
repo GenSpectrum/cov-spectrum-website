@@ -62,7 +62,7 @@ const createDivisionBreakdownButton = (setter: (show: boolean) => void) => (
       setter(true);
     }}
   >
-    Show divisions
+    Show regions
   </Button>
 );
 
