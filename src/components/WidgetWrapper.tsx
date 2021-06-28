@@ -23,11 +23,18 @@ export interface LayoutProps {
 export interface ExternalProps {
   title: string;
   toolbarChildren?: React.ReactChild | React.ReactChild[];
+  showExport?: boolean;
   height?: number;
   widgetLayout?: React.ComponentType<LayoutProps>;
 }
 // IMPORTANT externalPropsKeys must be kept in sync with ExternalProps
-const externalPropsKeys: (keyof ExternalProps)[] = ['title', 'toolbarChildren', 'height', 'widgetLayout'];
+const externalPropsKeys: (keyof ExternalProps)[] = [
+  'title',
+  'toolbarChildren',
+  'showExport',
+  'height',
+  'widgetLayout',
+];
 
 export function pickExternalProps<T extends { [K in keyof ExternalProps]?: never }>(
   allProps: T
@@ -51,6 +58,7 @@ export function WidgetWrapper({
   children,
   title,
   toolbarChildren,
+  showExport = true,
   height,
   widgetLayout: WidgetLayout = NamedCard,
 }: Props) {
@@ -74,7 +82,7 @@ export function WidgetWrapper({
           title={title}
           toolbar={
             <ButtonToolbar className='mb-1'>
-              <ExportButton className='mt-1 ml-1' />
+              {showExport && <ExportButton className='mt-1 ml-1' />}
               {toolbarChildren}
             </ButtonToolbar>
           }

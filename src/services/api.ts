@@ -423,7 +423,7 @@ export const isWorld = (place: Place): boolean => place === 'World';
 export const getPlaces = async (): Promise<Place[]> => {
   const countries = await getCountries();
   const regions = await getRegions();
-  return regions.concat(countries);
+  return ['World'].concat(regions).concat(countries);
 };
 
 export const fetchTimeDistributionData = () => {};
@@ -454,9 +454,7 @@ export async function getSequenceCounts(
   signal?: AbortSignal
 ): Promise<SequenceCountEntry[]> {
   const params = new URLSearchParams();
-  if (country) {
-    params.set('country', country);
-  }
+  setPlaceParam(params, country);
   if (dateFrom) {
     params.set('dateFrom', dateFrom);
   }

@@ -167,6 +167,13 @@ export const PangolinLineageInformationSchema = zod.object({
       proportion: zod.number(),
     })
   ),
+  commonNucMutations: zod.array(
+    zod.object({
+      mutation: zod.string(),
+      count: zod.number(),
+      proportion: zod.number(),
+    })
+  ),
 });
 
 export const PangolinLineageAliasSchema = zod.object({

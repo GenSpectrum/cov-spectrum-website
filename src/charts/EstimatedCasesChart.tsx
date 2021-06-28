@@ -7,6 +7,7 @@ import { getTicks } from '../helpers/ticks';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import dayjs from 'dayjs';
 import DownloadWrapper from './DownloadWrapper';
+import { Utils } from '../services/Utils';
 
 export type EstimatedCasesTimeEntry = {
   date: UnifiedDay;
@@ -47,19 +48,8 @@ export const EstimatedCasesChart = React.memo(
     } = useMemo(() => {
       // Only show the data after the variant was first identified
       const sortedData = [...data].sort((a, b) => (a.date.dayjs.isAfter(b.date.dayjs) ? 1 : -1));
-      const filteredData: EstimatedCasesTimeEntry[] = [];
-      let firstVariantFound = false;
-      for (let d of sortedData) {
-        if (!firstVariantFound) {
-          if (d.variantCount > 0) {
-            firstVariantFound = true;
-          }
-        }
-        if (firstVariantFound) {
-          filteredData.push(d);
-        }
-      }
-
+      let filteredData: EstimatedCasesTimeEntry[] = Utils.trimStartBy(sortedData, x => x.variantCount === 0);
+      filteredData = Utils.trimEndBy(filteredData, x => x.sequenced === 0);
       const smoothedData: EstimatedCasesTimeEntry[] = [];
       for (let i = 3; i < filteredData.length - 3; i++) {
         const window = [
@@ -153,10 +143,7 @@ export const EstimatedCasesChart = React.memo(
                     scale='time'
                     type='number'
                     tickFormatter={formatDate}
-                    domain={[
-                      (dataMin: any) => dataMin,
-                      () => data[data.length - 1].date.dayjs.toDate().getTime(),
-                    ]}
+                    domain={[(dataMin: any) => dataMin, () => plotData[plotData.length - 1].date.getTime()]}
                     ticks={ticks}
                   />
                   <YAxis domain={[0, yMax]} allowDataOverflow={true} scale='linear' />
