@@ -11,7 +11,7 @@ export interface Props {
   place: Place;
 }
 
-export const VariantHeader = ({ variant, titleSuffix, controls}: Props) => {
+export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
   const [resolvedFullName, setResolvedFullName] = useState<string | undefined>();
 
   const label = variant.name ? getWHOLabel(variant.name) : undefined;
@@ -43,7 +43,11 @@ export const VariantHeader = ({ variant, titleSuffix, controls}: Props) => {
             {!!titleSuffix && ' - '}
             {titleSuffix}
           </h1>
-          {<h3 className='pl-1.5 text-gray-500'>{` variant`} {type && ` of ${type}`}</h3>}
+          {
+            <h3 className='pl-1.5 text-gray-500'>
+              {` variant`} {type && ` of ${type}`}
+            </h3>
+          }
         </div>
         <div>{controls}</div>
       </div>

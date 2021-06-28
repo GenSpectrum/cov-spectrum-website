@@ -128,9 +128,9 @@ export const TimeIntensityChart = React.memo(
                 <Tooltip
                   active={false}
                   cursor={false}
-                  content={(e: any )=> {
+                  content={(e: any) => {
                     if (e?.payload.length > 0) {
-                      setCurrentData(e.payload[0].payload)
+                      setCurrentData(e.payload[0].payload);
                     }
                     return <></>;
                   }}
