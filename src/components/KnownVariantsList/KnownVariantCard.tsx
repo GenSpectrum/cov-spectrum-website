@@ -89,8 +89,9 @@ export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, s
       onClick={onClick}
       selected={selected}
     >
-      <div id="variant-title" className={`${selected ? 'font-bold' : ''} mx-2 mt-2`}>
-        {name}{WHOLabel !== undefined && ` ${WHOLabel}`}
+      <div id='variant-title' className={`${selected ? 'font-bold' : ''} mx-2 mt-2`}>
+        {WHOLabel !== undefined && `${WHOLabel} `}
+        {name}
         {chartData?.length && (
           <div className='text-muted float-right'>{(recentProportion! * 100).toFixed(1)}%</div>
         )}

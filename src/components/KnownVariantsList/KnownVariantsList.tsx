@@ -29,8 +29,8 @@ interface Props {
 
 const Grid = styled.div`
   display: grid;
-  grid-gap: 10px;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  grid-gap: 5px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 `;
 
 type NamedVariantSelector = VariantSelector & { variant: { name: string } };
@@ -233,7 +233,7 @@ export const KnownVariantsList = ({
         />
       </SearchWrapper>
 
-      <div className="grid grid-cols-2 md:grid-cols-2 gap-2">
+      <Grid>
         {knownVariants.map(({ selector, chartData, recentProportion }) => (
           <KnownVariantCard
             key={selector.variant.name}
@@ -244,7 +244,7 @@ export const KnownVariantsList = ({
             selected={selection?.variant.name === selector.variant.name}
           />
         ))}
-      </div>
+      </Grid>
     </>
   );
 };
