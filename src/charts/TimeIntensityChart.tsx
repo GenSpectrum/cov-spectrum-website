@@ -105,7 +105,7 @@ export const TimeIntensityChart = React.memo(
 
     return currentData ? (
       <ChartAndMetrics metrics={metrics}>
-          <ResponsiveContainer>
+          <ResponsiveContainer id="time-intensity-container" className="h-full">
             <BarChart
               data={data}
               barCategoryGap='5%'

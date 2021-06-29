@@ -2,7 +2,6 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import { BiHelpCircle } from 'react-icons/bi';
 import styled from 'styled-components';
-import { ChartAndMetricsWrapper, ChartWrapper } from './common';
 
 export const METRIC_RIGHT_PADDING_PX = 16;
 export const METRIC_WIDTH_PX = 160;
@@ -100,14 +99,14 @@ interface ChartAndMetricsProps {
 
 export const ChartAndMetrics = ({ children, metrics }: ChartAndMetricsProps) => {
   return (
-    <ChartAndMetricsWrapper>
-      <ChartWrapper className='-mr-4 -ml-2'>{children}</ChartWrapper>
+    <div id="chart-and-metricss" className="flex flex-col lg:flex-row h-full">
+      <div className="w-full h-full">{children}</div>
       <MetricsWrapper>
         {metrics.map(mProps => (
           <Metric {...mProps} />
         ))}
       </MetricsWrapper>
-    </ChartAndMetricsWrapper>
+    </div>
   );
 };
 
