@@ -89,19 +89,6 @@ const getMonthlyTickText = (value: string, dataLength: number, activeIndex: numb
   }
 };
 
-export type CustomTimeTickProps = {
-  x?: number;
-  y?: number;
-  stroke?: unknown;
-  payload?: { value: string; index: number };
-  activeIndex: number;
-  dataLength: number;
-  currentValue: string;
-  unit: 'week' | 'month';
-  activeColor?: string;
-  inactiveColor?: string;
-};
-
 export type TimeTickProps = {
   x?: number;
   y?: number;
@@ -126,7 +113,6 @@ const textBaseProperties = {
   x: 0,
   y: 0,
   dx: 0,
-  dy: 10,
   textAnchor: 'middle',
 };
 
@@ -164,6 +150,7 @@ export const TimeTick = React.memo(
           <>
             <text
               {...textBaseProperties}
+              dy={10}
               fill={payload.value === currentValue ? activeColor : inactiveColor}
               fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
             >
@@ -172,6 +159,7 @@ export const TimeTick = React.memo(
             {unit === 'week' && (
               <text
                 {...textBaseProperties}
+                dy={30}
                 fill={payload.value === currentValue ? activeColor : inactiveColor}
                 fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
               >
@@ -186,74 +174,3 @@ export const TimeTick = React.memo(
   },
   hasSameValue
 );
-
-export const CustomTimeTick = ({
-  x,
-  y,
-  payload,
-  activeIndex,
-  dataLength,
-  currentValue,
-  unit,
-  activeColor = colors.active,
-  inactiveColor = colors.inactive,
-}: CustomTimeTickProps): JSX.Element => {
-  let content;
-  if (!payload) {
-    content = <></>;
-  } else if (unit === 'week') {
-    const text = getWeeklyTickText(payload.value, dataLength, activeIndex, payload.index);
-    if (!text) {
-      content = <></>;
-    } else {
-      content = (
-        <>
-          <text
-            x={0}
-            y={0}
-            dx={0}
-            dy={10}
-            textAnchor='middle'
-            fill={payload.value === currentValue ? activeColor : inactiveColor}
-            fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
-          >
-            {text.line1}
-          </text>
-          <text
-            x={0}
-            y={0}
-            dx={0}
-            dy={30}
-            textAnchor='middle'
-            fill={payload.value === currentValue ? activeColor : inactiveColor}
-            fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
-          >
-            {text.line2}
-          </text>
-        </>
-      );
-    }
-  } else if (unit === 'month') {
-    const text = getMonthlyTickText(payload.value, dataLength, activeIndex, payload.index);
-    if (!text) {
-      content = <></>;
-    } else {
-      content = (
-        <>
-          <text
-            x={0}
-            y={0}
-            dx={0}
-            dy={10}
-            textAnchor='middle'
-            fill={payload.value === currentValue ? activeColor : inactiveColor}
-            fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
-          >
-            {text}
-          </text>
-        </>
-      );
-    }
-  }
-  return <g transform={`translate(${x},${y})`}>{content}</g>;
-};

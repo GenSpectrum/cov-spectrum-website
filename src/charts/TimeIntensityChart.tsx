@@ -4,11 +4,6 @@ import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, 
 import {
   colors,
   TimeTick,
-  // Wrapper,
-  // TitleWrapper,
-  // ChartAndMetricsWrapper,
-  // ChartWrapper,
-  // CustomTimeTick,
 } from './common';
 import { kFormat } from '../helpers/number';
 
@@ -18,7 +13,7 @@ const CHART_MARGIN_BOTTOM = 0;
 export type OnClickHandler = (index: number) => boolean;
 
 export type TimeIntensityEntry = {
-  id?: string;
+  id: string;
   month: string;
   proportion: number;
   quantity: number;
@@ -41,15 +36,6 @@ export const TimeIntensityChart = React.memo(
       resetDefault();
     }, [data, resetDefault]);
 
-    const handleMouseEnter = (context: unknown, index: number): void => {
-      setCurrentData(data[index]);
-    };
-
-    const handleClick = (context: unknown, index: number): void => {
-      if (onClickHandler) {
-        onClickHandler(index);
-      }
-    };
 
     const handleMouseLeave = (): void => {
       resetDefault();
@@ -60,8 +46,6 @@ export const TimeIntensityChart = React.memo(
         dataKey='proportion'
         key='proportion'
         stackId='a'
-        onMouseEnter={handleMouseEnter}
-        onClick={handleClick}
         isAnimationActive={false}
       >
         {data.map((_, index: number) => {
@@ -72,8 +56,6 @@ export const TimeIntensityChart = React.memo(
         dataKey='quantity'
         key='quantity'
         stackId='a'
-        onMouseEnter={handleMouseEnter}
-        onClick={handleClick}
         isAnimationActive={false}
       >
         {data.map((entry: TimeIntensityEntry, index: number) => (
@@ -109,7 +91,7 @@ export const TimeIntensityChart = React.memo(
 
     return currentData ? (
       <ChartAndMetrics metrics={metrics} title={`Number of sequenced samples on ${currentData.month}`}>
-        <ResponsiveContainer id='time-intensity-container' className='h-full'>
+        <ResponsiveContainer>
           <BarChart
             data={data}
             barCategoryGap='5%'
