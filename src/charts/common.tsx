@@ -50,45 +50,6 @@ export const ChartWrapper = styled.div`
   width: 100%;
 `;
 
-const getWeeklyTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
-  // minDistanceBetweenTicks tries to avoid that the fixed ticks overlap with the tick of the active entry. This
-  // seems to work good enough for now but a perfect implementation probably has to consider the width of the
-  // plot.
-  const minDistanceBetweenTicks = Math.ceil(dataLength / 10);
-  if (activeIndex !== index && Math.abs(activeIndex - index) <= minDistanceBetweenTicks) {
-    return undefined;
-  }
-  if (
-    index === activeIndex ||
-    index === 0 ||
-    index === dataLength - 1 ||
-    index === Math.floor(dataLength / 2)
-  ) {
-    return {
-      line1: 'Week ' + value.slice(5),
-      line2: globalDateCache.getIsoWeek(value).firstDay.string.slice(2),
-    };
-  }
-};
-
-const getMonthlyTickText = (value: string, dataLength: number, activeIndex: number, index: number) => {
-  // minDistanceBetweenTicks tries to avoid that the fixed ticks overlap with the tick of the active entry. This
-  // seems to work good enough for now but a perfect implementation probably has to consider the width of the
-  // plot.
-  const minDistanceBetweenTicks = Math.ceil(dataLength / 10);
-  if (activeIndex !== index && Math.abs(activeIndex - index) <= minDistanceBetweenTicks) {
-    return undefined;
-  }
-  if (
-    index === activeIndex ||
-    index === 0 ||
-    index === dataLength - 1 ||
-    index === Math.floor(dataLength / 2)
-  ) {
-    return value;
-  }
-};
-
 export type TimeTickProps = {
   x?: number;
   y?: number;
