@@ -101,6 +101,90 @@ export type CustomTimeTickProps = {
   inactiveColor?: string;
 };
 
+export type TimeTickProps = {
+  x?: number;
+  y?: number;
+  stroke?: unknown;
+  payload?: { value: string; index: number };
+  currentValue: string;
+  unit: 'week' | 'month';
+  activeColor?: string;
+  inactiveColor?: string;
+};
+
+export const TimeTick = ({
+  x,
+  y,
+  payload,
+  currentValue,
+  unit,
+  activeColor = colors.active,
+  inactiveColor = colors.inactive,
+}: TimeTickProps): JSX.Element => {
+  let content;
+  if (!payload) {
+    content = <></>;
+  } else if (unit === 'week') {
+    // const text = getWeeklyTickText(payload.value, dataLength, activeIndex, payload.index);
+    const text = {
+      line1: 'Week ' + payload.value.slice(5),
+      line2: globalDateCache.getIsoWeek(payload.value).firstDay.string.slice(2),
+    };
+    if (!text) {
+      content = <></>;
+    } else {
+      content = (
+        <>
+          <text
+            x={0}
+            y={0}
+            dx={0}
+            dy={10}
+            textAnchor='middle'
+            fill={payload.value === currentValue ? activeColor : inactiveColor}
+            fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
+          >
+            {text.line1}
+          </text>
+          <text
+            x={0}
+            y={0}
+            dx={0}
+            dy={30}
+            textAnchor='middle'
+            fill={payload.value === currentValue ? activeColor : inactiveColor}
+            fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
+          >
+            {text.line2}
+          </text>
+        </>
+      );
+    }
+  } else if (unit === 'month') {
+    const text = payload.value;
+    if (!text) {
+      content = <></>;
+    } else {
+      content = (
+        <>
+          <text
+            x={0}
+            y={0}
+            dx={0}
+            dy={10}
+            textAnchor='middle'
+            fill={payload.value === currentValue ? activeColor : inactiveColor}
+            fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
+          >
+            {text}
+          </text>
+        </>
+      );
+    }
+  }
+  return <g transform={`translate(${x},${y})`}>{content}</g>;
+};
+
 export const CustomTimeTick = ({
   x,
   y,

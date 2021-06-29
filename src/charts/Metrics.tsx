@@ -95,17 +95,23 @@ export type MetricProps = {
 interface ChartAndMetricsProps {
   children: React.ReactNode;
   metrics: MetricProps[];
+  title: string;
 }
 
-export const ChartAndMetrics = ({ children, metrics }: ChartAndMetricsProps) => {
+export const ChartAndMetrics = ({ children, metrics, title }: ChartAndMetricsProps) => {
   return (
-    <div id="chart-and-metricss" className="flex flex-col lg:flex-row h-full">
-      <div className="w-full h-full">{children}</div>
-      <MetricsWrapper>
-        {metrics.map(mProps => (
-          <Metric {...mProps} />
-        ))}
-      </MetricsWrapper>
+    <div id='chart-and-metrics' className="flex flex-col h-full w-full">
+      <h3 id='chart-title' className='my-0 pb-4 pr-10 pt-0 text-gray-500'>
+        {title}
+      </h3>
+      <div className='flex flex-col lg:flex-row h-full'>
+        <div className='w-full h-full'>{children}</div>
+        <MetricsWrapper>
+          {metrics.map(mProps => (
+            <Metric {...mProps} />
+          ))}
+        </MetricsWrapper>
+      </div>
     </div>
   );
 };

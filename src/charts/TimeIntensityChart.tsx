@@ -2,12 +2,12 @@ import React, { useEffect, useState, useCallback } from 'react';
 import  { ChartAndMetrics } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
 import {
-  colors,
+  colors, TimeTick,
   // Wrapper,
   // TitleWrapper,
   // ChartAndMetricsWrapper,
   // ChartWrapper,
-  CustomTimeTick,
+  // CustomTimeTick,
 } from './common';
 import { kFormat } from '../helpers/number';
 
@@ -104,54 +104,46 @@ export const TimeIntensityChart = React.memo(
       : [];
 
     return currentData ? (
-      <ChartAndMetrics metrics={metrics}>
-          <ResponsiveContainer id="time-intensity-container" className="h-full">
-            <BarChart
-              data={data}
-              barCategoryGap='5%'
-              margin={{ top: 0, right: CHART_MARGIN_RIGHT, left: 0, bottom: CHART_MARGIN_BOTTOM }}
-              onMouseLeave={handleMouseLeave}
-            >
-              <XAxis
-                dataKey='month'
-                axisLine={false}
-                tickLine={false}
-                interval={0}
-                tick={
-                  <CustomTimeTick
-                    activeIndex={Math.round(data.length / 2)}
-                    dataLength={data.length}
-                    currentValue={currentData.month}
-                    unit='month'
-                    activeColor='black'
-                  />
+      <ChartAndMetrics metrics={metrics} title={`Number of sequenced samples on ${currentData.month}`}>
+        <ResponsiveContainer id='time-intensity-container' className='h-full'>
+          <BarChart
+            data={data}
+            barCategoryGap='5%'
+            margin={{ top: 0, right: CHART_MARGIN_RIGHT, left: 0, bottom: CHART_MARGIN_BOTTOM }}
+            onMouseLeave={handleMouseLeave}
+          >
+            <XAxis
+              dataKey='month'
+              axisLine={false}
+              tickLine={false}
+              interval={0}
+              tick={<TimeTick currentValue={currentData.month} unit='month' activeColor='black' />}
+            />
+            <YAxis
+              dataKey='quantity'
+              tickFormatter={(v: number) => kFormat(v)}
+              interval={1}
+              axisLine={false}
+              tickLine={false}
+              allowDecimals={true}
+              hide={false}
+              width={60}
+              domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
+            />
+            <CartesianGrid vertical={false} />
+            {bars}
+            <Tooltip
+              active={false}
+              cursor={false}
+              content={(e: any) => {
+                if (e?.payload.length > 0) {
+                  setCurrentData(e.payload[0].payload);
                 }
-              />
-              <YAxis
-                dataKey='quantity'
-                tickFormatter={(v: number) => kFormat(v)}
-                interval={1}
-                axisLine={false}
-                tickLine={false}
-                allowDecimals={true}
-                hide={false}
-                width={60}
-                domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
-              />
-              <CartesianGrid vertical={false} />
-              {bars}
-              <Tooltip
-                active={false}
-                cursor={false}
-                content={(e: any) => {
-                  if (e?.payload.length > 0) {
-                    setCurrentData(e.payload[0].payload);
-                  }
-                  return <></>;
-                }}
-              />
-            </BarChart>
-          </ResponsiveContainer>
+                return <></>;
+              }}
+            />
+          </BarChart>
+        </ResponsiveContainer>
       </ChartAndMetrics>
     ) : (
       <p>Chart not available</p>
