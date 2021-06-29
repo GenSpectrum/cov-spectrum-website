@@ -2,6 +2,7 @@ import React from 'react';
 import ReactTooltip from 'react-tooltip';
 import { BiHelpCircle } from 'react-icons/bi';
 import styled from 'styled-components';
+import { ChartAndMetricsWrapper, ChartWrapper } from './common';
 
 export const METRIC_RIGHT_PADDING_PX = 16;
 export const METRIC_WIDTH_PX = 160;
@@ -90,6 +91,24 @@ export type MetricProps = {
   percent?: string | number | boolean;
   fontSize?: 'normal' | 'small';
   showPercent?: number | string | undefined;
+};
+
+interface ChartAndMetricsProps {
+  children: React.ReactNode;
+  metrics: MetricProps[];
+}
+
+export const ChartAndMetrics = ({ children, metrics }: ChartAndMetricsProps) => {
+  return (
+    <ChartAndMetricsWrapper>
+      <ChartWrapper className='-mr-4 -ml-2'>{children}</ChartWrapper>
+      <MetricsWrapper>
+        {metrics.map(mProps => (
+          <Metric {...mProps} />
+        ))}
+      </MetricsWrapper>
+    </ChartAndMetricsWrapper>
+  );
 };
 
 const Metric = ({
