@@ -1,3 +1,4 @@
+import React from 'react';
 import styled from 'styled-components';
 import { globalDateCache } from '../helpers/date-cache';
 
@@ -121,62 +122,70 @@ const shouldDisplay = (isActive: boolean, onlyDisplayActive: boolean) => {
   return true;
 };
 
-export const TimeTick = ({
-  x,
-  y,
-  payload,
-  currentValue,
-  onlyDisplayActive,
-  unit,
-  activeColor = colors.active,
-  inactiveColor = colors.inactive,
-}: TimeTickProps): JSX.Element => {
-  let content;
-  if (!payload || !shouldDisplay(payload.value === currentValue, onlyDisplayActive)) {
-    content = <></>;
-  } else {
-    const text =
-      unit === 'week'
-        ? {
-            line1: 'Week ' + payload.value.slice(5),
-            line2: globalDateCache.getIsoWeek(payload.value).firstDay.string.slice(2),
-          }
-        : { line1: payload.value };
-    if (!text) {
+const textBaseProperties = {
+  x: 0,
+  y: 0,
+  dx: 0,
+  dy: 10,
+  textAnchor: 'middle',
+};
+
+const hasSameValue= (prev: TimeTickProps, next: TimeTickProps): boolean => {
+  return prev.currentValue === next.currentValue;
+}
+
+//memoized based on whether it has same index
+export const TimeTick = React.memo(
+  ({
+    x,
+    y,
+    payload,
+    currentValue,
+    onlyDisplayActive,
+    unit,
+    activeColor = colors.active,
+    inactiveColor = colors.inactive,
+  }: TimeTickProps): JSX.Element => {
+    let content;
+    if (!payload || !shouldDisplay(payload.value === currentValue, onlyDisplayActive)) {
       content = <></>;
     } else {
-      content = (
-        <>
-          <text
-            x={0}
-            y={0}
-            dx={0}
-            dy={10}
-            textAnchor='middle'
-            fill={payload.value === currentValue ? activeColor : inactiveColor}
-            fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
-          >
-            {text.line1}
-          </text>
-          {unit === 'week' && (
+      const text =
+        unit === 'week'
+          ? {
+              line1: 'Week ' + payload.value.slice(5),
+              line2: globalDateCache.getIsoWeek(payload.value).firstDay.string.slice(2),
+            }
+          : { line1: payload.value };
+      if (!text) {
+        content = <></>;
+      } else {
+        content = (
+          <>
             <text
-              x={0}
-              y={0}
-              dx={0}
-              dy={30}
-              textAnchor='middle'
+              {...textBaseProperties}
               fill={payload.value === currentValue ? activeColor : inactiveColor}
               fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
             >
-              {text.line2}
+              {text.line1}
             </text>
-          )}
-        </>
-      );
+            {unit === 'week' && (
+              <text
+                {...textBaseProperties}
+                fill={payload.value === currentValue ? activeColor : inactiveColor}
+                fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
+              >
+                {text.line2}
+              </text>
+            )}
+          </>
+        );
+      }
     }
-  }
-  return <g transform={`translate(${x},${y})`}>{content}</g>;
-};
+    return <g transform={`translate(${x},${y})`}>{content}</g>;
+  },
+  hasSameValue
+);
 
 export const CustomTimeTick = ({
   x,

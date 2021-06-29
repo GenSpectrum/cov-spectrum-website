@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import  { ChartAndMetrics } from './Metrics';
+import { ChartAndMetrics } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
 import {
-  colors, TimeTick,
+  colors,
+  TimeTick,
   // Wrapper,
   // TitleWrapper,
   // ChartAndMetricsWrapper,
@@ -31,7 +32,6 @@ export type Props = {
 export const TimeIntensityChart = React.memo(
   ({ data, onClickHandler }: Props): JSX.Element => {
     const [currentData, setCurrentData] = useState<TimeIntensityEntry>(data[data.length - 1]);
-    const [activeIndex, setActiveIndex] = useState(data.length-1);
 
     const resetDefault = useCallback(() => {
       setCurrentData(data[data.length - 1]);
@@ -104,8 +104,11 @@ export const TimeIntensityChart = React.memo(
         ]
       : [];
 
+    //only display active index when the end is not selected
+    const onlyDisplayActive = !(currentData === data[data.length - 1]);
+
     return currentData ? (
-      <ChartAndMetrics metrics={metrics} title={`Number of sequenced samples`} date={currentData.month}>
+      <ChartAndMetrics metrics={metrics} title={`Number of sequenced samples on ${currentData.month}`}>
         <ResponsiveContainer id='time-intensity-container' className='h-full'>
           <BarChart
             data={data}
@@ -117,14 +120,15 @@ export const TimeIntensityChart = React.memo(
               dataKey='month'
               axisLine={false}
               tickLine={false}
-              interval={currentData === data[data.length - 1] ? 'preserveStartEnd' : 0}
+              //show all ticks when only display active is true
+              interval={onlyDisplayActive ? 0 : 'preserveStartEnd'}
               tick={
                 <TimeTick
                   currentValue={currentData.month}
                   dataLength={data.length}
                   unit='month'
                   activeColor='black'
-                  onlyDisplayActive={!(currentData === data[data.length - 1])}
+                  onlyDisplayActive={onlyDisplayActive}
                 />
               }
             />
@@ -147,7 +151,6 @@ export const TimeIntensityChart = React.memo(
               content={(e: any) => {
                 if (e?.payload.length > 0) {
                   setCurrentData(e.payload[0].payload);
-                  console.log(e.payload[0]);
                 }
                 return <></>;
               }}
