@@ -96,9 +96,10 @@ interface ChartAndMetricsProps {
   children: React.ReactNode;
   metrics: MetricProps[];
   title: string;
+  date?: string;
 }
 
-export const ChartAndMetrics = ({ children, metrics, title }: ChartAndMetricsProps) => {
+export const ChartAndMetrics = ({ children, metrics, title, date }: ChartAndMetricsProps) => {
   return (
     <div id='chart-and-metrics' className="flex flex-col h-full w-full">
       <h3 id='chart-title' className='my-0 pb-4 pr-10 pt-0 text-gray-500'>
@@ -107,6 +108,7 @@ export const ChartAndMetrics = ({ children, metrics, title }: ChartAndMetricsPro
       <div className='flex flex-col lg:flex-row h-full'>
         <div className='w-full h-full'>{children}</div>
         <MetricsWrapper>
+          {date && <h3>{date}</h3>}
           {metrics.map(mProps => (
             <Metric {...mProps} />
           ))}
@@ -124,7 +126,7 @@ const Metric = ({
   helpText,
   showPercent,
 }: MetricProps): JSX.Element => {
-  const tooltipId = 'TEST-id' + title;
+  const tooltipId = 'metric-tooltip-' + title;
   return (
     <MetricWrapper id='metric-with-tooltip'>
       <div data-for={tooltipId} data-tip={helpText}>

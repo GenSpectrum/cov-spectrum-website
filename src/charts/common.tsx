@@ -107,9 +107,18 @@ export type TimeTickProps = {
   stroke?: unknown;
   payload?: { value: string; index: number };
   currentValue: string;
+  dataLength: number;
   unit: 'week' | 'month';
   activeColor?: string;
   inactiveColor?: string;
+  onlyDisplayActive: boolean;
+};
+
+const shouldDisplay = (isActive: boolean, onlyDisplayActive: boolean) => {
+  if (onlyDisplayActive) {
+    return isActive;
+  }
+  return true;
 };
 
 export const TimeTick = ({
@@ -117,19 +126,22 @@ export const TimeTick = ({
   y,
   payload,
   currentValue,
+  onlyDisplayActive,
   unit,
   activeColor = colors.active,
   inactiveColor = colors.inactive,
 }: TimeTickProps): JSX.Element => {
   let content;
-  if (!payload) {
+  if (!payload || !shouldDisplay(payload.value === currentValue, onlyDisplayActive)) {
     content = <></>;
-  } else if (unit === 'week') {
-    // const text = getWeeklyTickText(payload.value, dataLength, activeIndex, payload.index);
-    const text = {
-      line1: 'Week ' + payload.value.slice(5),
-      line2: globalDateCache.getIsoWeek(payload.value).firstDay.string.slice(2),
-    };
+  } else {
+    const text =
+      unit === 'week'
+        ? {
+            line1: 'Week ' + payload.value.slice(5),
+            line2: globalDateCache.getIsoWeek(payload.value).firstDay.string.slice(2),
+          }
+        : { line1: payload.value };
     if (!text) {
       content = <></>;
     } else {
@@ -146,38 +158,19 @@ export const TimeTick = ({
           >
             {text.line1}
           </text>
-          <text
-            x={0}
-            y={0}
-            dx={0}
-            dy={30}
-            textAnchor='middle'
-            fill={payload.value === currentValue ? activeColor : inactiveColor}
-            fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
-          >
-            {text.line2}
-          </text>
-        </>
-      );
-    }
-  } else if (unit === 'month') {
-    const text = payload.value;
-    if (!text) {
-      content = <></>;
-    } else {
-      content = (
-        <>
-          <text
-            x={0}
-            y={0}
-            dx={0}
-            dy={10}
-            textAnchor='middle'
-            fill={payload.value === currentValue ? activeColor : inactiveColor}
-            fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
-          >
-            {text}
-          </text>
+          {unit === 'week' && (
+            <text
+              x={0}
+              y={0}
+              dx={0}
+              dy={30}
+              textAnchor='middle'
+              fill={payload.value === currentValue ? activeColor : inactiveColor}
+              fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
+            >
+              {text.line2}
+            </text>
+          )}
         </>
       );
     }
