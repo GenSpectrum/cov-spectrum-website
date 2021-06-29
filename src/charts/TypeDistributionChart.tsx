@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import Metric, { MetricsWrapper } from './Metrics';
+import { ChartAndMetrics } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { colors, Wrapper, TitleWrapper, ChartAndMetricsWrapper, ChartWrapper } from './common';
+import { colors} from './common';
 
 const CHART_MARGIN_RIGHT = 15;
 
@@ -102,11 +102,26 @@ export const TypeDistributionChart = React.memo(
       </Bar>,
     ];
 
+    const metrics = currentData
+      ? [
+          {
+            value: currentData.percent === undefined ? '-' : currentData.percent.toFixed(2),
+            title: 'Proportion',
+            color: colors.active,
+            helpText: 'Proportion relative to all samples collected from this age group.',
+            percent: true,
+          },
+          {
+            value: currentData.quantity,
+            title: 'Samples',
+            color: colors.secondary,
+            helpText: 'Number of samples of the variant collected from this age group.',
+          },
+        ]
+      : [];
+
     return ready && data.length > 0 && currentData ? (
-      <Wrapper>
-        <TitleWrapper id='graph_title'>Proportion of the variant by age (estimated)</TitleWrapper>
-        <ChartAndMetricsWrapper>
-          <ChartWrapper>
+          <ChartAndMetrics metrics={metrics} title="Proportion of the variant by age (estimated)">
             <ResponsiveContainer>
               <BarChart
                 data={data}
@@ -142,24 +157,7 @@ export const TypeDistributionChart = React.memo(
                 {bars}
               </BarChart>
             </ResponsiveContainer>
-          </ChartWrapper>
-          <MetricsWrapper>
-            <Metric
-              value={currentData.percent === undefined ? '-' : currentData.percent.toFixed(2)}
-              title='Proportion'
-              color={colors.active}
-              helpText='Proportion relative to all samples collected from this age group.'
-              percent={true}
-            />
-            <Metric
-              value={currentData.quantity}
-              title='Samples'
-              color={colors.secondary}
-              helpText='Number of samples of the variant collected from this age group.'
-            />
-          </MetricsWrapper>
-        </ChartAndMetricsWrapper>
-      </Wrapper>
+          </ChartAndMetrics>
     ) : (
       <p>Chart not available</p>
     );
