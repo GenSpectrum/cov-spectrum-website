@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { ChartAndMetrics } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
-import { colors} from './common';
+import { colors } from './common';
 
 const CHART_MARGIN_RIGHT = 15;
 
@@ -60,7 +60,11 @@ export const TypeDistributionChart = React.memo(
     }, []);
 
     const resetDefault = useCallback(() => {
-      const maxIndex = data.reduce((iMax: number, x:TypeDistributionEntry, i:number, arr:TypeDistributionEntry[]) => x.percent >= arr[iMax].percent ? i : iMax, 0);
+      const maxIndex = data.reduce(
+        (iMax: number, x: TypeDistributionEntry, i: number, arr: TypeDistributionEntry[]) =>
+          x.percent >= arr[iMax].percent ? i : iMax,
+        0
+      );
       setCurrentData(data[maxIndex]);
     }, [data]);
 
@@ -68,18 +72,12 @@ export const TypeDistributionChart = React.memo(
       resetDefault();
     }, [data, resetDefault]);
 
-
     const handleMouseLeave = (): void => {
       resetDefault();
     };
 
     const bars = [
-      <Bar
-        dataKey='percent'
-        key='percent'
-        stackId='a'
-        isAnimationActive={false}
-      >
+      <Bar dataKey='percent' key='percent' stackId='a' isAnimationActive={false}>
         {data.map((entry: TypeDistributionEntry, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
@@ -122,12 +120,7 @@ export const TypeDistributionChart = React.memo(
               axisLine={false}
               tickLine={false}
               interval={0}
-              tick={
-                <CustomTick
-                  dataLength={data.length}
-                  currentValue={currentData.name}
-                />
-              }
+              tick={<CustomTick dataLength={data.length} currentValue={currentData.name} />}
             />
             <YAxis
               dataKey='percent'

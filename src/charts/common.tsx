@@ -116,9 +116,9 @@ const textBaseProperties = {
   textAnchor: 'middle',
 };
 
-const hasSameValue= (prev: TimeTickProps, next: TimeTickProps): boolean => {
+const hasSameValue = (prev: TimeTickProps, next: TimeTickProps): boolean => {
   return prev.currentValue === next.currentValue;
-}
+};
 
 //memoized based on whether it has same index
 export const TimeTick = React.memo(

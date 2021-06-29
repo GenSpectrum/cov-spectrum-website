@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { ChartAndMetrics } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
-import {
-  colors, TimeTick,
-} from './common';
+import { colors, TimeTick } from './common';
 
 const CHART_MARGIN_RIGHT = 30;
 const CHART_MARGIN_BOTTOM = 10;
@@ -33,18 +31,13 @@ export const TimeChart = React.memo(
     useEffect(() => {
       resetDefault();
     }, [data, resetDefault]);
-    
+
     const handleMouseLeave = (): void => {
       resetDefault();
     };
 
     const bars = [
-      <Bar
-        dataKey='percent'
-        key='percent'
-        stackId='a'
-        isAnimationActive={false}
-      >
+      <Bar dataKey='percent' key='percent' stackId='a' isAnimationActive={false}>
         {data.map((entry: TimeEntry, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
@@ -73,7 +66,7 @@ export const TimeChart = React.memo(
         ]
       : [];
 
-      const onlyDisplayActive = !(currentData === data[data.length - 1]);
+    const onlyDisplayActive = !(currentData === data[data.length - 1]);
 
     return currentData ? (
       <ChartAndMetrics

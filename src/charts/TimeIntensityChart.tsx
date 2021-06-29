@@ -1,10 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { ChartAndMetrics } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
-import {
-  colors,
-  TimeTick,
-} from './common';
+import { colors, TimeTick } from './common';
 import { kFormat } from '../helpers/number';
 
 const CHART_MARGIN_RIGHT = 30;
@@ -36,28 +33,17 @@ export const TimeIntensityChart = React.memo(
       resetDefault();
     }, [data, resetDefault]);
 
-
     const handleMouseLeave = (): void => {
       resetDefault();
     };
 
     const bars = [
-      <Bar
-        dataKey='proportion'
-        key='proportion'
-        stackId='a'
-        isAnimationActive={false}
-      >
+      <Bar dataKey='proportion' key='proportion' stackId='a' isAnimationActive={false}>
         {data.map((_, index: number) => {
           return <Cell cursor={onClickHandler && 'pointer'} fill='black' key={`cell-${index}`}></Cell>;
         })}
       </Bar>,
-      <Bar
-        dataKey='quantity'
-        key='quantity'
-        stackId='a'
-        isAnimationActive={false}
-      >
+      <Bar dataKey='quantity' key='quantity' stackId='a' isAnimationActive={false}>
         {data.map((entry: TimeIntensityEntry, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
