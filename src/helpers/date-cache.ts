@@ -90,6 +90,39 @@ class DateCache {
     return output;
   }
 
+  rangeFromDays(days: Iterable<UnifiedDay>): { min: UnifiedDay; max: UnifiedDay } | undefined {
+    let min: UnifiedDay | undefined;
+    let max: UnifiedDay | undefined;
+    for (const day of days) {
+      if (!min) {
+        min = day;
+      } else if (day.dayjs.isBefore(min.dayjs)) {
+        min = day;
+      }
+      if (!max) {
+        max = day;
+      } else if (day.dayjs.isAfter(max.dayjs)) {
+        max = day;
+      }
+    }
+    assert.strictEqual(min === undefined, max === undefined);
+    return min && max && { min, max };
+  }
+
+  daysFromRange(range: { min: UnifiedDay; max: UnifiedDay } | undefined): UnifiedDay[] {
+    if (!range) {
+      return [];
+    }
+    const { min, max } = range;
+    assert(min.dayjs.isBefore(max.dayjs) || min === max);
+    const diff = max.dayjs.diff(min.dayjs, 'day');
+    const output: UnifiedDay[] = [min];
+    for (let i = 0; i < diff; i++) {
+      output.push(this.getDayUsingDayjs(min.dayjs.add(i, 'day')));
+    }
+    return output;
+  }
+
   rangeFromWeeks(weeks: Iterable<UnifiedIsoWeek>): { min: UnifiedIsoWeek; max: UnifiedIsoWeek } | undefined {
     let min: UnifiedIsoWeek | undefined;
     let max: UnifiedIsoWeek | undefined;

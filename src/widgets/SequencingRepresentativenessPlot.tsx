@@ -80,7 +80,7 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
-    const caseCountsPromise = getCaseCounts(selector, signal).then(counts =>
+    const caseCountsPromise = getCaseCounts(selector, false, signal).then(counts =>
       prepareCountsData(counts, selectedAttributes)
     );
     const sequenceCountsPromise = getSequenceCounts(selector, signal).then(counts =>

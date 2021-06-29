@@ -8,6 +8,7 @@ import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import dayjs from 'dayjs';
 import DownloadWrapper from './DownloadWrapper';
 import { Utils } from '../services/Utils';
+import { Alert, AlertVariant } from '../helpers/ui';
 
 export type EstimatedCasesTimeEntry = {
   date: UnifiedDay;
@@ -118,6 +119,10 @@ export const EstimatedCasesChart = React.memo(
         estimatedCasesCIUpper: estimatedCasesCI[1].toFixed(0),
       }));
     }, [plotData]);
+
+    if (plotData.length === 0) {
+      return <Alert variant={AlertVariant.INFO}>We do not have enough data for this plot.</Alert>;
+    }
 
     return (
       <DownloadWrapper name='EstimatedCasesPlot' csvData={csvData}>

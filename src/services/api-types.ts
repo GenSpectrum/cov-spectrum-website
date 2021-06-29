@@ -197,6 +197,7 @@ export const DataStatusSchema = zod.object({
 });
 
 export const CaseCountEntrySchema = zod.object({
+  date: DateStringSchema.nullable().optional(),
   division: zod.string().nullable(),
   ageGroup: zod.string().nullable(),
   sex: zod.string().nullable(),
