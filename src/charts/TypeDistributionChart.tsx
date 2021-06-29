@@ -60,7 +60,7 @@ export const TypeDistributionChart = React.memo(
     }, []);
 
     const resetDefault = useCallback(() => {
-      const maxIndex = data.reduce((iMax: number, x:TypeDistributionEntry, i:number, arr:TypeDistributionEntry[]) => x.percent > arr[iMax].percent ? i : iMax, 0);
+      const maxIndex = data.reduce((iMax: number, x:TypeDistributionEntry, i:number, arr:TypeDistributionEntry[]) => x.percent >= arr[iMax].percent ? i : iMax, 0);
       setCurrentData(data[maxIndex]);
     }, [data]);
 
