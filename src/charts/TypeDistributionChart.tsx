@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { ChartAndMetrics } from './Metrics';
-import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
 import { colors} from './common';
 
 const CHART_MARGIN_RIGHT = 15;
@@ -28,6 +28,7 @@ const CustomTick = ({ x, y, payload, currentValue }: CustomTickProps): JSX.Eleme
           dy={10}
           textAnchor='middle'
           fill={payload.value === currentValue ? colors.active : colors.inactive}
+          fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
         >
           {payload.value}
         </text>
@@ -51,7 +52,6 @@ export type TypeDistributionChartProps = {
 
 export const TypeDistributionChart = React.memo(
   ({ data, onClickHandler }: TypeDistributionChartProps): JSX.Element => {
-    const [activeIndex, setActiveIndex] = useState<number>(data.length - 1);
     const [ready, setReady] = useState(false);
     const [currentData, setCurrentData] = useState<TypeDistributionEntry>(data[data.length - 1]);
 
@@ -61,23 +61,12 @@ export const TypeDistributionChart = React.memo(
 
     const resetDefault = useCallback(() => {
       setCurrentData(data[data.length - 1]);
-      setActiveIndex(data.length - 1);
     }, [data]);
 
     useEffect(() => {
       resetDefault();
     }, [data, resetDefault]);
 
-    const handleMouseEnter = (context: unknown, index: number): void => {
-      setCurrentData(data[index]);
-      setActiveIndex(index);
-    };
-
-    const handleClick = (context: unknown, index: number): void => {
-      if (onClickHandler) {
-        onClickHandler(index);
-      }
-    };
 
     const handleMouseLeave = (): void => {
       resetDefault();
@@ -88,14 +77,12 @@ export const TypeDistributionChart = React.memo(
         dataKey='percent'
         key='percent'
         stackId='a'
-        onMouseEnter={handleMouseEnter}
-        onClick={handleClick}
         isAnimationActive={false}
       >
-        {data.map((_, index: number) => (
+        {data.map((entry: TypeDistributionEntry, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
-            fill={index === activeIndex ? colors.active : colors.inactive}
+            fill={entry.name === currentData.name ? colors.active : colors.inactive}
             key={`cell-${index}`}
           ></Cell>
         ))}
@@ -121,43 +108,52 @@ export const TypeDistributionChart = React.memo(
       : [];
 
     return ready && data.length > 0 && currentData ? (
-          <ChartAndMetrics metrics={metrics} title="Proportion of the variant by age (estimated)">
-            <ResponsiveContainer>
-              <BarChart
-                data={data}
-                barCategoryGap='5%'
-                margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
-                onMouseLeave={handleMouseLeave}
-              >
-                <XAxis
-                  dataKey='name'
-                  axisLine={false}
-                  tickLine={false}
-                  interval={0}
-                  tick={
-                    <CustomTick
-                      activeIndex={activeIndex}
-                      dataLength={data.length}
-                      currentValue={currentData.name}
-                    />
-                  }
+      <ChartAndMetrics metrics={metrics} title='Proportion of the variant by age (estimated)'>
+        <ResponsiveContainer>
+          <BarChart
+            data={data}
+            barCategoryGap='5%'
+            margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
+            onMouseLeave={handleMouseLeave}
+          >
+            <XAxis
+              dataKey='name'
+              axisLine={false}
+              tickLine={false}
+              interval={0}
+              tick={
+                <CustomTick
+                  dataLength={data.length}
+                  currentValue={currentData.name}
                 />
-                <YAxis
-                  dataKey='percent'
-                  interval={1}
-                  axisLine={false}
-                  tickLine={false}
-                  tickFormatter={tick => `${tick}%`}
-                  allowDecimals={true}
-                  hide={false}
-                  width={50}
-                  domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
-                />
-                <CartesianGrid vertical={false} />
-                {bars}
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartAndMetrics>
+              }
+            />
+            <YAxis
+              dataKey='percent'
+              interval={1}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={tick => `${tick}%`}
+              allowDecimals={true}
+              hide={false}
+              width={50}
+              domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
+            />
+            <CartesianGrid vertical={false} />
+            {bars}
+            <Tooltip
+              active={false}
+              cursor={false}
+              content={(e: any) => {
+                if (e?.payload.length > 0) {
+                  setCurrentData(e.payload[0].payload);
+                }
+                return <></>;
+              }}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartAndMetrics>
     ) : (
       <p>Chart not available</p>
     );
