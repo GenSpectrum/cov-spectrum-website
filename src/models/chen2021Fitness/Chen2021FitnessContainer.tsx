@@ -66,7 +66,7 @@ export const Chen2021FitnessContainer = ({
         <p>
           The model assumes that the increase or decrease of the proportion of a variant follows a logistic
           function. It fits a logistic model to the data by optimizing the maximum likelihood to obtain the
-          logistic growth rate a. From that, an estimate of the transmission transmission advantage under a
+          logistic growth rate a. From that, an estimate of the fitness transmission advantage under a
           continuous (f_c) and discrete (f_d) model is derived.
         </p>
         <SectionHeader>Parameters</SectionHeader>
