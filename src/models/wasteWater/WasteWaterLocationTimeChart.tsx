@@ -2,11 +2,11 @@ import React from 'react';
 import { WasteWaterTimeseriesSummaryDataset } from './types';
 import { UnifiedDay } from '../../helpers/date-cache';
 import { getTicks } from '../../helpers/ticks';
-import { scaleOrdinal } from 'd3-scale';
-import { schemeCategory10 } from 'd3-scale-chromatic';
 import { ChartAndMetricsWrapper, ChartWrapper, TitleWrapper, Wrapper } from '../../charts/common';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { formatDate } from './WasteWaterTimeChart';
+import { wastewaterVariantColors } from './constants';
+import { Utils } from '../../services/Utils';
 
 interface Props {
   variants: {
@@ -61,7 +61,6 @@ export const WasteWaterLocationTimeChart = React.memo(
     const ticks = getTicks(plotData.map(({ date }) => ({ date: new Date(date) }))); // TODO This does not seem efficient
     ticks.push(today);
 
-    const colorScale = scaleOrdinal(schemeCategory10);
     return (
       <Wrapper>
         <TitleWrapper>Estimated prevalence in wastewater samples</TitleWrapper>
@@ -104,7 +103,7 @@ export const WasteWaterLocationTimeChart = React.memo(
                     type='monotone'
                     dataKey={'values.' + variant}
                     strokeWidth={3}
-                    stroke={colorScale(variant)}
+                    stroke={wastewaterVariantColors[deEscapeValueName(variant)] ?? Utils.getRandomColorCode()}
                     dot={false}
                     isAnimationActive={false}
                     key={variant}

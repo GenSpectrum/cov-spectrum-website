@@ -53,4 +53,8 @@ export class Utils {
     }
     return arr.slice(start, end);
   }
+
+  static getRandomColorCode(): string {
+    return '#' + Math.floor(Math.random() * (16 ** 6 - 1)).toString(16);
+  }
 }
