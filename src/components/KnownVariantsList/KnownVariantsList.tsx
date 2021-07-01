@@ -13,6 +13,9 @@ import {
 } from './load-data';
 import dayjs from 'dayjs';
 import { Typeahead } from 'react-bootstrap-typeahead';
+import _VARIANTS from './variants.json';
+
+const VARIANTS: NamedVariantSelector[] = _VARIANTS;
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -46,58 +49,7 @@ function selectPreviewVariants(
   }[],
   numberVariants: number
 ): NamedVariantSelector[] {
-  const variants: NamedVariantSelector[] = [
-    // The three official VOCs (and now also B.1.617*) should always come first
-    {
-      variant: {
-        name: 'B.1.1.7',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.351*',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'P.1*',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.617*',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.617.1',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.617.2',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'AY.1',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-  ];
+  const variants = [...VARIANTS];
   for (let pangolinLineage of pangolinLineages) {
     if (variants.length >= numberVariants) {
       break;

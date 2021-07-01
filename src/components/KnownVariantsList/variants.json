@@ -1,0 +1,51 @@
+[
+  {
+    "variant": {
+      "name": "B.1.1.7",
+      "mutations": []
+    },
+    "matchPercentage": 1
+  },
+  {
+    "variant": {
+      "name": "B.1.351*",
+      "mutations": []
+    },
+    "matchPercentage": 1
+  },
+  {
+    "variant": {
+      "name": "P.1*",
+      "mutations": []
+    },
+    "matchPercentage": 1
+  },
+  {
+    "variant": {
+      "name": "B.1.617*",
+      "mutations": []
+    },
+    "matchPercentage": 1
+  },
+  {
+    "variant": {
+      "name": "B.1.617.1",
+      "mutations": []
+    },
+    "matchPercentage": 1
+  },
+  {
+    "variant": {
+      "name": "B.1.617.2",
+      "mutations": []
+    },
+    "matchPercentage": 1
+  },
+  {
+    "variant": {
+      "name": "AY.1",
+      "mutations": []
+    },
+    "matchPercentage": 1
+  }
+]
