@@ -4,6 +4,7 @@ import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import styled from 'styled-components';
 import { mean } from 'lodash';
 import { colors } from '../../charts/common';
+import { getWHOLabel } from '../../services/who-label';
 
 const TREND_START = 9;
 const TREND_END = 3;
@@ -15,15 +16,6 @@ interface Props {
   selected?: boolean;
   onClick: () => void;
 }
-
-const Title = styled.div`
-  margin: 5px 10px;
-  font-size: 1rem;
-`;
-
-const Percentage = styled.span`
-  float: right;
-`;
 
 const StyledCard = styled.div`
   overflow: hidden;
@@ -53,8 +45,7 @@ const getTrend = (data: number[]): TREND => {
 };
 
 const getTrendColor = (data: number[]): string => {
-  const trend = getTrend(data);
-  switch (trend) {
+  switch (getTrend(data)) {
     case TREND.POSITIVE:
       return colors.bad;
     case TREND.NEGATIVE:
@@ -90,6 +81,7 @@ const SimpleAreaPlot = React.memo(
 );
 
 export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, selected }: Props) => {
+  const WHOLabel: string | undefined = getWHOLabel(name);
   return (
     <Card
       as={StyledCard}
@@ -97,12 +89,13 @@ export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, s
       onClick={onClick}
       selected={selected}
     >
-      <Title className={`${selected ? 'font-bold' : ''}`}>
+      <div id='variant-title' className={`${selected ? 'font-bold' : ''} mx-2 mt-2`}>
         {name}
+        <p className='inline text-xs'>{WHOLabel !== undefined && ` ${WHOLabel}`}</p>
         {chartData?.length && (
-          <Percentage className='text-muted'>{(recentProportion! * 100).toFixed(1)}%</Percentage>
+          <div className='text-muted float-right'>{(recentProportion! * 100).toFixed(1)}%</div>
         )}
-      </Title>
+      </div>
       <div>
         <SimpleAreaPlot data={chartData} selected={selected ? selected : false} />
       </div>
