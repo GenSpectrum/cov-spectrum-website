@@ -1,4 +1,17 @@
-import { globalDateCache, UnifiedIsoWeek } from './date-cache';
+import { globalDateCache, UnifiedDay, UnifiedIsoWeek } from './date-cache';
+
+export function fillFromDailyMap<V>(
+  unsortedOriginalData: Map<UnifiedDay, V>,
+  filler: V
+): { key: UnifiedDay; value: V }[] {
+  const sortedFilledWeeks = globalDateCache.daysFromRange(
+    globalDateCache.rangeFromDays(unsortedOriginalData.keys())
+  );
+  return sortedFilledWeeks.map(day => ({
+    key: day,
+    value: unsortedOriginalData.get(day) ?? filler,
+  }));
+}
 
 export function fillFromWeeklyMap<V>(
   unsortedOriginalData: Map<UnifiedIsoWeek, V>,

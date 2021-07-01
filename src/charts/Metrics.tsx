@@ -92,6 +92,30 @@ export type MetricProps = {
   showPercent?: number | string | undefined;
 };
 
+interface ChartAndMetricsProps {
+  children: React.ReactNode;
+  metrics: MetricProps[];
+  title: string;
+}
+
+export const ChartAndMetrics = ({ children, metrics, title }: ChartAndMetricsProps) => {
+  return (
+    <div id={`chart-and-metrics-${title}`} className='flex flex-col h-full w-full'>
+      <h3 id={`chart-title-${title}`} className='my-0 pb-4 pr-10 pt-0 text-gray-500'>
+        {title}
+      </h3>
+      <div className='flex flex-col lg:flex-row h-full'>
+        <div className='w-full h-full'>{children}</div>
+        <MetricsWrapper>
+          {metrics.map(mProps => (
+            <Metric {...mProps} />
+          ))}
+        </MetricsWrapper>
+      </div>
+    </div>
+  );
+};
+
 const Metric = ({
   percent = false,
   value,
@@ -100,7 +124,7 @@ const Metric = ({
   helpText,
   showPercent,
 }: MetricProps): JSX.Element => {
-  const tooltipId = 'TEST-id' + title;
+  const tooltipId = 'metric-tooltip-' + title;
   return (
     <MetricWrapper id='metric-with-tooltip'>
       <div data-for={tooltipId} data-tip={helpText}>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import Metric, { MetricsWrapper } from './Metrics';
-import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
-import { colors, Wrapper, TitleWrapper, ChartAndMetricsWrapper, ChartWrapper } from './common';
+import { ChartAndMetrics } from './Metrics';
+import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
+import { colors } from './common';
 
 const CHART_MARGIN_RIGHT = 15;
 
@@ -28,6 +28,7 @@ const CustomTick = ({ x, y, payload, currentValue }: CustomTickProps): JSX.Eleme
           dy={10}
           textAnchor='middle'
           fill={payload.value === currentValue ? colors.active : colors.inactive}
+          fontWeight={payload.value === currentValue ? 'bold' : 'normal'}
         >
           {payload.value}
         </text>
@@ -40,7 +41,7 @@ const CustomTick = ({ x, y, payload, currentValue }: CustomTickProps): JSX.Eleme
 
 export type TypeDistributionEntry = {
   name: string;
-  percent?: number;
+  percent: number;
   quantity: number;
 };
 
@@ -51,7 +52,6 @@ export type TypeDistributionChartProps = {
 
 export const TypeDistributionChart = React.memo(
   ({ data, onClickHandler }: TypeDistributionChartProps): JSX.Element => {
-    const [activeIndex, setActiveIndex] = useState<number>(data.length - 1);
     const [ready, setReady] = useState(false);
     const [currentData, setCurrentData] = useState<TypeDistributionEntry>(data[data.length - 1]);
 
@@ -60,106 +60,94 @@ export const TypeDistributionChart = React.memo(
     }, []);
 
     const resetDefault = useCallback(() => {
-      setCurrentData(data[data.length - 1]);
-      setActiveIndex(data.length - 1);
+      const maxIndex = data.reduce(
+        (iMax: number, x: TypeDistributionEntry, i: number, arr: TypeDistributionEntry[]) =>
+          x.percent >= arr[iMax].percent ? i : iMax,
+        0
+      );
+      setCurrentData(data[maxIndex]);
     }, [data]);
 
     useEffect(() => {
       resetDefault();
     }, [data, resetDefault]);
 
-    const handleMouseEnter = (context: unknown, index: number): void => {
-      setCurrentData(data[index]);
-      setActiveIndex(index);
-    };
-
-    const handleClick = (context: unknown, index: number): void => {
-      if (onClickHandler) {
-        onClickHandler(index);
-      }
-    };
-
     const handleMouseLeave = (): void => {
       resetDefault();
     };
 
     const bars = [
-      <Bar
-        dataKey='percent'
-        key='percent'
-        stackId='a'
-        onMouseEnter={handleMouseEnter}
-        onClick={handleClick}
-        isAnimationActive={false}
-      >
-        {data.map((_, index: number) => (
+      <Bar dataKey='percent' key='percent' stackId='a' isAnimationActive={false}>
+        {data.map((entry: TypeDistributionEntry, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
-            fill={index === activeIndex ? colors.active : colors.inactive}
+            fill={entry.name === currentData.name ? colors.active : colors.inactive}
             key={`cell-${index}`}
           ></Cell>
         ))}
       </Bar>,
     ];
 
+    const metrics = currentData
+      ? [
+          {
+            value: currentData.percent === undefined ? '-' : currentData.percent.toFixed(2),
+            title: 'Proportion',
+            color: colors.active,
+            helpText: 'Proportion relative to all samples collected from this age group.',
+            percent: true,
+          },
+          {
+            value: currentData.quantity,
+            title: 'Samples',
+            color: colors.secondary,
+            helpText: 'Number of samples of the variant collected from this age group.',
+          },
+        ]
+      : [];
+
     return ready && data.length > 0 && currentData ? (
-      <Wrapper>
-        <TitleWrapper id='graph_title'>Proportion of the variant by age (estimated)</TitleWrapper>
-        <ChartAndMetricsWrapper>
-          <ChartWrapper>
-            <ResponsiveContainer>
-              <BarChart
-                data={data}
-                barCategoryGap='5%'
-                margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
-                onMouseLeave={handleMouseLeave}
-              >
-                <XAxis
-                  dataKey='name'
-                  axisLine={false}
-                  tickLine={false}
-                  interval={0}
-                  tick={
-                    <CustomTick
-                      activeIndex={activeIndex}
-                      dataLength={data.length}
-                      currentValue={currentData.name}
-                    />
-                  }
-                />
-                <YAxis
-                  dataKey='percent'
-                  interval={1}
-                  axisLine={false}
-                  tickLine={false}
-                  tickFormatter={tick => `${tick}%`}
-                  allowDecimals={true}
-                  hide={false}
-                  width={50}
-                  domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
-                />
-                <CartesianGrid vertical={false} />
-                {bars}
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartWrapper>
-          <MetricsWrapper>
-            <Metric
-              value={currentData.percent === undefined ? '-' : currentData.percent.toFixed(2)}
-              title='Proportion'
-              color={colors.active}
-              helpText='Proportion relative to all samples collected from this age group.'
-              percent={true}
+      <ChartAndMetrics metrics={metrics} title='Proportion of the variant by age (estimated)'>
+        <ResponsiveContainer>
+          <BarChart
+            data={data}
+            barCategoryGap='5%'
+            margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
+            onMouseLeave={handleMouseLeave}
+          >
+            <XAxis
+              dataKey='name'
+              axisLine={false}
+              tickLine={false}
+              interval={0}
+              tick={<CustomTick dataLength={data.length} currentValue={currentData.name} />}
             />
-            <Metric
-              value={currentData.quantity}
-              title='Samples'
-              color={colors.secondary}
-              helpText='Number of samples of the variant collected from this age group.'
+            <YAxis
+              dataKey='percent'
+              interval={1}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={tick => `${tick}%`}
+              allowDecimals={true}
+              hide={false}
+              width={50}
+              domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
             />
-          </MetricsWrapper>
-        </ChartAndMetricsWrapper>
-      </Wrapper>
+            <CartesianGrid vertical={false} />
+            {bars}
+            <Tooltip
+              active={false}
+              cursor={false}
+              content={(e: any) => {
+                if (e?.payload.length > 0) {
+                  setCurrentData(e.payload[0].payload);
+                }
+                return <></>;
+              }}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartAndMetrics>
     ) : (
       <p>Chart not available</p>
     );

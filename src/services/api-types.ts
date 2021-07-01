@@ -167,6 +167,13 @@ export const PangolinLineageInformationSchema = zod.object({
       proportion: zod.number(),
     })
   ),
+  commonNucMutations: zod.array(
+    zod.object({
+      mutation: zod.string(),
+      count: zod.number(),
+      proportion: zod.number(),
+    })
+  ),
 });
 
 export const PangolinLineageAliasSchema = zod.object({
@@ -190,6 +197,7 @@ export const DataStatusSchema = zod.object({
 });
 
 export const CaseCountEntrySchema = zod.object({
+  date: DateStringSchema.nullable().optional(),
   division: zod.string().nullable(),
   ageGroup: zod.string().nullable(),
   sex: zod.string().nullable(),

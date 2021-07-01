@@ -1,14 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import Metric, { MetricsWrapper } from './Metrics';
+import { ChartAndMetrics } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
-import {
-  colors,
-  Wrapper,
-  TitleWrapper,
-  ChartAndMetricsWrapper,
-  ChartWrapper,
-  CustomTimeTick,
-} from './common';
+import { colors, TimeTick } from './common';
 import { kFormat } from '../helpers/number';
 
 const CHART_MARGIN_RIGHT = 30;
@@ -17,7 +10,7 @@ const CHART_MARGIN_BOTTOM = 0;
 export type OnClickHandler = (index: number) => boolean;
 
 export type TimeIntensityEntry = {
-  id?: string;
+  id: string;
   month: string;
   proportion: number;
   quantity: number;
@@ -40,41 +33,17 @@ export const TimeIntensityChart = React.memo(
       resetDefault();
     }, [data, resetDefault]);
 
-    const handleMouseEnter = (context: unknown, index: number): void => {
-      setCurrentData(data[index]);
-    };
-
-    const handleClick = (context: unknown, index: number): void => {
-      if (onClickHandler) {
-        onClickHandler(index);
-      }
-    };
-
     const handleMouseLeave = (): void => {
       resetDefault();
     };
 
     const bars = [
-      <Bar
-        dataKey='proportion'
-        key='proportion'
-        stackId='a'
-        onMouseEnter={handleMouseEnter}
-        onClick={handleClick}
-        isAnimationActive={false}
-      >
+      <Bar dataKey='proportion' key='proportion' stackId='a' isAnimationActive={false}>
         {data.map((_, index: number) => {
           return <Cell cursor={onClickHandler && 'pointer'} fill='black' key={`cell-${index}`}></Cell>;
         })}
       </Bar>,
-      <Bar
-        dataKey='quantity'
-        key='quantity'
-        stackId='a'
-        onMouseEnter={handleMouseEnter}
-        onClick={handleClick}
-        isAnimationActive={false}
-      >
+      <Bar dataKey='quantity' key='quantity' stackId='a' isAnimationActive={false}>
         {data.map((entry: TimeIntensityEntry, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
@@ -85,76 +54,79 @@ export const TimeIntensityChart = React.memo(
       </Bar>,
     ];
 
+    const metrics = currentData
+      ? [
+          {
+            value: kFormat(currentData.quantity),
+            title: 'Confirmed',
+            color: colors.secondary,
+            helpText: 'Number of confirmed cases in this time frame.',
+          },
+          {
+            value: kFormat(currentData.proportion),
+            title: 'Sequenced',
+            color: 'black',
+            helpText: 'Number of samples sequenced among the confirmed cases on this time frame.',
+            showPercent: Math.round((currentData.proportion / currentData.quantity) * 100).toFixed(0),
+          },
+        ]
+      : [];
+
+    //only display active index when the end is not selected
+    const onlyDisplayActive = !(currentData === data[data.length - 1]);
+
     return currentData ? (
-      <Wrapper id='sequencing-intensity-chart'>
-        <TitleWrapper id='graph_title'>Number of sequenced samples on {currentData.month}</TitleWrapper>
-        <ChartAndMetricsWrapper>
-          <ChartWrapper className='-mr-4 -ml-2'>
-            <ResponsiveContainer>
-              <BarChart
-                data={data}
-                barCategoryGap='5%'
-                margin={{ top: 0, right: CHART_MARGIN_RIGHT, left: 0, bottom: CHART_MARGIN_BOTTOM }}
-                onMouseLeave={handleMouseLeave}
-              >
-                <XAxis
-                  dataKey='month'
-                  axisLine={false}
-                  tickLine={false}
-                  interval={0}
-                  tick={
-                    <CustomTimeTick
-                      activeIndex={Math.round(data.length / 2)}
-                      dataLength={data.length}
-                      currentValue={currentData.month}
-                      unit='month'
-                      activeColor='black'
-                    />
-                  }
+      <ChartAndMetrics metrics={metrics} title={`Number of sequenced samples on ${currentData.month}`}>
+        <ResponsiveContainer>
+          <BarChart
+            data={data}
+            barCategoryGap='5%'
+            margin={{ top: 0, right: CHART_MARGIN_RIGHT, left: 0, bottom: CHART_MARGIN_BOTTOM }}
+            onMouseLeave={handleMouseLeave}
+          >
+            <XAxis
+              dataKey='month'
+              axisLine={false}
+              tickLine={false}
+              //show all ticks when only display active is true
+              interval={onlyDisplayActive ? 0 : 'preserveStartEnd'}
+              minTickGap={100}
+              tick={
+                <TimeTick
+                  currentValue={currentData.month}
+                  dataLength={data.length}
+                  unit='month'
+                  activeColor='black'
+                  onlyDisplayActive={onlyDisplayActive}
                 />
-                <YAxis
-                  dataKey='quantity'
-                  tickFormatter={(v: number) => kFormat(v)}
-                  interval={1}
-                  axisLine={false}
-                  tickLine={false}
-                  allowDecimals={true}
-                  hide={false}
-                  width={60}
-                  domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
-                />
-                <CartesianGrid vertical={false} />
-                {bars}
-                <Tooltip
-                  active={false}
-                  cursor={false}
-                  content={(e: any) => {
-                    if (e?.payload.length > 0) {
-                      setCurrentData(e.payload[0].payload);
-                    }
-                    return <></>;
-                  }}
-                />
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartWrapper>
-          <MetricsWrapper>
-            <Metric
-              value={kFormat(currentData.quantity)}
-              title='Confirmed'
-              color={colors.secondary}
-              helpText='Number of confirmed cases in this time frame.'
+              }
             />
-            <Metric
-              value={kFormat(currentData.proportion)}
-              title='Sequenced'
-              color='black'
-              helpText='Number of samples sequenced among the confirmed cases on this time frame.'
-              showPercent={Math.round((currentData.proportion / currentData.quantity) * 100).toFixed(0)}
+            <YAxis
+              dataKey='quantity'
+              tickFormatter={(v: number) => kFormat(v)}
+              interval={1}
+              axisLine={false}
+              tickLine={false}
+              allowDecimals={true}
+              hide={false}
+              width={60}
+              domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
             />
-          </MetricsWrapper>
-        </ChartAndMetricsWrapper>
-      </Wrapper>
+            <CartesianGrid vertical={false} />
+            {bars}
+            <Tooltip
+              active={false}
+              cursor={false}
+              content={(e: any) => {
+                if (e?.payload.length > 0) {
+                  setCurrentData(e.payload[0].payload);
+                }
+                return <></>;
+              }}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartAndMetrics>
     ) : (
       <p>Chart not available</p>
     );

@@ -23,7 +23,6 @@ import {
   DataStatusSchema,
   SequencingRepresentativenessSelector,
   CaseCountEntry,
-  CaseCountEntrySchema,
   SequenceCountEntry,
   SequenceCountEntrySchema,
   PangolinLineageAlias,
@@ -423,7 +422,7 @@ export const isWorld = (place: Place): boolean => place === 'World';
 export const getPlaces = async (): Promise<Place[]> => {
   const countries = await getCountries();
   const regions = await getRegions();
-  return regions.concat(countries);
+  return ['World'].concat(regions).concat(countries);
 };
 
 export const fetchTimeDistributionData = () => {};
@@ -454,9 +453,7 @@ export async function getSequenceCounts(
   signal?: AbortSignal
 ): Promise<SequenceCountEntry[]> {
   const params = new URLSearchParams();
-  if (country) {
-    params.set('country', country);
-  }
+  setPlaceParam(params, country);
   if (dateFrom) {
     params.set('dateFrom', dateFrom);
   }
@@ -497,6 +494,7 @@ const setPlaceParam = (params: URLSearchParams, place: Place | undefined | null)
 
 export async function getCaseCounts(
   { dateFrom, dateTo, country }: SequencingRepresentativenessSelector,
+  includeDate = false,
   signal?: AbortSignal
 ): Promise<CaseCountEntry[]> {
   if (country !== 'Switzerland') {
@@ -510,10 +508,13 @@ export async function getCaseCounts(
   if (dateTo) {
     params.set('dateTo', dateTo);
   }
+  params.set('includeDate', includeDate.toString());
   const url = '/resource/case?' + params.toString();
   const res = await get(url, signal);
   if (!res.ok) {
     throw new Error('server responded with non-200 status code');
   }
-  return zod.array(CaseCountEntrySchema).parse(await res.json());
+  // TODO HACK don't actually parse because zod is slow
+  // return zod.array(CaseCountEntrySchema).parse(await res.json());
+  return (await res.json()) as CaseCountEntry[];
 }

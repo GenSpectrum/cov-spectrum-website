@@ -31,7 +31,7 @@ const VariantAgeDistributionPlot = ({ variantSampleSet, wholeSampleSet }: Props)
       .map(({ key, value: { count, proportion } }) => ({
         name: widthIsSmall ? key!.replace(/-\d+$/, '-') : key!,
         quantity: count,
-        percent: proportion === undefined ? undefined : 100 * proportion,
+        percent: proportion === undefined ? 0 : 100 * proportion,
       }));
   }, [variantSampleSet, wholeSampleSet, widthIsSmall]);
   const csvData = processedData.map(({ name, percent, quantity }) => ({
