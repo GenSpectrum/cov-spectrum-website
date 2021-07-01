@@ -38,8 +38,8 @@ export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
       <div className='flex'>
         <div className='flex-grow flex flex-row items-end'>
           <h1>
-            {label && `${label} `}
             {variant.name ?? 'Unnamed'}
+            {label && ` (${label})`}
             {!!titleSuffix && ' - '}
             {titleSuffix}
           </h1>
