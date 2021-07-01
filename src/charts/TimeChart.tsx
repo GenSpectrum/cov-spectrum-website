@@ -1,14 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import Metric, { MetricsWrapper } from './Metrics';
-import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid } from 'recharts';
-import {
-  colors,
-  Wrapper,
-  TitleWrapper,
-  ChartAndMetricsWrapper,
-  ChartWrapper,
-  CustomTimeTick,
-} from './common';
+import { ChartAndMetrics } from './Metrics';
+import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
+import { colors, TimeTick } from './common';
 
 const CHART_MARGIN_RIGHT = 30;
 const CHART_MARGIN_BOTTOM = 10;
@@ -29,120 +22,106 @@ export type TimeChartProps = {
 
 export const TimeChart = React.memo(
   ({ data, onClickHandler }: TimeChartProps): JSX.Element => {
-    const [activeIndex, setActiveIndex] = useState<number>(data.length - 1);
-    const [ready, setReady] = useState(false);
     const [currentData, setCurrentData] = useState<TimeEntry>(data[data.length - 1]);
-
-    useEffect(() => {
-      setReady(true);
-    }, []);
 
     const resetDefault = useCallback(() => {
       setCurrentData(data[data.length - 1]);
-      setActiveIndex(data.length - 1);
     }, [data]);
 
     useEffect(() => {
       resetDefault();
     }, [data, resetDefault]);
 
-    const handleMouseEnter = (context: unknown, index: number): void => {
-      setCurrentData(data[index]);
-      setActiveIndex(index);
-    };
-
-    const handleClick = (context: unknown, index: number): void => {
-      if (onClickHandler) {
-        onClickHandler(index);
-      }
-    };
-
     const handleMouseLeave = (): void => {
       resetDefault();
     };
 
     const bars = [
-      <Bar
-        dataKey='percent'
-        key='percent'
-        stackId='a'
-        onMouseEnter={handleMouseEnter}
-        onClick={handleClick}
-        isAnimationActive={false}
-      >
-        {data.map((entry: unknown, index: number) => (
+      <Bar dataKey='percent' key='percent' stackId='a' isAnimationActive={false}>
+        {data.map((entry: TimeEntry, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
-            fill={index === activeIndex ? colors.active : colors.inactive}
+            fill={entry.yearWeek === currentData.yearWeek ? colors.active : colors.inactive}
             key={`cell-${index}`}
           ></Cell>
         ))}
       </Bar>,
     ];
 
-    return ready && currentData ? (
-      <Wrapper>
-        <TitleWrapper id='graph_title'>
-          Proportion of all samples sequenced on week {currentData.yearWeek.split('-')[1]}
-          {', '}
-          {currentData.yearWeek.split('-')[0] + ' '}
-        </TitleWrapper>
-        <ChartAndMetricsWrapper>
-          <ChartWrapper className='-mr-4 -ml-1'>
-            <ResponsiveContainer>
-              <BarChart
-                data={data}
-                barCategoryGap='5%'
-                margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: CHART_MARGIN_BOTTOM }}
-                onMouseLeave={handleMouseLeave}
-              >
-                <XAxis
-                  dataKey='yearWeek'
-                  axisLine={false}
-                  tickLine={false}
-                  interval={0}
-                  tick={
-                    <CustomTimeTick
-                      activeIndex={activeIndex}
-                      dataLength={data.length}
-                      currentValue={currentData.yearWeek}
-                      unit='week'
-                    />
-                  }
+    const metrics = currentData
+      ? [
+          {
+            value: currentData.percent === undefined ? '-' : currentData.percent.toFixed(2),
+            title: 'Proportion',
+            color: colors.active,
+            helpText: 'Estimated proportion relative to all samples collected.',
+            percent: true,
+          },
+          {
+            value: currentData.quantity,
+            title: 'Samples',
+            color: colors.secondary,
+            helpText: 'Number of samples of the variant collected in this time frame.',
+          },
+        ]
+      : [];
+
+    const onlyDisplayActive = !(currentData === data[data.length - 1]);
+
+    return currentData ? (
+      <ChartAndMetrics
+        metrics={metrics}
+        title={`Proportion of all samples sequenced on week ${currentData.yearWeek.split('-')[1]}, ${
+          currentData.yearWeek.split('-')[0] + ' '
+        }`}
+      >
+        <ResponsiveContainer>
+          <BarChart
+            data={data}
+            barCategoryGap='5%'
+            margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: CHART_MARGIN_BOTTOM }}
+            onMouseLeave={handleMouseLeave}
+          >
+            <XAxis
+              dataKey='yearWeek'
+              axisLine={false}
+              tickLine={false}
+              interval={onlyDisplayActive ? 0 : 'preserveStartEnd'}
+              tick={
+                <TimeTick
+                  dataLength={data.length}
+                  currentValue={currentData.yearWeek}
+                  unit='week'
+                  onlyDisplayActive={onlyDisplayActive}
                 />
-                <YAxis
-                  dataKey='percent'
-                  interval={1}
-                  axisLine={false}
-                  tickLine={false}
-                  tickFormatter={tick => `${tick}%`}
-                  allowDecimals={true}
-                  hide={false}
-                  width={50}
-                  domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
-                />
-                <CartesianGrid vertical={false} />
-                {bars}
-              </BarChart>
-            </ResponsiveContainer>
-          </ChartWrapper>
-          <MetricsWrapper>
-            <Metric
-              value={currentData.percent === undefined ? '-' : currentData.percent.toFixed(2)}
-              title='Proportion'
-              color={colors.active}
-              helpText='Estimated proportion relative to all samples collected.'
-              percent={true}
+              }
             />
-            <Metric
-              value={currentData.quantity}
-              title='Samples'
-              color={colors.secondary}
-              helpText='Number of samples of the variant collected in this time frame.'
+            <YAxis
+              dataKey='percent'
+              interval={1}
+              axisLine={false}
+              tickLine={false}
+              tickFormatter={tick => `${tick}%`}
+              allowDecimals={true}
+              hide={false}
+              width={50}
+              domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
             />
-          </MetricsWrapper>
-        </ChartAndMetricsWrapper>
-      </Wrapper>
+            <CartesianGrid vertical={false} />
+            {bars}
+            <Tooltip
+              active={false}
+              cursor={false}
+              content={(e: any) => {
+                if (e?.payload.length > 0) {
+                  setCurrentData(e.payload[0].payload);
+                }
+                return <></>;
+              }}
+            />
+          </BarChart>
+        </ResponsiveContainer>
+      </ChartAndMetrics>
     ) : (
       <p>Chart not available</p>
     );

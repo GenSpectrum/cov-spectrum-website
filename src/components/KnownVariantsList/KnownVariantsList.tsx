@@ -229,6 +229,7 @@ export const KnownVariantsList = ({
             })
           }
           allowNew={true}
+          selectHintOnEnter={true}
         />
       </SearchWrapper>
 
