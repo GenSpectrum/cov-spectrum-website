@@ -14,6 +14,7 @@ import Loader from './Loader';
 import { globalDateCache } from '../helpers/date-cache';
 import { fillFromDailyMap } from '../helpers/fill-missing';
 import { cantonToRegion, mapParsedMultiSample } from '../helpers/switzerland-regions';
+import { Alert, AlertVariant } from '../helpers/ui';
 
 type Props = {
   variantSampleSet: SampleSetWithSelector;
@@ -131,6 +132,10 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
 
   return (
     <AlmostFullscreenModal show={show} handleClose={handleClose} header='Estimated cases'>
+      <Alert variant={AlertVariant.INFO}>
+        We use a different case numbers dataset for the regional/cantonal plots. It shows slightly lower
+        numbers than the dataset we use for the country-wide plots.
+      </Alert>
       <div className='ml-4'>
         <span
           className={showSwissRegions ? 'font-bold' : 'underline cursor-pointer'}
