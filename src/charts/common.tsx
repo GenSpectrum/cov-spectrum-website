@@ -102,7 +102,7 @@ export const TimeTick = React.memo(
         unit === 'week'
           ? {
               line1: 'Week ' + payload.value.slice(5),
-              line2: globalDateCache.getIsoWeek(payload.value).firstDay.string.slice(2),
+              line2: globalDateCache.getIsoWeek(payload.value).firstDay.string,
             }
           : { line1: payload.value };
       if (!text) {
