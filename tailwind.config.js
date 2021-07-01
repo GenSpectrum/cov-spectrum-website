@@ -15,9 +15,10 @@ module.exports = {
       red: colors.rose,
       yellow: colors.amber,
       blue: colors.blue,
-      eth: {
+      //from ETH colors
+      active: {
         DEFAULT: '#1F407A',
-        light: '#1269B0',
+        secondary: '#1269B0',
       },
     },
     extend: {},

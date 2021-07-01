@@ -49,7 +49,7 @@ const getButtonClasses = (variant: ButtonVariant): string => {
       return 'bg-yellow-600 hover:bg-yellow-700 focus:ring-yellow-500 focus:ring-offset-yellow-200';
     }
     case ButtonVariant.PRIMARY: {
-      return 'bg-eth-light hover:bg-eth focus:ring-blue-500 focus:ring-offset-blue-200';
+      return 'bg-active-secondary hover:bg-active focus:ring-blue-500 focus:ring-offset-blue-200';
     }
     case ButtonVariant.SECONDARY: {
       return 'bg-gray-400 hover:bg-gray-500 focus:ring-gray-500 focus:ring-offset-gray-200';
