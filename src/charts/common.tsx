@@ -117,7 +117,7 @@ export const TimeTick = React.memo(
             >
               {text.line1}
             </text>
-            {unit === 'week' && (
+            {unit === 'week' && onlyDisplayActive && (
               <text
                 {...textBaseProperties}
                 dy={30}

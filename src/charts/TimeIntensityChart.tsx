@@ -90,6 +90,7 @@ export const TimeIntensityChart = React.memo(
               tickLine={false}
               //show all ticks when only display active is true
               interval={onlyDisplayActive ? 0 : 'preserveStartEnd'}
+              minTickGap={100}
               tick={
                 <TimeTick
                   currentValue={currentData.month}
