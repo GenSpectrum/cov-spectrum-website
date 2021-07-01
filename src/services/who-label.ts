@@ -42,7 +42,7 @@ export const WHO_LABELS: { [key: string]: { label: string; type: VariantType } |
     type: VariantType.INTEREST,
   },
   'B.1.617.1': {
-    label: 'Iota',
+    label: 'Kappa',
     type: VariantType.INTEREST,
   },
   'C.37': {
