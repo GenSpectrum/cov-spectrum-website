@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { globalDateCache } from '../helpers/date-cache';
+import chroma from 'chroma-js'
 
 export const colors = {
-  active: '#2980b9',
-  activeSecondary: '#3498db',
+  active: '#1F407A',
+  activeSecondary: chroma('#273c75').brighten(2).hex(),
   inactive: '#bdc3c7',
   inactiveSecondary: '#ecf0f1',
   secondary: '#7f8c8d',
