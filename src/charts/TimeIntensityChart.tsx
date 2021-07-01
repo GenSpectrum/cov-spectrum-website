@@ -40,14 +40,16 @@ export const TimeIntensityChart = React.memo(
     const bars = [
       <Bar dataKey='proportion' key='proportion' stackId='a' isAnimationActive={false}>
         {data.map((_, index: number) => {
-          return <Cell cursor={onClickHandler && 'pointer'} fill='black' key={`cell-${index}`}></Cell>;
+          return (
+            <Cell cursor={onClickHandler && 'pointer'} fill={colors.active} key={`cell-${index}`}></Cell>
+          );
         })}
       </Bar>,
       <Bar dataKey='quantity' key='quantity' stackId='a' isAnimationActive={false}>
         {data.map((entry: TimeIntensityEntry, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
-            fill={entry.id === currentData.id ? colors.secondary : colors.inactive}
+            fill={entry.id === currentData.id ? colors.activeSecondary : colors.inactive}
             key={`cell-${index}`}
           ></Cell>
         ))}
@@ -59,13 +61,13 @@ export const TimeIntensityChart = React.memo(
           {
             value: kFormat(currentData.quantity),
             title: 'Confirmed',
-            color: colors.secondary,
+            color: colors.activeSecondary,
             helpText: 'Number of confirmed cases in this time frame.',
           },
           {
             value: kFormat(currentData.proportion),
             title: 'Sequenced',
-            color: 'black',
+            color: colors.active,
             helpText: 'Number of samples sequenced among the confirmed cases on this time frame.',
             showPercent: Math.round((currentData.proportion / currentData.quantity) * 100).toFixed(0),
           },
@@ -96,7 +98,7 @@ export const TimeIntensityChart = React.memo(
                   currentValue={currentData.month}
                   dataLength={data.length}
                   unit='month'
-                  activeColor='black'
+                  activeColor={colors.active}
                   onlyDisplayActive={onlyDisplayActive}
                 />
               }
