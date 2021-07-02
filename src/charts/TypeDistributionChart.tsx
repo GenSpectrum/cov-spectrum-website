@@ -107,7 +107,7 @@ export const TypeDistributionChart = React.memo(
       : [];
 
     return ready && data.length > 0 && currentData ? (
-      <ChartAndMetrics metrics={metrics} title='Proportion of the variant by age (estimated)'>
+      <ChartAndMetrics metrics={metrics} title='Proportion of the variant by age group (estimate)'>
         <ResponsiveContainer>
           <BarChart
             data={data}

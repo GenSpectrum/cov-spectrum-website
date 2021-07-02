@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 interface Props {
   title: string;
+  subtitle?: string;
   toolbar?: React.ReactNode;
   children: React.ReactNode;
 }
@@ -11,23 +12,24 @@ const ContentWrapper = styled.div`
   margin-bottom: 30px;
 `;
 
-const Title = styled.h3`
-  position: relative;
-`;
-
 const ToolbarWrapper = styled.div`
   position: absolute;
   top: 0;
   right: 0;
 `;
 
-export const NamedSection = ({ title, toolbar, children }: Props) => {
+export const NamedSection = ({ title, toolbar, children, subtitle }: Props) => {
   return (
     <>
-      <Title id='relative section-title'>
+      <div id='relative section-title' className='relative'>
         <h1>{title}</h1>
+        {subtitle && (
+          <h3 id={`chart-title-${title}`} className='my-0 pb-1 pr-10 pt-0 text-gray-500'>
+            {subtitle}
+          </h3>
+        )}
         <ToolbarWrapper>{toolbar}</ToolbarWrapper>
-      </Title>
+      </div>
       <ContentWrapper>{children}</ContentWrapper>
     </>
   );

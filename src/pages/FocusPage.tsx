@@ -204,7 +204,7 @@ export const FocusPage = ({
               variantSampleSet={variantSampleSet}
               wholeSampleSet={wholeSampleSet}
               height={300}
-              title='Demographics'
+              title='Age demographics'
               toolbarChildren={[createDivisionBreakdownButton(setShowVariantAgeDistributionDivGrid)]}
             />
           </GridCell>
@@ -337,7 +337,7 @@ export const FocusPage = ({
           )}
           show={showVariantAgeDistributionDivGrid}
           handleClose={() => setShowVariantAgeDistributionDivGrid(false)}
-          header='Demographics'
+          header='Age demographics'
         />
       )}
     </>

@@ -49,7 +49,7 @@ export const ExplorePage = ({
   );
   return (
     <>
-      <NamedSection title='Known variants'>
+      <NamedSection title='Known variants' subtitle="Which variant would you like to explore?">
         <KnownVariantsList
           country={country}
           samplingStrategy={samplingStrategy}
