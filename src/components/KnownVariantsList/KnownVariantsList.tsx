@@ -63,9 +63,7 @@ function selectPreviewVariants(
     if (variants.length >= numberVariants) {
       break;
     }
-    if (
-      variants.map(v => v.variant.name.replace(/\*/g, '')).includes(pangolinLineage.pangolinLineage)
-    ) {
+    if (variants.map(v => v.variant.name.replace(/\*/g, '')).includes(pangolinLineage.pangolinLineage)) {
       continue;
     }
     variants.push({
