@@ -64,8 +64,7 @@ function selectPreviewVariants(
       break;
     }
     if (
-      ['B.1.1.7', 'B.1.351', 'P.1'].includes(pangolinLineage.pangolinLineage) ||
-      pangolinLineage.pangolinLineage.startsWith('B.1.617')
+      variants.map(v => v.variant.name.replace(/\*/g, '')).includes(pangolinLineage.pangolinLineage)
     ) {
       continue;
     }

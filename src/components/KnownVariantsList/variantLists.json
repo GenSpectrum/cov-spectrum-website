@@ -56,6 +56,11 @@
   },
 
   {
+    "name": "Top 12 (past 3 months)",
+    "fillUpUntil": 12,
+    "variants": []
+  },
+  {
     "name": "WHO VOCs and VOIs",
     "source": "https://www.who.int/en/activities/tracking-SARS-CoV-2-variants/",
     "fillUpUntil": 0,
