@@ -1,0 +1,400 @@
+[
+  {
+    "name": "Editor's choice",
+    "fillUpUntil": 12,
+    "variants": [
+      {
+        "variant": {
+          "name": "B.1.1.7",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.351*",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "P.1*",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.617*",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.617.1",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.617.2",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "AY.1",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      }
+    ]
+  },
+
+  {
+    "name": "WHO VOCs and VOIs",
+    "source": "https://www.who.int/en/activities/tracking-SARS-CoV-2-variants/",
+    "fillUpUntil": 0,
+    "variants": [
+      {
+        "variant": {
+          "name": "B.1.1.7",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.351*",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "P.1*",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.617.2*",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.427.1",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.429",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "P.2",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.525",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "P.3",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.526",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.617.1",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "C.37",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      }
+    ]
+  },
+  {
+    "name": "Public Health England VOCs and VUIs",
+    "source": "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/997418/Variants_of_Concern_VOC_Technical_Briefing_17.pdf",
+    "fillUpUntil": 0,
+    "variants": [
+      {
+        "variant": {
+          "name": "B.1.1.7",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.351",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "P.1",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.617.2*",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "P.2",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.525",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.1.318",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "P.3",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.617.1",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.617.3",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "AV.1",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "C.36.3",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "C.37",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      }
+    ]
+  },
+  {
+    "name": "Public Health England Monitoring",
+    "source": "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/997418/Variants_of_Concern_VOC_Technical_Briefing_17.pdf",
+    "fillUpUntil": 0,
+    "variants": [
+      {
+        "variant": {
+          "name": "B.1.427",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.429",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "A.27",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.526",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.620",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.214.2",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "R.1",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.621",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "AT.1",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      }
+    ]
+  },
+  {
+    "name": "Swiss national SARS-CoV-2 genomic and variants surveillance program",
+    "fillUpUntil": 0,
+    "variants": [
+      {
+        "variant": {
+          "name": "B.1.1.7",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.351",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "P.1",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.617.2*",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.621",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.315",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.1.318",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.525",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.526",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.620",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "C.36",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      }
+    ]
+  }
+]

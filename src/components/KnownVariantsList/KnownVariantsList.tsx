@@ -13,6 +13,10 @@ import {
 } from './load-data';
 import dayjs from 'dayjs';
 import { Typeahead } from 'react-bootstrap-typeahead';
+import _VARIANT_LISTS from './variantLists.json';
+import { KnownVariantsListSelection } from './KnownVariantsListSelection';
+
+const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -33,71 +37,28 @@ const Grid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 `;
 
-type NamedVariantSelector = VariantSelector & { variant: { name: string } };
+export type NamedVariantSelector = VariantSelector & { variant: { name: string } };
+
+export type VariantList = {
+  name: string;
+  variants: NamedVariantSelector[];
+  source?: string;
+  fillUpUntil: number;
+};
 
 const SearchWrapper = styled.div`
   margin-bottom: 10px;
 `;
 
 function selectPreviewVariants(
+  definedVariants: NamedVariantSelector[],
   pangolinLineages: {
     pangolinLineage: string;
     count: number;
   }[],
   numberVariants: number
 ): NamedVariantSelector[] {
-  const variants: NamedVariantSelector[] = [
-    // The three official VOCs (and now also B.1.617*) should always come first
-    {
-      variant: {
-        name: 'B.1.1.7',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.351*',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'P.1*',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.617*',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.617.1',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.617.2',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'AY.1',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-  ];
+  const variants = [...definedVariants];
   for (let pangolinLineage of pangolinLineages) {
     if (variants.length >= numberVariants) {
       break;
@@ -126,6 +87,7 @@ export const KnownVariantsList = ({
   selection,
   wholeSampleSetState,
 }: Props) => {
+  const [selectedVariantList, setSelectedVariantList] = useState(VARIANT_LISTS[0].name);
   const [variantSampleSets, setVariantSampleSets] = useState<
     KnownVariantWithSampleSet<NamedVariantSelector>[]
   >();
@@ -163,7 +125,10 @@ export const KnownVariantsList = ({
             count: number;
           }[];
           setPangolinLineages(lineages);
-          setKnownVariantSelectors(selectPreviewVariants(lineages, 12));
+          const variantList = VARIANT_LISTS.filter(({ name }) => name === selectedVariantList)[0];
+          setKnownVariantSelectors(
+            selectPreviewVariants(variantList.variants, lineages, variantList.fillUpUntil)
+          );
         }
       })
       .catch(err => {
@@ -174,7 +139,7 @@ export const KnownVariantsList = ({
       isSubscribed = false;
       controller.abort();
     };
-  }, [country, samplingStrategy]);
+  }, [country, samplingStrategy, selectedVariantList]);
 
   useEffect(() => {
     setVariantSampleSets(undefined);
@@ -232,6 +197,12 @@ export const KnownVariantsList = ({
           selectHintOnEnter={true}
         />
       </SearchWrapper>
+
+      <KnownVariantsListSelection
+        variantLists={VARIANT_LISTS}
+        selected={selectedVariantList}
+        onSelect={setSelectedVariantList}
+      />
 
       <Grid>
         {knownVariants.map(({ selector, chartData, recentProportion }) => (
