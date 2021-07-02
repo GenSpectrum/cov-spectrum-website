@@ -226,12 +226,12 @@ export const FocusPage = ({
               <NamedCard
                 title='Transmission advantage'
                 toolbar={deepFocusButtons.chen2021Fitness}
-                description='
-              Estimate of how easily this variant gets transmitted. As other more transmittable variants spread, the so-called advantage of this one may decrease.
+                description={`
+              How easily this variant gets transmitted. This variant's so-called "advantage" may decrease as other more transmittable ones spread.
               This assumes variants spread pre-dominantly by local transmission across demographic groups. When absolute numbers of a variant are
                 low, the advantage may merely reflect the current importance of introductions from abroad or
                  the variant spreading in a particular demographic group. In this case, the estimate does not
-                  provide information on the transmission advantage.'
+                  provide information on the transmission advantage.`}
               >
                 <div style={{ height: 300 }}>
                   <Chen2021FitnessPreview {...plotProps} />
