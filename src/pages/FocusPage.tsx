@@ -224,13 +224,11 @@ export const FocusPage = ({
           {!isRegion(country) && (
             <GridCell minWidth={600}>
               <NamedCard
-                title='Estimation of the current advantage'
+                title='Transmission advantage'
                 toolbar={deepFocusButtons.chen2021Fitness}
                 description='
-              If variants spread pre-dominantly by local transmission across demographic groups, this
-               estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
-               advantage estimate reflects the advantage compared to co-circulating strains. Thus, as new variants
-                spread, the advantage of the focal variant may decrease. When absolute numbers of a variant are
+              Estimate of how easily this variant gets transmitted. As other more transmittable variants spread, the so-called advantage of this one may decrease.
+              This assumes variants spread pre-dominantly by local transmission across demographic groups. When absolute numbers of a variant are
                 low, the advantage may merely reflect the current importance of introductions from abroad or
                  the variant spreading in a particular demographic group. In this case, the estimate does not
                   provide information on the transmission advantage.'
@@ -245,14 +243,14 @@ export const FocusPage = ({
             <VariantDivisionDistributionTableWidget.ShareableComponent
               variantSampleSet={variantSampleSet}
               wholeSampleSet={wholeSampleSet}
-              title='Geography'
+              title='Geographic distribution'
             />
           </GridCell>
           {loggedIn && country === 'Switzerland' && (
             <GridCell minWidth={600}>
               <ExportManagerContext.Provider value={mapExportManagerRef.current}>
                 <NamedCard
-                  title='Geography'
+                  title='Geographic distribution'
                   style={NamedCardStyle.CONFIDENTIAL}
                   toolbar={<ExportButton className='mt-1 ml-1' />}
                 >
