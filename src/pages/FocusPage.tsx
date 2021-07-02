@@ -166,7 +166,7 @@ export const FocusPage = ({
     <>
       <div>
         {header}
-        {variant.mutations.length > 0 && (
+        {variant.mutations.length > 0 && matchPercentage !== 1 && (
           <p style={{ marginBottom: '30px' }}>
             The following plots show sequences matching <b>{Math.round(matchPercentage * 100)}%</b> of the
             mutations.
@@ -284,7 +284,7 @@ export const FocusPage = ({
           )}
         </PackedGrid>
 
-        {variant.name && (
+        {variant.name && variant.mutations.length === 0 && (
           <div className='m-4'>
             <VariantMutations
               country={forwardedProps.country}
