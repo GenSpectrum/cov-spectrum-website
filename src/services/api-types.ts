@@ -226,6 +226,7 @@ export type Sample = zod.infer<typeof SampleSchema>;
 export type SampleResultList = zod.infer<typeof SampleResultListSchema>;
 export type PangolinLineageList = zod.infer<typeof PangolinLineageListSchema>;
 export type Variant = zod.infer<typeof VariantSchema>;
+export type NamedVariant = Variant & { name: string };
 export type InterestingVariantResult = zod.infer<typeof InterestingVariantResultSchema>;
 export type LoginResponse = zod.infer<typeof LoginResponseSchema>;
 export type SequencingIntensityEntry = zod.infer<typeof SequencingIntensityEntrySchema>;

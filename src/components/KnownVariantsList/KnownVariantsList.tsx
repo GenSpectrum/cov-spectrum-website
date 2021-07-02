@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AsyncState } from 'react-async';
 import styled from 'styled-components';
-import { VariantSelector } from '../../helpers/sample-selector';
+import { NamedVariantSelector, VariantSelector } from '../../helpers/sample-selector';
 import { SampleSetWithSelector } from '../../helpers/sample-set';
 import { getPangolinLineages, SamplingStrategy } from '../../services/api';
 import { Country, Variant } from '../../services/api-types';
@@ -36,8 +36,6 @@ const Grid = styled.div`
   grid-gap: 5px;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 `;
-
-export type NamedVariantSelector = VariantSelector & { variant: { name: string } };
 
 export type VariantList = {
   name: string;

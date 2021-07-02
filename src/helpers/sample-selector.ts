@@ -1,4 +1,10 @@
-import { CountrySchema, DateStringSchema, RegionSchema, VariantSchema } from '../services/api-types';
+import {
+  CountrySchema,
+  DateStringSchema,
+  NamedVariant,
+  RegionSchema,
+  VariantSchema,
+} from '../services/api-types';
 import * as zod from 'zod';
 import { LiteralSamplingStrategySchema } from '../services/api';
 
@@ -27,4 +33,5 @@ export const NewSampleSelectorSchema = zod.object({
 });
 
 export type VariantSelector = zod.infer<typeof VariantSelectorSchema>;
+export type NamedVariantSelector = VariantSelector & { variant: NamedVariant };
 export type NewSampleSelector = zod.infer<typeof NewSampleSelectorSchema>;
