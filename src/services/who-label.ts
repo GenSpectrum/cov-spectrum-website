@@ -37,6 +37,10 @@ export const WHO_LABELS: { [key: string]: { label: string; type: VariantType } |
     label: 'Eta',
     type: VariantType.INTEREST,
   },
+  'P.3': {
+    label: 'Theta',
+    type: VariantType.INTEREST,
+  },
   'B.1.526': {
     label: 'Iota',
     type: VariantType.INTEREST,
