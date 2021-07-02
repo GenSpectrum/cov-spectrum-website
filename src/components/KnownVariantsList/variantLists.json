@@ -12,6 +12,19 @@
       },
       {
         "variant": {
+          "name": "B.1.1.7",
+          "mutations": ["S:E484"]
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "mutations": ["S:H69-", "S:V70-"]
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
           "name": "B.1.351*",
           "mutations": []
         },
@@ -33,21 +46,7 @@
       },
       {
         "variant": {
-          "name": "B.1.617.1",
-          "mutations": []
-        },
-        "matchPercentage": 1
-      },
-      {
-        "variant": {
-          "name": "B.1.617.2",
-          "mutations": []
-        },
-        "matchPercentage": 1
-      },
-      {
-        "variant": {
-          "name": "AY.1",
+          "name": "B.1.617.2*",
           "mutations": []
         },
         "matchPercentage": 1
@@ -256,6 +255,13 @@
     "variants": [
       {
         "variant": {
+          "name": "B.1.1.7",
+          "mutations": ["S:E484K"]
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
           "name": "B.1.427",
           "mutations": []
         },
@@ -270,6 +276,13 @@
       },
       {
         "variant": {
+          "name": "B.1.1.7",
+          "mutations": ["S:S494P"]
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
           "name": "A.27",
           "mutations": []
         },
@@ -279,6 +292,13 @@
         "variant": {
           "name": "B.1.526",
           "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.1.7",
+          "mutations": ["S:Q677H"]
         },
         "matchPercentage": 1
       },
@@ -314,6 +334,27 @@
         "variant": {
           "name": "AT.1",
           "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "A.*",
+          "mutations": ["S:R346K", "S:T478R", "S:E484K"]
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.617.2*",
+          "mutations": ["S:E484A"]
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "P.1",
+          "mutations": ["S:N501T", "S:E484Q"]
         },
         "matchPercentage": 1
       }
@@ -360,6 +401,13 @@
       },
       {
         "variant": {
+          "name": "B.1.1.7",
+          "mutations": ["S:E484K"]
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
           "name": "B.1.315",
           "mutations": []
         },
@@ -397,6 +445,12 @@
         "variant": {
           "name": "C.36",
           "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "mutations": ["S:L452R", "S:N501Y"]
         },
         "matchPercentage": 1
       }

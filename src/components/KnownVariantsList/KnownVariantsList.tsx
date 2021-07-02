@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { AsyncState } from 'react-async';
 import styled from 'styled-components';
-import { NamedVariantSelector, VariantSelector } from '../../helpers/sample-selector';
+import { VariantSelector } from '../../helpers/sample-selector';
 import { SampleSetWithSelector } from '../../helpers/sample-set';
 import { getPangolinLineages, SamplingStrategy } from '../../services/api';
 import { Country, Variant } from '../../services/api-types';
@@ -15,6 +15,7 @@ import dayjs from 'dayjs';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import _VARIANT_LISTS from './variantLists.json';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
+import { formatVariantDisplayName } from '../../helpers/variant-selector';
 
 const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
 
@@ -39,7 +40,7 @@ const Grid = styled.div`
 
 export type VariantList = {
   name: string;
-  variants: NamedVariantSelector[];
+  variants: VariantSelector[];
   source?: string;
   fillUpUntil: number;
 };
@@ -49,19 +50,19 @@ const SearchWrapper = styled.div`
 `;
 
 function selectPreviewVariants(
-  definedVariants: NamedVariantSelector[],
+  definedVariants: VariantSelector[],
   pangolinLineages: {
     pangolinLineage: string;
     count: number;
   }[],
   numberVariants: number
-): NamedVariantSelector[] {
+): VariantSelector[] {
   const variants = [...definedVariants];
   for (let pangolinLineage of pangolinLineages) {
     if (variants.length >= numberVariants) {
       break;
     }
-    if (variants.map(v => v.variant.name.replace(/\*/g, '')).includes(pangolinLineage.pangolinLineage)) {
+    if (variants.map(v => v.variant.name?.replace(/\*/g, '')).includes(pangolinLineage.pangolinLineage)) {
       continue;
     }
     variants.push({
@@ -83,19 +84,17 @@ export const KnownVariantsList = ({
   wholeSampleSetState,
 }: Props) => {
   const [selectedVariantList, setSelectedVariantList] = useState(VARIANT_LISTS[0].name);
-  const [variantSampleSets, setVariantSampleSets] = useState<
-    KnownVariantWithSampleSet<NamedVariantSelector>[]
-  >();
+  const [variantSampleSets, setVariantSampleSets] = useState<KnownVariantWithSampleSet<VariantSelector>[]>();
   const [pangolinLineages, setPangolinLineages] = useState<
     {
       pangolinLineage: string;
       count: number;
     }[]
   >([]);
-  const [knownVariantSelectors, setKnownVariantSelectors] = useState<NamedVariantSelector[]>([]);
+  const [knownVariantSelectors, setKnownVariantSelectors] = useState<VariantSelector[]>([]);
 
   const knownVariantsWithoutData: {
-    selector: NamedVariantSelector;
+    selector: VariantSelector;
     chartData?: number[];
     recentProportion?: number;
   }[] = knownVariantSelectors.map(selector => ({ selector }));
@@ -202,12 +201,16 @@ export const KnownVariantsList = ({
       <Grid>
         {knownVariants.map(({ selector, chartData, recentProportion }) => (
           <KnownVariantCard
-            key={selector.variant.name}
-            name={selector.variant.name}
+            key={formatVariantDisplayName(selector.variant, true)}
+            name={formatVariantDisplayName(selector.variant, true)}
             chartData={chartData}
             recentProportion={recentProportion}
             onClick={() => onVariantSelect(selector)}
-            selected={selection?.variant.name === selector.variant.name}
+            selected={
+              selection &&
+              formatVariantDisplayName(selection.variant, true) ===
+                formatVariantDisplayName(selector.variant, true)
+            }
           />
         ))}
       </Grid>
