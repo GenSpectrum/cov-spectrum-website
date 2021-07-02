@@ -14,8 +14,11 @@ import {
 import dayjs from 'dayjs';
 import { Typeahead } from 'react-bootstrap-typeahead';
 import _VARIANTS from './variants.json';
+import _VARIANT_LISTS from './variantLists.json';
+import { KnownVariantsListSelection } from './KnownVariantsListSelection';
 
 const VARIANTS: NamedVariantSelector[] = _VARIANTS;
+const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -36,7 +39,12 @@ const Grid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 `;
 
-type NamedVariantSelector = VariantSelector & { variant: { name: string } };
+export type NamedVariantSelector = VariantSelector & { variant: { name: string } };
+
+export type VariantList = {
+  name: string;
+  variants: NamedVariantSelector[];
+};
 
 const SearchWrapper = styled.div`
   margin-bottom: 10px;
@@ -78,6 +86,7 @@ export const KnownVariantsList = ({
   selection,
   wholeSampleSetState,
 }: Props) => {
+  const [selectedVariantList, setSelectedVariantList] = useState(VARIANT_LISTS[0].name);
   const [variantSampleSets, setVariantSampleSets] = useState<
     KnownVariantWithSampleSet<NamedVariantSelector>[]
   >();
@@ -184,6 +193,12 @@ export const KnownVariantsList = ({
           selectHintOnEnter={true}
         />
       </SearchWrapper>
+
+      <KnownVariantsListSelection
+        variantLists={VARIANT_LISTS}
+        selected={selectedVariantList}
+        onSelect={setSelectedVariantList}
+      />
 
       <Grid>
         {knownVariants.map(({ selector, chartData, recentProportion }) => (
