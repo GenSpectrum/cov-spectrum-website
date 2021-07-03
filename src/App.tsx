@@ -9,6 +9,7 @@ import { LoginPage } from './pages/LoginPage';
 import { SamplingStrategy } from './services/api';
 import { useResizeDetector } from 'react-resize-detector';
 import { Alert, AlertVariant } from './helpers/ui';
+import { StoryOverviewPage } from './pages/StoryOverviewPage';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -48,6 +49,9 @@ export const App = () => {
           </Route>
           <Route path='/global-samples'>
             <GlobalSamplePage />
+          </Route>
+          <Route exact path='/story'>
+            <StoryOverviewPage />
           </Route>
           <Route path='/about'>
             <AboutPage />
