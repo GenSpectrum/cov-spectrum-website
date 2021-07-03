@@ -9,6 +9,9 @@ import { LoginPage } from './pages/LoginPage';
 import { SamplingStrategy } from './services/api';
 import { useResizeDetector } from 'react-resize-detector';
 import { Alert, AlertVariant } from './helpers/ui';
+import { StoryOverviewPage } from './pages/StoryOverviewPage';
+import { WasteWaterStoryPage } from './models/wasteWater/story/WasteWaterStoryPage';
+import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLocationPage';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -48,6 +51,15 @@ export const App = () => {
           </Route>
           <Route path='/global-samples'>
             <GlobalSamplePage />
+          </Route>
+          <Route exact path='/story'>
+            <StoryOverviewPage />
+          </Route>
+          <Route exact path='/story/wastewater-in-switzerland'>
+            <WasteWaterStoryPage />
+          </Route>
+          <Route path='/story/wastewater-in-switzerland/location/:location'>
+            <WasteWaterLocationPage />
           </Route>
           <Route path='/about'>
             <AboutPage />
