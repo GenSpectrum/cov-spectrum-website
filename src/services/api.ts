@@ -95,12 +95,12 @@ export function dateRangeToDates(
       };
     case 'Past3M':
       return {
-        dateFrom: dayjs().subtract(3, 'months').day(1).toDate(),
+        dateFrom: dayjs().subtract(3, 'months').weekday(0).toDate(),
         dateTo: undefined,
       };
     case 'Past6M':
       return {
-        dateFrom: dayjs().subtract(6, 'months').day(1).toDate(),
+        dateFrom: dayjs().subtract(6, 'months').weekday(0).toDate(),
         dateTo: undefined,
       };
     case 'Y2020':

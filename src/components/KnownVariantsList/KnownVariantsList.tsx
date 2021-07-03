@@ -108,7 +108,7 @@ export const KnownVariantsList = ({
       {
         country,
         samplingStrategy,
-        dateFrom: dayjs().subtract(3, 'months').day(1).format('YYYY-MM-DD'),
+        dateFrom: dayjs().subtract(3, 'months').weekday(0).format('YYYY-MM-DD'),
       },
       signal
     )
