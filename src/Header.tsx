@@ -175,9 +175,6 @@ const Header = () => {
                     Done
                   </Button>
                 </div>
-                <a className={`${getDropdownButtonClasses('/acknowledgements')} `} href='/acknowledgements'>
-                  Acknowledgements
-                </a>
                 <a className={getDropdownButtonClasses('/about')} href='/about'>
                   About
                 </a>
@@ -241,9 +238,6 @@ const Header = () => {
               </div>
               <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>
                 <div className='ml-1 flex items-center'>
-                  <a className={`${getButtonClasses('/acknowledgements')}`} href='/acknowledgements'>
-                    Acknowledgements
-                  </a>
                   <a className={getButtonClasses('/about')} href='/about'>
                     About
                   </a>

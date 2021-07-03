@@ -7,7 +7,6 @@ import { ExploreFocusSplit } from './pages/ExploreFocusSplit';
 import { GlobalSamplePage } from './pages/GlobalSamplePage';
 import { LoginPage } from './pages/LoginPage';
 import { SamplingStrategy } from './services/api';
-import { AcknowledgementsPage } from './pages/AcknowledgementsPage';
 import { useResizeDetector } from 'react-resize-detector';
 import { Alert, AlertVariant } from './helpers/ui';
 
@@ -52,9 +51,6 @@ export const App = () => {
           </Route>
           <Route path='/about'>
             <AboutPage />
-          </Route>
-          <Route path='/acknowledgements'>
-            <AcknowledgementsPage />
           </Route>
         </Switch>
       </div>
