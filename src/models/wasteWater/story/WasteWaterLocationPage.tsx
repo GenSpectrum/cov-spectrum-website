@@ -7,6 +7,7 @@ import { GridCell, PackedGrid } from '../../../components/PackedGrid';
 import { WasteWaterTimeWidget } from '../WasteWaterTimeWidget';
 import { WasteWaterHeatMapWidget } from '../WasteWaterHeatMapWidget';
 import Loader from '../../../components/Loader';
+import _ from 'lodash';
 
 export const WasteWaterLocationPage = () => {
   const routeMatch = useRouteMatch<{ location: string }>(
@@ -32,7 +33,7 @@ export const WasteWaterLocationPage = () => {
       <a href='..'>&#60; Return</a>
       <h1 className='mt-0'>Wastewater in Switzerland - {location}</h1>
 
-      {wasteWaterData.map(({ variantName, data }) => (
+      {_.sortBy(wasteWaterData, [d => d.variantName]).map(({ variantName, data }) => (
         <div key={variantName} style={{ marginTop: '20px' }}>
           <h2>{variantName}</h2>
           <PackedGrid maxColumns={2}>
