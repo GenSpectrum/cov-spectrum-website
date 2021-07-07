@@ -17,6 +17,7 @@ import { VercelSponsorshipLogo } from '../components/VercelSponsorshipLogo';
 import { createLocation } from 'history';
 import { generatePath } from 'react-router';
 import { ShowMoreButton } from '../helpers/ui';
+import { VariantSearch } from '../components/VariantSearch/VariantSearch';
 
 interface Props {
   country: Country;
@@ -49,6 +50,9 @@ export const ExplorePage = ({
   );
   return (
     <>
+      <NamedSection title='Search'>
+        <VariantSearch />
+      </NamedSection>
       <NamedSection title='Known variants'>
         <KnownVariantsList
           country={country}

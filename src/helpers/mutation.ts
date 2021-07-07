@@ -45,7 +45,7 @@ export function normalizeDecodedMutation({
   position,
   mutatedBase,
 }: DecodedMutation): DecodedMutation {
-  // We could improve that by storing the reference genome so that we can always fill out the original base.
+  // TODO We could improve that by storing the reference genome so that we can always fill out the original base.
   return {
     gene: geneNameMap.get(gene.toLowerCase())!,
     originalBase: originalBase?.toUpperCase(),
@@ -81,4 +81,9 @@ export function sortListByMutation<T>(list: T[], mutationExtractorFunc: (x: T) =
       return a.mutationDecoded.position - b.mutationDecoded.position;
     })
     .map(m => m.x);
+}
+
+export function isValidMutation(mutation: string): boolean {
+  // TODO Only allow existing genes
+  return /^[A-Z]{1,3}[0-9]{0,2}[AB]?:[A-Z]?[0-9]+[A-Z]?$/.test(mutation.toUpperCase());
 }

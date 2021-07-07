@@ -2,6 +2,14 @@ import { NamedVariant, Variant } from '../services/api-types';
 import { sortMutationList } from './mutation';
 
 /**
+ * A valid pangolin lineage query is a string in the pangolin lineage format, optionally followed by a ".*"
+ * or "*".
+ */
+export function isValidPangolinLineageQuery(query: string): boolean {
+  return /^([A-Z]){1,2}(\.[0-9]{1,3})*(\.?\*)?$/.test(query.toUpperCase());
+}
+
+/**
  * Return whether the variant is purely defined by pangolin lineages
  */
 export function isPurePangolinLineage(variant: Variant): variant is NamedVariant {
