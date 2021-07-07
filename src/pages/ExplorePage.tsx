@@ -50,9 +50,9 @@ export const ExplorePage = ({
   );
   return (
     <>
-      <NamedSection title='Search'>
+      <div className='mt-4'>
         <VariantSearch onVariantSelect={onVariantSelect} />
-      </NamedSection>
+      </div>
       <NamedSection title='Known variants'>
         <KnownVariantsList
           country={country}
@@ -69,9 +69,11 @@ export const ExplorePage = ({
         widgetLayout={NamedSection}
         toolbarChildren={<ShowMoreButton to={toSequencingCoverage} />}
       />
-      <NamedSection title='Search by mutations'>
-        <MutationLookup onVariantSelect={onVariantSelect} />
-      </NamedSection>
+      {AccountService.isLoggedIn() && (
+        <NamedSection title='Search by mutations'>
+          <MutationLookup onVariantSelect={onVariantSelect} />
+        </NamedSection>
+      )}
       {/* The auto-detection of interesting mutations remains a very important part of the overall concept of
           CoV-Spectrum. The current algorithm is however not good enough. Further, the program is not automated
           and it has been a while that it was executed so that the data are quite outdated. Thus, we will show it
