@@ -51,7 +51,7 @@ export const ExplorePage = ({
   return (
     <>
       <NamedSection title='Search'>
-        <VariantSearch />
+        <VariantSearch onVariantSelect={onVariantSelect} />
       </NamedSection>
       <NamedSection title='Known variants'>
         <KnownVariantsList
