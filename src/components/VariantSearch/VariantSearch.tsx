@@ -45,7 +45,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
   }, []);
 
   const suggestPangolinLineages = (query: string): string[] => {
-    return pangolinLineages.filter(pl => pl.toUpperCase().startsWith(query));
+    return pangolinLineages.filter(pl => pl.toUpperCase().startsWith(query.toUpperCase()));
   };
 
   const suggestMutations = (query: string): string[] => {
@@ -102,7 +102,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
       'ORF7a:V82A',
       'ORF9b:T60A',
       'N:D63G',
-    ].filter(m => m.startsWith(query));
+    ].filter(m => m.toUpperCase().startsWith(query.toUpperCase()));
   };
 
   const suggestOptions = (query: string): SearchOption[] => {
