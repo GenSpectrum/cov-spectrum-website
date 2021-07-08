@@ -12,7 +12,6 @@ import {
   loadKnownVariantSampleSets,
 } from './load-data';
 import dayjs from 'dayjs';
-import { Typeahead } from 'react-bootstrap-typeahead';
 import _VARIANT_LISTS from './variantLists.json';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
 import { formatVariantDisplayName } from '../../helpers/variant-selector';
@@ -44,10 +43,6 @@ export type VariantList = {
   source?: string;
   fillUpUntil: number;
 };
-
-const SearchWrapper = styled.div`
-  margin-bottom: 10px;
-`;
 
 function selectPreviewVariants(
   definedVariants: VariantSelector[],
@@ -85,12 +80,6 @@ export const KnownVariantsList = ({
 }: Props) => {
   const [selectedVariantList, setSelectedVariantList] = useState(VARIANT_LISTS[0].name);
   const [variantSampleSets, setVariantSampleSets] = useState<KnownVariantWithSampleSet<VariantSelector>[]>();
-  const [pangolinLineages, setPangolinLineages] = useState<
-    {
-      pangolinLineage: string;
-      count: number;
-    }[]
-  >([]);
   const [knownVariantSelectors, setKnownVariantSelectors] = useState<VariantSelector[]>([]);
 
   const knownVariantsWithoutData: {
@@ -118,7 +107,6 @@ export const KnownVariantsList = ({
             pangolinLineage: string;
             count: number;
           }[];
-          setPangolinLineages(lineages);
           const variantList = VARIANT_LISTS.filter(({ name }) => name === selectedVariantList)[0];
           setKnownVariantSelectors(
             selectPreviewVariants(variantList.variants, lineages, variantList.fillUpUntil)
@@ -170,28 +158,6 @@ export const KnownVariantsList = ({
 
   return (
     <>
-      <SearchWrapper>
-        <Typeahead
-          id='pangolinLineageSearch'
-          options={pangolinLineages}
-          labelKey='pangolinLineage'
-          placeholder='Search pangolin lineage (B.1, B.1.1.7, B.1.*)'
-          selected={[]}
-          onChange={selected =>
-            selected.length === 1 &&
-            onVariantSelect({
-              variant: {
-                name: selected[0].pangolinLineage,
-                mutations: [],
-              },
-              matchPercentage: 1,
-            })
-          }
-          allowNew={true}
-          selectHintOnEnter={true}
-        />
-      </SearchWrapper>
-
       <KnownVariantsListSelection
         variantLists={VARIANT_LISTS}
         selected={selectedVariantList}
