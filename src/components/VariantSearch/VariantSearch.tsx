@@ -27,7 +27,7 @@ const colorStyles: Partial<Styles<any, true, any>> = {
   multiValue: (styles: CSSPseudos, { data }: { data: SearchOption }) => {
     return {
       ...styles,
-      backgroundColor: data.type === 'pangolin-lineage' ? 'rgba(172,44,86,0.1)' : 'rgba(0,56,44,0.1)',
+      backgroundColor: data.type === 'pangolin-lineage' ? 'rgba(29,78,207,0.1)' : 'rgba(4,133,27,0.1)',
     };
   },
 };
