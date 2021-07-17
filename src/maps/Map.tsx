@@ -32,7 +32,7 @@ const Wrapper = styled.div`
           return `&[name="${d.division}"] {
         fill: ${colorScale(d.prevalence || 0)};
         &:hover {
-          stroke-width: 8px;
+          stroke-width: 4px;
         }
       }`;
         })}
