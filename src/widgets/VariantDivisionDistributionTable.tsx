@@ -1,5 +1,5 @@
 import { SampleSetWithSelector } from '../helpers/sample-set';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Widget } from './Widget';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import * as zod from 'zod';
@@ -9,6 +9,7 @@ import { getNewSamples } from '../services/api';
 import Table from 'react-bootstrap/Table';
 import styled from 'styled-components';
 import DownloadWrapper from '../charts/DownloadWrapper';
+import Map from '../maps/Map';
 
 interface Props {
   variantSampleSet: SampleSetWithSelector;
@@ -53,8 +54,10 @@ const VariantDivisionDistributionTable = ({ variantSampleSet, wholeSampleSet }: 
     numberSamples: count,
     proportionWithinDivision: prevalence?.toFixed(6),
   }));
+
   return (
     <DownloadWrapper name='VariantDivisionDistributionTable' csvData={csvData}>
+      <Map data={processedData} />
       <Wrapper>
         <Table striped bordered hover>
           <thead>
