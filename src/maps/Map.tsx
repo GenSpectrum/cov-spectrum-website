@@ -106,7 +106,7 @@ const Map = ({ data, country }: Props) => {
   return (
     <ChartAndMetrics
       metrics={metrics}
-      title={`Proportion of variant ${focusData ? 'in ' + focusData.division : ''}`}
+      title={`Proportion of variant ${focusData ? 'in ' + focusData.division : country}`}
       metricsTitle={focusData && focusData.division !== null ? focusData.division : undefined}
     >
       <Wrapper data={data} focusDivision={focusData ? focusData.division : null} className='pd-1 md:m-2'>
