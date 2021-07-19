@@ -19,9 +19,9 @@ export const MetricsWrapper = ({
   return (
     <div
       id={id}
-      className={`pl-2 pt-1 flex-grow flex flex-row sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8 ${
+      className={`pl-2 pt-1 flex flex-row md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8 ${
         className ? className : ''
-      }`}
+      } md:mt-auto`}
     >
       {children}
     </div>
@@ -67,7 +67,7 @@ export const ValueWrapper = ({
 
 export const MetricWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
   return (
-    <div id={id} className='flex flex-col justify-end h-full flex-grow w-28 pr-1 md:w-40'>
+    <div id={id} className='flex flex-col justify-end w-36 pr-1 md:w-40'>
       {children}
     </div>
   );
@@ -96,9 +96,10 @@ interface ChartAndMetricsProps {
   children: React.ReactNode;
   metrics: MetricProps[];
   title: string;
+  metricsTitle?: string | undefined;
 }
 
-export const ChartAndMetrics = ({ children, metrics, title }: ChartAndMetricsProps) => {
+export const ChartAndMetrics = ({ children, metrics, title, metricsTitle }: ChartAndMetricsProps) => {
   return (
     <div id={`chart-and-metrics-${title}`} className='flex flex-col h-full w-full'>
       <h3 id={`chart-title-${title}`} className='my-0 pb-4 pr-10 pt-0 text-gray-500'>
@@ -107,6 +108,7 @@ export const ChartAndMetrics = ({ children, metrics, title }: ChartAndMetricsPro
       <div className='flex flex-col lg:flex-row h-full'>
         <div className='w-full h-full'>{children}</div>
         <MetricsWrapper>
+          {metricsTitle && <h3>{metricsTitle}</h3>}
           {metrics.map(mProps => (
             <Metric {...mProps} />
           ))}

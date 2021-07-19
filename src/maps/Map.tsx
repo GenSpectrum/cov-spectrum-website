@@ -1,9 +1,12 @@
 import { VectorMap } from '@south-paw/react-vector-maps';
 import { scaleQuantile } from 'd3-scale';
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import styled from 'styled-components';
 import switzerland from './switzerland.json';
+import germany from './germany.json';
+import usa from './usa.json';
 import { ChartAndMetrics, colors } from '../charts/Metrics';
+import { Place } from '../services/api-types';
 
 type Data = {
   division: string | null;
@@ -13,6 +16,7 @@ type Data = {
 
 interface WrapperProps {
   data: Data[];
+  focusDivision: string | null;
 }
 
 const colorScale = scaleQuantile<string>()
@@ -26,14 +30,14 @@ const Wrapper = styled.div`
       outline: none;
       stroke: black;
       fill: white;
-
       ${(p: WrapperProps) =>
         p.data.map(d => {
           return `&[name="${d.division}"] {
-        fill: ${colorScale(d.prevalence || 0)};
-        &:hover {
-          stroke-width: 4px;
-        }
+        fill: ${
+          p.focusDivision !== null && p.focusDivision === d.division
+            ? colors.active
+            : colorScale(d.prevalence || 0)
+        };
       }`;
         })}
     }
@@ -54,50 +58,61 @@ interface MouseProps {
 
 interface Props {
   data: Data[];
+  country: Place;
 }
 
-const Map = ({ data }: Props) => {
-  const [hovered, setHovered] = React.useState('None');
-  const [focused, setFocused] = React.useState('None');
-  const [clicked, setClicked] = React.useState('None');
+const Map = ({ data, country }: Props) => {
   const [focusData, setFocusData] = useState<Data | undefined>(undefined);
 
   const layerProps = {
     onMouseEnter: ({ target }: MouseProps) => {
       const newData = data.find(d => d.division === target.attributes.name.value);
-      setFocusData(newData);
+      newData && setFocusData(newData);
     },
-    // onMouseEnter: ({ target }: MouseProps) => setHovered(target.attributes.name.value),
-    // onMouseLeave: ({ target }: MouseProps) => setHovered('None'),
-    // onFocus: ({ target }: MouseProps) => setFocused(target.attributes.name.value),
-    // onClick: ({ target }: MouseProps) => setClicked(target.attributes.name.value),
+    onMouseLeave: ({ target }: MouseProps) => setFocusData(undefined),
   };
 
-  const metrics = focusData
-    ? [
-        {
-          value: focusData.prevalence ? focusData.prevalence.toFixed(2) : 0,
-          title: 'Prevalence',
-          color: colors.active,
-          helpText: 'Proportion relative to all samples collected from this age group.',
-          percent: true,
-        },
-        {
-          value: focusData.count,
-          title: 'Samples',
-          color: colors.secondary,
-          helpText: 'Number of samples of the variant collected from this age group.',
-        },
-      ]
-    : [];
+  const minPrevalence = useMemo(
+    () => data.map((d: Data) => (d.prevalence ? d.prevalence : 0)).reduce((a, b) => Math.min(a, b), Infinity),
+    [data]
+  );
+  const maxPrevalence = useMemo(
+    () => data.map((d: Data) => (d.prevalence ? d.prevalence : 0)).reduce((a, b) => Math.max(a, b), 0),
+    [data]
+  );
+
+  const metrics = [
+    {
+      value: focusData
+        ? focusData.prevalence
+          ? focusData.prevalence.toFixed(2)
+          : 0
+        : `${minPrevalence.toFixed(2)}-${maxPrevalence.toFixed(2)}`,
+      title: focusData ? 'Prevalence' : 'Prevalence range',
+      color: colors.active,
+      helpText: 'Proportion relative to all samples collected from this age group.',
+      percent: true,
+    },
+    {
+      value: focusData ? focusData.count : data.length,
+      title: focusData ? 'Samples' : 'Divisions with data',
+      color: colors.secondary,
+      helpText: focusData
+        ? 'Number of samples of the variant collected from this age group.'
+        : 'Number of divisions with prevalence data',
+    },
+  ];
 
   return (
     <ChartAndMetrics
       metrics={metrics}
       title={`Proportion of variant ${focusData ? 'in ' + focusData.division : ''}`}
+      metricsTitle={focusData && focusData.division !== null ? focusData.division : undefined}
     >
-      <Wrapper data={data} className='pd-1 md:m-2'>
-        <VectorMap {...switzerland} layerProps={layerProps} />
+      <Wrapper data={data} focusDivision={focusData ? focusData.division : null} className='pd-1 md:m-2'>
+        {country === 'Switzerland' && <VectorMap {...switzerland} layerProps={layerProps} />}
+        {country === 'Germany' && <VectorMap {...germany} layerProps={layerProps} />}
+        {country === 'United States' && <VectorMap {...usa} layerProps={layerProps} />}
       </Wrapper>
     </ChartAndMetrics>
   );
