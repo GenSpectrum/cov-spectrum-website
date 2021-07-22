@@ -1,12 +1,76 @@
-import { VectorMap } from '@south-paw/react-vector-maps';
-import { scaleQuantile } from 'd3-scale';
 import React, { useState, useMemo } from 'react';
+import { scaleQuantile } from 'd3-scale';
 import styled from 'styled-components';
 import switzerland from './switzerland.json';
 import germany from './germany.json';
 import usa from './usa.json';
 import { ChartAndMetrics, colors } from '../charts/Metrics';
 import { Place } from '../services/api-types';
+
+export interface VectorMapLayer {
+  /** Unique ID of each layer. */
+  id: string;
+  /** Name of the layer. */
+  name: string;
+  /** SVG path for the layer. */
+  d: string;
+}
+
+export interface VectorMapProps {
+  /** Unique ID of the SVG element. */
+  id: string;
+  /** Name of the map. */
+  name: string;
+  /** View box for the map. */
+  viewBox: string;
+  /** Layers that represent the regions of the map. */
+  layers: VectorMapLayer[];
+  /** Tab index for each layer. Set to '-1' to disable layer focusing. */
+  tabIndex?: number;
+  /** Props to spread onto each layer. */
+  layerProps?: any;
+  /** Layer IDs to 'select' with the 'aria-checked' attribute. */
+  checkedLayers?: string[];
+  /** Layer IDs to 'select' with the 'aria-current' attribute. */
+  currentLayers?: string[];
+}
+
+const VectorMap: React.FC<VectorMapProps> = ({
+  id,
+  name,
+  layers,
+  tabIndex = 0,
+  layerProps,
+  checkedLayers,
+  currentLayers,
+  children,
+  ...other
+}) => {
+  if (!layers || layers.length === 0) {
+    // eslint-disable-next-line no-console
+    console.error(
+      `[react-vector-maps] No 'layers' prop provided. Did you spread a map object onto the component?`
+    );
+    return null;
+  }
+
+  return (
+    <svg xmlns='http://www.w3.org/2000/svg' key={id} aria-label={name} {...other}>
+      {children}
+      {layers.map(layer => (
+        <path
+          key={layer.id}
+          tabIndex={tabIndex}
+          aria-label={layer.name}
+          aria-checked={checkedLayers && checkedLayers.includes(layer.id)}
+          aria-current={currentLayers && currentLayers.includes(layer.id)}
+          {...layer}
+          {...layerProps}
+        />
+      ))}
+    </svg>
+  );
+};
 
 type Data = {
   division: string | null;
