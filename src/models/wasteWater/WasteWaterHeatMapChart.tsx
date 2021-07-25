@@ -143,20 +143,26 @@ export const WasteWaterHeatMapChart = React.memo(
           )}
         </TitleWrapper>
         <ChartAndMetricsWrapper2>
-          <ChartWrapper2>
+          <div
+            id='heatmap-inner-wrapper'
+            className='flex mr-10 w-full overflow-x-scroll md:overflow-x-hidden'
+          >
             <div style={{ width: '70px', height: '100%', display: 'block' }}>
               <table style={{ tableLayout: 'fixed', width: '100px', height: '100%' }}>
                 <tbody>{nucMutationsLabelTableRows}</tbody>
               </table>
             </div>
-            <div style={{ width: 'calc(100% - 70px)', height: '100%', display: 'block' }}>
+            <div
+              className='md:overflow-x-scroll'
+              style={{ width: 'calc(100% - 70px)', height: '100%', display: 'block' }}
+            >
               <div style={{ height: '100%' }}>
                 <table style={{ tableLayout: 'fixed', width: '100%', height: '100%' }}>
                   <tbody>{heatMapTableRows}</tbody>
                 </table>
               </div>
             </div>
-          </ChartWrapper2>
+          </div>
           <MetricsWrapper>
             <Metric
               value={active?.proportion !== undefined ? (active.proportion * 100).toFixed(2) + '%' : 'NA'}
