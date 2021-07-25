@@ -127,7 +127,27 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
   return (
     <div>
       <div className='text-sm mb-2'>Type in up to one pangolin lineage and any number of mutations:</div>
-      <div className='w-full flex flex-row items-center'>
+      <form
+        className='w-full flex flex-row items-center'
+        onSubmit={e => {
+          e.preventDefault();
+          const selector: VariantSelector = {
+            variant: {
+              name: undefined,
+              mutations: [],
+            },
+            matchPercentage: 1,
+          };
+          for (let { type, value } of selectedOptions) {
+            if (type === 'mutation') {
+              selector.variant.mutations.push(value);
+            } else if (type === 'pangolin-lineage') {
+              selector.variant.name = value;
+            }
+          }
+          onVariantSelect(selector);
+        }}
+      >
         <AsyncSelect
           className='w-full mr-2'
           placeholder='B.1.1.7, S:484K, ...'
@@ -144,30 +164,10 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
           styles={colorStyles}
         />
 
-        <Button
-          variant={ButtonVariant.PRIMARY}
-          className='w-40'
-          onClick={() => {
-            const selector: VariantSelector = {
-              variant: {
-                name: undefined,
-                mutations: [],
-              },
-              matchPercentage: 1,
-            };
-            for (let { type, value } of selectedOptions) {
-              if (type === 'mutation') {
-                selector.variant.mutations.push(value);
-              } else if (type === 'pangolin-lineage') {
-                selector.variant.name = value;
-              }
-            }
-            onVariantSelect(selector);
-          }}
-        >
+        <Button variant={ButtonVariant.PRIMARY} className='w-40'>
           Search
         </Button>
-      </div>
+      </form>
     </div>
   );
 };
