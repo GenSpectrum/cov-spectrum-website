@@ -28,13 +28,6 @@ export const MetricsWrapper = ({
   );
 };
 
-export const colors = {
-  active: '#2980b9',
-  inactive: '#bdc3c7',
-  active2: '#3498db',
-  secondary: '#7f8c8d',
-};
-
 export const IconWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
   return (
     <div id={id} className='flex items-center pl-1 grow'>

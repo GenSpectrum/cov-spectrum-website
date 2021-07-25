@@ -4,8 +4,9 @@ import styled from 'styled-components';
 import switzerland from './switzerland.json';
 import germany from './germany.json';
 import usa from './usa.json';
-import { ChartAndMetrics, colors } from '../charts/Metrics';
+import { ChartAndMetrics } from '../charts/Metrics';
 import { Place } from '../services/api-types';
+import { colors } from '../charts/common';
 
 export interface VectorMapLayer {
   /** Unique ID of each layer. */
@@ -89,6 +90,9 @@ const colorScale = scaleQuantile<string>()
 
 const Wrapper = styled.div`
   svg {
+    max-height: 500px;
+    margin-left: auto;
+    margin-right: auto;
     path {
       cursor: pointer;
       outline: none;
@@ -104,6 +108,9 @@ const Wrapper = styled.div`
         };
       }`;
         })}
+      &:hover {
+        fill: ${colors.active};
+      }
     }
   }
 `;
@@ -133,8 +140,15 @@ const Map = ({ data: inputData, country }: Props) => {
   const layerProps = {
     onMouseEnter: ({ target }: MouseProps) => {
       const newData = data.find(d => d.division === target.attributes.name.value);
-
-      newData && setFocusData(newData);
+      if (newData) {
+        setFocusData(newData);
+      } else {
+        setFocusData({
+          division: target.attributes.name.value,
+          count: 0,
+          prevalence: 0,
+        });
+      }
     },
     onMouseLeave: () => setFocusData(undefined),
   };
@@ -147,6 +161,19 @@ const Map = ({ data: inputData, country }: Props) => {
     () => data.map((d: Data) => (d.prevalence ? d.prevalence : 0)).reduce((a, b) => Math.max(a, b), 0),
     [data]
   );
+
+  const getNumberOfDivisions = () => {
+    switch (country) {
+      case 'Switzerland':
+        return switzerland.layers.length;
+      case 'Germany':
+        return germany.layers.length;
+      case 'USA':
+        return usa.layers.length;
+      default:
+        return 0;
+    }
+  };
 
   const metrics = [
     {
@@ -161,8 +188,8 @@ const Map = ({ data: inputData, country }: Props) => {
       percent: true,
     },
     {
-      value: focusData ? focusData.count : data.length,
-      title: focusData ? 'Samples' : 'Divisions with data',
+      value: focusData ? focusData.count : getNumberOfDivisions(),
+      title: focusData ? 'Samples' : 'Divisions',
       color: colors.secondary,
       helpText: focusData
         ? 'Number of samples of the variant collected from this age group.'
