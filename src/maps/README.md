@@ -1,4 +1,8 @@
-# Adding countries
+# Prevalence division maps
+
+Each country division has it's own SVG shape and corresponding name. These are stored in the `country.json` files in this folder. Sometimes the API division names and the ones in the .json don't correspond, so we have to fix them by editing the division name in the .json file (one time fix per country division, it's harder to change the API).
+
+## Adding countries
 
 1. Download relevant map from https://react-vector-maps.netlify.app/maps
    These are json files generated from SVG.
