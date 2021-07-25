@@ -127,21 +127,23 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
   return (
     <div>
       <div className='text-sm mb-2'>Type in up to one pangolin lineage and any number of mutations:</div>
-      <AsyncSelect
-        placeholder='B.1.1.7, S:484K, ...'
-        isMulti
-        defaultOptions={suggestOptions('')}
-        loadOptions={(query: string) => Promise.resolve(suggestOptions(query))}
-        onChange={(_, change) => {
-          if (change.action === 'select-option') {
-            setSelectedOptions([...selectedOptions, change.option]);
-          } else if (change.action === 'remove-value' || change.action === 'pop-value') {
-            setSelectedOptions(selectedOptions.filter(o => o.value !== change.removedValue.value));
-          }
-        }}
-        styles={colorStyles}
-      />
-      <div className='mt-2'>
+      <div className='w-full flex flex-row items-center'>
+        <AsyncSelect
+          className='w-full mr-2'
+          placeholder='B.1.1.7, S:484K, ...'
+          isMulti
+          defaultOptions={suggestOptions('')}
+          loadOptions={(query: string) => Promise.resolve(suggestOptions(query))}
+          onChange={(_, change) => {
+            if (change.action === 'select-option') {
+              setSelectedOptions([...selectedOptions, change.option]);
+            } else if (change.action === 'remove-value' || change.action === 'pop-value') {
+              setSelectedOptions(selectedOptions.filter(o => o.value !== change.removedValue.value));
+            }
+          }}
+          styles={colorStyles}
+        />
+
         <Button
           variant={ButtonVariant.PRIMARY}
           className='w-40'
