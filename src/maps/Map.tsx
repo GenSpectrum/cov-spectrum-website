@@ -84,7 +84,7 @@ interface WrapperProps {
 }
 
 const colorScale = scaleQuantile<string>()
-  .domain([0, 1])
+  .domain([0, 100])
   .range(['#ffedea', '#ffcec5', '#ffad9f', '#ff8a75', '#ff5533', '#e2492d', '#be3d26', '#9a311f', '#782618']);
 
 const Wrapper = styled.div`
@@ -125,12 +125,15 @@ interface Props {
   country: Place;
 }
 
-const Map = ({ data, country }: Props) => {
+const Map = ({ data: inputData, country }: Props) => {
   const [focusData, setFocusData] = useState<Data | undefined>(undefined);
+
+  const data = inputData.map(d => ({ ...d, prevalence: d.prevalence ? d.prevalence * 100 : 0 }));
 
   const layerProps = {
     onMouseEnter: ({ target }: MouseProps) => {
       const newData = data.find(d => d.division === target.attributes.name.value);
+
       newData && setFocusData(newData);
     },
     onMouseLeave: () => setFocusData(undefined),
