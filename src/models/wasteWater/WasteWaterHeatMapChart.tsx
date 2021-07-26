@@ -34,12 +34,6 @@ const ChartAndMetricsWrapper2 = styled(ChartAndMetricsWrapper)`
   overflow-x: hidden;
 `;
 
-const ChartWrapper2 = styled(ChartWrapper)`
-  display: flex;
-  margin-right: 20px;
-  overflow-y: auto;
-`;
-
 function formatDate(date: UnifiedDay) {
   return date.dayjs.format('DD.MM');
 }
