@@ -161,6 +161,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
       if (suggestions && suggestions.length > 0
           && selectedOption && !selectedOptions.find(option => option.value === selectedOption.value)) {
         if(selectedOption.type === 'mutation'
+            // if there are more than one pangolin-lineage options in the comma separated input, we only accept the first one
             || (selectedOption.type === 'pangolin-lineage' && newSelectedOptions.filter(option => option.type === 'pangolin-lineage').length < 1)) {
           newSelectedOptions.push(selectedOption);
         }
