@@ -112,9 +112,6 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
   };
 
   const suggestOptions = (query: string): SearchOption[] => {
-    if(query.slice(-1) == ","){
-      query = query.slice(0, -1)
-    }
     const onePLAlreadySelected =
         selectedOptions.filter(option => option.type === 'pangolin-lineage').length > 0;
     const suggestions: SearchOption[] = [];
@@ -184,7 +181,8 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
   const promiseOptions = (inputValue : string) => {
     // resets the options to default (where input value is '') when menu is closed
     if(!menuIsOpen){
-      setInputValue('');
+      inputValue = ''
+      setInputValue(inputValue);
     }
 
     return Promise.resolve(suggestOptions(inputValue));
