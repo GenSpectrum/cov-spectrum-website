@@ -154,21 +154,24 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
       // remove spaces from both ends of the query
       query = query.trim()
       const suggestions = suggestOptions(query);
-      const selectedOption = suggestions.find(item => item.value.toUpperCase() === query.toUpperCase());
+      const selectedOption = suggestions.find(option => option.value.toUpperCase() === query.toUpperCase());
       // If query gets back valid a valid suggest option which is not yet selected,
       // then add the query's suggest option to the newSelectedOptions to be added to selectedOptions.
       // Otherwise, append the query to the invalid queries string
       if (suggestions && suggestions.length > 0
-          && selectedOption && !selectedOptions.find(item => item.value === selectedOption.value)) {
-        newSelectedOptions.push(selectedOption);
+          && selectedOption && !selectedOptions.find(option => option.value === selectedOption.value)) {
+        if(selectedOption.type === 'mutation'
+            || (selectedOption.type === 'pangolin-lineage' && newSelectedOptions.filter(option => option.type === 'pangolin-lineage').length < 1)) {
+          newSelectedOptions.push(selectedOption);
+        }
       }else{
         invalidQueries += query + ','
       }
     }
 
-    if (newSelectedOptions.length > 0) {
-      setSelectedOptions([...selectedOptions, ...newSelectedOptions]);
-    }
+     if (newSelectedOptions.length > 0) {
+       setSelectedOptions([...selectedOptions, ...newSelectedOptions]);
+     }
 
     // remove the last "," in the invalidQueries string
     invalidQueries = invalidQueries.slice(0, -1)
