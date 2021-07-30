@@ -175,7 +175,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
     setInputValue(invalidQueries);
     // leave options menu open if there are invalid queries from the list
     // this will show the "No Options" in the menu
-    setMenuIsOpen(invalidQueries === '' ? false : true);
+    setMenuIsOpen(invalidQueries !== '');
   }
 
   const promiseOptions = (inputValue : string) => {
