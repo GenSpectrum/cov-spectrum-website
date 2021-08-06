@@ -1,4 +1,4 @@
-import { WasteWaterDataset, WasteWaterDatasetEntry, WasteWaterRequest, WasteWaterResponse } from './types';
+import { WasteWaterDataset, WasteWaterDatasetEntry, WasteWaterRequest, WasteWaterResponse, WasteWaterResponseSchema } from './types';
 import { get, isRegion, isWorld } from '../../services/api';
 import { globalDateCache } from '../../helpers/date-cache';
 
@@ -16,9 +16,12 @@ export async function getData(
     if (!json) {
       return undefined;
     }
-    // TODO HACK don't actually parse because zod is slow
-    // const responseData: WasteWaterResponse = WasteWaterResponseSchema.parse(json);
-    const responseData = json as WasteWaterResponse;
+
+    const responseData: WasteWaterResponse = WasteWaterResponseSchema.parse(json);
+
+    // fall back json parsing in case zod is slow
+    //const responseData = json as WasteWaterResponse;
+
     return responseData.data.map(d => ({
       location: d.location,
       variantName: d.variantName,
