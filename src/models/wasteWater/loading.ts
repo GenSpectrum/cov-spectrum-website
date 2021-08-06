@@ -1,4 +1,10 @@
-import { WasteWaterDataset, WasteWaterDatasetEntry, WasteWaterRequest, WasteWaterResponse, WasteWaterResponseSchema } from './types';
+import {
+  WasteWaterDataset,
+  WasteWaterDatasetEntry,
+  WasteWaterRequest,
+  WasteWaterResponse,
+  WasteWaterResponseSchema,
+} from './types';
 import { get, isRegion, isWorld } from '../../services/api';
 import { globalDateCache } from '../../helpers/date-cache';
 
