@@ -214,7 +214,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
 
   /**
    * This is needed because the code is converted to manually opening/closing the option menu,
-   * which overrides the default behaviour of the DropdownIndicator. 
+   * which overrides the default behaviour of the DropdownIndicator.
    * @param props props of component
    * @constructor the constructor
    */
