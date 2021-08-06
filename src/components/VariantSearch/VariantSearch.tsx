@@ -3,10 +3,7 @@ import AsyncSelect from 'react-select/async';
 import { components } from 'react-select';
 import { isValidMutation } from '../../helpers/mutation';
 import { isValidPangolinLineageQuery } from '../../helpers/variant-selector';
-import {
-  InputActionMeta,
-  Styles
-} from 'react-select';
+import { InputActionMeta, Styles } from 'react-select';
 import { CSSPseudos } from 'styled-components';
 import { Button, ButtonVariant } from '../../helpers/ui';
 import { GenomeService } from '../../services/GenomeService';
@@ -113,7 +110,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
 
   const suggestOptions = (query: string): SearchOption[] => {
     const onePLAlreadySelected =
-        selectedOptions.filter(option => option.type === 'pangolin-lineage').length > 0;
+      selectedOptions.filter(option => option.type === 'pangolin-lineage').length > 0;
     const suggestions: SearchOption[] = [];
     if (isValidMutation(query)) {
       suggestions.push(mapOption(query, 'mutation'));
@@ -130,10 +127,18 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
     return suggestions.slice(0, 20);
   };
 
+  /**
+   * Handles the input change:
+   * 1) when input value contains ",", call the handleCommaSeparatedInput function
+   * 2) otherwise, set the input value to the new value and keep menu window open
+   * 3) when input change action is menu-close or input-blur, close menu window
+   * @param newValue the new input value
+   * @param change the change action
+   */
   const handleInputChange = (newValue: string, change: InputActionMeta) => {
-    if(change.action === 'input-change') {
+    if (change.action === 'input-change') {
       // when input value has "," in the string
-      if (newValue.includes(",")) {
+      if (newValue.includes(',')) {
         handleCommaSeparatedInput(newValue);
       } else {
         setInputValue(newValue);
@@ -141,135 +146,144 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
       }
     }
 
-    if(change.action === 'menu-close' || change.action === 'input-blur'){
+    if (change.action === 'menu-close' || change.action === 'input-blur') {
       setMenuIsOpen(false);
     }
   };
 
+  /**
+   * Handles comma-separated input value:
+   * 1) split the input value by "," to retrieve the individual query in the list
+   * 2) validate each input query by mapping to suggest options
+   * 3) add valid options to the selected options list so they transform from plain text to tags
+   * 4) max 1 pangolin lineage but multiple mutations allowed
+   * 5) invalid queries stay as comma-separated plain text
+   * 6) leave options menu open if there are invalid queries from the list
+   * @param inputValue comma-separated string
+   */
   const handleCommaSeparatedInput = (inputValue: string) => {
-    const inputValues = inputValue.split(",")
-    let newSelectedOptions: SearchOption[] = []
-    let invalidQueries = ''
+    const inputValues = inputValue.split(',');
+    let newSelectedOptions: SearchOption[] = [];
+    let invalidQueries = '';
     for (let query of inputValues) {
-      // remove spaces from both ends of the query
-      query = query.trim()
+      query = query.trim();
       const suggestions = suggestOptions(query);
       const selectedOption = suggestions.find(option => option.value.toUpperCase() === query.toUpperCase());
-      // If query gets back valid a valid suggest option which is not yet selected,
-      // then add the query's suggest option to the newSelectedOptions to be added to selectedOptions.
-      // Otherwise, append the query to the invalid queries string
-      if (suggestions && suggestions.length > 0
-          && selectedOption && !selectedOptions.find(option => option.value === selectedOption.value)) {
-        if(selectedOption.type === 'mutation'
-            // if there are more than one pangolin-lineage options in the comma separated input, we only accept the first one
-            || (selectedOption.type === 'pangolin-lineage' && newSelectedOptions.filter(option => option.type === 'pangolin-lineage').length < 1)) {
+      if (
+        suggestions &&
+        suggestions.length > 0 &&
+        selectedOption &&
+        !selectedOptions.find(option => option.value === selectedOption.value)
+      ) {
+        if (
+          selectedOption.type === 'mutation' ||
+          (selectedOption.type === 'pangolin-lineage' &&
+            newSelectedOptions.filter(option => option.type === 'pangolin-lineage').length < 1)
+        ) {
           newSelectedOptions.push(selectedOption);
         }
-      }else{
-        invalidQueries += query + ','
+      } else {
+        invalidQueries += query + ',';
       }
     }
 
-     if (newSelectedOptions.length > 0) {
-       setSelectedOptions([...selectedOptions, ...newSelectedOptions]);
-     }
+    if (newSelectedOptions.length > 0) {
+      setSelectedOptions([...selectedOptions, ...newSelectedOptions]);
+    }
 
     // remove the last "," in the invalidQueries string
-    invalidQueries = invalidQueries.slice(0, -1)
+    invalidQueries = invalidQueries.slice(0, -1);
     setInputValue(invalidQueries);
-    // leave options menu open if there are invalid queries from the list
-    // this will show the "No Options" in the menu
-    setMenuIsOpen(invalidQueries !== '');
-  }
 
-  const promiseOptions = (inputValue : string) => {
+    setMenuIsOpen(invalidQueries !== '');
+  };
+
+  const promiseOptions = (inputValue: string) => {
     // resets the options to default (where input value is '') when menu is closed
-    if(!menuIsOpen){
-      inputValue = ''
+    if (!menuIsOpen) {
+      inputValue = '';
       setInputValue(inputValue);
     }
 
     return Promise.resolve(suggestOptions(inputValue));
-  }
+  };
 
   const openMenu = () => {
     setMenuIsOpen(!menuIsOpen);
   };
 
-  // Custom DropdownIndicator that calls openMenu on click, which is default behaviour.
-  // This is needed because we need to manually close the menu after "selecting" by comma,
-  // which overrides the default behaviour of the DropdownIndicator.
+  /**
+   * This is needed because the code is converted to manually opening/closing the option menu,
+   * which overrides the default behaviour of the DropdownIndicator. 
+   * @param props props of component
+   * @constructor the constructor
+   */
   const DropdownIndicator = (props: any) => {
     return (
-        components.DropdownIndicator && (
-            <div
-                onClick={openMenu}
-                style={{ display: "flex", alignItems: "center" }}
-            >
-              <components.DropdownIndicator
-                  {...props}
-                  onClick={() => {
-                  }}
-              />
-            </div>
-        )
+      components.DropdownIndicator && (
+        <div onClick={openMenu} style={{ display: 'flex', alignItems: 'center' }}>
+          <components.DropdownIndicator {...props} onClick={() => {}} />
+        </div>
+      )
     );
   };
 
   return (
-      <div>
-        <div className='text-sm mb-2'>Type in up to one pangolin lineage and any number of mutations (or paste a comma separated list):</div>
-        <form
-            className='w-full flex flex-row items-center'
-            onSubmit={e => {
-              e.preventDefault();
-              const selector: VariantSelector = {
-                variant: {
-                  name: undefined,
-                  mutations: [],
-                },
-                matchPercentage: 1,
-              };
-              for (let { type, value } of selectedOptions) {
-                if (type === 'mutation') {
-                  selector.variant.mutations.push(value);
-                } else if (type === 'pangolin-lineage') {
-                  selector.variant.name = value;
-                }
-              }
-              onVariantSelect(selector);
-            }}
-        >
-          <AsyncSelect
-              className='w-full mr-2'
-              components = {{DropdownIndicator}}
-              placeholder='B.1.1.7, S:484K, ...'
-              isMulti
-              defaultOptions={suggestOptions('')}
-              loadOptions={promiseOptions}
-              onChange={(_, change) => {
-                if (change.action === 'select-option') {
-                  setSelectedOptions([...selectedOptions, change.option]);
-                  setInputValue('');
-                  setMenuIsOpen(false);
-                } else if (change.action === 'remove-value' || change.action === 'pop-value') {
-                  setSelectedOptions(selectedOptions.filter(o => o.value !== change.removedValue.value));
-                } else if (change.action === 'clear') {
-                  setSelectedOptions([]);
-                  setInputValue('');
-                }
-              }}
-              styles={colorStyles}
-              onInputChange={handleInputChange}
-              value={selectedOptions}
-              inputValue={inputValue}
-              menuIsOpen={menuIsOpen}
-          />
-
-          <Button variant={ButtonVariant.PRIMARY} className='w-40'>
-            Search
-          </Button>
-        </form>
+    <div>
+      <div className='text-sm mb-2'>
+        Type in up to one pangolin lineage and any number of mutations (or paste a comma separated list):
       </div>
+      <form
+        className='w-full flex flex-row items-center'
+        onSubmit={e => {
+          e.preventDefault();
+          const selector: VariantSelector = {
+            variant: {
+              name: undefined,
+              mutations: [],
+            },
+            matchPercentage: 1,
+          };
+          for (let { type, value } of selectedOptions) {
+            if (type === 'mutation') {
+              selector.variant.mutations.push(value);
+            } else if (type === 'pangolin-lineage') {
+              selector.variant.name = value;
+            }
+          }
+          onVariantSelect(selector);
+        }}
+      >
+        <AsyncSelect
+          className='w-full mr-2'
+          components={{ DropdownIndicator }}
+          placeholder='B.1.1.7, S:484K, ...'
+          isMulti
+          defaultOptions={suggestOptions('')}
+          loadOptions={promiseOptions}
+          onChange={(_, change) => {
+            if (change.action === 'select-option') {
+              setSelectedOptions([...selectedOptions, change.option]);
+              setInputValue('');
+              setMenuIsOpen(false);
+            } else if (change.action === 'remove-value' || change.action === 'pop-value') {
+              setSelectedOptions(selectedOptions.filter(o => o.value !== change.removedValue.value));
+            } else if (change.action === 'clear') {
+              setSelectedOptions([]);
+              setInputValue('');
+            }
+          }}
+          styles={colorStyles}
+          onInputChange={handleInputChange}
+          value={selectedOptions}
+          inputValue={inputValue}
+          menuIsOpen={menuIsOpen}
+        />
+
+        <Button variant={ButtonVariant.PRIMARY} className='w-40'>
+          Search
+        </Button>
+      </form>
+    </div>
   );
 };
