@@ -222,7 +222,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
     return (
       components.DropdownIndicator && (
         <div onClick={openMenu} style={{ display: 'flex', alignItems: 'center' }}>
-          <components.DropdownIndicator {...props} onClick={() => {}} />
+          <components.DropdownIndicator {...props} onClick={() => {}} children={props.children} />
         </div>
       )
     );
