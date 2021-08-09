@@ -15,7 +15,7 @@ import { globalDateCache } from '../helpers/date-cache';
 import { fillFromDailyMap } from '../helpers/fill-missing';
 import { cantonToRegion, mapParsedMultiSample } from '../helpers/switzerland-regions';
 import { Alert, AlertVariant } from '../helpers/ui';
-import { useQuery } from 'react-query'
+import { useQuery } from 'react-query';
 
 type Props = {
   variantSampleSet: SampleSetWithSelector;
@@ -97,10 +97,10 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
     return data;
   };
 
-  const { isLoading, isSuccess, error, isError, data: caseCounts, isFetching } = useQuery<CaseCountEntry[], Error>(
-      "caseCounts",
-      fetchCaseCounts
-  );
+  const { isLoading, isSuccess, error, isError, data: caseCounts, isFetching } = useQuery<
+    CaseCountEntry[],
+    Error
+  >('caseCounts', fetchCaseCounts);
 
   useEffect(() => {
     let isSubscribed = true;
@@ -164,11 +164,14 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
       </div>
 
       {isLoading && <Loader />}
-      {isError && error &&
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-          <span className="block sm:inline">{error.message}</span>
+      {isError && error && (
+        <div
+          className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative'
+          role='alert'
+        >
+          <span className='block sm:inline'>{error.message}</span>
         </div>
-      }
+      )}
 
       {isSuccess && cantonData && regionData && (
         <PackedGrid maxColumns={3}>
