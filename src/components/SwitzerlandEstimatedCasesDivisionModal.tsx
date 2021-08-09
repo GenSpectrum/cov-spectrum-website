@@ -15,6 +15,7 @@ import { globalDateCache } from '../helpers/date-cache';
 import { fillFromDailyMap } from '../helpers/fill-missing';
 import { cantonToRegion, mapParsedMultiSample } from '../helpers/switzerland-regions';
 import { Alert, AlertVariant } from '../helpers/ui';
+import { useQuery } from 'react-query'
 
 type Props = {
   variantSampleSet: SampleSetWithSelector;
@@ -87,20 +88,30 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
   show,
   handleClose,
 }: Props) => {
-  const [caseCounts, setCaseCounts] = useState<CaseCountEntry[] | undefined>();
+  //const [caseCounts, setCaseCounts] = useState<CaseCountEntry[] | undefined>();
   const [showSwissRegions, setShowSwissRegions] = useState(true);
-
   const { dateFrom, dateTo, country } = variantSampleSet.sampleSelector;
+
+  const fetchCaseCounts = async () => {
+    const data = await getCaseCounts({ dateFrom, dateTo, country }, true, new AbortController().signal);
+    return data;
+  };
+
+  const { isLoading, isSuccess, error, isError, data: caseCounts, isFetching } = useQuery<CaseCountEntry[], Error>(
+      "caseCounts",
+      fetchCaseCounts
+  );
+
   useEffect(() => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;
 
-    getCaseCounts({ dateFrom, dateTo, country }, true, signal).then(caseCounts => {
-      if (isSubscribed) {
-        setCaseCounts(caseCounts);
-      }
-    });
+    // getCaseCounts({ dateFrom, dateTo, country }, true, signal).then(caseCounts => {
+    //   if (isSubscribed) {
+    //     setCaseCounts(caseCounts);
+    //   }
+    // });
 
     return () => {
       isSubscribed = false;
@@ -151,8 +162,15 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
           Show cantons
         </span>
       </div>
-      {(!cantonData || !regionData) && <Loader />}
-      {cantonData && regionData && (
+
+      {isLoading && <Loader />}
+      {isError && error &&
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+          <span className="block sm:inline">{error.message}</span>
+        </div>
+      }
+
+      {isSuccess && cantonData && regionData && (
         <PackedGrid maxColumns={3}>
           {(showSwissRegions ? regionData : cantonData).map(d => {
             return (
