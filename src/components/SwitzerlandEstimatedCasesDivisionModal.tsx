@@ -97,27 +97,14 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
     return data;
   };
 
-  const { isLoading, isSuccess, error, isError, data: caseCounts, isFetching } = useQuery<
+  const { isLoading, isSuccess, error, isError, data: caseCounts, refetch } = useQuery<
     CaseCountEntry[],
     Error
   >('caseCounts', fetchCaseCounts);
 
   useEffect(() => {
-    let isSubscribed = true;
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    // getCaseCounts({ dateFrom, dateTo, country }, true, signal).then(caseCounts => {
-    //   if (isSubscribed) {
-    //     setCaseCounts(caseCounts);
-    //   }
-    // });
-
-    return () => {
-      isSubscribed = false;
-      controller.abort();
-    };
-  }, [dateFrom, dateTo, country]);
+   refetch()
+  }, [dateFrom, dateTo, country, refetch]);
 
   const { cantonData, regionData } = useMemo(() => {
     if (!caseCounts) {
