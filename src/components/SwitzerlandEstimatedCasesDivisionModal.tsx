@@ -103,7 +103,7 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
   >('caseCounts', fetchCaseCounts);
 
   useEffect(() => {
-   refetch()
+    refetch();
   }, [dateFrom, dateTo, country, refetch]);
 
   const { cantonData, regionData } = useMemo(() => {
