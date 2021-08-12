@@ -9,7 +9,6 @@ import {
   Place,
   CountrySchema,
   InterestingVariantResult,
-  RawMultiSample,
   SampleResultList,
   SampleResultListSchema,
   SequencingIntensityEntrySchema,
@@ -27,6 +26,9 @@ import {
   SequenceCountEntrySchema,
   PangolinLineageAlias,
   PangolinLineageAliasSchema,
+  RawMultiSampleSchema,
+  InterestingVariantResultSchema,
+  CaseCountEntrySchema,
 } from './api-types';
 import dayjs from 'dayjs';
 import {
@@ -215,9 +217,10 @@ export async function getNewSamples(
     throw new Error('server responded with non-200 status code');
   }
 
-  // TODO(voinovp) HACK don't actually parse because zod is slow
-  // const data = zod.array(MultiSampleSchema).parse(await res.json());
-  const data = (await res.json()) as RawMultiSample[];
+  const data = zod.array(RawMultiSampleSchema).parse(await res.json());
+
+  // fall back method in case zod is slow
+  //const data = (await res.json()) as RawMultiSample[];
 
   return SampleSet.fromRawSamples(data, selector);
 }
@@ -391,9 +394,7 @@ export const getInterestingVariants = (
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
     .then(data => {
-      // TODO(voinovp) HACK don't actually parse because zod is slow
-      // return InterestingVariantResultSchema.parse(data);
-      return data as InterestingVariantResult;
+      return InterestingVariantResultSchema.parse(data);
     });
 };
 
@@ -509,12 +510,14 @@ export async function getCaseCounts(
     params.set('dateTo', dateTo);
   }
   params.set('includeDate', includeDate.toString());
-  const url = '/resource/case?' + params.toString() + 'abc';
+  const url = '/resource/case?' + params.toString();
   const res = await get(url, signal);
   if (!res.ok) {
     throw new Error('Server Error: server responded with non-200 status code');
   }
-  // TODO HACK don't actually parse because zod is slow
-  // return zod.array(CaseCountEntrySchema).parse(await res.json());
-  return (await res.json()) as CaseCountEntry[];
+
+  return zod.array(CaseCountEntrySchema).parse(await res.json());
+
+  // fall back method in case zod is slow
+  //return (await res.json()) as CaseCountEntry[];
 }
