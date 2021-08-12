@@ -498,7 +498,7 @@ export async function getCaseCounts(
   signal?: AbortSignal
 ): Promise<CaseCountEntry[]> {
   if (country !== 'Switzerland') {
-    throw new Error('getCaseCounts() is currently only available for Switzerland.');
+    throw new Error('Case count is currently only available for Switzerland.');
   }
   const params = new URLSearchParams();
   params.set('country', country);
@@ -509,10 +509,10 @@ export async function getCaseCounts(
     params.set('dateTo', dateTo);
   }
   params.set('includeDate', includeDate.toString());
-  const url = '/resource/case?' + params.toString();
+  const url = '/resource/case?' + params.toString() + 'abc';
   const res = await get(url, signal);
   if (!res.ok) {
-    throw new Error('server responded with non-200 status code');
+    throw new Error('Server Error: server responded with non-200 status code');
   }
   // TODO HACK don't actually parse because zod is slow
   // return zod.array(CaseCountEntrySchema).parse(await res.json());
