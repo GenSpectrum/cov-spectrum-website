@@ -17,6 +17,10 @@ import { cantonToRegion, mapParsedMultiSample } from '../helpers/switzerland-reg
 import { Alert, AlertVariant } from '../helpers/ui';
 import { useQuery } from 'react-query';
 
+interface PromiseWithCancel<T> extends Promise<T> {
+  cancel: () => void;
+}
+
 type Props = {
   variantSampleSet: SampleSetWithSelector;
   wholeSampleSet: SampleSetWithSelector;
@@ -88,23 +92,25 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
   show,
   handleClose,
 }: Props) => {
-  //const [caseCounts, setCaseCounts] = useState<CaseCountEntry[] | undefined>();
   const [showSwissRegions, setShowSwissRegions] = useState(true);
   const { dateFrom, dateTo, country } = variantSampleSet.sampleSelector;
 
-  const fetchCaseCounts = async () => {
-    const data = await getCaseCounts({ dateFrom, dateTo, country }, true, new AbortController().signal);
-    return data;
-  };
-
-  const { isLoading, isSuccess, error, isError, data: caseCounts, refetch } = useQuery<
+  const { isLoading, isSuccess, error, isError, data: caseCounts, refetch, isFetching } = useQuery<
     CaseCountEntry[],
     Error
-  >('caseCounts', fetchCaseCounts);
+  >('caseCounts', () => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const promise = getCaseCounts({ dateFrom, dateTo, country }, true, signal);
+    (promise as PromiseWithCancel<CaseCountEntry[]>).cancel = () => controller.abort();
+    return promise;
+  });
 
   useEffect(() => {
-    refetch();
-  }, [dateFrom, dateTo, country, refetch]);
+    if (!isFetching) {
+      refetch();
+    }
+  }, [dateFrom, dateTo, country, isFetching, refetch]);
 
   const { cantonData, regionData } = useMemo(() => {
     if (!caseCounts) {
