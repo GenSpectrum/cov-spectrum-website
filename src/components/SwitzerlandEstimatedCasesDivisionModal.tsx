@@ -110,7 +110,8 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
     if (!isFetching) {
       refetch();
     }
-  }, [dateFrom, dateTo, country, isFetching, refetch]);
+    // eslint-disable-next-line
+  }, [dateFrom, dateTo, country]);
 
   const { cantonData, regionData } = useMemo(() => {
     if (!caseCounts) {
