@@ -4,6 +4,7 @@ import { getSamples, PromiseWithCancel, SamplingStrategy, toLiteralSamplingStrat
 import { Country, Sample, SampleResultList, Variant } from '../services/api-types';
 import { useQuery } from 'react-query';
 import Loader from './Loader';
+import { Alert, AlertVariant } from "../helpers/ui";
 
 type SampleMetadata = NonNullable<Sample['metadata']>;
 
@@ -115,14 +116,8 @@ export const SampleTable = ({ matchPercentage, variant, country, samplingStrateg
       )}
 
       {(isLoading || isFetching) && <Loader />}
-      {isError && error && (
-        <div
-          className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative'
-          role='alert'
-        >
-          <span className='block sm:inline'>{error.message}</span>
-        </div>
-      )}
+      {isError && error &&
+        <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
 
       {isSuccess && samples?.data && (
         <>
