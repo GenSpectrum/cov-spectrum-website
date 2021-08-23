@@ -154,8 +154,7 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
       </div>
 
       {(isLoading || isFetching) && <Loader />}
-      {isError && error &&
-          <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
+      {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
 
       {isSuccess && cantonData && regionData && (
         <PackedGrid maxColumns={3}>

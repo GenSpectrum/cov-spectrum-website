@@ -4,7 +4,7 @@ import { getSamples, PromiseWithCancel, SamplingStrategy, toLiteralSamplingStrat
 import { Country, Sample, SampleResultList, Variant } from '../services/api-types';
 import { useQuery } from 'react-query';
 import Loader from './Loader';
-import { Alert, AlertVariant } from "../helpers/ui";
+import { Alert, AlertVariant } from '../helpers/ui';
 
 type SampleMetadata = NonNullable<Sample['metadata']>;
 
@@ -65,7 +65,7 @@ export const SampleTable = ({ matchPercentage, variant, country, samplingStrateg
   const { isLoading, isSuccess, error, isError, data: samples, refetch, isFetching } = useQuery<
     SampleResultList,
     Error
-  >('caseCounts', () => {
+  >('samples', () => {
     const controller = new AbortController();
     const signal = controller.signal;
     const promise = getSamples(
@@ -116,8 +116,7 @@ export const SampleTable = ({ matchPercentage, variant, country, samplingStrateg
       )}
 
       {(isLoading || isFetching) && <Loader />}
-      {isError && error &&
-        <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
+      {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
 
       {isSuccess && samples?.data && (
         <>
