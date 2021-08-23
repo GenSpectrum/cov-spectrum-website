@@ -33,7 +33,6 @@ import { VariantTimeDistributionPlotWidget } from '../widgets/VariantTimeDistrib
 import { VariantSelector } from '../helpers/sample-selector';
 import { DivisionModal } from '../components/DivisionModal';
 import { SwitzerlandEstimatedCasesDivisionModal } from '../components/SwitzerlandEstimatedCasesDivisionModal';
-import { QueryClient, QueryClientProvider } from 'react-query';
 
 interface Props {
   country: Country;
@@ -81,8 +80,6 @@ export const FocusPage = ({
   const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
   const [showEstimatedCasesDivGrid, setShowEstimatedCasesDivGrid] = useState(false);
   const [showVariantAgeDistributionDivGrid, setShowVariantAgeDistributionDivGrid] = useState(false);
-
-  const queryClient = new QueryClient();
 
   const plotProps = {
     country,
@@ -318,14 +315,12 @@ export const FocusPage = ({
         />
       )}
       {showEstimatedCasesDivGrid && country === 'Switzerland' && (
-        <QueryClientProvider client={queryClient}>
-          <SwitzerlandEstimatedCasesDivisionModal
-            variantSampleSet={variantSampleSet}
-            wholeSampleSet={wholeSampleSet}
-            show={showEstimatedCasesDivGrid}
-            handleClose={() => setShowEstimatedCasesDivGrid(false)}
-          />
-        </QueryClientProvider>
+        <SwitzerlandEstimatedCasesDivisionModal
+          variantSampleSet={variantSampleSet}
+          wholeSampleSet={wholeSampleSet}
+          show={showEstimatedCasesDivGrid}
+          handleClose={() => setShowEstimatedCasesDivGrid(false)}
+        />
       )}
       {showVariantAgeDistributionDivGrid && (
         <DivisionModal

@@ -36,6 +36,10 @@ import {
   SequencingIntensityEntrySetWithSelector,
 } from '../helpers/sequencing-intensity-entry-set';
 
+export interface PromiseWithCancel<T> extends Promise<T> {
+  cancel: () => void;
+}
+
 // WARNING These values are used in URLs - be careful when changing them
 export enum SamplingStrategy {
   AllSamples = 'AllSamples',
@@ -152,7 +156,7 @@ export const post = (endpoint: string, body: unknown, signal?: AbortSignal) => {
   });
 };
 
-export const getSamples = (
+export async function getSamples(
   {
     pangolinLineage,
     mutationsString,
@@ -167,7 +171,7 @@ export const getSamples = (
     samplingStrategy: LiteralSamplingStrategy;
   },
   signal?: AbortSignal
-): Promise<SampleResultList> => {
+): Promise<SampleResultList> {
   let url = HOST + `/resource/sample/?matchPercentage=${matchPercentage}`;
   if (pangolinLineage?.length) {
     url += `&pangolinLineage=${pangolinLineage}`;
@@ -180,10 +184,13 @@ export const getSamples = (
   if (samplingStrategy) {
     url += `&dataType=${samplingStrategy}`;
   }
-  return fetch(url, { headers: getBaseHeaders(), signal })
-    .then(response => response.json())
-    .then(data => SampleResultListSchema.parse(data));
-};
+
+  const res = await fetch(url, { headers: getBaseHeaders(), signal });
+  if (!res.ok) {
+    throw new Error('server responded with non-200 status code');
+  }
+  return SampleResultListSchema.parse(await res.json());
+}
 
 export async function getNewSamples(
   selector: NewSampleSelector,
@@ -513,7 +520,7 @@ export async function getCaseCounts(
   const url = '/resource/case?' + params.toString();
   const res = await get(url, signal);
   if (!res.ok) {
-    throw new Error('Server Error: server responded with non-200 status code');
+    throw new Error('server responded with non-200 status code');
   }
 
   return zod.array(CaseCountEntrySchema).parse(await res.json());

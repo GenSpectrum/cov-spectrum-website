@@ -3,7 +3,7 @@ import {
   SequencingIntensityEntrySet,
   SequencingIntensityEntrySetWithSelector,
 } from '../helpers/sequencing-intensity-entry-set';
-import { getCaseCounts } from '../services/api';
+import { getCaseCounts, PromiseWithCancel } from '../services/api';
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlmostFullscreenModal } from './AlmostFullscreenModal';
 import { CaseCountEntry } from '../services/api-types';
@@ -16,10 +16,6 @@ import { fillFromDailyMap } from '../helpers/fill-missing';
 import { cantonToRegion, mapParsedMultiSample } from '../helpers/switzerland-regions';
 import { Alert, AlertVariant } from '../helpers/ui';
 import { useQuery } from 'react-query';
-
-interface PromiseWithCancel<T> extends Promise<T> {
-  cancel: () => void;
-}
 
 type Props = {
   variantSampleSet: SampleSetWithSelector;
@@ -157,7 +153,7 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
         </span>
       </div>
 
-      {isLoading && <Loader />}
+      {(isLoading || isFetching) && <Loader />}
       {isError && error && (
         <div
           className='bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative'
