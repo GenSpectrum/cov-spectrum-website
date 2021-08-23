@@ -1,4 +1,3 @@
-import { AccountService } from '../../../services/AccountService';
 import React, { useEffect, useMemo, useState } from 'react';
 import { ExternalLink } from '../../../components/ExternalLink';
 import { WasteWaterDataset } from '../types';
@@ -14,9 +13,6 @@ import { createLocation } from 'history';
 export const WasteWaterStoryPage = () => {
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
   useEffect(() => {
-    if (!AccountService.isLoggedIn()) {
-      return;
-    }
     getData({
       country: 'Switzerland',
     }).then(dataset => dataset && setWasteWaterData(dataset));
@@ -54,10 +50,6 @@ export const WasteWaterStoryPage = () => {
     });
   }, [wasteWaterData]);
 
-  if (!AccountService.isLoggedIn()) {
-    window.location.href = '/login';
-    return <></>;
-  }
   if (!locationData) {
     return <Loader />;
   }

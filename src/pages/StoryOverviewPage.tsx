@@ -1,4 +1,3 @@
-import { AccountService } from '../services/AccountService';
 import React from 'react';
 import { ExternalLink } from '../components/ExternalLink';
 
@@ -14,11 +13,6 @@ const Story = ({ title, id, children }: { title: string; id: string; children: R
 };
 
 export const StoryOverviewPage = () => {
-  if (!AccountService.isLoggedIn()) {
-    window.location.href = '/login';
-    return <></>;
-  }
-
   return (
     <div className='max-w-4xl mx-auto px-4 md:px-8'>
       <Story title='Wastewater in Switzerland' id='wastewater-in-switzerland'>
