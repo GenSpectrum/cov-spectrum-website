@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import { components } from 'react-select';
-import { isValidMutation } from '../../helpers/mutation';
-import { isValidPangolinLineageQuery } from '../../helpers/variant-selector';
+import { isValidMutation } from '../helpers/mutation';
+import { isValidPangolinLineageQuery } from '../helpers/variant-selector';
 import { InputActionMeta, Styles } from 'react-select';
 import { CSSPseudos } from 'styled-components';
-import { Button, ButtonVariant } from '../../helpers/ui';
-import { GenomeService } from '../../services/GenomeService';
-import { VariantSelector } from '../../helpers/sample-selector';
+import { Button, ButtonVariant } from '../helpers/ui';
+import { GenomeService } from '../services/GenomeService';
+import { VariantSelector } from '../helpers/sample-selector';
 
 type SearchOption = {
   label: string;
