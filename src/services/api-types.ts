@@ -85,6 +85,14 @@ export const PangolinLineageListSchema = zod.array(
   })
 );
 
+export const PangolinLineageByDateListSchema = zod.array(
+  zod.object({
+    pangolinLineage: zod.string().nullable(),
+    date: DateStringSchema,
+    count: zod.number(),
+  })
+);
+
 export const VariantSchema = zod.object({
   name: zod
     .string()
@@ -225,6 +233,7 @@ export type RawMultiSample = zod.infer<typeof RawMultiSampleSchema>;
 export type Sample = zod.infer<typeof SampleSchema>;
 export type SampleResultList = zod.infer<typeof SampleResultListSchema>;
 export type PangolinLineageList = zod.infer<typeof PangolinLineageListSchema>;
+export type PangolinLineageByDateList = zod.infer<typeof PangolinLineageByDateListSchema>;
 export type Variant = zod.infer<typeof VariantSchema>;
 export type NamedVariant = Variant & { name: string };
 export type InterestingVariantResult = zod.infer<typeof InterestingVariantResultSchema>;

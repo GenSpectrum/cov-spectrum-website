@@ -28,7 +28,7 @@ import {
   PangolinLineageAliasSchema,
   RawMultiSampleSchema,
   InterestingVariantResultSchema,
-  CaseCountEntrySchema,
+  CaseCountEntrySchema, PangolinLineageByDateList, PangolinLineageByDateListSchema,
 } from './api-types';
 import dayjs from 'dayjs';
 import {
@@ -308,6 +308,55 @@ export async function getPangolinLineages(
 
   return PangolinLineageListSchema.parse(await res.json());
 }
+
+// TODO We might want to merge this function with getNewSamples() as it uses the same endpoint.
+export const getPangolinLineagesByDate = (
+  {
+    country,
+    samplingStrategy,
+    pangolinLineage,
+    dateFrom,
+    dateTo,
+    mutationsString,
+    matchPercentage,
+  }: {
+    country: Country;
+    samplingStrategy: SamplingStrategy;
+    pangolinLineage?: string;
+    dateFrom?: string;
+    dateTo?: string;
+    mutationsString?: string;
+    matchPercentage?: number;
+  },
+  signal?: AbortSignal
+): Promise<PangolinLineageByDateList> => {
+  let url = HOST + `/resource/sample2?fields=pangolinLineage,date`;
+  url += getPlaceParamString(country);
+  const literalSamplingStrategy = toLiteralSamplingStrategy(samplingStrategy);
+  if (literalSamplingStrategy) {
+    url += `&dataType=${literalSamplingStrategy}`;
+  }
+  if (dateFrom) {
+    url += `&dateFrom=${dateFrom}`;
+  }
+  if (dateTo) {
+    url += `&dateTo=${dateTo}`;
+  }
+  if (pangolinLineage) {
+    url += `&pangolinLineage=${pangolinLineage}`;
+  }
+  if (mutationsString) {
+    url += `&mutations=${mutationsString}`;
+  }
+  if (matchPercentage) {
+    url += `&matchPercentage=${matchPercentage}`;
+  }
+  return fetch(url, { headers: getBaseHeaders(), signal })
+    .then(response => response.json())
+    .then(data => {
+      return PangolinLineageByDateListSchema.parse(data);
+    });
+};
 
 export async function getInformationOfPangolinLineage(
   {

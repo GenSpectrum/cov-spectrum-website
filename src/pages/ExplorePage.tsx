@@ -18,6 +18,7 @@ import { createLocation } from 'history';
 import { generatePath } from 'react-router';
 import { ShowMoreButton } from '../helpers/ui';
 import { VariantSearch } from '../components/VariantSearch';
+import { VariantOverviewPlot } from '../widgets/VariantOverviewPlot';
 
 interface Props {
   country: Country;
@@ -60,6 +61,12 @@ export const ExplorePage = ({
           onVariantSelect={onVariantSelect}
           selection={selection}
           wholeSampleSetState={wholeSampleSetState}
+        />
+      </NamedSection>
+      <NamedSection title='Variant overview'>
+        <VariantOverviewPlot
+          country={country}
+          samplingStrategy={samplingStrategy}
         />
       </NamedSection>
       <SequencingIntensityPlotWidget.ShareableComponent
