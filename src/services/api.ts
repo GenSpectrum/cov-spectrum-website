@@ -28,7 +28,9 @@ import {
   PangolinLineageAliasSchema,
   RawMultiSampleSchema,
   InterestingVariantResultSchema,
-  CaseCountEntrySchema, PangolinLineageByDateList, PangolinLineageByDateListSchema,
+  CaseCountEntrySchema,
+  PangolinLineageByDateList,
+  PangolinLineageByDateListSchema,
 } from './api-types';
 import dayjs from 'dayjs';
 import {

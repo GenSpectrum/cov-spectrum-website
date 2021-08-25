@@ -64,10 +64,7 @@ export const ExplorePage = ({
         />
       </NamedSection>
       <NamedSection title='Variant overview'>
-        <VariantOverviewPlot
-          country={country}
-          samplingStrategy={samplingStrategy}
-        />
+        <VariantOverviewPlot country={country} samplingStrategy={samplingStrategy} />
       </NamedSection>
       <SequencingIntensityPlotWidget.ShareableComponent
         title='Sequencing intensity'

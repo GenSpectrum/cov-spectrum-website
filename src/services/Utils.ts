@@ -11,6 +11,12 @@ export class Utils {
     return grouped;
   }
 
+  static aggregateMap<T, K, A>(map: Map<K, T[]>, aggregateFunc: (values: T[]) => A): Map<K, A> {
+    const newMap = new Map();
+    map.forEach((value, key) => newMap.set(key, aggregateFunc(value)));
+    return newMap;
+  }
+
   static minBy<T>(element1: T, element2: T, byFunc: (element: T) => number) {
     if (byFunc(element1) < byFunc(element2)) {
       return element1;
