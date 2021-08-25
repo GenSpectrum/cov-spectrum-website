@@ -85,5 +85,5 @@ export function sortListByMutation<T>(list: T[], mutationExtractorFunc: (x: T) =
 
 export function isValidMutation(mutation: string): boolean {
   // TODO Only allow existing genes
-  return /^[A-Z]{1,3}[0-9]{0,2}[AB]?:[A-Z]?[0-9]+[A-Z]?$/.test(mutation.toUpperCase());
+  return /^[A-Z]{1,3}[0-9]{0,2}[AB]?:[A-Z]?[0-9]+[A-Z-*]?$/.test(mutation.toUpperCase());
 }
