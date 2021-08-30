@@ -65,7 +65,7 @@ export const SampleTable = ({ matchPercentage, variant, country, samplingStrateg
   const { isLoading, isSuccess, error, isError, data: samples, refetch, isFetching } = useQuery<
     SampleResultList,
     Error
-  >('samples', () => {
+  >(['samples', matchPercentage, variant.name, variant.mutations, country, samplingStrategy], () => {
     const controller = new AbortController();
     const signal = controller.signal;
     const promise = getSamples(

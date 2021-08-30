@@ -94,7 +94,7 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
   const { isLoading, isSuccess, error, isError, data: caseCounts, refetch, isFetching } = useQuery<
     CaseCountEntry[],
     Error
-  >('caseCounts', () => {
+  >(['caseCounts', dateFrom, dateTo, country], () => {
     const controller = new AbortController();
     const signal = controller.signal;
     const promise = getCaseCounts({ dateFrom, dateTo, country }, true, signal);
