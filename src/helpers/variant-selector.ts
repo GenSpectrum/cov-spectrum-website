@@ -31,6 +31,11 @@ export function isPangolinLineageWithMutations(variant: Variant): variant is Nam
 }
 
 export function formatVariantDisplayName(variant: Variant, dense = false): string {
+  // If nothing is specified at all
+  if (!variant.name && variant.mutations.length === 0) {
+    return 'All lineages';
+  }
+
   const plus = dense ? '+' : ' + ';
   return (
     (variant.name ?? '') +

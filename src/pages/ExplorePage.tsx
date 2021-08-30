@@ -17,7 +17,7 @@ import { VercelSponsorshipLogo } from '../components/VercelSponsorshipLogo';
 import { createLocation } from 'history';
 import { generatePath } from 'react-router';
 import { ShowMoreButton } from '../helpers/ui';
-import { VariantSearch } from '../components/VariantSearch/VariantSearch';
+import { VariantSearch } from '../components/VariantSearch';
 
 interface Props {
   country: Country;
