@@ -187,7 +187,7 @@ export async function getSamples(
 
   const res = await fetch(url, { headers: getBaseHeaders(), signal });
   if (!res.ok) {
-    throw new Error('server responded with non-200 status code');
+    throw new Error('Error fetching samples data');
   }
   return SampleResultListSchema.parse(await res.json());
 }
@@ -221,7 +221,7 @@ export async function getNewSamples(
 
   const res = await get(`/resource/sample2?${params.toString()}`, signal);
   if (!res.ok) {
-    throw new Error('server responded with non-200 status code');
+    throw new Error('Error fetching new samples data');
   }
 
   const data = zod.array(RawMultiSampleSchema).parse(await res.json());
@@ -260,7 +260,7 @@ export const getSampleFastaUrl = ({
 };
 
 // TODO We might want to merge this function with getNewSamples() as it uses the same endpoint.
-export const getPangolinLineages = (
+export async function getPangolinLineages(
   {
     country,
     samplingStrategy,
@@ -279,7 +279,7 @@ export const getPangolinLineages = (
     matchPercentage?: number;
   },
   signal?: AbortSignal
-): Promise<PangolinLineageList> => {
+): Promise<PangolinLineageList> {
   let url = HOST + `/resource/sample2?fields=pangolinLineage`;
   url += getPlaceParamString(country);
   const literalSamplingStrategy = toLiteralSamplingStrategy(samplingStrategy);
@@ -301,12 +301,13 @@ export const getPangolinLineages = (
   if (matchPercentage) {
     url += `&matchPercentage=${matchPercentage}`;
   }
-  return fetch(url, { headers: getBaseHeaders(), signal })
-    .then(response => response.json())
-    .then(data => {
-      return PangolinLineageListSchema.parse(data);
-    });
-};
+  const res = await fetch(url, { headers: getBaseHeaders(), signal });
+  if (!res.ok) {
+    throw new Error('Error fetching pangolin lineages data');
+  }
+
+  return PangolinLineageListSchema.parse(await res.json());
+}
 
 export async function getInformationOfPangolinLineage(
   {
@@ -348,15 +349,15 @@ export async function getPangolinLineageAliases(signal?: AbortSignal): Promise<P
   const url = '/resource/pangolin-lineage-alias';
   const res = await get(url, signal);
   if (!res.ok) {
-    throw new Error('server responded with non-200 status code');
+    throw new Error('Error fetching pangolin lineage aliases data');
   }
   return zod.array(PangolinLineageAliasSchema).parse(await res.json());
 }
 
-export const getSequencingIntensity = (
+export async function getSequencingIntensity(
   selector: SequencingIntensityEntrySetSelector,
   signal?: AbortSignal
-): Promise<SequencingIntensityEntrySetWithSelector> => {
+): Promise<SequencingIntensityEntrySetWithSelector> {
   let url = HOST + `/plot/sequencing/time-intensity-distribution?`;
   if (!selector.country) {
     // TODO should be addressed in #101
@@ -371,15 +372,15 @@ export const getSequencingIntensity = (
     params.set('dataType', selector.samplingStrategy);
   }
   url = url + params.toString();
-  return fetch(url, { headers: getBaseHeaders(), signal })
-    .then(response => response.json())
-    .then(data => {
-      return {
-        data: zod.array(SequencingIntensityEntrySchema).parse(data),
-        selector,
-      };
-    });
-};
+  const res = await fetch(url, { headers: getBaseHeaders(), signal });
+  if (!res.ok) {
+    throw new Error('Error fetching sequencing intensity data');
+  }
+  return {
+    data: zod.array(SequencingIntensityEntrySchema).parse(await res.json()),
+    selector,
+  };
+}
 
 export const getInterestingVariants = (
   {
@@ -476,7 +477,7 @@ export async function getSequenceCounts(
     signal
   );
   if (!res.ok) {
-    throw new Error('server responded with non-200 status code');
+    throw new Error('Error fetching sequence counts data');
   }
   return zod.array(SequenceCountEntrySchema).parse(await res.json());
 }
@@ -506,7 +507,7 @@ export async function getCaseCounts(
   signal?: AbortSignal
 ): Promise<CaseCountEntry[]> {
   if (country !== 'Switzerland') {
-    throw new Error('Case count is currently only available for Switzerland.');
+    throw new Error('Case count is currently only available for Switzerland');
   }
   const params = new URLSearchParams();
   params.set('country', country);
@@ -520,7 +521,7 @@ export async function getCaseCounts(
   const url = '/resource/case?' + params.toString();
   const res = await get(url, signal);
   if (!res.ok) {
-    throw new Error('server responded with non-200 status code');
+    throw new Error('Error fetching case counts data');
   }
 
   return zod.array(CaseCountEntrySchema).parse(await res.json());
