@@ -88,7 +88,6 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
   const {
     data: caseCounts,
     isFetching: isCCFetching,
-    refetch: cCRefetch,
     isError: isCCError,
     error: cCError,
     isLoading: isCCLoading,
@@ -122,7 +121,6 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
 
   const {
     isFetching: isSCFetching,
-    refetch: sCRefetch,
     isError: isSCError,
     error: sCError,
     isLoading: isSCLoading,
@@ -137,15 +135,6 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
     if (selector.country !== 'Switzerland') {
       return;
     }
-
-    if (!isCCFetching) {
-      cCRefetch();
-    }
-
-    if (!isSCFetching) {
-      sCRefetch();
-    }
-    // eslint-disable-next-line
   }, [selector, selectedAttributes]);
 
   if (selector.country !== 'Switzerland') {

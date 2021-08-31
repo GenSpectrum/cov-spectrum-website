@@ -5,7 +5,7 @@ import {
   SequencingRepresentativenessSelector,
   SequencingRepresentativenessSelectorSchema,
 } from '../services/api-types';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { getSequenceCounts, PromiseWithCancel } from '../services/api';
 import { Attribute, attributes } from './SequencingRepresentativenessPlot';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../charts/common';
@@ -58,17 +58,10 @@ export const MetadataAvailabilityPlot = ({ selector }: Props) => {
     return promise;
   };
 
-  const { isFetching, refetch, isError, error, isLoading, isSuccess } = useQuery<SequenceCountEntry[], Error>(
+  const { isFetching, isError, error, isLoading, isSuccess } = useQuery<SequenceCountEntry[], Error>(
     ['sequenceCounts', selector, setData],
     fetchSequenceCounts
   );
-
-  useEffect(() => {
-    if (!isFetching) {
-      refetch();
-    }
-    // eslint-disable-next-line
-  }, [selector, setData]);
 
   if (isLoading || isFetching) {
     return <Loader />;

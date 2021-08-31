@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Country, PangolinLineageList, Variant } from '../services/api-types';
 import {
   DateRange,
@@ -55,7 +55,7 @@ export const VariantLineages = ({
   >([]);
   const { dateFrom, dateTo } = dateRangeToDates(dateRange);
 
-  const { isLoading, error, isError, isSuccess, refetch, isFetching } = useQuery<PangolinLineageList, Error>(
+  const { isLoading, error, isError, isSuccess, isFetching } = useQuery<PangolinLineageList, Error>(
     ['pangolinLineages', country, matchPercentage, variant, samplingStrategy, dateFrom, dateTo],
     () => {
       const controller = new AbortController();
@@ -64,7 +64,11 @@ export const VariantLineages = ({
         {
           country,
           samplingStrategy,
-          dateFrom: dayjs().subtract(3, 'months').weekday(0).format('YYYY-MM-DD'),
+          pangolinLineage: variant.name,
+          dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
+          dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
+          mutationsString: variant.mutations.join(','),
+          matchPercentage,
         },
         signal
       ).then(rawData => {
@@ -81,13 +85,6 @@ export const VariantLineages = ({
       return promise;
     }
   );
-
-  useEffect(() => {
-    if (!isFetching) {
-      refetch();
-    }
-    // eslint-disable-next-line
-  }, [country, matchPercentage, variant, samplingStrategy, dateFrom, dateTo]);
 
   return (
     <>

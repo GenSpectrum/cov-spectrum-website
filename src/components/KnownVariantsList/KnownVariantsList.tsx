@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AsyncState } from 'react-async';
 import styled from 'styled-components';
 import { VariantSelector } from '../../helpers/sample-selector';
@@ -118,7 +118,6 @@ export const KnownVariantsList = ({
 
   const {
     isFetching: isPLFetching,
-    refetch: plRefetch,
     isError: isPLError,
     error: pLError,
     isLoading: isPLLoading,
@@ -149,7 +148,6 @@ export const KnownVariantsList = ({
 
   const {
     isFetching: isKVFetching,
-    refetch: kVRefetch,
     isError: isKVError,
     error: kVError,
     isLoading: isKVLoading,
@@ -158,20 +156,6 @@ export const KnownVariantsList = ({
     ['knownVariantsSampleSets', country, samplingStrategy, knownVariantSelectors],
     fetchKnownVariantSampleSets
   );
-
-  useEffect(() => {
-    if (!isPLFetching) {
-      plRefetch();
-    }
-    // eslint-disable-next-line
-  }, [country, samplingStrategy, selectedVariantList]);
-
-  useEffect(() => {
-    if (!isKVFetching) {
-      kVRefetch();
-    }
-    // eslint-disable-next-line
-  }, [country, samplingStrategy, knownVariantSelectors]);
 
   const knownVariants = useMemo(() => {
     if (variantSampleSets === undefined || !wholeSampleSetState.isResolved) {

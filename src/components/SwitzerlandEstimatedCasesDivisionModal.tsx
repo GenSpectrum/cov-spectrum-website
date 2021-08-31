@@ -4,7 +4,7 @@ import {
   SequencingIntensityEntrySetWithSelector,
 } from '../helpers/sequencing-intensity-entry-set';
 import { getCaseCounts, PromiseWithCancel } from '../services/api';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AlmostFullscreenModal } from './AlmostFullscreenModal';
 import { CaseCountEntry } from '../services/api-types';
 import { Utils } from '../services/Utils';
@@ -91,7 +91,7 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
   const [showSwissRegions, setShowSwissRegions] = useState(true);
   const { dateFrom, dateTo, country } = variantSampleSet.sampleSelector;
 
-  const { isLoading, isSuccess, error, isError, data: caseCounts, refetch, isFetching } = useQuery<
+  const { isLoading, isSuccess, error, isError, data: caseCounts, isFetching } = useQuery<
     CaseCountEntry[],
     Error
   >(['caseCounts', dateFrom, dateTo, country], () => {
@@ -101,13 +101,6 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
     (promise as PromiseWithCancel<CaseCountEntry[]>).cancel = () => controller.abort();
     return promise;
   });
-
-  useEffect(() => {
-    if (!isFetching) {
-      refetch();
-    }
-    // eslint-disable-next-line
-  }, [dateFrom, dateTo, country]);
 
   const { cantonData, regionData } = useMemo(() => {
     if (!caseCounts) {
