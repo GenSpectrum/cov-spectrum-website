@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Overlay, Popover, Table } from 'react-bootstrap';
-import { getSamples, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
-import { Country, Sample, Variant } from '../services/api-types';
+import { getSamples, PromiseWithCancel, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { Country, Sample, SampleResultList, Variant } from '../services/api-types';
+import { useQuery } from 'react-query';
+import Loader from './Loader';
+import { Alert, AlertVariant } from '../helpers/ui';
 
 type SampleMetadata = NonNullable<Sample['metadata']>;
 
@@ -58,17 +61,14 @@ interface Props {
 
 // SampleTable shows detailed information about individual samples from GISAID
 export const SampleTable = ({ matchPercentage, variant, country, samplingStrategy }: Props) => {
-  const [samples, setSamples] = useState<Sample[] | undefined>(undefined);
-  const [totalNumber, setTotalNumber] = useState<number | undefined>(undefined);
-
-  useEffect(() => {
-    let isSubscribed = true;
+  const mutationsString = variant.mutations.join(',');
+  const { isLoading, isSuccess, error, isError, data: samples, refetch, isFetching } = useQuery<
+    SampleResultList,
+    Error
+  >(['samples', matchPercentage, variant.name, variant.mutations, country, samplingStrategy], () => {
     const controller = new AbortController();
     const signal = controller.signal;
-
-    const mutationsString = variant.mutations.join(',');
-
-    getSamples(
+    const promise = getSamples(
       {
         pangolinLineage: variant.name,
         mutationsString,
@@ -77,25 +77,24 @@ export const SampleTable = ({ matchPercentage, variant, country, samplingStrateg
         samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
       },
       signal
-    ).then(response => {
-      if (isSubscribed) {
-        setTotalNumber(response.total);
-        setSamples(response.data);
-      }
-    });
+    );
+    (promise as PromiseWithCancel<SampleResultList>).cancel = () => controller.abort();
+    return promise;
+  });
 
-    return () => {
-      isSubscribed = false;
-      controller.abort();
-    };
+  useEffect(() => {
+    if (!isFetching) {
+      refetch();
+    }
+    // eslint-disable-next-line
   }, [matchPercentage, variant.name, variant.mutations, country, samplingStrategy]);
 
   const [popoverTarget, setPopoverTarget] = useState<PopoverTarget>();
   useEffect(() => {
-    if (popoverTarget && !samples?.includes(popoverTarget.sample)) {
+    if (popoverTarget && !samples?.data?.includes(popoverTarget.sample)) {
       setPopoverTarget(undefined);
     }
-  }, [samples, popoverTarget]);
+  }, [samples?.data, popoverTarget]);
 
   return (
     <>
@@ -116,16 +115,19 @@ export const SampleTable = ({ matchPercentage, variant, country, samplingStrateg
         </Overlay>
       )}
 
-      {samples && (
+      {(isLoading || isFetching) && <Loader />}
+      {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
+
+      {isSuccess && samples?.data && (
         <>
           {variant.mutations.length > 0 && (
             <p>
-              {totalNumber} samples have at least <b>{Math.round(matchPercentage * 100)}%</b> of the
+              {samples?.total} samples have at least <b>{Math.round(matchPercentage * 100)}%</b> of the
               mutations.{' '}
-              {samples &&
-                totalNumber &&
-                samples.length < totalNumber &&
-                samples.length + ' will be displayed.'}
+              {samples.data &&
+                samples.total &&
+                samples.data.length < samples.total &&
+                samples.data.length + ' will be displayed.'}
             </p>
           )}
 
@@ -139,7 +141,7 @@ export const SampleTable = ({ matchPercentage, variant, country, samplingStrateg
               </tr>
             </thead>
             <tbody>
-              {samples.map(sample => (
+              {samples?.data.map(sample => (
                 <tr key={sample.name}>
                   <td
                     onMouseEnter={ev =>

@@ -3,7 +3,7 @@ import {
   SequencingIntensityEntrySet,
   SequencingIntensityEntrySetWithSelector,
 } from '../helpers/sequencing-intensity-entry-set';
-import { getCaseCounts } from '../services/api';
+import { getCaseCounts, PromiseWithCancel } from '../services/api';
 import React, { useEffect, useMemo, useState } from 'react';
 import { AlmostFullscreenModal } from './AlmostFullscreenModal';
 import { CaseCountEntry } from '../services/api-types';
@@ -15,6 +15,7 @@ import { globalDateCache } from '../helpers/date-cache';
 import { fillFromDailyMap } from '../helpers/fill-missing';
 import { cantonToRegion, mapParsedMultiSample } from '../helpers/switzerland-regions';
 import { Alert, AlertVariant } from '../helpers/ui';
+import { useQuery } from 'react-query';
 
 type Props = {
   variantSampleSet: SampleSetWithSelector;
@@ -87,25 +88,25 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
   show,
   handleClose,
 }: Props) => {
-  const [caseCounts, setCaseCounts] = useState<CaseCountEntry[] | undefined>();
   const [showSwissRegions, setShowSwissRegions] = useState(true);
-
   const { dateFrom, dateTo, country } = variantSampleSet.sampleSelector;
-  useEffect(() => {
-    let isSubscribed = true;
+
+  const { isLoading, isSuccess, error, isError, data: caseCounts, refetch, isFetching } = useQuery<
+    CaseCountEntry[],
+    Error
+  >(['caseCounts', dateFrom, dateTo, country], () => {
     const controller = new AbortController();
     const signal = controller.signal;
+    const promise = getCaseCounts({ dateFrom, dateTo, country }, true, signal);
+    (promise as PromiseWithCancel<CaseCountEntry[]>).cancel = () => controller.abort();
+    return promise;
+  });
 
-    getCaseCounts({ dateFrom, dateTo, country }, true, signal).then(caseCounts => {
-      if (isSubscribed) {
-        setCaseCounts(caseCounts);
-      }
-    });
-
-    return () => {
-      isSubscribed = false;
-      controller.abort();
-    };
+  useEffect(() => {
+    if (!isFetching) {
+      refetch();
+    }
+    // eslint-disable-next-line
   }, [dateFrom, dateTo, country]);
 
   const { cantonData, regionData } = useMemo(() => {
@@ -151,8 +152,11 @@ export const SwitzerlandEstimatedCasesDivisionModal = ({
           Show cantons
         </span>
       </div>
-      {(!cantonData || !regionData) && <Loader />}
-      {cantonData && regionData && (
+
+      {(isLoading || isFetching) && <Loader />}
+      {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
+
+      {isSuccess && cantonData && regionData && (
         <PackedGrid maxColumns={3}>
           {(showSwissRegions ? regionData : cantonData).map(d => {
             return (

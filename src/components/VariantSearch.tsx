@@ -5,9 +5,12 @@ import { isValidMutation } from '../helpers/mutation';
 import { isValidPangolinLineageQuery } from '../helpers/variant-selector';
 import { InputActionMeta, Styles } from 'react-select';
 import { CSSPseudos } from 'styled-components';
-import { Button, ButtonVariant } from '../helpers/ui';
-import { GenomeService } from '../services/GenomeService';
 import { VariantSelector } from '../helpers/sample-selector';
+import { PangolinLineageList } from '../services/api-types';
+import { useQuery } from 'react-query';
+import { getPangolinLineages, PromiseWithCancel, SamplingStrategy } from '../services/api';
+import Loader from './Loader';
+import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 
 type SearchOption = {
   label: string;
@@ -43,8 +46,35 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
   const [inputValue, setInputValue] = useState<string>('');
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
 
+  const { isLoading, error, isError, isSuccess, refetch, isFetching } = useQuery<PangolinLineageList, Error>(
+    'knownPangolinLineages',
+    () => {
+      const controller = new AbortController();
+      const signal = controller.signal;
+      const promise = getPangolinLineages(
+        {
+          country: 'World',
+          samplingStrategy: SamplingStrategy.AllSamples,
+        },
+        signal
+      ).then(data => {
+        const processedData = data
+          .sort((pl1, pl2) => pl2.count - pl1.count)
+          .filter(pl => pl.pangolinLineage !== null)
+          .map(pl => pl.pangolinLineage!);
+        setPangolinLineages(processedData);
+        return data;
+      });
+      (promise as PromiseWithCancel<PangolinLineageList>).cancel = () => controller.abort();
+      return promise;
+    }
+  );
+
   useEffect(() => {
-    GenomeService.getKnownPangolinLineages().then(setPangolinLineages);
+    if (!isFetching) {
+      refetch();
+    }
+    // eslint-disable-next-line
   }, []);
 
   const suggestPangolinLineages = (query: string): string[] => {
@@ -233,57 +263,63 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
       <div className='text-sm mb-2'>
         Type in up to one pangolin lineage and any number of mutations (or paste a comma separated list):
       </div>
-      <form
-        className='w-full flex flex-row items-center'
-        onSubmit={e => {
-          e.preventDefault();
-          const selector: VariantSelector = {
-            variant: {
-              name: undefined,
-              mutations: [],
-            },
-            matchPercentage: 1,
-          };
-          for (let { type, value } of selectedOptions) {
-            if (type === 'mutation') {
-              selector.variant.mutations.push(value);
-            } else if (type === 'pangolin-lineage') {
-              selector.variant.name = value;
-            }
-          }
-          onVariantSelect(selector);
-        }}
-      >
-        <AsyncSelect
-          className='w-full mr-2'
-          components={{ DropdownIndicator }}
-          placeholder='B.1.1.7, S:484K, ...'
-          isMulti
-          defaultOptions={suggestOptions('')}
-          loadOptions={promiseOptions}
-          onChange={(_, change) => {
-            if (change.action === 'select-option') {
-              setSelectedOptions([...selectedOptions, change.option]);
-              setInputValue('');
-              setMenuIsOpen(false);
-            } else if (change.action === 'remove-value' || change.action === 'pop-value') {
-              setSelectedOptions(selectedOptions.filter(o => o.value !== change.removedValue.value));
-            } else if (change.action === 'clear') {
-              setSelectedOptions([]);
-              setInputValue('');
-            }
-          }}
-          styles={colorStyles}
-          onInputChange={handleInputChange}
-          value={selectedOptions}
-          inputValue={inputValue}
-          menuIsOpen={menuIsOpen}
-        />
 
-        <Button variant={ButtonVariant.PRIMARY} className='w-40'>
-          Search
-        </Button>
-      </form>
+      {(isLoading || isFetching) && <Loader />}
+      {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
+
+      {isSuccess && (
+        <form
+          className='w-full flex flex-row items-center'
+          onSubmit={e => {
+            e.preventDefault();
+            const selector: VariantSelector = {
+              variant: {
+                name: undefined,
+                mutations: [],
+              },
+              matchPercentage: 1,
+            };
+            for (let { type, value } of selectedOptions) {
+              if (type === 'mutation') {
+                selector.variant.mutations.push(value);
+              } else if (type === 'pangolin-lineage') {
+                selector.variant.name = value;
+              }
+            }
+            onVariantSelect(selector);
+          }}
+        >
+          <AsyncSelect
+            className='w-full mr-2'
+            components={{ DropdownIndicator }}
+            placeholder='B.1.1.7, S:484K, ...'
+            isMulti
+            defaultOptions={suggestOptions('')}
+            loadOptions={promiseOptions}
+            onChange={(_, change) => {
+              if (change.action === 'select-option') {
+                setSelectedOptions([...selectedOptions, change.option]);
+                setInputValue('');
+                setMenuIsOpen(false);
+              } else if (change.action === 'remove-value' || change.action === 'pop-value') {
+                setSelectedOptions(selectedOptions.filter(o => o.value !== change.removedValue.value));
+              } else if (change.action === 'clear') {
+                setSelectedOptions([]);
+                setInputValue('');
+              }
+            }}
+            styles={colorStyles}
+            onInputChange={handleInputChange}
+            value={selectedOptions}
+            inputValue={inputValue}
+            menuIsOpen={menuIsOpen}
+          />
+
+          <Button variant={ButtonVariant.PRIMARY} className='w-40'>
+            Search
+          </Button>
+        </form>
+      )}
     </div>
   );
 };
