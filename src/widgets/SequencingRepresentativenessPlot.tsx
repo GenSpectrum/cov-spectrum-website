@@ -137,15 +137,6 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
     if (selector.country !== 'Switzerland') {
       return;
     }
-
-    if (!isCCFetching) {
-      cCRefetch();
-    }
-
-    if (!isSCFetching) {
-      sCRefetch();
-    }
-    // eslint-disable-next-line
   }, [selector, selectedAttributes]);
 
   if (selector.country !== 'Switzerland') {

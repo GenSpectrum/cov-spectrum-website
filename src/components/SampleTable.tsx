@@ -62,7 +62,7 @@ interface Props {
 // SampleTable shows detailed information about individual samples from GISAID
 export const SampleTable = ({ matchPercentage, variant, country, samplingStrategy }: Props) => {
   const mutationsString = variant.mutations.join(',');
-  const { isLoading, isSuccess, error, isError, data: samples, refetch, isFetching } = useQuery<
+  const { isLoading, isSuccess, error, isError, data: samples, isFetching } = useQuery<
     SampleResultList,
     Error
   >(['samples', matchPercentage, variant.name, variant.mutations, country, samplingStrategy], () => {
@@ -81,13 +81,6 @@ export const SampleTable = ({ matchPercentage, variant, country, samplingStrateg
     (promise as PromiseWithCancel<SampleResultList>).cancel = () => controller.abort();
     return promise;
   });
-
-  useEffect(() => {
-    if (!isFetching) {
-      refetch();
-    }
-    // eslint-disable-next-line
-  }, [matchPercentage, variant.name, variant.mutations, country, samplingStrategy]);
 
   const [popoverTarget, setPopoverTarget] = useState<PopoverTarget>();
   useEffect(() => {

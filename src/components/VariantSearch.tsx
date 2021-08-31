@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import { components } from 'react-select';
 import { isValidMutation } from '../helpers/mutation';
@@ -46,7 +46,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
   const [inputValue, setInputValue] = useState<string>('');
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
 
-  const { isLoading, error, isError, isSuccess, refetch, isFetching } = useQuery<PangolinLineageList, Error>(
+  const { isLoading, error, isError, isSuccess, isFetching } = useQuery<PangolinLineageList, Error>(
     'knownPangolinLineages',
     () => {
       const controller = new AbortController();
@@ -69,13 +69,6 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
       return promise;
     }
   );
-
-  useEffect(() => {
-    if (!isFetching) {
-      refetch();
-    }
-    // eslint-disable-next-line
-  }, []);
 
   const suggestPangolinLineages = (query: string): string[] => {
     return pangolinLineages.filter(pl => pl.toUpperCase().startsWith(query.toUpperCase()));
