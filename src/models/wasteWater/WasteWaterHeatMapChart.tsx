@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { scaleLinear } from 'd3-scale';
 import styled from 'styled-components';
 import Metric, { MetricsWrapper } from '../../charts/Metrics';
-import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../../charts/common';
+import { ChartAndMetricsWrapper, colors, TitleWrapper, Wrapper } from '../../charts/common';
 import { WasteWaterHeatMapEntry, WasteWaterMutationOccurrencesDataset } from './types';
 import { UnifiedDay } from '../../helpers/date-cache';
 
@@ -32,12 +32,6 @@ const XAxisTicksCell = styled(Cell)`
 
 const ChartAndMetricsWrapper2 = styled(ChartAndMetricsWrapper)`
   overflow-x: hidden;
-`;
-
-const ChartWrapper2 = styled(ChartWrapper)`
-  display: flex;
-  margin-right: 20px;
-  overflow-y: auto;
 `;
 
 function formatDate(date: UnifiedDay) {
@@ -143,20 +137,26 @@ export const WasteWaterHeatMapChart = React.memo(
           )}
         </TitleWrapper>
         <ChartAndMetricsWrapper2>
-          <ChartWrapper2>
-            <div style={{ width: '70px', height: '100%', display: 'block' }}>
+          <div
+            id='heatmap-inner-wrapper'
+            className='flex mr-10 w-full overflow-x-scroll md:overflow-x-hidden'
+          >
+            <div style={{ width: '70px', height: '100%', display: 'block' }} className='md:overflow-x-scroll'>
               <table style={{ tableLayout: 'fixed', width: '100px', height: '100%' }}>
                 <tbody>{nucMutationsLabelTableRows}</tbody>
               </table>
             </div>
-            <div style={{ width: 'calc(100% - 70px)', height: '100%', display: 'block' }}>
+            <div
+              className='md:overflow-x-scroll'
+              style={{ width: 'calc(100% - 70px)', height: '100%', display: 'block' }}
+            >
               <div style={{ height: '100%' }}>
                 <table style={{ tableLayout: 'fixed', width: '100%', height: '100%' }}>
                   <tbody>{heatMapTableRows}</tbody>
                 </table>
               </div>
             </div>
-          </ChartWrapper2>
+          </div>
           <MetricsWrapper>
             <Metric
               value={active?.proportion !== undefined ? (active.proportion * 100).toFixed(2) + '%' : 'NA'}
