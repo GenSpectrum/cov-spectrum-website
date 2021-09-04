@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useRouteMatch } from 'react-router';
 import { WasteWaterDataset } from '../types';
-import { AccountService } from '../../../services/AccountService';
 import { filter, getData } from '../loading';
 import { GridCell, PackedGrid } from '../../../components/PackedGrid';
 import { WasteWaterTimeWidget } from '../WasteWaterTimeWidget';
@@ -18,9 +17,6 @@ export const WasteWaterLocationPage = () => {
 
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
   useEffect(() => {
-    if (!AccountService.isLoggedIn()) {
-      return;
-    }
     getData({ country }).then(dataset => dataset && setWasteWaterData(filter(dataset, undefined, location)));
   }, [location]);
 

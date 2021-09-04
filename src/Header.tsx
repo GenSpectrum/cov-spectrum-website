@@ -175,11 +175,9 @@ const Header = () => {
                     Done
                   </Button>
                 </div>
-                {loggedIn && (
-                  <a className={getDropdownButtonClasses('/story')} href='/story'>
-                    Stories
-                  </a>
-                )}
+                <a className={getDropdownButtonClasses('/story')} href='/story'>
+                  Stories
+                </a>
                 <a className={getDropdownButtonClasses('/about')} href='/about'>
                   About
                 </a>
@@ -243,11 +241,9 @@ const Header = () => {
               </div>
               <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>
                 <div className='ml-1 flex items-center'>
-                  {loggedIn && (
-                    <a className={getButtonClasses('/story')} href='/story'>
-                      Stories
-                    </a>
-                  )}
+                  <a className={getButtonClasses('/story')} href='/story'>
+                    Stories
+                  </a>
                   <a className={getButtonClasses('/about')} href='/about'>
                     About
                   </a>
