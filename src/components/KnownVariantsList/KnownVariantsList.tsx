@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AsyncState } from 'react-async';
 import styled from 'styled-components';
 import { VariantSelector } from '../../helpers/sample-selector';
 import { SampleSetWithSelector } from '../../helpers/sample-set';
-import { getPangolinLineages, SamplingStrategy } from '../../services/api';
-import { Country, Variant } from '../../services/api-types';
+import { getPangolinLineages, PromiseWithCancel, SamplingStrategy } from '../../services/api';
+import { Country, PangolinLineageList, Variant } from '../../services/api-types';
 import { KnownVariantCard } from './KnownVariantCard';
 import {
   convertKnownVariantChartData,
@@ -15,6 +15,9 @@ import dayjs from 'dayjs';
 import _VARIANT_LISTS from './variantLists.json';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
 import { formatVariantDisplayName } from '../../helpers/variant-selector';
+import { useQuery } from 'react-query';
+import Loader from '../Loader';
+import { Alert, AlertVariant } from '../../helpers/ui';
 
 const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
 
@@ -88,63 +91,71 @@ export const KnownVariantsList = ({
     recentProportion?: number;
   }[] = knownVariantSelectors.map(selector => ({ selector }));
 
-  useEffect(() => {
-    let isSubscribed = true;
+  const fetchPangolinLineages = () => {
     const controller = new AbortController();
     const signal = controller.signal;
-
-    getPangolinLineages(
+    const promise = getPangolinLineages(
       {
         country,
         samplingStrategy,
         dateFrom: dayjs().subtract(3, 'months').weekday(0).format('YYYY-MM-DD'),
       },
       signal
-    )
-      .then(data => {
-        if (isSubscribed) {
-          const lineages = data.filter(d => d.pangolinLineage !== null).sort((a, b) => b.count - a.count) as {
-            pangolinLineage: string;
-            count: number;
-          }[];
-          const variantList = VARIANT_LISTS.filter(({ name }) => name === selectedVariantList)[0];
-          setKnownVariantSelectors(
-            selectPreviewVariants(variantList.variants, lineages, variantList.fillUpUntil)
-          );
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    ).then(data => {
+      const lineages = data.filter(d => d.pangolinLineage !== null).sort((a, b) => b.count - a.count) as {
+        pangolinLineage: string;
+        count: number;
+      }[];
+      const variantList = VARIANT_LISTS.filter(({ name }) => name === selectedVariantList)[0];
+      setKnownVariantSelectors(
+        selectPreviewVariants(variantList.variants, lineages, variantList.fillUpUntil)
+      );
+      return data;
+    });
+    (promise as PromiseWithCancel<PangolinLineageList>).cancel = () => controller.abort();
+    return promise;
+  };
 
-    return () => {
-      isSubscribed = false;
-      controller.abort();
-    };
-  }, [country, samplingStrategy, selectedVariantList]);
+  const {
+    isFetching: isPLFetching,
+    isError: isPLError,
+    error: pLError,
+    isLoading: isPLLoading,
+    isSuccess: isPLSuccess,
+  } = useQuery<PangolinLineageList, Error>(
+    ['pangolinLineages', country, samplingStrategy, selectedVariantList],
+    fetchPangolinLineages
+  );
 
-  useEffect(() => {
-    setVariantSampleSets(undefined);
-
-    let isSubscribed = true;
+  const fetchKnownVariantSampleSets = () => {
     const controller = new AbortController();
     const signal = controller.signal;
-
-    loadKnownVariantSampleSets({ variantSelectors: knownVariantSelectors, country, samplingStrategy }, signal)
-      .then(data => {
-        if (isSubscribed) {
-          setVariantSampleSets(data);
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      });
-
-    return () => {
-      isSubscribed = false;
+    const promise = loadKnownVariantSampleSets(
+      {
+        variantSelectors: knownVariantSelectors,
+        country,
+        samplingStrategy,
+      },
+      signal
+    ).then(data => {
+      setVariantSampleSets(data);
+      return data;
+    });
+    (promise as PromiseWithCancel<KnownVariantWithSampleSet<VariantSelector>[]>).cancel = () =>
       controller.abort();
-    };
-  }, [country, samplingStrategy, knownVariantSelectors]);
+    return promise;
+  };
+
+  const {
+    isFetching: isKVFetching,
+    isError: isKVError,
+    error: kVError,
+    isLoading: isKVLoading,
+    isSuccess: isKVSuccess,
+  } = useQuery<KnownVariantWithSampleSet<VariantSelector>[], Error>(
+    ['knownVariantsSampleSets', country, samplingStrategy, knownVariantSelectors],
+    fetchKnownVariantSampleSets
+  );
 
   const knownVariants = useMemo(() => {
     if (variantSampleSets === undefined || !wholeSampleSetState.isResolved) {
@@ -156,6 +167,10 @@ export const KnownVariantsList = ({
     });
   }, [variantSampleSets, wholeSampleSetState, knownVariantsWithoutData]);
 
+  const isLoading = () => {
+    return isPLLoading || isPLFetching || isKVLoading || isKVFetching;
+  };
+
   return (
     <>
       <KnownVariantsListSelection
@@ -164,21 +179,27 @@ export const KnownVariantsList = ({
         onSelect={setSelectedVariantList}
       />
 
+      {isLoading() && <Loader />}
+      {isPLError && pLError && <Alert variant={AlertVariant.DANGER}>{pLError.message}</Alert>}
+      {isKVError && kVError && <Alert variant={AlertVariant.DANGER}>{kVError.message}</Alert>}
+
       <Grid>
-        {knownVariants.map(({ selector, chartData, recentProportion }) => (
-          <KnownVariantCard
-            key={formatVariantDisplayName(selector.variant, true)}
-            name={formatVariantDisplayName(selector.variant, true)}
-            chartData={chartData}
-            recentProportion={recentProportion}
-            onClick={() => onVariantSelect(selector)}
-            selected={
-              selection &&
-              formatVariantDisplayName(selection.variant, true) ===
-                formatVariantDisplayName(selector.variant, true)
-            }
-          />
-        ))}
+        {isPLSuccess &&
+          isKVSuccess &&
+          knownVariants.map(({ selector, chartData, recentProportion }) => (
+            <KnownVariantCard
+              key={formatVariantDisplayName(selector.variant, true)}
+              name={formatVariantDisplayName(selector.variant, true)}
+              chartData={chartData}
+              recentProportion={recentProportion}
+              onClick={() => onVariantSelect(selector)}
+              selected={
+                selection &&
+                formatVariantDisplayName(selection.variant, true) ===
+                  formatVariantDisplayName(selector.variant, true)
+              }
+            />
+          ))}
       </Grid>
     </>
   );

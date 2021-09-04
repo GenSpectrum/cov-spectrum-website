@@ -128,7 +128,12 @@ export const FocusPage = ({
   );
 
   if (variantSampleSet.isEmpty()) {
-    return <Alert variant={AlertVariant.WARNING}>No samples match your query</Alert>;
+    return (
+      <>
+        <VariantHeader variant={variant} place={country} />
+        <Alert variant={AlertVariant.WARNING}>No samples match your query</Alert>
+      </>
+    );
   }
 
   let wasteWaterSummaryPlot = undefined;
