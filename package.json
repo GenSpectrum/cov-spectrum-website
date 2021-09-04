@@ -65,7 +65,7 @@
     "build": "craco build",
     "test": "craco test",
     "eject": "react-scripts eject",
-    "format": "prettier --write .",
+    "format": "prettier --write . && npx eslint . --fix",
     "check-format": "prettier --check .",
     "check-types": "tsc --noEmit"
   },
@@ -108,7 +108,7 @@
     "@types/react-bootstrap-typeahead": "^5.1.2",
     "@types/react-plotly.js": "^2.2.4",
     "autoprefixer": "^9.8.6",
-    "eslint-plugin-unused-imports": "^1.1.1",
+    "eslint-plugin-unused-imports": "^1.1.4",
     "postcss": "^7.0.35",
     "prettier": "^2.2.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2"
