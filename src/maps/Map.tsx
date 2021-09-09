@@ -168,7 +168,7 @@ const Map = ({ data: inputData, country }: Props) => {
         return switzerland.layers.length;
       case 'Germany':
         return germany.layers.length;
-      case 'USA':
+      case 'United States':
         return usa.layers.length;
       default:
         return 0;
