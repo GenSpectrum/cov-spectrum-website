@@ -232,9 +232,10 @@ export const FocusPage = ({
                 title='Transmission advantage'
                 toolbar={deepFocusButtons.chen2021Fitness}
                 description={`
-              How easily this variant gets transmitted. This variant's so-called "advantage" may decrease as other more transmittable ones spread.
-              This assumes variants spread pre-dominantly by local transmission across demographic groups. When absolute numbers of a variant are
-                low, the advantage may merely reflect the current importance of introductions from abroad or
+               If variants spread pre-dominantly by local transmission across demographic groups, this
+               estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
+               advantage estimate reflects the advantage compared to co-circulating strains. Thus, as new variants
+                spread, the advantage of the focal variant may decrease. When absolute numbers of a variant are low, the advantage may merely reflect the current importance of introductions from abroad or
                  the variant spreading in a particular demographic group. In this case, the estimate does not
                   provide information on the transmission advantage.`}
               >
