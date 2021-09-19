@@ -248,6 +248,7 @@ export const FocusPage = ({
           )}
           <GridCell minWidth={600}>
             <VariantDivisionDistributionTableWidget.ShareableComponent
+              country={country}
               variantSampleSet={variantSampleSet}
               wholeSampleSet={wholeSampleSet}
               title='Geography'
