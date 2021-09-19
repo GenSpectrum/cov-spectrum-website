@@ -49,6 +49,10 @@ export const WHO_LABELS: { [key: string]: { label: string; type: VariantType } |
     label: 'Kappa',
     type: VariantType.INTEREST,
   },
+  'B.1.621': {
+    label: 'Mu',
+    type: VariantType.INTEREST,
+  },
   'C.37': {
     label: 'Lambda',
     type: VariantType.INTEREST,

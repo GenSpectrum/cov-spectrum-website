@@ -141,6 +141,13 @@
           "mutations": []
         },
         "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.621",
+          "mutations": []
+        },
+        "matchPercentage": 1
       }
     ]
   },
