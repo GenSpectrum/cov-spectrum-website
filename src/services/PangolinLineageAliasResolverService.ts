@@ -5,16 +5,22 @@ export class PangolinLineageAliasResolverService {
   private static aliases: PangolinLineageAlias[] | undefined;
 
   static async findFullName(pangolinLineage: string): Promise<string | undefined> {
+    let promise = undefined;
     let aliases = PangolinLineageAliasResolverService.aliases;
     if (aliases === undefined) {
-      aliases = await getPangolinLineageAliases();
-      PangolinLineageAliasResolverService.aliases = aliases;
-    }
-    for (let { alias, fullName } of aliases) {
-      if (pangolinLineage.startsWith(alias + '.')) {
-        return fullName + pangolinLineage.substr(alias.length);
+      try {
+        aliases = await getPangolinLineageAliases();
+        PangolinLineageAliasResolverService.aliases = aliases;
+
+        for (let { alias, fullName } of aliases) {
+          if (pangolinLineage.startsWith(alias + '.')) {
+            promise = fullName + pangolinLineage.substr(alias.length);
+          }
+        }
+      } catch (error) {
+        console.log(error.message);
       }
     }
-    return undefined;
+    return promise;
   }
 }

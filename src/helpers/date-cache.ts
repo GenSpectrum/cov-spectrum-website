@@ -3,11 +3,15 @@ import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import utc from 'dayjs/plugin/utc';
 import minMax from 'dayjs/plugin/minMax';
+import weekday from 'dayjs/plugin/weekday';
 import { yearWeekRegex } from '../services/api-types';
 
+require('dayjs/locale/de');
+dayjs.locale('de');
 dayjs.extend(isoWeek);
 dayjs.extend(utc);
 dayjs.extend(minMax);
+dayjs.extend(weekday);
 
 export interface UnifiedDay {
   string: string;

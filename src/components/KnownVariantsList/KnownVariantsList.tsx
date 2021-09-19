@@ -1,10 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { AsyncState } from 'react-async';
 import styled from 'styled-components';
 import { VariantSelector } from '../../helpers/sample-selector';
 import { SampleSetWithSelector } from '../../helpers/sample-set';
-import { getPangolinLineages, SamplingStrategy } from '../../services/api';
-import { Country, Variant } from '../../services/api-types';
+import { getPangolinLineages, PromiseWithCancel, SamplingStrategy } from '../../services/api';
+import { Country, PangolinLineageList, Variant } from '../../services/api-types';
 import { KnownVariantCard } from './KnownVariantCard';
 import {
   convertKnownVariantChartData,
@@ -12,7 +12,14 @@ import {
   loadKnownVariantSampleSets,
 } from './load-data';
 import dayjs from 'dayjs';
-import { Typeahead } from 'react-bootstrap-typeahead';
+import _VARIANT_LISTS from './variantLists.json';
+import { KnownVariantsListSelection } from './KnownVariantsListSelection';
+import { formatVariantDisplayName } from '../../helpers/variant-selector';
+import { useQuery } from 'react-query';
+import Loader from '../Loader';
+import { Alert, AlertVariant } from '../../helpers/ui';
+
+const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -33,79 +40,27 @@ const Grid = styled.div`
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 `;
 
-type NamedVariantSelector = VariantSelector & { variant: { name: string } };
-
-const SearchWrapper = styled.div`
-  margin-bottom: 10px;
-`;
+export type VariantList = {
+  name: string;
+  variants: VariantSelector[];
+  source?: string;
+  fillUpUntil: number;
+};
 
 function selectPreviewVariants(
+  definedVariants: VariantSelector[],
   pangolinLineages: {
     pangolinLineage: string;
     count: number;
   }[],
   numberVariants: number
-): NamedVariantSelector[] {
-  const variants: NamedVariantSelector[] = [
-    // The three official VOCs (and now also B.1.617*) should always come first
-    {
-      variant: {
-        name: 'B.1.1.7',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.351*',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'P.1*',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.617*',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.617.1',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'B.1.617.2',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-    {
-      variant: {
-        name: 'AY.1',
-        mutations: [],
-      },
-      matchPercentage: 1,
-    },
-  ];
+): VariantSelector[] {
+  const variants = [...definedVariants];
   for (let pangolinLineage of pangolinLineages) {
     if (variants.length >= numberVariants) {
       break;
     }
-    if (
-      ['B.1.1.7', 'B.1.351', 'P.1'].includes(pangolinLineage.pangolinLineage) ||
-      pangolinLineage.pangolinLineage.startsWith('B.1.617')
-    ) {
+    if (variants.map(v => v.variant.name?.replace(/\*/g, '')).includes(pangolinLineage.pangolinLineage)) {
       continue;
     }
     variants.push({
@@ -126,78 +81,81 @@ export const KnownVariantsList = ({
   selection,
   wholeSampleSetState,
 }: Props) => {
-  const [variantSampleSets, setVariantSampleSets] = useState<
-    KnownVariantWithSampleSet<NamedVariantSelector>[]
-  >();
-  const [pangolinLineages, setPangolinLineages] = useState<
-    {
-      pangolinLineage: string;
-      count: number;
-    }[]
-  >([]);
-  const [knownVariantSelectors, setKnownVariantSelectors] = useState<NamedVariantSelector[]>([]);
+  const [selectedVariantList, setSelectedVariantList] = useState(VARIANT_LISTS[0].name);
+  const [variantSampleSets, setVariantSampleSets] = useState<KnownVariantWithSampleSet<VariantSelector>[]>();
+  const [knownVariantSelectors, setKnownVariantSelectors] = useState<VariantSelector[]>([]);
 
   const knownVariantsWithoutData: {
-    selector: NamedVariantSelector;
+    selector: VariantSelector;
     chartData?: number[];
     recentProportion?: number;
   }[] = knownVariantSelectors.map(selector => ({ selector }));
 
-  useEffect(() => {
-    let isSubscribed = true;
+  const fetchPangolinLineages = () => {
     const controller = new AbortController();
     const signal = controller.signal;
-
-    getPangolinLineages(
+    const promise = getPangolinLineages(
       {
         country,
         samplingStrategy,
-        dateFrom: dayjs().subtract(3, 'months').day(1).format('YYYY-MM-DD'),
+        dateFrom: dayjs().subtract(3, 'months').weekday(0).format('YYYY-MM-DD'),
       },
       signal
-    )
-      .then(data => {
-        if (isSubscribed) {
-          const lineages = data.filter(d => d.pangolinLineage !== null).sort((a, b) => b.count - a.count) as {
-            pangolinLineage: string;
-            count: number;
-          }[];
-          setPangolinLineages(lineages);
-          setKnownVariantSelectors(selectPreviewVariants(lineages, 12));
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      });
+    ).then(data => {
+      const lineages = data.filter(d => d.pangolinLineage !== null).sort((a, b) => b.count - a.count) as {
+        pangolinLineage: string;
+        count: number;
+      }[];
+      const variantList = VARIANT_LISTS.filter(({ name }) => name === selectedVariantList)[0];
+      setKnownVariantSelectors(
+        selectPreviewVariants(variantList.variants, lineages, variantList.fillUpUntil)
+      );
+      return data;
+    });
+    (promise as PromiseWithCancel<PangolinLineageList>).cancel = () => controller.abort();
+    return promise;
+  };
 
-    return () => {
-      isSubscribed = false;
-      controller.abort();
-    };
-  }, [country, samplingStrategy]);
+  const {
+    isFetching: isPLFetching,
+    isError: isPLError,
+    error: pLError,
+    isLoading: isPLLoading,
+    isSuccess: isPLSuccess,
+  } = useQuery<PangolinLineageList, Error>(
+    ['pangolinLineages', country, samplingStrategy, selectedVariantList],
+    fetchPangolinLineages
+  );
 
-  useEffect(() => {
-    setVariantSampleSets(undefined);
-
-    let isSubscribed = true;
+  const fetchKnownVariantSampleSets = () => {
     const controller = new AbortController();
     const signal = controller.signal;
-
-    loadKnownVariantSampleSets({ variantSelectors: knownVariantSelectors, country, samplingStrategy }, signal)
-      .then(data => {
-        if (isSubscribed) {
-          setVariantSampleSets(data);
-        }
-      })
-      .catch(err => {
-        console.error(err);
-      });
-
-    return () => {
-      isSubscribed = false;
+    const promise = loadKnownVariantSampleSets(
+      {
+        variantSelectors: knownVariantSelectors,
+        country,
+        samplingStrategy,
+      },
+      signal
+    ).then(data => {
+      setVariantSampleSets(data);
+      return data;
+    });
+    (promise as PromiseWithCancel<KnownVariantWithSampleSet<VariantSelector>[]>).cancel = () =>
       controller.abort();
-    };
-  }, [country, samplingStrategy, knownVariantSelectors]);
+    return promise;
+  };
+
+  const {
+    isFetching: isKVFetching,
+    isError: isKVError,
+    error: kVError,
+    isLoading: isKVLoading,
+    isSuccess: isKVSuccess,
+  } = useQuery<KnownVariantWithSampleSet<VariantSelector>[], Error>(
+    ['knownVariantsSampleSets', country, samplingStrategy, knownVariantSelectors],
+    fetchKnownVariantSampleSets
+  );
 
   const knownVariants = useMemo(() => {
     if (variantSampleSets === undefined || !wholeSampleSetState.isResolved) {
@@ -209,41 +167,39 @@ export const KnownVariantsList = ({
     });
   }, [variantSampleSets, wholeSampleSetState, knownVariantsWithoutData]);
 
+  const isLoading = () => {
+    return isPLLoading || isPLFetching || isKVLoading || isKVFetching;
+  };
+
   return (
     <>
-      <SearchWrapper>
-        <Typeahead
-          id='pangolinLineageSearch'
-          options={pangolinLineages}
-          labelKey='pangolinLineage'
-          placeholder='Search pangolin lineage (B.1, B.1.1.7, B.1.*)'
-          selected={[]}
-          onChange={selected =>
-            selected.length === 1 &&
-            onVariantSelect({
-              variant: {
-                name: selected[0].pangolinLineage,
-                mutations: [],
-              },
-              matchPercentage: 1,
-            })
-          }
-          allowNew={true}
-          selectHintOnEnter={true}
-        />
-      </SearchWrapper>
+      <KnownVariantsListSelection
+        variantLists={VARIANT_LISTS}
+        selected={selectedVariantList}
+        onSelect={setSelectedVariantList}
+      />
+
+      {isLoading() && <Loader />}
+      {isPLError && pLError && <Alert variant={AlertVariant.DANGER}>{pLError.message}</Alert>}
+      {isKVError && kVError && <Alert variant={AlertVariant.DANGER}>{kVError.message}</Alert>}
 
       <Grid>
-        {knownVariants.map(({ selector, chartData, recentProportion }) => (
-          <KnownVariantCard
-            key={selector.variant.name}
-            name={selector.variant.name}
-            chartData={chartData}
-            recentProportion={recentProportion}
-            onClick={() => onVariantSelect(selector)}
-            selected={selection?.variant.name === selector.variant.name}
-          />
-        ))}
+        {isPLSuccess &&
+          isKVSuccess &&
+          knownVariants.map(({ selector, chartData, recentProportion }) => (
+            <KnownVariantCard
+              key={formatVariantDisplayName(selector.variant, true)}
+              name={formatVariantDisplayName(selector.variant, true)}
+              chartData={chartData}
+              recentProportion={recentProportion}
+              onClick={() => onVariantSelect(selector)}
+              selected={
+                selection &&
+                formatVariantDisplayName(selection.variant, true) ===
+                  formatVariantDisplayName(selector.variant, true)
+              }
+            />
+          ))}
       </Grid>
     </>
   );

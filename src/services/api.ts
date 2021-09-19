@@ -9,7 +9,6 @@ import {
   Place,
   CountrySchema,
   InterestingVariantResult,
-  RawMultiSample,
   SampleResultList,
   SampleResultListSchema,
   SequencingIntensityEntrySchema,
@@ -27,12 +26,19 @@ import {
   SequenceCountEntrySchema,
   PangolinLineageAlias,
   PangolinLineageAliasSchema,
+  RawMultiSampleSchema,
+  InterestingVariantResultSchema,
+  CaseCountEntrySchema,
 } from './api-types';
 import dayjs from 'dayjs';
 import {
   SequencingIntensityEntrySetSelector,
   SequencingIntensityEntrySetWithSelector,
 } from '../helpers/sequencing-intensity-entry-set';
+
+export interface PromiseWithCancel<T> extends Promise<T> {
+  cancel: () => void;
+}
 
 // WARNING These values are used in URLs - be careful when changing them
 export enum SamplingStrategy {
@@ -95,12 +101,12 @@ export function dateRangeToDates(
       };
     case 'Past3M':
       return {
-        dateFrom: dayjs().subtract(3, 'months').day(1).toDate(),
+        dateFrom: dayjs().subtract(3, 'months').weekday(0).toDate(),
         dateTo: undefined,
       };
     case 'Past6M':
       return {
-        dateFrom: dayjs().subtract(6, 'months').day(1).toDate(),
+        dateFrom: dayjs().subtract(6, 'months').weekday(0).toDate(),
         dateTo: undefined,
       };
     case 'Y2020':
@@ -150,7 +156,7 @@ export const post = (endpoint: string, body: unknown, signal?: AbortSignal) => {
   });
 };
 
-export const getSamples = (
+export async function getSamples(
   {
     pangolinLineage,
     mutationsString,
@@ -165,7 +171,7 @@ export const getSamples = (
     samplingStrategy: LiteralSamplingStrategy;
   },
   signal?: AbortSignal
-): Promise<SampleResultList> => {
+): Promise<SampleResultList> {
   let url = HOST + `/resource/sample/?matchPercentage=${matchPercentage}`;
   if (pangolinLineage?.length) {
     url += `&pangolinLineage=${pangolinLineage}`;
@@ -178,10 +184,13 @@ export const getSamples = (
   if (samplingStrategy) {
     url += `&dataType=${samplingStrategy}`;
   }
-  return fetch(url, { headers: getBaseHeaders(), signal })
-    .then(response => response.json())
-    .then(data => SampleResultListSchema.parse(data));
-};
+
+  const res = await fetch(url, { headers: getBaseHeaders(), signal });
+  if (!res.ok) {
+    throw new Error('Error fetching samples data');
+  }
+  return SampleResultListSchema.parse(await res.json());
+}
 
 export async function getNewSamples(
   selector: NewSampleSelector,
@@ -212,12 +221,13 @@ export async function getNewSamples(
 
   const res = await get(`/resource/sample2?${params.toString()}`, signal);
   if (!res.ok) {
-    throw new Error('server responded with non-200 status code');
+    throw new Error('Error fetching new samples data');
   }
 
-  // TODO(voinovp) HACK don't actually parse because zod is slow
-  // const data = zod.array(MultiSampleSchema).parse(await res.json());
-  const data = (await res.json()) as RawMultiSample[];
+  const data = zod.array(RawMultiSampleSchema).parse(await res.json());
+
+  // fall back method in case zod is slow
+  //const data = (await res.json()) as RawMultiSample[];
 
   return SampleSet.fromRawSamples(data, selector);
 }
@@ -250,7 +260,7 @@ export const getSampleFastaUrl = ({
 };
 
 // TODO We might want to merge this function with getNewSamples() as it uses the same endpoint.
-export const getPangolinLineages = (
+export async function getPangolinLineages(
   {
     country,
     samplingStrategy,
@@ -269,7 +279,7 @@ export const getPangolinLineages = (
     matchPercentage?: number;
   },
   signal?: AbortSignal
-): Promise<PangolinLineageList> => {
+): Promise<PangolinLineageList> {
   let url = HOST + `/resource/sample2?fields=pangolinLineage`;
   url += getPlaceParamString(country);
   const literalSamplingStrategy = toLiteralSamplingStrategy(samplingStrategy);
@@ -291,12 +301,13 @@ export const getPangolinLineages = (
   if (matchPercentage) {
     url += `&matchPercentage=${matchPercentage}`;
   }
-  return fetch(url, { headers: getBaseHeaders(), signal })
-    .then(response => response.json())
-    .then(data => {
-      return PangolinLineageListSchema.parse(data);
-    });
-};
+  const res = await fetch(url, { headers: getBaseHeaders(), signal });
+  if (!res.ok) {
+    throw new Error('Error fetching pangolin lineages data');
+  }
+
+  return PangolinLineageListSchema.parse(await res.json());
+}
 
 export async function getInformationOfPangolinLineage(
   {
@@ -338,15 +349,15 @@ export async function getPangolinLineageAliases(signal?: AbortSignal): Promise<P
   const url = '/resource/pangolin-lineage-alias';
   const res = await get(url, signal);
   if (!res.ok) {
-    throw new Error('server responded with non-200 status code');
+    throw new Error('Error fetching pangolin lineage aliases data');
   }
   return zod.array(PangolinLineageAliasSchema).parse(await res.json());
 }
 
-export const getSequencingIntensity = (
+export async function getSequencingIntensity(
   selector: SequencingIntensityEntrySetSelector,
   signal?: AbortSignal
-): Promise<SequencingIntensityEntrySetWithSelector> => {
+): Promise<SequencingIntensityEntrySetWithSelector> {
   let url = HOST + `/plot/sequencing/time-intensity-distribution?`;
   if (!selector.country) {
     // TODO should be addressed in #101
@@ -361,15 +372,15 @@ export const getSequencingIntensity = (
     params.set('dataType', selector.samplingStrategy);
   }
   url = url + params.toString();
-  return fetch(url, { headers: getBaseHeaders(), signal })
-    .then(response => response.json())
-    .then(data => {
-      return {
-        data: zod.array(SequencingIntensityEntrySchema).parse(data),
-        selector,
-      };
-    });
-};
+  const res = await fetch(url, { headers: getBaseHeaders(), signal });
+  if (!res.ok) {
+    throw new Error('Error fetching sequencing intensity data');
+  }
+  return {
+    data: zod.array(SequencingIntensityEntrySchema).parse(await res.json()),
+    selector,
+  };
+}
 
 export const getInterestingVariants = (
   {
@@ -391,9 +402,7 @@ export const getInterestingVariants = (
   return fetch(url, { headers: getBaseHeaders(), signal })
     .then(response => response.json())
     .then(data => {
-      // TODO(voinovp) HACK don't actually parse because zod is slow
-      // return InterestingVariantResultSchema.parse(data);
-      return data as InterestingVariantResult;
+      return InterestingVariantResultSchema.parse(data);
     });
 };
 
@@ -468,7 +477,7 @@ export async function getSequenceCounts(
     signal
   );
   if (!res.ok) {
-    throw new Error('server responded with non-200 status code');
+    throw new Error('Error fetching sequence counts data');
   }
   return zod.array(SequenceCountEntrySchema).parse(await res.json());
 }
@@ -498,7 +507,7 @@ export async function getCaseCounts(
   signal?: AbortSignal
 ): Promise<CaseCountEntry[]> {
   if (country !== 'Switzerland') {
-    throw new Error('getCaseCounts() is currently only available for Switzerland.');
+    throw new Error('Case count is currently only available for Switzerland');
   }
   const params = new URLSearchParams();
   params.set('country', country);
@@ -512,9 +521,11 @@ export async function getCaseCounts(
   const url = '/resource/case?' + params.toString();
   const res = await get(url, signal);
   if (!res.ok) {
-    throw new Error('server responded with non-200 status code');
+    throw new Error('Error fetching case counts data');
   }
-  // TODO HACK don't actually parse because zod is slow
-  // return zod.array(CaseCountEntrySchema).parse(await res.json());
-  return (await res.json()) as CaseCountEntry[];
+
+  return zod.array(CaseCountEntrySchema).parse(await res.json());
+
+  // fall back method in case zod is slow
+  //return (await res.json()) as CaseCountEntry[];
 }
