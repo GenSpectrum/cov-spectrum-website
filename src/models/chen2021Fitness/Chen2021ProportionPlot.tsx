@@ -65,7 +65,7 @@ export const Chen2021ProportionPlot = ({
 
   return (
     <>
-      <TitleWrapper id='graph_title'>Estimated proportion through time*</TitleWrapper>
+      <TitleWrapper id='graph_title'>Estimated proportion through time</TitleWrapper>
       <Plot
         style={{ width: '100%', height: '80%' }}
         data={[

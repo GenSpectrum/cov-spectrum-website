@@ -7,7 +7,7 @@ import {
   SequencingRepresentativenessSelectorSchema,
 } from '../services/api-types';
 import React, { useEffect, useState } from 'react';
-import { getCaseCounts, getSequenceCounts } from '../services/api';
+import { getCaseCounts, getSequenceCounts, PromiseWithCancel } from '../services/api';
 import { Form } from 'react-bootstrap';
 import { Utils } from '../services/Utils';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../charts/common';
@@ -15,6 +15,8 @@ import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Text, Cell }
 import Metrics, { MetricsWrapper } from '../charts/Metrics';
 import Loader from '../components/Loader';
 import { kFormat } from '../helpers/number';
+import { useQuery } from 'react-query';
+import { Alert, AlertVariant } from '../helpers/ui';
 
 interface Props {
   selector: SequencingRepresentativenessSelector;
@@ -73,40 +75,66 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
   const [active, setActive] = useState<undefined | PlotEntry>(undefined);
   const [selectedAttributes, setSelectedAttributes] = useState<Attribute[]>(['division']);
 
+  const fetchCaseCounts = () => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const promise = getCaseCounts(selector, false, signal).then(counts => {
+      return prepareCountsData(counts, selectedAttributes);
+    });
+    (promise as PromiseWithCancel<Map<string, number>>).cancel = () => controller.abort();
+    return promise;
+  };
+
+  const {
+    data: caseCounts,
+    isFetching: isCCFetching,
+    isError: isCCError,
+    error: cCError,
+    isLoading: isCCLoading,
+    isSuccess: isCCSuccess,
+  } = useQuery<Map<string, number>, Error>(['caseCounts', selector, selectedAttributes], fetchCaseCounts);
+
+  const fetchSequenceCounts = () => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+    const promise = getSequenceCounts(selector, signal).then(counts => {
+      const sequenceCounts = prepareCountsData(counts, selectedAttributes);
+      if (caseCounts) {
+        const _data: PlotEntry[] = [];
+        for (let [key, cases] of caseCounts) {
+          const sequenced = sequenceCounts.get(key) ?? 0;
+          const proportion = cases > 0 ? (sequenced / cases) * 100 : undefined;
+          _data.push({
+            key,
+            cases,
+            sequenced,
+            proportion,
+          });
+        }
+        setData(_data);
+      }
+      return sequenceCounts;
+    });
+    (promise as PromiseWithCancel<Map<string, number>>).cancel = () => controller.abort();
+    return promise;
+  };
+
+  const {
+    isFetching: isSCFetching,
+    isError: isSCError,
+    error: sCError,
+    isLoading: isSCLoading,
+    isSuccess: isSCSuccess,
+  } = useQuery<Map<string, number>, Error>(
+    ['sequenceCounts', selector, selectedAttributes],
+    fetchSequenceCounts,
+    { enabled: !!caseCounts }
+  );
+
   useEffect(() => {
     if (selector.country !== 'Switzerland') {
       return;
     }
-    let isSubscribed = true;
-    const controller = new AbortController();
-    const signal = controller.signal;
-    const caseCountsPromise = getCaseCounts(selector, false, signal).then(counts =>
-      prepareCountsData(counts, selectedAttributes)
-    );
-    const sequenceCountsPromise = getSequenceCounts(selector, signal).then(counts =>
-      prepareCountsData(counts, selectedAttributes)
-    );
-    Promise.all([caseCountsPromise, sequenceCountsPromise]).then(([caseCounts, sequenceCounts]) => {
-      if (!isSubscribed) {
-        return;
-      }
-      const _data: PlotEntry[] = [];
-      for (let [key, cases] of caseCounts) {
-        const sequenced = sequenceCounts.get(key) ?? 0;
-        const proportion = cases > 0 ? (sequenced / cases) * 100 : undefined;
-        _data.push({
-          key,
-          cases,
-          sequenced,
-          proportion,
-        });
-      }
-      setData(_data);
-    });
-    return () => {
-      isSubscribed = false;
-      controller.abort();
-    };
   }, [selector, selectedAttributes]);
 
   if (selector.country !== 'Switzerland') {
@@ -138,6 +166,10 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
     }
   };
 
+  const isLoading = () => {
+    return isCCLoading || isCCFetching || isSCLoading || isSCFetching;
+  };
+
   return (
     <div className='flex h-full'>
       <div>
@@ -154,8 +186,12 @@ export const SequencingRepresentativenessPlot = React.memo(({ selector }: Props)
         ))}
       </div>
       <div className='flex-grow overflow-auto'>
-        {!data && <Loader />}
-        {data && (
+        {isLoading() && <Loader />}
+
+        {isCCError && cCError && <Alert variant={AlertVariant.DANGER}>{cCError.message}</Alert>}
+        {isSCError && sCError && <Alert variant={AlertVariant.DANGER}>{sCError.message}</Alert>}
+
+        {isCCSuccess && isSCSuccess && data && (
           <div style={{ height: `${30 + data.length * 25}px` }} key={data.length}>
             <Wrapper>
               <ChartAndMetricsWrapper>

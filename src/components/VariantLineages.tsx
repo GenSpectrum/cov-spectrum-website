@@ -1,9 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { Country, Variant } from '../services/api-types';
-import { DateRange, dateRangeToDates, getPangolinLineages, SamplingStrategy } from '../services/api';
+import React, { useState } from 'react';
+import { Country, PangolinLineageList, Variant } from '../services/api-types';
+import {
+  DateRange,
+  dateRangeToDates,
+  getPangolinLineages,
+  PromiseWithCancel,
+  SamplingStrategy,
+} from '../services/api';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { VariantSelector } from '../helpers/sample-selector';
+import { useQuery } from 'react-query';
+import Loader from './Loader';
+import { Alert, AlertVariant } from '../helpers/ui';
 
 export interface Props {
   country: Country;
@@ -45,55 +54,73 @@ export const VariantLineages = ({
     }[]
   >([]);
   const { dateFrom, dateTo } = dateRangeToDates(dateRange);
-  useEffect(() => {
-    getPangolinLineages({
-      country,
-      samplingStrategy,
-      pangolinLineage: variant.name,
-      dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
-      dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
-      mutationsString: variant.mutations.join(','),
-      matchPercentage,
-    }).then(data => {
-      data.sort((a, b) => b.count - a.count);
-      const totalSize = data.reduce((total, a) => total + a.count, 0);
-      const processed = data.map(d => ({
-        ...d,
-        proportion: d.count / totalSize,
-      }));
-      setData(processed);
-    });
-  }, [country, matchPercentage, variant, samplingStrategy, dateFrom, dateTo]);
+
+  const { isLoading, error, isError, isSuccess, isFetching } = useQuery<PangolinLineageList, Error>(
+    ['pangolinLineages', country, matchPercentage, variant, samplingStrategy, dateFrom, dateTo],
+    () => {
+      const controller = new AbortController();
+      const signal = controller.signal;
+      const promise = getPangolinLineages(
+        {
+          country,
+          samplingStrategy,
+          pangolinLineage: variant.name,
+          dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
+          dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
+          mutationsString: variant.mutations.join(','),
+          matchPercentage,
+        },
+        signal
+      ).then(rawData => {
+        rawData.sort((a, b) => b.count - a.count);
+        const totalSize = rawData.reduce((total, a) => total + a.count, 0);
+        const processed = rawData.map(d => ({
+          ...d,
+          proportion: d.count / totalSize,
+        }));
+        setData(processed);
+        return rawData;
+      });
+      (promise as PromiseWithCancel<PangolinLineageList>).cancel = () => controller.abort();
+      return promise;
+    }
+  );
 
   return (
     <>
       <div>Sequences of this variant belong to the following pangolin lineages:</div>
+
+      {(isLoading || isFetching) && <Loader />}
+      {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
+
       <LineageList className='list-disc	'>
-        {data
-          .sort((a, b) => b.count - a.count)
-          .map(({ pangolinLineage, proportion }) => {
-            const label = pangolinLineage || 'Unknown';
-            return (
-              <LineageEntry key={label}>
-                {pangolinLineage ? (
-                  <button
-                    className='underline outline-none'
-                    onClick={() =>
-                      onVariantSelect({
-                        variant: { name: pangolinLineage, mutations: [] },
-                        matchPercentage: 1,
-                      })
-                    }
-                  >
-                    {pangolinLineage}
-                  </button>
-                ) : (
-                  'Unknown'
-                )}{' '}
-                ({(proportion * 100).toFixed(2)}%)
-              </LineageEntry>
-            );
-          })}
+        {isSuccess &&
+          data &&
+          data
+            .sort((a, b) => b.count - a.count)
+            .map(({ pangolinLineage, proportion }) => {
+              const label = pangolinLineage || 'Unknown';
+              return (
+                <LineageEntry key={label}>
+                  {pangolinLineage ? (
+                    <button
+                      className='underline outline-none'
+                      onClick={() =>
+                        onVariantSelect({
+                          variant: { name: pangolinLineage, mutations: [] },
+                          matchPercentage: 1,
+                        })
+                      }
+                    >
+                      {pangolinLineage}
+                    </button>
+                  ) : (
+                    'Unknown'
+                  )}{' '}
+                  ({(proportion * 100).toFixed(2)}%)
+                </LineageEntry>
+              );
+            })}
       </LineageList>
     </>
   );

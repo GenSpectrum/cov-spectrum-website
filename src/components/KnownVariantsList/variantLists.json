@@ -19,12 +19,6 @@
       },
       {
         "variant": {
-          "mutations": ["S:H69-", "S:V70-"]
-        },
-        "matchPercentage": 1
-      },
-      {
-        "variant": {
           "name": "B.1.351*",
           "mutations": []
         },
@@ -39,14 +33,14 @@
       },
       {
         "variant": {
-          "name": "B.1.617*",
+          "name": "B.1.617.2*",
           "mutations": []
         },
         "matchPercentage": 1
       },
       {
         "variant": {
-          "name": "B.1.617.2*",
+          "name": "B.1.1.318*",
           "mutations": []
         },
         "matchPercentage": 1
@@ -144,6 +138,13 @@
       {
         "variant": {
           "name": "C.37",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "B.1.621",
           "mutations": []
         },
         "matchPercentage": 1

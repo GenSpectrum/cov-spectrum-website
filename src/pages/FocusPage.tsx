@@ -128,7 +128,12 @@ export const FocusPage = ({
   );
 
   if (variantSampleSet.isEmpty()) {
-    return <Alert variant={AlertVariant.WARNING}>No samples match your query</Alert>;
+    return (
+      <>
+        <VariantHeader variant={variant} place={country} />
+        <Alert variant={AlertVariant.WARNING}>No samples match your query</Alert>
+      </>
+    );
   }
 
   let wasteWaterSummaryPlot = undefined;
@@ -204,7 +209,7 @@ export const FocusPage = ({
               variantSampleSet={variantSampleSet}
               wholeSampleSet={wholeSampleSet}
               height={300}
-              title='Demographics'
+              title='Age demographics'
               toolbarChildren={[createDivisionBreakdownButton(setShowVariantAgeDistributionDivGrid)]}
             />
           </GridCell>
@@ -224,16 +229,15 @@ export const FocusPage = ({
           {!isRegion(country) && (
             <GridCell minWidth={600}>
               <NamedCard
-                title='Estimation of the current advantage'
+                title='Transmission advantage'
                 toolbar={deepFocusButtons.chen2021Fitness}
-                description='
-              If variants spread pre-dominantly by local transmission across demographic groups, this
+                description={`
+               If variants spread pre-dominantly by local transmission across demographic groups, this
                estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
                advantage estimate reflects the advantage compared to co-circulating strains. Thus, as new variants
-                spread, the advantage of the focal variant may decrease. When absolute numbers of a variant are
-                low, the advantage may merely reflect the current importance of introductions from abroad or
+                spread, the advantage of the focal variant may decrease. When absolute numbers of a variant are low, the advantage may merely reflect the current importance of introductions from abroad or
                  the variant spreading in a particular demographic group. In this case, the estimate does not
-                  provide information on the transmission advantage.'
+                  provide information on the transmission advantage.`}
               >
                 <div style={{ height: 300 }}>
                   <Chen2021FitnessPreview {...plotProps} />
@@ -243,16 +247,17 @@ export const FocusPage = ({
           )}
           <GridCell minWidth={600}>
             <VariantDivisionDistributionTableWidget.ShareableComponent
+              country={country}
               variantSampleSet={variantSampleSet}
               wholeSampleSet={wholeSampleSet}
-              title='Geography'
+              title='Geographic distribution'
             />
           </GridCell>
           {loggedIn && country === 'Switzerland' && (
             <GridCell minWidth={600}>
               <ExportManagerContext.Provider value={mapExportManagerRef.current}>
                 <NamedCard
-                  title='Geography'
+                  title='Geographic distribution'
                   style={NamedCardStyle.CONFIDENTIAL}
                   toolbar={<ExportButton className='mt-1 ml-1' />}
                 >
@@ -337,7 +342,7 @@ export const FocusPage = ({
           )}
           show={showVariantAgeDistributionDivGrid}
           handleClose={() => setShowVariantAgeDistributionDivGrid(false)}
-          header='Demographics'
+          header='Age demographics'
         />
       )}
     </>

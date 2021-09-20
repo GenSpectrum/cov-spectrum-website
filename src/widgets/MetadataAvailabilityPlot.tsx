@@ -1,17 +1,20 @@
 import { Widget } from './Widget';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import {
+  SequenceCountEntry,
   SequencingRepresentativenessSelector,
   SequencingRepresentativenessSelectorSchema,
 } from '../services/api-types';
-import React, { useEffect, useState } from 'react';
-import { getSequenceCounts } from '../services/api';
+import React, { useState } from 'react';
+import { getSequenceCounts, PromiseWithCancel } from '../services/api';
 import { Attribute, attributes } from './SequencingRepresentativenessPlot';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../charts/common';
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import Metrics, { MetricsWrapper } from '../charts/Metrics';
 import { kFormat } from '../helpers/number';
 import Loader from '../components/Loader';
+import { useQuery } from 'react-query';
+import { Alert, AlertVariant } from '../helpers/ui';
 
 interface Props {
   selector: SequencingRepresentativenessSelector;
@@ -28,14 +31,10 @@ export const MetadataAvailabilityPlot = ({ selector }: Props) => {
   const [data, setData] = useState<undefined | PlotEntry[]>(undefined);
   const [active, setActive] = useState<undefined | PlotEntry>(undefined);
 
-  useEffect(() => {
-    let isSubscribed = true;
+  const fetchSequenceCounts = () => {
     const controller = new AbortController();
     const signal = controller.signal;
-    getSequenceCounts(selector, signal).then(counts => {
-      if (!isSubscribed) {
-        return;
-      }
+    const promise = getSequenceCounts(selector, signal).then(counts => {
       let total = 0;
       const knownOfAttribute: Map<Attribute, number> = new Map(attributes.map(({ key }) => [key, 0]));
       for (let countEntry of counts) {
@@ -53,14 +52,18 @@ export const MetadataAvailabilityPlot = ({ selector }: Props) => {
         unknown: total - knownOfAttribute.get(key)!,
       }));
       setData(_data);
+      return counts;
     });
-    return () => {
-      isSubscribed = false;
-      controller.abort();
-    };
-  }, [selector, setData]);
+    (promise as PromiseWithCancel<SequenceCountEntry[]>).cancel = () => controller.abort();
+    return promise;
+  };
 
-  if (!data) {
+  const { isFetching, isError, error, isLoading, isSuccess } = useQuery<SequenceCountEntry[], Error>(
+    ['sequenceCounts', selector, setData],
+    fetchSequenceCounts
+  );
+
+  if (isLoading || isFetching) {
     return <Loader />;
   }
 
@@ -69,48 +72,60 @@ export const MetadataAvailabilityPlot = ({ selector }: Props) => {
       <TitleWrapper id='graph_title'>
         Proportion of sequences for which we have metadata information
       </TitleWrapper>
-      <ChartAndMetricsWrapper>
-        <ChartWrapper className='-mr-4 -ml-1'>
-          <ResponsiveContainer>
-            <BarChart layout='vertical' data={data} margin={{ left: 60, right: 30 }}>
-              <XAxis type='number' domain={[0, 100]} tickFormatter={tick => `${tick}%`} />
-              <YAxis interval={0} dataKey='attributeLabel' type='category' />
-              <Bar dataKey='proportion' isAnimationActive={false}>
-                {data.map((entry: PlotEntry, index: number) => (
-                  <Cell
-                    fill={entry.attributeLabel === active?.attributeLabel ? colors.active : colors.inactive}
-                    key={`cell-${index}`}
-                  />
-                ))}
-              </Bar>
-              <Tooltip
-                active={false}
-                cursor={false}
-                content={e => {
-                  if (e.active && e.payload !== undefined) {
-                    const newActive = e.payload[0].payload;
-                    if (active?.attributeLabel !== newActive.attributeLabel) {
-                      setActive(newActive);
-                    }
-                  }
-                  if (!e.active) {
-                    setActive(undefined);
-                  }
-                  return <></>;
+
+      {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
+
+      {isSuccess && data && (
+        <ChartAndMetricsWrapper>
+          <ChartWrapper className='-mr-4 -ml-1'>
+            <ResponsiveContainer>
+              <BarChart
+                layout='vertical'
+                data={data}
+                margin={{
+                  left: 60,
+                  right: 30,
                 }}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartWrapper>
-        <MetricsWrapper>
-          <Metrics
-            value={active ? kFormat(active.known) : '-'}
-            title={'Available'}
-            helpText={'Number of samples for which metadata information is available'}
-            showPercent={active ? active.proportion.toFixed(2) : '-'}
-          />
-        </MetricsWrapper>
-      </ChartAndMetricsWrapper>
+              >
+                <XAxis type='number' domain={[0, 100]} tickFormatter={tick => `${tick}%`} />
+                <YAxis interval={0} dataKey='attributeLabel' type='category' />
+                <Bar dataKey='proportion' isAnimationActive={false}>
+                  {data.map((entry: PlotEntry, index: number) => (
+                    <Cell
+                      fill={entry.attributeLabel === active?.attributeLabel ? colors.active : colors.inactive}
+                      key={`cell-${index}`}
+                    />
+                  ))}
+                </Bar>
+                <Tooltip
+                  active={false}
+                  cursor={false}
+                  content={e => {
+                    if (e.active && e.payload !== undefined) {
+                      const newActive = e.payload[0].payload;
+                      if (active?.attributeLabel !== newActive.attributeLabel) {
+                        setActive(newActive);
+                      }
+                    }
+                    if (!e.active) {
+                      setActive(undefined);
+                    }
+                    return <></>;
+                  }}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </ChartWrapper>
+          <MetricsWrapper>
+            <Metrics
+              value={active ? kFormat(active.known) : '-'}
+              title={'Available'}
+              helpText={'Number of samples for which metadata information is available'}
+              showPercent={active ? active.proportion.toFixed(2) : '-'}
+            />
+          </MetricsWrapper>
+        </ChartAndMetricsWrapper>
+      )}
     </Wrapper>
   );
 };
