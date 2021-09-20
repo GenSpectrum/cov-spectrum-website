@@ -1,12 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { scaleQuantile } from 'd3-scale';
 import styled from 'styled-components';
-import switzerland from './switzerland.json';
-import germany from './germany.json';
-import usa from './usa.json';
 import { ChartAndMetrics } from '../charts/Metrics';
 import { Place } from '../services/api-types';
 import { colors } from '../charts/common';
+import brazil from './brazil.json';
+import france from './france.json';
+import germany from './germany.json';
+import italy from './italy.json';
+import japan from './japan.json';
+import switzerland from './switzerland.json';
+import uk from './uk.json';
+import usa from './usa.json';
 
 export interface VectorMapLayer {
   /** Unique ID of each layer. */
@@ -204,9 +209,14 @@ const Map = ({ data: inputData, country }: Props) => {
       metricsTitle={focusData && focusData.division !== null ? focusData.division : undefined}
     >
       <Wrapper data={data} focusDivision={focusData ? focusData.division : null} className='pd-1 md:m-2'>
+        {country === 'Brazil' && <VectorMap {...brazil} layerProps={layerProps} />}
         {country === 'Switzerland' && <VectorMap {...switzerland} layerProps={layerProps} />}
-        {country === 'Germany' && <VectorMap {...germany} layerProps={layerProps} />}
+        {country === 'Italy' && <VectorMap {...italy} layerProps={layerProps} />}
+        {country === 'Japan' && <VectorMap {...japan} layerProps={layerProps} />}
         {country === 'United States' && <VectorMap {...usa} layerProps={layerProps} />}
+        {country === 'United Kingdom' && <VectorMap {...uk} layerProps={layerProps} />}
+        {country === 'France' && <VectorMap {...france} layerProps={layerProps} />}
+        {country === 'Germany' && <VectorMap {...germany} layerProps={layerProps} />}
       </Wrapper>
     </ChartAndMetrics>
   );

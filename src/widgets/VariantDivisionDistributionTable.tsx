@@ -1,16 +1,16 @@
-import { SampleSetWithSelector } from '../helpers/sample-set';
-import React, { useMemo } from 'react';
-import { Widget } from './Widget';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
-import * as zod from 'zod';
+import { CountrySchema, Place } from '../services/api-types';
+import { getNewSamples } from '../services/api';
 import { NewSampleSelectorSchema } from '../helpers/sample-selector';
 import { omit } from 'lodash';
-import { getNewSamples } from '../services/api';
-import Table from 'react-bootstrap/Table';
-import styled from 'styled-components';
+import { SampleSetWithSelector } from '../helpers/sample-set';
+import { Widget } from './Widget';
+import * as zod from 'zod';
 import DownloadWrapper from '../charts/DownloadWrapper';
 import Map from '../maps/Map';
-import { CountrySchema, Place } from '../services/api-types';
+import React, { useMemo } from 'react';
+import styled from 'styled-components';
+import Table from 'react-bootstrap/Table';
 
 interface Props {
   variantSampleSet: SampleSetWithSelector;
@@ -23,7 +23,17 @@ const Wrapper = styled.div`
   height: 300px;
 `;
 
-const countriesWithMaps = ['Switzerland', 'Germany', 'United States'];
+const countriesWithMaps = [
+  'Brazil',
+  'France',
+  'Germany',
+  'Italy',
+  'Japan',
+  'Spain',
+  'Switzerland',
+  'United Kingdom',
+  'United States',
+];
 
 const VariantDivisionDistributionTable = ({ variantSampleSet, wholeSampleSet, country }: Props) => {
   const processedData = useMemo(() => {
