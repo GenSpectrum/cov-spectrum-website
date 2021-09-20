@@ -50,10 +50,10 @@ export const ExplorePage = ({
   );
   return (
     <>
-      <div className='mt-4'>
-        <VariantSearch onVariantSelect={onVariantSelect} />
-      </div>
-      <NamedSection title='Known variants'>
+      <NamedSection title='Known variants' subtitle='Which variant would you like to explore?'>
+        <div className='mt-4'>
+          <VariantSearch onVariantSelect={onVariantSelect} />
+        </div>
         <KnownVariantsList
           country={country}
           samplingStrategy={samplingStrategy}
