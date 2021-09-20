@@ -72,7 +72,7 @@ export const AboutPage = () => {
         (FOPH) of Switzerland.
       </Question>
       <p></p>
-      <Question title='What is the "Private Switzerland Login" and can I gain access?'>
+      <Question title='What is the "Login" and can I gain access?'>
         For Switzerland, we have some confidential data. The access can only be provided to very few people.
         Please contact us if you believe that you are eligible.
       </Question>
