@@ -9,6 +9,7 @@ import france from './france.json';
 import germany from './germany.json';
 import italy from './italy.json';
 import japan from './japan.json';
+import spain from './spain.json';
 import switzerland from './switzerland.json';
 import uk from './uk.json';
 import usa from './usa.json';
@@ -210,13 +211,14 @@ const Map = ({ data: inputData, country }: Props) => {
     >
       <Wrapper data={data} focusDivision={focusData ? focusData.division : null} className='pd-1 md:m-2'>
         {country === 'Brazil' && <VectorMap {...brazil} layerProps={layerProps} />}
-        {country === 'Switzerland' && <VectorMap {...switzerland} layerProps={layerProps} />}
-        {country === 'Italy' && <VectorMap {...italy} layerProps={layerProps} />}
-        {country === 'Japan' && <VectorMap {...japan} layerProps={layerProps} />}
-        {country === 'United States' && <VectorMap {...usa} layerProps={layerProps} />}
-        {country === 'United Kingdom' && <VectorMap {...uk} layerProps={layerProps} />}
         {country === 'France' && <VectorMap {...france} layerProps={layerProps} />}
         {country === 'Germany' && <VectorMap {...germany} layerProps={layerProps} />}
+        {country === 'Italy' && <VectorMap {...italy} layerProps={layerProps} />}
+        {country === 'Japan' && <VectorMap {...japan} layerProps={layerProps} />}
+        {country === 'Spain' && <VectorMap {...spain} layerProps={layerProps} />}
+        {country === 'Switzerland' && <VectorMap {...switzerland} layerProps={layerProps} />}
+        {country === 'United Kingdom' && <VectorMap {...uk} layerProps={layerProps} />}
+        {country === 'United States' && <VectorMap {...usa} layerProps={layerProps} />}
       </Wrapper>
     </ChartAndMetrics>
   );
