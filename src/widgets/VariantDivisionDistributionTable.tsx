@@ -31,7 +31,6 @@ const countriesWithMaps = [
   'Japan',
   'Spain',
   'Switzerland',
-  'United Kingdom',
   'United States',
 ];
 

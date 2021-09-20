@@ -11,7 +11,6 @@ import italy from './italy.json';
 import japan from './japan.json';
 import spain from './spain.json';
 import switzerland from './switzerland.json';
-import uk from './uk.json';
 import usa from './usa.json';
 
 export interface VectorMapLayer {
@@ -217,7 +216,6 @@ const Map = ({ data: inputData, country }: Props) => {
         {country === 'Japan' && <VectorMap {...japan} layerProps={layerProps} />}
         {country === 'Spain' && <VectorMap {...spain} layerProps={layerProps} />}
         {country === 'Switzerland' && <VectorMap {...switzerland} layerProps={layerProps} />}
-        {country === 'United Kingdom' && <VectorMap {...uk} layerProps={layerProps} />}
         {country === 'United States' && <VectorMap {...usa} layerProps={layerProps} />}
       </Wrapper>
     </ChartAndMetrics>
