@@ -198,14 +198,14 @@ const Map = ({ data: inputData, country }: Props) => {
       color: colors.secondary,
       helpText: focusData
         ? 'Number of samples of the variant collected from this age group.'
-        : 'Number of divisions with prevalence data',
+        : 'Number of divisions with prevalence data. Some divisions may not be visible.',
     },
   ];
 
   return (
     <ChartAndMetrics
       metrics={metrics}
-      title={`Average proportion in ${focusData ? focusData.division : country} for selected timeframe`}
+      title={`Average proportion during selected timeframe`}
       metricsTitle={focusData && focusData.division !== null ? focusData.division : undefined}
     >
       <Wrapper data={data} focusDivision={focusData ? focusData.division : null} className='pd-1 md:m-2'>
