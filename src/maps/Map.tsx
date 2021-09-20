@@ -5,6 +5,7 @@ import { ChartAndMetrics } from '../charts/Metrics';
 import { Place } from '../services/api-types';
 import { colors } from '../charts/common';
 import brazil from './brazil.json';
+import china from './china.json';
 import france from './france.json';
 import germany from './germany.json';
 import italy from './italy.json';
@@ -210,6 +211,7 @@ const Map = ({ data: inputData, country }: Props) => {
     >
       <Wrapper data={data} focusDivision={focusData ? focusData.division : null} className='pd-1 md:m-2'>
         {country === 'Brazil' && <VectorMap {...brazil} layerProps={layerProps} />}
+        {country === 'China' && <VectorMap {...china} layerProps={layerProps} />}
         {country === 'France' && <VectorMap {...france} layerProps={layerProps} />}
         {country === 'Germany' && <VectorMap {...germany} layerProps={layerProps} />}
         {country === 'Italy' && <VectorMap {...italy} layerProps={layerProps} />}

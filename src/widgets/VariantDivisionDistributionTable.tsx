@@ -25,6 +25,7 @@ const Wrapper = styled.div`
 
 const countriesWithMaps = [
   'Brazil',
+  'China',
   'France',
   'Germany',
   'Italy',
