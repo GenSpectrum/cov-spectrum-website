@@ -86,11 +86,6 @@ function selectPreviewVariants(
  * of weeks, we need to fetch slightly more here to ensure we have enough. Therefore,
  * we use past 3 months (Past3M) as the date range across all API calls within KnownVariantsList,
  * e.g. useWholeSampleSet, getPangolinLineages, loadKnownVariantSampleSets.
- * @param country
- * @param samplingStrategy
- * @param onVariantSelect
- * @param selection
- * @constructor
  */
 export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, selection }: Props) => {
   const [selectedVariantList, setSelectedVariantList] = useState(VARIANT_LISTS[0].name);
