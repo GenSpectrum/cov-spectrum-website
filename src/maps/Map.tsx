@@ -1,12 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import { scaleQuantile } from 'd3-scale';
 import styled from 'styled-components';
-import switzerland from './switzerland.json';
-import germany from './germany.json';
-import usa from './usa.json';
 import { ChartAndMetrics } from '../charts/Metrics';
 import { Place } from '../services/api-types';
 import { colors } from '../charts/common';
+import brazil from './brazil.json';
+import china from './china.json';
+import france from './france.json';
+import germany from './germany.json';
+import italy from './italy.json';
+import japan from './japan.json';
+import spain from './spain.json';
+import switzerland from './switzerland.json';
+import usa from './usa.json';
 
 export interface VectorMapLayer {
   /** Unique ID of each layer. */
@@ -193,19 +199,25 @@ const Map = ({ data: inputData, country }: Props) => {
       color: colors.secondary,
       helpText: focusData
         ? 'Number of samples of the variant collected from this age group.'
-        : 'Number of divisions with prevalence data',
+        : 'Number of divisions with prevalence data. Some divisions may not be visible.',
     },
   ];
 
   return (
     <ChartAndMetrics
       metrics={metrics}
-      title={`Average proportion in ${focusData ? focusData.division : country} for selected timeframe`}
+      title={`Average proportion during selected timeframe`}
       metricsTitle={focusData && focusData.division !== null ? focusData.division : undefined}
     >
       <Wrapper data={data} focusDivision={focusData ? focusData.division : null} className='pd-1 md:m-2'>
-        {country === 'Switzerland' && <VectorMap {...switzerland} layerProps={layerProps} />}
+        {country === 'Brazil' && <VectorMap {...brazil} layerProps={layerProps} />}
+        {country === 'China' && <VectorMap {...china} layerProps={layerProps} />}
+        {country === 'France' && <VectorMap {...france} layerProps={layerProps} />}
         {country === 'Germany' && <VectorMap {...germany} layerProps={layerProps} />}
+        {country === 'Italy' && <VectorMap {...italy} layerProps={layerProps} />}
+        {country === 'Japan' && <VectorMap {...japan} layerProps={layerProps} />}
+        {country === 'Spain' && <VectorMap {...spain} layerProps={layerProps} />}
+        {country === 'Switzerland' && <VectorMap {...switzerland} layerProps={layerProps} />}
         {country === 'United States' && <VectorMap {...usa} layerProps={layerProps} />}
       </Wrapper>
     </ChartAndMetrics>
