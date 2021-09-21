@@ -3,7 +3,13 @@ import { AsyncState } from 'react-async';
 import styled from 'styled-components';
 import { VariantSelector } from '../../helpers/sample-selector';
 import { SampleSetWithSelector } from '../../helpers/sample-set';
-import { getPangolinLineages, PromiseWithCancel, SamplingStrategy } from '../../services/api';
+import {
+  DateRange,
+  dateRangeToDates,
+  getPangolinLineages,
+  PromiseWithCancel,
+  SamplingStrategy,
+} from '../../services/api';
 import { Country, PangolinLineageList, Variant } from '../../services/api-types';
 import { KnownVariantCard } from './KnownVariantCard';
 import {
@@ -18,6 +24,7 @@ import { formatVariantDisplayName } from '../../helpers/variant-selector';
 import { useQuery } from 'react-query';
 import Loader from '../Loader';
 import { Alert, AlertVariant } from '../../helpers/ui';
+import { useWholeSampleSet } from '../../pages/ExploreFocusSplit';
 
 const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
 
@@ -31,7 +38,6 @@ interface Props {
   samplingStrategy: SamplingStrategy;
   onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
-  wholeSampleSetState: AsyncState<SampleSetWithSelector>;
 }
 
 const Grid = styled.div`
@@ -74,16 +80,30 @@ function selectPreviewVariants(
   return variants;
 }
 
-export const KnownVariantsList = ({
-  country,
-  samplingStrategy,
-  onVariantSelect,
-  selection,
-  wholeSampleSetState,
-}: Props) => {
+/**
+ * For KnownVariantsList, we don't need very old data, since convertKnownVariantChartData (in load-data.ts)
+ * will only take the latest 2 months. However since our data collection lags by a couple
+ * of weeks, we need to fetch slightly more here to ensure we have enough. Therefore,
+ * we use past 3 months (Past3M) as the date range across all API calls within KnownVariantsList,
+ * e.g. useWholeSampleSet, getPangolinLineages, loadKnownVariantSampleSets.
+ * @param country
+ * @param samplingStrategy
+ * @param onVariantSelect
+ * @param selection
+ * @constructor
+ */
+export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, selection }: Props) => {
   const [selectedVariantList, setSelectedVariantList] = useState(VARIANT_LISTS[0].name);
   const [variantSampleSets, setVariantSampleSets] = useState<KnownVariantWithSampleSet<VariantSelector>[]>();
   const [knownVariantSelectors, setKnownVariantSelectors] = useState<VariantSelector[]>([]);
+
+  const dateRange: DateRange = 'Past3M';
+  const { dateFrom, dateTo } = dateRangeToDates(dateRange);
+  const wholeSampleSetState: AsyncState<SampleSetWithSelector> = useWholeSampleSet({
+    country,
+    samplingStrategy,
+    dateRange,
+  });
 
   const knownVariantsWithoutData: {
     selector: VariantSelector;
@@ -98,7 +118,8 @@ export const KnownVariantsList = ({
       {
         country,
         samplingStrategy,
-        dateFrom: dayjs().subtract(3, 'months').weekday(0).format('YYYY-MM-DD'),
+        dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
+        dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
       },
       signal
     ).then(data => {
@@ -135,6 +156,8 @@ export const KnownVariantsList = ({
         variantSelectors: knownVariantSelectors,
         country,
         samplingStrategy,
+        dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
+        dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
       },
       signal
     ).then(data => {
@@ -168,7 +191,14 @@ export const KnownVariantsList = ({
   }, [variantSampleSets, wholeSampleSetState, knownVariantsWithoutData]);
 
   const isLoading = () => {
-    return isPLLoading || isPLFetching || isKVLoading || isKVFetching;
+    return (
+      isPLLoading ||
+      isPLFetching ||
+      isKVLoading ||
+      isKVFetching ||
+      wholeSampleSetState.status === 'initial' ||
+      wholeSampleSetState.status === 'pending'
+    );
   };
 
   return (
@@ -182,6 +212,9 @@ export const KnownVariantsList = ({
       {isLoading() && <Loader />}
       {isPLError && pLError && <Alert variant={AlertVariant.DANGER}>{pLError.message}</Alert>}
       {isKVError && kVError && <Alert variant={AlertVariant.DANGER}>{kVError.message}</Alert>}
+      {wholeSampleSetState.status === 'rejected' && (
+        <Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>
+      )}
 
       <Grid>
         {isPLSuccess &&

@@ -71,7 +71,7 @@ function useVariantSampleSet({
   return useAsync(promiseFn);
 }
 
-function useWholeSampleSet({
+export function useWholeSampleSet({
   country,
   samplingStrategy,
   dateRange,
@@ -193,7 +193,6 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
         dateRange={dateRange}
         onVariantSelect={onVariantSelect}
         selection={variantSelector}
-        wholeSampleSetState={wholeSampleSetState}
         sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
       />
     );
