@@ -159,6 +159,7 @@ export const FocusPage = ({
       variant={variant}
       place={country}
       controls={<FocusVariantHeaderControls {...forwardedProps} />}
+      dateRange={dateRange}
     />
   );
 

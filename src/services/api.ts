@@ -88,6 +88,23 @@ export function isDateRange(s: unknown): s is DateRange {
   }
 }
 
+export function dateRangeToString(dateRange: DateRange): string {
+  switch (true) {
+    case dateRange === 'AllTimes':
+      return 'All times';
+    case dateRange === 'Past3M':
+      return 'Past 3 months';
+    case dateRange === 'Past6M':
+      return 'Past 6 months';
+    case dateRange === 'Y2020':
+      return '2020';
+    case dateRange === 'Y2021':
+      return '2021';
+    default:
+      return '';
+  }
+}
+
 export function dateRangeToDates(
   dateRange: DateRange
 ): {

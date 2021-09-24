@@ -102,6 +102,7 @@ export const DeepFocusPage = ({
       <VariantHeader
         variant={syncProps.variant}
         place={syncProps.country}
+        dateRange={syncProps.dateRange}
         controls={
           <Button className='mt-2' variant='secondary' as={Link} to={url}>
             Back to overview

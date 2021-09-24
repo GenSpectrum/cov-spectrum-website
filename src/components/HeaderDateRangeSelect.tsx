@@ -1,7 +1,8 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
 import { ExploreUrl } from '../helpers/explore-url';
-import { DateRange } from '../services/api-types';
+import { ALL_TIMES, DateRange, PAST_3M, PAST_6M, Y2020, Y2021 } from '../services/api-types';
+import { dateRangeToString } from '../services/api';
 
 interface Props {
   exploreUrl?: ExploreUrl;
@@ -25,11 +26,11 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
         value={exploreUrl.dateRange}
         onChange={handleChange}
       >
-        <option value='AllTimes'>All times</option>
-        <option value='Past3M'>Past 3 months</option>
-        <option value='Past6M'>Past 6 months</option>
-        <option value='Y2020'>2020</option>
-        <option value='Y2021'>2021</option>
+        <option value={ALL_TIMES}>{dateRangeToString(ALL_TIMES)}</option>
+        <option value={PAST_3M}>{dateRangeToString(PAST_3M)}</option>
+        <option value={PAST_6M}>{dateRangeToString(PAST_6M)}</option>
+        <option value={Y2020}>{dateRangeToString(Y2020)}</option>
+        <option value={Y2021}>{dateRangeToString(Y2021)}</option>
       </Form.Control>
     </Form>
   );

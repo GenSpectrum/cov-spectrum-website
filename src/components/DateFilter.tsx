@@ -3,7 +3,7 @@ import 'react-modern-calendar-datepicker/lib/DatePicker.css';
 import DatePicker, { DayRange, DayValue } from 'react-modern-calendar-datepicker';
 import { Button } from 'react-bootstrap';
 import { HeaderDateRangeSelect } from './HeaderDateRangeSelect';
-import { dateRangeToDates } from '../services/api';
+import { dateRangeToDates, dateRangeToString } from '../services/api';
 import { useExploreUrl } from '../helpers/explore-url';
 import { DateRange } from '../services/api-types';
 
@@ -35,8 +35,8 @@ export const DateFilter = ({ dateRange }: Props) => {
   const renderCustomInput = ({ ref }: any) => (
     <input
       ref={ref} // necessary
-      placeholder={`Select Date Range`}
-      value={dayRange && dayRange.from && dayRange.to ? formatDateRange(dayRange) : ''}
+      placeholder={dateRange ? dateRangeToString(dateRange) : `Select Date Range`}
+      value={dayRange && dayRange.from && dayRange.to ? `${formatDateRange(dayRange)}` : ''}
       className='custom-date-filter-input'
     />
   );
@@ -60,7 +60,8 @@ export const DateFilter = ({ dateRange }: Props) => {
   };
 
   return (
-    <div className='mr-2 mt-3 inline-block align-middle'>
+    <div className='ml-2 mt-3 inline-block align-middle'>
+      <div style={{ backgroundColor: 'green' }}></div>
       <DatePicker
         value={dayRange}
         onChange={handleChange}
@@ -74,24 +75,6 @@ export const DateFilter = ({ dateRange }: Props) => {
           </div>
         )}
       />
-      {/*<Calendar*/}
-      {/*    value={dayRange}*/}
-      {/*    onChange={setDayRange}*/}
-      {/*    renderFooter={() => (*/}
-      {/*        <div className="flex justify-center space-x-1 pb-2">*/}
-      {/*            <HeaderDateRangeSelect />*/}
-      {/*            <Button*/}
-      {/*                variant='secondary'*/}
-      {/*                size='sm'*/}
-      {/*                onClick={() => {*/}
-      {/*                    setDayRange({from:null, to:null});*/}
-      {/*                }}*/}
-      {/*            >*/}
-      {/*                Reset Value!*/}
-      {/*            </Button>*/}
-      {/*        </div>*/}
-      {/*    )}*/}
-      {/*/>*/}
     </div>
   );
 };

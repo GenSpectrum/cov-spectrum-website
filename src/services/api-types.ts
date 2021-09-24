@@ -242,11 +242,11 @@ export type SequencingRepresentativenessSelector = zod.infer<
 
 export type Place = Country | Region;
 
-const ALL_TIMES = 'AllTimes';
-const PAST_3M = 'Past3M';
-const PAST_6M = 'Past6M';
-const Y2020 = 'Y2020';
-const Y2021 = 'Y2021';
+export const ALL_TIMES = 'AllTimes';
+export const PAST_3M = 'Past3M';
+export const PAST_6M = 'Past6M';
+export const Y2020 = 'Y2020';
+export const Y2021 = 'Y2021';
 export type DateRange =
   | typeof ALL_TIMES
   | typeof PAST_3M

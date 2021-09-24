@@ -13,7 +13,6 @@ import { NextstrainIntegration } from '../services/external-integrations/Nextstr
 import { WikipediaIntegration } from '../services/external-integrations/WikipediaIntegration';
 import { CoVariantsIntegration } from '../services/external-integrations/CoVariantsIntegration';
 import { useState } from 'react';
-import { DateFilter } from './DateFilter';
 
 export interface Props {
   country: Country;
@@ -74,7 +73,6 @@ export const FocusVariantHeaderControls = React.memo(
 
     return (
       <>
-        <DateFilter dateRange={dateRange} />
         {integrationButtons}
         {AccountService.isLoggedIn() && (
           <LazySampleButton
