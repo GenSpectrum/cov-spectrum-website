@@ -1,12 +1,6 @@
 import React, { useState } from 'react';
-import { Country, PangolinLineageList, Variant } from '../services/api-types';
-import {
-  DateRange,
-  dateRangeToDates,
-  getPangolinLineages,
-  PromiseWithCancel,
-  SamplingStrategy,
-} from '../services/api';
+import { Country, DateRange, PangolinLineageList, Variant } from '../services/api-types';
+import { dateRangeToDates, getPangolinLineages, PromiseWithCancel, SamplingStrategy } from '../services/api';
 import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { VariantSelector } from '../helpers/sample-selector';

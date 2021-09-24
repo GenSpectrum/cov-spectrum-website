@@ -1,14 +1,20 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
-import { useExploreUrl } from '../helpers/explore-url';
-import { DateRange } from '../services/api';
+import { ExploreUrl } from '../helpers/explore-url';
+import { DateRange } from '../services/api-types';
 
-export const HeaderDateRangeSelect = () => {
-  const exploreUrl = useExploreUrl();
+interface Props {
+  exploreUrl?: ExploreUrl;
+}
 
+export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
   if (!exploreUrl) {
     return null;
   }
+
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    exploreUrl.setDateRange(event.target.value as DateRange);
+  };
 
   return (
     <Form inline className='mr-3'>
@@ -17,7 +23,7 @@ export const HeaderDateRangeSelect = () => {
         custom
         id='dateRangeSelect'
         value={exploreUrl.dateRange}
-        onChange={ev => exploreUrl.setDateRange(ev.target.value as DateRange)}
+        onChange={handleChange}
       >
         <option value='AllTimes'>All times</option>
         <option value='Past3M'>Past 3 months</option>

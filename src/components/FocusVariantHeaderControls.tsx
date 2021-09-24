@@ -2,8 +2,8 @@ import React from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { ButtonGroup, DropdownButton } from 'react-bootstrap';
 import { AccountService } from '../services/AccountService';
-import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
-import { Country, Variant } from '../services/api-types';
+import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { Country, DateRange, Variant } from '../services/api-types';
 import { NextcladeIntegration } from '../services/external-integrations/NextcladeIntegration';
 import { LazySampleButton } from './LazySampleButton';
 import { Integration } from '../services/external-integrations/Integration';
@@ -13,6 +13,7 @@ import { NextstrainIntegration } from '../services/external-integrations/Nextstr
 import { WikipediaIntegration } from '../services/external-integrations/WikipediaIntegration';
 import { CoVariantsIntegration } from '../services/external-integrations/CoVariantsIntegration';
 import { useState } from 'react';
+import { DateFilter } from './DateFilter';
 
 export interface Props {
   country: Country;
@@ -73,6 +74,7 @@ export const FocusVariantHeaderControls = React.memo(
 
     return (
       <>
+        <DateFilter dateRange={dateRange} />
         {integrationButtons}
         {AccountService.isLoggedIn() && (
           <LazySampleButton

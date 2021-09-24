@@ -241,3 +241,19 @@ export type SequencingRepresentativenessSelector = zod.infer<
 >;
 
 export type Place = Country | Region;
+
+const ALL_TIMES = 'AllTimes';
+const PAST_3M = 'Past3M';
+const PAST_6M = 'Past6M';
+const Y2020 = 'Y2020';
+const Y2021 = 'Y2021';
+export type DateRange =
+  | typeof ALL_TIMES
+  | typeof PAST_3M
+  | typeof PAST_6M
+  | typeof Y2020
+  | typeof Y2021
+  | typeof specificDateRangePattern;
+
+export const specificDateRangePattern = `^from=\\d{4}-\\d{1,2}-\\d{1,2}&to=\\d{4}-\\d{1,2}-\\d{1,2}$`;
+export const specificDateRangeRegEx: RegExp = new RegExp(specificDateRangePattern);

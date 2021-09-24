@@ -1,5 +1,5 @@
-import { Country } from '../services/api-types';
-import { DateRange, SamplingStrategy } from '../services/api';
+import { Country, DateRange } from '../services/api-types';
+import { SamplingStrategy } from '../services/api';
 import { DeepRoute, makeLayout, makeSwitch } from '../helpers/deep-page';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';

@@ -4,8 +4,8 @@ import { generatePath, useHistory, useLocation, useRouteMatch } from 'react-rout
 import { Location, createLocation } from 'history';
 import { ZodQueryEncoder } from '../helpers/query-encoder';
 import { VariantSelector, VariantSelectorSchema } from '../helpers/sample-selector';
-import { DateRange, isDateRange, isSamplingStrategy, SamplingStrategy } from '../services/api';
-import { Country } from '../services/api-types';
+import { isDateRange, isSamplingStrategy, SamplingStrategy } from '../services/api';
+import { Country, DateRange } from '../services/api-types';
 
 const queryEncoder = new ZodQueryEncoder(VariantSelectorSchema);
 

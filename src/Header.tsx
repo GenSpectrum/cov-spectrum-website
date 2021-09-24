@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrategySelect';
 import { AccountService } from './services/AccountService';
-import { HeaderDateRangeSelect } from './components/HeaderDateRangeSelect';
 import { ExternalLink } from './components/ExternalLink';
 import { AiOutlineGithub } from 'react-icons/ai';
 import { FaFilter } from 'react-icons/fa';
@@ -123,9 +122,6 @@ const Header = () => {
                       </Button>
                     </div>
                     <div className='py-2'>
-                      <HeaderDateRangeSelect />
-                    </div>
-                    <div className='py-2'>
                       <HeaderSamplingStrategySelect />
                     </div>
                   </div>
@@ -231,9 +227,6 @@ const Header = () => {
                 <div className='flex items-center z-20 mt-2 md:mt-0'>
                   <HeaderCountrySelect />
                   <FilterDropdown />
-                  <div id='date-range-wrapper' className='hidden xl:block'>
-                    <HeaderDateRangeSelect />
-                  </div>
                   <div className='hidden xl:block'>
                     <HeaderSamplingStrategySelect />
                   </div>

@@ -55,3 +55,20 @@ code {
 .custom-narrow-dropdown button.dropdown-toggle::after {
   vertical-align: 0.15em;
 }
+.custom-date-filter-input {
+  color: #ffffff;
+  text-align: center;
+  padding: 6px;
+  font-size: 13px;
+  border: 1px solid #1269b0;
+  background-color: #1269b0;
+  border-radius: 3px;
+}
+
+.custom-date-filter-input::placeholder {
+  color: #ffffff;
+}
+
+.custom-date-filter-input:hover {
+  cursor: pointer;
+}
