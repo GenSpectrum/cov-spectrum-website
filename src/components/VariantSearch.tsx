@@ -253,13 +253,10 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
 
   return (
     <div>
-      <div className='text-sm mb-2'>
-        Type in up to one pangolin lineage and any number of mutations (or paste a comma separated list):
-      </div>
+      <div className='text-sm mb-2'>Pangolin lineage and any number of mutations:</div>
 
       {(isLoading || isFetching) && <Loader />}
       {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
-
       {isSuccess && (
         <form
           className='w-full flex flex-row items-center'
@@ -285,7 +282,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
           <AsyncSelect
             className='w-full mr-2'
             components={{ DropdownIndicator }}
-            placeholder='B.1.1.7, S:484K, ...'
+            placeholder='B.1.1.7, S:484K,...'
             isMulti
             defaultOptions={suggestOptions('')}
             loadOptions={promiseOptions}

@@ -12,12 +12,22 @@ const Wrapper = styled.div`
 
 const Loader = () => {
   return (
-    <Wrapper>
+    <div className='flex justify-center items-center h-full p-20'>
+      <Spinner animation='border' role='status'>
+        <span className='sr-only'>Loading...</span>
+      </Spinner>
+    </div>
+  );
+};
+
+export default Loader;
+
+export const MiniLoader = () => {
+  return (
+    <Wrapper className='flex justify-center items-center h-full'>
       <Spinner animation='border' role='status'>
         <span className='sr-only'>Loading...</span>
       </Spinner>
     </Wrapper>
   );
 };
-
-export default Loader;

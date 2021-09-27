@@ -25,10 +25,14 @@ export async function loadKnownVariantSampleSets<T extends VariantSelector>(
     variantSelectors,
     country,
     samplingStrategy,
+    dateFrom,
+    dateTo,
   }: {
     variantSelectors: T[];
     country: Country;
     samplingStrategy: SamplingStrategy;
+    dateFrom?: string;
+    dateTo?: string;
   },
   signal?: AbortSignal
 ): Promise<KnownVariantWithSampleSet<T>[]> {
@@ -41,10 +45,8 @@ export async function loadKnownVariantSampleSets<T extends VariantSelector>(
           mutations: selector.variant.mutations,
           pangolinLineage: selector.variant.name,
           dataType: toLiteralSamplingStrategy(samplingStrategy),
-          // We don't need very old data, since convertKnownVariantChartData will only
-          // take the latest 2 months. However since our data collection lags by a couple
-          // of weeks, we need to fetch slightly more here to ensure we have enough.
-          dateFrom: dayjs().subtract(3, 'months').weekday(0).format('YYYY-MM-DD'),
+          dateFrom, // past 3 months
+          dateTo, // undefined
         },
         signal
       )

@@ -1,5 +1,4 @@
 import React from 'react';
-import { AsyncState } from 'react-async';
 import styled from 'styled-components';
 import { ExternalLink } from '../components/ExternalLink';
 import { KnownVariantsList } from '../components/KnownVariantsList/KnownVariantsList';
@@ -7,7 +6,6 @@ import { MutationLookup } from '../components/MutationLookup';
 import { NamedSection } from '../components/NamedSection';
 import { NewVariantTable } from '../components/NewVariantTable';
 import { VariantSelector } from '../helpers/sample-selector';
-import { SampleSetWithSelector } from '../helpers/sample-set';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 import { DateRange, isRegion, SamplingStrategy } from '../services/api';
 import { Country } from '../services/api-types';
@@ -25,7 +23,6 @@ interface Props {
   dateRange: DateRange;
   onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
-  wholeSampleSetState: AsyncState<SampleSetWithSelector>;
   sequencingIntensityEntrySet: SequencingIntensityEntrySetWithSelector;
 }
 
@@ -42,7 +39,6 @@ export const ExplorePage = ({
   dateRange,
   onVariantSelect,
   selection,
-  wholeSampleSetState,
   sequencingIntensityEntrySet,
 }: Props) => {
   const toSequencingCoverage = createLocation(
@@ -59,7 +55,6 @@ export const ExplorePage = ({
           samplingStrategy={samplingStrategy}
           onVariantSelect={onVariantSelect}
           selection={selection}
-          wholeSampleSetState={wholeSampleSetState}
         />
       </NamedSection>
       <SequencingIntensityPlotWidget.ShareableComponent
