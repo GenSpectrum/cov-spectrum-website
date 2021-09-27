@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { ChartAndMetrics } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
 import { colors, TimeTick } from './common';
@@ -16,6 +16,14 @@ export type TimeIntensityEntry = {
   quantity: number;
 };
 
+type PlotEntry = {
+  id: string;
+  month: string;
+  total: number;
+  intense: number; // In case of sequencing intensity, this are the sequenced samples.
+  nonIntense: number; // In case of sequencing intensity, this are the non-sequenced samples.
+};
+
 export type Props = {
   data: TimeIntensityEntry[];
   onClickHandler?: OnClickHandler;
@@ -23,30 +31,40 @@ export type Props = {
 
 export const TimeIntensityChart = React.memo(
   ({ data, onClickHandler }: Props): JSX.Element => {
-    const [currentData, setCurrentData] = useState<TimeIntensityEntry>(data[data.length - 1]);
+    const plotData = useMemo(() => {
+      return data.map(d => ({
+        id: d.id,
+        month: d.month,
+        total: d.quantity,
+        intense: d.proportion,
+        nonIntense: d.quantity - d.proportion,
+      }));
+    }, [data]);
+
+    const [currentData, setCurrentData] = useState<PlotEntry>(plotData[plotData.length - 1]);
 
     const resetDefault = useCallback(() => {
-      setCurrentData(data[data.length - 1]);
-    }, [data]);
+      setCurrentData(plotData[plotData.length - 1]);
+    }, [plotData]);
 
     useEffect(() => {
       resetDefault();
-    }, [data, resetDefault]);
+    }, [plotData, resetDefault]);
 
     const handleMouseLeave = (): void => {
       resetDefault();
     };
 
     const bars = [
-      <Bar dataKey='proportion' key='proportion' stackId='a' isAnimationActive={false}>
-        {data.map((_, index: number) => {
+      <Bar dataKey='intense' key='intense' stackId='a' isAnimationActive={false}>
+        {plotData.map((_, index: number) => {
           return (
             <Cell cursor={onClickHandler && 'pointer'} fill={colors.active} key={`cell-${index}`}></Cell>
           );
         })}
       </Bar>,
-      <Bar dataKey='quantity' key='quantity' stackId='a' isAnimationActive={false}>
-        {data.map((entry: TimeIntensityEntry, index: number) => (
+      <Bar dataKey='nonIntense' key='nonIntense' stackId='a' isAnimationActive={false}>
+        {plotData.map((entry: PlotEntry, index: number) => (
           <Cell
             cursor={onClickHandler && 'pointer'}
             fill={entry.id === currentData.id ? colors.activeSecondary : colors.inactive}
@@ -59,29 +77,29 @@ export const TimeIntensityChart = React.memo(
     const metrics = currentData
       ? [
           {
-            value: kFormat(currentData.quantity),
+            value: kFormat(currentData.total),
             title: 'Confirmed',
             color: colors.activeSecondary,
             helpText: 'Number of confirmed cases in this time frame.',
           },
           {
-            value: kFormat(currentData.proportion),
+            value: kFormat(currentData.intense),
             title: 'Sequenced',
             color: colors.active,
             helpText: 'Number of samples sequenced among the confirmed cases on this time frame.',
-            showPercent: Math.round((currentData.proportion / currentData.quantity) * 100).toFixed(0),
+            showPercent: Math.round((currentData.intense / currentData.total) * 100).toFixed(0),
           },
         ]
       : [];
 
     //only display active index when the end is not selected
-    const onlyDisplayActive = !(currentData === data[data.length - 1]);
+    const onlyDisplayActive = !(currentData === plotData[plotData.length - 1]);
 
     return currentData ? (
       <ChartAndMetrics metrics={metrics} title={`Number of sequenced samples on ${currentData.month}`}>
         <ResponsiveContainer>
           <BarChart
-            data={data}
+            data={plotData}
             barCategoryGap='5%'
             margin={{ top: 0, right: CHART_MARGIN_RIGHT, left: 0, bottom: CHART_MARGIN_BOTTOM }}
             onMouseLeave={handleMouseLeave}
@@ -104,7 +122,7 @@ export const TimeIntensityChart = React.memo(
               }
             />
             <YAxis
-              dataKey='quantity'
+              dataKey='total'
               tickFormatter={(v: number) => kFormat(v)}
               interval={1}
               axisLine={false}
