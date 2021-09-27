@@ -38,7 +38,7 @@ export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Pro
   return (
     <div className='ml-3'>
       <div className='flex'>
-        <div className='flex-grow flex flex-row items-end space-x-2'>
+        <div className='flex-grow flex flex-row flex-wrap items-end space-x-2 whitespace-nowrap'>
           <h1>
             {formatVariantDisplayName(variant)}
             {label && ` (${label})`}

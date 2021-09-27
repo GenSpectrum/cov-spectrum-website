@@ -56,12 +56,11 @@ code {
   vertical-align: 0.15em;
 }
 .custom-date-filter-input {
-  /*background-image: url(https://img.icons8.com/office/40/000000/calendar--v1.png);*/
-  background-image: url(https://img.icons8.com/ios-filled/50/000000/sort.png);
-  background-size: 16px 16px;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e");
+  background-size: 8px 10px;
   background-repeat: no-repeat;
-  background-position: right 5px bottom 8px;
-  border-radius: 18px; /*rounded border */
+  background-position: right 5px bottom 50%;
+  border-radius: 0.25rem; /*rounded border */
   border: 1px solid #34495e;
   padding: 5px 18px 5px 5px;
   color: black;
@@ -73,7 +72,7 @@ code {
 }
 
 .custom-date-filter-input:focus {
-  box-shadow: 0 0 2px 2px rgba(14, 202, 45, 0.4);
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 .custom-date-filter-input::placeholder {
