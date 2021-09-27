@@ -204,13 +204,12 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
         onSelect={setSelectedVariantList}
       />
 
-      {isLoading() && <Loader />}
+      {isLoading() && !isPLSuccess && !isKVSuccess && <Loader />}
       {isPLError && pLError && <Alert variant={AlertVariant.DANGER}>{pLError.message}</Alert>}
       {isKVError && kVError && <Alert variant={AlertVariant.DANGER}>{kVError.message}</Alert>}
       {wholeSampleSetState.status === 'rejected' && (
         <Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>
       )}
-
       <Grid>
         {isPLSuccess &&
           isKVSuccess &&

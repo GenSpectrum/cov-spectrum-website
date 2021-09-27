@@ -155,8 +155,6 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
    * 1) when input value contains ",", call the handleCommaSeparatedInput function
    * 2) otherwise, set the input value to the new value and keep menu window open
    * 3) when input change action is menu-close or input-blur, close menu window
-   * @param newValue the new input value
-   * @param change the change action
    */
   const handleInputChange = (newValue: string, change: InputActionMeta) => {
     if (change.action === 'input-change') {
@@ -182,7 +180,6 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
    * 4) max 1 pangolin lineage but multiple mutations allowed
    * 5) invalid queries stay as comma-separated plain text
    * 6) leave options menu open if there are invalid queries from the list
-   * @param inputValue comma-separated string
    */
   const handleCommaSeparatedInput = (inputValue: string) => {
     const inputValues = inputValue.split(',');
