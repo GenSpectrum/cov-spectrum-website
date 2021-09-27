@@ -9,7 +9,7 @@ import { VariantSelector } from '../helpers/sample-selector';
 import { PangolinLineageList } from '../services/api-types';
 import { useQuery } from 'react-query';
 import { getPangolinLineages, PromiseWithCancel, SamplingStrategy } from '../services/api';
-import Loader from './Loader';
+import { InputLoader } from './Loader';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 
 type SearchOption = {
@@ -255,9 +255,9 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
     <div>
       <div className='text-sm mb-2'>Pangolin lineage and any number of mutations:</div>
 
-      {(isLoading || isFetching) && <Loader />}
+      {(isLoading || isFetching) && <InputLoader />}
       {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
-      {isSuccess && (
+      {isSuccess && !isLoading && !isFetching && (
         <form
           className='w-full flex flex-row items-center'
           onSubmit={e => {

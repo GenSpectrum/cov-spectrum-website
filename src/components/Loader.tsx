@@ -20,14 +20,15 @@ const Loader = () => {
   );
 };
 
-export default Loader;
-
-export const MiniLoader = () => {
+export const InputLoader = () => {
   return (
-    <Wrapper className='flex justify-center items-center h-full'>
-      <Spinner animation='border' role='status'>
-        <span className='sr-only'>Loading...</span>
-      </Spinner>
-    </Wrapper>
+    <div className='flex justify-center items-center w-full my-1'>
+      <div className='animate-pulse w-full'>
+        {' '}
+        <div className='h-8 bg-gradient-to-r from-gray-400 to-gray-300 rounded w-full'></div>
+      </div>
+    </div>
   );
 };
+
+export default Loader;
