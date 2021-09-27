@@ -1,7 +1,15 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
 import { ExploreUrl } from '../helpers/explore-url';
-import { ALL_TIMES, DateRange, PAST_3M, PAST_6M, Y2020, Y2021 } from '../services/api-types';
+import {
+  ALL_TIMES,
+  DateRange,
+  PAST_3M,
+  PAST_6M,
+  specificDateRangeRegEx,
+  Y2020,
+  Y2021,
+} from '../services/api-types';
 import { dateRangeToString } from '../services/api';
 
 interface Props {
@@ -23,9 +31,12 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
         as='select'
         custom
         id='dateRangeSelect'
-        value={exploreUrl.dateRange}
+        value={specificDateRangeRegEx.test(exploreUrl.dateRange) ? '' : exploreUrl.dateRange}
         onChange={handleChange}
       >
+        <option value='' disabled selected>
+          Custom Ranges
+        </option>
         <option value={ALL_TIMES}>{dateRangeToString(ALL_TIMES)}</option>
         <option value={PAST_3M}>{dateRangeToString(PAST_3M)}</option>
         <option value={PAST_6M}>{dateRangeToString(PAST_6M)}</option>

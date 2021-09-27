@@ -255,5 +255,5 @@ export type DateRange =
   | typeof Y2021
   | typeof specificDateRangePattern;
 
-export const specificDateRangePattern = `^from=\\d{4}-\\d{1,2}-\\d{1,2}&to=\\d{4}-\\d{1,2}-\\d{1,2}$`;
+export const specificDateRangePattern = `^from=\\d{4}-\\d{2}-\\d{2}&to=\\d{4}-\\d{2}-\\d{2}$`;
 export const specificDateRangeRegEx: RegExp = new RegExp(specificDateRangePattern);
