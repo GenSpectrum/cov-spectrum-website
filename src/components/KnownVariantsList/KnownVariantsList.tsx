@@ -185,17 +185,6 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
     });
   }, [variantSampleSets, wholeSampleSetState, knownVariantsWithoutData]);
 
-  const isLoading = () => {
-    return (
-      isPLLoading ||
-      isPLFetching ||
-      isKVLoading ||
-      isKVFetching ||
-      wholeSampleSetState.status === 'initial' ||
-      wholeSampleSetState.status === 'pending'
-    );
-  };
-
   return (
     <>
       <KnownVariantsListSelection
