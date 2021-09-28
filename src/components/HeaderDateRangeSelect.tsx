@@ -31,10 +31,11 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
         as='select'
         custom
         id='dateRangeSelect'
+        defaultValue={''}
         value={specificDateRangeRegEx.test(exploreUrl.dateRange) ? '' : exploreUrl.dateRange}
         onChange={handleChange}
       >
-        <option value='' disabled selected>
+        <option value='' disabled>
           Custom Ranges
         </option>
         <option value={ALL_TIMES}>{dateRangeToString(ALL_TIMES)}</option>

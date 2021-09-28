@@ -7,7 +7,7 @@ import React from 'react';
 import { Route, useRouteMatch } from 'react-router';
 import { SequencingCoverageDeepExplore } from '../components/SequencingCoverageDeepExplore';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
-import { DateFilter } from '../components/DateFilter';
+import { DateRangeSelector } from '../components/DateRangeSelector';
 
 interface Props {
   country: Country;
@@ -45,7 +45,7 @@ export const DeepExplorePage = (props: Props) => {
                 </Route>
               ))}
             </h1>
-            {props.dateRange && <DateFilter dateRange={props.dateRange} />}
+            {props.dateRange && <DateRangeSelector dateRange={props.dateRange} />}
           </div>
           <div>
             <Button className='mt-2' variant='secondary' as={Link} to={url}>

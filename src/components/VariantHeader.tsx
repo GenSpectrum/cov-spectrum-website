@@ -3,7 +3,8 @@ import { DateRange, Place, Variant } from '../services/api-types';
 import { PangolinLineageAliasResolverService } from '../services/PangolinLineageAliasResolverService';
 import { getWHOLabel, getWHOVariantType } from '../services/who-label';
 import { formatVariantDisplayName, isPurePangolinLineage } from '../helpers/variant-selector';
-import { DateFilter } from './DateFilter';
+//import { DateFilter } from './DateFilter';
+import { DateRangeSelector } from './DateRangeSelector';
 
 export interface Props {
   variant: Variant;
@@ -46,7 +47,7 @@ export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Pro
             {titleSuffix}
           </h1>
           {<h3 className='pl-1.5 text-gray-500'>{type && ` variant of ${type}`}</h3>}
-          {dateRange && <DateFilter dateRange={dateRange} />}
+          {dateRange && <DateRangeSelector dateRange={dateRange} />}
         </div>
         <div>{controls}</div>
       </div>

@@ -1,6 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { RefObject, useEffect, useState } from 'react';
 import 'react-modern-calendar-datepicker/lib/DatePicker.css';
-import DatePicker, { CalendarDigit, Day, DayRange, DayValue, Locale } from 'react-modern-calendar-datepicker';
+import DatePicker, {
+  CalendarDigit,
+  Day,
+  DayRange,
+  DayValue,
+  Locale,
+  RenderInputProps,
+} from 'react-modern-calendar-datepicker-fix';
 import { Button } from 'react-bootstrap';
 import { HeaderDateRangeSelect } from './HeaderDateRangeSelect';
 import { dateRangeToDates, dateRangeToString } from '../services/api';
@@ -59,14 +66,18 @@ export const DateFilter = ({ dateRange }: Props) => {
       : '';
   };
 
-  const renderCustomInput = ({ ref }: any) => (
-    <input
-      ref={ref} // necessary
-      placeholder={dateRange && dateRange === ALL_TIMES ? dateRangeToString(dateRange) : `Select Date Range`}
-      value={dayRange && dayRange.from && dayRange.to ? `${formatDateRange(dayRange)}` : ''}
-      className='custom-date-filter-input'
-    />
-  );
+  const renderCustomInput = ({ ref }: RenderInputProps) => {
+    return (
+      <input
+        ref={ref as RefObject<HTMLInputElement>} // necessary
+        placeholder={
+          dateRange && dateRange === ALL_TIMES ? dateRangeToString(dateRange) : `Select Date Range`
+        }
+        value={dayRange && dayRange.from && dayRange.to ? `${formatDateRange(dayRange)}` : ''}
+        className='custom-date-filter-input'
+      />
+    );
+  };
 
   const resetDateFilter = () => {
     setDayRange({ from: null, to: null });
