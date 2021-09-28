@@ -54,9 +54,11 @@ export const VariantLineages = ({
     }[]
   >([]);
   const { dateFrom, dateTo } = dateRangeToDates(dateRange);
+  const unifiedDateFrom = dateFrom && dayjs(dateFrom).format('YYYY-MM-DD');
+  const unifiedDateTo = dateTo && dayjs(dateTo).format('YYYY-MM-DD');
 
   const { isLoading, error, isError, isSuccess, isFetching } = useQuery<PangolinLineageList, Error>(
-    ['pangolinLineages', country, matchPercentage, variant, samplingStrategy, dateFrom, dateTo],
+    ['pangolinLineages', country, matchPercentage, variant, samplingStrategy, unifiedDateFrom, unifiedDateTo],
     () => {
       const controller = new AbortController();
       const signal = controller.signal;
@@ -65,8 +67,8 @@ export const VariantLineages = ({
           country,
           samplingStrategy,
           pangolinLineage: variant.name,
-          dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
-          dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
+          dateFrom: unifiedDateFrom,
+          dateTo: unifiedDateTo,
           mutationsString: variant.mutations.join(','),
           matchPercentage,
         },
