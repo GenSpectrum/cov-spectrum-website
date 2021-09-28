@@ -84,6 +84,9 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
   return (
     <>
       <div className='flex flex-nowrap'>
+        <div className='flex flex-row items-end inline-block align-middle'>
+          <HeaderDateRangeSelect exploreUrl={exploreUrl} />
+        </div>
         <div className='flex flex-row items-end inline-block align-middle space-x-2'>
           <h3 className='pl-1.5 text-gray-500'>from:</h3>
           <DatePicker
@@ -118,9 +121,6 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
             minDate={startDate}
           />
         </div>
-      </div>
-      <div className='flex flex-row items-end inline-block align-middle'>
-        <HeaderDateRangeSelect exploreUrl={exploreUrl} />
       </div>
     </>
   );
