@@ -186,13 +186,7 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
   }, [variantSampleSets, wholeSampleSetState, knownVariantsWithoutData]);
 
   return (
-    <>
-      <KnownVariantsListSelection
-        variantLists={VARIANT_LISTS}
-        selected={selectedVariantList}
-        onSelect={setSelectedVariantList}
-      />
-
+    <div className='mt-2'>
       {isPLError && pLError && <Alert variant={AlertVariant.DANGER}>{pLError.message}</Alert>}
       {isKVError && kVError && <Alert variant={AlertVariant.DANGER}>{kVError.message}</Alert>}
       {wholeSampleSetState.status === 'rejected' && (
@@ -218,6 +212,11 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
       ) : (
         <KnownVariantLoader />
       )}
-    </>
+      <KnownVariantsListSelection
+        variantLists={VARIANT_LISTS}
+        selected={selectedVariantList}
+        onSelect={setSelectedVariantList}
+      />
+    </div>
   );
 };
