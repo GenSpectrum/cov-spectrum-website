@@ -132,13 +132,7 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
     return promise;
   };
 
-  const {
-    isFetching: isPLFetching,
-    isError: isPLError,
-    error: pLError,
-    isLoading: isPLLoading,
-    isSuccess: isPLSuccess,
-  } = useQuery<PangolinLineageList, Error>(
+  const { isError: isPLError, error: pLError, isSuccess: isPLSuccess } = useQuery<PangolinLineageList, Error>(
     ['pangolinLineages', country, samplingStrategy, selectedVariantList],
     fetchPangolinLineages
   );
@@ -164,13 +158,10 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
     return promise;
   };
 
-  const {
-    isFetching: isKVFetching,
-    isError: isKVError,
-    error: kVError,
-    isLoading: isKVLoading,
-    isSuccess: isKVSuccess,
-  } = useQuery<KnownVariantWithSampleSet<VariantSelector>[], Error>(
+  const { isError: isKVError, error: kVError, isSuccess: isKVSuccess } = useQuery<
+    KnownVariantWithSampleSet<VariantSelector>[],
+    Error
+  >(
     ['knownVariantsSampleSets', country, samplingStrategy, knownVariantSelectors],
     fetchKnownVariantSampleSets
   );
@@ -186,7 +177,7 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
   }, [variantSampleSets, wholeSampleSetState, knownVariantsWithoutData]);
 
   return (
-    <div className='mt-2'>
+    <div>
       {isPLError && pLError && <Alert variant={AlertVariant.DANGER}>{pLError.message}</Alert>}
       {isKVError && kVError && <Alert variant={AlertVariant.DANGER}>{kVError.message}</Alert>}
       {wholeSampleSetState.status === 'rejected' && (
