@@ -22,7 +22,7 @@ import _VARIANT_LISTS from './variantLists.json';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
 import { formatVariantDisplayName } from '../../helpers/variant-selector';
 import { useQuery } from 'react-query';
-import Loader from '../Loader';
+import { KnownVariantLoader } from '../Loader';
 import { Alert, AlertVariant } from '../../helpers/ui';
 import { useWholeSampleSet } from '../../pages/ExploreFocusSplit';
 
@@ -40,7 +40,7 @@ interface Props {
   selection: VariantSelector | undefined;
 }
 
-const Grid = styled.div`
+export const Grid = styled.div`
   display: grid;
   grid-gap: 5px;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -204,16 +204,14 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
         onSelect={setSelectedVariantList}
       />
 
-      {isLoading() && !isPLSuccess && !isKVSuccess && <Loader />}
       {isPLError && pLError && <Alert variant={AlertVariant.DANGER}>{pLError.message}</Alert>}
       {isKVError && kVError && <Alert variant={AlertVariant.DANGER}>{kVError.message}</Alert>}
       {wholeSampleSetState.status === 'rejected' && (
         <Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>
       )}
-      <Grid>
-        {isPLSuccess &&
-          isKVSuccess &&
-          knownVariants.map(({ selector, chartData, recentProportion }) => (
+      {isPLSuccess && isKVSuccess ? (
+        <Grid>
+          {knownVariants.map(({ selector, chartData, recentProportion }) => (
             <KnownVariantCard
               key={formatVariantDisplayName(selector.variant, true)}
               name={formatVariantDisplayName(selector.variant, true)}
@@ -227,7 +225,10 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
               }
             />
           ))}
-      </Grid>
+        </Grid>
+      ) : (
+        <KnownVariantLoader />
+      )}
     </>
   );
 };
