@@ -1,0 +1,27 @@
+# https://docs.github.com/en/actions/managing-issues-and-pull-requests/scheduling-issue-creation
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Check country list for new countries
+on:
+  schedule:
+    - cron: 0 9 10,25 * *
+
+jobs:
+  create_issue:
+    name: Check country list for new countries
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Check country list for new countries
+        uses: imjohnbo/issue-bot@3daae12aa54d38685d7ff8459fc8a2aee8cea98b
+        with:
+          title: "Check country list for new countries"
+          pinned: false
+          close-previous: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
