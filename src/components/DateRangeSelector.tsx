@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import DatePicker from 'react-datepicker';
+import React, { useEffect, useRef, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { HeaderDateRangeSelect } from './HeaderDateRangeSelect';
 import { DateRange, dateStringRegex } from '../services/api-types';
 import { useExploreUrl } from '../helpers/explore-url';
 import { dateRangeToDates } from '../services/api';
 import dayjs from 'dayjs';
+import { HiArrowNarrowRight } from 'react-icons/hi';
+import ReactDatePicker from 'react-datepicker';
 
 interface Props {
   dateRange: DateRange;
@@ -18,6 +19,8 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
   const [startDate, setStartDate] = useState<Date>(dateFrom ? dateFrom : minimumDate);
   const [endDate, setEndDate] = useState<Date>(dateTo ? dateTo : today);
   const exploreUrl = useExploreUrl();
+  const startDatePickerRef = useRef<ReactDatePicker>(null);
+  const endDatePickerRef = useRef<ReactDatePicker>(null);
 
   useEffect(() => {
     const { dateFrom, dateTo } = dateRangeToDates(dateRange);
@@ -81,15 +84,24 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
     }
   };
 
+  const handleStartDatePickerBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    startDatePickerRef.current?.setOpen(false);
+    endDatePickerRef.current?.setFocus();
+  };
+
+  const handleEndDatePickerBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    endDatePickerRef.current?.setOpen(false);
+  };
+
   return (
     <>
-      <div className='flex flex-nowrap'>
+      <div className='flex flex-nowrap space-x-1.5'>
         <div className='flex flex-row items-end inline-block align-middle'>
           <HeaderDateRangeSelect exploreUrl={exploreUrl} />
         </div>
-        <div className='flex flex-row items-end inline-block align-middle space-x-2'>
-          <h3 className='pl-1.5 text-gray-500'>from:</h3>
-          <DatePicker
+        <div className='flex flex-row items-end inline-block align-middle' onBlur={handleStartDatePickerBlur}>
+          <ReactDatePicker
+            ref={startDatePickerRef}
             className='border rounded py-1.5 px-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
             dateFormat='yyyy-MM-dd'
             selected={startDate}
@@ -103,11 +115,15 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
             minDate={minimumDate}
             maxDate={endDate}
             adjustDateOnChange
+            enableTabLoop={false}
           />
         </div>
-        <div className='flex flex-row items-end inline-block align-middle space-x-2'>
-          <h3 className='pl-1.5 text-gray-500'>until:</h3>
-          <DatePicker
+        <div className='flex flex-row items-center inline-block align-middle'>
+          <HiArrowNarrowRight />
+        </div>
+        <div className='flex flex-row items-end inline-block align-middle' onBlur={handleEndDatePickerBlur}>
+          <ReactDatePicker
+            ref={endDatePickerRef}
             className='border rounded py-1.5 px-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
             dateFormat='yyyy-MM-dd'
             selected={endDate}
@@ -119,6 +135,8 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
             startDate={startDate}
             endDate={endDate}
             minDate={startDate}
+            adjustDateOnChange
+            enableTabLoop={false}
           />
         </div>
       </div>

@@ -26,7 +26,7 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
   };
 
   return (
-    <Form inline className='mr-3'>
+    <Form inline>
       <Form.Control
         as='select'
         custom
