@@ -85,11 +85,13 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
   };
 
   const handleStartDatePickerBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    console.log(event)
     startDatePickerRef.current?.setOpen(false);
     endDatePickerRef.current?.setFocus();
   };
 
   const handleEndDatePickerBlur = (event: React.FocusEvent<HTMLInputElement>) => {
+    console.log(event)
     endDatePickerRef.current?.setOpen(false);
   };
 
