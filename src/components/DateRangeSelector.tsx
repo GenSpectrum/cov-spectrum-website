@@ -100,7 +100,10 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
           <HeaderDateRangeSelect exploreUrl={exploreUrl} />
         </div>
         <div className='flex flex-nowrap space-x-1.5'>
-          <div className='flex flex-row items-end inline-block align-middle' onBlur={handleStartDatePickerBlur}>
+          <div
+            className='flex flex-row items-end inline-block align-middle'
+            onBlur={handleStartDatePickerBlur}
+          >
             <ReactDatePicker
               ref={startDatePickerRef}
               className='border rounded py-1.5 px-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
