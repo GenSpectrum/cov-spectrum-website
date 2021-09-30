@@ -36,7 +36,7 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
         onChange={handleChange}
       >
         <option value='' disabled>
-          Custom Ranges
+          Custom Range
         </option>
         <option value={ALL_TIMES}>{dateRangeToString(ALL_TIMES)}</option>
         <option value={PAST_3M}>{dateRangeToString(PAST_3M)}</option>

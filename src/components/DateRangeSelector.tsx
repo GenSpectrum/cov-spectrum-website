@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { HeaderDateRangeSelect } from './HeaderDateRangeSelect';
 import { DateRange, dateStringRegex } from '../services/api-types';
@@ -19,8 +19,6 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
   const [startDate, setStartDate] = useState<Date>(dateFrom ? dateFrom : minimumDate);
   const [endDate, setEndDate] = useState<Date>(dateTo ? dateTo : today);
   const exploreUrl = useExploreUrl();
-  const startDatePickerRef = useRef<ReactDatePicker>(null);
-  const endDatePickerRef = useRef<ReactDatePicker>(null);
 
   useEffect(() => {
     const { dateFrom, dateTo } = dateRangeToDates(dateRange);
@@ -93,8 +91,10 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
         <div className='flex flex-nowrap space-x-1.5'>
           <div className='flex flex-row items-end inline-block align-middle'>
             <ReactDatePicker
-              ref={startDatePickerRef}
-              className='border rounded py-1.5 px-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
+              enableTabLoop={false}
+              disabledKeyboardNavigation={true}
+              preventOpenOnFocus={true}
+              className='border rounded py-1.5 px-3 w-32 focus:outline-none focus:ring focus:border-blue-200'
               dateFormat='yyyy-MM-dd'
               selected={startDate}
               onChangeRaw={handleStartDateRaw}
@@ -106,8 +106,6 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
               endDate={endDate}
               minDate={minimumDate}
               maxDate={endDate}
-              adjustDateOnChange
-              enableTabLoop={false}
             />
           </div>
           <div className='flex flex-row items-center inline-block align-middle'>
@@ -115,8 +113,10 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
           </div>
           <div className='flex flex-row items-end inline-block align-middle'>
             <ReactDatePicker
-              ref={endDatePickerRef}
-              className='border rounded py-1.5 px-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
+              enableTabLoop={false}
+              disabledKeyboardNavigation={true}
+              preventOpenOnFocus={true}
+              className='border rounded py-1.5 px-3 w-32 focus:outline-none focus:ring focus:border-blue-200'
               dateFormat='yyyy-MM-dd'
               selected={endDate}
               onChangeRaw={handleEndDateRaw}
@@ -127,8 +127,6 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
               startDate={startDate}
               endDate={endDate}
               minDate={startDate}
-              adjustDateOnChange
-              enableTabLoop={false}
             />
           </div>
         </div>
