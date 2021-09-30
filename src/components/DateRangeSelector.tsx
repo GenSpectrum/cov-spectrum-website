@@ -95,49 +95,51 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
 
   return (
     <>
-      <div className='flex flex-nowrap space-x-1.5'>
+      <div className='flex flex-wrap space-x-1.5'>
         <div className='flex flex-row items-end inline-block align-middle'>
           <HeaderDateRangeSelect exploreUrl={exploreUrl} />
         </div>
-        <div className='flex flex-row items-end inline-block align-middle' onBlur={handleStartDatePickerBlur}>
-          <ReactDatePicker
-            ref={startDatePickerRef}
-            className='border rounded py-1.5 px-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
-            dateFormat='yyyy-MM-dd'
-            selected={startDate}
-            onChangeRaw={handleStartDateRaw}
-            onChange={() => {}}
-            onMonthChange={handleStartDateMonthChange}
-            onSelect={handleStartDateSelect}
-            selectsStart
-            startDate={startDate}
-            endDate={endDate}
-            minDate={minimumDate}
-            maxDate={endDate}
-            adjustDateOnChange
-            enableTabLoop={false}
-          />
-        </div>
-        <div className='flex flex-row items-center inline-block align-middle'>
-          <HiArrowNarrowRight />
-        </div>
-        <div className='flex flex-row items-end inline-block align-middle' onBlur={handleEndDatePickerBlur}>
-          <ReactDatePicker
-            ref={endDatePickerRef}
-            className='border rounded py-1.5 px-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
-            dateFormat='yyyy-MM-dd'
-            selected={endDate}
-            onChangeRaw={handleEndDateRaw}
-            onChange={() => {}}
-            onMonthChange={handleEndDateMonthChange}
-            onSelect={handleEndDateSelect}
-            selectsEnd
-            startDate={startDate}
-            endDate={endDate}
-            minDate={startDate}
-            adjustDateOnChange
-            enableTabLoop={false}
-          />
+        <div className='flex flex-nowrap space-x-1.5'>
+          <div className='flex flex-row items-end inline-block align-middle' onBlur={handleStartDatePickerBlur}>
+            <ReactDatePicker
+              ref={startDatePickerRef}
+              className='border rounded py-1.5 px-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
+              dateFormat='yyyy-MM-dd'
+              selected={startDate}
+              onChangeRaw={handleStartDateRaw}
+              onChange={() => {}}
+              onMonthChange={handleStartDateMonthChange}
+              onSelect={handleStartDateSelect}
+              selectsStart
+              startDate={startDate}
+              endDate={endDate}
+              minDate={minimumDate}
+              maxDate={endDate}
+              adjustDateOnChange
+              enableTabLoop={false}
+            />
+          </div>
+          <div className='flex flex-row items-center inline-block align-middle'>
+            <HiArrowNarrowRight />
+          </div>
+          <div className='flex flex-row items-end inline-block align-middle' onBlur={handleEndDatePickerBlur}>
+            <ReactDatePicker
+              ref={endDatePickerRef}
+              className='border rounded py-1.5 px-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
+              dateFormat='yyyy-MM-dd'
+              selected={endDate}
+              onChangeRaw={handleEndDateRaw}
+              onChange={() => {}}
+              onMonthChange={handleEndDateMonthChange}
+              onSelect={handleEndDateSelect}
+              selectsEnd
+              startDate={startDate}
+              endDate={endDate}
+              minDate={startDate}
+              adjustDateOnChange
+              enableTabLoop={false}
+            />
+          </div>
         </div>
       </div>
     </>
