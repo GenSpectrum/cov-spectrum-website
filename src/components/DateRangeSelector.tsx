@@ -94,7 +94,7 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
               enableTabLoop={false}
               disabledKeyboardNavigation={true}
               preventOpenOnFocus={true}
-              className='border rounded py-1.5 px-3 w-32 focus:outline-none focus:ring focus:border-blue-200'
+              className='border rounded py-1.5 pl-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
               dateFormat='yyyy-MM-dd'
               selected={startDate}
               onChangeRaw={handleStartDateRaw}
@@ -116,7 +116,7 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
               enableTabLoop={false}
               disabledKeyboardNavigation={true}
               preventOpenOnFocus={true}
-              className='border rounded py-1.5 px-3 w-32 focus:outline-none focus:ring focus:border-blue-200'
+              className='border rounded py-1.5 pl-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
               dateFormat='yyyy-MM-dd'
               selected={endDate}
               onChangeRaw={handleEndDateRaw}

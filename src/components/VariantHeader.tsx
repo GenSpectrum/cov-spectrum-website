@@ -3,7 +3,6 @@ import { DateRange, Place, Variant } from '../services/api-types';
 import { PangolinLineageAliasResolverService } from '../services/PangolinLineageAliasResolverService';
 import { getWHOLabel, getWHOVariantType } from '../services/who-label';
 import { formatVariantDisplayName, isPurePangolinLineage } from '../helpers/variant-selector';
-//import { DateFilter } from './DateFilter';
 import { DateRangeSelector } from './DateRangeSelector';
 
 export interface Props {
