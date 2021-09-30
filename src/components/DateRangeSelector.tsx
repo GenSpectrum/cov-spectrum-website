@@ -84,17 +84,6 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
     }
   };
 
-  const handleStartDatePickerBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-    console.log(event);
-    startDatePickerRef.current?.setOpen(false);
-    endDatePickerRef.current?.setFocus();
-  };
-
-  const handleEndDatePickerBlur = (event: React.FocusEvent<HTMLInputElement>) => {
-    console.log(event);
-    endDatePickerRef.current?.setOpen(false);
-  };
-
   return (
     <>
       <div className='flex flex-wrap space-x-1.5'>
@@ -102,10 +91,7 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
           <HeaderDateRangeSelect exploreUrl={exploreUrl} />
         </div>
         <div className='flex flex-nowrap space-x-1.5'>
-          <div
-            className='flex flex-row items-end inline-block align-middle'
-            onBlur={handleStartDatePickerBlur}
-          >
+          <div className='flex flex-row items-end inline-block align-middle'>
             <ReactDatePicker
               ref={startDatePickerRef}
               className='border rounded py-1.5 px-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
@@ -127,7 +113,7 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
           <div className='flex flex-row items-center inline-block align-middle'>
             <HiArrowNarrowRight />
           </div>
-          <div className='flex flex-row items-end inline-block align-middle' onBlur={handleEndDatePickerBlur}>
+          <div className='flex flex-row items-end inline-block align-middle'>
             <ReactDatePicker
               ref={endDatePickerRef}
               className='border rounded py-1.5 px-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
