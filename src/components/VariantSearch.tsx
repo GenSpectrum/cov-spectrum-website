@@ -249,9 +249,8 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
   };
 
   return (
-    <div>
+    <div className='mb-2'>
       <div className='text-sm mb-2'>Pangolin lineage and any number of mutations:</div>
-
       {(isLoading || isFetching) && <InputLoader />}
       {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
       {isSuccess && !isLoading && !isFetching && (

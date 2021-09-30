@@ -47,15 +47,15 @@ export const ExplorePage = ({
   return (
     <>
       <NamedSection title='Known variants' subtitle='Which variant would you like to explore?'>
+        <div className='mt-4'>
+          <VariantSearch onVariantSelect={onVariantSelect} />
+        </div>
         <KnownVariantsList
           country={country}
           samplingStrategy={samplingStrategy}
           onVariantSelect={onVariantSelect}
           selection={selection}
         />
-        <div className='mt-4'>
-          <VariantSearch onVariantSelect={onVariantSelect} />
-        </div>
       </NamedSection>
       <SequencingIntensityPlotWidget.ShareableComponent
         title='Sequencing intensity'
