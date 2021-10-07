@@ -106,7 +106,7 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
               endDate={endDate}
               minDate={minimumDate}
               maxDate={endDate}
-              locale="de-ch"
+              locale='de-ch'
               calendarStartDay={1}
               useWeekdaysShort={true}
             />
@@ -130,7 +130,7 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
               startDate={startDate}
               endDate={endDate}
               minDate={startDate}
-              locale="de-ch"
+              locale='de-ch'
               calendarStartDay={1}
               useWeekdaysShort={true}
             />
