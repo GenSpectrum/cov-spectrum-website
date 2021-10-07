@@ -4,13 +4,12 @@ import styled from 'styled-components';
 import { VariantSelector } from '../../helpers/sample-selector';
 import { SampleSetWithSelector } from '../../helpers/sample-set';
 import {
-  DateRange,
   dateRangeToDates,
   getPangolinLineages,
   PromiseWithCancel,
   SamplingStrategy,
 } from '../../services/api';
-import { Country, PangolinLineageList, Variant } from '../../services/api-types';
+import { Country, DateRange, PangolinLineageList, Variant } from '../../services/api-types';
 import { KnownVariantCard } from './KnownVariantCard';
 import {
   convertKnownVariantChartData,

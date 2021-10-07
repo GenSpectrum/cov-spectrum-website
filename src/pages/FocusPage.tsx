@@ -22,8 +22,8 @@ import { WasteWaterDataset } from '../models/wasteWater/types';
 import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
 import { AccountService } from '../services/AccountService';
-import { DateRange, isRegion, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
-import { Country, Variant } from '../services/api-types';
+import { isRegion, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { Country, DateRange, Variant } from '../services/api-types';
 import { ArticleListWidget } from '../widgets/ArticleList';
 import { EstimatedCasesPlotWidget } from '../widgets/EstimatedCasesPlot';
 import { HospitalizationDeathPlotWidget } from '../widgets/HospitalizationDeathPlot';
@@ -40,12 +40,14 @@ interface Props {
   variant: Variant;
   samplingStrategy: SamplingStrategy;
   dateRange: DateRange;
-  variantSampleSet: SampleSetWithSelector;
-  wholeSampleSet: SampleSetWithSelector;
+  variantSampleSet?: SampleSetWithSelector;
+  wholeSampleSet?: SampleSetWithSelector;
+  sequencingIntensityEntrySet?: SequencingIntensityEntrySetWithSelector;
   variantInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
   wholeInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
-  sequencingIntensityEntrySet: SequencingIntensityEntrySetWithSelector;
   onVariantSelect: (selection: VariantSelector) => void;
+  isDataPending: () => boolean;
+  isDataRejected: () => boolean;
 }
 
 const deepFocusPaths = {
@@ -73,6 +75,8 @@ export const FocusPage = ({
   variantInternationalSampleSetState,
   wholeInternationalSampleSetState,
   sequencingIntensityEntrySet,
+  isDataPending,
+  isDataRejected,
   onVariantSelect,
   ...forwardedProps
 }: Props) => {
@@ -119,23 +123,6 @@ export const FocusPage = ({
 
   const mapExportManagerRef = useRef(new ExportManager());
 
-  const header = (
-    <VariantHeader
-      variant={variant}
-      place={country}
-      controls={<FocusVariantHeaderControls {...forwardedProps} />}
-    />
-  );
-
-  if (variantSampleSet.isEmpty()) {
-    return (
-      <>
-        <VariantHeader variant={variant} place={country} />
-        <Alert variant={AlertVariant.WARNING}>No samples match your query</Alert>
-      </>
-    );
-  }
-
   let wasteWaterSummaryPlot = undefined;
   if (country === 'Switzerland' && variant.name && WASTE_WATER_AVAILABLE_LINEAGES.includes(variant.name)) {
     if (wasteWaterData) {
@@ -167,7 +154,43 @@ export const FocusPage = ({
     }
   }
 
-  return (
+  const header = (
+    <VariantHeader
+      variant={variant}
+      place={country}
+      controls={<FocusVariantHeaderControls {...forwardedProps} />}
+      dateRange={dateRange}
+    />
+  );
+
+  if (isDataPending()) {
+    return (
+      <>
+        {header}
+        <Loader />
+      </>
+    );
+  }
+
+  if (isDataRejected()) {
+    return (
+      <>
+        {header}
+        <Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>
+      </>
+    );
+  }
+
+  if (variantSampleSet && variantSampleSet.isEmpty()) {
+    return (
+      <>
+        {header}
+        <Alert variant={AlertVariant.WARNING}>No samples match your query</Alert>
+      </>
+    );
+  }
+
+  return variantSampleSet && wholeSampleSet && sequencingIntensityEntrySet ? (
     <>
       <div>
         {header}
@@ -346,5 +369,7 @@ export const FocusPage = ({
         />
       )}
     </>
+  ) : (
+    <Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>
   );
 };

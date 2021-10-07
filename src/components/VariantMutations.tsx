@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Country, PangolinLineageInformation } from '../services/api-types';
-import { DateRange, dateRangeToDates, getInformationOfPangolinLineage } from '../services/api';
+import { Country, DateRange, PangolinLineageInformation } from '../services/api-types';
+import { dateRangeToDates, getInformationOfPangolinLineage } from '../services/api';
 import styled from 'styled-components';
 import { MutationName } from './MutationName';
 import { ExternalLink } from './ExternalLink';

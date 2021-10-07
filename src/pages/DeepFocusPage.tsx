@@ -10,8 +10,8 @@ import { SampleTable } from '../components/SampleTable';
 import { VariantHeader } from '../components/VariantHeader';
 import { SampleSetWithSelector } from '../helpers/sample-set';
 import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
-import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
-import { Country, Variant } from '../services/api-types';
+import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { Country, DateRange, Variant } from '../services/api-types';
 import { HospitalizationDeathDeepFocus } from '../components/HospitalizationDeathDeepFocus';
 import { WasteWaterDeepFocus } from '../models/wasteWater/WasteWaterDeepFocus';
 import { Alert, AlertVariant } from '../helpers/ui';
@@ -23,8 +23,10 @@ interface SyncProps {
   variant: Variant;
   samplingStrategy: SamplingStrategy;
   dateRange: DateRange;
-  variantSampleSet: SampleSetWithSelector;
-  wholeSampleSet: SampleSetWithSelector;
+  variantSampleSet?: SampleSetWithSelector;
+  wholeSampleSet?: SampleSetWithSelector;
+  isDataPending: () => boolean;
+  isDataRejected: () => boolean;
 }
 
 interface AsyncProps {
@@ -69,14 +71,17 @@ const routes: DeepRoute<LoadedProps>[] = [
   {
     key: 'hospitalization-death',
     title: 'Hospitalization and death',
-    content: props => (
-      <HospitalizationDeathDeepFocus
-        country={props.country}
-        variantName={props.variant.name || 'unnamed variant'}
-        variantSampleSet={props.variantSampleSet}
-        wholeSampleSet={props.wholeSampleSet}
-      />
-    ),
+    content: props =>
+      props.variantSampleSet && props.wholeSampleSet ? (
+        <HospitalizationDeathDeepFocus
+          country={props.country}
+          variantName={props.variant.name || 'unnamed variant'}
+          variantSampleSet={props.variantSampleSet}
+          wholeSampleSet={props.wholeSampleSet}
+        />
+      ) : (
+        <Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>
+      ),
   },
   {
     key: 'waste-water',
@@ -97,6 +102,7 @@ export const DeepFocusPage = ({
       <VariantHeader
         variant={syncProps.variant}
         place={syncProps.country}
+        dateRange={syncProps.dateRange}
         controls={
           <Button className='mt-2' variant='secondary' as={Link} to={url}>
             Back to overview
@@ -115,14 +121,16 @@ export const DeepFocusPage = ({
     variantInternationalSampleSetState.status === 'initial' ||
     variantInternationalSampleSetState.status === 'pending' ||
     wholeInternationalSampleSetState.status === 'initial' ||
-    wholeInternationalSampleSetState.status === 'pending'
+    wholeInternationalSampleSetState.status === 'pending' ||
+    syncProps.isDataPending()
   ) {
     return _makeLayout(<Loader />);
   }
 
   if (
     variantInternationalSampleSetState.status === 'rejected' ||
-    wholeInternationalSampleSetState.status === 'rejected'
+    wholeInternationalSampleSetState.status === 'rejected' ||
+    syncProps.isDataRejected()
   ) {
     return _makeLayout(<Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>);
   }

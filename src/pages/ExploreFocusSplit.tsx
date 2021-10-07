@@ -18,7 +18,6 @@ import { ExplorePage } from '../pages/ExplorePage';
 import { FocusEmptyPage } from '../pages/FocusEmptyPage';
 import { FocusPage } from '../pages/FocusPage';
 import {
-  DateRange,
   dateRangeToDates,
   getDataStatus,
   getNewSamples,
@@ -26,7 +25,7 @@ import {
   SamplingStrategy,
   toLiteralSamplingStrategy,
 } from '../services/api';
-import { Country } from '../services/api-types';
+import { Country, DateRange } from '../services/api-types';
 import dayjs from 'dayjs';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 import { Alert, AlertVariant } from '../helpers/ui';
@@ -251,25 +250,44 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     </>
   );
 
-  if (
-    variantSampleSetState.status === 'initial' ||
-    variantSampleSetState.status === 'pending' ||
-    wholeSampleSetState.status === 'initial' ||
-    wholeSampleSetState.status === 'pending' ||
-    sequencingIntensityEntrySetState.status === 'initial' ||
-    sequencingIntensityEntrySetState.status === 'pending'
-  ) {
-    return makeLayout(<Loader />, <Loader />);
-  }
+  // if (
+  //   variantSampleSetState.status === 'initial' ||
+  //   variantSampleSetState.status === 'pending' ||
+  //   wholeSampleSetState.status === 'initial' ||
+  //   wholeSampleSetState.status === 'pending' ||
+  //   sequencingIntensityEntrySetState.status === 'initial' ||
+  //   sequencingIntensityEntrySetState.status === 'pending'
+  // ) {
+  //   return makeLayout(<Loader />, <Loader />);
+  // }
 
-  if (
-    variantSampleSetState.status === 'rejected' ||
-    wholeSampleSetState.status === 'rejected' ||
-    sequencingIntensityEntrySetState.status === 'rejected'
-  ) {
-    const alert = <Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>;
-    return makeLayout(alert, alert);
-  }
+  // if (
+  //   variantSampleSetState.status === 'rejected' ||
+  //   wholeSampleSetState.status === 'rejected' ||
+  //   sequencingIntensityEntrySetState.status === 'rejected'
+  // ) {
+  //   const alert = <Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>;
+  //   return makeLayout(alert, alert);
+  // }
+
+  const isDataPending = (): boolean => {
+    return (
+      variantSampleSetState.status === 'initial' ||
+      variantSampleSetState.status === 'pending' ||
+      wholeSampleSetState.status === 'initial' ||
+      wholeSampleSetState.status === 'pending' ||
+      sequencingIntensityEntrySetState.status === 'initial' ||
+      sequencingIntensityEntrySetState.status === 'pending'
+    );
+  };
+
+  const isDataRejected = (): boolean => {
+    return (
+      variantSampleSetState.status === 'rejected' ||
+      wholeSampleSetState.status === 'rejected' ||
+      sequencingIntensityEntrySetState.status === 'rejected'
+    );
+  };
 
   return makeLayout(
     variantSelector && (
@@ -285,6 +303,8 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
         wholeInternationalSampleSetState={wholeInternationalSampleSetState}
         sequencingIntensityEntrySet={sequencingIntensityEntrySetState.data}
         onVariantSelect={onVariantSelect}
+        isDataPending={isDataPending}
+        isDataRejected={isDataRejected}
       />
     ),
     variantSelector && (
@@ -298,6 +318,8 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
         wholeSampleSet={wholeSampleSetState.data}
         variantInternationalSampleSetState={variantInternationalSampleSetState}
         wholeInternationalSampleSetState={wholeInternationalSampleSetState}
+        isDataPending={isDataPending}
+        isDataRejected={isDataRejected}
       />
     )
   );

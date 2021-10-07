@@ -4,8 +4,8 @@ import { useHistory } from 'react-router-dom';
 import { getFocusPageLink } from '../helpers/explore-url';
 import { VariantSelector } from '../helpers/sample-selector';
 import { getGlobalSamplePageLink } from '../pages/GlobalSamplePage';
-import { DateRange, SamplingStrategy } from '../services/api';
-import { Country } from '../services/api-types';
+import { SamplingStrategy } from '../services/api';
+import { Country, DateRange } from '../services/api-types';
 
 interface Props extends ButtonProps {
   query: {
