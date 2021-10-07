@@ -106,6 +106,9 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
               endDate={endDate}
               minDate={minimumDate}
               maxDate={endDate}
+              locale="de-ch"
+              calendarStartDay={1}
+              useWeekdaysShort={true}
             />
           </div>
           <div className='flex flex-row items-center inline-block align-middle'>
@@ -127,6 +130,9 @@ export const DateRangeSelector = ({ dateRange }: Props) => {
               startDate={startDate}
               endDate={endDate}
               minDate={startDate}
+              locale="de-ch"
+              calendarStartDay={1}
+              useWeekdaysShort={true}
             />
           </div>
         </div>
