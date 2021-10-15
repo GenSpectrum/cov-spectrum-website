@@ -140,11 +140,11 @@ export function dateRangeToDates(
         dateTo: new Date('2022-01-02'),
       };
     case specificDateRangeRegEx.test(dateRange):
-      const from = dateRange.match(/(?<=from=)(.*)(?=&)/g);
-      const to = dateRange.match(/(?<=to=)(.*)$/g);
+      const from = dateRange.match(/from=(.*)&/);
+      const to = dateRange.match(/to=(.*)$/);
       return {
-        dateFrom: from ? new Date(from[0]) : undefined,
-        dateTo: to ? new Date(to[0]) : undefined,
+        dateFrom: from ? new Date(from[1]) : undefined,
+        dateTo: to ? new Date(to[1]) : undefined,
       };
     default:
       return {
