@@ -114,12 +114,16 @@ export const FocusPage = ({
 
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
   useEffect(() => {
+    let isMounted = true;
     if (!variant.name) {
       return;
     }
     getData({
       country,
-    }).then(dataset => dataset && setWasteWaterData(filter(dataset, variant.name)));
+    }).then(dataset => isMounted && dataset && setWasteWaterData(filter(dataset, variant.name)));
+    return () => {
+      isMounted = false;
+    };
   }, [country, variant.name]);
 
   const mapExportManagerRef = useRef(new ExportManager());
