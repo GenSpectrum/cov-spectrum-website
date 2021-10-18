@@ -57,8 +57,9 @@ const deepFocusPaths = {
   wasteWater: '/waste-water',
 };
 
-const createDivisionBreakdownButton = (setter: (show: boolean) => void) => (
+const createDivisionBreakdownButton = (key: string, setter: (show: boolean) => void) => (
   <Button
+      key={key}
     className='mt-1 ml-2'
     variant={ButtonVariant.PRIMARY}
     onClick={() => {
@@ -106,7 +107,7 @@ export const FocusPage = ({
           dateRange,
           deepFocusPath: suffix,
         });
-        return <ShowMoreButton to={to} />;
+        return <ShowMoreButton key={suffix} to={to} />;
       }),
     [country, samplingStrategy, dateRange, matchPercentage, variant]
   );
@@ -213,7 +214,7 @@ export const FocusPage = ({
               wholeSampleSet={wholeSampleSet}
               height={300}
               title='Sequences over time'
-              toolbarChildren={[createDivisionBreakdownButton(setShowVariantTimeDistributionDivGrid)]}
+              toolbarChildren={[createDivisionBreakdownButton("SequencesOverTime", setShowVariantTimeDistributionDivGrid)]}
             />
           </GridCell>
           <GridCell minWidth={600}>
@@ -223,7 +224,7 @@ export const FocusPage = ({
               height={300}
               title='Estimated cases'
               toolbarChildren={
-                country === 'Switzerland' ? [createDivisionBreakdownButton(setShowEstimatedCasesDivGrid)] : []
+                country === 'Switzerland' ? [createDivisionBreakdownButton("EstimatedCases", setShowEstimatedCasesDivGrid)] : []
               }
             />
           </GridCell>
@@ -233,7 +234,7 @@ export const FocusPage = ({
               wholeSampleSet={wholeSampleSet}
               height={300}
               title='Age demographics'
-              toolbarChildren={[createDivisionBreakdownButton(setShowVariantAgeDistributionDivGrid)]}
+              toolbarChildren={[createDivisionBreakdownButton("AgeDemographics", setShowVariantAgeDistributionDivGrid)]}
             />
           </GridCell>
           {country === 'Switzerland' && (

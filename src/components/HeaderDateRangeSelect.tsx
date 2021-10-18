@@ -31,7 +31,6 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
         as='select'
         custom
         id='dateRangeSelect'
-        defaultValue={''}
         value={specificDateRangeRegEx.test(exploreUrl.dateRange) ? '' : exploreUrl.dateRange}
         onChange={handleChange}
       >

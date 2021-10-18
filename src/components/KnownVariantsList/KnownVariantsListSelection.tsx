@@ -46,8 +46,8 @@ export const KnownVariantsListSelection = ({ variantLists, selected, onSelect }:
     <Dropdown>
       <Dropdown.Toggle as={CustomToggle}>{selected}</Dropdown.Toggle>
       <Dropdown.Menu as={CustomMenu}>
-        {variantLists.map(({ name }) => (
-          <Dropdown.Item active={name === selected} onClick={() => onSelect(name)}>
+        {variantLists.map(({ name }, index) => (
+          <Dropdown.Item key={index} active={name === selected} onClick={() => onSelect(name)}>
             {name}
           </Dropdown.Item>
         ))}
