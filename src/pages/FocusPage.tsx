@@ -59,7 +59,7 @@ const deepFocusPaths = {
 
 const createDivisionBreakdownButton = (key: string, setter: (show: boolean) => void) => (
   <Button
-      key={key}
+    key={key}
     className='mt-1 ml-2'
     variant={ButtonVariant.PRIMARY}
     onClick={() => {
@@ -214,7 +214,9 @@ export const FocusPage = ({
               wholeSampleSet={wholeSampleSet}
               height={300}
               title='Sequences over time'
-              toolbarChildren={[createDivisionBreakdownButton("SequencesOverTime", setShowVariantTimeDistributionDivGrid)]}
+              toolbarChildren={[
+                createDivisionBreakdownButton('SequencesOverTime', setShowVariantTimeDistributionDivGrid),
+              ]}
             />
           </GridCell>
           <GridCell minWidth={600}>
@@ -224,7 +226,9 @@ export const FocusPage = ({
               height={300}
               title='Estimated cases'
               toolbarChildren={
-                country === 'Switzerland' ? [createDivisionBreakdownButton("EstimatedCases", setShowEstimatedCasesDivGrid)] : []
+                country === 'Switzerland'
+                  ? [createDivisionBreakdownButton('EstimatedCases', setShowEstimatedCasesDivGrid)]
+                  : []
               }
             />
           </GridCell>
@@ -234,7 +238,9 @@ export const FocusPage = ({
               wholeSampleSet={wholeSampleSet}
               height={300}
               title='Age demographics'
-              toolbarChildren={[createDivisionBreakdownButton("AgeDemographics", setShowVariantAgeDistributionDivGrid)]}
+              toolbarChildren={[
+                createDivisionBreakdownButton('AgeDemographics', setShowVariantAgeDistributionDivGrid),
+              ]}
             />
           </GridCell>
           {country === 'Switzerland' && (
