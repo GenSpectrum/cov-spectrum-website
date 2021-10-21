@@ -6,6 +6,6 @@ There is a centralized system to speed up date conversions and other operations 
 
 A `UnifiedDay` object represents a single day and contains multiple representations of it (e.g. as `Dayjs`). `UnifiedIsoWeek` is the equivalent for weeks, which are used quite a lot in CoV-Spectrum. Days and weeks are linked to each other through `isoWeek` and `firstDay` fields for fast lookups.
 
-You can get a `UnifiedDay` or `UnifiedIsoWeek` by calling `globalDateCache.getDay` or `globalDateCache.getIsoWeek`. This is cheap from the second call for the same date, which really helps for our use case. If you are using `SampleSet` (see [./sample-set.md](./sample-set.md)) it already gets these objects from the date cache.
+You can get a `UnifiedDay` or `UnifiedIsoWeek` by calling `globalDateCache.getDay` or `globalDateCache.getIsoWeek`. This is cheap from the second call for the same date, which really helps for our use case.
 
 `UnifiedDay` objects will be reference equal (`===`) if they represent the same day. The same holds for `UnifiedIsoWeek`. This allows using these objects as keys for `Map` or `Set` instead of using specially formatted strings. Note that you **must use `globalDateCache`** for this to work - do _not_ call `new DateCache()` yourself, except in tests.

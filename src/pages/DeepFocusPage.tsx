@@ -1,68 +1,48 @@
 import React from 'react';
-import { AsyncState } from 'react-async';
 import { Button } from 'react-bootstrap';
 import { Route, useRouteMatch } from 'react-router';
 import { Link } from 'react-router-dom';
 import { InternationalComparison } from '../components/InternationalComparison';
-import Loader from '../components/Loader';
-import { MinimalWidgetLayout } from '../components/MinimalWidgetLayout';
-import { SampleTable } from '../components/SampleTable';
 import { VariantHeader } from '../components/VariantHeader';
-import { SampleSetWithSelector } from '../helpers/sample-set';
-import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
-import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
-import { Country, DateRange, Variant } from '../services/api-types';
 import { HospitalizationDeathDeepFocus } from '../components/HospitalizationDeathDeepFocus';
 import { WasteWaterDeepFocus } from '../models/wasteWater/WasteWaterDeepFocus';
-import { Alert, AlertVariant } from '../helpers/ui';
 import { DeepRoute, makeLayout, makeSwitch } from '../helpers/deep-page';
+import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
+import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
+import { formatVariantDisplayName } from '../data/VariantSelector';
+import { MinimalWidgetLayout } from '../components/MinimalWidgetLayout';
+import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
+import { useExploreUrl } from '../helpers/explore-url';
 
 interface SyncProps {
-  country: Country;
-  matchPercentage: number;
-  variant: Variant;
-  samplingStrategy: SamplingStrategy;
-  dateRange: DateRange;
-  variantSampleSet?: SampleSetWithSelector;
-  wholeSampleSet?: SampleSetWithSelector;
-  isDataPending: () => boolean;
-  isDataRejected: () => boolean;
+  variantDataset: DetailedSampleAggDataset;
+  wholeDataset: DetailedSampleAggDataset;
+  variantInternationalDateCountDataset: CountryDateCountSampleDataset;
+  wholeInternationalDateCountDataset: CountryDateCountSampleDataset;
 }
 
-interface AsyncProps {
-  variantInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
-  wholeInternationalSampleSetState: AsyncState<SampleSetWithSelector>;
-}
-
-interface LoadedAsyncProps {
-  variantInternationalSampleSet: SampleSetWithSelector;
-  wholeInternationalSampleSet: SampleSetWithSelector;
-}
-
-type Props = SyncProps & AsyncProps;
-type LoadedProps = SyncProps & LoadedAsyncProps;
+type Props = SyncProps;
+type LoadedProps = SyncProps;
 
 const routes: DeepRoute<LoadedProps>[] = [
   {
-    key: 'samples',
-    title: 'Samples',
-    content: props => <SampleTable {...props} />,
-  },
-  {
     key: 'international-comparison',
     title: 'International comparison',
-    content: props => <InternationalComparison {...props} />,
+    content: props => (
+      <InternationalComparison
+        locationSelector={props.variantDataset.getSelector().location}
+        variantInternationalDateCountDataset={props.variantInternationalDateCountDataset}
+        wholeInternationalDateCountDataset={props.wholeInternationalDateCountDataset}
+      />
+    ),
   },
   {
     key: 'chen-2021-fitness',
     title: 'Transmission advantage',
     content: props => (
       <Chen2021FitnessWidget.ShareableComponent
-        country={props.country}
-        matchPercentage={props.matchPercentage}
-        mutations={props.variant.mutations}
-        pangolinLineage={props.variant.name}
-        samplingStrategy={toLiteralSamplingStrategy(props.samplingStrategy)}
+        locationSelector={props.variantDataset.getSelector().location}
+        variantSelector={props.variantDataset.getSelector().variant!}
         widgetLayout={MinimalWidgetLayout}
         title='Transmission advantage'
       />
@@ -71,40 +51,45 @@ const routes: DeepRoute<LoadedProps>[] = [
   {
     key: 'hospitalization-death',
     title: 'Hospitalization and death',
-    content: props =>
-      props.variantSampleSet && props.wholeSampleSet ? (
-        <HospitalizationDeathDeepFocus
-          country={props.country}
-          variantName={props.variant.name || 'unnamed variant'}
-          variantSampleSet={props.variantSampleSet}
-          wholeSampleSet={props.wholeSampleSet}
-        />
-      ) : (
-        <Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>
-      ),
+    content: props => (
+      <HospitalizationDeathDeepFocus
+        variantName={formatVariantDisplayName(props.variantDataset.getSelector().variant!, true)}
+        variantSampleSet={props.variantDataset}
+        wholeSampleSet={props.wholeDataset}
+      />
+    ),
   },
   {
     key: 'waste-water',
     title: 'Wastewater prevalence',
-    content: props => <WasteWaterDeepFocus country={props.country} variantName={props.variant.name} />,
+    content: props => {
+      const country = props.variantDataset.getSelector().location.country;
+      if (country !== 'Switzerland') {
+        return <>Nothing to see here.</>;
+      }
+      return (
+        <WasteWaterDeepFocus
+          country={country}
+          variantName={props.variantDataset.getSelector().variant?.pangoLineage}
+        />
+      );
+    },
   },
 ];
 
-export const DeepFocusPage = ({
-  variantInternationalSampleSetState,
-  wholeInternationalSampleSetState,
-  ...syncProps
-}: Props) => {
-  const { path, url } = useRouteMatch();
-
+export const DeepFocusPage = ({ ...syncProps }: Props) => {
+  const { path } = useRouteMatch();
+  const overviewPageUrl = useExploreUrl()?.getOverviewPageUrl() ?? '#';
+  if (!syncProps.variantDataset.getSelector().variant) {
+    return <></>;
+  }
   const _makeLayout = (content: JSX.Element) =>
     makeLayout(
       <VariantHeader
-        variant={syncProps.variant}
-        place={syncProps.country}
-        dateRange={syncProps.dateRange}
+        dateRange={syncProps.variantDataset.getSelector().dateRange!} // TODO is date range always available?
+        variant={syncProps.variantDataset.getSelector().variant!}
         controls={
-          <Button className='mt-2' variant='secondary' as={Link} to={url}>
+          <Button className='mt-2' variant='secondary' as={Link} to={overviewPageUrl}>
             Back to overview
           </Button>
         }
@@ -117,28 +102,8 @@ export const DeepFocusPage = ({
       content
     );
 
-  if (
-    variantInternationalSampleSetState.status === 'initial' ||
-    variantInternationalSampleSetState.status === 'pending' ||
-    wholeInternationalSampleSetState.status === 'initial' ||
-    wholeInternationalSampleSetState.status === 'pending' ||
-    syncProps.isDataPending()
-  ) {
-    return _makeLayout(<Loader />);
-  }
-
-  if (
-    variantInternationalSampleSetState.status === 'rejected' ||
-    wholeInternationalSampleSetState.status === 'rejected' ||
-    syncProps.isDataRejected()
-  ) {
-    return _makeLayout(<Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>);
-  }
-
   const loadedProps = {
     ...syncProps,
-    variantInternationalSampleSet: variantInternationalSampleSetState.data,
-    wholeInternationalSampleSet: wholeInternationalSampleSetState.data,
   };
 
   return _makeLayout(makeSwitch(routes, loadedProps, path));

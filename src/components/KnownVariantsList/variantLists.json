@@ -4,64 +4,39 @@
     "fillUpUntil": 12,
     "variants": [
       {
-        "variant": {
-          "name": "B.1.1.7",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.1.7",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.1.7",
-          "mutations": ["S:E484"]
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.1.7",
+        "aaMutations": ["S:E484"]
       },
       {
-        "variant": {
-          "name": "B.1.351*",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.351*",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "P.1*",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "P.1*",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.617.2*",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.617.2*",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.1.318*",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.1.318*",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "AY.4",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "AY.4",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "AY.4.2",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "AY.4.2",
+        "aaMutations": []
       }
     ]
   },
-
   {
     "name": "Top 12 (past 3 months)",
     "fillUpUntil": 12,
@@ -73,95 +48,56 @@
     "fillUpUntil": 0,
     "variants": [
       {
-        "variant": {
-          "name": "B.1.1.7",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.1.7",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.351*",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.351*",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "P.1*",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "P.1*",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.617.2*",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.617.2*",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.427",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.427",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.429",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.429",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "P.2",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "P.2",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.525",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.525",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "P.3",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "P.3",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.526",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.526",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.617.1",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.617.1",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "C.37",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "C.37",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.621",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.621",
+        "aaMutations": []
       }
     ]
   },
@@ -171,95 +107,56 @@
     "fillUpUntil": 0,
     "variants": [
       {
-        "variant": {
-          "name": "B.1.1.7",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.1.7",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.351",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.351",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "P.1",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "P.1",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.617.2*",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.617.2*",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "P.2",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "P.2",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.525",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.525",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.1.318",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.1.318",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "P.3",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "P.3",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.617.1",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.617.1",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.617.3",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.617.3",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "AV.1",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "AV.1",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "C.36.3",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "C.36.3",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "C.37",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "C.37",
+        "aaMutations": []
       }
     ]
   },
@@ -269,109 +166,64 @@
     "fillUpUntil": 0,
     "variants": [
       {
-        "variant": {
-          "name": "B.1.1.7",
-          "mutations": ["S:E484K"]
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.1.7",
+        "aaMutations": ["S:E484K"]
       },
       {
-        "variant": {
-          "name": "B.1.427",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.427",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.429",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.429",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.1.7",
-          "mutations": ["S:S494P"]
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.1.7",
+        "aaMutations": ["S:S494P"]
       },
       {
-        "variant": {
-          "name": "A.27",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "A.27",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.526",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.526",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.1.7",
-          "mutations": ["S:Q677H"]
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.1.7",
+        "aaMutations": ["S:Q677H"]
       },
       {
-        "variant": {
-          "name": "B.1.620",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.620",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.214.2",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.214.2",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "R.1",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "R.1",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.621",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.621",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "AT.1",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "AT.1",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "A.*",
-          "mutations": ["S:R346K", "S:T478R", "S:E484K"]
-        },
-        "matchPercentage": 1
+        "pangoLineage": "A.*",
+        "aaMutations": ["S:R346K", "S:T478R", "S:E484K"]
       },
       {
-        "variant": {
-          "name": "B.1.617.2*",
-          "mutations": ["S:E484A"]
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.617.2*",
+        "aaMutations": ["S:E484A"]
       },
       {
-        "variant": {
-          "name": "P.1",
-          "mutations": ["S:N501T", "S:E484Q"]
-        },
-        "matchPercentage": 1
+        "pangoLineage": "P.1",
+        "aaMutations": ["S:N501T", "S:E484Q"]
       }
     ]
   },
@@ -380,94 +232,55 @@
     "fillUpUntil": 0,
     "variants": [
       {
-        "variant": {
-          "name": "B.1.1.7",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.1.7",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.351",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.351",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "P.1",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "P.1",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.617.2*",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.617.2*",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.621",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.621",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.1.7",
-          "mutations": ["S:E484K"]
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.1.7",
+        "aaMutations": ["S:E484K"]
       },
       {
-        "variant": {
-          "name": "B.1.315",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.315",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.1.318",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.1.318",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.525",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.525",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.526",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.526",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "B.1.620",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "B.1.620",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "name": "C.36*",
-          "mutations": []
-        },
-        "matchPercentage": 1
+        "pangoLineage": "C.36*",
+        "aaMutations": []
       },
       {
-        "variant": {
-          "mutations": ["S:L452R", "S:N501Y"]
-        },
-        "matchPercentage": 1
+        "aaMutations": ["S:L452R", "S:N501Y"]
       }
     ]
   }

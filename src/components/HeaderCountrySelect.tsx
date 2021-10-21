@@ -31,8 +31,8 @@ export const HeaderCountrySelect = () => {
       <Wrapper>
         <RequiredPlaceSelect
           id='countrySelect'
-          selected={exploreUrl.country}
-          onSelect={exploreUrl.setCountry}
+          selected={exploreUrl.location}
+          onSelect={exploreUrl.setLocation}
         />
       </Wrapper>
     </Form>

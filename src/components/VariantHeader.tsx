@@ -1,31 +1,34 @@
 import React, { useEffect, useState } from 'react';
-import { DateRange, Place, Variant } from '../services/api-types';
-import { PangolinLineageAliasResolverService } from '../services/PangolinLineageAliasResolverService';
+import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
 import { getWHOLabel, getWHOVariantType } from '../services/who-label';
-import { formatVariantDisplayName, isPurePangolinLineage } from '../helpers/variant-selector';
-import { DateRangeSelector } from './DateRangeSelector';
+import { DateRangePicker } from './DateRangePicker';
+import { formatVariantDisplayName, variantIsOnlyDefinedBy, VariantSelector } from '../data/VariantSelector';
+import { DateRangeSelector } from '../data/DateRangeSelector';
 
 export interface Props {
-  variant: Variant;
+  dateRange: DateRangeSelector;
+  variant: VariantSelector;
   titleSuffix?: React.ReactChild | React.ReactChild[];
   controls?: React.ReactChild | React.ReactChild[];
-  dateRange?: DateRange;
-  place: Place;
 }
 
 export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Props) => {
   const [resolvedFullName, setResolvedFullName] = useState<string | undefined>();
 
-  const label = isPurePangolinLineage(variant) ? getWHOLabel(variant.name) : undefined;
-  const type = isPurePangolinLineage(variant) ? getWHOVariantType(variant.name) : undefined;
+  const label = variantIsOnlyDefinedBy(variant, 'pangoLineage')
+    ? getWHOLabel(variant.pangoLineage!)
+    : undefined;
+  const type = variantIsOnlyDefinedBy(variant, 'pangoLineage')
+    ? getWHOVariantType(variant.pangoLineage!)
+    : undefined;
 
   useEffect(() => {
     let isSubscribed = true;
-    if (variant.name === undefined) {
+    if (variant.pangoLineage === undefined) {
       setResolvedFullName(undefined);
       return;
     }
-    PangolinLineageAliasResolverService.findFullName(variant.name).then(name => {
+    PangoLineageAliasResolverService.findFullName(variant.pangoLineage).then(name => {
       if (isSubscribed) {
         setResolvedFullName(name);
       }
@@ -33,7 +36,7 @@ export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Pro
     return () => {
       isSubscribed = false;
     };
-  }, [variant.name]);
+  }, [variant.pangoLineage]);
 
   return (
     <div className='ml-3'>
@@ -46,7 +49,7 @@ export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Pro
             {titleSuffix}
           </h1>
           {<h3 className='pl-1.5 text-gray-500'>{type && ` variant of ${type}`}</h3>}
-          {dateRange && <DateRangeSelector dateRange={dateRange} />}
+          {dateRange && <DateRangePicker dateRangeSelector={dateRange} />}
         </div>
         <div>{controls}</div>
       </div>

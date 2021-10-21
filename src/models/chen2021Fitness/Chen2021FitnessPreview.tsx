@@ -1,25 +1,22 @@
 import React, { useMemo } from 'react';
-import * as zod from 'zod';
 import Loader from '../../components/Loader';
-import { OldSampleSelectorSchema } from '../../helpers/sample-selector';
 import { Chen2021ProportionPlot } from './Chen2021ProportionPlot';
 import { fillRequestWithDefaults, useModelData } from './loading';
-import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../../charts/common';
-import Metric, { MetricsWrapper } from '../../charts/Metrics';
+import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../../widgets/common';
+import Metric, { MetricsWrapper } from '../../widgets/Metrics';
+import { LocationSelector } from '../../data/LocationSelector';
+import { VariantSelector } from '../../data/VariantSelector';
 
-type Props = zod.infer<typeof OldSampleSelectorSchema>;
+type Props = {
+  locationSelector: LocationSelector;
+  variantSelector: VariantSelector;
+};
 
-export const Chen2021FitnessPreview = ({
-  country,
-  mutations,
-  matchPercentage,
-  pangolinLineage,
-  samplingStrategy,
-}: Props) => {
-  const request = useMemo(
-    () => fillRequestWithDefaults({ country, mutations, matchPercentage, pangolinLineage, samplingStrategy }),
-    [country, mutations, matchPercentage, pangolinLineage, samplingStrategy]
-  );
+export const Chen2021FitnessPreview = ({ locationSelector, variantSelector }: Props) => {
+  const request = useMemo(() => fillRequestWithDefaults({ locationSelector, variantSelector }), [
+    locationSelector,
+    variantSelector,
+  ]);
 
   const { modelData, loading } = useModelData(request);
 

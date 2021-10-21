@@ -12,7 +12,7 @@ There's a short guide on how to get the application running locally in [./docs/b
 
 There is a loose logic to how the source code folder is structured. See [./docs/folders.md](./docs/folders.md) for a guide.
 
-No state management library (e.g. Redux) is used. Most data is in a generic format ([./docs/sample-set.md](./docs/sample-set.md)) which is loaded centrally and transformed per plot. Some more specialized data is loaded locally in components. In either case, data is fetched though API helper functions ([./docs/api.md](./docs/api.md)).
+No state management library (e.g. Redux) is used. Most data is in a generic format which is loaded centrally and transformed per plot. Some more specialized data is loaded locally in components. In either case, data is fetched though API helper functions ([./docs/api.md](./docs/api.md)).
 
 The plotting libraries that we use are Recharts and Plotly. See [./docs/plot-libraries.md](./docs/plot-libraries.md) for a bit more info.
 

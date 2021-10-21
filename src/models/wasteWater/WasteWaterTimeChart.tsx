@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../../charts/common';
-import Metric, { MetricsWrapper } from '../../charts/Metrics';
+import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../../widgets/common';
+import Metric, { MetricsWrapper } from '../../widgets/Metrics';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { WasteWaterTimeEntry, WasteWaterTimeseriesSummaryDataset } from './types';
 import { getTicks } from '../../helpers/ticks';

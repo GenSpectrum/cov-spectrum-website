@@ -3,9 +3,9 @@ import { ExternalLink } from '../components/ExternalLink';
 import { EmailLink } from '../components/EmailLink';
 import { VercelSponsorshipLogo } from '../components/VercelSponsorshipLogo';
 
-const Question = ({ title, children }: { title: string; children: React.ReactNode }) => {
+const Question = ({ title, id, children }: { title: string; id?: string; children: React.ReactNode }) => {
   return (
-    <div className='w-full bg-yellow-100 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-800'>
+    <div id={id} className='w-full bg-yellow-100 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-800'>
       <h2 className='font-bold mb-2 mt-0'>{title}</h2>
       <p>{children}</p>
     </div>
@@ -54,37 +54,137 @@ export const AboutPage = () => {
         </ExternalLink>{' '}
         (2021); arXiv: 2106.08106.
       </div>
-      <h1>FAQ</h1>
-      <Question title='What is a variant?'>
+      <h1 id='faq'>FAQ</h1>
+      <Question title='What is a variant?' id='faq-variant'>
         We distinguish between two ways to specify a variant. A variant can be defined as a clade on the
         phylogenetic tree. This approach is followed by the{' '}
-        <ExternalLink url='https://cov-lineages.org/'>pangolin lineages</ExternalLink> which we consider as
-        "known variants." Additionally, a variant can be defined as a set of amino acid mutations. On{' '}
+        <ExternalLink url='https://cov-lineages.org/'>pangolin lineages</ExternalLink>. Additionally, a
+        variant can be defined as a set of amino acid mutations. On{' '}
         <ExternalLink url='https://covariants.org/'>CoVariants</ExternalLink> and{' '}
         <ExternalLink url='https://cov-lineages.org/global_report.html'>PANGO lineages</ExternalLink> , you
         can find detailed information about variants that are currently of particular interest. Different to
         these websites, CoV-Spectrum does not only show pre-defined variants but provides tools to discover
         and analyze new variants.
       </Question>
-      <Question title='Which data do you use?'>
+      <Question title='Which data do you use?' id='faq-data-sources'>
         We use genomic data from GISAID and unreleased/not yet released sequences from the Swiss SARS-CoV-2
         Sequencing Consortium (S3C) complemented by metadata provided by the Federal Office of Public Health
         (FOPH) of Switzerland.
       </Question>
-      <p></p>
-      <Question title='What is the "Login" and can I gain access?'>
+      <Question title='How can I search a variant?' id='faq-search-variants'>
+        <p>
+          CoV-Spectrum supports a wide range of search queries. First of all,{' '}
+          <b>the search is case-insensitive</b>.
+        </p>
+        <p>
+          <b>Pango lineages:</b> You can search for a single pango lineage (e.g., B.1.617) or include the
+          sub-lineages by adding a "*" at the end (e.g., B.1.617*). The search is aware of pango lineage
+          aliases (i.e., B.1.617* includes B.1.617, B.1.617.1, B.1.617.2, but also AY.1, AY.2, ...). It is
+          possible to enter the "full name" instead of an alias (e.g., B.1.617.2.1 instead of AY.1).
+        </p>
+        <p>
+          <b>Amino acid mutations:</b> An amino acid (AA) mutation is encoded as the name of the gene,
+          followed by a colon, optionally the base in the reference genome, the position on the amino acid
+          sequence, and optionally the new base or a special character.
+        </p>
+        <p>
+          Formally: &lt;gene&gt;:[&lt;reference AA&gt;]&lt;position&gt;[&lt;new AA&gt;|&lt;special
+          character&gt;] - where:
+          <ul className='list-disc'>
+            <li>
+              &lt;gene&gt; - one of the following: E, M, N, ORF1a, ORF1b, ORF3a, ORF6, ORF7a, ORF7b, ORF8,
+              ORF9b, S
+            </li>
+            <li>&lt;reference AA&gt; - this is optional and will be ignored</li>
+            <li>
+              &lt;position&gt; - an integer specifying the position on the amino acid sequence of the
+              respective gene, it starts with 1.
+            </li>
+            <li>&lt;new AA&gt; - the AA at the specified position</li>
+            <li>
+              &lt;special character&gt; - one of the following: X (=unknown), - (=deletion), * (=stop codon),
+              . (=not mutated)
+            </li>
+          </ul>
+        </p>
+        <p>
+          Examples:
+          <ul className='list-disc'>
+            <li>
+              S:N501Y: the reference genome has a N at the 501st position on the S-gene, and this query is
+              looking for sequences which has instead a Y at that position
+            </li>
+            <li>S:501Y: this is equivalent to the previous one</li>
+            <li>
+              S:501: the 501st position is mutated; in other words, it does not have the same AA as the
+              reference genome and it is not unknown
+            </li>
+            <li>S:501-: the 501st position is deleted</li>
+            <li>
+              S:501.: the 501st position is not mutated, i.e., it has the same AA as the reference genome
+            </li>
+            <li>S:501X: the 501st position is unknown</li>
+          </ul>
+        </p>
+        <p>
+          <b>Nucleotide mutations:</b>
+        </p>
+        <p>
+          Formally: &lt;reference base&gt;]&lt;position&gt;[&lt;new base&gt;|&lt;special character&gt;] -
+          where:
+          <ul className='list-disc'>
+            <li>&lt;reference base&gt; - this is optional and will be ignored</li>
+            <li>
+              &lt;position&gt; - an integer specifying the position on the necleotide sequence of the
+              respective gene, it starts with 1.
+            </li>
+            <li>
+              &lt;special character&gt; - one of the following: N (=unknown), - (=deletion), . (=not mutated)
+            </li>
+          </ul>
+        </p>
+        <p>
+          Examples:
+          <ul className='list-disc'>
+            <li>
+              A23403G: the reference genome has an A at the 23403th position, and this query is looking for
+              sequences which has instead a G at that position
+            </li>
+            <li>23403G: this is equivalent to the previous one</li>
+            <li>
+              23403: the 23403th position is mutated; in other words, it does not have the same base as the
+              reference genome and it is not unknown
+            </li>
+            <li>23403: the 23403th position is deleted</li>
+            <li>
+              23403.: the 23403th position is not mutated, i.e., it has the same base as the reference genome
+            </li>
+            <li>23403-: the 23403th position is deleted</li>
+            <li>23403N: the 23403th position is unknown</li>
+          </ul>
+        </p>
+        <p>
+          We will soon support <b>Nextstrain and GISAID clades</b>. Follow{' '}
+          <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website/issues/274'>
+            #274 in our Github repository
+          </ExternalLink>{' '}
+          to get notifications about the progress.
+        </p>
+      </Question>
+      <Question title='What is the "Login" and can I gain access?' id='faq-login'>
         For Switzerland, we have some confidential data. The access can only be provided to very few people.
         Please contact us if you believe that you are eligible.
       </Question>
-      <Question title='What is the "Share" button next to the plots for?'>
-        You can embed all the interactive plots of CoV-Spectrum on your own website. Just click on the "Share"
-        button and copy and paste the code to your page. The plots will be automatically updated whenever new
-        data arrives.
+      <Question title='Can I use the plots on my own website?' id='faq-embed-widget'>
+        Yes! You can embed all the interactive plots of CoV-Spectrum on your own website. Just click on the
+        "Export" and then on the "Embed widget" button and copy and paste the code to your page. The plot will
+        then be embedded as an iframe. It will be automatically updated whenever new data arrives.
       </Question>
-      <Question title='Can I download the numbers behind the plots?'>
-        For some of the plots, there is a button next to the plot to download the data as a CSV file.
+      <Question title='Can I download the numbers behind the plots?' id='faq-download-data'>
+        Click on the "Export" button next to the plots and then on "Download CSV" to get the data as a CSV
+        file.
       </Question>
-      <h1>Components</h1>
+      <h1 id='components'>Components</h1>
       <Component title='Known variants list'>
         <p>
           <img
@@ -123,7 +223,7 @@ export const AboutPage = () => {
         </ul>
       </Disclaimer>
 
-      <h1>Acknowlegements</h1>
+      <h1 id='acknowledgements'>Acknowlegements</h1>
       <Component title='FOPH and S3C'>
         We gratefully acknowledge the{' '}
         <ExternalLink url='https://www.bag.admin.ch/'>Federal Office of Public Health (FOPH)</ExternalLink>{' '}
@@ -147,7 +247,9 @@ export const AboutPage = () => {
         <ExternalLink url='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6607375/'>31565258</ExternalLink>
       </p>
 
-      <h1 className='font-bold mb-2 mt-4'>Contact</h1>
+      <h1 className='font-bold mb-2 mt-4' id='contact'>
+        Contact
+      </h1>
       <p>
         This project is developed by the{' '}
         <ExternalLink url='https://bsse.ethz.ch/cevo'>Computational Evolution group</ExternalLink> at ETH

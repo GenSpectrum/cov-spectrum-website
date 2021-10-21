@@ -1,24 +1,32 @@
 import React, { useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import { components } from 'react-select';
-import { isValidMutation } from '../helpers/mutation';
-import { isValidPangolinLineageQuery } from '../helpers/variant-selector';
+import { isValidAAMutation } from '../helpers/aa-mutation';
 import { InputActionMeta, Styles } from 'react-select';
 import { CSSPseudos } from 'styled-components';
-import { VariantSelector } from '../helpers/sample-selector';
-import { PangolinLineageList } from '../services/api-types';
-import { useQuery } from 'react-query';
-import { getPangolinLineages, PromiseWithCancel, SamplingStrategy } from '../services/api';
-import Loader from './Loader';
-import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
+import { Button, ButtonVariant } from '../helpers/ui';
+import { PangoCountSampleDataset } from '../data/sample/PangoCountSampleDataset';
+import { isValidPangoLineageQuery, VariantSelector } from '../data/VariantSelector';
+import { isValidNucMutation } from '../helpers/nuc-mutation';
+import { useQuery } from '../helpers/query-hook';
+import { InternalLink } from './InternalLink';
+import { ExternalLink } from './ExternalLink';
+
+type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
 
 type SearchOption = {
   label: string;
   value: string;
-  type: 'mutation' | 'pangolin-lineage';
+  type: SearchType;
 };
 
-function mapOption(optionString: string, type: 'mutation' | 'pangolin-lineage'): SearchOption {
+const backgroundColor: { [key in SearchType]: string } = {
+  'pango-lineage': 'rgba(29,78,207,0.1)',
+  'aa-mutation': 'rgba(4,133,27,0.1)',
+  'nuc-mutation': 'rgba(33,162,162,0.29)',
+};
+
+function mapOption(optionString: string, type: SearchType): SearchOption {
   return {
     label: optionString,
     value: optionString,
@@ -31,7 +39,7 @@ const colorStyles: Partial<Styles<any, true, any>> = {
   multiValue: (styles: CSSPseudos, { data }: { data: SearchOption }) => {
     return {
       ...styles,
-      backgroundColor: data.type === 'pangolin-lineage' ? 'rgba(29,78,207,0.1)' : 'rgba(4,133,27,0.1)',
+      backgroundColor: backgroundColor[data.type],
     };
   },
 };
@@ -42,36 +50,22 @@ type Props = {
 
 export const VariantSearch = ({ onVariantSelect }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<SearchOption[]>([]);
-  const [pangolinLineages, setPangolinLineages] = useState<readonly string[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
 
-  const { isLoading, error, isError, isSuccess, isFetching } = useQuery<PangolinLineageList, Error>(
-    'knownPangolinLineages',
-    () => {
-      const controller = new AbortController();
-      const signal = controller.signal;
-      const promise = getPangolinLineages(
-        {
-          country: 'World',
-          samplingStrategy: SamplingStrategy.AllSamples,
-        },
-        signal
-      ).then(data => {
-        const processedData = data
-          .sort((pl1, pl2) => pl2.count - pl1.count)
-          .filter(pl => pl.pangolinLineage !== null)
-          .map(pl => pl.pangolinLineage!);
-        setPangolinLineages(processedData);
-        return data;
-      });
-      (promise as PromiseWithCancel<PangolinLineageList>).cancel = () => controller.abort();
-      return promise;
-    }
+  const pangoLineages = useQuery(
+    signal =>
+      PangoCountSampleDataset.fromApi({ location: {} }, signal).then(dataset =>
+        dataset
+          .getPayload()
+          .filter(e => e.pangoLineage)
+          .map(e => e.pangoLineage!)
+      ),
+    []
   );
 
   const suggestPangolinLineages = (query: string): string[] => {
-    return pangolinLineages.filter(pl => pl.toUpperCase().startsWith(query.toUpperCase()));
+    return (pangoLineages.data ?? []).filter(pl => pl.toUpperCase().startsWith(query.toUpperCase()));
   };
 
   const suggestMutations = (query: string): string[] => {
@@ -132,21 +126,22 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
   };
 
   const suggestOptions = (query: string): SearchOption[] => {
-    const onePLAlreadySelected =
-      selectedOptions.filter(option => option.type === 'pangolin-lineage').length > 0;
+    const onePLAlreadySelected = selectedOptions.filter(option => option.type === 'pango-lineage').length > 0;
     const suggestions: SearchOption[] = [];
-    if (isValidMutation(query)) {
-      suggestions.push(mapOption(query, 'mutation'));
-    } else if (!onePLAlreadySelected && isValidPangolinLineageQuery(query)) {
-      suggestions.push(mapOption(query, 'pangolin-lineage'));
+    if (isValidAAMutation(query)) {
+      suggestions.push(mapOption(query, 'aa-mutation'));
+    } else if (isValidNucMutation(query)) {
+      suggestions.push(mapOption(query, 'nuc-mutation'));
+    } else if (!onePLAlreadySelected && isValidPangoLineageQuery(query)) {
+      suggestions.push(mapOption(query, 'pango-lineage'));
       if (!query.endsWith('*')) {
-        suggestions.push(mapOption(query + '*', 'pangolin-lineage'));
+        suggestions.push(mapOption(query + '*', 'pango-lineage'));
       }
     }
     if (!onePLAlreadySelected) {
-      suggestions.push(...suggestPangolinLineages(query).map(pl => mapOption(pl, 'pangolin-lineage')));
+      suggestions.push(...suggestPangolinLineages(query).map(pl => mapOption(pl, 'pango-lineage')));
     }
-    suggestions.push(...suggestMutations(query).map(pl => mapOption(pl, 'mutation')));
+    suggestions.push(...suggestMutations(query).map(pl => mapOption(pl, 'aa-mutation')));
     return suggestions.slice(0, 20);
   };
 
@@ -179,7 +174,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
    * 1) split the input value by "," to retrieve the individual query in the list
    * 2) validate each input query by mapping to suggest options
    * 3) add valid options to the selected options list so they transform from plain text to tags
-   * 4) max 1 pangolin lineage but multiple mutations allowed
+   * 4) max 1 pango lineage but multiple mutations allowed
    * 5) invalid queries stay as comma-separated plain text
    * 6) leave options menu open if there are invalid queries from the list
    * @param inputValue comma-separated string
@@ -199,9 +194,10 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
         !selectedOptions.find(option => option.value === selectedOption.value)
       ) {
         if (
-          selectedOption.type === 'mutation' ||
-          (selectedOption.type === 'pangolin-lineage' &&
-            newSelectedOptions.filter(option => option.type === 'pangolin-lineage').length < 1)
+          selectedOption.type === 'aa-mutation' ||
+          selectedOption.type === 'nuc-mutation' ||
+          (selectedOption.type === 'pango-lineage' &&
+            newSelectedOptions.filter(option => option.type === 'pango-lineage').length < 1)
         ) {
           newSelectedOptions.push(selectedOption);
         }
@@ -254,29 +250,33 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
   return (
     <div>
       <div className='text-sm mb-2'>
-        Type in up to one pangolin lineage and any number of mutations (or paste a comma separated list):
+        <p>
+          Search for pango lineages, amino acid mutations, and nucleotide mutations (
+          <InternalLink path='/about#faq-search-variants'>see documentation</InternalLink>):
+        </p>
+        <p>
+          <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website/issues/278'>
+            We are still improving the nucleotide search (#278 on Github).
+          </ExternalLink>
+        </p>
       </div>
 
-      {(isLoading || isFetching) && <Loader />}
-      {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
-
-      {isSuccess && (
+      {
         <form
           className='w-full flex flex-row items-center'
           onSubmit={e => {
             e.preventDefault();
             const selector: VariantSelector = {
-              variant: {
-                name: undefined,
-                mutations: [],
-              },
-              matchPercentage: 1,
+              aaMutations: [],
+              nucMutations: [],
             };
             for (let { type, value } of selectedOptions) {
-              if (type === 'mutation') {
-                selector.variant.mutations.push(value);
-              } else if (type === 'pangolin-lineage') {
-                selector.variant.name = value;
+              if (type === 'aa-mutation') {
+                selector.aaMutations!.push(value);
+              } else if (type === 'nuc-mutation') {
+                selector.nucMutations!.push(value);
+              } else if (type === 'pango-lineage') {
+                selector.pangoLineage = value;
               }
             }
             onVariantSelect(selector);
@@ -285,7 +285,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
           <AsyncSelect
             className='w-full mr-2'
             components={{ DropdownIndicator }}
-            placeholder='B.1.1.7, S:484K, ...'
+            placeholder='B.1.1.7, S:484K, C913T, ...'
             isMulti
             defaultOptions={suggestOptions('')}
             loadOptions={promiseOptions}
@@ -312,7 +312,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
             Search
           </Button>
         </form>
-      )}
+      }
     </div>
   );
 };

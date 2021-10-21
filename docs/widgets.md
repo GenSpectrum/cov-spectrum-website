@@ -46,8 +46,6 @@ Typically our `encodeToInternal` function will take a dataset from your props (t
 
 The `decodeToInternal` function will take any props that have not been directly saved (datasets) and will load them again using the information that was saved. This is why these functions are both `async`. As with `encodeToInternal`, any props that are not treated specially must be passed along.
 
-Often your datasets will be `SampleSetWithSelector` objects. These are specially designed to work with widgets. See "Widgets and async loading" in [./sample-set.md](./sample-set.md) for more information. Take a look at [src/widgets/VariantTimeDistributionPlot.tsx](/src/widgets/VariantTimeDistributionPlot.tsx) for an example - it uses `AsyncZodQueryEncoder` with `SampleSetWithSelector`.
-
 ## "External" props
 
 Some props can be passed to any `Widget.SharableComponent` (for example `title` or `toolbarChildren`). These are called (not very consistently) "external" props. They are defined in [src/components/WidgetWrapper.tsx](/src/components/WidgetWrapper.tsx) (`ExternalProps` and `externalPropsKeys`). These props are _not_ passed to the inner React component (plot) of a widget. They are stripped away and passed to `WidgetWrapper` instead. These props are generally only relevant for the component that uses a `Widget.SharableComponent`, not the component inside the `Widget` itself.

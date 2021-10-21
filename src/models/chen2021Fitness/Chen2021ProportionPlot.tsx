@@ -1,6 +1,6 @@
 import React from 'react';
 import * as zod from 'zod';
-import { TitleWrapper } from '../../charts/common';
+import { TitleWrapper } from '../../widgets/common';
 import { Plot } from '../../components/Plot';
 import { Chen2021FitnessResponse, Chen2021FitnessResponseSchema } from './chen2021Fitness-types';
 import { formatValueWithCI } from './format-value';

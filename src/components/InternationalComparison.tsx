@@ -1,55 +1,33 @@
 import React, { useState } from 'react';
-import { SampleSetWithSelector } from '../helpers/sample-set';
-import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
-import { AccountService } from '../services/AccountService';
-import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
-import { Country, DateRange, Variant } from '../services/api-types';
-import { NextcladeIntegration } from '../services/external-integrations/NextcladeIntegration';
-import { VariantInternationalComparisonPlotWidget } from '../widgets/VariantInternationalComparisonPlot';
+import { Button, ButtonVariant } from '../helpers/ui';
 import { InternationalComparisonTable } from './InternationalComparisonTable';
-import { LazySampleButton } from './LazySampleButton';
 import { MinimalWidgetLayout } from './MinimalWidgetLayout';
+import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
+import { VariantInternationalComparisonChartWidget } from '../widgets/VariantInternationalComparisonChartWidget';
+import { LocationSelector } from '../data/LocationSelector';
 
 interface Props {
-  country: Country;
-  matchPercentage: number;
-  variant: Variant;
-  samplingStrategy: SamplingStrategy;
-  dateRange: DateRange;
-  variantInternationalSampleSet: SampleSetWithSelector;
-  wholeInternationalSampleSet: SampleSetWithSelector;
+  locationSelector: LocationSelector;
+  variantInternationalDateCountDataset: CountryDateCountSampleDataset;
+  wholeInternationalDateCountDataset: CountryDateCountSampleDataset;
 }
 
 export const InternationalComparison = ({
-  country,
-  matchPercentage,
-  variant,
-  samplingStrategy: requestedSamplingStrategy,
-  dateRange,
-  variantInternationalSampleSet,
-  wholeInternationalSampleSet,
+  variantInternationalDateCountDataset,
+  wholeInternationalDateCountDataset,
+  locationSelector,
 }: Props) => {
   const [logScale, setLogScale] = useState<boolean>(false);
-
-  if (requestedSamplingStrategy !== SamplingStrategy.AllSamples) {
-    return (
-      <Alert variant={AlertVariant.WARNING}>
-        The selected sampling strategy can not be used for international comparison. Use "All samples"
-        instead.
-      </Alert>
-    );
-  }
-
   return (
     <>
-      <VariantInternationalComparisonPlotWidget.ShareableComponent
+      <VariantInternationalComparisonChartWidget.ShareableComponent
         title='International comparison'
+        variantInternationalSampleSet={variantInternationalDateCountDataset}
+        wholeInternationalSampleSet={wholeInternationalDateCountDataset}
+        preSelectedCountries={locationSelector.country ? [locationSelector.country] : []}
         widgetLayout={MinimalWidgetLayout}
         height={300}
-        country={country}
         logScale={logScale}
-        variantInternationalSampleSet={variantInternationalSampleSet}
-        wholeInternationalSampleSet={wholeInternationalSampleSet}
         toolbarChildren={
           <>
             <Button
@@ -59,46 +37,12 @@ export const InternationalComparison = ({
             >
               Toggle log scale
             </Button>
-            {AccountService.isLoggedIn() && (
-              <>
-                <Button
-                  variant={ButtonVariant.SECONDARY}
-                  className='ml-1 mt-1'
-                  onClick={() =>
-                    new NextcladeIntegration().open({
-                      variant,
-                      matchPercentage,
-                      country: undefined,
-                      samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
-                    })
-                  }
-                >
-                  Show on Nextclade
-                </Button>
-                <LazySampleButton
-                  query={{
-                    variantSelector: { variant, matchPercentage },
-                    country: undefined,
-                    samplingStrategy: SamplingStrategy.AllSamples,
-                    dateRange,
-                  }}
-                  variant='secondary'
-                  size='sm'
-                  className='ml-1'
-                >
-                  Show worldwide samples
-                </LazySampleButton>
-              </>
-            )}
           </>
         }
       />
 
       <InternationalComparisonTable
-        dateRange={dateRange}
-        matchPercentage={matchPercentage}
-        variant={variant}
-        variantInternationalSampleSet={variantInternationalSampleSet}
+        variantInternationalDateCountDataset={variantInternationalDateCountDataset}
       />
     </>
   );

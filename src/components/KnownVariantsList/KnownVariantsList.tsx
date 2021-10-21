@@ -1,42 +1,26 @@
-import React, { useMemo, useState } from 'react';
-import { AsyncState } from 'react-async';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components';
-import { VariantSelector } from '../../helpers/sample-selector';
-import { SampleSetWithSelector } from '../../helpers/sample-set';
-import {
-  dateRangeToDates,
-  getPangolinLineages,
-  PromiseWithCancel,
-  SamplingStrategy,
-} from '../../services/api';
-import { Country, DateRange, PangolinLineageList, Variant } from '../../services/api-types';
 import { KnownVariantCard } from './KnownVariantCard';
-import {
-  convertKnownVariantChartData,
-  KnownVariantWithSampleSet,
-  loadKnownVariantSampleSets,
-} from './load-data';
-import dayjs from 'dayjs';
 import _VARIANT_LISTS from './variantLists.json';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
-import { formatVariantDisplayName } from '../../helpers/variant-selector';
-import { useQuery } from 'react-query';
 import Loader from '../Loader';
-import { Alert, AlertVariant } from '../../helpers/ui';
-import { useWholeSampleSet } from '../../pages/ExploreFocusSplit';
+import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
+import { PangoCountSampleDataset } from '../../data/sample/PangoCountSampleDataset';
+import { SpecialDateRangeSelector } from '../../data/DateRangeSelector';
+import { PangoCountSampleEntry } from '../../data/sample/PangoCountSampleEntry';
+import { formatVariantDisplayName, VariantSelector } from '../../data/VariantSelector';
+import { LocationDateVariantSelector } from '../../data/LocationDateVariantSelector';
+import { globalDateCache } from '../../helpers/date-cache';
+import assert from 'assert';
+import dayjs from 'dayjs';
+import { useQuery } from '../../helpers/query-hook';
 
 const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
 
-export interface SelectedVariantAndCountry {
-  variant: Variant;
-  country?: Country;
-}
-
 interface Props {
-  country: Country;
-  samplingStrategy: SamplingStrategy;
   onVariantSelect: (selection: VariantSelector) => void;
-  selection: VariantSelector | undefined;
+  variantSelector: VariantSelector | undefined;
+  wholeDateCountSampleDataset: DateCountSampleDataset;
 }
 
 const Grid = styled.div`
@@ -54,29 +38,100 @@ export type VariantList = {
 
 function selectPreviewVariants(
   definedVariants: VariantSelector[],
-  pangolinLineages: {
-    pangolinLineage: string;
-    count: number;
-  }[],
+  pangoLineageCounts: PangoCountSampleEntry[],
   numberVariants: number
 ): VariantSelector[] {
   const variants = [...definedVariants];
-  for (let pangolinLineage of pangolinLineages) {
+  pangoLineageCounts.sort((a, b) => b.count - a.count);
+  for (let { pangoLineage } of pangoLineageCounts) {
     if (variants.length >= numberVariants) {
       break;
     }
-    if (variants.map(v => v.variant.name?.replace(/\*/g, '')).includes(pangolinLineage.pangolinLineage)) {
+    if (!pangoLineage) {
+      continue;
+    }
+    if (variants.map(v => v.pangoLineage?.replace(/\*/g, '')).includes(pangoLineage)) {
       continue;
     }
     variants.push({
-      variant: {
-        name: pangolinLineage.pangolinLineage,
-        mutations: [],
-      },
-      matchPercentage: 1,
+      pangoLineage: pangoLineage,
     });
   }
   return variants;
+}
+
+export interface KnownVariantWithChartData {
+  selector: VariantSelector;
+  chartData: number[]; // proportion (0-1) per week
+  recentProportion: number; // the proportion of the last 14 days
+}
+
+// convertKnownVariantChartData converts SampleSets into the format required
+// by the known variant plots. It takes the latest 2 month window of data
+// in which the proportion for some variants was known. Data for every variant
+// is clipped to the same window.
+// Further, it computes the proportion from the sequencing data of the last 14
+// days, again ensuring that the same time window is used for every variant.
+export function convertKnownVariantChartData({
+  variantSampleSets,
+  wholeSampleSet,
+}: {
+  variantSampleSets: DateCountSampleDataset[];
+  wholeSampleSet: DateCountSampleDataset;
+}): KnownVariantWithChartData[] {
+  // Compute the weekly chart data
+  const variantWeeklyCounts = variantSampleSets.map(s => DateCountSampleDataset.countByWeek(s.getPayload()));
+  const wholeWeeklyCounts = DateCountSampleDataset.countByWeek(wholeSampleSet.getPayload());
+
+  const dataWeekRange = globalDateCache.rangeFromWeeks(
+    [...variantWeeklyCounts.values()].flatMap(map => [...map.keys()])
+  );
+  if (!dataWeekRange) {
+    return [];
+  }
+
+  const plotWeekRange = {
+    min: globalDateCache.getDayUsingDayjs(dataWeekRange.max.firstDay.dayjs.subtract(2, 'months')).isoWeek,
+    max: dataWeekRange.max,
+  };
+  if (globalDateCache.weekIsBefore(plotWeekRange.min, dataWeekRange.min)) {
+    console.warn('not enough data was fetched to show the latest 2 month window');
+    plotWeekRange.min = dataWeekRange.min;
+  }
+  const plotWeeks = globalDateCache.weeksFromRange(plotWeekRange);
+
+  const filledData = variantWeeklyCounts.map(counts => {
+    return plotWeeks.map(w => {
+      const wholeCount = wholeWeeklyCounts.get(w);
+      if (!wholeCount) {
+        return 0;
+      }
+      const variantCount = counts.get(w) ?? 0;
+      return variantCount / wholeCount;
+    });
+  });
+
+  assert(new Set(filledData.map(d => d.length)).size === 1);
+
+  // Compute the proportion during the last 14 days
+  const variantDailyCounts = variantSampleSets.map(s => DateCountSampleDataset.countByDay(s.getPayload()));
+  const wholeDateCounts = DateCountSampleDataset.countByDay(wholeSampleSet.getPayload());
+  const maxDate = dayjs.max([...wholeDateCounts.keys()].map(d => d.dayjs));
+  let recentVariantTotal = variantDailyCounts.map(_ => 0);
+  let recentWholeTotal = 0;
+  for (let i = 0; i < 14; i++) {
+    const d = globalDateCache.getDayUsingDayjs(maxDate.subtract(i, 'day'));
+    recentWholeTotal += wholeDateCounts.get(d) ?? 0;
+    variantDailyCounts.forEach((counts, index) => {
+      recentVariantTotal[index] += counts.get(d) ?? 0;
+    });
+  }
+
+  return variantSampleSets.map((dataset, i) => ({
+    selector: dataset.getSelector().variant!,
+    chartData: filledData[i],
+    recentProportion: recentVariantTotal[i] / recentWholeTotal,
+  }));
 }
 
 /**
@@ -86,114 +141,72 @@ function selectPreviewVariants(
  * we use past 3 months (Past3M) as the date range across all API calls within KnownVariantsList,
  * e.g. useWholeSampleSet, getPangolinLineages, loadKnownVariantSampleSets.
  */
-export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, selection }: Props) => {
+export const KnownVariantsList = ({
+  onVariantSelect,
+  variantSelector,
+  wholeDateCountSampleDataset,
+}: Props) => {
   const [selectedVariantList, setSelectedVariantList] = useState(VARIANT_LISTS[0].name);
-  const [variantSampleSets, setVariantSampleSets] = useState<KnownVariantWithSampleSet<VariantSelector>[]>();
-  const [knownVariantSelectors, setKnownVariantSelectors] = useState<VariantSelector[]>([]);
+  const [chartData, setChartData] = useState<KnownVariantWithChartData[] | undefined>(undefined);
 
-  const dateRange: DateRange = 'Past3M';
-  const { dateFrom, dateTo } = dateRangeToDates(dateRange);
-  const wholeSampleSetState: AsyncState<SampleSetWithSelector> = useWholeSampleSet({
-    country,
-    samplingStrategy,
-    dateRange,
-  });
-
-  const knownVariantsWithoutData: {
-    selector: VariantSelector;
-    chartData?: number[];
-    recentProportion?: number;
-  }[] = knownVariantSelectors.map(selector => ({ selector }));
-
-  const fetchPangolinLineages = () => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-    const promise = getPangolinLineages(
-      {
-        country,
-        samplingStrategy,
-        dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
-        dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
-      },
-      signal
-    ).then(data => {
-      const lineages = data.filter(d => d.pangolinLineage !== null).sort((a, b) => b.count - a.count) as {
-        pangolinLineage: string;
-        count: number;
-      }[];
-      const variantList = VARIANT_LISTS.filter(({ name }) => name === selectedVariantList)[0];
-      setKnownVariantSelectors(
-        selectPreviewVariants(variantList.variants, lineages, variantList.fillUpUntil)
-      );
-      return data;
-    });
-    (promise as PromiseWithCancel<PangolinLineageList>).cancel = () => controller.abort();
-    return promise;
-  };
-
-  const {
-    isFetching: isPLFetching,
-    isError: isPLError,
-    error: pLError,
-    isLoading: isPLLoading,
-    isSuccess: isPLSuccess,
-  } = useQuery<PangolinLineageList, Error>(
-    ['pangolinLineages', country, samplingStrategy, selectedVariantList],
-    fetchPangolinLineages
+  const pangoCountDataset = useQuery(
+    signal =>
+      PangoCountSampleDataset.fromApi(
+        {
+          location: wholeDateCountSampleDataset.getSelector().location,
+          dateRange: new SpecialDateRangeSelector('Past3M'),
+        },
+        signal
+      ),
+    [wholeDateCountSampleDataset]
   );
-
-  const fetchKnownVariantSampleSets = () => {
-    const controller = new AbortController();
-    const signal = controller.signal;
-    const promise = loadKnownVariantSampleSets(
-      {
-        variantSelectors: knownVariantSelectors,
-        country,
-        samplingStrategy,
-        dateFrom: dateFrom && dayjs(dateFrom).format('YYYY-MM-DD'),
-        dateTo: dateTo && dayjs(dateTo).format('YYYY-MM-DD'),
-      },
-      signal
-    ).then(data => {
-      setVariantSampleSets(data);
-      return data;
-    });
-    (promise as PromiseWithCancel<KnownVariantWithSampleSet<VariantSelector>[]>).cancel = () =>
-      controller.abort();
-    return promise;
-  };
-
-  const {
-    isFetching: isKVFetching,
-    isError: isKVError,
-    error: kVError,
-    isLoading: isKVLoading,
-    isSuccess: isKVSuccess,
-  } = useQuery<KnownVariantWithSampleSet<VariantSelector>[], Error>(
-    ['knownVariantsSampleSets', country, samplingStrategy, knownVariantSelectors],
-    fetchKnownVariantSampleSets
-  );
-
-  const knownVariants = useMemo(() => {
-    if (variantSampleSets === undefined || !wholeSampleSetState.isResolved) {
-      return knownVariantsWithoutData;
+  const knownVariantSelectors = useMemo(() => {
+    if (!pangoCountDataset.isSuccess || !pangoCountDataset.data) {
+      return [];
     }
-    return convertKnownVariantChartData({
-      variantSampleSets,
-      wholeSampleSet: wholeSampleSetState.data,
-    });
-  }, [variantSampleSets, wholeSampleSetState, knownVariantsWithoutData]);
-
-  const isLoading = () => {
-    return (
-      isPLLoading ||
-      isPLFetching ||
-      isKVLoading ||
-      isKVFetching ||
-      wholeSampleSetState.status === 'initial' ||
-      wholeSampleSetState.status === 'pending'
+    const variantList = VARIANT_LISTS.filter(({ name }) => name === selectedVariantList)[0];
+    console.log(1);
+    return selectPreviewVariants(
+      variantList.variants,
+      pangoCountDataset.data.getPayload(),
+      variantList.fillUpUntil
     );
-  };
+  }, [pangoCountDataset.isSuccess, pangoCountDataset.data, selectedVariantList]);
+
+  useEffect(() => {
+    if (!knownVariantSelectors) {
+      return;
+    }
+    console.log(2);
+
+    const createSelector = (variantSelector: VariantSelector): LocationDateVariantSelector => {
+      return {
+        location: wholeDateCountSampleDataset.getSelector().location,
+        dateRange: new SpecialDateRangeSelector('Past3M'),
+        variant: variantSelector,
+      };
+    };
+
+    async function fetchAll(knownVariantSelectors: VariantSelector[]) {
+      return await Promise.all(
+        knownVariantSelectors.map(vs => {
+          const selector = createSelector(vs);
+          return DateCountSampleDataset.fromApi(selector);
+        })
+      );
+    }
+    fetchAll(knownVariantSelectors).then(sampleSets => {
+      const _chartData = convertKnownVariantChartData({
+        variantSampleSets: sampleSets,
+        wholeSampleSet: wholeDateCountSampleDataset,
+      });
+      setChartData(_chartData);
+    });
+  }, [knownVariantSelectors, wholeDateCountSampleDataset]);
+
+  if (!chartData) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -203,30 +216,20 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
         onSelect={setSelectedVariantList}
       />
 
-      {isLoading() && <Loader />}
-      {isPLError && pLError && <Alert variant={AlertVariant.DANGER}>{pLError.message}</Alert>}
-      {isKVError && kVError && <Alert variant={AlertVariant.DANGER}>{kVError.message}</Alert>}
-      {wholeSampleSetState.status === 'rejected' && (
-        <Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>
-      )}
-
       <Grid>
-        {isPLSuccess &&
-          isKVSuccess &&
-          knownVariants.map(({ selector, chartData, recentProportion }) => (
-            <KnownVariantCard
-              key={formatVariantDisplayName(selector.variant, true)}
-              name={formatVariantDisplayName(selector.variant, true)}
-              chartData={chartData}
-              recentProportion={recentProportion}
-              onClick={() => onVariantSelect(selector)}
-              selected={
-                selection &&
-                formatVariantDisplayName(selection.variant, true) ===
-                  formatVariantDisplayName(selector.variant, true)
-              }
-            />
-          ))}
+        {chartData.map(({ selector, chartData, recentProportion }) => (
+          <KnownVariantCard
+            key={formatVariantDisplayName(selector, true)}
+            name={formatVariantDisplayName(selector, true)}
+            chartData={chartData}
+            recentProportion={recentProportion}
+            onClick={() => onVariantSelect(selector)}
+            selected={
+              variantSelector &&
+              formatVariantDisplayName(variantSelector, true) === formatVariantDisplayName(selector, true)
+            }
+          />
+        ))}
       </Grid>
     </>
   );
