@@ -9,8 +9,23 @@ import { VariantSelector } from '../helpers/sample-selector';
 import { PangolinLineageList } from '../services/api-types';
 import { useQuery } from 'react-query';
 import { getPangolinLineages, PromiseWithCancel, SamplingStrategy } from '../services/api';
-import { InputLoader } from './Loader';
+// import { InputLoader } from './Loader';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
+
+const LOADER_COLORS = 'gray';
+
+export const InputLoader = () => {
+  return (
+    <div className='flex justify-center items-center w-full my-1'>
+      <div className='animate-pulse w-full'>
+        {' '}
+        <div
+          className={`h-8 bg-gradient-to-r from-${LOADER_COLORS}-400 to-${LOADER_COLORS}-300 rounded w-full`}
+        ></div>
+      </div>
+    </div>
+  );
+};
 
 type SearchOption = {
   label: string;

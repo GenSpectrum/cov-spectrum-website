@@ -21,11 +21,30 @@ import _VARIANT_LISTS from './variantLists.json';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
 import { formatVariantDisplayName } from '../../helpers/variant-selector';
 import { useQuery } from 'react-query';
-import { KnownVariantLoader } from '../Loader';
+// import { KnownVariantLoader } from '../Loader';
 import { Alert, AlertVariant } from '../../helpers/ui';
 import { useWholeSampleSet } from '../../pages/ExploreFocusSplit';
 
 const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
+
+const KnownVariantCardLoader = (
+  <div className='animate-pulse w-full'>
+    <div className={`h-20 bg-gradient-to-r from-gray-400 to-gray-300 rounded w-full`}></div>
+  </div>
+);
+const getLoadVariantCardLoaders = () => {
+  let loaders = [];
+  for (let i = 0; i < 12; i++) {
+    loaders.push(KnownVariantCardLoader);
+  }
+  return loaders;
+};
+
+export const KnownVariantLoader = () => {
+  const loaders = getLoadVariantCardLoaders();
+
+  return <Grid>{loaders}</Grid>;
+};
 
 export interface SelectedVariantAndCountry {
   variant: Variant;

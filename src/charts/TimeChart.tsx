@@ -51,7 +51,10 @@ export const TimeChart = React.memo(
     const metrics = currentData
       ? [
           {
-            value: currentData.percent === undefined ? '-' : currentData.percent.toFixed(2),
+            value:
+              currentData.percent === undefined
+                ? '-'
+                : (Math.round(currentData.percent * 10) / 10).toString(),
             title: 'Proportion',
             color: colors.active,
             helpText: 'Estimated proportion relative to all samples collected.',

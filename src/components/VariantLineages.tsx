@@ -5,7 +5,7 @@ import dayjs from 'dayjs';
 import styled from 'styled-components';
 import { VariantSelector } from '../helpers/sample-selector';
 import { useQuery } from 'react-query';
-import Loader from './Loader';
+import { LoaderSmall } from './Loader';
 import { Alert, AlertVariant } from '../helpers/ui';
 
 export interface Props {
@@ -16,12 +16,6 @@ export interface Props {
   dateRange: DateRange;
   onVariantSelect: (selection: VariantSelector) => void;
 }
-
-const LineageList = styled.ul`
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 10px;
-`;
 
 const LineageEntry = styled.li`
   width: 250px;
@@ -86,38 +80,43 @@ export const VariantLineages = ({
     <>
       <div>Sequences of this variant belong to the following pangolin lineages:</div>
 
-      {(isLoading || isFetching) && <Loader />}
       {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
 
-      <LineageList className='list-disc	'>
-        {isSuccess &&
-          data &&
-          data
-            .sort((a, b) => b.count - a.count)
-            .map(({ pangolinLineage, proportion }) => {
-              const label = pangolinLineage || 'Unknown';
-              return (
-                <LineageEntry key={label}>
-                  {pangolinLineage ? (
-                    <button
-                      className='underline outline-none'
-                      onClick={() =>
-                        onVariantSelect({
-                          variant: { name: pangolinLineage, mutations: [] },
-                          matchPercentage: 1,
-                        })
-                      }
-                    >
-                      {pangolinLineage}
-                    </button>
-                  ) : (
-                    'Unknown'
-                  )}{' '}
-                  ({(proportion * 100).toFixed(2)}%)
-                </LineageEntry>
-              );
-            })}
-      </LineageList>
+      {isLoading || isFetching ? (
+        <div className='h-20 w-full flex items-center'>
+          <LoaderSmall />
+        </div>
+      ) : (
+        <ul className='list-disc flex flex-wrap max-h-24 overflow-y-auto '>
+          {isSuccess &&
+            data &&
+            data
+              .sort((a, b) => b.count - a.count)
+              .map(({ pangolinLineage, proportion }) => {
+                const label = pangolinLineage || 'Unknown';
+                return (
+                  <LineageEntry key={label}>
+                    {pangolinLineage ? (
+                      <button
+                        className='underline outline-none'
+                        onClick={() =>
+                          onVariantSelect({
+                            variant: { name: pangolinLineage, mutations: [] },
+                            matchPercentage: 1,
+                          })
+                        }
+                      >
+                        {pangolinLineage}
+                      </button>
+                    ) : (
+                      'Unknown'
+                    )}{' '}
+                    ({(proportion * 100).toFixed(2)}%)
+                  </LineageEntry>
+                );
+              })}
+        </ul>
+      )}
     </>
   );
 };
