@@ -46,7 +46,6 @@ const getLoadVariantCardLoaders = () => {
 export const KnownVariantLoader = () => {
   const loaders = getLoadVariantCardLoaders();
 
-  // return <div className='grid grid-cols-3 gap-4'>{loaders}</div>;
   return <Grid>{loaders}</Grid>;
 };
 
