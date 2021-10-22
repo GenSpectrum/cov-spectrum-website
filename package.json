@@ -95,10 +95,6 @@
       ]
     }
   },
-  "jest": {
-    "verbose": true,
-    "preset": "jest-puppeteer"
-  },
   "browserslist": {
     "production": [
       ">0.2%",
