@@ -1,22 +1,23 @@
 import * as React from 'react';
 import Spinner from 'react-bootstrap/Spinner';
-import styled from 'styled-components';
-
-const Wrapper = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 5rem;
-  height: 100%;
-`;
 
 const Loader = () => {
   return (
-    <Wrapper>
+    <div className='flex justify-center items-center h-full p-20'>
       <Spinner animation='border' role='status'>
         <span className='sr-only'>Loading...</span>
       </Spinner>
-    </Wrapper>
+    </div>
+  );
+};
+
+export const LoaderSmall = () => {
+  return (
+    <div className='flex justify-center items-center p-2 m-auto'>
+      <Spinner animation='border' role='status'>
+        <span className='sr-only'>Loading...</span>
+      </Spinner>
+    </div>
   );
 };
 

@@ -9,8 +9,23 @@ import { VariantSelector } from '../helpers/sample-selector';
 import { PangolinLineageList } from '../services/api-types';
 import { useQuery } from 'react-query';
 import { getPangolinLineages, PromiseWithCancel, SamplingStrategy } from '../services/api';
-import Loader from './Loader';
+// import { InputLoader } from './Loader';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
+
+const LOADER_COLORS = 'gray';
+
+export const InputLoader = () => {
+  return (
+    <div className='flex justify-center items-center w-full my-1'>
+      <div className='animate-pulse w-full'>
+        {' '}
+        <div
+          className={`h-8 bg-gradient-to-r from-${LOADER_COLORS}-400 to-${LOADER_COLORS}-300 rounded w-full`}
+        ></div>
+      </div>
+    </div>
+  );
+};
 
 type SearchOption = {
   label: string;
@@ -155,8 +170,6 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
    * 1) when input value contains ",", call the handleCommaSeparatedInput function
    * 2) otherwise, set the input value to the new value and keep menu window open
    * 3) when input change action is menu-close or input-blur, close menu window
-   * @param newValue the new input value
-   * @param change the change action
    */
   const handleInputChange = (newValue: string, change: InputActionMeta) => {
     if (change.action === 'input-change') {
@@ -182,7 +195,6 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
    * 4) max 1 pangolin lineage but multiple mutations allowed
    * 5) invalid queries stay as comma-separated plain text
    * 6) leave options menu open if there are invalid queries from the list
-   * @param inputValue comma-separated string
    */
   const handleCommaSeparatedInput = (inputValue: string) => {
     const inputValues = inputValue.split(',');
@@ -252,15 +264,11 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
   };
 
   return (
-    <div>
-      <div className='text-sm mb-2'>
-        Type in up to one pangolin lineage and any number of mutations (or paste a comma separated list):
-      </div>
-
-      {(isLoading || isFetching) && <Loader />}
+    <div className='mb-2'>
+      <div className='text-sm mb-2'>Pangolin lineage and any number of mutations:</div>
+      {(isLoading || isFetching) && <InputLoader />}
       {isError && error && <Alert variant={AlertVariant.DANGER}>{error.message}</Alert>}
-
-      {isSuccess && (
+      {isSuccess && !isLoading && !isFetching && (
         <form
           className='w-full flex flex-row items-center'
           onSubmit={e => {
@@ -285,7 +293,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
           <AsyncSelect
             className='w-full mr-2'
             components={{ DropdownIndicator }}
-            placeholder='B.1.1.7, S:484K, ...'
+            placeholder='B.1.1.7, S:484K,...'
             isMulti
             defaultOptions={suggestOptions('')}
             loadOptions={promiseOptions}

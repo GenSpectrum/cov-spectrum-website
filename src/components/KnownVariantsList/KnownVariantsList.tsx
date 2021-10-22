@@ -21,11 +21,30 @@ import _VARIANT_LISTS from './variantLists.json';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
 import { formatVariantDisplayName } from '../../helpers/variant-selector';
 import { useQuery } from 'react-query';
-import Loader from '../Loader';
+// import { KnownVariantLoader } from '../Loader';
 import { Alert, AlertVariant } from '../../helpers/ui';
 import { useWholeSampleSet } from '../../pages/ExploreFocusSplit';
 
 const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
+
+const KnownVariantCardLoader = (
+  <div className='animate-pulse w-full'>
+    <div className={`h-20 bg-gradient-to-r from-gray-400 to-gray-300 rounded w-full`}></div>
+  </div>
+);
+const getLoadVariantCardLoaders = () => {
+  let loaders = [];
+  for (let i = 0; i < 12; i++) {
+    loaders.push(KnownVariantCardLoader);
+  }
+  return loaders;
+};
+
+export const KnownVariantLoader = () => {
+  const loaders = getLoadVariantCardLoaders();
+
+  return <Grid>{loaders}</Grid>;
+};
 
 export interface SelectedVariantAndCountry {
   variant: Variant;
@@ -39,7 +58,7 @@ interface Props {
   selection: VariantSelector | undefined;
 }
 
-const Grid = styled.div`
+export const Grid = styled.div`
   display: grid;
   grid-gap: 5px;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -131,13 +150,7 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
     return promise;
   };
 
-  const {
-    isFetching: isPLFetching,
-    isError: isPLError,
-    error: pLError,
-    isLoading: isPLLoading,
-    isSuccess: isPLSuccess,
-  } = useQuery<PangolinLineageList, Error>(
+  const { isError: isPLError, error: pLError, isSuccess: isPLSuccess } = useQuery<PangolinLineageList, Error>(
     ['pangolinLineages', country, samplingStrategy, selectedVariantList],
     fetchPangolinLineages
   );
@@ -163,13 +176,10 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
     return promise;
   };
 
-  const {
-    isFetching: isKVFetching,
-    isError: isKVError,
-    error: kVError,
-    isLoading: isKVLoading,
-    isSuccess: isKVSuccess,
-  } = useQuery<KnownVariantWithSampleSet<VariantSelector>[], Error>(
+  const { isError: isKVError, error: kVError, isSuccess: isKVSuccess } = useQuery<
+    KnownVariantWithSampleSet<VariantSelector>[],
+    Error
+  >(
     ['knownVariantsSampleSets', country, samplingStrategy, knownVariantSelectors],
     fetchKnownVariantSampleSets
   );
@@ -184,36 +194,16 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
     });
   }, [variantSampleSets, wholeSampleSetState, knownVariantsWithoutData]);
 
-  const isLoading = () => {
-    return (
-      isPLLoading ||
-      isPLFetching ||
-      isKVLoading ||
-      isKVFetching ||
-      wholeSampleSetState.status === 'initial' ||
-      wholeSampleSetState.status === 'pending'
-    );
-  };
-
   return (
-    <>
-      <KnownVariantsListSelection
-        variantLists={VARIANT_LISTS}
-        selected={selectedVariantList}
-        onSelect={setSelectedVariantList}
-      />
-
-      {isLoading() && <Loader />}
+    <div>
       {isPLError && pLError && <Alert variant={AlertVariant.DANGER}>{pLError.message}</Alert>}
       {isKVError && kVError && <Alert variant={AlertVariant.DANGER}>{kVError.message}</Alert>}
       {wholeSampleSetState.status === 'rejected' && (
         <Alert variant={AlertVariant.DANGER}>Failed to load samples</Alert>
       )}
-
-      <Grid>
-        {isPLSuccess &&
-          isKVSuccess &&
-          knownVariants.map(({ selector, chartData, recentProportion }) => (
+      {isPLSuccess && isKVSuccess ? (
+        <Grid>
+          {knownVariants.map(({ selector, chartData, recentProportion }) => (
             <KnownVariantCard
               key={formatVariantDisplayName(selector.variant, true)}
               name={formatVariantDisplayName(selector.variant, true)}
@@ -227,7 +217,15 @@ export const KnownVariantsList = ({ country, samplingStrategy, onVariantSelect, 
               }
             />
           ))}
-      </Grid>
-    </>
+        </Grid>
+      ) : (
+        <KnownVariantLoader />
+      )}
+      <KnownVariantsListSelection
+        variantLists={VARIANT_LISTS}
+        selected={selectedVariantList}
+        onSelect={setSelectedVariantList}
+      />
+    </div>
   );
 };
