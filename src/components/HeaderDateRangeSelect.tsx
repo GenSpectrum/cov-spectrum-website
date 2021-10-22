@@ -1,29 +1,48 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
-import { useExploreUrl } from '../helpers/explore-url';
-import { DateRange } from '../services/api';
+import { ExploreUrl } from '../helpers/explore-url';
+import {
+  ALL_TIMES,
+  DateRange,
+  PAST_3M,
+  PAST_6M,
+  specificDateRangeRegEx,
+  Y2020,
+  Y2021,
+} from '../services/api-types';
+import { dateRangeToString } from '../services/api';
 
-export const HeaderDateRangeSelect = () => {
-  const exploreUrl = useExploreUrl();
+interface Props {
+  exploreUrl?: ExploreUrl;
+}
 
+export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
   if (!exploreUrl) {
     return null;
   }
 
+  const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    exploreUrl.setDateRange(event.target.value as DateRange);
+  };
+
   return (
-    <Form inline className='mr-3'>
+    <Form inline>
       <Form.Control
         as='select'
         custom
         id='dateRangeSelect'
-        value={exploreUrl.dateRange}
-        onChange={ev => exploreUrl.setDateRange(ev.target.value as DateRange)}
+        defaultValue={''}
+        value={specificDateRangeRegEx.test(exploreUrl.dateRange) ? '' : exploreUrl.dateRange}
+        onChange={handleChange}
       >
-        <option value='AllTimes'>All times</option>
-        <option value='Past3M'>Past 3 months</option>
-        <option value='Past6M'>Past 6 months</option>
-        <option value='Y2020'>2020</option>
-        <option value='Y2021'>2021</option>
+        <option value='' disabled>
+          Custom Range
+        </option>
+        <option value={ALL_TIMES}>{dateRangeToString(ALL_TIMES)}</option>
+        <option value={PAST_3M}>{dateRangeToString(PAST_3M)}</option>
+        <option value={PAST_6M}>{dateRangeToString(PAST_6M)}</option>
+        <option value={Y2020}>{dateRangeToString(Y2020)}</option>
+        <option value={Y2021}>{dateRangeToString(Y2021)}</option>
       </Form.Control>
     </Form>
   );

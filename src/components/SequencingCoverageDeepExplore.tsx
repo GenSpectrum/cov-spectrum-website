@@ -1,7 +1,7 @@
 import React from 'react';
 import { SequencingRepresentativenessPlotWidget } from '../widgets/SequencingRepresentativenessPlot';
-import { Country } from '../services/api-types';
-import { DateRange, dateRangeToDates, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { Country, DateRange } from '../services/api-types';
+import { dateRangeToDates, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
 import dayjs from 'dayjs';
 import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
 import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';

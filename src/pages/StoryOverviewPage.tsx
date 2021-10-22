@@ -22,9 +22,9 @@ export const StoryOverviewPage = () => {
         </div>
         <p>
           We report estimates of the prevalence of different genomic variants of SARS-CoV-2 obtained from
-          wastewater samples. Samples are collected daily at six Swiss wastewater treatment plants (by{' '}
-          <ExternalLink url='https://www.eawag.ch/en/department/sww/projects/sars-cov2-in-wastewater/'>
-            Eawag
+          samples collected at different Swiss wastewater treatment plants (
+          <ExternalLink url='https://bsse.ethz.ch/cbg/research/computational-virology/sarscov2-variants-wastewater-surveillance.html#data-sources'>
+            see our website for the sources
           </ExternalLink>
           ).
         </p>

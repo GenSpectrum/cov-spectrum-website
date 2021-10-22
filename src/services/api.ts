@@ -29,6 +29,8 @@ import {
   RawMultiSampleSchema,
   InterestingVariantResultSchema,
   CaseCountEntrySchema,
+  specificDateRangeRegEx,
+  DateRange,
 } from './api-types';
 import dayjs from 'dayjs';
 import {
@@ -71,19 +73,35 @@ export function isSamplingStrategy(s: unknown): s is SamplingStrategy {
   }
 }
 
-export type DateRange = 'AllTimes' | 'Past3M' | 'Past6M' | 'Y2020' | 'Y2021';
-
 export function isDateRange(s: unknown): s is DateRange {
   const _s = s as DateRange;
-  switch (_s) {
-    case 'AllTimes':
-    case 'Past3M':
-    case 'Past6M':
-    case 'Y2020':
-    case 'Y2021':
+  switch (true) {
+    case _s === 'AllTimes':
+    case _s === 'Past3M':
+    case _s === 'Past6M':
+    case _s === 'Y2020':
+    case _s === 'Y2021':
+    case specificDateRangeRegEx.test(_s):
       return true;
     default:
-      return defaultForNever(_s, false);
+      return false;
+  }
+}
+
+export function dateRangeToString(dateRange: DateRange): string {
+  switch (true) {
+    case dateRange === 'AllTimes':
+      return 'All times';
+    case dateRange === 'Past3M':
+      return 'Past 3 months';
+    case dateRange === 'Past6M':
+      return 'Past 6 months';
+    case dateRange === 'Y2020':
+      return '2020';
+    case dateRange === 'Y2021':
+      return '2021';
+    default:
+      return '';
   }
 }
 
@@ -93,33 +111,45 @@ export function dateRangeToDates(
   dateFrom: Date | undefined;
   dateTo: Date | undefined;
 } {
-  switch (dateRange) {
-    case 'AllTimes':
+  switch (true) {
+    case dateRange === 'AllTimes':
       return {
         dateFrom: undefined,
         dateTo: undefined,
       };
-    case 'Past3M':
+    case dateRange === 'Past3M':
       return {
         dateFrom: dayjs().subtract(3, 'months').weekday(0).toDate(),
-        dateTo: undefined,
+        dateTo: dayjs().toDate(),
       };
-    case 'Past6M':
+    case dateRange === 'Past6M':
       return {
         dateFrom: dayjs().subtract(6, 'months').weekday(0).toDate(),
-        dateTo: undefined,
+        dateTo: dayjs().toDate(),
       };
-    case 'Y2020':
+    case dateRange === 'Y2020':
       // The dates are chosen so that the date range always starts on a monday and ends on a Sunday.
       return {
         dateFrom: new Date('2020-01-06'),
         dateTo: new Date('2021-01-03'),
       };
-    case 'Y2021':
+    case dateRange === 'Y2021':
       // The dates are chosen so that the date range always starts on a monday and ends on a Sunday.
       return {
         dateFrom: new Date('2021-01-04'),
         dateTo: new Date('2022-01-02'),
+      };
+    case specificDateRangeRegEx.test(dateRange):
+      const from = dateRange.match(/from=(.*)&/);
+      const to = dateRange.match(/to=(.*)$/);
+      return {
+        dateFrom: from ? new Date(from[1]) : undefined,
+        dateTo: to ? new Date(to[1]) : undefined,
+      };
+    default:
+      return {
+        dateFrom: undefined,
+        dateTo: undefined,
       };
   }
 }

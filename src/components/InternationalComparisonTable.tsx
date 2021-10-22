@@ -5,8 +5,8 @@ import { LazySampleButton } from '../components/LazySampleButton';
 import { globalDateCache, UnifiedIsoWeek } from '../helpers/date-cache';
 import { SampleSet } from '../helpers/sample-set';
 import { AccountService } from '../services/AccountService';
-import { DateRange, SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
-import { Variant } from '../services/api-types';
+import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
+import { DateRange, Variant } from '../services/api-types';
 import { NextcladeIntegration } from '../services/external-integrations/NextcladeIntegration';
 
 interface Props {

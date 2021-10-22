@@ -44,6 +44,20 @@
           "mutations": []
         },
         "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "AY.4",
+          "mutations": []
+        },
+        "matchPercentage": 1
+      },
+      {
+        "variant": {
+          "name": "AY.4.2",
+          "mutations": []
+        },
+        "matchPercentage": 1
       }
     ]
   },

@@ -55,3 +55,30 @@ code {
 .custom-narrow-dropdown button.dropdown-toggle::after {
   vertical-align: 0.15em;
 }
+.custom-date-filter-input {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='4' height='5' viewBox='0 0 4 5'%3e%3cpath fill='%23343a40' d='M2 0L0 2h4zm0 5L0 3h4z'/%3e%3c/svg%3e");
+  background-size: 8px 10px;
+  background-repeat: no-repeat;
+  background-position: right 5px bottom 50%;
+  border-radius: 0.25rem; /*rounded border */
+  border: 1px solid #34495e;
+  padding: 5px 18px 5px 5px;
+  color: black;
+  text-align: center;
+  font-size: 1rem;
+  background-color: white;
+  outline: none;
+  width: 220px;
+}
+
+.custom-date-filter-input:focus {
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.custom-date-filter-input::placeholder {
+  color: black;
+}
+
+.custom-date-filter-input:hover {
+  cursor: pointer;
+}
