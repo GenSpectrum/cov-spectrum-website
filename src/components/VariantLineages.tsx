@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import Loader from './Loader';
+import { LoaderSmall } from './Loader';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { PangoCountSampleDataset } from '../data/sample/PangoCountSampleDataset';
 import { VariantSelector } from '../data/VariantSelector';
@@ -9,12 +9,6 @@ export interface Props {
   selector: LocationDateVariantSelector;
   onVariantSelect: (selection: VariantSelector) => void;
 }
-
-const LineageList = styled.ul`
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 10px;
-`;
 
 const LineageEntry = styled.li`
   width: 250px;
@@ -44,11 +38,13 @@ export const VariantLineages = ({ selector, onVariantSelect }: Props) => {
     <>
       <div>Sequences of this variant belong to the following pangolin lineages:</div>
 
-      {!data && <Loader />}
-
-      <LineageList className='list-disc	'>
-        {data &&
-          data
+      {!data ? (
+        <div className='h-20 w-full flex items-center'>
+          <LoaderSmall />
+        </div>
+      ) : (
+        <ul className='list-disc flex flex-wrap max-h-24 overflow-y-auto '>
+          {data
             .sort((a, b) => b.proportion - a.proportion)
             .map(({ pangoLineage, proportion }) => {
               const label = pangoLineage || 'Unknown';
@@ -57,11 +53,7 @@ export const VariantLineages = ({ selector, onVariantSelect }: Props) => {
                   {pangoLineage ? (
                     <button
                       className='underline outline-none'
-                      onClick={() =>
-                        onVariantSelect({
-                          pangoLineage: pangoLineage,
-                        })
-                      }
+                      onClick={() => onVariantSelect({ pangoLineage })}
                     >
                       {pangoLineage}
                     </button>
@@ -72,7 +64,8 @@ export const VariantLineages = ({ selector, onVariantSelect }: Props) => {
                 </LineageEntry>
               );
             })}
-      </LineageList>
+        </ul>
+      )}
     </>
   );
 };

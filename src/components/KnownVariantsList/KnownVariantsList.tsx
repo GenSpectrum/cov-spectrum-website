@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { KnownVariantCard } from './KnownVariantCard';
 import _VARIANT_LISTS from './variantLists.json';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
-import Loader from '../Loader';
 import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
 import { PangoCountSampleDataset } from '../../data/sample/PangoCountSampleDataset';
 import { SpecialDateRangeSelector } from '../../data/DateRangeSelector';
@@ -17,13 +16,32 @@ import { useQuery } from '../../helpers/query-hook';
 
 const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
 
+const KnownVariantCardLoader = (
+  <div className='animate-pulse w-full'>
+    <div className={`h-20 bg-gradient-to-r from-gray-400 to-gray-300 rounded w-full`}></div>
+  </div>
+);
+const getLoadVariantCardLoaders = () => {
+  let loaders = [];
+  for (let i = 0; i < 12; i++) {
+    loaders.push(KnownVariantCardLoader);
+  }
+  return loaders;
+};
+
+export const KnownVariantLoader = () => {
+  const loaders = getLoadVariantCardLoaders();
+
+  return <Grid>{loaders}</Grid>;
+};
+
 interface Props {
   onVariantSelect: (selection: VariantSelector) => void;
   variantSelector: VariantSelector | undefined;
   wholeDateCountSampleDataset: DateCountSampleDataset;
 }
 
-const Grid = styled.div`
+export const Grid = styled.div`
   display: grid;
   grid-gap: 5px;
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -174,10 +192,10 @@ export const KnownVariantsList = ({
   }, [pangoCountDataset.isSuccess, pangoCountDataset.data, selectedVariantList]);
 
   useEffect(() => {
+    setChartData(undefined);
     if (!knownVariantSelectors) {
       return;
     }
-    console.log(2);
 
     const createSelector = (variantSelector: VariantSelector): LocationDateVariantSelector => {
       return {
@@ -205,7 +223,7 @@ export const KnownVariantsList = ({
   }, [knownVariantSelectors, wholeDateCountSampleDataset]);
 
   if (!chartData) {
-    return <Loader />;
+    return <KnownVariantLoader />;
   }
 
   return (

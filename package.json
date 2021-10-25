@@ -113,9 +113,12 @@
     "@types/react-plotly.js": "^2.2.4",
     "@types/react-router-hash-link": "^2.4.2",
     "autoprefixer": "^9.8.6",
+    "eslint": "^7.32.0",
     "eslint-plugin-unused-imports": "^1.1.4",
+    "jest-puppeteer": "^6.0.0",
     "postcss": "^7.0.35",
     "prettier": "^2.2.1",
+    "puppeteer": "^10.4.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2"
   }
 }

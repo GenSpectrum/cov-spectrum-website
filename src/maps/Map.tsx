@@ -186,7 +186,9 @@ const Map = ({ data: inputData, country }: Props) => {
         ? focusData.prevalence
           ? focusData.prevalence.toFixed(2)
           : 0
-        : `${minPrevalence.toFixed(2)}-${maxPrevalence.toFixed(2)}`,
+        : `${(Math.round(minPrevalence * 100) / 100).toString()}-${Math.round(
+            (maxPrevalence * 100) / 100
+          ).toString()}`,
       title: focusData ? 'Prevalence' : 'Prevalence range',
       color: colors.active,
       helpText: 'Proportion relative to all samples collected from this age group.',

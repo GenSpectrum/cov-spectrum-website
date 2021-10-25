@@ -256,7 +256,7 @@ export const FocusPage = ({
           controls={<FocusVariantHeaderControls selector={variantDataset.getSelector()} />}
         />
         {(!pangoLineage || pangoLineage.endsWith('*')) && (
-          <div className='m-4'>
+          <div className='mx-0.5 mt-1 mb-5 md:mx-3 shadow-lg rounded-lg bg-white p-2 pl-4'>
             <VariantLineages onVariantSelect={onVariantSelect} selector={variantDataset.getSelector()} />{' '}
           </div>
         )}
