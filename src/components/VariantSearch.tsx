@@ -155,8 +155,8 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
    */
   const handleInputChange = (newValue: string, change: InputActionMeta) => {
     if (change.action === 'input-change') {
-      // when input value has "," in the string
-      if (newValue.includes(',')) {
+      // when input value has "," or "+" in the string
+      if (newValue.includes(',') || newValue.includes('+')) {
         handleCommaSeparatedInput(newValue);
       } else {
         setInputValue(newValue);
@@ -171,7 +171,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
 
   /**
    * Handles comma-separated input value:
-   * 1) split the input value by "," to retrieve the individual query in the list
+   * 1) split the input value by "," and "+" to retrieve the individual query in the list
    * 2) validate each input query by mapping to suggest options
    * 3) add valid options to the selected options list so they transform from plain text to tags
    * 4) max 1 pango lineage but multiple mutations allowed
@@ -180,7 +180,7 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
    * @param inputValue comma-separated string
    */
   const handleCommaSeparatedInput = (inputValue: string) => {
-    const inputValues = inputValue.split(',');
+    const inputValues = inputValue.split(/[,+]/);
     let newSelectedOptions: SearchOption[] = [];
     let invalidQueries = '';
     for (let query of inputValues) {
