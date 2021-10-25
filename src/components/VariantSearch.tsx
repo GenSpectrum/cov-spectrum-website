@@ -11,6 +11,7 @@ import { isValidNucMutation } from '../helpers/nuc-mutation';
 import { useQuery } from '../helpers/query-hook';
 import { InternalLink } from './InternalLink';
 import { ExternalLink } from './ExternalLink';
+import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 
 type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
 
@@ -34,6 +35,20 @@ function mapOption(optionString: string, type: SearchType): SearchOption {
   };
 }
 
+function variantSelectorToOptions(selector: VariantSelector): SearchOption[] {
+  const options: SearchOption[] = [];
+  if (selector.pangoLineage) {
+    options.push({ label: selector.pangoLineage, value: selector.pangoLineage, type: 'pango-lineage' });
+  }
+  if (selector.aaMutations) {
+    selector.aaMutations.forEach(m => options.push({ label: m, value: m, type: 'aa-mutation' }));
+  }
+  if (selector.nucMutations) {
+    selector.nucMutations.forEach(m => options.push({ label: m, value: m, type: 'nuc-mutation' }));
+  }
+  return options;
+}
+
 const colorStyles: Partial<Styles<any, true, any>> = {
   control: (styles: CSSPseudos) => ({ ...styles, backgroundColor: 'white' }),
   multiValue: (styles: CSSPseudos, { data }: { data: SearchOption }) => {
@@ -45,10 +60,11 @@ const colorStyles: Partial<Styles<any, true, any>> = {
 };
 
 type Props = {
+  currentSelection?: VariantSelector;
   onVariantSelect: (selection: VariantSelector) => void;
 };
 
-export const VariantSearch = ({ onVariantSelect }: Props) => {
+export const VariantSearch = ({ onVariantSelect, currentSelection }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<SearchOption[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
@@ -63,6 +79,12 @@ export const VariantSearch = ({ onVariantSelect }: Props) => {
       ),
     []
   );
+
+  useDeepCompareEffect(() => {
+    if (currentSelection) {
+      setSelectedOptions(variantSelectorToOptions(currentSelection));
+    }
+  }, [currentSelection]);
 
   const suggestPangolinLineages = (query: string): string[] => {
     return (pangoLineages.data ?? []).filter(pl => pl.toUpperCase().startsWith(query.toUpperCase()));

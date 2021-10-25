@@ -41,7 +41,7 @@ export const ExplorePage = ({
   return (
     <>
       <div className='mt-4'>
-        <VariantSearch onVariantSelect={onVariantSelect} />
+        <VariantSearch onVariantSelect={onVariantSelect} currentSelection={selection} />
       </div>
       <KnownVariantsList
         onVariantSelect={onVariantSelect}
