@@ -33,14 +33,21 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     signal => DetailedSampleAggDataset.fromApi({ location: location!, dateRange, variant }, signal),
     [dateRange, location, variant]
   );
-  const wholeDataset = useQuery(signal => DetailedSampleAggDataset.fromApi({ location: location! }, signal), [
-    location,
-  ]);
-  const wholeDateCountSampleDataset: DateCountSampleDataset | undefined = useMemo(() => {
-    if (wholeDataset.isSuccess && wholeDataset.data) {
-      return DateCountSampleDataset.fromDetailedSampleAggDataset(wholeDataset.data);
+  const wholeDatasetWithoutDateFilter = useQuery(
+    // Used by the explore page
+    signal => DetailedSampleAggDataset.fromApi({ location: location! }, signal),
+    [location]
+  );
+  const wholeDateCountSampleDatasetWithoutDateFilter: DateCountSampleDataset | undefined = useMemo(() => {
+    if (wholeDatasetWithoutDateFilter.isSuccess && wholeDatasetWithoutDateFilter.data) {
+      return DateCountSampleDataset.fromDetailedSampleAggDataset(wholeDatasetWithoutDateFilter.data);
     }
-  }, [wholeDataset.isSuccess, wholeDataset.data]);
+  }, [wholeDatasetWithoutDateFilter.isSuccess, wholeDatasetWithoutDateFilter.data]);
+  const wholeDatasetWithDateFilter = useQuery(
+    // Used by the focus page
+    signal => DetailedSampleAggDataset.fromApi({ location: location!, dateRange }, signal),
+    [location]
+  );
   const caseCountDataset = useQuery(signal => CaseCountDataset.fromApi({ location: location! }, signal), [
     location,
   ]);
@@ -61,19 +68,22 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   }
 
   const explorePage =
-    caseCountDataset.isSuccess && wholeDateCountSampleDataset ? (
+    caseCountDataset.isSuccess && wholeDateCountSampleDatasetWithoutDateFilter ? (
       <ExplorePage
         onVariantSelect={setVariant!}
         selection={variant}
-        wholeDateCountSampleDataset={wholeDateCountSampleDataset}
+        wholeDateCountSampleDataset={wholeDateCountSampleDatasetWithoutDateFilter}
         caseCountDataset={caseCountDataset.data!}
       />
     ) : (
       <Loader />
     );
   const deepExplorePage =
-    caseCountDataset.isSuccess && wholeDataset.isSuccess ? (
-      <DeepExplorePage wholeDataset={wholeDataset.data!} caseCountDataset={caseCountDataset.data!} />
+    caseCountDataset.isSuccess && wholeDatasetWithoutDateFilter.isSuccess ? (
+      <DeepExplorePage
+        wholeDataset={wholeDatasetWithoutDateFilter.data!}
+        caseCountDataset={caseCountDataset.data!}
+      />
     ) : (
       <Loader />
     );
@@ -116,14 +126,14 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   return makeLayout(
     variant &&
       variantDataset.isSuccess &&
-      wholeDataset.isSuccess &&
+      wholeDatasetWithDateFilter.isSuccess &&
       variantInternationalDateCountDataset.isSuccess &&
       wholeInternationalDateCountDataset.isSuccess &&
       caseCountDataset.isSuccess ? (
       <FocusPage
         key={focusKey}
         variantDataset={variantDataset.data!}
-        wholeDataset={wholeDataset.data!}
+        wholeDataset={wholeDatasetWithDateFilter.data!}
         caseCountDataset={caseCountDataset.data!}
         variantInternationalDateCountDataset={variantInternationalDateCountDataset.data!}
         wholeInternationalDateCountDataset={wholeInternationalDateCountDataset.data!}
@@ -134,13 +144,13 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     ),
     variant &&
       variantDataset.isSuccess &&
-      wholeDataset.isSuccess &&
+      wholeDatasetWithDateFilter.isSuccess &&
       variantInternationalDateCountDataset.isSuccess &&
       wholeInternationalDateCountDataset.isSuccess ? (
       <DeepFocusPage
         key={focusKey}
         variantDataset={variantDataset.data!}
-        wholeDataset={wholeDataset.data!}
+        wholeDataset={wholeDatasetWithDateFilter.data!}
         variantInternationalDateCountDataset={variantInternationalDateCountDataset.data!}
         wholeInternationalDateCountDataset={wholeInternationalDateCountDataset.data!}
       />
