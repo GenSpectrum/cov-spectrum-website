@@ -46,7 +46,7 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   const wholeDatasetWithDateFilter = useQuery(
     // Used by the focus page
     signal => DetailedSampleAggDataset.fromApi({ location: location!, dateRange }, signal),
-    [location]
+    [location, dateRange]
   );
   const caseCountDataset = useQuery(signal => CaseCountDataset.fromApi({ location: location! }, signal), [
     location,
