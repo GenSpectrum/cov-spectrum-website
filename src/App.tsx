@@ -4,22 +4,19 @@ import Header from './Header';
 import { LoginWrapper } from './helpers/app-layout';
 import { AboutPage } from './pages/AboutPage';
 import { ExploreFocusSplit } from './pages/ExploreFocusSplit';
-import { GlobalSamplePage } from './pages/GlobalSamplePage';
 import { LoginPage } from './pages/LoginPage';
-import { SamplingStrategy } from './services/api';
 import { useResizeDetector } from 'react-resize-detector';
 import { Alert, AlertVariant } from './helpers/ui';
 import { StoryOverviewPage } from './pages/StoryOverviewPage';
 import { WasteWaterStoryPage } from './models/wasteWater/story/WasteWaterStoryPage';
 import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLocationPage';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { SamplingStrategy } from './SamplingStrategy';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
 export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width <= 1000;
-  const queryClient = new QueryClient();
 
   return (
     <div className='pt-32 md:pt-20 h-screen w-full overflow-hidden'>
@@ -36,39 +33,31 @@ export const App = () => {
             </div>
           </Alert>
         )}
-        <QueryClientProvider client={queryClient}>
-          <Switch>
-            <Route exact path='/'>
-              <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}/AllTimes`} />
-            </Route>
-            <Route path='/variant'>
-              <Redirect to='/' />
-            </Route>
-            <Route path='/login'>
-              <LoginWrapper>
-                <LoginPage />
-              </LoginWrapper>
-            </Route>
-            <Route path='/explore/:country/:samplingStrategy/:dateRange'>
-              <ExploreFocusSplit isSmallScreen={isSmallScreen} />
-            </Route>
-            <Route path='/global-samples'>
-              <GlobalSamplePage />
-            </Route>
-            <Route exact path='/story'>
-              <StoryOverviewPage />
-            </Route>
-            <Route exact path='/story/wastewater-in-switzerland'>
-              <WasteWaterStoryPage />
-            </Route>
-            <Route path='/story/wastewater-in-switzerland/location/:location'>
-              <WasteWaterLocationPage />
-            </Route>
-            <Route path='/about'>
-              <AboutPage />
-            </Route>
-          </Switch>
-        </QueryClientProvider>
+        <Switch>
+          <Route exact path='/'>
+            <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}/AllTimes`} />
+          </Route>
+          <Route path='/login'>
+            <LoginWrapper>
+              <LoginPage />
+            </LoginWrapper>
+          </Route>
+          <Route path='/explore/:country/:samplingStrategy/:dateRange'>
+            <ExploreFocusSplit isSmallScreen={isSmallScreen} />
+          </Route>
+          <Route exact path='/story'>
+            <StoryOverviewPage />
+          </Route>
+          <Route exact path='/story/wastewater-in-switzerland'>
+            <WasteWaterStoryPage />
+          </Route>
+          <Route path='/story/wastewater-in-switzerland/location/:location'>
+            <WasteWaterLocationPage />
+          </Route>
+          <Route path='/about'>
+            <AboutPage />
+          </Route>
+        </Switch>
       </div>
     </div>
   );

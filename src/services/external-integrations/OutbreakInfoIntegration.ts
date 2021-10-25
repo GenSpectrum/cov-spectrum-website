@@ -1,14 +1,15 @@
-import { getPangolinLineageIfPure, Integration, IntegrationSelector } from './Integration';
+import { getPangoLineageIfPure, Integration } from './Integration';
+import { LocationDateVariantSelector } from '../../data/LocationDateVariantSelector';
 
 export class OutbreakInfoIntegration implements Integration {
   name = 'outbreak.info';
 
-  isAvailable(selector: IntegrationSelector): boolean {
+  isAvailable(selector: LocationDateVariantSelector): boolean {
     // TODO outbreak.info can more! It can also generate reports for mutations and limit to countries
-    return !!getPangolinLineageIfPure(selector);
+    return !!getPangoLineageIfPure(selector);
   }
 
-  open(selector: IntegrationSelector): void {
-    window.open(`https://outbreak.info/situation-reports?pango=${selector.variant.name}`);
+  open(selector: LocationDateVariantSelector): void {
+    window.open(`https://outbreak.info/situation-reports?pango=${selector.variant?.pangoLineage}`);
   }
 }

@@ -3,7 +3,7 @@ import { Card } from 'react-bootstrap';
 import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import styled from 'styled-components';
 import { mean } from 'lodash';
-import { colors } from '../../charts/common';
+import { colors } from '../../widgets/common';
 import { getWHOLabel } from '../../services/who-label';
 
 const TREND_START = 9;

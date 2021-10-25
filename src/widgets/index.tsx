@@ -1,33 +1,32 @@
-import { VariantAgeDistributionPlotWidget } from './VariantAgeDistributionPlot';
-import { VariantInternationalComparisonPlotWidget } from './VariantInternationalComparisonPlot';
-import { VariantTimeDistributionPlotWidget } from './VariantTimeDistributionPlot';
 import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
-import { SequencingIntensityPlotWidget } from './SequencingIntensityPlot';
 import { WasteWaterTimeWidget } from '../models/wasteWater/WasteWaterTimeWidget';
 import { WasteWaterHeatMapWidget } from '../models/wasteWater/WasteWaterHeatMapWidget';
-import { EstimatedCasesPlotWidget } from './EstimatedCasesPlot';
-import { ArticleListWidget } from './ArticleList';
-import { VariantDivisionDistributionTableWidget } from './VariantDivisionDistributionTable';
+import { ArticleListWidget } from './ArticleListWidget';
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
 import { WasteWaterLocationTimeWidget } from '../models/wasteWater/WasteWaterLocationTimeWidget';
-import { HospitalizationDeathPlotWidget } from './HospitalizationDeathPlot';
-import { SequencingRepresentativenessPlotWidget } from './SequencingRepresentativenessPlot';
-import { MetadataAvailabilityPlotWidget } from './MetadataAvailabilityPlot';
+import { SequencingRepresentativenessChartWidget } from './SequencingRepresentativenessChartWidget';
+import { MetadataAvailabilityChartWidget } from './MetadataAvailabilityChartWidget';
+import { VariantTimeDistributionChartWidget } from './VariantTimeDistributionChartWidget';
+import { VariantAgeDistributionChartWidget } from './VariantAgeDistributionChartWidget';
+import { HospitalizationDeathChartWidget } from './HospitalizationDeathChartWidget';
+import { SequencingIntensityChartWidget } from './SequencingIntensityChartWidget';
+import { EstimatedCasesChartWidget } from './EstimatedCasesChartWidget';
+import { VariantInternationalComparisonChartWidget } from './VariantInternationalComparisonChartWidget';
 
 export const allWidgets = [
-  VariantAgeDistributionPlotWidget,
-  VariantInternationalComparisonPlotWidget,
-  VariantTimeDistributionPlotWidget,
-  VariantDivisionDistributionTableWidget,
-  SequencingIntensityPlotWidget,
-  SequencingRepresentativenessPlotWidget,
-  MetadataAvailabilityPlotWidget,
-  Chen2021FitnessWidget,
-  WasteWaterTimeWidget,
-  WasteWaterHeatMapWidget,
-  WasteWaterSummaryTimeWidget,
-  WasteWaterLocationTimeWidget,
-  EstimatedCasesPlotWidget,
   ArticleListWidget,
-  HospitalizationDeathPlotWidget,
+  EstimatedCasesChartWidget,
+  HospitalizationDeathChartWidget,
+  MetadataAvailabilityChartWidget,
+  SequencingIntensityChartWidget,
+  SequencingRepresentativenessChartWidget,
+  VariantAgeDistributionChartWidget,
+  VariantInternationalComparisonChartWidget,
+  VariantTimeDistributionChartWidget,
+
+  Chen2021FitnessWidget,
+  WasteWaterHeatMapWidget,
+  WasteWaterLocationTimeWidget,
+  WasteWaterSummaryTimeWidget,
+  WasteWaterTimeWidget,
 ];

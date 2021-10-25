@@ -8,7 +8,6 @@ import { GridCell, PackedGrid } from '../../../components/PackedGrid';
 import { WasteWaterLocationTimeWidget } from '../WasteWaterLocationTimeWidget';
 import _ from 'lodash';
 import { ShowMoreButton } from '../../../helpers/ui';
-import { createLocation } from 'history';
 
 export const WasteWaterStoryPage = () => {
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
@@ -42,7 +41,7 @@ export const WasteWaterStoryPage = () => {
             variants={variantsTimeseriesSummaries}
             height={300}
             toolbarChildren={[
-              <ShowMoreButton to={createLocation('/story/wastewater-in-switzerland/location/' + location)} />,
+              <ShowMoreButton to={'/story/wastewater-in-switzerland/location/' + location} />,
             ]}
           />
         ),

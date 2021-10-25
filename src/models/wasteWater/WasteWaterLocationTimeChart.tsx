@@ -2,7 +2,7 @@ import React from 'react';
 import { WasteWaterTimeseriesSummaryDataset } from './types';
 import { UnifiedDay } from '../../helpers/date-cache';
 import { getTicks } from '../../helpers/ticks';
-import { ChartAndMetricsWrapper, ChartWrapper, TitleWrapper, Wrapper } from '../../charts/common';
+import { ChartAndMetricsWrapper, ChartWrapper, TitleWrapper, Wrapper } from '../../widgets/common';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { formatDate } from './WasteWaterTimeChart';
 import { wastewaterVariantColors } from './constants';

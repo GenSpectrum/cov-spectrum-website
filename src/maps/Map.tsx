@@ -1,9 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { scaleQuantile } from 'd3-scale';
 import styled from 'styled-components';
-import { ChartAndMetrics } from '../charts/Metrics';
-import { Place } from '../services/api-types';
-import { colors } from '../charts/common';
+import { ChartAndMetrics } from '../widgets/Metrics';
+import { colors } from '../widgets/common';
 import brazil from './brazil.json';
 import china from './china.json';
 import france from './france.json';
@@ -135,7 +134,7 @@ interface MouseProps {
 
 interface Props {
   data: Data[];
-  country: Place;
+  country: string;
 }
 
 const Map = ({ data: inputData, country }: Props) => {

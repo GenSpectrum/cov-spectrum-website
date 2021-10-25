@@ -1,7 +1,7 @@
 import React from 'react';
 import { scaleOrdinal } from 'd3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
-import { ChartAndMetricsWrapper, ChartWrapper, TitleWrapper, Wrapper } from '../../charts/common';
+import { ChartAndMetricsWrapper, ChartWrapper, TitleWrapper, Wrapper } from '../../widgets/common';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { WasteWaterTimeseriesSummaryDataset } from './types';
 import { formatDate } from './WasteWaterTimeChart';

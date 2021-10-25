@@ -2,28 +2,23 @@ import React from 'react';
 import styled from 'styled-components';
 import { ExternalLink } from '../components/ExternalLink';
 import { KnownVariantsList } from '../components/KnownVariantsList/KnownVariantsList';
-import { MutationLookup } from '../components/MutationLookup';
 import { NamedSection } from '../components/NamedSection';
-import { NewVariantTable } from '../components/NewVariantTable';
-import { VariantSelector } from '../helpers/sample-selector';
-import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
-import { isRegion, SamplingStrategy } from '../services/api';
-import { Country, DateRange } from '../services/api-types';
-import { SequencingIntensityPlotWidget } from '../widgets/SequencingIntensityPlot';
-import { AccountService } from '../services/AccountService';
 import { VercelSponsorshipLogo } from '../components/VercelSponsorshipLogo';
-import { createLocation } from 'history';
-import { generatePath } from 'react-router';
 import { ShowMoreButton } from '../helpers/ui';
 import { VariantSearch } from '../components/VariantSearch';
+import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
+import { CaseCountDataset } from '../data/CaseCountDataset';
+import { SequencingIntensityChartWidget } from '../widgets/SequencingIntensityChartWidget';
+import { VariantSelector } from '../data/VariantSelector';
+import { useExploreUrl } from '../helpers/explore-url';
+import { getCurrentLapisDataVersionDate } from '../data/api-lapis';
+import dayjs from 'dayjs';
 
 interface Props {
-  country: Country;
-  samplingStrategy: SamplingStrategy;
-  dateRange: DateRange;
   onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
-  sequencingIntensityEntrySet: SequencingIntensityEntrySetWithSelector;
+  wholeDateCountSampleDataset: DateCountSampleDataset;
+  caseCountDataset: CaseCountDataset;
 }
 
 const Footer = styled.footer`
@@ -34,55 +29,35 @@ const Footer = styled.footer`
 `;
 
 export const ExplorePage = ({
-  country,
-  samplingStrategy,
-  dateRange,
   onVariantSelect,
   selection,
-  sequencingIntensityEntrySet,
+  wholeDateCountSampleDataset,
+  caseCountDataset,
 }: Props) => {
-  const toSequencingCoverage = createLocation(
-    generatePath(`/explore/${country}/${samplingStrategy}/${dateRange}/sequencing-coverage`)
-  );
+  const exploreUrl = useExploreUrl();
+  if (!exploreUrl) {
+    return null;
+  }
   return (
     <>
-      <NamedSection title='Known variants' subtitle='Which variant would you like to explore?'>
-        <div className='mt-4'>
-          <VariantSearch onVariantSelect={onVariantSelect} />
-        </div>
-        <KnownVariantsList
-          country={country}
-          samplingStrategy={samplingStrategy}
-          onVariantSelect={onVariantSelect}
-          selection={selection}
-        />
-      </NamedSection>
-      <SequencingIntensityPlotWidget.ShareableComponent
+      <div className='mt-4'>
+        <VariantSearch onVariantSelect={onVariantSelect} />
+      </div>
+      <KnownVariantsList
+        onVariantSelect={onVariantSelect}
+        wholeDateCountSampleDataset={wholeDateCountSampleDataset}
+        variantSelector={selection}
+      />
+      <SequencingIntensityChartWidget.ShareableComponent
         title='Sequencing intensity'
-        sequencingIntensityEntrySet={sequencingIntensityEntrySet}
+        sequencingCounts={wholeDateCountSampleDataset}
+        caseCounts={caseCountDataset}
         height={300}
         widgetLayout={NamedSection}
-        toolbarChildren={<ShowMoreButton to={toSequencingCoverage} />}
+        toolbarChildren={<ShowMoreButton to={exploreUrl.getDeepExplorePageUrl('/sequencing-coverage')} />}
       />
-      {AccountService.isLoggedIn() && (
-        <NamedSection title='Search by mutations'>
-          <MutationLookup onVariantSelect={onVariantSelect} />
-        </NamedSection>
-      )}
-      {/* The auto-detection of interesting mutations remains a very important part of the overall concept of
-          CoV-Spectrum. The current algorithm is however not good enough. Further, the program is not automated
-          and it has been a while that it was executed so that the data are quite outdated. Thus, we will show it
-          only to logged-in users for now.
-       */}
-      {AccountService.isLoggedIn() && !isRegion(country) && (
-        <NamedSection title='Interesting mutations'>
-          <NewVariantTable
-            country={country}
-            onVariantSelect={variant => onVariantSelect({ variant, matchPercentage: 1 })}
-          />
-        </NamedSection>
-      )}
       <Footer>
+        <div>The sequence data was updated on: {dayjs(getCurrentLapisDataVersionDate()).toISOString()}</div>
         <div>
           Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
           <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.

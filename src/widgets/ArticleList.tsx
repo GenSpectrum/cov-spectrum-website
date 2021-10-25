@@ -1,21 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { Widget } from './Widget';
-import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
-import * as zod from 'zod';
-import { Article } from '../services/api-types';
-import { getArticles } from '../services/api';
+import React, { useMemo, useState } from 'react';
 import Loader from '../components/Loader';
 import styled from 'styled-components';
-import dayjs from 'dayjs';
 import { ExternalLink } from '../components/ExternalLink';
 import { Pagination, Form } from 'react-bootstrap';
 import { createBootstrapPaginationControl } from '../helpers/bootstrap-pagination';
+import { ArticleDataset } from '../data/ArticleDataset';
 
 const ENTRIES_PER_PAGE = 10;
 
-interface Props {
-  pangolinLineage: string;
-}
+export type ArticleListProps = {
+  articleDataset: ArticleDataset;
+};
 
 const TopPanel = styled.div`
   display: flex;
@@ -64,31 +59,11 @@ function formatAuthorList(authors: string[]): string {
   }
 }
 
-export const ArticleList = ({ pangolinLineage }: Props) => {
-  const [articles, setArticles] = useState<(Omit<Article, 'date'> & { date: Date })[] | undefined>(undefined);
+export const ArticleList = ({ articleDataset }: ArticleListProps) => {
   const [page, setPage] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  useEffect(() => {
-    let isSubscribed = true;
-    const controller = new AbortController();
-    const signal = controller.signal;
-    getArticles({ pangolinLineage }, signal).then(articles => {
-      if (isSubscribed) {
-        const data = articles
-          .map(a => ({
-            ...a,
-            date: new Date(a.date),
-          }))
-          .sort((a1, a2) => a2.date.getTime() - a1.date.getTime());
-        setArticles(data);
-      }
-    });
-    return () => {
-      isSubscribed = false;
-      controller.abort();
-    };
-  }, [pangolinLineage]);
+  const articles = articleDataset.getPayload();
 
   let filteredArticles = useMemo(() => {
     if (!articles) {
@@ -99,9 +74,9 @@ export const ArticleList = ({ pangolinLineage }: Props) => {
       filtered = filtered.filter(a => {
         const query = searchQuery.toLowerCase();
         return (
-          a.title.toLowerCase().includes(query) ||
-          a.abstract?.toLowerCase().includes(query) ||
-          a.authors.some(a => a.toLowerCase().includes(query))
+          a.title?.toLowerCase().includes(query) ||
+          a.abstractText?.toLowerCase().includes(query) ||
+          a.authors?.some(a => a.toLowerCase().includes(query))
         );
       });
     }
@@ -142,9 +117,9 @@ export const ArticleList = ({ pangolinLineage }: Props) => {
               </ExternalLink>
             </EntryTitle>
             <EntryMetadata>
-              <EntryMetadataValue>{formatAuthorList(article.authors)}</EntryMetadataValue>-{' '}
-              <EntryMetadataValue>{dayjs(article.date).format('DD.MM.YYYY')}</EntryMetadataValue>-{' '}
-              <EntryMetadataValue>{article.category}</EntryMetadataValue>
+              <EntryMetadataValue>{formatAuthorList(article.authors ?? [])}</EntryMetadataValue>-{' '}
+              <EntryMetadataValue>{article.date?.string}</EntryMetadataValue>-{' '}
+              <EntryMetadataValue>{article.category ?? ''}</EntryMetadataValue>
               {article.published ? (
                 <>
                   - <EntryMetadataValue>published</EntryMetadataValue>
@@ -160,15 +135,3 @@ export const ArticleList = ({ pangolinLineage }: Props) => {
     </>
   );
 };
-
-export const ArticleListWidget = new Widget(
-  new AsyncZodQueryEncoder(
-    zod.object({
-      pangolinLineage: zod.string(),
-    }),
-    async (decoded: Props) => decoded,
-    async (encoded, _) => encoded
-  ),
-  ArticleList,
-  'ArticleList'
-);

@@ -1,44 +1,27 @@
 import React from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { ButtonGroup, DropdownButton } from 'react-bootstrap';
-import { AccountService } from '../services/AccountService';
-import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
-import { Country, DateRange, Variant } from '../services/api-types';
-import { NextcladeIntegration } from '../services/external-integrations/NextcladeIntegration';
-import { LazySampleButton } from './LazySampleButton';
 import { Integration } from '../services/external-integrations/Integration';
 import { PangoLineageIntegration } from '../services/external-integrations/PangoLineageIntegration';
 import { OutbreakInfoIntegration } from '../services/external-integrations/OutbreakInfoIntegration';
-import { NextstrainIntegration } from '../services/external-integrations/NextstrainIntegration';
 import { WikipediaIntegration } from '../services/external-integrations/WikipediaIntegration';
 import { CoVariantsIntegration } from '../services/external-integrations/CoVariantsIntegration';
 import { useState } from 'react';
+import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 
 export interface Props {
-  country: Country;
-  matchPercentage: number;
-  variant: Variant;
-  samplingStrategy: SamplingStrategy;
-  dateRange: DateRange;
+  selector: LocationDateVariantSelector;
 }
 
 const integrations: Integration[] = [
   new WikipediaIntegration(),
   new PangoLineageIntegration(),
-  new NextcladeIntegration(),
-  new NextstrainIntegration(),
   new CoVariantsIntegration(),
   new OutbreakInfoIntegration(),
 ];
 
 export const FocusVariantHeaderControls = React.memo(
-  ({ country, matchPercentage, variant, samplingStrategy, dateRange }: Props): JSX.Element => {
-    const integrationSelector = {
-      variant,
-      matchPercentage,
-      country,
-      samplingStrategy: toLiteralSamplingStrategy(samplingStrategy),
-    };
+  ({ selector }: Props): JSX.Element => {
     const [show, setShow] = useState(false);
     const showDropdown = (_: any) => {
       setShow(!show);
@@ -61,8 +44,8 @@ export const FocusVariantHeaderControls = React.memo(
         >
           {integrations.map(
             integration =>
-              integration.isAvailable(integrationSelector) && (
-                <Dropdown.Item key={integration.name} onClick={() => integration.open(integrationSelector)}>
+              integration.isAvailable(selector) && (
+                <Dropdown.Item key={integration.name} onClick={() => integration.open(selector)}>
                   {integration.name}
                 </Dropdown.Item>
               )
@@ -71,20 +54,6 @@ export const FocusVariantHeaderControls = React.memo(
       </>
     );
 
-    return (
-      <>
-        {integrationButtons}
-        {AccountService.isLoggedIn() && (
-          <LazySampleButton
-            query={{ variantSelector: { variant, matchPercentage }, country, samplingStrategy, dateRange }}
-            variant='secondary'
-            size='sm'
-            className='mt-3 mr-3'
-          >
-            Show samples
-          </LazySampleButton>
-        )}
-      </>
-    );
+    return <>{integrationButtons}</>;
   }
 );

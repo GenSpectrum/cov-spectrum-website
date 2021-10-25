@@ -1,6 +1,5 @@
-import { post } from './api';
 import * as zod from 'zod';
-import { LoginResponseSchema } from './api-types';
+import { post } from '../data/api';
 
 const JwtDataSchema = zod.object({
   sub: zod.string(),
@@ -9,6 +8,10 @@ const JwtDataSchema = zod.object({
 });
 
 export type JwtData = zod.infer<typeof JwtDataSchema>;
+
+export const LoginResponseSchema = zod.object({
+  token: zod.string(),
+});
 
 const localStorageKey = 'cov-spectrum-auth';
 
