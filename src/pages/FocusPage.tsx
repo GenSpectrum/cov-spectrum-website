@@ -31,6 +31,7 @@ import { VariantSelector } from '../data/VariantSelector';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { useExploreUrl } from '../helpers/explore-url';
 import { useQuery } from '../helpers/query-hook';
+import { CoreMetrics } from '../components/CoreMetrics';
 
 interface Props {
   variantDataset: DetailedSampleAggDataset;
@@ -254,6 +255,10 @@ export const FocusPage = ({
           dateRange={variantDataset.getSelector().dateRange!} // TODO is date range always available?
           variant={variantDataset.getSelector().variant!}
           controls={<FocusVariantHeaderControls selector={variantDataset.getSelector()} />}
+        />
+        <CoreMetrics
+          variantSampleSet={DateCountSampleDataset.fromDetailedSampleAggDataset(variantDataset)}
+          wholeSampleSet={DateCountSampleDataset.fromDetailedSampleAggDataset(wholeDataset)}
         />
         {(!pangoLineage || pangoLineage.endsWith('*')) && (
           <div className='mx-0.5 mt-1 mb-5 md:mx-3 shadow-lg rounded-lg bg-white p-2 pl-4'>
