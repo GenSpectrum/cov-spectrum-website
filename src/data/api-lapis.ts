@@ -74,6 +74,13 @@ export async function fetchCountryDateCountSamples(
   return _fetchAggSamples(selector, ['date', 'country'], signal);
 }
 
+export async function fetchSamplesCount(
+  selector: LocationDateVariantSelector,
+  signal?: AbortSignal
+): Promise<number> {
+  return _fetchAggSamples(selector, [], signal).then(entries => entries[0].count);
+}
+
 export async function fetchPangoLineageCountSamples(
   selector: LocationDateVariantSelector,
   signal?: AbortSignal
