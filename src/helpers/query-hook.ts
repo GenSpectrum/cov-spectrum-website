@@ -1,17 +1,26 @@
 import { DependencyList, useState } from 'react';
 import { useDeepCompareEffect } from './deep-compare-hooks';
 
+export type QueryStatus<T> = {
+  isLoading: boolean;
+  isSuccess: boolean;
+  isError: boolean;
+  data: T | undefined;
+  error: any;
+};
+
 export function useQuery<T>(
   queryFunction: (signal: AbortSignal) => Promise<T>,
-  dependencies: DependencyList
-) {
+  dependencies: DependencyList,
+  useEffectFunction = useDeepCompareEffect
+): QueryStatus<T> {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isError, setIsError] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [data, setData] = useState<T | undefined>(undefined);
   const [error, setError] = useState<any>(undefined);
 
-  useDeepCompareEffect(() => {
+  useEffectFunction(() => {
     let isSubscribed = true;
     const controller = new AbortController();
     const signal = controller.signal;

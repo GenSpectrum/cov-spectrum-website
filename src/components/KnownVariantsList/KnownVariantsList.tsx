@@ -183,7 +183,6 @@ export const KnownVariantsList = ({
       return [];
     }
     const variantList = VARIANT_LISTS.filter(({ name }) => name === selectedVariantList)[0];
-    console.log(1);
     return selectPreviewVariants(
       variantList.variants,
       pangoCountDataset.data.getPayload(),
