@@ -112,6 +112,7 @@
     "@types/react-bootstrap-typeahead": "^5.1.2",
     "@types/react-plotly.js": "^2.2.4",
     "@types/react-router-hash-link": "^2.4.2",
+    "all-contributors-cli": "^6.20.0",
     "autoprefixer": "^9.8.6",
     "eslint": "^7.32.0",
     "eslint-plugin-unused-imports": "^1.1.4",
