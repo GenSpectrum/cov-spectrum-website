@@ -207,18 +207,17 @@ export const FocusPage = ({
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
   useEffect(() => {
     let isMounted = true;
-    if (!variant.name) {
+    if (!pangoLineage || !country) {
       return;
     }
-    getData({
-      country,
-    }).then(dataset => isMounted && dataset && setWasteWaterData(filter(dataset, variant.name)));
+    getData({ country }).then(
+      dataset => isMounted && dataset && setWasteWaterData(filter(dataset, pangoLineage))
+    );
+
     return () => {
       isMounted = false;
     };
-  }, [country, variant.name]);
-
-  const mapExportManagerRef = useRef(new ExportManager());
+  }, [country, pangoLineage]);
 
   let wasteWaterSummaryPlot = undefined;
   if (country === 'Switzerland' && pangoLineage && WASTE_WATER_AVAILABLE_LINEAGES.includes(pangoLineage)) {
@@ -282,7 +281,9 @@ export const FocusPage = ({
                 height={300}
                 variantSampleSet={DateCountSampleDataset.fromDetailedSampleAggDataset(variantDataset)}
                 wholeSampleSet={DateCountSampleDataset.fromDetailedSampleAggDataset(wholeDataset)}
-                toolbarChildren={[createDivisionBreakdownButton(setShowVariantTimeDistributionDivGrid)]}
+                toolbarChildren={[
+                  createDivisionBreakdownButton('SequencesOverTime', setShowVariantTimeDistributionDivGrid),
+                ]}
               />
             }
           </GridCell>
@@ -307,7 +308,9 @@ export const FocusPage = ({
                 height={300}
                 variantSampleSet={AgeCountSampleDataset.fromDetailedSampleAggDataset(variantDataset)}
                 wholeSampleSet={AgeCountSampleDataset.fromDetailedSampleAggDataset(wholeDataset)}
-                toolbarChildren={[createDivisionBreakdownButton(setShowVariantAgeDistributionDivGrid)]}
+                toolbarChildren={[
+                  createDivisionBreakdownButton('AgeDemographics', setShowVariantAgeDistributionDivGrid),
+                ]}
               />
             }
           </GridCell>
