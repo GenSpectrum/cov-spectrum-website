@@ -1,4 +1,5 @@
-import { getPangolinLineageIfPure, Integration, IntegrationSelector } from './Integration';
+import { getPangoLineageIfPure, Integration } from './Integration';
+import { LocationDateVariantSelector } from '../../data/LocationDateVariantSelector';
 
 const pangolinLineagesMap = new Map([
   ['B.1.177', 'https://covariants.org/variants/20A.EU1'],
@@ -22,14 +23,14 @@ const pangolinLineagesMap = new Map([
 export class CoVariantsIntegration implements Integration {
   name = 'CoVariants';
 
-  isAvailable(selector: IntegrationSelector): boolean {
-    const lineage = getPangolinLineageIfPure(selector);
+  isAvailable(selector: LocationDateVariantSelector): boolean {
+    const lineage = getPangoLineageIfPure(selector);
     return !!lineage && pangolinLineagesMap.has(lineage);
   }
 
-  open(selector: IntegrationSelector): void {
-    if (selector.variant.name) {
-      window.open(pangolinLineagesMap.get(selector.variant.name));
+  open(selector: LocationDateVariantSelector): void {
+    if (selector.variant?.pangoLineage) {
+      window.open(pangolinLineagesMap.get(selector.variant.pangoLineage));
     }
   }
 }

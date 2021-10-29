@@ -1,19 +1,16 @@
-import { Country, DateRange } from '../services/api-types';
-import { SamplingStrategy } from '../services/api';
 import { DeepRoute, makeLayout, makeSwitch } from '../helpers/deep-page';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import React from 'react';
 import { Route, useRouteMatch } from 'react-router';
 import { SequencingCoverageDeepExplore } from '../components/SequencingCoverageDeepExplore';
-import { SequencingIntensityEntrySetWithSelector } from '../helpers/sequencing-intensity-entry-set';
-import { DateRangeSelector } from '../components/DateRangeSelector';
+import { CaseCountDataset } from '../data/CaseCountDataset';
+import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
+import { useExploreUrl } from '../helpers/explore-url';
 
 interface Props {
-  country: Country;
-  dateRange: DateRange;
-  samplingStrategy: SamplingStrategy;
-  sequencingIntensityEntrySet: SequencingIntensityEntrySetWithSelector;
+  wholeDataset: DetailedSampleAggDataset;
+  caseCountDataset: CaseCountDataset;
 }
 
 const routes: DeepRoute<Props>[] = [
@@ -22,17 +19,16 @@ const routes: DeepRoute<Props>[] = [
     title: 'Sequencing Coverage',
     content: props => (
       <SequencingCoverageDeepExplore
-        country={props.country}
-        dateRange={props.dateRange}
-        samplingStrategy={props.samplingStrategy}
-        sequencingIntensityEntrySet={props.sequencingIntensityEntrySet}
+        wholeDataset={props.wholeDataset}
+        caseCountDataset={props.caseCountDataset}
       />
     ),
   },
 ];
 
 export const DeepExplorePage = (props: Props) => {
-  const { path, url } = useRouteMatch();
+  const { path } = useRouteMatch();
+  const overviewPageUrl = useExploreUrl()?.getOverviewPageUrl() ?? '#';
   const _makeLayout = (content: JSX.Element) =>
     makeLayout(
       <div className='ml-3'>
@@ -45,10 +41,11 @@ export const DeepExplorePage = (props: Props) => {
                 </Route>
               ))}
             </h1>
-            {props.dateRange && <DateRangeSelector dateRange={props.dateRange} />}
+            {/*{props.dateRange && <DateRangeSelector dateRange={props.dateRange} />} */}
+            {/*TODO*/}
           </div>
           <div>
-            <Button className='mt-2' variant='secondary' as={Link} to={url}>
+            <Button className='mt-2' variant='secondary' as={Link} to={overviewPageUrl}>
               Back to overview
             </Button>
           </div>

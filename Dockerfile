@@ -14,7 +14,8 @@ COPY . .
 RUN npm set progress=false && \
     npm config set depth 0 && \
     export REACT_APP_WEBSITE_HOST=https://cov-spectrum.ethz.ch && \
-    export REACT_APP_SERVER_HOST=https://cov-spectrum.ethz.ch/api && \
+    export REACT_APP_SERVER_HOST=https://cov-spectrum.ethz.ch/api/v2 && \
+    export REACT_APP_LAPIS_HOST=https://cov-spectrum.ethz.ch/gisaid/api/v1 && \
     npm --quiet run build
 
 

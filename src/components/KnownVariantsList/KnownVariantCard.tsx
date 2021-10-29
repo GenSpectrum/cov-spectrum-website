@@ -3,7 +3,7 @@ import { Card } from 'react-bootstrap';
 import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import styled from 'styled-components';
 import { mean } from 'lodash';
-import { colors } from '../../charts/common';
+import { colors } from '../../widgets/common';
 import { getWHOLabel } from '../../services/who-label';
 
 const TREND_START = 9;
@@ -89,11 +89,20 @@ export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, s
       onClick={onClick}
       selected={selected}
     >
-      <div id='variant-title' className={`${selected ? 'font-bold' : ''} mx-2 mt-2`}>
-        {name}
-        <p className='inline text-xs'>{WHOLabel !== undefined && ` ${WHOLabel}`}</p>
+      <div
+        id='variant-title'
+        className={`${
+          selected ? 'font-bold' : ''
+        } mx-2 mt-2 flex flex-row flex-nowrap items-end space-between`}
+      >
+        <div className='flex flex-row items-end flex-grow-1 overflow-hidden'>
+          <p className=''>{name}</p>
+          <p className='inline text-xs'>{WHOLabel !== undefined && ` ${WHOLabel}`}</p>
+        </div>
         {chartData?.length && (
-          <div className='text-muted float-right'>{(recentProportion! * 100).toFixed(1)}%</div>
+          <div className='text-muted float-right'>
+            <p>{(Math.round(recentProportion! * 100 * 10) / 10).toString()}%</p>
+          </div>
         )}
       </div>
       <div>

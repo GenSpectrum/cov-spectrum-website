@@ -49,10 +49,10 @@
     "react-modern-calendar-datepicker": "^3.1.6",
     "react-modern-calendar-datepicker-fix": "^3.1.8",
     "react-plotly.js": "^2.5.1",
-    "react-query": "^3.19.2",
     "react-resize-detector": "^6.6.0",
     "react-reverse-portal": "^2.0.1",
     "react-router-dom": "^5.2.0",
+    "react-router-hash-link": "^2.4.3",
     "react-scripts": "4.0.1",
     "react-select": "^4.3.0",
     "react-simple-maps": "^2.3.0",
@@ -111,10 +111,15 @@
     "@types/lodash": "^4.14.168",
     "@types/react-bootstrap-typeahead": "^5.1.2",
     "@types/react-plotly.js": "^2.2.4",
+    "@types/react-router-hash-link": "^2.4.2",
+    "all-contributors-cli": "^6.20.0",
     "autoprefixer": "^9.8.6",
+    "eslint": "^7.32.0",
     "eslint-plugin-unused-imports": "^1.1.4",
+    "jest-puppeteer": "^6.0.0",
     "postcss": "^7.0.35",
     "prettier": "^2.2.1",
+    "puppeteer": "^10.4.0",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2"
   }
 }

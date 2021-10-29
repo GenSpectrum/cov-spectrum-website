@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
-import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrategySelect';
 import { AccountService } from './services/AccountService';
 import { ExternalLink } from './components/ExternalLink';
 import { AiOutlineGithub } from 'react-icons/ai';
@@ -121,9 +120,9 @@ const Header = () => {
                         Done
                       </Button>
                     </div>
-                    <div className='py-2'>
-                      <HeaderSamplingStrategySelect />
-                    </div>
+                    {/*<div className='py-2'>*/}
+                    {/*  <HeaderSamplingStrategySelect />*/}
+                    {/*</div>*/}
                   </div>
                 </div>
               )}
@@ -227,9 +226,9 @@ const Header = () => {
                 <div className='flex items-center z-20 mt-2 md:mt-0'>
                   <HeaderCountrySelect />
                   <FilterDropdown />
-                  <div className='hidden xl:block'>
-                    <HeaderSamplingStrategySelect />
-                  </div>
+                  {/*<div className='hidden xl:block'>*/}
+                  {/*  <HeaderSamplingStrategySelect />*/}
+                  {/*</div>*/}
                 </div>
               </div>
               <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>

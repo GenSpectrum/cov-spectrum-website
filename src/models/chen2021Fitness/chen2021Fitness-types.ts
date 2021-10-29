@@ -1,11 +1,10 @@
 import * as zod from 'zod';
+import { LocationSelector } from '../../data/LocationSelector';
+import { VariantSelector } from '../../data/VariantSelector';
 
 export type Chen2021FitnessRequest = {
-  country: string;
-  mutations?: string[];
-  matchPercentage: number;
-  pangolinLineage?: string;
-  samplingStrategy?: string;
+  location: LocationSelector;
+  variant: VariantSelector;
   alpha: number;
   generationTime: number;
   reproductionNumberWildtype: number;

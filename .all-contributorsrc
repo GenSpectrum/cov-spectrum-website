@@ -1,0 +1,94 @@
+{
+  "projectName": "CoV-Spectrum",
+  "projectOwner": "chaoran-chen",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "none",
+  "contributors": [
+    {
+      "login": "chaoran-chen",
+      "name": "Chaoran Chen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/18666552?v=4",
+      "profile": "https://github.com/chaoran-chen",
+      "contributions": [
+        "code",
+        "data",
+        "ideas",
+        "maintenance",
+        "platform",
+        "research",
+        "infra"
+      ]
+    },
+    {
+      "login": "tanja819",
+      "name": "tanja819",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8371380?v=4",
+      "profile": "https://github.com/tanja819",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "SarahNadeau",
+      "name": "Sarah Nadeau",
+      "avatar_url": "https://avatars.githubusercontent.com/u/30396464?v=4",
+      "profile": "https://github.com/SarahNadeau",
+      "contributions": [
+        "ideas",
+        "data"
+      ]
+    },
+    {
+      "login": "TKGZ",
+      "name": "Michael Yared",
+      "avatar_url": "https://avatars.githubusercontent.com/u/36269621?v=4",
+      "profile": "https://github.com/TKGZ",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "tehwalris",
+      "name": "Philippe Voinov",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1489115?v=4",
+      "profile": "https://walr.is/",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "ningxie1991",
+      "name": "ningxie",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3387698?v=4",
+      "profile": "https://github.com/ningxie1991",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "corneliusroemer",
+      "name": "Cornelius Roemer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25161793?v=4",
+      "profile": "https://github.com/corneliusroemer",
+      "contributions": [
+        "ideas"
+      ]
+    },
+    {
+      "login": "DrYak",
+      "name": "DrYak",
+      "avatar_url": "https://avatars.githubusercontent.com/u/11413679?v=4",
+      "profile": "https://github.com/DrYak",
+      "contributions": [
+        "data"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7
+}

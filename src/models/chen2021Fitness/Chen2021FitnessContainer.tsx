@@ -1,29 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import { Chen2021FitnessRequest } from './chen2021Fitness-types';
 import { Button, Col, Form } from 'react-bootstrap';
-import * as zod from 'zod';
-import { OldSampleSelectorSchema } from '../../helpers/sample-selector';
 import styled from 'styled-components';
 import { Chen2021FitnessResults } from './Chen2021FitnessResults';
 import { fillRequestWithDefaults } from './loading';
 import { dateToString } from './format-value';
 import { ExternalLink } from '../../components/ExternalLink';
+import { LocationSelector } from '../../data/LocationSelector';
+import { VariantSelector } from '../../data/VariantSelector';
 
-export type ContainerProps = zod.infer<typeof OldSampleSelectorSchema>;
+export type ContainerProps = {
+  locationSelector: LocationSelector;
+  variantSelector: VariantSelector;
+};
 
 const SectionHeader = styled.h5`
   margin-top: 20px;
 `;
 
-export const Chen2021FitnessContainer = ({
-  country,
-  mutations,
-  matchPercentage,
-  pangolinLineage,
-  samplingStrategy,
-}: ContainerProps) => {
+export const Chen2021FitnessContainer = ({ locationSelector, variantSelector }: ContainerProps) => {
   const [paramData, setParamData] = useState<Chen2021FitnessRequest>(() =>
-    fillRequestWithDefaults({ country, mutations, matchPercentage, pangolinLineage, samplingStrategy })
+    fillRequestWithDefaults({ locationSelector, variantSelector })
   );
   const [formGenerationTime, setFormGenerationTime] = useState(paramData.generationTime.toString());
   const [formReproductionNumberWildtype, setFormReproductionNumberWildtype] = useState(
@@ -41,12 +38,10 @@ export const Chen2021FitnessContainer = ({
   useEffect(() => {
     setParamData(p => ({
       ...p,
-      country,
-      mutations,
-      matchPercentage,
-      samplingStrategy,
+      location: locationSelector,
+      variant: variantSelector,
     }));
-  }, [country, mutations, matchPercentage, samplingStrategy]);
+  }, [locationSelector, variantSelector]);
 
   const compute = () => {
     setParamData({

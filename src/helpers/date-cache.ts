@@ -4,7 +4,6 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 import utc from 'dayjs/plugin/utc';
 import minMax from 'dayjs/plugin/minMax';
 import weekday from 'dayjs/plugin/weekday';
-import { yearWeekRegex } from '../services/api-types';
 
 require('dayjs/locale/de');
 dayjs.locale('de');
@@ -29,6 +28,7 @@ export interface UnifiedIsoWeek {
 // parseYearWeekString extracts the ISO week and year from a string.
 // It will **not check** whether there is actually a week 53 in the specified year.
 function parseYearWeekString(yearWeek: string): { year: number; week: number } {
+  const yearWeekRegex = /^(\d{4})-(\d{1,2})$/;
   const m = yearWeek.match(yearWeekRegex);
   if (!m) {
     throw new Error('invalid YearWeek string');
@@ -63,6 +63,10 @@ class DateCache {
 
   getDayUsingDayjs(dayjsDay: Dayjs): UnifiedDay {
     return this.getDay(dayjsDay.format('YYYY-MM-DD'));
+  }
+
+  today(): UnifiedDay {
+    return this.getDayUsingDayjs(dayjs());
   }
 
   getIsoWeek(nonNormalizedYearWeekString: string): UnifiedIsoWeek {

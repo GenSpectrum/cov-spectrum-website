@@ -1,4 +1,5 @@
-import { getPangolinLineageIfPure, Integration, IntegrationSelector } from './Integration';
+import { getPangoLineageIfPure, Integration } from './Integration';
+import { LocationDateVariantSelector } from '../../data/LocationDateVariantSelector';
 
 const wikiLinks = new Map([
   ['B.1.1.7', 'https://en.wikipedia.org/wiki/SARS-CoV-2_Alpha_variant'],
@@ -13,14 +14,14 @@ const wikiLinks = new Map([
 export class WikipediaIntegration implements Integration {
   name = 'Wikipedia';
 
-  isAvailable(selector: IntegrationSelector): boolean {
-    const lineage = getPangolinLineageIfPure(selector);
+  isAvailable(selector: LocationDateVariantSelector): boolean {
+    const lineage = getPangoLineageIfPure(selector);
     return !!lineage && wikiLinks.has(lineage);
   }
 
-  open(selector: IntegrationSelector): void {
-    if (selector.variant.name) {
-      window.open(wikiLinks.get(selector.variant.name));
+  open(selector: LocationDateVariantSelector): void {
+    if (selector.variant?.pangoLineage) {
+      window.open(wikiLinks.get(selector.variant.pangoLineage));
     }
   }
 }

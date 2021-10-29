@@ -3,25 +3,23 @@ import {
   Chen2021FitnessResponse,
   Chen2021FitnessResponseSchema,
 } from './chen2021Fitness-types';
-import * as zod from 'zod';
-import { OldSampleSelectorSchema } from '../../helpers/sample-selector';
 import { useEffect, useState } from 'react';
-import { get, isRegion, isWorld } from '../../services/api';
+import { get } from '../../data/api';
 import { dateToString } from './format-value';
+import { addLocationSelectorToUrlSearchParams, LocationSelector } from '../../data/LocationSelector';
+import { addVariantSelectorToUrlSearchParams, VariantSelector } from '../../data/VariantSelector';
+import { LocationService } from '../../services/LocationService';
 
 export function fillRequestWithDefaults({
-  country,
-  mutations,
-  matchPercentage,
-  pangolinLineage,
-  samplingStrategy,
-}: zod.infer<typeof OldSampleSelectorSchema>): Chen2021FitnessRequest {
+  locationSelector,
+  variantSelector,
+}: {
+  locationSelector: LocationSelector;
+  variantSelector: VariantSelector;
+}): Chen2021FitnessRequest {
   return {
-    country,
-    mutations,
-    matchPercentage,
-    pangolinLineage,
-    samplingStrategy,
+    location: locationSelector,
+    variant: variantSelector,
     alpha: 0.95,
     generationTime: 4.8,
     reproductionNumberWildtype: 1,
@@ -37,7 +35,6 @@ const getData = async (
   signal: AbortSignal
 ): Promise<Chen2021FitnessResponse | undefined> => {
   const urlSearchParams = new URLSearchParams({
-    matchPercentage: params.matchPercentage.toString(),
     alpha: params.alpha.toString(),
     generationTime: params.generationTime.toString(),
     reproductionNumberWildtype: params.reproductionNumberWildtype.toString(),
@@ -46,20 +43,17 @@ const getData = async (
     initialWildtypeCases: params.initialWildtypeCases.toString(),
     initialVariantCases: params.initialVariantCases.toString(),
   });
-  if (isRegion(params.country)) {
-    urlSearchParams.set('region', params.country);
-  } else if (!isWorld(params.country)) {
-    urlSearchParams.set('country', params.country);
+  if (params.location.country) {
+    params = {
+      ...params,
+      location: {
+        ...params.location,
+        country: await LocationService.getGisaidName(params.location.country),
+      },
+    };
   }
-  if (params.mutations?.length) {
-    urlSearchParams.set('mutations', params.mutations.join(','));
-  }
-  if (params.samplingStrategy) {
-    urlSearchParams.set('dataType', params.samplingStrategy);
-  }
-  if (params.pangolinLineage) {
-    urlSearchParams.set('pangolinLineage', params.pangolinLineage);
-  }
+  addLocationSelectorToUrlSearchParams(params.location, urlSearchParams);
+  addVariantSelectorToUrlSearchParams(params.variant, urlSearchParams);
   const url = `/computed/model/chen2021Fitness?` + urlSearchParams.toString();
   const response = await get(url, signal);
   if (response.status !== 200) {

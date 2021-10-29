@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import styled from 'styled-components';
-import { SampleSetWithSelector } from '../helpers/sample-set';
 import { Alert, AlertVariant } from '../helpers/ui';
-import { Country } from '../services/api-types';
-import { HospitalizationDeathPlotWidget, OMIT_LAST_N_WEEKS } from '../widgets/HospitalizationDeathPlot';
+import { OMIT_LAST_N_WEEKS } from '../widgets/HospitalizationDeathChart';
 import { GridCell, PackedGrid } from './PackedGrid';
+import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
+import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
 
 interface Props {
-  country: Country;
-  variantSampleSet: SampleSetWithSelector;
-  wholeSampleSet: SampleSetWithSelector;
+  variantSampleSet: DetailedSampleAggDataset;
+  wholeSampleSet: DetailedSampleAggDataset;
   variantName: string;
 }
 
@@ -22,15 +21,10 @@ const Info = styled.div`
   margin: 15px;
 `;
 
-export const HospitalizationDeathDeepFocus = ({
-  country,
-  variantSampleSet,
-  wholeSampleSet,
-  variantName,
-}: Props) => {
+export const HospitalizationDeathDeepFocus = ({ variantSampleSet, wholeSampleSet, variantName }: Props) => {
   const [relative, setRelative] = useState(false);
 
-  if (country !== 'Switzerland') {
+  if (variantSampleSet.getSelector().location.country !== 'Switzerland') {
     return (
       <Alert variant={AlertVariant.DANGER}>
         Hospitalization and death rates are only available for Switzerland
@@ -42,7 +36,7 @@ export const HospitalizationDeathDeepFocus = ({
     <>
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={800}>
-          <HospitalizationDeathPlotWidget.ShareableComponent
+          <HospitalizationDeathChartWidget.ShareableComponent
             title='Hospitalization probabilities'
             height={300}
             field='hospitalized'
@@ -54,10 +48,10 @@ export const HospitalizationDeathDeepFocus = ({
           />
         </GridCell>
         <GridCell minWidth={800}>
-          <HospitalizationDeathPlotWidget.ShareableComponent
+          <HospitalizationDeathChartWidget.ShareableComponent
             title='Death probabilities'
             height={300}
-            field='deceased'
+            field='died'
             variantSampleSet={variantSampleSet}
             wholeSampleSet={wholeSampleSet}
             variantName={variantName}

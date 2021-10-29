@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { scaleLinear } from 'd3-scale';
 import styled from 'styled-components';
-import Metric, { MetricsWrapper } from '../../charts/Metrics';
-import { ChartAndMetricsWrapper, colors, TitleWrapper, Wrapper } from '../../charts/common';
+import Metric, { MetricsWrapper } from '../../widgets/Metrics';
+import { ChartAndMetricsWrapper, colors, TitleWrapper, Wrapper } from '../../widgets/common';
 import { WasteWaterHeatMapEntry, WasteWaterMutationOccurrencesDataset } from './types';
 import { UnifiedDay } from '../../helpers/date-cache';
 

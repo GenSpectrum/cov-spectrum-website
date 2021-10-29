@@ -1,19 +1,11 @@
-import { sortBy } from 'lodash';
 import React, { useMemo } from 'react';
-import { Button, Table } from 'react-bootstrap';
-import { LazySampleButton } from '../components/LazySampleButton';
+import { Table } from 'react-bootstrap';
 import { globalDateCache, UnifiedIsoWeek } from '../helpers/date-cache';
-import { SampleSet } from '../helpers/sample-set';
-import { AccountService } from '../services/AccountService';
-import { SamplingStrategy, toLiteralSamplingStrategy } from '../services/api';
-import { DateRange, Variant } from '../services/api-types';
-import { NextcladeIntegration } from '../services/external-integrations/NextcladeIntegration';
+import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
+import { Utils } from '../services/Utils';
 
 interface Props {
-  dateRange: DateRange;
-  matchPercentage: number;
-  variant: Variant;
-  variantInternationalSampleSet: SampleSet;
+  variantInternationalDateCountDataset: CountryDateCountSampleDataset;
 }
 
 interface CountrySummary {
@@ -22,16 +14,18 @@ interface CountrySummary {
   weekRange: { min: UnifiedIsoWeek; max: UnifiedIsoWeek };
 }
 
-export const InternationalComparisonTable = ({
-  dateRange,
-  matchPercentage,
-  variant,
-  variantInternationalSampleSet,
-}: Props) => {
+export const InternationalComparisonTable = ({ variantInternationalDateCountDataset }: Props) => {
   const summaries = useMemo(() => {
     const summaries: CountrySummary[] = [];
-    for (const [country, samples] of variantInternationalSampleSet.groupByField('country')) {
-      const weekRange = globalDateCache.rangeFromWeeks(samples.map(s => s.date.isoWeek));
+    for (let [country, samples] of Utils.groupBy(
+      variantInternationalDateCountDataset.getPayload(),
+      e => e.country
+    )) {
+      if (!country) {
+        continue;
+      }
+      const weeks = samples.map(s => s.date?.isoWeek).filter(d => d !== undefined) as UnifiedIsoWeek[];
+      const weekRange = globalDateCache.rangeFromWeeks(weeks);
       if (!weekRange) {
         continue;
       }
@@ -41,8 +35,8 @@ export const InternationalComparisonTable = ({
         weekRange,
       });
     }
-    return sortBy(summaries, s => s.country);
-  }, [variantInternationalSampleSet]);
+    return summaries;
+  }, [variantInternationalDateCountDataset]);
 
   return (
     <Table striped bordered hover>
@@ -52,7 +46,6 @@ export const InternationalComparisonTable = ({
           <th>Total Variant Sequences</th>
           <th>First seq. found at</th>
           <th>Last seq. found at</th>
-          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -62,39 +55,6 @@ export const InternationalComparisonTable = ({
             <td>{c.count}</td>
             <td>{c.weekRange.min.yearWeekString}</td>
             <td>{c.weekRange.max.yearWeekString}</td>
-            <td>
-              {AccountService.isLoggedIn() && (
-                <>
-                  <Button
-                    onClick={() =>
-                      new NextcladeIntegration().open({
-                        variant,
-                        matchPercentage,
-                        country: c.country,
-                        samplingStrategy: toLiteralSamplingStrategy(SamplingStrategy.AllSamples),
-                      })
-                    }
-                    variant='secondary'
-                    size='sm'
-                    className='mr-2'
-                  >
-                    Show on Nextclade
-                  </Button>
-                  <LazySampleButton
-                    query={{
-                      variantSelector: { variant, matchPercentage },
-                      country: c.country,
-                      samplingStrategy: SamplingStrategy.AllSamples,
-                      dateRange,
-                    }}
-                    variant='secondary'
-                    size='sm'
-                  >
-                    Show samples
-                  </LazySampleButton>
-                </>
-              )}
-            </td>
           </tr>
         ))}
       </tbody>
