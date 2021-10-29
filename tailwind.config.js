@@ -21,6 +21,12 @@ module.exports = {
         secondary: '#1269B0',
       },
     },
+    listStyleType: {
+      none: 'none',
+      disc: 'disc',
+      decimal: 'decimal',
+      circle: 'circle',
+    },
     extend: {},
   },
   variants: {

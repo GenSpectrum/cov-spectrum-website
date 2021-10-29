@@ -6,6 +6,7 @@ import { ArticleEntry, ArticleEntryRaw, parseArticleEntry } from './ArticleEntry
 import { PangoLineageAlias } from './PangoLineageAlias';
 import { CountryMapping } from './CountryMapping';
 import { AccountService } from '../services/AccountService';
+import { ReferenceGenomeInfo } from './ReferenceGenomeInfo';
 
 const HOST = process.env.REACT_APP_SERVER_HOST;
 
@@ -87,4 +88,13 @@ export async function fetchCountryMapping(signal?: AbortSignal): Promise<Country
     throw new Error('Error fetching country mapping');
   }
   return (await res.json()) as CountryMapping[];
+}
+
+export async function fetchReferenceGenomeInfo(signal?: AbortSignal): Promise<ReferenceGenomeInfo> {
+  const url = '/resource/reference-genome';
+  const res = await get(url, signal);
+  if (!res.ok) {
+    throw new Error('Error fetching reference genome information');
+  }
+  return (await res.json()) as ReferenceGenomeInfo;
 }
