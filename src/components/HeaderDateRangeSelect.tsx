@@ -29,21 +29,15 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
   }
   const specialDateRanges: SpecialDateRange[] = ['AllTimes', 'Y2020', 'Y2021', 'Past3M', 'Past6M'];
   return (
-      <Form inline>
-        <Form.Control
-            as='select'
-            custom
-            id='dateRangeSelect'
-            value={value}
-            onChange={handleChange}
-        >
-          <option value='' disabled>
-            Custom Range
-          </option>
-          {specialDateRanges.map(d => (
-              <option value={d}>{specialDateRangeToString(d)}</option>
-          ))}
-        </Form.Control>
-      </Form>
+    <Form inline>
+      <Form.Control as='select' custom id='dateRangeSelect' value={value} onChange={handleChange}>
+        <option value='' disabled>
+          Custom Range
+        </option>
+        {specialDateRanges.map(d => (
+          <option value={d}>{specialDateRangeToString(d)}</option>
+        ))}
+      </Form.Control>
+    </Form>
   );
 };
