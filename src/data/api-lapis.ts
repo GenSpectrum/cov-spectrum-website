@@ -4,7 +4,7 @@ import { DetailedSampleAggEntry } from './sample/DetailedSampleAggEntry';
 import { DateCountSampleEntry } from './sample/DateCountSampleEntry';
 import { AgeCountSampleEntry } from './sample/AgeCountSampleEntry';
 import { DivisionCountSampleEntry } from './sample/DivisionCountSampleEntry';
-import { addLocationSelectorToUrlSearchParams } from './LocationSelector';
+import { addLocationSelectorToUrlSearchParams, LocationSelector } from './LocationSelector';
 import { addDateRangeSelectorToUrlSearchParams } from './DateRangeSelector';
 import { addVariantSelectorToUrlSearchParams } from './VariantSelector';
 import { CountryDateCountSampleEntry } from './sample/CountryDateCountSampleEntry';
@@ -95,6 +95,7 @@ export async function fetchMutationProportions(
 ): Promise<MutationProportionEntry[]> {
   const params = new URLSearchParams();
   _addDefaultsToSearchParams(params);
+  selector = await _mapCountryName(selector);
   addLocationSelectorToUrlSearchParams(selector.location, params);
   if (selector.dateRange) {
     addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
@@ -119,15 +120,7 @@ async function _fetchAggSamples(
   const params = new URLSearchParams();
   params.set('fields', fields.join(','));
   _addDefaultsToSearchParams(params);
-  if (selector.location.country) {
-    selector = {
-      ...selector,
-      location: {
-        ...selector.location,
-        country: await LocationService.getGisaidName(selector.location.country),
-      },
-    };
-  }
+  selector = await _mapCountryName(selector);
   addLocationSelectorToUrlSearchParams(selector.location, params);
   if (selector.dateRange) {
     addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
@@ -171,4 +164,17 @@ function _extractLapisData<T>(response: LapisResponse<T>): T {
     );
   }
   return response.data;
+}
+
+async function _mapCountryName<T extends { location: LocationSelector }>(selector: T): Promise<T> {
+  if (selector.location.country) {
+    selector = {
+      ...selector,
+      location: {
+        ...selector.location,
+        country: await LocationService.getGisaidName(selector.location.country),
+      },
+    };
+  }
+  return selector;
 }
