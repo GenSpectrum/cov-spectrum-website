@@ -93,8 +93,8 @@ export const EstimatedCasesChartInner = React.memo(
 
       // To avoid that big confidence intervals render the plot unreadable
       const yMax = Math.min(
-        Math.max(...plotData.map(d => d.estimatedCases * 3)),
-        Math.max(...plotData.map(d => d.estimatedCasesCI[1]))
+        Math.max(...plotData.filter(d => !isNaN(d.estimatedCases)).map(d => d.estimatedCases * 1.5)),
+        Math.max(...plotData.filter(d => !isNaN(d.estimatedCasesCI[1])).map(d => d.estimatedCasesCI[1]))
       );
 
       return { plotData, ticks, yMax };
