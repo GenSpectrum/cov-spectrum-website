@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import styled from 'styled-components';
+// import styled from 'styled-components';
 import { KnownVariantCard } from './KnownVariantCard';
 import _VARIANT_LISTS from './variantLists.json';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
@@ -28,24 +28,6 @@ const getLoadVariantCardLoaders = () => {
   }
   return loaders;
 };
-
-export const KnownVariantLoader = () => {
-  const loaders = getLoadVariantCardLoaders();
-
-  return <Grid>{loaders}</Grid>;
-};
-
-interface Props {
-  onVariantSelect: (selection: VariantSelector) => void;
-  variantSelector: VariantSelector | undefined;
-  wholeDateCountSampleDataset: DateCountSampleDataset;
-}
-
-export const Grid = styled.div`
-  display: grid;
-  grid-gap: 5px;
-  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-`;
 
 export type VariantList = {
   name: string;
@@ -152,6 +134,13 @@ export function convertKnownVariantChartData({
   }));
 }
 
+interface Props {
+  onVariantSelect: (selection: VariantSelector) => void;
+  variantSelector: VariantSelector | undefined;
+  wholeDateCountSampleDataset: DateCountSampleDataset;
+  isHorizontal: boolean;
+}
+
 /**
  * For KnownVariantsList, we don't need very old data, since convertKnownVariantChartData (in load-data.ts)
  * will only take the latest 2 months. However since our data collection lags by a couple
@@ -163,9 +152,27 @@ export const KnownVariantsList = ({
   onVariantSelect,
   variantSelector,
   wholeDateCountSampleDataset,
+  isHorizontal = false,
 }: Props) => {
   const [selectedVariantList, setSelectedVariantList] = useState(VARIANT_LISTS[0].name);
   const [chartData, setChartData] = useState<KnownVariantWithChartData[] | undefined>(undefined);
+
+  const KnownVariantLoader = () => {
+    const loaders = getLoadVariantCardLoaders();
+    return <Grid>{loaders}</Grid>;
+  };
+
+  const Grid = ({ children }: { children: JSX.Element[] | JSX.Element }) => (
+    <div className={`w-full ${isHorizontal ? 'overflow-scroll ' : ''}`}>
+      <div
+        className={`w-full grid gap-1 ${
+          isHorizontal ? 'w-max grid-flow-col overflow-x-scroll auto-rows-max' : 'grid-cols-2 md:grid-cols-3'
+        }`}
+      >
+        {children}
+      </div>
+    </div>
+  );
 
   const pangoCountDataset = useQuery(
     signal =>
@@ -222,7 +229,11 @@ export const KnownVariantsList = ({
   }, [knownVariantSelectors, wholeDateCountSampleDataset]);
 
   if (!chartData) {
-    return <KnownVariantLoader />;
+    return (
+      <div className='mt-2'>
+        <KnownVariantLoader />{' '}
+      </div>
+    );
   }
 
   return (
@@ -232,7 +243,6 @@ export const KnownVariantsList = ({
         selected={selectedVariantList}
         onSelect={setSelectedVariantList}
       />
-
       <Grid>
         {chartData.map(({ selector, chartData, recentProportion }) => (
           <KnownVariantCard
