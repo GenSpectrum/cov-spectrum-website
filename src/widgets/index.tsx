@@ -12,6 +12,7 @@ import { HospitalizationDeathChartWidget } from './HospitalizationDeathChartWidg
 import { SequencingIntensityChartWidget } from './SequencingIntensityChartWidget';
 import { EstimatedCasesChartWidget } from './EstimatedCasesChartWidget';
 import { VariantInternationalComparisonChartWidget } from './VariantInternationalComparisonChartWidget';
+import { VariantDivisionDistributionChartWidget } from './VariantDivisionDistributionChartWidget';
 
 export const allWidgets = [
   ArticleListWidget,
@@ -21,6 +22,7 @@ export const allWidgets = [
   SequencingIntensityChartWidget,
   SequencingRepresentativenessChartWidget,
   VariantAgeDistributionChartWidget,
+  VariantDivisionDistributionChartWidget,
   VariantInternationalComparisonChartWidget,
   VariantTimeDistributionChartWidget,
 
