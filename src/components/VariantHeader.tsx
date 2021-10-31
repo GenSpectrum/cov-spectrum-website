@@ -43,13 +43,13 @@ export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Pro
       <div className='absolute top-0 right-0 md:top-4 md:right-4'>{controls}</div>
       <div className='flex'>
         <div className='flex-grow flex flex-row flex-wrap items-end'>
-          <h1 className='md:pr-4 '>
+          <h1 className='md:mr-2'>
             {formatVariantDisplayName(variant)}
             {label && ` (${label})`}
             {!!titleSuffix && ' - '}
             {titleSuffix}
           </h1>
-          {type && <h3 className='text-gray-500'>{`variant of ${type}`}</h3>}
+          {type && <h3 className='text-gray-500 sm:mr-2'>{`variant of ${type}`}</h3>}
           {dateRange && <DateRangePicker dateRangeSelector={dateRange} />}
         </div>
       </div>
