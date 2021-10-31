@@ -16,7 +16,7 @@ const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
 export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
-  const isSmallScreen = width !== undefined && width <= 1000;
+  const isSmallScreen = width !== undefined && width < 768;
 
   return (
     <div className='pt-32 md:pt-20 h-screen w-full overflow-hidden'>

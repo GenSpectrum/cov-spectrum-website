@@ -41,14 +41,14 @@ export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Pro
   return (
     <div className='ml-3'>
       <div className='flex'>
-        <div className='flex-grow flex flex-row flex-wrap items-end space-x-2'>
-          <h1>
+        <div className='flex-grow flex flex-row flex-wrap items-end'>
+          <h1 className='md:pr-4'>
             {formatVariantDisplayName(variant)}
             {label && ` (${label})`}
             {!!titleSuffix && ' - '}
             {titleSuffix}
           </h1>
-          {<h3 className='pl-1.5 text-gray-500'>{type && ` variant of ${type}`}</h3>}
+          {type && <h3 className='text-gray-500'>{`variant of ${type}`}</h3>}
           {dateRange && <DateRangePicker dateRangeSelector={dateRange} />}
         </div>
         <div>{controls}</div>
