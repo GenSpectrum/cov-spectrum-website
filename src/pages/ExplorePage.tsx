@@ -41,7 +41,7 @@ export const ExplorePage = ({
     return null;
   }
   return (
-    <div className={`w-full h-full ${isSmallExplore ? 'shadow-xl' : ''}`}>
+    <div className={`w-full h-full ${isSmallExplore ? '' : ''}`}>
       <div className='mt-4'>
         <VariantSearch
           onVariantSelect={onVariantSelect}

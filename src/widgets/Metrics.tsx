@@ -30,7 +30,7 @@ export const MetricsWrapper = ({
 
 export const IconWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
   return (
-    <div id={id} className='flex items-center pl-1 grow'>
+    <div id={id} className='flex items-center pl-1 grow fill-current text-gray-600'>
       {children}
     </div>
   );
@@ -38,7 +38,7 @@ export const IconWrapper = ({ id, children }: { id: string; children: React.Reac
 
 export const MetricTitleWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
   return (
-    <div id={id} className='flex text-base text-gray-400 h-7'>
+    <div id={id} className='flex w-full'>
       {children}
     </div>
   );
@@ -131,7 +131,7 @@ const Metric = ({
           <PercentWrapper className='self-end'>{showPercent && '' + showPercent + '%'}</PercentWrapper>
         </div>
         <MetricTitleWrapper id='metric-title'>
-          {title + ' '}
+          <p className='text-sm md:text-base text-gray-400'>{title + ' '}</p>
           <IconWrapper id='info-wrapper'>
             <BiHelpCircle />
           </IconWrapper>
