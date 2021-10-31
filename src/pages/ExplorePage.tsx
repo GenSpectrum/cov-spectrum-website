@@ -43,7 +43,11 @@ export const ExplorePage = ({
   return (
     <div className={`w-full h-full ${isSmallExplore ? 'shadow-xl' : ''}`}>
       <div className='mt-4'>
-        <VariantSearch onVariantSelect={onVariantSelect} currentSelection={selection} />
+        <VariantSearch
+          onVariantSelect={onVariantSelect}
+          currentSelection={selection}
+          isSimple={isSmallExplore}
+        />
       </div>
       <KnownVariantsList
         onVariantSelect={onVariantSelect}

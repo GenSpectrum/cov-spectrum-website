@@ -62,9 +62,10 @@ const colorStyles: Partial<Styles<any, true, any>> = {
 type Props = {
   currentSelection?: VariantSelector;
   onVariantSelect: (selection: VariantSelector) => void;
+  isSimple: boolean;
 };
 
-export const VariantSearch = ({ onVariantSelect, currentSelection }: Props) => {
+export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = false }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<SearchOption[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
@@ -271,17 +272,19 @@ export const VariantSearch = ({ onVariantSelect, currentSelection }: Props) => {
 
   return (
     <div>
-      <div className='text-sm mb-2'>
-        <p>
-          Search for pango lineages, amino acid mutations, and nucleotide mutations (
-          <InternalLink path='/about#faq-search-variants'>see documentation</InternalLink>):
-        </p>
-        <p>
-          <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website/issues/278'>
-            We are still improving the nucleotide search (#278 on Github).
-          </ExternalLink>
-        </p>
-      </div>
+      {!isSimple && (
+        <div className='text-sm mb-2'>
+          <p>
+            Search for pango lineages, amino acid mutations, and nucleotide mutations (
+            <InternalLink path='/about#faq-search-variants'>see documentation</InternalLink>):
+          </p>
+          <p>
+            <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website/issues/278'>
+              We are still improving the nucleotide search (#278 on Github).
+            </ExternalLink>
+          </p>
+        </div>
+      )}
 
       {
         <form
