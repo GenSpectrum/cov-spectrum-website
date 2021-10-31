@@ -230,6 +230,7 @@ export const VariantInternationalComparisonChart = ({
             <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
               <XAxis dataKey='dateString' xAxisId='date' />
               <YAxis
+                tickFormatter={tick => `${tick * 100}%`}
                 yAxisId='variant-proportion'
                 scale={logScale ? 'log' : 'auto'}
                 domain={logScale ? ['auto', 'auto'] : [0, 'auto']}
