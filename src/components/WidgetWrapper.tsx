@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ButtonToolbar, Form, Modal } from 'react-bootstrap';
 import { ExportButton } from './CombinedExport/ExportButton';
 import { ExportManager, ExportManagerContext } from './CombinedExport/ExportManager';
-import { NamedCard } from './NamedCard';
+import { NamedCard, TabConfig } from './NamedCard';
 
 const host = process.env.REACT_APP_WEBSITE_HOST;
 
@@ -10,6 +10,7 @@ const host = process.env.REACT_APP_WEBSITE_HOST;
 export interface InternalProps {
   getShareUrl: () => Promise<string>;
   children: React.ReactChild | React.ReactChild[];
+  componentLabels?: string[];
 }
 
 // LayoutProps as passed by WidgetWrapper to the component responsible for Layout
@@ -17,6 +18,7 @@ export interface LayoutProps {
   title: string;
   toolbar?: React.ReactChild | React.ReactChild[];
   children: React.ReactChild | React.ReactChild[];
+  tabs?: TabConfig;
 }
 
 // ExternalProps are passed by users of Widget.ShareableComponent
@@ -61,8 +63,19 @@ export function WidgetWrapper({
   showExport = true,
   height,
   widgetLayout: WidgetLayout = NamedCard,
+  componentLabels,
 }: Props) {
   const exportManagerRef = useRef(new ExportManager());
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+
+  const childrenAsArray: (React.ReactChild | {})[] = React.Children.toArray(children);
+  const tabs: TabConfig | undefined = componentLabels
+    ? {
+        activeTabIndex,
+        labels: componentLabels,
+        onNewTabSelect: setActiveTabIndex,
+      }
+    : undefined;
 
   const [shownEmbeddingCode, setShownEmbeddingCode] = useState<string>();
 
@@ -86,8 +99,9 @@ export function WidgetWrapper({
               {toolbarChildren}
             </ButtonToolbar>
           }
+          tabs={tabs}
         >
-          <div style={height ? { height } : undefined}>{children}</div>
+          <div style={height ? { height } : undefined}>{childrenAsArray[activeTabIndex]}</div>
         </WidgetLayout>
       </ExportManagerContext.Provider>
 

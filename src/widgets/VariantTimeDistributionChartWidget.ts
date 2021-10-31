@@ -1,15 +1,19 @@
 import { Widget } from './Widget';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import * as zod from 'zod';
-import VariantTimeDistributionChart, {
-  VariantTimeDistributionChartProps,
-} from './VariantTimeDistributionChart';
+import VariantTimeDistributionBarChart from './VariantTimeDistributionBarChart';
 import {
   decodeLocationDateVariantSelector,
   encodeLocationDateVariantSelector,
   LocationDateVariantSelectorEncodedSchema,
 } from '../data/LocationDateVariantSelector';
 import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
+import { VariantTimeDistributionLineChart } from './VariantTimeDistributionLineChart';
+
+export type VariantTimeDistributionChartProps = {
+  variantSampleSet: DateCountSampleDataset;
+  wholeSampleSet: DateCountSampleDataset;
+};
 
 export const VariantTimeDistributionChartWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -28,6 +32,9 @@ export const VariantTimeDistributionChartWidget = new Widget(
       };
     }
   ),
-  VariantTimeDistributionChart,
+  [
+    { label: 'Line chart', component: VariantTimeDistributionLineChart },
+    { label: 'Bar chart', component: VariantTimeDistributionBarChart },
+  ],
   'VariantTimeDistributionChart'
 );

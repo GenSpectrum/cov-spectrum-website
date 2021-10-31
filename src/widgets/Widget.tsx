@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   ExternalProps as WidgetWrapperExternalProps,
   pickExternalProps,
@@ -31,15 +30,26 @@ export class Widget<
     shared: typeof sharedWidgetPropsEncoder;
   }>;
 
+  DefaultComponent: C;
+
   constructor(
     public readonly specificPropsEncoder: E,
-    public readonly Component: C,
+    public readonly Component: C | { label: string; component: C }[],
     public readonly urlName: string
   ) {
     this.mergedPropsEncoder = new MergedAsyncQueryEncoder({
       specific: specificPropsEncoder,
       shared: sharedWidgetPropsEncoder,
     });
+    this.DefaultComponent = Array.isArray(Component) ? Component[0].component : Component;
+    const componentList: C[] = [];
+    let componentLabels: string[] | undefined = undefined;
+    if (Array.isArray(Component)) {
+      componentList.push(...Component.map(c => c.component));
+      componentLabels = Component.map(c => c.label);
+    } else {
+      componentList.push(Component);
+    }
     this.ShareableComponent = props => {
       const { external: wrapperProps, remaining: componentProps } = pickExternalProps<P>(props);
       return (
@@ -51,8 +61,11 @@ export class Widget<
               shared: { originalPageUrl: window.location.href },
             })}`
           }
+          componentLabels={componentLabels}
         >
-          <this.Component {...componentProps} />
+          {componentList.map(Com => (
+            <Com {...componentProps} />
+          ))}
         </WidgetWrapper>
       );
     };
