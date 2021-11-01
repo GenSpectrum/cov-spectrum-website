@@ -131,7 +131,7 @@ const Metric = ({
           <PercentWrapper className='self-end'>{showPercent && '' + showPercent + '%'}</PercentWrapper>
         </div>
         <MetricTitleWrapper id='metric-title'>
-          <p className='w-full overflow-clip'>{title + ' '}</p>
+          <p className='w-auto overflow-clip'>{title + ' '}</p>
           <IconWrapper id='info-wrapper'>
             <BiHelpCircle />
           </IconWrapper>
