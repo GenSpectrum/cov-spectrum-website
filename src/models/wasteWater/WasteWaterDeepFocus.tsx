@@ -60,16 +60,18 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
                 height={500}
               />
             </GridCell>
-            <GridCell minWidth={800}>
-              <WasteWaterHeatMapWidget.ShareableComponent
-                data={entry[0].data.mutationOccurrences}
-                variantName={variantName}
-                country={country}
-                location={location}
-                title='Occurrences of individual mutations'
-                height={500}
-              />
-            </GridCell>
+            {entry[0].data.mutationOccurrences && (
+              <GridCell minWidth={800}>
+                <WasteWaterHeatMapWidget.ShareableComponent
+                  data={entry[0].data.mutationOccurrences}
+                  variantName={variantName}
+                  country={country}
+                  location={location}
+                  title='Occurrences of individual mutations'
+                  height={500}
+                />
+              </GridCell>
+            )}
           </PackedGrid>
         </div>
       ))}
