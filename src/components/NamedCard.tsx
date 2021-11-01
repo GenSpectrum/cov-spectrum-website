@@ -69,17 +69,14 @@ export const TabbedCard = ({
             tabConfig.activeTabIndex === index
               ? {
                   borderStyle: 'solid',
-                  borderLeftWidth: '1px',
-                  borderRightWidth: '1px',
-                  borderBottomWidth: '4px',
+                  borderBottomWidth: '2px',
                   borderColor: 'lightgray',
-                  borderBottomColor: 'darkgray',
+                  borderBottomColor: 'black',
+                  fontWeight: 'bold',
                 }
               : {
                   borderStyle: 'solid',
-                  borderLeftWidth: '1px',
-                  borderRightWidth: '1px',
-                  borderBottomWidth: '1px',
+                  borderBottomWidth: '2px',
                   borderColor: 'lightgray',
                 }
           }
