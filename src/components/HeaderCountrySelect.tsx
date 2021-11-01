@@ -27,7 +27,7 @@ export const HeaderCountrySelect = () => {
   }
 
   return (
-    <Form inline className='mr-3 shadow-md'>
+    <Form inline className='mr-2 shadow-md'>
       <Wrapper>
         <RequiredPlaceSelect
           id='countrySelect'

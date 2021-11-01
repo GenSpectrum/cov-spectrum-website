@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { ExpandableTextBox } from './ExpandableTextBox';
+import chroma from 'chroma-js';
 
 export enum NamedCardStyle {
   NORMAL,
@@ -63,7 +64,7 @@ export const TabbedCard = ({
         <button
           key={label}
           className={`p-2 shadow-lg w-40 text-center text-sm outline-none
-            ${tabConfig.activeTabIndex === index ? 'relative bg-white cursor-default' : ''}
+            ${tabConfig.activeTabIndex === index ? 'relative bg-white cursor-default rounded' : ''}
           `}
           style={
             tabConfig.activeTabIndex === index
@@ -78,6 +79,7 @@ export const TabbedCard = ({
                   borderStyle: 'solid',
                   borderBottomWidth: '2px',
                   borderColor: 'lightgray',
+                  backgroundColor: chroma('lightgray').brighten(0.5).hex(),
                 }
           }
           onClick={_ => tabConfig.onNewTabSelect(index)}
