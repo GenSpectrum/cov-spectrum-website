@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from 'react';
-// import styled from 'styled-components';
 import { KnownVariantCard } from './KnownVariantCard';
 import _VARIANT_LISTS from './variantLists.json';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
@@ -163,10 +162,12 @@ export const KnownVariantsList = ({
   };
 
   const Grid = ({ children }: { children: JSX.Element[] | JSX.Element }) => (
-    <div className={`w-full ${isHorizontal ? 'overflow-x-scroll ' : ''}`}>
+    <div className={`w-full ${isHorizontal ? 'overflow-x-scroll' : ''}`}>
       <div
-        className={`w-full grid gap-1 ${
-          isHorizontal ? 'w-max grid-flow-col overflow-hidden auto-rows-max' : 'grid-cols-2 md:grid-cols-3'
+        className={`w-full grid gap-x-2 md:gap-2 ${
+          isHorizontal
+            ? 'w-max grid-flow-col overflow-hidden auto-rows-min auto-cols-min'
+            : 'grid-cols-2 md:grid-cols-3'
         }`}
       >
         {children}
@@ -245,17 +246,19 @@ export const KnownVariantsList = ({
       />
       <Grid>
         {chartData.map(({ selector, chartData, recentProportion }) => (
-          <KnownVariantCard
-            key={formatVariantDisplayName(selector, true)}
-            name={formatVariantDisplayName(selector, true)}
-            chartData={chartData}
-            recentProportion={recentProportion}
-            onClick={() => onVariantSelect(selector)}
-            selected={
-              variantSelector &&
-              formatVariantDisplayName(variantSelector, true) === formatVariantDisplayName(selector, true)
-            }
-          />
+          <div className={`${isHorizontal && 'h-full w-36'}`}>
+            <KnownVariantCard
+              key={formatVariantDisplayName(selector, true)}
+              name={formatVariantDisplayName(selector, true)}
+              chartData={chartData}
+              recentProportion={recentProportion}
+              onClick={() => onVariantSelect(selector)}
+              selected={
+                variantSelector &&
+                formatVariantDisplayName(variantSelector, true) === formatVariantDisplayName(selector, true)
+              }
+            />
+          </div>
         ))}
       </Grid>
     </>
