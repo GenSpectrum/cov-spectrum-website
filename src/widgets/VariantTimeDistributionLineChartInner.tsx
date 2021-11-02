@@ -143,7 +143,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             {active !== undefined && (
               <>
                 {' '}
-                between <b>{formatDate(active.date.getTime() - 3 * 24 * 60 * 60 * 1000)}</b> and{' '}
+                from <b>{formatDate(active.date.getTime() - 3 * 24 * 60 * 60 * 1000)}</b> to{' '}
                 <b>{formatDate(active.date.getTime() + 3 * 24 * 60 * 60 * 1000)}</b>
               </>
             )}
