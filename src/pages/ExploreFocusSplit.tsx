@@ -67,13 +67,14 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     return null;
   }
 
-  const explorePage =
+  const explorePage = (isSmallExplore = false) =>
     caseCountDataset.isSuccess && wholeDateCountSampleDatasetWithoutDateFilter ? (
       <ExplorePage
         onVariantSelect={setVariant!}
         selection={variant}
         wholeDateCountSampleDataset={wholeDateCountSampleDatasetWithoutDateFilter}
         caseCountDataset={caseCountDataset.data!}
+        isSmallExplore={isSmallExplore}
       />
     ) : (
       <Loader />
@@ -93,10 +94,10 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
       <Switch>
         <Route exact path={`${path}`}>
           {isSmallScreen ? (
-            <ScrollableFullContentWrapper>{explorePage}</ScrollableFullContentWrapper>
+            <ScrollableFullContentWrapper>{explorePage(false)}</ScrollableFullContentWrapper>
           ) : (
             <SplitParentWrapper>
-              <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
+              <SplitExploreWrapper>{explorePage(false)}</SplitExploreWrapper>
               <SplitFocusWrapper>
                 <FocusEmptyPage />
               </SplitFocusWrapper>
@@ -105,10 +106,13 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
         </Route>
         <Route exact path={`${path}/variants`}>
           {isSmallScreen ? (
-            <ScrollableFullContentWrapper>{focusContent}</ScrollableFullContentWrapper>
+            <SplitParentWrapper>
+              <SplitExploreWrapper>{explorePage(true)}</SplitExploreWrapper>
+              <SplitFocusWrapper>{focusContent}</SplitFocusWrapper>
+            </SplitParentWrapper>
           ) : (
             <SplitParentWrapper>
-              <SplitExploreWrapper>{explorePage}</SplitExploreWrapper>
+              <SplitExploreWrapper>{explorePage(false)}</SplitExploreWrapper>
               <SplitFocusWrapper>{focusContent}</SplitFocusWrapper>
             </SplitParentWrapper>
           )}
