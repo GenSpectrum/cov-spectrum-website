@@ -163,10 +163,10 @@ export const KnownVariantsList = ({
   };
 
   const Grid = ({ children }: { children: JSX.Element[] | JSX.Element }) => (
-    <div className={`w-full ${isHorizontal ? 'overflow-scroll ' : ''}`}>
+    <div className={`w-full ${isHorizontal ? 'overflow-x-scroll ' : ''}`}>
       <div
         className={`w-full grid gap-1 ${
-          isHorizontal ? 'w-max grid-flow-col overflow-x-scroll auto-rows-max' : 'grid-cols-2 md:grid-cols-3'
+          isHorizontal ? 'w-max grid-flow-col overflow-hidden auto-rows-max' : 'grid-cols-2 md:grid-cols-3'
         }`}
       >
         {children}

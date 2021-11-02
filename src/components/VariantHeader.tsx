@@ -40,7 +40,7 @@ export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Pro
 
   return (
     <div className='ml-1 md:ml-3 w-full relative'>
-      <div className='absolute top-0 right-0 md:top-4 md:right-4'>{controls}</div>
+      <div className='absolute top-0 right-0 md:right-4'>{controls}</div>
       <div className='flex'>
         <div className='flex-grow flex flex-row flex-wrap items-end'>
           <h1 className='md:mr-2'>

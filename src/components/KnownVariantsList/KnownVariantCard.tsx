@@ -100,7 +100,7 @@ export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, s
           <p className='inline text-xs'>{WHOLabel !== undefined && ` ${WHOLabel}`}</p>
         </div>
         {chartData?.length && (
-          <div className='text-muted float-right'>
+          <div className='text-muted float-right ml-2 md:ml-0.5'>
             <p>{(Math.round(recentProportion! * 100 * 10) / 10).toString()}%</p>
           </div>
         )}
