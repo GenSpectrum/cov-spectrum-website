@@ -33,7 +33,7 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## Developer documentation
 
-From a technical point of view, CoV-Spectrum is a React app that shows a lot of plots based on read-only data.
+From a technical point of view, CoV-Spectrum's frontend is a React app that shows a lot of plots based on read-only data. It depends on the [CoV-Spectrum server](https://github.com/cevo-public/cov-spectrum-server) and on [LAPIS](https://github.com/cevo-public/LAPIS).
 
 There is documentation about different technical aspects of this app in the [./docs](./docs) folder. These next few paragraphs link to parts of that documentation. If you don't want to read much doc, at least check the the list of gotchas ([./docs/gotchas.md](./docs/gotchas.md)).
 
