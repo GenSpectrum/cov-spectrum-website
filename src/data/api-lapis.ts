@@ -18,6 +18,7 @@ import { SequenceType } from './SequenceType';
 import { MutationProportionEntry } from './MutationProportionEntry';
 import dayjs from 'dayjs';
 import { LocationService } from '../services/LocationService';
+import { sequenceDataSource } from '../helpers/sequence-data-source';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 
@@ -146,7 +147,7 @@ async function _fetchAggSamples(
 }
 
 function _addDefaultsToSearchParams(params: URLSearchParams) {
-  params.set('host', 'Human');
+  params.set('host', sequenceDataSource === 'gisaid' ? 'Human' : 'Homo sapiens');
 }
 
 function _extractLapisData<T>(response: LapisResponse<T>): T {

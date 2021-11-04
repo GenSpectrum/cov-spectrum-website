@@ -1,0 +1,39 @@
+name: Docker
+
+on:
+  push:
+    branches:
+  schedule:
+    - cron: '0 7 */2 * *'
+
+env:
+  IMAGE_NAME: ghcr.io/cevo-public/cov-spectrum-website
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set environment variable "BRANCH"
+        run: |
+          echo "BRANCH=$(eval 'echo $GITHUB_REF | sed s/refs\\/heads\\/// | sed s/\\//__/ ')" >> $GITHUB_ENV
+      - name: Build image
+        run: docker build -t new_image -f Dockerfile-open .
+      - name: Login to Github Container Registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Add tags and push
+        run: |
+          docker tag new_image ${{ env.IMAGE_NAME }}:br-${{ env.BRANCH }}-open
+          docker push ${{ env.IMAGE_NAME }}:br-${{ env.BRANCH }}-open
+          docker tag new_image ${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.IMAGE_NAME }}:latest
+      - name: Add "develop" tag and push
+        if: env.BRANCH == 'develop'
+        run: |
+          docker tag new_image ${{ env.IMAGE_NAME }}:develop-open
+          docker push ${{ env.IMAGE_NAME }}:develop-open
+      - name: Add "public" tag and push
+        if: env.BRANCH == 'public'
+        run: |
+          docker tag new_image ${{ env.IMAGE_NAME }}:public-open
+          docker push ${{ env.IMAGE_NAME }}:public-open
