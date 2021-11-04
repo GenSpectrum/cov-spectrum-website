@@ -13,6 +13,7 @@ import { VariantSelector } from '../data/VariantSelector';
 import { useExploreUrl } from '../helpers/explore-url';
 import { getCurrentLapisDataVersionDate } from '../data/api-lapis';
 import dayjs from 'dayjs';
+import { sequenceDataSource } from '../helpers/sequence-data-source';
 
 const Footer = styled.footer`
   margin-top: 50px;
@@ -69,10 +70,12 @@ export const ExplorePage = ({
             <div>
               The sequence data was updated on: {dayjs(getCurrentLapisDataVersionDate()).toISOString()}
             </div>
-            <div>
-              Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
-              <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
-            </div>
+            {sequenceDataSource === 'gisaid' && (
+              <div>
+                Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
+                <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
+              </div>
+            )}
             isSmallExplore && <VercelSponsorshipLogo />
           </Footer>
         </>
