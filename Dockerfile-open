@@ -15,6 +15,7 @@ RUN npm set progress=false && \
     export REACT_APP_WEBSITE_HOST=https://open.cov-spectrum.ethz.ch && \
     export REACT_APP_SERVER_HOST=https://cov-spectrum.ethz.ch/api/v2 && \
     export REACT_APP_LAPIS_HOST=https://cov-spectrum.ethz.ch/public/api/v1 && \
+    export REACT_APP_SEQUENCE_DATA_SOURCE=open && \
     npm --quiet run build
 
 
