@@ -19,7 +19,7 @@ export const MetricsWrapper = ({
   return (
     <div
       id={id}
-      className={`pl-2 pt-1 flex flex-row md:justify-end md:flex-col sm:pt-0 sm:pl-1 sm:pb-8 ${
+      className={`pl-2 pt-1 flex flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8 ${
         className ? className : ''
       } md:mt-auto`}
     >
@@ -38,7 +38,7 @@ export const IconWrapper = ({ id, children }: { id: string; children: React.Reac
 
 export const MetricTitleWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
   return (
-    <div id={id} className='flex w-full'>
+    <div id={id} className='flex text-base text-gray-400 h-7 justify-start'>
       {children}
     </div>
   );
@@ -60,7 +60,7 @@ export const ValueWrapper = ({
 
 export const MetricWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
   return (
-    <div id={id} className='flex flex-col justify-end w-36 pr-1 md:w-40'>
+    <div id={id} className='flex flex-col justify-end w-full pr-1 mb-2 overflow-hidden h-full md:w-40'>
       {children}
     </div>
   );
@@ -131,7 +131,7 @@ const Metric = ({
           <PercentWrapper className='self-end'>{showPercent && '' + showPercent + '%'}</PercentWrapper>
         </div>
         <MetricTitleWrapper id='metric-title'>
-          <p className='text-sm md:text-base text-gray-400'>{title + ' '}</p>
+          <p className='w-auto overflow-clip'>{title + ' '}</p>
           <IconWrapper id='info-wrapper'>
             <BiHelpCircle />
           </IconWrapper>
