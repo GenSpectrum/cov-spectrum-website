@@ -92,7 +92,7 @@ export const TabbedCard = ({
   );
 };
 
-const Title = styled.h3`
+const Title = styled.h1`
   font-size: 1.5rem;
   margin-top: 0px;
   margin-bottom: 0.5rem;
@@ -126,7 +126,7 @@ export const NamedCard = ({
   return (
     <SelectedCard namedCardStyle={style} tabConfig={tabs!}>
       <Title>
-        <h1 className='my-0'>{title}</h1>
+        {title}
         {style === NamedCardStyle.CONFIDENTIAL && (
           <OverlayTrigger
             placement='bottom'

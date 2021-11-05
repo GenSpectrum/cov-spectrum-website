@@ -102,8 +102,8 @@ export const ChartAndMetrics = ({ children, metrics, title, metricsTitle }: Char
         <div className='w-full h-full'>{children}</div>
         <MetricsWrapper>
           {metricsTitle && <h3>{metricsTitle}</h3>}
-          {metrics.map(mProps => (
-            <Metric {...mProps} />
+          {metrics.map((mProps, index) => (
+            <Metric key={index} {...mProps} />
           ))}
         </MetricsWrapper>
       </div>
