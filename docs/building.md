@@ -19,4 +19,4 @@ env REACT_APP_SERVER_HOST=https://cov-spectrum.ethz.ch/api/v2 \
 
 ## For production
 
-Production builds are done automatically in CI (see [.github/workflows/docker.yml](/.github/workflows/docker.yml)).
+Production builds are done automatically in CI (see [.github/workflows/gisaid_docker.yml](/.github/workflows/gisaid_docker.yml)).

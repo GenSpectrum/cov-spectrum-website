@@ -49,8 +49,9 @@ const deepFocusPaths = {
   wasteWater: '/waste-water',
 };
 
-const createDivisionBreakdownButton = (setter: (show: boolean) => void) => (
+const createDivisionBreakdownButton = (key: string, setter: (show: boolean) => void) => (
   <Button
+    key={key}
     className='mt-1 ml-2'
     variant={ButtonVariant.PRIMARY}
     onClick={() => {
@@ -196,7 +197,7 @@ export const FocusPage = ({
   const deepFocusButtons = useMemo(
     () =>
       mapValues(deepFocusPaths, suffix => {
-        return <ShowMoreButton to={exploreUrl?.getDeepFocusPageUrl(suffix) ?? '#'} />;
+        return <ShowMoreButton key={suffix} to={exploreUrl?.getDeepFocusPageUrl(suffix) ?? '#'} />;
       }),
     [exploreUrl]
   );
@@ -205,10 +206,17 @@ export const FocusPage = ({
   const pangoLineage = variantDataset.getSelector().variant?.pangoLineage;
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
   useEffect(() => {
+    let isMounted = true;
     if (!pangoLineage || !country) {
       return;
     }
-    getData({ country }).then(dataset => dataset && setWasteWaterData(filter(dataset, pangoLineage)));
+    getData({ country }).then(
+      dataset => isMounted && dataset && setWasteWaterData(filter(dataset, pangoLineage))
+    );
+
+    return () => {
+      isMounted = false;
+    };
   }, [country, pangoLineage]);
 
   let wasteWaterSummaryPlot = undefined;
@@ -273,7 +281,9 @@ export const FocusPage = ({
                 height={300}
                 variantSampleSet={DateCountSampleDataset.fromDetailedSampleAggDataset(variantDataset)}
                 wholeSampleSet={DateCountSampleDataset.fromDetailedSampleAggDataset(wholeDataset)}
-                toolbarChildren={[createDivisionBreakdownButton(setShowVariantTimeDistributionDivGrid)]}
+                toolbarChildren={[
+                  createDivisionBreakdownButton('SequencesOverTime', setShowVariantTimeDistributionDivGrid),
+                ]}
               />
             }
           </GridCell>
@@ -285,7 +295,9 @@ export const FocusPage = ({
               height={300}
               title='Estimated cases'
               toolbarChildren={
-                country === 'Switzerland' ? [createDivisionBreakdownButton(setShowEstimatedCasesDivGrid)] : []
+                country === 'Switzerland'
+                  ? [createDivisionBreakdownButton('EstimatedCases', setShowEstimatedCasesDivGrid)]
+                  : []
               }
             />
           </GridCell>
@@ -296,7 +308,9 @@ export const FocusPage = ({
                 height={300}
                 variantSampleSet={AgeCountSampleDataset.fromDetailedSampleAggDataset(variantDataset)}
                 wholeSampleSet={AgeCountSampleDataset.fromDetailedSampleAggDataset(wholeDataset)}
-                toolbarChildren={[createDivisionBreakdownButton(setShowVariantAgeDistributionDivGrid)]}
+                toolbarChildren={[
+                  createDivisionBreakdownButton('AgeDemographics', setShowVariantAgeDistributionDivGrid),
+                ]}
               />
             }
           </GridCell>

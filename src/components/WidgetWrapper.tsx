@@ -95,7 +95,7 @@ export function WidgetWrapper({
           title={title}
           toolbar={
             <ButtonToolbar className='mb-1'>
-              {showExport && <ExportButton className='mt-1 ml-1' />}
+              {showExport && <ExportButton key={title} className='mt-1 ml-1' />}
               {toolbarChildren}
             </ButtonToolbar>
           }

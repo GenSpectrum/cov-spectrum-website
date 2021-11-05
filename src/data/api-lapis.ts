@@ -18,6 +18,8 @@ import { SequenceType } from './SequenceType';
 import { MutationProportionEntry } from './MutationProportionEntry';
 import dayjs from 'dayjs';
 import { LocationService } from '../services/LocationService';
+import { sequenceDataSource } from '../helpers/sequence-data-source';
+import { ContributorsEntry } from './ContributorsEntry';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 
@@ -112,6 +114,43 @@ export async function fetchMutationProportions(
   return _extractLapisData(body);
 }
 
+export async function fetchContributors(
+  selector: LocationDateVariantSelector,
+  signal?: AbortSignal
+): Promise<ContributorsEntry[]> {
+  const params = new URLSearchParams();
+  _addDefaultsToSearchParams(params);
+  selector = await _mapCountryName(selector);
+  addLocationSelectorToUrlSearchParams(selector.location, params);
+  if (selector.dateRange) {
+    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
+  }
+  if (selector.variant) {
+    addVariantSelectorToUrlSearchParams(selector.variant, params);
+  }
+
+  const res = await get(`/sample/contributors?${params.toString()}`, signal);
+  if (!res.ok) {
+    throw new Error('Error fetching contributors data');
+  }
+  const body = (await res.json()) as LapisResponse<ContributorsEntry[]>;
+  return _extractLapisData(body);
+}
+
+export async function getLinkToStrainNames(selector: LocationDateVariantSelector): Promise<string> {
+  const params = new URLSearchParams();
+  _addDefaultsToSearchParams(params);
+  selector = await _mapCountryName(selector);
+  addLocationSelectorToUrlSearchParams(selector.location, params);
+  if (selector.dateRange) {
+    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
+  }
+  if (selector.variant) {
+    addVariantSelectorToUrlSearchParams(selector.variant, params);
+  }
+  return `${HOST}/sample/strain-names?${params.toString()}`;
+}
+
 async function _fetchAggSamples(
   selector: LocationDateVariantSelector,
   fields: string[],
@@ -146,7 +185,7 @@ async function _fetchAggSamples(
 }
 
 function _addDefaultsToSearchParams(params: URLSearchParams) {
-  params.set('host', 'Human');
+  params.set('host', sequenceDataSource === 'gisaid' ? 'Human' : 'Homo sapiens');
 }
 
 function _extractLapisData<T>(response: LapisResponse<T>): T {
