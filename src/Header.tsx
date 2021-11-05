@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { AccountService } from './services/AccountService';
 import { ExternalLink } from './components/ExternalLink';
-import { AiOutlineGithub } from 'react-icons/ai';
+import { AiOutlineGithub, AiOutlineTwitter } from 'react-icons/ai';
 import { BsFillInfoCircleFill } from 'react-icons/bs';
 import { RiDeleteBack2Fill } from 'react-icons/ri';
 import { Button, ButtonVariant } from './helpers/ui';
@@ -145,6 +145,14 @@ const Header = () => {
                 )}
                 <a
                   className={getDropdownButtonClasses('')}
+                  href='https://twitter.com/covSpectrum'
+                  rel='noopener noreferrer'
+                  target='_blank'
+                >
+                  Twitter
+                </a>
+                <a
+                  className={getDropdownButtonClasses('')}
                   href='https://github.com/cevo-public/cov-spectrum-website'
                   rel='noopener noreferrer'
                   target='_blank'
@@ -219,16 +227,19 @@ const Header = () => {
                       Logout {username}
                     </a>
                   )}
-                  <div
-                    onClick={() =>
-                      window.open('https://github.com/cevo-public/cov-spectrum-website', '_blank')
-                    }
-                  >
+                  <ExternalLink url='https://twitter.com/covSpectrum'>
+                    <AiOutlineTwitter
+                      className='hidden md:block fill-current rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8 hover:opacity-70'
+                      size={'1.5em'}
+                      style={{ color: '#1d9bf0' }}
+                    />
+                  </ExternalLink>
+                  <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website'>
                     <AiOutlineGithub
-                      className='hidden md:block fill-current hover:text-gray-500 rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8'
+                      className='hidden md:block fill-current hover:text-gray-500 rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8 text-black'
                       size={'1.5em'}
                     />
-                  </div>
+                  </ExternalLink>
                 </div>
               </div>
             </div>
