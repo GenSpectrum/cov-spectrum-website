@@ -85,7 +85,7 @@ export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, s
   return (
     <Card
       as={StyledCard}
-      className={`shadow-md border-0 m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl`}
+      className={`shadow-md border-0 m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl w-full`}
       onClick={onClick}
       selected={selected}
     >
@@ -100,7 +100,7 @@ export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, s
           <p className='inline text-xs'>{WHOLabel !== undefined && ` ${WHOLabel}`}</p>
         </div>
         {chartData?.length && (
-          <div className='text-muted float-right'>
+          <div className='text-muted float-right ml-2 md:ml-0.5'>
             <p>{(Math.round(recentProportion! * 100 * 10) / 10).toString()}%</p>
           </div>
         )}

@@ -42,7 +42,7 @@ export const LoginWrapper = styled.div`
 `;
 
 export const SplitParentWrapper = ({ children }: { children: React.ReactNode }) => {
-  return <div className='grid md:grid-cols-2 lg:grid-cols-5 2xl:grid-cols-4 h-full'>{children}</div>;
+  return <div className='md:grid md:grid-cols-2 lg:grid-cols-5 2xl:grid-cols-4 h-full'>{children}</div>;
 };
 
 export const SplitExploreWrapper = ({ children }: { children: React.ReactNode }) => {

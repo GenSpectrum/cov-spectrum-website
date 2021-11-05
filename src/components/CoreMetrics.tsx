@@ -1,5 +1,5 @@
 import { Card, NamedCardStyle } from './NamedCard';
-import Metrics from '../widgets/Metrics';
+import Metric from '../widgets/Metrics';
 import { GridCell, PackedGrid } from './PackedGrid';
 import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
 import { useMemo } from 'react';
@@ -22,18 +22,18 @@ export const CoreMetrics = ({ variantSampleSet, wholeSampleSet }: CoreMetricsPro
   return (
     <>
       <PackedGrid maxColumns={3}>
-        <GridCell minWidth={300}>
+        <GridCell minWidth={150}>
           <Card namedCardStyle={NamedCardStyle.NORMAL}>
-            <Metrics
+            <Metric
               value={totalSequences}
               title='Total sequences'
               helpText='The total number of sequenced samples'
             />
           </Card>
         </GridCell>
-        <GridCell minWidth={300}>
+        <GridCell minWidth={150}>
           <Card namedCardStyle={NamedCardStyle.NORMAL}>
-            <Metrics
+            <Metric
               value={(overallProportion * 100).toFixed(2)}
               title='Overall proportion'
               helpText='The proportion among all sequenced samples in the selected time frame'

@@ -30,7 +30,7 @@ export const MetricsWrapper = ({
 
 export const IconWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
   return (
-    <div id={id} className='flex items-center pl-1 grow'>
+    <div id={id} className='flex items-center pl-1 grow fill-current text-gray-600'>
       {children}
     </div>
   );
