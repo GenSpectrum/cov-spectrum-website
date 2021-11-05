@@ -11,6 +11,7 @@ import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector
 import { FaDownload } from 'react-icons/fa';
 import { ContributorsDataset } from '../data/ContributorsDataset';
 import { parse } from 'json2csv';
+import { UsherIntegration } from '../services/external-integrations/UsherIntegration';
 
 export interface Props {
   selector: LocationDateVariantSelector;
@@ -21,6 +22,7 @@ const integrations: Integration[] = [
   new PangoLineageIntegration(),
   new CoVariantsIntegration(),
   new OutbreakInfoIntegration(),
+  new UsherIntegration(),
 ];
 
 export const FocusVariantHeaderControls = React.memo(

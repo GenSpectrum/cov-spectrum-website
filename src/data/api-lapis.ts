@@ -137,6 +137,20 @@ export async function fetchContributors(
   return _extractLapisData(body);
 }
 
+export async function getLinkToStrainNames(selector: LocationDateVariantSelector): Promise<string> {
+  const params = new URLSearchParams();
+  _addDefaultsToSearchParams(params);
+  selector = await _mapCountryName(selector);
+  addLocationSelectorToUrlSearchParams(selector.location, params);
+  if (selector.dateRange) {
+    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
+  }
+  if (selector.variant) {
+    addVariantSelectorToUrlSearchParams(selector.variant, params);
+  }
+  return `${HOST}/sample/strain-names?${params.toString()}`;
+}
+
 async function _fetchAggSamples(
   selector: LocationDateVariantSelector,
   fields: string[],
