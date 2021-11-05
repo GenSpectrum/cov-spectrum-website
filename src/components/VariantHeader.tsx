@@ -39,19 +39,19 @@ export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Pro
   }, [variant.pangoLineage]);
 
   return (
-    <div className='ml-3'>
+    <div className='ml-1 md:ml-3 w-full relative'>
+      <div className='absolute top-0 right-0 md:right-4'>{controls}</div>
       <div className='flex'>
-        <div className='flex-grow flex flex-row flex-wrap items-end space-x-2'>
-          <h1>
+        <div className='flex-grow flex flex-row flex-wrap items-end'>
+          <h1 className='md:mr-2'>
             {formatVariantDisplayName(variant)}
             {label && ` (${label})`}
             {!!titleSuffix && ' - '}
             {titleSuffix}
           </h1>
-          {<h3 className='pl-1.5 text-gray-500'>{type && ` variant of ${type}`}</h3>}
+          {type && <h3 className='text-gray-500 sm:mr-2'>{`variant of ${type}`}</h3>}
           {dateRange && <DateRangePicker dateRangeSelector={dateRange} />}
         </div>
-        <div>{controls}</div>
       </div>
       {resolvedFullName && <h3 className=' text-gray-500'>Alias for {resolvedFullName}</h3>}
     </div>

@@ -10,6 +10,7 @@ import { RiDeleteBack2Fill } from 'react-icons/ri';
 import { Button, ButtonVariant } from './helpers/ui';
 import { useExploreUrl } from './helpers/explore-url';
 import { useHistory } from 'react-router';
+import { sequenceDataSource } from './helpers/sequence-data-source';
 
 const letters = [
   { color: 'darkgray', text: 'cov' },
@@ -216,12 +217,28 @@ const Header = () => {
               <div id='logo-and-search' className='flex h-full md:flex-row flex-column justify-center'>
                 <div id='logo-and-gsid' className='flex flex-column items-center justify-center md:pr-4'>
                   <div>{Logo}</div>
-                  <div className='text-xs flex flex-row justify-between space-x-1'>
-                    <div className='self-end text-gray-500 text-sm'>Enabled by data from </div>{' '}
-                    <ExternalLink url='https://gisaid.org/'>
-                      <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />{' '}
-                    </ExternalLink>
-                  </div>
+                  {sequenceDataSource === 'gisaid' ? (
+                    <>
+                      <div className='text-xs flex flex-row justify-between space-x-1'>
+                        <div className='self-end text-gray-500 text-sm'>Enabled by data from </div>{' '}
+                        <ExternalLink url='https://gisaid.org/'>
+                          <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />{' '}
+                        </ExternalLink>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className='text-gray-500 text-sm'>
+                        Enabled by{' '}
+                        <ExternalLink url='https://nextstrain.org/blog/2021-07-08-ncov-open-announcement'>
+                          <span className='border border-gray-500 text-gray-800 border-2 px-2 py-0.5 rounded-xl'>
+                            open
+                          </span>
+                        </ExternalLink>{' '}
+                        data
+                      </div>
+                    </>
+                  )}
                 </div>
                 <div className='flex items-center z-20 mt-2 md:mt-0'>
                   <HeaderCountrySelect />

@@ -4,7 +4,7 @@ import { DetailedSampleAggEntry } from './sample/DetailedSampleAggEntry';
 import { DateCountSampleEntry } from './sample/DateCountSampleEntry';
 import { AgeCountSampleEntry } from './sample/AgeCountSampleEntry';
 import { DivisionCountSampleEntry } from './sample/DivisionCountSampleEntry';
-import { addLocationSelectorToUrlSearchParams } from './LocationSelector';
+import { addLocationSelectorToUrlSearchParams, LocationSelector } from './LocationSelector';
 import { addDateRangeSelectorToUrlSearchParams } from './DateRangeSelector';
 import { addVariantSelectorToUrlSearchParams } from './VariantSelector';
 import { CountryDateCountSampleEntry } from './sample/CountryDateCountSampleEntry';
@@ -18,6 +18,8 @@ import { SequenceType } from './SequenceType';
 import { MutationProportionEntry } from './MutationProportionEntry';
 import dayjs from 'dayjs';
 import { LocationService } from '../services/LocationService';
+import { sequenceDataSource } from '../helpers/sequence-data-source';
+import { ContributorsEntry } from './ContributorsEntry';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 
@@ -95,6 +97,7 @@ export async function fetchMutationProportions(
 ): Promise<MutationProportionEntry[]> {
   const params = new URLSearchParams();
   _addDefaultsToSearchParams(params);
+  selector = await _mapCountryName(selector);
   addLocationSelectorToUrlSearchParams(selector.location, params);
   if (selector.dateRange) {
     addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
@@ -111,6 +114,43 @@ export async function fetchMutationProportions(
   return _extractLapisData(body);
 }
 
+export async function fetchContributors(
+  selector: LocationDateVariantSelector,
+  signal?: AbortSignal
+): Promise<ContributorsEntry[]> {
+  const params = new URLSearchParams();
+  _addDefaultsToSearchParams(params);
+  selector = await _mapCountryName(selector);
+  addLocationSelectorToUrlSearchParams(selector.location, params);
+  if (selector.dateRange) {
+    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
+  }
+  if (selector.variant) {
+    addVariantSelectorToUrlSearchParams(selector.variant, params);
+  }
+
+  const res = await get(`/sample/contributors?${params.toString()}`, signal);
+  if (!res.ok) {
+    throw new Error('Error fetching contributors data');
+  }
+  const body = (await res.json()) as LapisResponse<ContributorsEntry[]>;
+  return _extractLapisData(body);
+}
+
+export async function getLinkToStrainNames(selector: LocationDateVariantSelector): Promise<string> {
+  const params = new URLSearchParams();
+  _addDefaultsToSearchParams(params);
+  selector = await _mapCountryName(selector);
+  addLocationSelectorToUrlSearchParams(selector.location, params);
+  if (selector.dateRange) {
+    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
+  }
+  if (selector.variant) {
+    addVariantSelectorToUrlSearchParams(selector.variant, params);
+  }
+  return `${HOST}/sample/strain-names?${params.toString()}`;
+}
+
 async function _fetchAggSamples(
   selector: LocationDateVariantSelector,
   fields: string[],
@@ -119,15 +159,7 @@ async function _fetchAggSamples(
   const params = new URLSearchParams();
   params.set('fields', fields.join(','));
   _addDefaultsToSearchParams(params);
-  if (selector.location.country) {
-    selector = {
-      ...selector,
-      location: {
-        ...selector.location,
-        country: await LocationService.getGisaidName(selector.location.country),
-      },
-    };
-  }
+  selector = await _mapCountryName(selector);
   addLocationSelectorToUrlSearchParams(selector.location, params);
   if (selector.dateRange) {
     addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
@@ -153,7 +185,7 @@ async function _fetchAggSamples(
 }
 
 function _addDefaultsToSearchParams(params: URLSearchParams) {
-  params.set('host', 'Human');
+  params.set('host', sequenceDataSource === 'gisaid' ? 'Human' : 'Homo sapiens');
 }
 
 function _extractLapisData<T>(response: LapisResponse<T>): T {
@@ -171,4 +203,17 @@ function _extractLapisData<T>(response: LapisResponse<T>): T {
     );
   }
   return response.data;
+}
+
+async function _mapCountryName<T extends { location: LocationSelector }>(selector: T): Promise<T> {
+  if (selector.location.country) {
+    selector = {
+      ...selector,
+      location: {
+        ...selector.location,
+        country: await LocationService.getGisaidName(selector.location.country),
+      },
+    };
+  }
+  return selector;
 }

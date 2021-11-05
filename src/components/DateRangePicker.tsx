@@ -76,12 +76,12 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
 
   return (
     <>
-      <div className='flex flex-wrap space-x-1.5'>
-        <div className='flex flex-row items-end inline-block align-middle'>
+      <div className='flex flex-wrap '>
+        <div className='flex flex-row items-end inline-block align-middle mr-1'>
           <HeaderDateRangeSelect exploreUrl={exploreUrl} />
         </div>
-        <div className='flex flex-nowrap space-x-1.5'>
-          <div className='flex flex-row items-end inline-block align-middle'>
+        <div className='flex flex-nowrap'>
+          <div className='flex flex-row items-end inline-block align-middle mr-1'>
             <ReactDatePicker
               enableTabLoop={false}
               disabledKeyboardNavigation={true}
@@ -102,10 +102,10 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
               useWeekdaysShort={true}
             />
           </div>
-          <div className='flex flex-row items-center inline-block align-middle'>
+          <div className='flex flex-row items-center inline-block align-middle mr-1'>
             <HiArrowNarrowRight />
           </div>
-          <div className='flex flex-row items-end inline-block align-middle'>
+          <div className=' flex-row items-end inline-block align-middle mr-1'>
             <ReactDatePicker
               enableTabLoop={false}
               disabledKeyboardNavigation={true}

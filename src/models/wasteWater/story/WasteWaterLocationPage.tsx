@@ -43,16 +43,18 @@ export const WasteWaterLocationPage = () => {
                 height={500}
               />
             </GridCell>
-            <GridCell minWidth={800}>
-              <WasteWaterHeatMapWidget.ShareableComponent
-                data={data.mutationOccurrences}
-                variantName={variantName}
-                country={country}
-                location={location}
-                title='Occurrences of individual mutations'
-                height={500}
-              />
-            </GridCell>
+            {data.mutationOccurrences && (
+              <GridCell minWidth={800}>
+                <WasteWaterHeatMapWidget.ShareableComponent
+                  data={data.mutationOccurrences}
+                  variantName={variantName}
+                  country={country}
+                  location={location}
+                  title='Occurrences of individual mutations'
+                  height={500}
+                />
+              </GridCell>
+            )}
           </PackedGrid>
         </div>
       ))}

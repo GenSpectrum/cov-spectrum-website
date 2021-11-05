@@ -5,6 +5,7 @@ import { colors, TimeTick } from './common';
 import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
 import { fillAndFilterFromWeeklyMap } from '../helpers/fill-missing';
 import DownloadWrapper from './DownloadWrapper';
+import { VariantTimeDistributionChartProps } from './VariantTimeDistributionChartWidget';
 
 const CHART_MARGIN_RIGHT = 30;
 const CHART_MARGIN_BOTTOM = 10;
@@ -16,12 +17,7 @@ type TimeEntry = {
   quantity: number;
 };
 
-export type VariantTimeDistributionChartProps = {
-  variantSampleSet: DateCountSampleDataset;
-  wholeSampleSet: DateCountSampleDataset;
-};
-
-export const VariantTimeDistributionChart = React.memo(
+export const VariantTimeDistributionBarChart = React.memo(
   ({ variantSampleSet, wholeSampleSet }: VariantTimeDistributionChartProps): JSX.Element => {
     const data = useMemo(() => {
       const proportionByWeek = DateCountSampleDataset.proportionByWeek(
@@ -85,14 +81,14 @@ export const VariantTimeDistributionChart = React.memo(
                 : (Math.round(currentData.percent * 10) / 10).toString(),
             title: 'Proportion',
             color: colors.active,
-            helpText: 'Estimated proportion relative to all samples collected.',
+            helpText: 'Proportion relative to all samples collected',
             percent: true,
           },
           {
             value: currentData.quantity,
             title: 'Samples',
             color: colors.secondary,
-            helpText: 'Number of samples of the variant collected in this time frame.',
+            helpText: 'Number of samples of the variant collected in this time frame',
           },
         ]
       : [];
@@ -161,4 +157,4 @@ export const VariantTimeDistributionChart = React.memo(
   }
 );
 
-export default VariantTimeDistributionChart;
+export default VariantTimeDistributionBarChart;

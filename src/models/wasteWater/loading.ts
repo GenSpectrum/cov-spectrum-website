@@ -36,7 +36,7 @@ export async function getData(
         proportion: ts.proportion,
         proportionCI: [ts.proportionLower, ts.proportionUpper],
       })),
-      mutationOccurrences: d.data.mutationOccurrences.map(mo => ({
+      mutationOccurrences: d.data.mutationOccurrences?.map(mo => ({
         date: globalDateCache.getDay(mo.date),
         nucMutation: mo.nucMutation,
         proportion: mo.proportion !== null ? mo.proportion : undefined,

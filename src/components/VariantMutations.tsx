@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { MutationName } from './MutationName';
-import { sortListByAAMutation } from '../helpers/aa-mutation';
+import { decodeAAMutation, sortListByAAMutation } from '../helpers/aa-mutation';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { MutationProportionDataset } from '../data/MutationProportionDataset';
 import Loader from './Loader';
@@ -11,6 +11,7 @@ import { fetchSamplesCount } from '../data/api-lapis';
 import { SequenceType } from '../data/SequenceType';
 import { VariantSelector } from '../data/VariantSelector';
 import { PromiseQueue } from '../helpers/PromiseQueue';
+import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 
 export interface Props {
   selector: LocationDateVariantSelector;
@@ -43,7 +44,13 @@ type MutationUniquenessMap = {
   [key: string]: number | undefined;
 };
 
+type MergedAAAndNucEntry = {
+  aa: MutationProportionEntry;
+  nucs: MutationProportionEntry[];
+};
+
 export const VariantMutations = ({ selector }: Props) => {
+  const [showMergedList, setShowMergedList] = useState(false);
   const [commonAAMutationsSort, setCommonAAMutationsSort] = useState<SortOptions>('position');
   const [commonNucMutationsSort, setCommonNucMutationsSort] = useState<SortOptions>('position');
   const [aaMutationUniqueness, setAAMutationUniqueness] = useState<MutationUniquenessMap>({});
@@ -55,11 +62,39 @@ export const VariantMutations = ({ selector }: Props) => {
         fetchSamplesCount(selector, signal),
         MutationProportionDataset.fromApi(selector, 'aa', signal),
         MutationProportionDataset.fromApi(selector, 'nuc', signal),
-      ]).then(([variantCount, aaMutationDataset, nucMutationDataset]) => {
+      ]).then(async ([variantCount, aaMutationDataset, nucMutationDataset]) => {
+        const aa = aaMutationDataset.getPayload();
+        const nuc = nucMutationDataset.getPayload();
+        const aaMap = new Map<string, MergedAAAndNucEntry[]>();
+        const additionalNucs: MutationProportionEntry[] = [];
+        for (let aaElement of aa) {
+          const aaDecoded = decodeAAMutation(aaElement.mutation);
+          const aaString = aaDecoded.gene + ':' + aaDecoded.position;
+          // There could be multiple common mutations at the same position. We will show all nucleotide mutations at
+          // positions that encode an AA.
+          if (!aaMap.has(aaString)) {
+            aaMap.set(aaString, []);
+          }
+          aaMap.get(aaString)!.push({ aa: aaElement, nucs: [] });
+        }
+        for (let nucElement of nuc) {
+          const nucPosition = Number.parseInt(nucElement.mutation.substr(1, nucElement.mutation.length - 2));
+          let aaString = await ReferenceGenomeService.getAAOfNuc(nucPosition);
+          if (!aaString || !aaMap.has(aaString)) {
+            additionalNucs.push(nucElement);
+          } else {
+            for (let mergedEntry of aaMap.get(aaString)!) {
+              mergedEntry.nucs.push(nucElement);
+            }
+          }
+        }
+        const mergedEntries = [...aaMap.values()].flat();
         return {
           variantCount,
-          aa: aaMutationDataset.getPayload(),
-          nuc: nucMutationDataset.getPayload(),
+          aa,
+          nuc,
+          mergedEntries,
+          additionalNucs,
         };
       }),
     [selector]
@@ -104,65 +139,133 @@ export const VariantMutations = ({ selector }: Props) => {
 
   return (
     <>
-      <div>
-        The following (amino acid) mutations are present in at least 5% of the sequences of this variant:
+      <div className='ml-4 mb-4'>
+        <span
+          className={!showMergedList ? 'font-bold' : 'underline cursor-pointer'}
+          onClick={() => setShowMergedList(false)}
+        >
+          Show amino acid and nucleotide mutations separated
+        </span>
+        {' | '}
+        <span
+          className={showMergedList ? 'font-bold' : 'underline cursor-pointer'}
+          onClick={() => setShowMergedList(true)}
+        >
+          Show amino acid and nucleotide mutations together
+        </span>
       </div>
-      <div className='ml-4'>
-        {sortOptions.map((opt, index) => (
-          <>
-            {index > 0 && <> | </>}
-            <span
-              key={opt}
-              className={commonAAMutationsSort === opt ? 'font-bold' : 'underline cursor-pointer'}
-              onClick={() => setCommonAAMutationsSort(opt)}
-            >
-              Sort by <span className={sortOptionCssClass[opt]}>{sortOptionLabels[opt]}</span>
-            </span>{' '}
-          </>
-        ))}
-      </div>
-      <MutationList className='list-disc'>
-        {sortAAMutations(data.aa, commonAAMutationsSort, aaMutationUniqueness).map(
-          ({ mutation, proportion }) => {
-            return (
-              <MutationEntry key={mutation}>
-                <MutationName mutation={mutation} /> (<Proportion value={proportion} />,{' '}
-                <Uniqueness value={aaMutationUniqueness[mutation]} />)
-              </MutationEntry>
-            );
-          }
-        )}
-      </MutationList>
-      <div className='mt-4'>
-        The following nucleotide mutations are present in at least 5% of the sequences of this variant
-        (leading and tailing deletions are excluded):
-      </div>
-      <div className='ml-4'>
-        {sortOptions.map((opt, index) => (
-          <>
-            {index > 0 && <> | </>}
-            <span
-              key={opt}
-              className={commonNucMutationsSort === opt ? 'font-bold' : 'underline cursor-pointer'}
-              onClick={() => setCommonNucMutationsSort(opt)}
-            >
-              Sort by <span className={sortOptionCssClass[opt]}>{sortOptionLabels[opt]}</span>
-            </span>{' '}
-          </>
-        ))}
-      </div>
-      <MutationList className='list-disc'>
-        {sortNucMutations(data.nuc, commonNucMutationsSort, nucMutationUniqueness).map(
-          ({ mutation, proportion }) => {
-            return (
-              <MutationEntry key={mutation}>
-                {mutation} (<Proportion value={proportion} />,{' '}
-                <Uniqueness value={nucMutationUniqueness[mutation]} />)
-              </MutationEntry>
-            );
-          }
-        )}
-      </MutationList>
+      {showMergedList ? (
+        <>
+          <div>The following mutations are present in at least 5% of the sequences of this variant:</div>
+          <div className='ml-4'>
+            {sortOptions.map((opt, index) => (
+              <>
+                {index > 0 && <> | </>}
+                <span
+                  key={opt}
+                  className={commonAAMutationsSort === opt ? 'font-bold' : 'underline cursor-pointer'}
+                  onClick={() => setCommonAAMutationsSort(opt)}
+                >
+                  Sort by <span className={sortOptionCssClass[opt]}>{sortOptionLabels[opt]}</span>
+                </span>{' '}
+              </>
+            ))}
+          </div>
+          <MutationList className='list-disc'>
+            {sortMergedEntries(data.mergedEntries, commonAAMutationsSort, aaMutationUniqueness).map(
+              ({ aa, nucs }) => (
+                <MutationEntry key={aa.mutation}>
+                  <MutationName mutation={aa.mutation} /> (<Proportion value={aa.proportion} />,{' '}
+                  <Uniqueness value={aaMutationUniqueness[aa.mutation]} />)
+                  <ul className='list-circle'>
+                    {sortNucMutations(nucs, 'position', nucMutationUniqueness).map(nuc => (
+                      <MutationEntry key={nuc.mutation}>
+                        {nuc.mutation} (<Proportion value={nuc.proportion} />,{' '}
+                        <Uniqueness value={nucMutationUniqueness[nuc.mutation]} />)
+                      </MutationEntry>
+                    ))}
+                  </ul>
+                </MutationEntry>
+              )
+            )}
+          </MutationList>
+          <div className='ml-4 mt-4'>Additional nucleotide mutations:</div>
+          <MutationList className='list-circle ml-6'>
+            {sortNucMutations(data.additionalNucs, commonAAMutationsSort, nucMutationUniqueness).map(
+              ({ mutation, proportion }) => {
+                return (
+                  <MutationEntry key={mutation}>
+                    {mutation} (<Proportion value={proportion} />,{' '}
+                    <Uniqueness value={nucMutationUniqueness[mutation]} />)
+                  </MutationEntry>
+                );
+              }
+            )}
+          </MutationList>
+        </>
+      ) : (
+        <>
+          <div>
+            The following amino acid mutations are present in at least 5% of the sequences of this variant:
+          </div>
+          <div className='ml-4'>
+            {sortOptions.map((opt, index) => (
+              <>
+                {index > 0 && <> | </>}
+                <span
+                  key={opt}
+                  className={commonAAMutationsSort === opt ? 'font-bold' : 'underline cursor-pointer'}
+                  onClick={() => setCommonAAMutationsSort(opt)}
+                >
+                  Sort by <span className={sortOptionCssClass[opt]}>{sortOptionLabels[opt]}</span>
+                </span>{' '}
+              </>
+            ))}
+          </div>
+          <MutationList className='list-disc'>
+            {sortAAMutations(data.aa, commonAAMutationsSort, aaMutationUniqueness).map(
+              ({ mutation, proportion }) => {
+                return (
+                  <MutationEntry key={mutation}>
+                    <MutationName mutation={mutation} /> (<Proportion value={proportion} />,{' '}
+                    <Uniqueness value={aaMutationUniqueness[mutation]} />)
+                  </MutationEntry>
+                );
+              }
+            )}
+          </MutationList>
+          <div className='mt-4'>
+            The following nucleotide mutations are present in at least 5% of the sequences of this variant
+            (leading and tailing deletions are excluded):
+          </div>
+          <div className='ml-4'>
+            {sortOptions.map((opt, index) => (
+              <>
+                {index > 0 && <> | </>}
+                <span
+                  key={opt}
+                  className={commonNucMutationsSort === opt ? 'font-bold' : 'underline cursor-pointer'}
+                  onClick={() => setCommonNucMutationsSort(opt)}
+                >
+                  Sort by <span className={sortOptionCssClass[opt]}>{sortOptionLabels[opt]}</span>
+                </span>{' '}
+              </>
+            ))}
+          </div>
+          <MutationList className='list-disc'>
+            {sortNucMutations(data.nuc, commonNucMutationsSort, nucMutationUniqueness).map(
+              ({ mutation, proportion }) => {
+                return (
+                  <MutationEntry key={mutation}>
+                    {mutation} (<Proportion value={proportion} />,{' '}
+                    <Uniqueness value={nucMutationUniqueness[mutation]} />)
+                  </MutationEntry>
+                );
+              }
+            )}
+          </MutationList>
+        </>
+      )}
     </>
   );
 };
@@ -222,6 +325,33 @@ const sortNucMutations = (
         throw new Error('Unimplemented case');
     }
   });
+};
+
+const sortMergedEntries = (
+  entries: MergedAAAndNucEntry[],
+  sortOption: SortOptions,
+  uniquenessMap: MutationUniquenessMap
+): MergedAAAndNucEntry[] => {
+  // TODO This is very redundant to sortAAMutations().
+  switch (sortOption) {
+    case 'proportion':
+      return [...entries].sort((a, b) => b.aa.proportion - a.aa.proportion);
+    case 'position':
+      return sortListByAAMutation(entries, x => x.aa.mutation);
+    case 'uniqueness':
+      return [...entries].sort((a, b) => {
+        if (uniquenessMap[a.aa.mutation] === undefined && uniquenessMap[b.aa.mutation] === undefined) {
+          return 0;
+        }
+        if (uniquenessMap[a.aa.mutation] === undefined) {
+          return 1;
+        }
+        if (uniquenessMap[b.aa.mutation] === undefined) {
+          return -1;
+        }
+        return uniquenessMap[b.aa.mutation]! - uniquenessMap[a.aa.mutation]!;
+      });
+  }
 };
 
 const Proportion = ({ value }: { value: number }) => (

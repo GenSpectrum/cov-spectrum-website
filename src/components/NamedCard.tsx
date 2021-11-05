@@ -8,12 +8,19 @@ export enum NamedCardStyle {
   CONFIDENTIAL,
 }
 
+export type TabConfig = {
+  labels: string[];
+  activeTabIndex: number;
+  onNewTabSelect: (tabIndex: number) => void;
+};
+
 interface Props {
   title: string;
   toolbar?: React.ReactChild | React.ReactChild[];
   children: React.ReactChild | React.ReactChild[];
   style?: NamedCardStyle;
   description?: string;
+  tabs?: TabConfig;
 }
 
 export const Card = ({
@@ -62,9 +69,11 @@ export const NamedCard = ({
   children,
   style = NamedCardStyle.NORMAL,
   description,
+  tabs,
 }: Props) => {
+  const SelectedCard = tabs ? TabbedCard : Card;
   return (
-    <Card namedCardStyle={style}>
+    <SelectedCard namedCardStyle={style} tabConfig={tabs!}>
       <Title>
         {title}
         {style === NamedCardStyle.CONFIDENTIAL && (
@@ -87,6 +96,6 @@ export const NamedCard = ({
       )}
       <ToolbarWrapper>{toolbar}</ToolbarWrapper>
       <ContentWrapper>{children}</ContentWrapper>
-    </Card>
+    </SelectedCard>
   );
 };

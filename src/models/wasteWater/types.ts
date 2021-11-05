@@ -27,13 +27,15 @@ export const WasteWaterResponseSchema = zod.object({
             proportionUpper: zod.number(),
           })
         ),
-        mutationOccurrences: zod.array(
-          zod.object({
-            date: zod.string(),
-            nucMutation: zod.string(),
-            proportion: zod.number().nullable(),
-          })
-        ),
+        mutationOccurrences: zod
+          .array(
+            zod.object({
+              date: zod.string(),
+              nucMutation: zod.string(),
+              proportion: zod.number().nullable(),
+            })
+          )
+          .nullable(),
       }),
     })
   ),
@@ -62,7 +64,7 @@ export type WasteWaterDatasetEntry = {
   variantName: string;
   data: {
     timeseriesSummary: WasteWaterTimeseriesSummaryDataset;
-    mutationOccurrences: WasteWaterMutationOccurrencesDataset;
+    mutationOccurrences: WasteWaterMutationOccurrencesDataset | undefined;
   };
 };
 

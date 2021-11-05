@@ -72,7 +72,7 @@ export function EmbedPage() {
         <IfFulfilled state={asyncWidgetProps}>
           {({ specific }) => (
             <ExportManagerContext.Provider value={exportManagerRef.current}>
-              <widget.Component {...specific} />
+              <widget.DefaultComponent {...specific} />
             </ExportManagerContext.Provider>
           )}
         </IfFulfilled>

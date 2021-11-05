@@ -23,13 +23,14 @@ export const WasteWaterHeatMapWidget = new Widget(
       country: encoded.country,
       variantName: encoded.variantName,
       location: encoded.location,
-      data: filterSingle(
-        (await getData({
-          country: encoded.country,
-        }))!,
-        encoded.variantName,
-        encoded.location
-      )!.data.mutationOccurrences,
+      data:
+        filterSingle(
+          (await getData({
+            country: encoded.country,
+          }))!,
+          encoded.variantName,
+          encoded.location
+        )!.data.mutationOccurrences ?? [],
     })
   ),
   WasteWaterHeatMapChart,

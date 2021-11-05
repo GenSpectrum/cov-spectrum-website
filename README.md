@@ -11,12 +11,12 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- markdownlint-disable -->
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/chaoran-chen"><img src="https://avatars.githubusercontent.com/u/18666552?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Chaoran Chen</b></sub></a><br /><a href="https://github.com/chaoran-chen/CoV-Spectrum/commits?author=chaoran-chen" title="Code">💻</a> <a href="#data-chaoran-chen" title="Data">🔣</a> <a href="#ideas-chaoran-chen" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-chaoran-chen" title="Maintenance">🚧</a> <a href="#platform-chaoran-chen" title="Packaging/porting to new platform">📦</a> <a href="#research-chaoran-chen" title="Research">🔬</a> <a href="#infra-chaoran-chen" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
+    <td align="center"><a href="https://github.com/chaoran-chen"><img src="https://avatars.githubusercontent.com/u/18666552?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Chaoran Chen</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=chaoran-chen" title="Code">💻</a> <a href="#data-chaoran-chen" title="Data">🔣</a> <a href="#ideas-chaoran-chen" title="Ideas, Planning, & Feedback">🤔</a> <a href="#maintenance-chaoran-chen" title="Maintenance">🚧</a> <a href="#platform-chaoran-chen" title="Packaging/porting to new platform">📦</a> <a href="#research-chaoran-chen" title="Research">🔬</a> <a href="#infra-chaoran-chen" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
     <td align="center"><a href="https://github.com/tanja819"><img src="https://avatars.githubusercontent.com/u/8371380?v=4?s=100" width="100px;" alt=""/><br /><sub><b>tanja819</b></sub></a><br /><a href="#ideas-tanja819" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/SarahNadeau"><img src="https://avatars.githubusercontent.com/u/30396464?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Sarah Nadeau</b></sub></a><br /><a href="#ideas-SarahNadeau" title="Ideas, Planning, & Feedback">🤔</a> <a href="#data-SarahNadeau" title="Data">🔣</a></td>
-    <td align="center"><a href="https://github.com/TKGZ"><img src="https://avatars.githubusercontent.com/u/36269621?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Michael Yared</b></sub></a><br /><a href="https://github.com/chaoran-chen/CoV-Spectrum/commits?author=TKGZ" title="Code">💻</a></td>
-    <td align="center"><a href="https://walr.is/"><img src="https://avatars.githubusercontent.com/u/1489115?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Philippe Voinov</b></sub></a><br /><a href="https://github.com/chaoran-chen/CoV-Spectrum/commits?author=tehwalris" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/ningxie1991"><img src="https://avatars.githubusercontent.com/u/3387698?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ningxie</b></sub></a><br /><a href="https://github.com/chaoran-chen/CoV-Spectrum/commits?author=ningxie1991" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/TKGZ"><img src="https://avatars.githubusercontent.com/u/36269621?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Michael Yared</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=TKGZ" title="Code">💻</a></td>
+    <td align="center"><a href="https://walr.is/"><img src="https://avatars.githubusercontent.com/u/1489115?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Philippe Voinov</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=tehwalris" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/ningxie1991"><img src="https://avatars.githubusercontent.com/u/3387698?v=4?s=100" width="100px;" alt=""/><br /><sub><b>ningxie</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=ningxie1991" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/corneliusroemer"><img src="https://avatars.githubusercontent.com/u/25161793?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Cornelius Roemer</b></sub></a><br /><a href="#ideas-corneliusroemer" title="Ideas, Planning, & Feedback">🤔</a></td>
   </tr>
   <tr>
@@ -33,11 +33,9 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 ## Developer documentation
 
-From a technical point of view, CoV-Spectrum is a React app that shows a lot of plots based on read-only data.
+From a technical point of view, CoV-Spectrum's frontend is a React app that shows a lot of plots based on read-only data. It depends on the [CoV-Spectrum server](https://github.com/cevo-public/cov-spectrum-server) for all but sequence data and on [LAPIS](https://github.com/cevo-public/LAPIS) for the sequence data. Please check out the corresponding repositories for instructions on how to set up the server applications. A short guide on how to get the frontend application running locally is in [./docs/building.md](./docs/building.md).
 
 There is documentation about different technical aspects of this app in the [./docs](./docs) folder. These next few paragraphs link to parts of that documentation. If you don't want to read much doc, at least check the the list of gotchas ([./docs/gotchas.md](./docs/gotchas.md)).
-
-There's a short guide on how to get the application running locally in [./docs/building.md](./docs/building.md).
 
 There is a loose logic to how the source code folder is structured. See [./docs/folders.md](./docs/folders.md) for a guide.
 
@@ -50,12 +48,6 @@ There is a special setup that allows certain plots to be loaded standalone outsi
 Certain models and analyses require very different data than the main application. They are slightly separated from the rest of the code. See [./docs/models.md](./docs/models.md).
 
 There is also some miscellaneous documentation about date handling ([./docs/date-cache.md](./docs/date-cache.md)), routing ([./docs/routing.md](./docs/routing.md)) and export buttons ([./docs/export.md](./docs/export.md)).
-
-## Testing
-
-```
-npm run test
-```
 
 ## Sponsors
 
