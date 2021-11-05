@@ -1,6 +1,7 @@
 import { Integration } from './Integration';
 import { LocationDateVariantSelector } from '../../data/LocationDateVariantSelector';
-import { getLinkToStrainNames } from '../../data/api-lapis';
+import { getLinkToGisaidEpiIsl, getLinkToStrainNames } from '../../data/api-lapis';
+import { sequenceDataSource } from '../../helpers/sequence-data-source';
 
 const usherUrl =
   'https://genome.ucsc.edu/cgi-bin/hgPhyloPlace?db=wuhCor1&phyloPlaceTree=hgPhyloPlaceData/wuhCor1' +
@@ -14,8 +15,10 @@ export class UsherIntegration implements Integration {
   }
 
   open(selector: LocationDateVariantSelector): void {
-    getLinkToStrainNames(selector).then(url => {
-      window.open(usherUrl + encodeURIComponent(url));
-    });
+    (sequenceDataSource === 'gisaid' ? getLinkToGisaidEpiIsl(selector) : getLinkToStrainNames(selector)).then(
+      url => {
+        window.open(usherUrl + encodeURIComponent(url));
+      }
+    );
   }
 }

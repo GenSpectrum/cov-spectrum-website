@@ -151,6 +151,20 @@ export async function getLinkToStrainNames(selector: LocationDateVariantSelector
   return `${HOST}/sample/strain-names?${params.toString()}`;
 }
 
+export async function getLinkToGisaidEpiIsl(selector: LocationDateVariantSelector): Promise<string> {
+  const params = new URLSearchParams();
+  _addDefaultsToSearchParams(params);
+  selector = await _mapCountryName(selector);
+  addLocationSelectorToUrlSearchParams(selector.location, params);
+  if (selector.dateRange) {
+    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
+  }
+  if (selector.variant) {
+    addVariantSelectorToUrlSearchParams(selector.variant, params);
+  }
+  return `${HOST}/sample/gisaid-epi-isl?${params.toString()}`;
+}
+
 async function _fetchAggSamples(
   selector: LocationDateVariantSelector,
   fields: string[],
