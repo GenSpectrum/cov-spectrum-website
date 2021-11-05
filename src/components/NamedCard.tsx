@@ -42,57 +42,57 @@ export const Card = ({
 };
 
 export const TabbedCard = ({
-                             children,
-                             namedCardStyle,
-                             tabConfig,
-                           }: {
+  children,
+  namedCardStyle,
+  tabConfig,
+}: {
   children: React.ReactNode;
   namedCardStyle: NamedCardStyle;
   tabConfig: TabConfig;
 }) => {
   return (
-      <div className='mx-0.5 mt-1 mb-5 md:mx-3'>
-        <div
-            className={`relative shadow-lg rounded-lg bg-white p-4 border ${
-                namedCardStyle === NamedCardStyle.NORMAL ? ' border-gray-100' : 'border-red-500'
-            }`}
-        >
-          {children}
-        </div>
-        {tabConfig.labels.map((label, index) => (
-            <button
-                key={label}
-                className={`p-2 shadow-lg w-40 text-center text-sm outline-none
+    <div className='mx-0.5 mt-1 mb-5 md:mx-3'>
+      <div
+        className={`relative shadow-lg rounded-lg bg-white p-4 border ${
+          namedCardStyle === NamedCardStyle.NORMAL ? ' border-gray-100' : 'border-red-500'
+        }`}
+      >
+        {children}
+      </div>
+      {tabConfig.labels.map((label, index) => (
+        <button
+          key={label}
+          className={`p-2 shadow-lg w-40 text-center text-sm outline-none
             ${tabConfig.activeTabIndex === index ? 'relative bg-white cursor-default' : ''}
           `}
-                style={
-                  tabConfig.activeTabIndex === index
-                      ? {
-                        borderStyle: 'solid',
-                        borderLeftWidth: '1px',
-                        borderRightWidth: '1px',
-                        borderBottomWidth: '4px',
-                        borderColor: 'lightgray',
-                        borderBottomColor: 'darkgray',
-                      }
-                      : {
-                        borderStyle: 'solid',
-                        borderLeftWidth: '1px',
-                        borderRightWidth: '1px',
-                        borderBottomWidth: '1px',
-                        borderColor: 'lightgray',
-                      }
+          style={
+            tabConfig.activeTabIndex === index
+              ? {
+                  borderStyle: 'solid',
+                  borderLeftWidth: '1px',
+                  borderRightWidth: '1px',
+                  borderBottomWidth: '4px',
+                  borderColor: 'lightgray',
+                  borderBottomColor: 'darkgray',
                 }
-                onClick={_ => tabConfig.onNewTabSelect(index)}
-            >
-              {label}
-            </button>
-        ))}
-      </div>
+              : {
+                  borderStyle: 'solid',
+                  borderLeftWidth: '1px',
+                  borderRightWidth: '1px',
+                  borderBottomWidth: '1px',
+                  borderColor: 'lightgray',
+                }
+          }
+          onClick={_ => tabConfig.onNewTabSelect(index)}
+        >
+          {label}
+        </button>
+      ))}
+    </div>
   );
 };
 
-const Title = styled.h3`
+const Title = styled.h1`
   font-size: 1.5rem;
   margin-top: 0px;
   margin-bottom: 0.5rem;
@@ -126,7 +126,7 @@ export const NamedCard = ({
   return (
     <SelectedCard namedCardStyle={style} tabConfig={tabs!}>
       <Title>
-        <h1 className='my-0'>{title}</h1>
+        {title}
         {style === NamedCardStyle.CONFIDENTIAL && (
           <OverlayTrigger
             placement='bottom'
