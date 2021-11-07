@@ -4,12 +4,13 @@ import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { AccountService } from './services/AccountService';
 import { ExternalLink } from './components/ExternalLink';
 import { AiOutlineGithub, AiOutlineTwitter } from 'react-icons/ai';
+import { FaExchangeAlt } from 'react-icons/fa';
 import { BsFillInfoCircleFill } from 'react-icons/bs';
 import { RiDeleteBack2Fill } from 'react-icons/ri';
 import { Button, ButtonVariant } from './helpers/ui';
 import { useExploreUrl } from './helpers/explore-url';
 import { useHistory } from 'react-router';
-import { sequenceDataSource } from './helpers/sequence-data-source';
+import { alternativeSequenceDataSourceUrl, sequenceDataSource } from './helpers/sequence-data-source';
 
 const letters = [
   { color: 'darkgray', text: 'cov' },
@@ -167,6 +168,18 @@ const Header = () => {
     );
   };
 
+  const buttonToAlternativeSequenceDataSource = alternativeSequenceDataSourceUrl ? (
+    <ExternalLink
+      url={alternativeSequenceDataSourceUrl}
+      label={sequenceDataSource === 'open' ? 'Use GISAID data' : 'Use open data'}
+      newWindow={false}
+    >
+      <FaExchangeAlt className='inline ml-4' />
+    </ExternalLink>
+  ) : (
+    <></>
+  );
+
   return (
     <>
       <nav className='flex h-full content-center shadow-md z-50 bg-white '>
@@ -183,6 +196,7 @@ const Header = () => {
                         <ExternalLink url='https://gisaid.org/'>
                           <img src='/img/gisaid.png' alt='GISAID' style={{ height: '20px' }} />{' '}
                         </ExternalLink>
+                        {buttonToAlternativeSequenceDataSource}
                       </div>
                     </>
                   ) : (
@@ -195,6 +209,7 @@ const Header = () => {
                           </span>
                         </ExternalLink>{' '}
                         data
+                        {buttonToAlternativeSequenceDataSource}
                       </div>
                     </>
                   )}

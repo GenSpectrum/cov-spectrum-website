@@ -11,3 +11,6 @@ if (process.env.REACT_APP_SEQUENCE_DATA_SOURCE) {
   }
   sequenceDataSource = _sequenceSource;
 }
+
+export const alternativeSequenceDataSourceUrl: string | undefined =
+  process.env.REACT_APP_ALTERNATIVE_SEQUENCE_DATA_SOURCE_URL;
