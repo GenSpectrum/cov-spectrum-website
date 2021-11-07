@@ -20,6 +20,7 @@ import dayjs from 'dayjs';
 import { LocationService } from '../services/LocationService';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { ContributorsEntry } from './ContributorsEntry';
+import { parseSampleDetailsEntry, SampleDetailsEntry, SampleDetailsEntryRaw } from './SampleDetailsEntry';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 
@@ -112,6 +113,29 @@ export async function fetchMutationProportions(
   }
   const body = (await res.json()) as LapisResponse<MutationProportionEntry[]>;
   return _extractLapisData(body);
+}
+
+export async function fetchSampleDetails(
+  selector: LocationDateVariantSelector,
+  signal?: AbortSignal
+): Promise<SampleDetailsEntry[]> {
+  const params = new URLSearchParams();
+  _addDefaultsToSearchParams(params);
+  selector = await _mapCountryName(selector);
+  addLocationSelectorToUrlSearchParams(selector.location, params);
+  if (selector.dateRange) {
+    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
+  }
+  if (selector.variant) {
+    addVariantSelectorToUrlSearchParams(selector.variant, params);
+  }
+
+  const res = await get(`/sample/details?${params.toString()}`, signal);
+  if (!res.ok) {
+    throw new Error('Error fetching contributors data');
+  }
+  const body = (await res.json()) as LapisResponse<SampleDetailsEntryRaw[]>;
+  return _extractLapisData(body).map(parseSampleDetailsEntry);
 }
 
 export async function fetchContributors(

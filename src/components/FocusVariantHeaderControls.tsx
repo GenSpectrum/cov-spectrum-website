@@ -12,6 +12,9 @@ import { FaDownload } from 'react-icons/fa';
 import { ContributorsDataset } from '../data/ContributorsDataset';
 import { parse } from 'json2csv';
 import { UsherIntegration } from '../services/external-integrations/UsherIntegration';
+import { sequenceDataSource } from '../helpers/sequence-data-source';
+import { SampleDetailsDataset } from '../data/SampleDetailsDataset';
+import { serializeSampleDetailsEntryToRaw } from '../data/SampleDetailsEntry';
 
 export interface Props {
   selector: LocationDateVariantSelector;
@@ -38,8 +41,17 @@ export const FocusVariantHeaderControls = React.memo(
     const [isDownloadingSequenceList, setIsDownloadingSequenceList] = useState(false);
     const downloadSequenceList = async () => {
       setIsDownloadingSequenceList(true);
-      const contributorsDataset = await ContributorsDataset.fromApi(selector);
-      const csv = parse(contributorsDataset.getPayload());
+
+      let csv;
+      // If the open version is used, all the metadata will be downloaded. If GISAID is used, only the contributors
+      // will be downloaded.
+      if (sequenceDataSource === 'open') {
+        const detailsDataset = await SampleDetailsDataset.fromApi(selector);
+        csv = parse(detailsDataset.getPayload().map(serializeSampleDetailsEntryToRaw));
+      } else {
+        const contributorsDataset = await ContributorsDataset.fromApi(selector);
+        csv = parse(contributorsDataset.getPayload());
+      }
 
       // Download as file
       const element = document.createElement('a');
