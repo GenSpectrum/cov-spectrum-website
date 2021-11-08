@@ -6,19 +6,40 @@ import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { EmbedPage } from './pages/EmbedPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
+import { fetchCurrentUserCountry } from './data/api';
+import { LocationService } from './services/LocationService';
 
-ReactDOM.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Switch>
-        <Route path='/embed/:widget'>
-          <EmbedPage />
-        </Route>
-        <Route path='/'>
-          <App />
-        </Route>
-      </Switch>
-    </BrowserRouter>
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+export let baseLocation = 'Europe';
+
+async function main() {
+  try {
+    // Find out the country/region of the user
+    const [currentUserCountry, allLocationNames] = await Promise.all([
+      fetchCurrentUserCountry(),
+      LocationService.getAllLocationNames(),
+    ]);
+    if (currentUserCountry.country && allLocationNames.includes(currentUserCountry.country)) {
+      baseLocation = currentUserCountry.country;
+    } else if (currentUserCountry.region && allLocationNames.includes(currentUserCountry.region)) {
+      baseLocation = currentUserCountry.region;
+    }
+  } catch (_) {}
+
+  ReactDOM.render(
+    <React.StrictMode>
+      <BrowserRouter>
+        <Switch>
+          <Route path='/embed/:widget'>
+            <EmbedPage />
+          </Route>
+          <Route path='/'>
+            <App />
+          </Route>
+        </Switch>
+      </BrowserRouter>
+    </React.StrictMode>,
+    document.getElementById('root')
+  );
+}
+
+main();

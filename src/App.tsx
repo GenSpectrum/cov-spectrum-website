@@ -11,6 +11,7 @@ import { StoryOverviewPage } from './pages/StoryOverviewPage';
 import { WasteWaterStoryPage } from './models/wasteWater/story/WasteWaterStoryPage';
 import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLocationPage';
 import { SamplingStrategy } from './SamplingStrategy';
+import { baseLocation } from './index';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -35,7 +36,7 @@ export const App = () => {
         )}
         <Switch>
           <Route exact path='/'>
-            <Redirect to={`/explore/Switzerland/${SamplingStrategy.AllSamples}/AllTimes`} />
+            <Redirect to={`/explore/${baseLocation}/${SamplingStrategy.AllSamples}/AllTimes`} />
           </Route>
           <Route path='/login'>
             <LoginWrapper>

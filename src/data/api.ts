@@ -7,6 +7,7 @@ import { PangoLineageAlias } from './PangoLineageAlias';
 import { CountryMapping } from './CountryMapping';
 import { AccountService } from '../services/AccountService';
 import { ReferenceGenomeInfo } from './ReferenceGenomeInfo';
+import { UserCountry } from './UserCountry';
 
 const HOST = process.env.REACT_APP_SERVER_HOST;
 
@@ -39,6 +40,14 @@ export const post = (endpoint: string, body: unknown, signal?: AbortSignal) => {
     signal,
   });
 };
+
+export async function fetchCurrentUserCountry(signal?: AbortSignal): Promise<UserCountry> {
+  const res = await get('/internal/my-country', signal);
+  if (!res.ok) {
+    throw new Error('Error fetching case data data');
+  }
+  return (await res.json()) as UserCountry;
+}
 
 export async function fetchCaseCounts(
   selector: LocationDateSelector,

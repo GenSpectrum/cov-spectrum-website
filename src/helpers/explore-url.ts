@@ -15,6 +15,7 @@ import {
   isDateRangeEncoded,
 } from '../data/DateRangeUrlEncoded';
 import { SamplingStrategy } from '../SamplingStrategy';
+import { baseLocation } from '../index';
 
 export interface ExploreUrl {
   validUrl: true;
@@ -35,7 +36,6 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-const defaultCountry = 'Switzerland';
 const defaultDateRange: DateRangeUrlEncoded = 'AllTimes';
 
 export function useExploreUrl(): ExploreUrl | undefined {
@@ -124,7 +124,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
       const { location } = routeMatches.country.params;
       history.push(`/explore/${location}/${SamplingStrategy.AllSamples}/${defaultDateRange}`);
     } else if (routeMatches.explore) {
-      history.push(`/explore/${defaultCountry}/${SamplingStrategy.AllSamples}/${defaultDateRange}`);
+      history.push(`/explore/${baseLocation}/${SamplingStrategy.AllSamples}/${defaultDateRange}`);
     }
     // Don't redirect/do anything if /explore/ is not matched.
     return undefined;
