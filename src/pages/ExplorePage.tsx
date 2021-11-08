@@ -76,7 +76,7 @@ export const ExplorePage = ({
                 <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
               </div>
             )}
-            isSmallExplore && <VercelSponsorshipLogo />
+            <VercelSponsorshipLogo />
           </Footer>
         </>
       ) : (
