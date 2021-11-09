@@ -165,9 +165,7 @@ export const KnownVariantsList = ({
     <div className={`w-full ${isHorizontal ? 'overflow-x-scroll' : ''}`}>
       <div
         className={`w-full grid gap-x-2 md:gap-2 ${
-          isHorizontal
-            ? 'w-max grid-flow-col overflow-hidden auto-rows-min auto-cols-min'
-            : 'grid-cols-2 md:grid-cols-3'
+          isHorizontal ? 'w-max grid-flow-col overflow-hidden auto-rows-min auto-cols-min' : 'grid-cols-2'
         }`}
       >
         {children}
