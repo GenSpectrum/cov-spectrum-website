@@ -296,7 +296,7 @@ export const FocusPage = ({
               height={300}
               title='Estimated cases'
               toolbarChildren={
-                country === 'Switzerland'
+                !country || country === 'Switzerland'
                   ? [createDivisionBreakdownButton('EstimatedCases', setShowEstimatedCasesDivGrid)]
                   : []
               }
@@ -413,9 +413,9 @@ export const FocusPage = ({
           header='Sequences over time'
         />
       )}
-      {showEstimatedCasesDivGrid && divisionSubData && country === 'Switzerland' && (
+      {showEstimatedCasesDivGrid && subData && (!country || country === 'Switzerland') && (
         <DivisionModal
-          data={divisionSubData}
+          data={subData}
           generate={(division, d) =>
             d.cases ? (
               <EstimatedCasesChartWidget.ShareableComponent
