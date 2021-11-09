@@ -73,6 +73,7 @@ export const FocusPage = ({
   const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
   const [showEstimatedCasesDivGrid, setShowEstimatedCasesDivGrid] = useState(false);
   const [showVariantAgeDistributionDivGrid, setShowVariantAgeDistributionDivGrid] = useState(false);
+  const [showChen2021FitnessDivGrid, setShowChen2021FitnessDivGrid] = useState(false);
 
   const pangoLineageQuery = variantDataset.getSelector().variant?.pangoLineage;
   const articleDataset = useQuery(
@@ -332,7 +333,10 @@ export const FocusPage = ({
           <GridCell minWidth={600}>
             <NamedCard
               title='Transmission advantage'
-              toolbar={deepFocusButtons.chen2021Fitness}
+              toolbar={[
+                deepFocusButtons.chen2021Fitness,
+                createDivisionBreakdownButton('Chen2021Fitness', setShowChen2021FitnessDivGrid),
+              ]}
               description={`
              If variants spread pre-dominantly by local transmission across demographic groups, this
              estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
@@ -444,6 +448,35 @@ export const FocusPage = ({
           show={showVariantAgeDistributionDivGrid}
           handleClose={() => setShowVariantAgeDistributionDivGrid(false)}
           header='Age demographics'
+        />
+      )}
+      {showChen2021FitnessDivGrid && subData && (
+        <DivisionModal
+          data={subData}
+          generate={(division, d) => (
+            <NamedCard
+              title={division}
+              toolbar={deepFocusButtons.chen2021Fitness}
+              description={`
+             If variants spread pre-dominantly by local transmission across demographic groups, this
+             estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
+             advantage estimate reflects the advantage compared to co-circulating strains. Thus, as new variants
+              spread, the advantage of the focal variant may decrease. When absolute numbers of a variant are low, the 
+              advantage may merely reflect the current importance of introductions from abroad or
+               the variant spreading in a particular demographic group. In this case, the estimate does not
+                provide information on the transmission advantage.`}
+            >
+              <div style={{ height: 300 }}>
+                <Chen2021FitnessPreview
+                  locationSelector={d.variant.getSelector().location}
+                  variantSelector={variantDataset.getSelector().variant!}
+                />
+              </div>
+            </NamedCard>
+          )}
+          show={showChen2021FitnessDivGrid}
+          handleClose={() => setShowChen2021FitnessDivGrid(false)}
+          header='Transmission advantage'
         />
       )}
     </>
