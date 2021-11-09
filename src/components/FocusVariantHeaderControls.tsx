@@ -15,6 +15,7 @@ import { UsherIntegration } from '../services/external-integrations/UsherIntegra
 import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { SampleDetailsDataset } from '../data/SampleDetailsDataset';
 import { serializeSampleDetailsEntryToRaw } from '../data/SampleDetailsEntry';
+import { TaxoniumIntegration } from '../services/external-integrations/TaxoniumIntegration';
 
 export interface Props {
   selector: LocationDateVariantSelector;
@@ -26,6 +27,7 @@ const integrations: Integration[] = [
   new CoVariantsIntegration(),
   new OutbreakInfoIntegration(),
   new UsherIntegration(),
+  new TaxoniumIntegration(),
 ];
 
 export const FocusVariantHeaderControls = React.memo(
