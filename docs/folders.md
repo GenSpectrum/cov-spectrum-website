@@ -4,7 +4,7 @@ The files in the `src` folder are roughly organized as follows:
 
 - `components` - Most components
 - `data` - data fetching and transformation
-  - See docs in [./api.md] for details
+  - See docs in [./api.md](./api.md) for details
 - `pages` - Components for "top level" pages
   - The docs in [./routing.md](./routing.md) might be relevant
 - `widgets` - Sharable plots and tables with data loading logic
