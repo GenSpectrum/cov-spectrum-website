@@ -21,6 +21,7 @@ import { LocationService } from '../services/LocationService';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { ContributorsEntry } from './ContributorsEntry';
 import { parseSampleDetailsEntry, SampleDetailsEntry, SampleDetailsEntryRaw } from './SampleDetailsEntry';
+import { OrderAndLimitConfig } from './OrderAndLimitConfig';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 
@@ -161,9 +162,13 @@ export async function fetchContributors(
   return _extractLapisData(body);
 }
 
-export async function getLinkToStrainNames(selector: LocationDateVariantSelector): Promise<string> {
+export async function getLinkToStrainNames(
+  selector: LocationDateVariantSelector,
+  orderAndLimit?: OrderAndLimitConfig
+): Promise<string> {
   const params = new URLSearchParams();
   _addDefaultsToSearchParams(params);
+  _addOrderAndLimitToSearchParams(params, orderAndLimit);
   selector = await _mapCountryName(selector);
   addLocationSelectorToUrlSearchParams(selector.location, params);
   if (selector.dateRange) {
@@ -175,9 +180,13 @@ export async function getLinkToStrainNames(selector: LocationDateVariantSelector
   return `${HOST}/sample/strain-names?${params.toString()}`;
 }
 
-export async function getLinkToGisaidEpiIsl(selector: LocationDateVariantSelector): Promise<string> {
+export async function getLinkToGisaidEpiIsl(
+  selector: LocationDateVariantSelector,
+  orderAndLimit?: OrderAndLimitConfig
+): Promise<string> {
   const params = new URLSearchParams();
   _addDefaultsToSearchParams(params);
+  _addOrderAndLimitToSearchParams(params, orderAndLimit);
   selector = await _mapCountryName(selector);
   addLocationSelectorToUrlSearchParams(selector.location, params);
   if (selector.dateRange) {
@@ -224,6 +233,18 @@ async function _fetchAggSamples(
 
 function _addDefaultsToSearchParams(params: URLSearchParams) {
   params.set('host', sequenceDataSource === 'gisaid' ? 'Human' : 'Homo sapiens');
+}
+
+function _addOrderAndLimitToSearchParams(params: URLSearchParams, orderAndLimitConfig?: OrderAndLimitConfig) {
+  if (orderAndLimitConfig) {
+    const { orderBy, limit } = orderAndLimitConfig;
+    if (orderBy) {
+      params.set('orderBy', orderBy);
+    }
+    if (limit) {
+      params.set('limit', limit.toString());
+    }
+  }
 }
 
 function _extractLapisData<T>(response: LapisResponse<T>): T {
