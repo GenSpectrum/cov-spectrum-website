@@ -10,7 +10,7 @@ import {
   VariantInternationalComparisonChartProps,
 } from './VariantInternationalComparisonChart';
 import * as zod from 'zod';
-import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
+import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
 
 export const VariantInternationalComparisonChartWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -20,7 +20,7 @@ export const VariantInternationalComparisonChartWidget = new Widget(
       logScale: zod.boolean(),
     }),
     async (decoded: VariantInternationalComparisonChartProps) => ({
-      variantSelector: encodeLocationDateVariantSelector(decoded.variantInternationalSampleSet.getSelector()),
+      variantSelector: encodeLocationDateVariantSelector(decoded.variantInternationalSampleSet.selector),
       countries: decoded.preSelectedCountries,
       logScale: decoded.logScale ?? false,
     }),
@@ -31,8 +31,8 @@ export const VariantInternationalComparisonChartWidget = new Widget(
         variant: undefined,
       };
       return {
-        variantInternationalSampleSet: await CountryDateCountSampleDataset.fromApi(variantSelector, signal),
-        wholeInternationalSampleSet: await CountryDateCountSampleDataset.fromApi(wholeSelector, signal),
+        variantInternationalSampleSet: await CountryDateCountSampleData.fromApi(variantSelector, signal),
+        wholeInternationalSampleSet: await CountryDateCountSampleData.fromApi(wholeSelector, signal),
         preSelectedCountries: encoded.countries,
         logScale: encoded.logScale,
       };

@@ -5,16 +5,15 @@ import {
   encodeLocationDateSelector,
   LocationDateSelectorEncodedSchema,
 } from '../data/LocationDateSelector';
-import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
+import { DetailedSampleAggData } from '../data/sample/DetailedSampleAggDataset';
 import { MetadataAvailabilityChart, MetadataAvailabilityChartProps } from './MetadataAvailabilityChart';
 
 export const MetadataAvailabilityChartWidget = new Widget(
   new AsyncZodQueryEncoder(
     LocationDateSelectorEncodedSchema,
-    async (decoded: MetadataAvailabilityChartProps) =>
-      encodeLocationDateSelector(decoded.sampleSet.getSelector()),
+    async (decoded: MetadataAvailabilityChartProps) => encodeLocationDateSelector(decoded.sampleSet.selector),
     async (encoded, signal) => ({
-      sampleSet: await DetailedSampleAggDataset.fromApi(decodeLocationDateSelector(encoded), signal),
+      sampleSet: await DetailedSampleAggData.fromApi(decodeLocationDateSelector(encoded), signal),
     })
   ),
   MetadataAvailabilityChart,

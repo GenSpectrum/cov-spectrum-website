@@ -63,7 +63,7 @@ export const ArticleList = ({ articleDataset }: ArticleListProps) => {
   const [page, setPage] = useState<number>(1);
   const [searchQuery, setSearchQuery] = useState<string>('');
 
-  const articles = articleDataset.getPayload();
+  const articles = articleDataset.payload;
 
   let filteredArticles = useMemo(() => {
     if (!articles) {

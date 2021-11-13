@@ -4,13 +4,13 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 import { Route, useRouteMatch } from 'react-router';
 import { SequencingCoverageDeepExplore } from '../components/SequencingCoverageDeepExplore';
-import { CaseCountDataset } from '../data/CaseCountDataset';
 import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
 import { useExploreUrl } from '../helpers/explore-url';
+import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
 
 interface Props {
   wholeDataset: DetailedSampleAggDataset;
-  caseCountDataset: CaseCountDataset;
+  caseCountDataset: CaseCountAsyncDataset;
 }
 
 const routes: DeepRoute<Props>[] = [

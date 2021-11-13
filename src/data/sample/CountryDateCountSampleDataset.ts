@@ -6,27 +6,24 @@ import { DetailedSampleAggDataset } from './DetailedSampleAggDataset';
 import { Utils } from '../../services/Utils';
 import { globalDateCache } from '../../helpers/date-cache';
 
-export class CountryDateCountSampleDataset
-  implements Dataset<LocationDateVariantSelector, CountryDateCountSampleEntry[]> {
-  constructor(
-    private selector: LocationDateVariantSelector,
-    private payload: CountryDateCountSampleEntry[]
-  ) {}
+export type CountryDateCountSampleDataset = Dataset<
+  LocationDateVariantSelector,
+  CountryDateCountSampleEntry[]
+>;
 
-  getPayload(): CountryDateCountSampleEntry[] {
-    return this.payload;
-  }
-
-  getSelector(): LocationDateVariantSelector {
-    return this.selector;
-  }
-
-  static async fromApi(selector: LocationDateVariantSelector, signal?: AbortSignal) {
-    return new CountryDateCountSampleDataset(selector, await fetchCountryDateCountSamples(selector, signal));
+export class CountryDateCountSampleData {
+  static async fromApi(
+    selector: LocationDateVariantSelector,
+    signal?: AbortSignal
+  ): Promise<CountryDateCountSampleDataset> {
+    return {
+      selector: selector,
+      payload: await fetchCountryDateCountSamples(selector, signal),
+    };
   }
 
   static fromDetailedSampleAggDataset(dataset: DetailedSampleAggDataset): CountryDateCountSampleDataset {
-    const grouped = Utils.groupBy(dataset.getPayload(), d => d.date?.string + '###' + d.country);
+    const grouped = Utils.groupBy(dataset.payload, d => d.date?.string + '###' + d.country);
     const newPayload = [];
     for (let [key, entries] of grouped.entries()) {
       const [dateString, countryString] = key.split('###');
@@ -36,6 +33,9 @@ export class CountryDateCountSampleDataset
         count: entries.reduce((prev, curr) => prev + curr.count, 0),
       });
     }
-    return new CountryDateCountSampleDataset(dataset.getSelector(), newPayload);
+    return {
+      selector: dataset.selector,
+      payload: newPayload,
+    };
   }
 }

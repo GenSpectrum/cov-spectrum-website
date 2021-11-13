@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { ChartAndMetrics } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
 import { colors } from './common';
-import { AgeCountSampleDataset } from '../data/sample/AgeCountSampleDataset';
+import { AgeCountSampleData, AgeCountSampleDataset } from '../data/sample/AgeCountSampleDataset';
 import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { useResizeDetector } from 'react-resize-detector';
 import DownloadWrapper from './DownloadWrapper';
@@ -61,9 +61,9 @@ export const VariantAgeDistributionChart = React.memo(
     const widthIsSmall = !!width && width < 700;
 
     const data = useMemo(() => {
-      const proportionByAgeGroup = AgeCountSampleDataset.proportionByAgeGroup(
-        variantSampleSet.getPayload(),
-        wholeSampleSet.getPayload()
+      const proportionByAgeGroup = AgeCountSampleData.proportionByAgeGroup(
+        variantSampleSet.payload,
+        wholeSampleSet.payload
       );
       return fillFromPrimitiveMap(proportionByAgeGroup, possibleAgeKeys, {
         count: 0,

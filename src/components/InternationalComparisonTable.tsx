@@ -18,7 +18,7 @@ export const InternationalComparisonTable = ({ variantInternationalDateCountData
   const summaries = useMemo(() => {
     const summaries: CountrySummary[] = [];
     for (let [country, samples] of Utils.groupBy(
-      variantInternationalDateCountDataset.getPayload(),
+      variantInternationalDateCountDataset.payload,
       e => e.country
     )) {
       if (!country) {

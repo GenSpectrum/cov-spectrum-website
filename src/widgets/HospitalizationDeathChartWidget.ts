@@ -7,7 +7,7 @@ import {
   LocationDateVariantSelectorEncodedSchema,
 } from '../data/LocationDateVariantSelector';
 import { HospitalizationDeathChart, HospitalizationDeathChartProps } from './HospitalizationDeathChart';
-import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
+import { DetailedSampleAggData } from '../data/sample/DetailedSampleAggDataset';
 
 export const HospitalizationDeathChartWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -18,7 +18,7 @@ export const HospitalizationDeathChartWidget = new Widget(
       relativeToOtherVariants: zod.boolean().optional(),
     }),
     async (decoded: HospitalizationDeathChartProps) => ({
-      sampleSet: encodeLocationDateVariantSelector(decoded.variantSampleSet.getSelector()),
+      sampleSet: encodeLocationDateVariantSelector(decoded.variantSampleSet.selector),
       field: decoded.field,
       extendedMetrics: decoded.extendedMetrics,
       relativeToOtherVariants: decoded.relativeToOtherVariants,
@@ -30,8 +30,8 @@ export const HospitalizationDeathChartWidget = new Widget(
         variant: undefined,
       };
       return {
-        variantSampleSet: await DetailedSampleAggDataset.fromApi(variantSelector, signal),
-        wholeSampleSet: await DetailedSampleAggDataset.fromApi(wholeSelector, signal),
+        variantSampleSet: await DetailedSampleAggData.fromApi(variantSelector, signal),
+        wholeSampleSet: await DetailedSampleAggData.fromApi(wholeSelector, signal),
         field: encoded.field,
         variantName: variantSelector.variant?.pangoLineage ?? 'unnamed variant',
         extendedMetrics: encoded.extendedMetrics,

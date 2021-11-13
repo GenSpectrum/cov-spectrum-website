@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { MutationName } from './MutationName';
 import { decodeAAMutation, sortListByAAMutation } from '../helpers/aa-mutation';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
-import { MutationProportionDataset } from '../data/MutationProportionDataset';
+import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
 import { useQuery } from '../helpers/query-hook';
 import { MutationProportionEntry } from '../data/MutationProportionEntry';
@@ -60,11 +60,11 @@ export const VariantMutations = ({ selector }: Props) => {
     signal =>
       Promise.all([
         fetchSamplesCount(selector, signal),
-        MutationProportionDataset.fromApi(selector, 'aa', signal),
-        MutationProportionDataset.fromApi(selector, 'nuc', signal),
+        MutationProportionData.fromApi(selector, 'aa', signal),
+        MutationProportionData.fromApi(selector, 'nuc', signal),
       ]).then(async ([variantCount, aaMutationDataset, nucMutationDataset]) => {
-        const aa = aaMutationDataset.getPayload();
-        const nuc = nucMutationDataset.getPayload();
+        const aa = aaMutationDataset.payload;
+        const nuc = nucMutationDataset.payload;
         const aaMap = new Map<string, MergedAAAndNucEntry[]>();
         const additionalNucs: MutationProportionEntry[] = [];
         for (let aaElement of aa) {

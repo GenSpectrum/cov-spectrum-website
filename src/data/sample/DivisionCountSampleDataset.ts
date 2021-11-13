@@ -5,24 +5,21 @@ import { fetchDivisionCountSamples } from '../api-lapis';
 import { DetailedSampleAggDataset } from './DetailedSampleAggDataset';
 import { Utils } from '../../services/Utils';
 
-export class DivisionCountSampleDataset
-  implements Dataset<LocationDateVariantSelector, DivisionCountSampleEntry[]> {
-  constructor(private selector: LocationDateVariantSelector, private payload: DivisionCountSampleEntry[]) {}
+export type DivisionCountSampleDataset = Dataset<LocationDateVariantSelector, DivisionCountSampleEntry[]>;
 
-  getPayload(): DivisionCountSampleEntry[] {
-    return this.payload;
-  }
-
-  getSelector(): LocationDateVariantSelector {
-    return this.selector;
-  }
-
-  static async fromApi(selector: LocationDateVariantSelector, signal?: AbortSignal) {
-    return new DivisionCountSampleDataset(selector, await fetchDivisionCountSamples(selector, signal));
+export class DivisionCountSampleData {
+  static async fromApi(
+    selector: LocationDateVariantSelector,
+    signal?: AbortSignal
+  ): Promise<DivisionCountSampleDataset> {
+    return {
+      selector: selector,
+      payload: await fetchDivisionCountSamples(selector, signal),
+    };
   }
 
   static fromDetailedSampleAggDataset(dataset: DetailedSampleAggDataset): DivisionCountSampleDataset {
-    const grouped = Utils.groupBy(dataset.getPayload(), d => d.division);
+    const grouped = Utils.groupBy(dataset.payload, d => d.division);
     const newPayload = [];
     for (let [division, entries] of grouped.entries()) {
       newPayload.push({
@@ -30,7 +27,7 @@ export class DivisionCountSampleDataset
         count: entries.reduce((prev, curr) => prev + curr.count, 0),
       });
     }
-    return new DivisionCountSampleDataset(dataset.getSelector(), newPayload);
+    return { selector: dataset.selector, payload: newPayload };
   }
 
   static countByDivisionGroup(data: DivisionCountSampleEntry[]): Map<string, number> {
@@ -49,8 +46,8 @@ export class DivisionCountSampleDataset
     variant: DivisionCountSampleEntry[],
     whole: DivisionCountSampleEntry[]
   ): Map<string, { count: number; proportion?: number }> {
-    const variantCounts = DivisionCountSampleDataset.countByDivisionGroup(variant);
-    const wholeCounts = DivisionCountSampleDataset.countByDivisionGroup(whole);
+    const variantCounts = DivisionCountSampleData.countByDivisionGroup(variant);
+    const wholeCounts = DivisionCountSampleData.countByDivisionGroup(whole);
     return new Map(
       [...variantCounts.entries()].map(([k, v]) => {
         const wholeCount = wholeCounts.get(k);

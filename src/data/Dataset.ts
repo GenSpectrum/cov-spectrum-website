@@ -1,5 +1,4 @@
-export interface Dataset<Selector, Payload> {
-  getSelector(): Selector;
-
-  getPayload(): Payload;
-}
+export type Dataset<Selector, Payload> = {
+  selector: Selector;
+  payload: Payload;
+};

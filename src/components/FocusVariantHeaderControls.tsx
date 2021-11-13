@@ -9,11 +9,11 @@ import { CoVariantsIntegration } from '../services/external-integrations/CoVaria
 import { useState } from 'react';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { FaDownload } from 'react-icons/fa';
-import { ContributorsDataset } from '../data/ContributorsDataset';
+import { ContributorsData } from '../data/ContributorsDataset';
 import { parse } from 'json2csv';
 import { UsherIntegration } from '../services/external-integrations/UsherIntegration';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
-import { SampleDetailsDataset } from '../data/SampleDetailsDataset';
+import { SampleDetailsData } from '../data/SampleDetailsDataset';
 import { serializeSampleDetailsEntryToRaw } from '../data/SampleDetailsEntry';
 import { TaxoniumIntegration } from '../services/external-integrations/TaxoniumIntegration';
 
@@ -48,11 +48,11 @@ export const FocusVariantHeaderControls = React.memo(
       // If the open version is used, all the metadata will be downloaded. If GISAID is used, only the contributors
       // will be downloaded.
       if (sequenceDataSource === 'open') {
-        const detailsDataset = await SampleDetailsDataset.fromApi(selector);
-        csv = parse(detailsDataset.getPayload().map(serializeSampleDetailsEntryToRaw));
+        const detailsDataset = await SampleDetailsData.fromApi(selector);
+        csv = parse(detailsDataset.payload.map(serializeSampleDetailsEntryToRaw));
       } else {
-        const contributorsDataset = await ContributorsDataset.fromApi(selector);
-        csv = parse(contributorsDataset.getPayload());
+        const contributorsDataset = await ContributorsData.fromApi(selector);
+        csv = parse(contributorsDataset.payload);
       }
 
       // Download as file

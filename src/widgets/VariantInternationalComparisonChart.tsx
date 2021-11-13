@@ -111,7 +111,7 @@ export const VariantInternationalComparisonChart = ({
   );
 
   const variantSamplesByCountry: Map<string, CountryDateCountSampleEntry[]> = useMemo(() => {
-    const map = Utils.groupBy(variantInternationalSampleSet.getPayload(), e => e.country);
+    const map = Utils.groupBy(variantInternationalSampleSet.payload, e => e.country);
     map.delete(null);
     return map as Map<string, CountryDateCountSampleEntry[]>;
   }, [variantInternationalSampleSet]);
@@ -141,7 +141,7 @@ export const VariantInternationalComparisonChart = ({
   }));
 
   const plotData = useMemo(() => {
-    const wholeSamplesByCountry = Utils.groupBy(wholeInternationalSampleSet.getPayload(), e => e.country);
+    const wholeSamplesByCountry = Utils.groupBy(wholeInternationalSampleSet.payload, e => e.country);
     const proportionCountries: ProportionCountry[] = [...variantSamplesByCountry.entries()].map(
       ([country, variantSamples]) => {
         const variantSamplesByWeek = Utils.groupBy(

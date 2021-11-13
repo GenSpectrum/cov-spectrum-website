@@ -3,20 +3,17 @@ import { CaseCountEntry } from './CaseCountEntry';
 import { fetchCaseCounts } from './api';
 import { LocationDateSelector } from './LocationDateSelector';
 import { LocationDateVariantSelector } from './LocationDateVariantSelector';
+import { AsyncDataset } from './AsyncDataset';
 
-export class CaseCountDataset implements Dataset<LocationDateSelector, CaseCountEntry[]> {
-  constructor(private selector: LocationDateSelector, private payload: CaseCountEntry[]) {}
+export type CaseCountDataset = Dataset<LocationDateSelector, CaseCountEntry[]>;
+export type CaseCountAsyncDataset = AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
 
-  getSelector() {
-    return this.selector;
-  }
-
-  getPayload(): CaseCountEntry[] {
-    return this.payload;
-  }
-
-  static async fromApi(selector: LocationDateSelector, signal?: AbortSignal) {
-    return new CaseCountDataset(selector, await fetchCaseCounts(selector, signal));
+export class CaseCountData {
+  static async fromApi(selector: LocationDateSelector, signal?: AbortSignal): Promise<CaseCountDataset> {
+    return {
+      selector: selector,
+      payload: await fetchCaseCounts(selector, signal),
+    };
   }
 
   static split(
@@ -25,12 +22,15 @@ export class CaseCountDataset implements Dataset<LocationDateSelector, CaseCount
     getNewSelector: (oldSelector: LocationDateSelector, entry: CaseCountEntry) => LocationDateVariantSelector
   ): Map<string, CaseCountDataset> {
     const map = new Map<string, CaseCountDataset>();
-    const oldSelector = dataset.getSelector();
-    for (let entry of dataset.getPayload()) {
+    const oldSelector = dataset.selector;
+    for (let entry of dataset.payload) {
       const key = getKey(entry);
       if (!map.has(key)) {
         const newSelector = getNewSelector(oldSelector, entry);
-        map.set(key, new CaseCountDataset(newSelector, []));
+        map.set(key, {
+          selector: newSelector,
+          payload: [],
+        });
       }
       const d = map.get(key)!;
       d.payload.push(entry);

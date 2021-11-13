@@ -10,13 +10,13 @@ import {
   VariantDivisionDistributionChart,
   VariantDivisionDistributionChartProps,
 } from './VariantDivisionDistributionChart';
-import { DivisionCountSampleDataset } from '../data/sample/DivisionCountSampleDataset';
+import { DivisionCountSampleData } from '../data/sample/DivisionCountSampleDataset';
 
 export const VariantDivisionDistributionChartWidget = new Widget(
   new AsyncZodQueryEncoder(
     LocationDateVariantSelectorEncodedSchema,
     async (decoded: VariantDivisionDistributionChartProps) =>
-      encodeLocationDateVariantSelector(decoded.variantSampleSet.getSelector()),
+      encodeLocationDateVariantSelector(decoded.variantSampleSet.selector),
     async (encoded: zod.infer<typeof LocationDateVariantSelectorEncodedSchema>, signal) => {
       const variantSelector = decodeLocationDateVariantSelector(encoded);
       const wholeSelector = {
@@ -24,8 +24,8 @@ export const VariantDivisionDistributionChartWidget = new Widget(
         variant: undefined,
       };
       return {
-        variantSampleSet: await DivisionCountSampleDataset.fromApi(variantSelector, signal),
-        wholeSampleSet: await DivisionCountSampleDataset.fromApi(wholeSelector, signal),
+        variantSampleSet: await DivisionCountSampleData.fromApi(variantSelector, signal),
+        wholeSampleSet: await DivisionCountSampleData.fromApi(wholeSelector, signal),
       };
     }
   ),

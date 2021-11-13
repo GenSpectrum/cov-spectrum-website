@@ -3,7 +3,10 @@ import Map from '../maps/Map';
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import Table from 'react-bootstrap/Table';
-import { DivisionCountSampleDataset } from '../data/sample/DivisionCountSampleDataset';
+import {
+  DivisionCountSampleData,
+  DivisionCountSampleDataset,
+} from '../data/sample/DivisionCountSampleDataset';
 
 export type VariantDivisionDistributionChartProps = {
   variantSampleSet: DivisionCountSampleDataset;
@@ -31,15 +34,15 @@ export const VariantDivisionDistributionChart = ({
   variantSampleSet,
   wholeSampleSet,
 }: VariantDivisionDistributionChartProps) => {
-  const country = wholeSampleSet.getSelector().location.country;
+  const country = wholeSampleSet.selector.location.country;
   const processedData = useMemo(() => {
-    const variantDivisions = DivisionCountSampleDataset.proportionByDivision(
-      variantSampleSet.getPayload(),
-      wholeSampleSet.getPayload()
+    const variantDivisions = DivisionCountSampleData.proportionByDivision(
+      variantSampleSet.payload,
+      wholeSampleSet.payload
     );
-    const wholeDivisions = DivisionCountSampleDataset.proportionByDivision(
-      wholeSampleSet.getPayload(),
-      wholeSampleSet.getPayload()
+    const wholeDivisions = DivisionCountSampleData.proportionByDivision(
+      wholeSampleSet.payload,
+      wholeSampleSet.payload
     );
     const plotData: {
       division: string | null;

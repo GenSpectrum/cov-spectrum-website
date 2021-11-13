@@ -7,25 +7,34 @@ import {
 } from '../data/LocationDateVariantSelector';
 import { EstimatedCasesChart, EstimatedCasesChartProps } from './EstimatedCasesChart';
 import * as zod from 'zod';
-import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
-import { CaseCountDataset } from '../data/CaseCountDataset';
+import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
+import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
+import { AsyncStatusTypes } from '../data/AsyncDataset';
+import { LocationDateSelector } from '../data/LocationDateSelector';
 
 export const EstimatedCasesChartWidget = new Widget(
   new AsyncZodQueryEncoder(
     LocationDateVariantSelectorEncodedSchema,
     async (decoded: EstimatedCasesChartProps) =>
-      encodeLocationDateVariantSelector(decoded.variantDateCounts.getSelector()),
+      encodeLocationDateVariantSelector(decoded.variantDateCounts.selector),
     async (encoded: zod.infer<typeof LocationDateVariantSelectorEncodedSchema>, signal) => {
       const variantSelector = decodeLocationDateVariantSelector(encoded);
       const wholeSelector = {
         ...variantSelector,
         variant: undefined,
       };
-      const caseSelector = wholeSelector;
+      const caseSelector: LocationDateSelector = {
+        location: variantSelector.location,
+        dateRange: variantSelector.dateRange,
+      };
       return {
-        variantDateCounts: await DateCountSampleDataset.fromApi(variantSelector, signal),
-        wholeDateCounts: await DateCountSampleDataset.fromApi(wholeSelector, signal),
-        caseCounts: await CaseCountDataset.fromApi(caseSelector, signal),
+        variantDateCounts: await DateCountSampleData.fromApi(variantSelector, signal),
+        wholeDateCounts: await DateCountSampleData.fromApi(wholeSelector, signal),
+        caseCounts: {
+          selector: caseSelector,
+          payload: (await CaseCountData.fromApi(caseSelector, signal)).payload,
+          status: AsyncStatusTypes.fulfilled,
+        } as CaseCountAsyncDataset,
       };
     }
   ),

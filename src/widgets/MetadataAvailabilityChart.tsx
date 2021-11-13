@@ -34,7 +34,7 @@ export const MetadataAvailabilityChart = ({ sampleSet }: MetadataAvailabilityCha
   const data: PlotEntry[] = useMemo(() => {
     let total = 0;
     const knownOfAttribute: Map<Attribute, number> = new Map(attributes.map(({ key }) => [key, 0]));
-    for (const entry of sampleSet.getPayload()) {
+    for (const entry of sampleSet.payload) {
       total += entry.count;
       for (let { key } of attributes) {
         if (entry[key] !== null) {

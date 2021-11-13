@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { ChartAndMetrics } from './Metrics';
 import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
 import { colors, TimeTick } from './common';
-import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
+import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { fillAndFilterFromWeeklyMap } from '../helpers/fill-missing';
 import DownloadWrapper from './DownloadWrapper';
 import { VariantTimeDistributionChartProps } from './VariantTimeDistributionChartWidget';
@@ -20,9 +20,9 @@ type TimeEntry = {
 export const VariantTimeDistributionBarChart = React.memo(
   ({ variantSampleSet, wholeSampleSet }: VariantTimeDistributionChartProps): JSX.Element => {
     const data = useMemo(() => {
-      const proportionByWeek = DateCountSampleDataset.proportionByWeek(
-        variantSampleSet.getPayload(),
-        wholeSampleSet.getPayload()
+      const proportionByWeek = DateCountSampleData.proportionByWeek(
+        variantSampleSet.payload,
+        wholeSampleSet.payload
       );
       return fillAndFilterFromWeeklyMap(
         proportionByWeek,
@@ -30,7 +30,7 @@ export const VariantTimeDistributionBarChart = React.memo(
           count: 0,
           proportion: 0,
         },
-        variantSampleSet.getSelector().dateRange!.getDateRange()
+        variantSampleSet.selector.dateRange!.getDateRange()
       ).map(({ key, value: { count, proportion } }) => ({
         firstDayInWeek: key.firstDay.string,
         yearWeek: key.yearWeekString,

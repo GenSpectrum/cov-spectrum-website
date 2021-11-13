@@ -5,13 +5,14 @@ import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from './common'
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Text, Cell } from 'recharts';
 import Metrics, { MetricsWrapper } from './Metrics';
 import { kFormat } from '../helpers/number';
-import { CaseCountDataset } from '../data/CaseCountDataset';
 import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
 import { CaseCountEntry } from '../data/CaseCountEntry';
 import { DetailedSampleAggEntry } from '../data/sample/DetailedSampleAggEntry';
+import Loader from '../components/Loader';
+import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
 
 export type SequencingRepresentativenessChartProps = {
-  caseDataset: CaseCountDataset;
+  caseDataset: CaseCountAsyncDataset;
   sampleDataset: DetailedSampleAggDataset;
 };
 
@@ -80,8 +81,11 @@ export const SequencingRepresentativenessChart = React.memo(
     const [selectedAttributes, setSelectedAttributes] = useState<Attribute[]>(['division']);
 
     const data = useMemo(() => {
-      const caseCountsByField = prepareCountsData(caseDataset.getPayload(), selectedAttributes);
-      const sampleCountsByField = prepareCountsData(sampleDataset.getPayload(), selectedAttributes);
+      if (!caseDataset.payload) {
+        return undefined;
+      }
+      const caseCountsByField = prepareCountsData(caseDataset.payload, selectedAttributes);
+      const sampleCountsByField = prepareCountsData(sampleDataset.payload, selectedAttributes);
       const _data: PlotEntry[] = [];
       for (let [key, cases] of caseCountsByField) {
         const sequenced = sampleCountsByField.get(key)!;
@@ -94,6 +98,10 @@ export const SequencingRepresentativenessChart = React.memo(
       }
       return _data;
     }, [caseDataset, sampleDataset, selectedAttributes]);
+
+    if (!data) {
+      return <Loader />;
+    }
 
     const YAxisLeftTick = ({ y, payload: { value } }: any) => {
       return (

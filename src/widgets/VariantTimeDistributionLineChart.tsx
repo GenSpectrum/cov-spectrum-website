@@ -17,15 +17,15 @@ export const VariantTimeDistributionLineChart = React.memo(
         sequenced: 0,
         variantCount: 0,
       },
-      variantSampleSet.getSelector().dateRange!.getDateRange()
+      variantSampleSet.selector.dateRange!.getDateRange()
     ).forEach(({ key, value }) => data.set(key, { ...value, date: key }));
-    for (let { date, count } of wholeSampleSet.getPayload()) {
+    for (let { date, count } of wholeSampleSet.payload) {
       if (!date || !data.has(date)) {
         continue;
       }
       data.get(date)!.sequenced += count;
     }
-    for (let { date, count } of variantSampleSet.getPayload()) {
+    for (let { date, count } of variantSampleSet.payload) {
       if (!date || !data.has(date)) {
         continue;
       }
