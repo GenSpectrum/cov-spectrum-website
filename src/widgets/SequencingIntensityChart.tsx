@@ -6,14 +6,12 @@ import {
   SequencingIntensityChartPlotEntry,
 } from './SequencingIntensityChartInner';
 import { Utils } from '../services/Utils';
-import { AsyncDataset } from '../data/AsyncDataset';
-import { LocationDateSelector } from '../data/LocationDateSelector';
-import { CaseCountEntry } from '../data/CaseCountEntry';
 import Loader from '../components/Loader';
+import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
 
 export type SequencingIntensityChartProps = {
   sequencingCounts: DateCountSampleDataset;
-  caseCounts: AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
+  caseCounts: CaseCountAsyncDataset;
 };
 
 type SequencingIntensityEntry = {

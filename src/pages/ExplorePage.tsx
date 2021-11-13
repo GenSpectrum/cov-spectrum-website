@@ -13,9 +13,7 @@ import { useExploreUrl } from '../helpers/explore-url';
 import { getCurrentLapisDataVersionDate } from '../data/api-lapis';
 import dayjs from 'dayjs';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
-import { AsyncDataset } from '../data/AsyncDataset';
-import { LocationDateSelector } from '../data/LocationDateSelector';
-import { CaseCountEntry } from '../data/CaseCountEntry';
+import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
 
 const Footer = styled.footer`
   margin-top: 50px;
@@ -27,7 +25,7 @@ interface Props {
   onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
   wholeDateCountSampleDataset: DateCountSampleDataset;
-  caseCountDataset: AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
+  caseCountDataset: CaseCountAsyncDataset;
   isSmallExplore: boolean;
 }
 

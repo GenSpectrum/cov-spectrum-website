@@ -6,13 +6,11 @@ import { MetadataAvailabilityChartWidget } from '../widgets/MetadataAvailability
 import { SequencingIntensityChartWidget } from '../widgets/SequencingIntensityChartWidget';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
-import { AsyncDataset } from '../data/AsyncDataset';
-import { LocationDateSelector } from '../data/LocationDateSelector';
-import { CaseCountEntry } from '../data/CaseCountEntry';
+import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
 
 interface Props {
   wholeDataset: DetailedSampleAggDataset;
-  caseCountDataset: AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
+  caseCountDataset: CaseCountAsyncDataset;
 }
 
 export const SequencingCoverageDeepExplore = React.memo(({ wholeDataset, caseCountDataset }: Props) => {

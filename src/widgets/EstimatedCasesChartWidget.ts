@@ -8,10 +8,9 @@ import {
 import { EstimatedCasesChart, EstimatedCasesChartProps } from './EstimatedCasesChart';
 import * as zod from 'zod';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
-import { CaseCountData } from '../data/CaseCountDataset';
-import { AsyncDataset, AsyncStatusTypes } from '../data/AsyncDataset';
+import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
+import { AsyncStatusTypes } from '../data/AsyncDataset';
 import { LocationDateSelector } from '../data/LocationDateSelector';
-import { CaseCountEntry } from '../data/CaseCountEntry';
 
 export const EstimatedCasesChartWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -35,7 +34,7 @@ export const EstimatedCasesChartWidget = new Widget(
           selector: caseSelector,
           payload: (await CaseCountData.fromApi(caseSelector, signal)).payload,
           status: AsyncStatusTypes.fulfilled,
-        } as AsyncDataset<LocationDateSelector, CaseCountEntry[]>,
+        } as CaseCountAsyncDataset,
       };
     }
   ),

@@ -14,23 +14,19 @@ import { FocusEmptyPage } from './FocusEmptyPage';
 import { FocusPage } from './FocusPage';
 import { DeepExplorePage } from './DeepExplorePage';
 import { DetailedSampleAggData } from '../data/sample/DetailedSampleAggDataset';
-import { CaseCountData, CaseCountDataset } from '../data/CaseCountDataset';
+import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
 import { DateCountSampleData, DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
 import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
 import Loader from '../components/Loader';
 import { useQuery } from '../helpers/query-hook';
 import { PromiseFn, useAsync } from 'react-async';
-import { LocationDateSelector } from '../data/LocationDateSelector';
 import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
+import { AsyncDataset } from '../data/AsyncDataset';
+import { Dataset } from '../data/Dataset';
 
 interface Props {
   isSmallScreen: boolean;
 }
-
-type PromiseFnWithSelector<T, S> = {
-  selector: T;
-  promiseFn: PromiseFn<S>;
-};
 
 export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   const { validUrl, location, dateRange, variant, focusKey, setVariant } = useExploreUrl() ?? {
@@ -57,23 +53,9 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     [location, dateRange]
   );
 
-  const { promiseFn: caseCountPromiseFn, selector: caseCountSelector } = useDeepCompareMemo<
-    PromiseFnWithSelector<LocationDateSelector, CaseCountDataset>
-  >(() => {
-    const selector = { location: location! };
-    return {
-      selector,
-      promiseFn: (_, { signal }) => CaseCountData.fromApi(selector, signal),
-    };
-  }, [location]);
-  const caseCountDatasetAsync = useAsync(caseCountPromiseFn);
-  const caseCountDataset = useMemo(
-    () => ({
-      selector: caseCountSelector,
-      payload: caseCountDatasetAsync.data?.payload,
-      status: caseCountDatasetAsync.status,
-    }),
-    [caseCountDatasetAsync.data, caseCountDatasetAsync.status, caseCountSelector]
+  const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(
+    { location: location! },
+    ({ selector }, { signal }) => CaseCountData.fromApi(selector, signal)
   );
 
   const wholeInternationalDateCountDataset = useQuery(
@@ -183,3 +165,29 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     )
   );
 };
+
+/**
+ * This hook returns an AsyncDataset and updates it when the selector changes. It does not watch for changes of the
+ * promiseFn.
+ */
+function useAsyncDataset<Selector, Payload>(
+  selector: Selector,
+  promiseFn: PromiseFn<Dataset<Selector, Payload>>
+): AsyncDataset<Selector, Payload> {
+  const { memorizedPromiseFn, memorizedSelector } = useDeepCompareMemo(
+    () => ({
+      memorizedSelector: selector,
+      memorizedPromiseFn: promiseFn,
+    }),
+    [selector]
+  );
+  const caseCountDatasetAsync = useAsync(memorizedPromiseFn, { selector });
+  return useMemo(
+    () => ({
+      selector: memorizedSelector,
+      payload: caseCountDatasetAsync.data?.payload,
+      status: caseCountDatasetAsync.status,
+    }),
+    [caseCountDatasetAsync, memorizedSelector]
+  );
+}

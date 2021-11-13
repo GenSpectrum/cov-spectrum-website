@@ -22,7 +22,7 @@ import { VariantDivisionDistributionChartWidget } from '../widgets/VariantDivisi
 import { DivisionCountSampleData } from '../data/sample/DivisionCountSampleDataset';
 import { DivisionModal } from '../components/DivisionModal';
 import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
-import { CaseCountData, CaseCountDataset } from '../data/CaseCountDataset';
+import { CaseCountAsyncDataset, CaseCountData, CaseCountDataset } from '../data/CaseCountDataset';
 import { EstimatedCasesChartWidget } from '../widgets/EstimatedCasesChartWidget';
 import { VariantInternationalComparisonChartWidget } from '../widgets/VariantInternationalComparisonChartWidget';
 import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
@@ -32,14 +32,11 @@ import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021Fitnes
 import { useExploreUrl } from '../helpers/explore-url';
 import { useQuery } from '../helpers/query-hook';
 import { CoreMetrics } from '../components/CoreMetrics';
-import { AsyncDataset } from '../data/AsyncDataset';
-import { LocationDateSelector } from '../data/LocationDateSelector';
-import { CaseCountEntry } from '../data/CaseCountEntry';
 
 interface Props {
   variantDataset: DetailedSampleAggDataset;
   wholeDataset: DetailedSampleAggDataset;
-  caseCountDataset: AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
+  caseCountDataset: CaseCountAsyncDataset;
   variantInternationalDateCountDataset: CountryDateCountSampleDataset;
   wholeInternationalDateCountDataset: CountryDateCountSampleDataset;
   onVariantSelect: (selection: VariantSelector) => void;

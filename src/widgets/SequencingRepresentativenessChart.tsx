@@ -8,12 +8,11 @@ import { kFormat } from '../helpers/number';
 import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
 import { CaseCountEntry } from '../data/CaseCountEntry';
 import { DetailedSampleAggEntry } from '../data/sample/DetailedSampleAggEntry';
-import { AsyncDataset } from '../data/AsyncDataset';
-import { LocationDateSelector } from '../data/LocationDateSelector';
 import Loader from '../components/Loader';
+import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
 
 export type SequencingRepresentativenessChartProps = {
-  caseDataset: AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
+  caseDataset: CaseCountAsyncDataset;
   sampleDataset: DetailedSampleAggDataset;
 };
 

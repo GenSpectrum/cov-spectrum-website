@@ -3,8 +3,10 @@ import { CaseCountEntry } from './CaseCountEntry';
 import { fetchCaseCounts } from './api';
 import { LocationDateSelector } from './LocationDateSelector';
 import { LocationDateVariantSelector } from './LocationDateVariantSelector';
+import { AsyncDataset } from './AsyncDataset';
 
 export type CaseCountDataset = Dataset<LocationDateSelector, CaseCountEntry[]>;
+export type CaseCountAsyncDataset = AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
 
 export class CaseCountData {
   static async fromApi(selector: LocationDateSelector, signal?: AbortSignal): Promise<CaseCountDataset> {

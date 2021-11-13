@@ -2,15 +2,13 @@ import { UnifiedDay } from '../helpers/date-cache';
 import { EstimatedCasesChartInner, EstimatedCasesTimeEntry } from './EstimatedCasesChartInner';
 import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
 import { fillAndFilterFromDailyMap } from '../helpers/fill-missing';
-import { AsyncDataset } from '../data/AsyncDataset';
-import { LocationDateSelector } from '../data/LocationDateSelector';
 import Loader from '../components/Loader';
-import { CaseCountEntry } from '../data/CaseCountEntry';
+import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
 
 export type EstimatedCasesChartProps = {
   wholeDateCounts: DateCountSampleDataset;
   variantDateCounts: DateCountSampleDataset;
-  caseCounts: AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
+  caseCounts: CaseCountAsyncDataset;
 };
 
 export const EstimatedCasesChart = ({

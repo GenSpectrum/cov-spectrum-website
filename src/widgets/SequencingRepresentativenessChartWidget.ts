@@ -7,13 +7,11 @@ import {
 import {
   decodeLocationDateSelector,
   encodeLocationDateSelector,
-  LocationDateSelector,
   LocationDateSelectorEncodedSchema,
 } from '../data/LocationDateSelector';
-import { CaseCountData } from '../data/CaseCountDataset';
+import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
 import { DetailedSampleAggData } from '../data/sample/DetailedSampleAggDataset';
-import { AsyncDataset, AsyncStatusTypes } from '../data/AsyncDataset';
-import { CaseCountEntry } from '../data/CaseCountEntry';
+import { AsyncStatusTypes } from '../data/AsyncDataset';
 
 export const SequencingRepresentativenessChartWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -27,7 +25,7 @@ export const SequencingRepresentativenessChartWidget = new Widget(
           selector,
           payload: (await CaseCountData.fromApi(selector, signal)).payload,
           status: AsyncStatusTypes.fulfilled,
-        } as AsyncDataset<LocationDateSelector, CaseCountEntry[]>,
+        } as CaseCountAsyncDataset,
         sampleDataset: await DetailedSampleAggData.fromApi(decodeLocationDateSelector(encoded), signal),
       };
     }
