@@ -3,19 +3,13 @@ import { LocationDateVariantSelector } from '../LocationDateVariantSelector';
 import { PangoCountSampleEntry } from './PangoCountSampleEntry';
 import { fetchPangoLineageCountSamples } from '../api-lapis';
 
-export class PangoCountSampleDataset
-  implements Dataset<LocationDateVariantSelector, PangoCountSampleEntry[]> {
-  constructor(private selector: LocationDateVariantSelector, private payload: PangoCountSampleEntry[]) {}
+export type PangoCountSampleDataset = Dataset<LocationDateVariantSelector, PangoCountSampleEntry[]>;
 
-  getPayload(): PangoCountSampleEntry[] {
-    return this.payload;
-  }
-
-  getSelector(): LocationDateVariantSelector {
-    return this.selector;
-  }
-
-  static async fromApi(selector: LocationDateVariantSelector, signal?: AbortSignal) {
-    return new PangoCountSampleDataset(selector, await fetchPangoLineageCountSamples(selector, signal));
+export class PangoCountSampleData {
+  static async fromApi(
+    selector: LocationDateVariantSelector,
+    signal?: AbortSignal
+  ): Promise<PangoCountSampleDataset> {
+    return { selector, payload: await fetchPangoLineageCountSamples(selector, signal) };
   }
 }

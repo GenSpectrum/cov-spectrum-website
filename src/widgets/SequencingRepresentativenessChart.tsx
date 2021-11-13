@@ -86,7 +86,7 @@ export const SequencingRepresentativenessChart = React.memo(
         return undefined;
       }
       const caseCountsByField = prepareCountsData(caseDataset.payload, selectedAttributes);
-      const sampleCountsByField = prepareCountsData(sampleDataset.getPayload(), selectedAttributes);
+      const sampleCountsByField = prepareCountsData(sampleDataset.payload, selectedAttributes);
       const _data: PlotEntry[] = [];
       for (let [key, cases] of caseCountsByField) {
         const sequenced = sampleCountsByField.get(key)!;

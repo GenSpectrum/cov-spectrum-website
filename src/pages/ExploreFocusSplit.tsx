@@ -13,10 +13,10 @@ import { ExplorePage } from './ExplorePage';
 import { FocusEmptyPage } from './FocusEmptyPage';
 import { FocusPage } from './FocusPage';
 import { DeepExplorePage } from './DeepExplorePage';
-import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
-import { CaseCountDataset } from '../data/CaseCountDataset';
-import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
-import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
+import { DetailedSampleAggData } from '../data/sample/DetailedSampleAggDataset';
+import { CaseCountData, CaseCountDataset } from '../data/CaseCountDataset';
+import { DateCountSampleData, DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
+import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
 import Loader from '../components/Loader';
 import { useQuery } from '../helpers/query-hook';
 import { PromiseFn, useAsync } from 'react-async';
@@ -38,22 +38,22 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   };
 
   const variantDataset = useQuery(
-    signal => DetailedSampleAggDataset.fromApi({ location: location!, dateRange, variant }, signal),
+    signal => DetailedSampleAggData.fromApi({ location: location!, dateRange, variant }, signal),
     [dateRange, location, variant]
   );
   const wholeDatasetWithoutDateFilter = useQuery(
     // Used by the explore page
-    signal => DetailedSampleAggDataset.fromApi({ location: location! }, signal),
+    signal => DetailedSampleAggData.fromApi({ location: location! }, signal),
     [location]
   );
   const wholeDateCountSampleDatasetWithoutDateFilter: DateCountSampleDataset | undefined = useMemo(() => {
     if (wholeDatasetWithoutDateFilter.isSuccess && wholeDatasetWithoutDateFilter.data) {
-      return DateCountSampleDataset.fromDetailedSampleAggDataset(wholeDatasetWithoutDateFilter.data);
+      return DateCountSampleData.fromDetailedSampleAggDataset(wholeDatasetWithoutDateFilter.data);
     }
   }, [wholeDatasetWithoutDateFilter.isSuccess, wholeDatasetWithoutDateFilter.data]);
   const wholeDatasetWithDateFilter = useQuery(
     // Used by the focus page
-    signal => DetailedSampleAggDataset.fromApi({ location: location!, dateRange }, signal),
+    signal => DetailedSampleAggData.fromApi({ location: location!, dateRange }, signal),
     [location, dateRange]
   );
 
@@ -63,25 +63,25 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     const selector = { location: location! };
     return {
       selector,
-      promiseFn: (_, { signal }) => CaseCountDataset.fromApi(selector, signal),
+      promiseFn: (_, { signal }) => CaseCountData.fromApi(selector, signal),
     };
   }, [location]);
   const caseCountDatasetAsync = useAsync(caseCountPromiseFn);
   const caseCountDataset = useMemo(
     () => ({
       selector: caseCountSelector,
-      payload: caseCountDatasetAsync.data?.getPayload(),
+      payload: caseCountDatasetAsync.data?.payload,
       status: caseCountDatasetAsync.status,
     }),
     [caseCountDatasetAsync.data, caseCountDatasetAsync.status, caseCountSelector]
   );
 
   const wholeInternationalDateCountDataset = useQuery(
-    signal => CountryDateCountSampleDataset.fromApi({ location: {}, dateRange }, signal),
+    signal => CountryDateCountSampleData.fromApi({ location: {}, dateRange }, signal),
     [dateRange]
   );
   const variantInternationalDateCountDataset = useQuery(
-    signal => CountryDateCountSampleDataset.fromApi({ location: {}, dateRange, variant }, signal),
+    signal => CountryDateCountSampleData.fromApi({ location: {}, dateRange, variant }, signal),
     [dateRange, variant]
   );
 

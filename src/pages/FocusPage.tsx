@@ -13,20 +13,20 @@ import { WasteWaterDataset } from '../models/wasteWater/types';
 import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
 import { ArticleListWidget } from '../widgets/ArticleListWidget';
-import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
+import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { VariantTimeDistributionChartWidget } from '../widgets/VariantTimeDistributionChartWidget';
-import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
-import { AgeCountSampleDataset } from '../data/sample/AgeCountSampleDataset';
+import { DetailedSampleAggData, DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
+import { AgeCountSampleData } from '../data/sample/AgeCountSampleDataset';
 import { VariantAgeDistributionChartWidget } from '../widgets/VariantAgeDistributionChartWidget';
 import { VariantDivisionDistributionChartWidget } from '../widgets/VariantDivisionDistributionChartWidget';
-import { DivisionCountSampleDataset } from '../data/sample/DivisionCountSampleDataset';
+import { DivisionCountSampleData } from '../data/sample/DivisionCountSampleDataset';
 import { DivisionModal } from '../components/DivisionModal';
 import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
-import { CaseCountDataset } from '../data/CaseCountDataset';
+import { CaseCountData, CaseCountDataset } from '../data/CaseCountDataset';
 import { EstimatedCasesChartWidget } from '../widgets/EstimatedCasesChartWidget';
 import { VariantInternationalComparisonChartWidget } from '../widgets/VariantInternationalComparisonChartWidget';
 import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
-import { ArticleDataset } from '../data/ArticleDataset';
+import { ArticleData } from '../data/ArticleDataset';
 import { VariantSelector } from '../data/VariantSelector';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { useExploreUrl } from '../helpers/explore-url';
@@ -78,10 +78,10 @@ export const FocusPage = ({
   const [showVariantAgeDistributionDivGrid, setShowVariantAgeDistributionDivGrid] = useState(false);
   const [showChen2021FitnessDivGrid, setShowChen2021FitnessDivGrid] = useState(false);
 
-  const pangoLineageQuery = variantDataset.getSelector().variant?.pangoLineage;
+  const pangoLineageQuery = variantDataset.selector.variant?.pangoLineage;
   const articleDataset = useQuery(
     signal =>
-      pangoLineageQuery ? ArticleDataset.fromApi(pangoLineageQuery, signal) : Promise.resolve(undefined),
+      pangoLineageQuery ? ArticleData.fromApi(pangoLineageQuery, signal) : Promise.resolve(undefined),
     [pangoLineageQuery]
   );
 
@@ -89,7 +89,7 @@ export const FocusPage = ({
     if (!variantDataset || !wholeDataset || !caseCountDataset.payload) {
       return undefined;
     }
-    const variantDatasetSplit = DetailedSampleAggDataset.split(
+    const variantDatasetSplit = DetailedSampleAggData.split(
       variantDataset,
       e => e.division ?? 'Unknown',
       (oldSelector, entry) => ({
@@ -100,7 +100,7 @@ export const FocusPage = ({
         },
       })
     );
-    const wholeDatasetSplit = DetailedSampleAggDataset.split(
+    const wholeDatasetSplit = DetailedSampleAggData.split(
       wholeDataset,
       e => e.division ?? 'Unknown',
       (oldSelector, entry) => ({
@@ -111,8 +111,8 @@ export const FocusPage = ({
         },
       })
     );
-    const caseCountDatasetSplit = CaseCountDataset.split(
-      new CaseCountDataset(caseCountDataset.selector, caseCountDataset.payload),
+    const caseCountDatasetSplit = CaseCountData.split(
+      { selector: caseCountDataset.selector, payload: caseCountDataset.payload },
       e => e.division ?? 'Unknown',
       (oldSelector, entry) => ({
         ...oldSelector,
@@ -145,7 +145,7 @@ export const FocusPage = ({
     if (!variantDataset || !wholeDataset || !caseCountDataset.payload) {
       return undefined;
     }
-    const variantDatasetSplit = DetailedSampleAggDataset.split(
+    const variantDatasetSplit = DetailedSampleAggData.split(
       variantDataset,
       e => e.country ?? 'Unknown',
       (oldSelector, entry) => ({
@@ -156,7 +156,7 @@ export const FocusPage = ({
         },
       })
     );
-    const wholeDatasetSplit = DetailedSampleAggDataset.split(
+    const wholeDatasetSplit = DetailedSampleAggData.split(
       wholeDataset,
       e => e.country ?? 'Unknown',
       (oldSelector, entry) => ({
@@ -167,8 +167,8 @@ export const FocusPage = ({
         },
       })
     );
-    const caseCountDatasetSplit = CaseCountDataset.split(
-      new CaseCountDataset(caseCountDataset.selector, caseCountDataset.payload),
+    const caseCountDatasetSplit = CaseCountData.split(
+      { selector: caseCountDataset.selector, payload: caseCountDataset.payload },
       e => e.country ?? 'Unknown',
       (oldSelector, entry) => ({
         ...oldSelector,
@@ -206,8 +206,8 @@ export const FocusPage = ({
     [exploreUrl]
   );
 
-  const country = variantDataset.getSelector().location.country;
-  const pangoLineage = variantDataset.getSelector().variant?.pangoLineage;
+  const country = variantDataset.selector.location.country;
+  const pangoLineage = variantDataset.selector.variant?.pangoLineage;
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
   useEffect(() => {
     let isMounted = true;
@@ -254,27 +254,27 @@ export const FocusPage = ({
     }
   }
 
-  if (!variantDataset.getSelector().variant) {
+  if (!variantDataset.selector.variant) {
     return <></>;
   }
 
-  const subData = variantDataset.getSelector().location.country ? divisionSubData : countrySubData;
+  const subData = variantDataset.selector.location.country ? divisionSubData : countrySubData;
 
   return (
     <>
       <div>
         <VariantHeader
-          dateRange={variantDataset.getSelector().dateRange!} // TODO is date range always available?
-          variant={variantDataset.getSelector().variant!}
-          controls={<FocusVariantHeaderControls selector={variantDataset.getSelector()} />}
+          dateRange={variantDataset.selector.dateRange!} // TODO is date range always available?
+          variant={variantDataset.selector.variant!}
+          controls={<FocusVariantHeaderControls selector={variantDataset.selector} />}
         />
         <CoreMetrics
-          variantSampleSet={DateCountSampleDataset.fromDetailedSampleAggDataset(variantDataset)}
-          wholeSampleSet={DateCountSampleDataset.fromDetailedSampleAggDataset(wholeDataset)}
+          variantSampleSet={DateCountSampleData.fromDetailedSampleAggDataset(variantDataset)}
+          wholeSampleSet={DateCountSampleData.fromDetailedSampleAggDataset(wholeDataset)}
         />
         {(!pangoLineage || pangoLineage.endsWith('*')) && (
           <div className='mx-0.5 mt-1 mb-5 md:mx-3 shadow-lg rounded-lg bg-white p-2 pl-4'>
-            <VariantLineages onVariantSelect={onVariantSelect} selector={variantDataset.getSelector()} />{' '}
+            <VariantLineages onVariantSelect={onVariantSelect} selector={variantDataset.selector} />{' '}
           </div>
         )}
         <PackedGrid maxColumns={2}>
@@ -283,8 +283,8 @@ export const FocusPage = ({
               <VariantTimeDistributionChartWidget.ShareableComponent
                 title='Sequences over time'
                 height={300}
-                variantSampleSet={DateCountSampleDataset.fromDetailedSampleAggDataset(variantDataset)}
-                wholeSampleSet={DateCountSampleDataset.fromDetailedSampleAggDataset(wholeDataset)}
+                variantSampleSet={DateCountSampleData.fromDetailedSampleAggDataset(variantDataset)}
+                wholeSampleSet={DateCountSampleData.fromDetailedSampleAggDataset(wholeDataset)}
                 toolbarChildren={[
                   createDivisionBreakdownButton('SequencesOverTime', setShowVariantTimeDistributionDivGrid),
                 ]}
@@ -294,8 +294,8 @@ export const FocusPage = ({
           <GridCell minWidth={600}>
             <EstimatedCasesChartWidget.ShareableComponent
               caseCounts={caseCountDataset}
-              variantDateCounts={DateCountSampleDataset.fromDetailedSampleAggDataset(variantDataset)}
-              wholeDateCounts={DateCountSampleDataset.fromDetailedSampleAggDataset(wholeDataset)}
+              variantDateCounts={DateCountSampleData.fromDetailedSampleAggDataset(variantDataset)}
+              wholeDateCounts={DateCountSampleData.fromDetailedSampleAggDataset(wholeDataset)}
               height={300}
               title='Estimated cases'
               toolbarChildren={
@@ -310,8 +310,8 @@ export const FocusPage = ({
               <VariantAgeDistributionChartWidget.ShareableComponent
                 title='Age demographics'
                 height={300}
-                variantSampleSet={AgeCountSampleDataset.fromDetailedSampleAggDataset(variantDataset)}
-                wholeSampleSet={AgeCountSampleDataset.fromDetailedSampleAggDataset(wholeDataset)}
+                variantSampleSet={AgeCountSampleData.fromDetailedSampleAggDataset(variantDataset)}
+                wholeSampleSet={AgeCountSampleData.fromDetailedSampleAggDataset(wholeDataset)}
                 toolbarChildren={[
                   createDivisionBreakdownButton('AgeDemographics', setShowVariantAgeDistributionDivGrid),
                 ]}
@@ -326,7 +326,7 @@ export const FocusPage = ({
                 field='hospitalized'
                 variantSampleSet={variantDataset}
                 wholeSampleSet={wholeDataset}
-                variantName={variantDataset.getSelector().variant?.pangoLineage ?? 'unnamed variant'}
+                variantName={variantDataset.selector.variant?.pangoLineage ?? 'unnamed variant'}
                 title='Hospitalization probabilities'
                 height={300}
                 toolbarChildren={deepFocusButtons.hospitalizationAndDeath}
@@ -351,8 +351,8 @@ export const FocusPage = ({
             >
               <div style={{ height: 300 }}>
                 <Chen2021FitnessPreview
-                  locationSelector={variantDataset.getSelector().location}
-                  variantSelector={variantDataset.getSelector().variant!}
+                  locationSelector={variantDataset.selector.location}
+                  variantSelector={variantDataset.selector.variant!}
                 />
               </div>
             </NamedCard>
@@ -361,8 +361,8 @@ export const FocusPage = ({
             {
               <VariantDivisionDistributionChartWidget.ShareableComponent
                 title='Geographic distribution'
-                variantSampleSet={DivisionCountSampleDataset.fromDetailedSampleAggDataset(variantDataset)}
-                wholeSampleSet={DivisionCountSampleDataset.fromDetailedSampleAggDataset(wholeDataset)}
+                variantSampleSet={DivisionCountSampleData.fromDetailedSampleAggDataset(variantDataset)}
+                wholeSampleSet={DivisionCountSampleData.fromDetailedSampleAggDataset(wholeDataset)}
               />
             }
           </GridCell>
@@ -395,7 +395,7 @@ export const FocusPage = ({
         </PackedGrid>
 
         <div className='m-4'>
-          <VariantMutations selector={variantDataset.getSelector()} />
+          <VariantMutations selector={variantDataset.selector} />
         </div>
       </div>
 
@@ -405,8 +405,8 @@ export const FocusPage = ({
           data={subData}
           generate={(division, d) => (
             <VariantTimeDistributionChartWidget.ShareableComponent
-              variantSampleSet={DateCountSampleDataset.fromDetailedSampleAggDataset(d.variant)}
-              wholeSampleSet={DateCountSampleDataset.fromDetailedSampleAggDataset(d.whole)}
+              variantSampleSet={DateCountSampleData.fromDetailedSampleAggDataset(d.variant)}
+              wholeSampleSet={DateCountSampleData.fromDetailedSampleAggDataset(d.whole)}
               height={300}
               title={division}
             />
@@ -423,12 +423,12 @@ export const FocusPage = ({
             d.cases ? (
               <EstimatedCasesChartWidget.ShareableComponent
                 caseCounts={{
-                  selector: d.cases.getSelector(),
-                  payload: d.cases.getPayload(),
+                  selector: d.cases.selector,
+                  payload: d.cases.payload,
                   status: 'fulfilled',
                 }}
-                wholeDateCounts={DateCountSampleDataset.fromDetailedSampleAggDataset(d.whole)}
-                variantDateCounts={DateCountSampleDataset.fromDetailedSampleAggDataset(d.variant)}
+                wholeDateCounts={DateCountSampleData.fromDetailedSampleAggDataset(d.whole)}
+                variantDateCounts={DateCountSampleData.fromDetailedSampleAggDataset(d.variant)}
                 title={division}
                 height={300}
               />
@@ -446,8 +446,8 @@ export const FocusPage = ({
           data={subData}
           generate={(division, d) => (
             <VariantAgeDistributionChartWidget.ShareableComponent
-              variantSampleSet={AgeCountSampleDataset.fromDetailedSampleAggDataset(d.variant)}
-              wholeSampleSet={AgeCountSampleDataset.fromDetailedSampleAggDataset(d.whole)}
+              variantSampleSet={AgeCountSampleData.fromDetailedSampleAggDataset(d.variant)}
+              wholeSampleSet={AgeCountSampleData.fromDetailedSampleAggDataset(d.whole)}
               height={300}
               title={division}
             />
@@ -475,8 +475,8 @@ export const FocusPage = ({
             >
               <div style={{ height: 300 }}>
                 <Chen2021FitnessPreview
-                  locationSelector={d.variant.getSelector().location}
-                  variantSelector={variantDataset.getSelector().variant!}
+                  locationSelector={d.variant.selector.location}
+                  variantSelector={variantDataset.selector.variant!}
                 />
               </div>
             </NamedCard>

@@ -29,15 +29,15 @@ export const EstimatedCasesChart = ({
       sequenced: 0,
       variantCount: 0,
     },
-    variantDateCounts.getSelector().dateRange!.getDateRange()
+    variantDateCounts.selector.dateRange!.getDateRange()
   ).forEach(({ key, value }) => data.set(key, { ...value, date: key }));
-  for (let { date, count } of wholeDateCounts.getPayload()) {
+  for (let { date, count } of wholeDateCounts.payload) {
     if (!date || !data.has(date)) {
       continue;
     }
     data.get(date)!.sequenced += count;
   }
-  for (let { date, count } of variantDateCounts.getPayload()) {
+  for (let { date, count } of variantDateCounts.payload) {
     if (!date || !data.has(date)) {
       continue;
     }

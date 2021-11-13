@@ -7,7 +7,7 @@ import {
   encodeLocationDateVariantSelector,
   LocationDateVariantSelectorEncodedSchema,
 } from '../data/LocationDateVariantSelector';
-import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
+import { DateCountSampleData, DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
 import { VariantTimeDistributionLineChart } from './VariantTimeDistributionLineChart';
 
 export type VariantTimeDistributionChartProps = {
@@ -19,7 +19,7 @@ export const VariantTimeDistributionChartWidget = new Widget(
   new AsyncZodQueryEncoder(
     LocationDateVariantSelectorEncodedSchema,
     async (decoded: VariantTimeDistributionChartProps) =>
-      encodeLocationDateVariantSelector(decoded.variantSampleSet.getSelector()),
+      encodeLocationDateVariantSelector(decoded.variantSampleSet.selector),
     async (encoded: zod.infer<typeof LocationDateVariantSelectorEncodedSchema>, signal) => {
       const variantSelector = decodeLocationDateVariantSelector(encoded);
       const wholeSelector = {
@@ -27,8 +27,8 @@ export const VariantTimeDistributionChartWidget = new Widget(
         variant: undefined,
       };
       return {
-        variantSampleSet: await DateCountSampleDataset.fromApi(variantSelector, signal),
-        wholeSampleSet: await DateCountSampleDataset.fromApi(wholeSelector, signal),
+        variantSampleSet: await DateCountSampleData.fromApi(variantSelector, signal),
+        wholeSampleSet: await DateCountSampleData.fromApi(wholeSelector, signal),
       };
     }
   ),

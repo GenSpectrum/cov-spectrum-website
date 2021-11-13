@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { LoaderSmall } from './Loader';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
-import { PangoCountSampleDataset } from '../data/sample/PangoCountSampleDataset';
+import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
 import { VariantSelector } from '../data/VariantSelector';
 
 export interface Props {
@@ -24,9 +24,9 @@ export const VariantLineages = ({ selector, onVariantSelect }: Props) => {
   >(undefined);
 
   useEffect(() => {
-    PangoCountSampleDataset.fromApi(selector).then(pangoCountDataset => {
-      const total = pangoCountDataset.getPayload().reduce((prev, curr) => prev + curr.count, 0);
-      const proportions = pangoCountDataset.getPayload().map(e => ({
+    PangoCountSampleData.fromApi(selector).then(pangoCountDataset => {
+      const total = pangoCountDataset.payload.reduce((prev, curr) => prev + curr.count, 0);
+      const proportions = pangoCountDataset.payload.map(e => ({
         pangoLineage: e.pangoLineage,
         proportion: e.count / total,
       }));

@@ -4,7 +4,7 @@ import { NamedCard } from './NamedCard';
 import { GridCell, PackedGrid } from './PackedGrid';
 import { MetadataAvailabilityChartWidget } from '../widgets/MetadataAvailabilityChartWidget';
 import { SequencingIntensityChartWidget } from '../widgets/SequencingIntensityChartWidget';
-import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
+import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
 import { AsyncDataset } from '../data/AsyncDataset';
 import { LocationDateSelector } from '../data/LocationDateSelector';
@@ -21,7 +21,7 @@ export const SequencingCoverageDeepExplore = React.memo(({ wholeDataset, caseCou
       <GridCell minWidth={600}>
         <SequencingIntensityChartWidget.ShareableComponent
           title='Sequencing Intensity Over Time'
-          sequencingCounts={DateCountSampleDataset.fromDetailedSampleAggDataset(wholeDataset)}
+          sequencingCounts={DateCountSampleData.fromDetailedSampleAggDataset(wholeDataset)}
           caseCounts={caseCountDataset}
           height={300}
           widgetLayout={NamedCard}
@@ -34,7 +34,7 @@ export const SequencingCoverageDeepExplore = React.memo(({ wholeDataset, caseCou
           height={300}
         />
       </GridCell>
-      {wholeDataset.getSelector().location.country === 'Switzerland' && (
+      {wholeDataset.selector.location.country === 'Switzerland' && (
         <GridCell minWidth={1600}>
           <SequencingRepresentativenessChartWidget.ShareableComponent
             title='Sequencing Intensity by Attribute'

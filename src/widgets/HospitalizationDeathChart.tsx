@@ -19,7 +19,7 @@ import { approximateBinomialRatioConfidence } from '../helpers/binomial-ratio-co
 import DownloadWrapper from './DownloadWrapper';
 import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
 import { Utils } from '../services/Utils';
-import { AgeCountSampleDataset } from '../data/sample/AgeCountSampleDataset';
+import { AgeCountSampleData } from '../data/sample/AgeCountSampleDataset';
 
 export const OMIT_LAST_N_WEEKS = 4;
 
@@ -113,11 +113,11 @@ export const HospitalizationDeathChart = ({
       const lastWeek = globalDateCache.getDayUsingDayjs(
         globalDateCache.getDayUsingDayjs(dayjs()).dayjs.subtract(OMIT_LAST_N_WEEKS, 'weeks')
       ).isoWeek;
-      const filteredSamples = originalSampleSet
-        .getPayload()
-        .filter(entry => entry.date && !globalDateCache.weekIsBefore(lastWeek, entry.date.isoWeek));
+      const filteredSamples = originalSampleSet.payload.filter(
+        entry => entry.date && !globalDateCache.weekIsBefore(lastWeek, entry.date.isoWeek)
+      );
       const groupedByAgeGroup = Utils.groupBy(filteredSamples, e =>
-        e.age !== null ? AgeCountSampleDataset.fromAgeToAgeGroup(e.age) : null
+        e.age !== null ? AgeCountSampleData.fromAgeToAgeGroup(e.age) : null
       );
       const filled = fillFromPrimitiveMap(groupedByAgeGroup, possibleAgeKeys, []);
       return filled.map(({ key: ageGroup, value: samples }) => {

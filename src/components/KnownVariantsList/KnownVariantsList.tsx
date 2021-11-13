@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { KnownVariantCard } from './KnownVariantCard';
 import _VARIANT_LISTS from './variantLists.json';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
-import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
-import { PangoCountSampleDataset } from '../../data/sample/PangoCountSampleDataset';
+import { DateCountSampleData, DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
+import { PangoCountSampleData } from '../../data/sample/PangoCountSampleDataset';
 import { SpecialDateRangeSelector } from '../../data/DateRangeSelector';
 import { PangoCountSampleEntry } from '../../data/sample/PangoCountSampleEntry';
 import { formatVariantDisplayName, VariantSelector } from '../../data/VariantSelector';
@@ -79,8 +79,8 @@ export function convertKnownVariantChartData({
   wholeSampleSet: DateCountSampleDataset;
 }): KnownVariantWithChartData[] {
   // Compute the weekly chart data
-  const variantWeeklyCounts = variantSampleSets.map(s => DateCountSampleDataset.countByWeek(s.getPayload()));
-  const wholeWeeklyCounts = DateCountSampleDataset.countByWeek(wholeSampleSet.getPayload());
+  const variantWeeklyCounts = variantSampleSets.map(s => DateCountSampleData.countByWeek(s.payload));
+  const wholeWeeklyCounts = DateCountSampleData.countByWeek(wholeSampleSet.payload);
 
   const dataWeekRange = globalDateCache.rangeFromWeeks(
     [...variantWeeklyCounts.values()].flatMap(map => [...map.keys()])
@@ -113,8 +113,8 @@ export function convertKnownVariantChartData({
   assert(new Set(filledData.map(d => d.length)).size === 1);
 
   // Compute the proportion during the last 14 days
-  const variantDailyCounts = variantSampleSets.map(s => DateCountSampleDataset.countByDay(s.getPayload()));
-  const wholeDateCounts = DateCountSampleDataset.countByDay(wholeSampleSet.getPayload());
+  const variantDailyCounts = variantSampleSets.map(s => DateCountSampleData.countByDay(s.payload));
+  const wholeDateCounts = DateCountSampleData.countByDay(wholeSampleSet.payload);
   const maxDate = dayjs.max([...wholeDateCounts.keys()].map(d => d.dayjs));
   let recentVariantTotal = variantDailyCounts.map(_ => 0);
   let recentWholeTotal = 0;
@@ -127,7 +127,7 @@ export function convertKnownVariantChartData({
   }
 
   return variantSampleSets.map((dataset, i) => ({
-    selector: dataset.getSelector().variant!,
+    selector: dataset.selector.variant!,
     chartData: filledData[i],
     recentProportion: recentVariantTotal[i] / recentWholeTotal,
   }));
@@ -175,9 +175,9 @@ export const KnownVariantsList = ({
 
   const pangoCountDataset = useQuery(
     signal =>
-      PangoCountSampleDataset.fromApi(
+      PangoCountSampleData.fromApi(
         {
-          location: wholeDateCountSampleDataset.getSelector().location,
+          location: wholeDateCountSampleDataset.selector.location,
           dateRange: new SpecialDateRangeSelector('Past3M'),
         },
         signal
@@ -191,7 +191,7 @@ export const KnownVariantsList = ({
     const variantList = VARIANT_LISTS.filter(({ name }) => name === selectedVariantList)[0];
     return selectPreviewVariants(
       variantList.variants,
-      pangoCountDataset.data.getPayload(),
+      pangoCountDataset.data.payload,
       variantList.fillUpUntil
     );
   }, [pangoCountDataset.isSuccess, pangoCountDataset.data, selectedVariantList]);
@@ -204,7 +204,7 @@ export const KnownVariantsList = ({
 
     const createSelector = (variantSelector: VariantSelector): LocationDateVariantSelector => {
       return {
-        location: wholeDateCountSampleDataset.getSelector().location,
+        location: wholeDateCountSampleDataset.selector.location,
         dateRange: new SpecialDateRangeSelector('Past3M'),
         variant: variantSelector,
       };
@@ -214,7 +214,7 @@ export const KnownVariantsList = ({
       return await Promise.all(
         knownVariantSelectors.map(vs => {
           const selector = createSelector(vs);
-          return DateCountSampleDataset.fromApi(selector);
+          return DateCountSampleData.fromApi(selector);
         })
       );
     }

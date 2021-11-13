@@ -10,8 +10,8 @@ import {
   LocationDateSelector,
   LocationDateSelectorEncodedSchema,
 } from '../data/LocationDateSelector';
-import { CaseCountDataset } from '../data/CaseCountDataset';
-import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
+import { CaseCountData } from '../data/CaseCountDataset';
+import { DetailedSampleAggData } from '../data/sample/DetailedSampleAggDataset';
 import { AsyncDataset, AsyncStatusTypes } from '../data/AsyncDataset';
 import { CaseCountEntry } from '../data/CaseCountEntry';
 
@@ -25,10 +25,10 @@ export const SequencingRepresentativenessChartWidget = new Widget(
       return {
         caseDataset: {
           selector,
-          payload: (await CaseCountDataset.fromApi(selector, signal)).getPayload(),
+          payload: (await CaseCountData.fromApi(selector, signal)).payload,
           status: AsyncStatusTypes.fulfilled,
         } as AsyncDataset<LocationDateSelector, CaseCountEntry[]>,
-        sampleDataset: await DetailedSampleAggDataset.fromApi(decodeLocationDateSelector(encoded), signal),
+        sampleDataset: await DetailedSampleAggData.fromApi(decodeLocationDateSelector(encoded), signal),
       };
     }
   ),

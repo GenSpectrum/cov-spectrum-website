@@ -30,7 +30,7 @@ const routes: DeepRoute<LoadedProps>[] = [
     title: 'International comparison',
     content: props => (
       <InternationalComparison
-        locationSelector={props.variantDataset.getSelector().location}
+        locationSelector={props.variantDataset.selector.location}
         variantInternationalDateCountDataset={props.variantInternationalDateCountDataset}
         wholeInternationalDateCountDataset={props.wholeInternationalDateCountDataset}
       />
@@ -41,8 +41,8 @@ const routes: DeepRoute<LoadedProps>[] = [
     title: 'Transmission advantage',
     content: props => (
       <Chen2021FitnessWidget.ShareableComponent
-        locationSelector={props.variantDataset.getSelector().location}
-        variantSelector={props.variantDataset.getSelector().variant!}
+        locationSelector={props.variantDataset.selector.location}
+        variantSelector={props.variantDataset.selector.variant!}
         widgetLayout={MinimalWidgetLayout}
         title='Transmission advantage'
       />
@@ -53,7 +53,7 @@ const routes: DeepRoute<LoadedProps>[] = [
     title: 'Hospitalization and death',
     content: props => (
       <HospitalizationDeathDeepFocus
-        variantName={formatVariantDisplayName(props.variantDataset.getSelector().variant!, true)}
+        variantName={formatVariantDisplayName(props.variantDataset.selector.variant!, true)}
         variantSampleSet={props.variantDataset}
         wholeSampleSet={props.wholeDataset}
       />
@@ -63,14 +63,14 @@ const routes: DeepRoute<LoadedProps>[] = [
     key: 'waste-water',
     title: 'Wastewater prevalence',
     content: props => {
-      const country = props.variantDataset.getSelector().location.country;
+      const country = props.variantDataset.selector.location.country;
       if (country !== 'Switzerland') {
         return <>Nothing to see here.</>;
       }
       return (
         <WasteWaterDeepFocus
           country={country}
-          variantName={props.variantDataset.getSelector().variant?.pangoLineage}
+          variantName={props.variantDataset.selector.variant?.pangoLineage}
         />
       );
     },
@@ -80,14 +80,14 @@ const routes: DeepRoute<LoadedProps>[] = [
 export const DeepFocusPage = ({ ...syncProps }: Props) => {
   const { path } = useRouteMatch();
   const overviewPageUrl = useExploreUrl()?.getOverviewPageUrl() ?? '#';
-  if (!syncProps.variantDataset.getSelector().variant) {
+  if (!syncProps.variantDataset.selector.variant) {
     return <></>;
   }
   const _makeLayout = (content: JSX.Element) =>
     makeLayout(
       <VariantHeader
-        dateRange={syncProps.variantDataset.getSelector().dateRange!} // TODO is date range always available?
-        variant={syncProps.variantDataset.getSelector().variant!}
+        dateRange={syncProps.variantDataset.selector.dateRange!} // TODO is date range always available?
+        variant={syncProps.variantDataset.selector.variant!}
         controls={
           <Button className='mt-2' variant='secondary' as={Link} to={overviewPageUrl}>
             Back to overview

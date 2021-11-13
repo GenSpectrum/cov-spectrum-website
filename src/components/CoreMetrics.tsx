@@ -11,8 +11,8 @@ export type CoreMetricsProps = {
 
 export const CoreMetrics = ({ variantSampleSet, wholeSampleSet }: CoreMetricsProps) => {
   const { totalSequences, overallProportion } = useMemo(() => {
-    const totalVariantSequences = variantSampleSet.getPayload().reduce((prev, curr) => prev + curr.count, 0);
-    const totalOverallSequences = wholeSampleSet.getPayload().reduce((prev, curr) => prev + curr.count, 0);
+    const totalVariantSequences = variantSampleSet.payload.reduce((prev, curr) => prev + curr.count, 0);
+    const totalOverallSequences = wholeSampleSet.payload.reduce((prev, curr) => prev + curr.count, 0);
     return {
       totalSequences: totalVariantSequences,
       overallProportion: totalVariantSequences / totalOverallSequences,

@@ -24,7 +24,7 @@ const Info = styled.div`
 export const HospitalizationDeathDeepFocus = ({ variantSampleSet, wholeSampleSet, variantName }: Props) => {
   const [relative, setRelative] = useState(false);
 
-  if (variantSampleSet.getSelector().location.country !== 'Switzerland') {
+  if (variantSampleSet.selector.location.country !== 'Switzerland') {
     return (
       <Alert variant={AlertVariant.DANGER}>
         Hospitalization and death rates are only available for Switzerland

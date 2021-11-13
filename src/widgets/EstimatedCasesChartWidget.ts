@@ -7,8 +7,8 @@ import {
 } from '../data/LocationDateVariantSelector';
 import { EstimatedCasesChart, EstimatedCasesChartProps } from './EstimatedCasesChart';
 import * as zod from 'zod';
-import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
-import { CaseCountDataset } from '../data/CaseCountDataset';
+import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
+import { CaseCountData } from '../data/CaseCountDataset';
 import { AsyncDataset, AsyncStatusTypes } from '../data/AsyncDataset';
 import { LocationDateSelector } from '../data/LocationDateSelector';
 import { CaseCountEntry } from '../data/CaseCountEntry';
@@ -17,7 +17,7 @@ export const EstimatedCasesChartWidget = new Widget(
   new AsyncZodQueryEncoder(
     LocationDateVariantSelectorEncodedSchema,
     async (decoded: EstimatedCasesChartProps) =>
-      encodeLocationDateVariantSelector(decoded.variantDateCounts.getSelector()),
+      encodeLocationDateVariantSelector(decoded.variantDateCounts.selector),
     async (encoded: zod.infer<typeof LocationDateVariantSelectorEncodedSchema>, signal) => {
       const variantSelector = decodeLocationDateVariantSelector(encoded);
       const wholeSelector = {
@@ -29,11 +29,11 @@ export const EstimatedCasesChartWidget = new Widget(
         dateRange: variantSelector.dateRange,
       };
       return {
-        variantDateCounts: await DateCountSampleDataset.fromApi(variantSelector, signal),
-        wholeDateCounts: await DateCountSampleDataset.fromApi(wholeSelector, signal),
+        variantDateCounts: await DateCountSampleData.fromApi(variantSelector, signal),
+        wholeDateCounts: await DateCountSampleData.fromApi(wholeSelector, signal),
         caseCounts: {
           selector: caseSelector,
-          payload: (await CaseCountDataset.fromApi(caseSelector, signal)).getPayload(),
+          payload: (await CaseCountData.fromApi(caseSelector, signal)).payload,
           status: AsyncStatusTypes.fulfilled,
         } as AsyncDataset<LocationDateSelector, CaseCountEntry[]>,
       };

@@ -5,7 +5,7 @@ import { isValidAAMutation } from '../helpers/aa-mutation';
 import { InputActionMeta, Styles } from 'react-select';
 import { CSSPseudos } from 'styled-components';
 import { Button, ButtonVariant } from '../helpers/ui';
-import { PangoCountSampleDataset } from '../data/sample/PangoCountSampleDataset';
+import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
 import { isValidPangoLineageQuery, VariantSelector } from '../data/VariantSelector';
 import { isValidNucMutation } from '../helpers/nuc-mutation';
 import { useQuery } from '../helpers/query-hook';
@@ -72,11 +72,8 @@ export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = fa
 
   const pangoLineages = useQuery(
     signal =>
-      PangoCountSampleDataset.fromApi({ location: {} }, signal).then(dataset =>
-        dataset
-          .getPayload()
-          .filter(e => e.pangoLineage)
-          .map(e => e.pangoLineage!)
+      PangoCountSampleData.fromApi({ location: {} }, signal).then(dataset =>
+        dataset.payload.filter(e => e.pangoLineage).map(e => e.pangoLineage!)
       ),
     []
   );

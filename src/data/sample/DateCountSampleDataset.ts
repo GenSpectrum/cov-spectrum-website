@@ -6,23 +6,21 @@ import { DetailedSampleAggDataset } from './DetailedSampleAggDataset';
 import { Utils } from '../../services/Utils';
 import { UnifiedDay, UnifiedIsoWeek } from '../../helpers/date-cache';
 
-export class DateCountSampleDataset implements Dataset<LocationDateVariantSelector, DateCountSampleEntry[]> {
-  constructor(private selector: LocationDateVariantSelector, private payload: DateCountSampleEntry[]) {}
+export type DateCountSampleDataset = Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>;
 
-  getPayload(): DateCountSampleEntry[] {
-    return this.payload;
-  }
-
-  getSelector(): LocationDateVariantSelector {
-    return this.selector;
-  }
-
-  static async fromApi(selector: LocationDateVariantSelector, signal?: AbortSignal) {
-    return new DateCountSampleDataset(selector, await fetchDateCountSamples(selector, signal));
+export class DateCountSampleData {
+  static async fromApi(
+    selector: LocationDateVariantSelector,
+    signal?: AbortSignal
+  ): Promise<DateCountSampleDataset> {
+    return {
+      selector: selector,
+      payload: await fetchDateCountSamples(selector, signal),
+    };
   }
 
   static fromDetailedSampleAggDataset(dataset: DetailedSampleAggDataset): DateCountSampleDataset {
-    const grouped = Utils.groupBy(dataset.getPayload(), d => d.date);
+    const grouped = Utils.groupBy(dataset.payload, d => d.date);
     const newPayload = [];
     for (let [date, entries] of grouped.entries()) {
       newPayload.push({
@@ -30,7 +28,10 @@ export class DateCountSampleDataset implements Dataset<LocationDateVariantSelect
         count: entries.reduce((prev, curr) => prev + curr.count, 0),
       });
     }
-    return new DateCountSampleDataset(dataset.getSelector(), newPayload);
+    return {
+      selector: dataset.selector,
+      payload: newPayload,
+    };
   }
 
   static countByDay(data: DateCountSampleEntry[]): Map<UnifiedDay, number> {
@@ -61,8 +62,8 @@ export class DateCountSampleDataset implements Dataset<LocationDateVariantSelect
     variant: DateCountSampleEntry[],
     whole: DateCountSampleEntry[]
   ): Map<UnifiedIsoWeek, { count: number; proportion?: number }> {
-    const variantCounts = DateCountSampleDataset.countByWeek(variant);
-    const wholeCounts = DateCountSampleDataset.countByWeek(whole);
+    const variantCounts = DateCountSampleData.countByWeek(variant);
+    const wholeCounts = DateCountSampleData.countByWeek(whole);
     return new Map(
       [...wholeCounts.entries()].map(([week, wholeCount]) => {
         const variantCount = variantCounts.get(week) ?? 0;

@@ -66,7 +66,7 @@ export const SequencingIntensityChart = ({ sequencingCounts, caseCounts }: Seque
     }
     sequencingIntensityMap.get(date)!.numberCases += newCases;
   }
-  for (const { date, count } of sequencingCounts.getPayload()) {
+  for (const { date, count } of sequencingCounts.payload) {
     if (!date) {
       continue;
     }

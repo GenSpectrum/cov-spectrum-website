@@ -5,23 +5,21 @@ import { fetchAgeCountSamples } from '../api-lapis';
 import { DetailedSampleAggDataset } from './DetailedSampleAggDataset';
 import { Utils } from '../../services/Utils';
 
-export class AgeCountSampleDataset implements Dataset<LocationDateVariantSelector, AgeCountSampleEntry[]> {
-  constructor(private selector: LocationDateVariantSelector, private payload: AgeCountSampleEntry[]) {}
+export type AgeCountSampleDataset = Dataset<LocationDateVariantSelector, AgeCountSampleEntry[]>;
 
-  getPayload(): AgeCountSampleEntry[] {
-    return this.payload;
-  }
-
-  getSelector(): LocationDateVariantSelector {
-    return this.selector;
-  }
-
-  static async fromApi(selector: LocationDateVariantSelector, signal?: AbortSignal) {
-    return new AgeCountSampleDataset(selector, await fetchAgeCountSamples(selector, signal));
+export class AgeCountSampleData {
+  static async fromApi(
+    selector: LocationDateVariantSelector,
+    signal?: AbortSignal
+  ): Promise<AgeCountSampleDataset> {
+    return {
+      selector,
+      payload: await fetchAgeCountSamples(selector, signal),
+    };
   }
 
   static fromDetailedSampleAggDataset(dataset: DetailedSampleAggDataset): AgeCountSampleDataset {
-    const grouped = Utils.groupBy(dataset.getPayload(), d => d.age);
+    const grouped = Utils.groupBy(dataset.payload, d => d.age);
     const newPayload = [];
     for (let [age, entries] of grouped.entries()) {
       newPayload.push({
@@ -29,7 +27,10 @@ export class AgeCountSampleDataset implements Dataset<LocationDateVariantSelecto
         count: entries.reduce((prev, curr) => prev + curr.count, 0),
       });
     }
-    return new AgeCountSampleDataset(dataset.getSelector(), newPayload);
+    return {
+      selector: dataset.selector,
+      payload: newPayload,
+    };
   }
 
   static fromAgeToAgeGroup(age: number): string {
@@ -51,7 +52,7 @@ export class AgeCountSampleDataset implements Dataset<LocationDateVariantSelecto
       if (entry.age === null) {
         continue;
       }
-      const ageGroup = this.fromAgeToAgeGroup(entry.age);
+      const ageGroup = AgeCountSampleData.fromAgeToAgeGroup(entry.age);
       const oldCount = output.get(ageGroup) ?? 0;
       output.set(ageGroup, oldCount + entry.count);
     }
@@ -62,8 +63,8 @@ export class AgeCountSampleDataset implements Dataset<LocationDateVariantSelecto
     variant: AgeCountSampleEntry[],
     whole: AgeCountSampleEntry[]
   ): Map<string, { count: number; proportion?: number }> {
-    const variantCounts = AgeCountSampleDataset.countByAgeGroup(variant);
-    const wholeCounts = AgeCountSampleDataset.countByAgeGroup(whole);
+    const variantCounts = AgeCountSampleData.countByAgeGroup(variant);
+    const wholeCounts = AgeCountSampleData.countByAgeGroup(whole);
     return new Map(
       [...variantCounts.entries()].map(([k, v]) => {
         const wholeCount = wholeCounts.get(k);
