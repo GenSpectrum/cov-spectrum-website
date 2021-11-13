@@ -422,13 +422,11 @@ export const FocusPage = ({
           generate={(division, d) =>
             d.cases ? (
               <EstimatedCasesChartWidget.ShareableComponent
-                caseCounts={
-                  new AsyncDataset<LocationDateSelector, CaseCountEntry[]>(
-                    d.cases.getSelector(),
-                    d.cases.getPayload(),
-                    'fulfilled'
-                  )
-                }
+                caseCounts={{
+                  selector: d.cases.getSelector(),
+                  payload: d.cases.getPayload(),
+                  status: 'fulfilled',
+                }}
                 wholeDateCounts={DateCountSampleDataset.fromDetailedSampleAggDataset(d.whole)}
                 variantDateCounts={DateCountSampleDataset.fromDetailedSampleAggDataset(d.variant)}
                 title={division}

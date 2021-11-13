@@ -20,7 +20,6 @@ import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSa
 import Loader from '../components/Loader';
 import { useQuery } from '../helpers/query-hook';
 import { PromiseFn, useAsync } from 'react-async';
-import { AsyncDataset } from '../data/AsyncDataset';
 import { LocationDateSelector } from '../data/LocationDateSelector';
 import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 
@@ -69,12 +68,11 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   }, [location]);
   const caseCountDatasetAsync = useAsync(caseCountPromiseFn);
   const caseCountDataset = useMemo(
-    () =>
-      new AsyncDataset(
-        caseCountSelector,
-        caseCountDatasetAsync.data?.getPayload(),
-        caseCountDatasetAsync.status
-      ),
+    () => ({
+      selector: caseCountSelector,
+      payload: caseCountDatasetAsync.data?.getPayload(),
+      status: caseCountDatasetAsync.status,
+    }),
     [caseCountDatasetAsync.data, caseCountDatasetAsync.status, caseCountSelector]
   );
 

@@ -2,11 +2,16 @@ import { Widget } from './Widget';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import * as zod from 'zod';
 import { SequencingIntensityChart, SequencingIntensityChartProps } from './SequencingIntensityChart';
-import { decodeLocationDateSelector, LocationDateSelectorEncodedSchema } from '../data/LocationDateSelector';
+import {
+  decodeLocationDateSelector,
+  LocationDateSelector,
+  LocationDateSelectorEncodedSchema,
+} from '../data/LocationDateSelector';
 import { CaseCountDataset } from '../data/CaseCountDataset';
 import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
 import { encodeLocationDateVariantSelector } from '../data/LocationDateVariantSelector';
-import { AsyncDataset } from '../data/AsyncDataset';
+import { AsyncDataset, AsyncStatusTypes } from '../data/AsyncDataset';
+import { CaseCountEntry } from '../data/CaseCountEntry';
 
 export const SequencingIntensityChartWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -17,11 +22,11 @@ export const SequencingIntensityChartWidget = new Widget(
       const selector = decodeLocationDateSelector(encoded);
       return {
         sequencingCounts: await DateCountSampleDataset.fromApi(selector, signal),
-        caseCounts: new AsyncDataset(
+        caseCounts: {
           selector,
-          (await CaseCountDataset.fromApi(selector, signal)).getPayload(),
-          'fulfilled'
-        ),
+          payload: (await CaseCountDataset.fromApi(selector, signal)).getPayload(),
+          status: AsyncStatusTypes.fulfilled,
+        } as AsyncDataset<LocationDateSelector, CaseCountEntry[]>,
       };
     }
   ),
