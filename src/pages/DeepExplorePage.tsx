@@ -4,13 +4,15 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 import { Route, useRouteMatch } from 'react-router';
 import { SequencingCoverageDeepExplore } from '../components/SequencingCoverageDeepExplore';
-import { CaseCountDataset } from '../data/CaseCountDataset';
 import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
 import { useExploreUrl } from '../helpers/explore-url';
+import { AsyncDataset } from '../data/AsyncDataset';
+import { LocationDateSelector } from '../data/LocationDateSelector';
+import { CaseCountEntry } from '../data/CaseCountEntry';
 
 interface Props {
   wholeDataset: DetailedSampleAggDataset;
-  caseCountDataset: CaseCountDataset;
+  caseCountDataset: AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
 }
 
 const routes: DeepRoute<Props>[] = [

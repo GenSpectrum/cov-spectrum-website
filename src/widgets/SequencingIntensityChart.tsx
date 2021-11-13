@@ -1,16 +1,19 @@
 import DownloadWrapper from './DownloadWrapper';
 import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
-import { CaseCountDataset } from '../data/CaseCountDataset';
 import { UnifiedDay } from '../helpers/date-cache';
 import {
   SequencingIntensityChartInner,
   SequencingIntensityChartPlotEntry,
 } from './SequencingIntensityChartInner';
 import { Utils } from '../services/Utils';
+import { AsyncDataset } from '../data/AsyncDataset';
+import { LocationDateSelector } from '../data/LocationDateSelector';
+import { CaseCountEntry } from '../data/CaseCountEntry';
+import Loader from '../components/Loader';
 
 export type SequencingIntensityChartProps = {
   sequencingCounts: DateCountSampleDataset;
-  caseCounts: CaseCountDataset;
+  caseCounts: AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
 };
 
 type SequencingIntensityEntry = {
@@ -46,8 +49,11 @@ const groupByMonth = (entries: SequencingIntensityEntry[]): SequencingIntensityC
 const processData = (data: SequencingIntensityEntry[]) => groupByMonth(data);
 
 export const SequencingIntensityChart = ({ sequencingCounts, caseCounts }: SequencingIntensityChartProps) => {
+  if (!caseCounts.payload) {
+    return <Loader />;
+  }
   const sequencingIntensityMap = new Map<UnifiedDay, SequencingIntensityEntry>();
-  for (const { date, newCases } of caseCounts.getPayload()) {
+  for (const { date, newCases } of caseCounts.payload) {
     if (!date) {
       continue;
     }

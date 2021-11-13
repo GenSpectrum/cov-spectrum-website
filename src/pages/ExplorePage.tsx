@@ -7,13 +7,15 @@ import { VercelSponsorshipLogo } from '../components/VercelSponsorshipLogo';
 import { ShowMoreButton } from '../helpers/ui';
 import { VariantSearch } from '../components/VariantSearch';
 import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
-import { CaseCountDataset } from '../data/CaseCountDataset';
 import { SequencingIntensityChartWidget } from '../widgets/SequencingIntensityChartWidget';
 import { VariantSelector } from '../data/VariantSelector';
 import { useExploreUrl } from '../helpers/explore-url';
 import { getCurrentLapisDataVersionDate } from '../data/api-lapis';
 import dayjs from 'dayjs';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
+import { AsyncDataset } from '../data/AsyncDataset';
+import { LocationDateSelector } from '../data/LocationDateSelector';
+import { CaseCountEntry } from '../data/CaseCountEntry';
 
 const Footer = styled.footer`
   margin-top: 50px;
@@ -25,7 +27,7 @@ interface Props {
   onVariantSelect: (selection: VariantSelector) => void;
   selection: VariantSelector | undefined;
   wholeDateCountSampleDataset: DateCountSampleDataset;
-  caseCountDataset: CaseCountDataset;
+  caseCountDataset: AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
   isSmallExplore: boolean;
 }
 

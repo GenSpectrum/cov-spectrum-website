@@ -5,12 +5,14 @@ import { GridCell, PackedGrid } from './PackedGrid';
 import { MetadataAvailabilityChartWidget } from '../widgets/MetadataAvailabilityChartWidget';
 import { SequencingIntensityChartWidget } from '../widgets/SequencingIntensityChartWidget';
 import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
-import { CaseCountDataset } from '../data/CaseCountDataset';
 import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
+import { AsyncDataset } from '../data/AsyncDataset';
+import { LocationDateSelector } from '../data/LocationDateSelector';
+import { CaseCountEntry } from '../data/CaseCountEntry';
 
 interface Props {
   wholeDataset: DetailedSampleAggDataset;
-  caseCountDataset: CaseCountDataset;
+  caseCountDataset: AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
 }
 
 export const SequencingCoverageDeepExplore = React.memo(({ wholeDataset, caseCountDataset }: Props) => {

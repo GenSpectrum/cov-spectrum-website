@@ -19,10 +19,19 @@ import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
 import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
 import Loader from '../components/Loader';
 import { useQuery } from '../helpers/query-hook';
+import { PromiseFn, useAsync } from 'react-async';
+import { AsyncDataset } from '../data/AsyncDataset';
+import { LocationDateSelector } from '../data/LocationDateSelector';
+import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 
 interface Props {
   isSmallScreen: boolean;
 }
+
+type PromiseFnWithSelector<T, S> = {
+  selector: T;
+  promiseFn: PromiseFn<S>;
+};
 
 export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   const { validUrl, location, dateRange, variant, focusKey, setVariant } = useExploreUrl() ?? {
@@ -48,9 +57,27 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     signal => DetailedSampleAggDataset.fromApi({ location: location!, dateRange }, signal),
     [location, dateRange]
   );
-  const caseCountDataset = useQuery(signal => CaseCountDataset.fromApi({ location: location! }, signal), [
-    location,
-  ]);
+
+  const { promiseFn: caseCountPromiseFn, selector: caseCountSelector } = useDeepCompareMemo<
+    PromiseFnWithSelector<LocationDateSelector, CaseCountDataset>
+  >(() => {
+    const selector = { location: location! };
+    return {
+      selector,
+      promiseFn: (_, { signal }) => CaseCountDataset.fromApi(selector, signal),
+    };
+  }, [location]);
+  const caseCountDatasetAsync = useAsync(caseCountPromiseFn);
+  const caseCountDataset = useMemo(
+    () =>
+      new AsyncDataset(
+        caseCountSelector,
+        caseCountDatasetAsync.data?.getPayload(),
+        caseCountDatasetAsync.status
+      ),
+    [caseCountDatasetAsync.data, caseCountDatasetAsync.status, caseCountSelector]
+  );
+
   const wholeInternationalDateCountDataset = useQuery(
     signal => CountryDateCountSampleDataset.fromApi({ location: {}, dateRange }, signal),
     [dateRange]
@@ -68,26 +95,22 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   }
 
   const explorePage = (isSmallExplore = false) =>
-    caseCountDataset.isSuccess && wholeDateCountSampleDatasetWithoutDateFilter ? (
+    wholeDateCountSampleDatasetWithoutDateFilter ? (
       <ExplorePage
         onVariantSelect={setVariant!}
         selection={variant}
         wholeDateCountSampleDataset={wholeDateCountSampleDatasetWithoutDateFilter}
-        caseCountDataset={caseCountDataset.data!}
+        caseCountDataset={caseCountDataset}
         isSmallExplore={isSmallExplore}
       />
     ) : (
       <Loader />
     );
-  const deepExplorePage =
-    caseCountDataset.isSuccess && wholeDatasetWithoutDateFilter.isSuccess ? (
-      <DeepExplorePage
-        wholeDataset={wholeDatasetWithoutDateFilter.data!}
-        caseCountDataset={caseCountDataset.data!}
-      />
-    ) : (
-      <Loader />
-    );
+  const deepExplorePage = wholeDatasetWithoutDateFilter.isSuccess ? (
+    <DeepExplorePage wholeDataset={wholeDatasetWithoutDateFilter.data!} caseCountDataset={caseCountDataset} />
+  ) : (
+    <Loader />
+  );
 
   const makeLayout = (focusContent: React.ReactNode, deepFocusContent: React.ReactNode): JSX.Element => (
     <>
@@ -132,13 +155,12 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
       variantDataset.isSuccess &&
       wholeDatasetWithDateFilter.isSuccess &&
       variantInternationalDateCountDataset.isSuccess &&
-      wholeInternationalDateCountDataset.isSuccess &&
-      caseCountDataset.isSuccess ? (
+      wholeInternationalDateCountDataset.isSuccess ? (
       <FocusPage
         key={focusKey}
         variantDataset={variantDataset.data!}
         wholeDataset={wholeDatasetWithDateFilter.data!}
-        caseCountDataset={caseCountDataset.data!}
+        caseCountDataset={caseCountDataset}
         variantInternationalDateCountDataset={variantInternationalDateCountDataset.data!}
         wholeInternationalDateCountDataset={wholeInternationalDateCountDataset.data!}
         onVariantSelect={setVariant!}

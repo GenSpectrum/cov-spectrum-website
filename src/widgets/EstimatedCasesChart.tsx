@@ -1,13 +1,16 @@
 import { UnifiedDay } from '../helpers/date-cache';
 import { EstimatedCasesChartInner, EstimatedCasesTimeEntry } from './EstimatedCasesChartInner';
 import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
-import { CaseCountDataset } from '../data/CaseCountDataset';
 import { fillAndFilterFromDailyMap } from '../helpers/fill-missing';
+import { AsyncDataset } from '../data/AsyncDataset';
+import { LocationDateSelector } from '../data/LocationDateSelector';
+import Loader from '../components/Loader';
+import { CaseCountEntry } from '../data/CaseCountEntry';
 
 export type EstimatedCasesChartProps = {
   wholeDateCounts: DateCountSampleDataset;
   variantDateCounts: DateCountSampleDataset;
-  caseCounts: CaseCountDataset;
+  caseCounts: AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
 };
 
 export const EstimatedCasesChart = ({
@@ -15,6 +18,9 @@ export const EstimatedCasesChart = ({
   variantDateCounts,
   caseCounts,
 }: EstimatedCasesChartProps) => {
+  if (!caseCounts.payload) {
+    return <Loader />;
+  }
   const data: Map<UnifiedDay, EstimatedCasesTimeEntry> = new Map();
   fillAndFilterFromDailyMap(
     new Map<UnifiedDay, Omit<EstimatedCasesTimeEntry, 'date'>>(),
@@ -37,7 +43,7 @@ export const EstimatedCasesChart = ({
     }
     data.get(date)!.variantCount += count;
   }
-  for (let { date, newCases } of caseCounts.getPayload()) {
+  for (let { date, newCases } of caseCounts.payload) {
     if (!date || !data.has(date)) {
       continue;
     }

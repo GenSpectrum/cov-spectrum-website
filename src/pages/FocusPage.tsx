@@ -32,11 +32,14 @@ import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021Fitnes
 import { useExploreUrl } from '../helpers/explore-url';
 import { useQuery } from '../helpers/query-hook';
 import { CoreMetrics } from '../components/CoreMetrics';
+import { AsyncDataset } from '../data/AsyncDataset';
+import { LocationDateSelector } from '../data/LocationDateSelector';
+import { CaseCountEntry } from '../data/CaseCountEntry';
 
 interface Props {
   variantDataset: DetailedSampleAggDataset;
   wholeDataset: DetailedSampleAggDataset;
-  caseCountDataset: CaseCountDataset;
+  caseCountDataset: AsyncDataset<LocationDateSelector, CaseCountEntry[]>;
   variantInternationalDateCountDataset: CountryDateCountSampleDataset;
   wholeInternationalDateCountDataset: CountryDateCountSampleDataset;
   onVariantSelect: (selection: VariantSelector) => void;
@@ -83,7 +86,7 @@ export const FocusPage = ({
   );
 
   const divisionSubData = useMemo(() => {
-    if (!variantDataset || !wholeDataset) {
+    if (!variantDataset || !wholeDataset || !caseCountDataset.payload) {
       return undefined;
     }
     const variantDatasetSplit = DetailedSampleAggDataset.split(
@@ -109,7 +112,7 @@ export const FocusPage = ({
       })
     );
     const caseCountDatasetSplit = CaseCountDataset.split(
-      caseCountDataset,
+      new CaseCountDataset(caseCountDataset.selector, caseCountDataset.payload),
       e => e.division ?? 'Unknown',
       (oldSelector, entry) => ({
         ...oldSelector,
@@ -136,10 +139,10 @@ export const FocusPage = ({
       merged.set(division, { variant, whole, cases });
     }
     return merged;
-  }, [variantDataset, wholeDataset, caseCountDataset]);
+  }, [variantDataset, wholeDataset, caseCountDataset.payload, caseCountDataset.selector]);
 
   const countrySubData = useMemo(() => {
-    if (!variantDataset || !wholeDataset) {
+    if (!variantDataset || !wholeDataset || !caseCountDataset.payload) {
       return undefined;
     }
     const variantDatasetSplit = DetailedSampleAggDataset.split(
@@ -165,7 +168,7 @@ export const FocusPage = ({
       })
     );
     const caseCountDatasetSplit = CaseCountDataset.split(
-      caseCountDataset,
+      new CaseCountDataset(caseCountDataset.selector, caseCountDataset.payload),
       e => e.country ?? 'Unknown',
       (oldSelector, entry) => ({
         ...oldSelector,
@@ -192,7 +195,7 @@ export const FocusPage = ({
       merged.set(country, { variant, whole, cases });
     }
     return merged;
-  }, [variantDataset, wholeDataset, caseCountDataset]);
+  }, [variantDataset, wholeDataset, caseCountDataset.payload, caseCountDataset.selector]);
 
   const exploreUrl = useExploreUrl();
   const deepFocusButtons = useMemo(
@@ -419,7 +422,13 @@ export const FocusPage = ({
           generate={(division, d) =>
             d.cases ? (
               <EstimatedCasesChartWidget.ShareableComponent
-                caseCounts={d.cases}
+                caseCounts={
+                  new AsyncDataset<LocationDateSelector, CaseCountEntry[]>(
+                    d.cases.getSelector(),
+                    d.cases.getPayload(),
+                    'fulfilled'
+                  )
+                }
                 wholeDateCounts={DateCountSampleDataset.fromDetailedSampleAggDataset(d.whole)}
                 variantDateCounts={DateCountSampleDataset.fromDetailedSampleAggDataset(d.variant)}
                 title={division}

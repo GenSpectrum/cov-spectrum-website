@@ -6,17 +6,22 @@ import { decodeLocationDateSelector, LocationDateSelectorEncodedSchema } from '.
 import { CaseCountDataset } from '../data/CaseCountDataset';
 import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
 import { encodeLocationDateVariantSelector } from '../data/LocationDateVariantSelector';
+import { AsyncDataset } from '../data/AsyncDataset';
 
 export const SequencingIntensityChartWidget = new Widget(
   new AsyncZodQueryEncoder(
     LocationDateSelectorEncodedSchema,
     async (decoded: SequencingIntensityChartProps) =>
-      encodeLocationDateVariantSelector(decoded.caseCounts.getSelector()),
+      encodeLocationDateVariantSelector(decoded.caseCounts.selector),
     async (encoded: zod.infer<typeof LocationDateSelectorEncodedSchema>, signal) => {
       const selector = decodeLocationDateSelector(encoded);
       return {
         sequencingCounts: await DateCountSampleDataset.fromApi(selector, signal),
-        caseCounts: await CaseCountDataset.fromApi(selector, signal),
+        caseCounts: new AsyncDataset(
+          selector,
+          (await CaseCountDataset.fromApi(selector, signal)).getPayload(),
+          'fulfilled'
+        ),
       };
     }
   ),
