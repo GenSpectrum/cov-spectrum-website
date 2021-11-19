@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 import { HeaderDateRangeSelect } from './HeaderDateRangeSelect';
 import { useExploreUrl } from '../helpers/explore-url';
@@ -19,6 +19,8 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
   const { dateFrom, dateTo } = dateRangeSelector.getDateRange();
   const [startDate, setStartDate] = useState<Date>(dateFrom ? dateFrom.dayjs.toDate() : minimumDate);
   const [endDate, setEndDate] = useState<Date>(dateTo ? dateTo.dayjs.toDate() : today);
+  const starDateRef = useRef<ReactDatePicker>(null);
+  const endDateRef = useRef<ReactDatePicker>(null);
   const exploreUrl = useExploreUrl();
 
   useEffect(() => {
@@ -30,16 +32,25 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
     return () => {};
   }, [dateFrom, dateTo]);
 
-  const handleStartDateChange = (date: UnifiedDay) => {
+  const changeDate = () => {
     exploreUrl?.setDateRange(
-      new FixedDateRangeSelector({ dateFrom: date, dateTo: dateTo ?? globalDateCache.today() })
+      new FixedDateRangeSelector({
+        dateFrom: globalDateCache.getDayUsingDayjs(dayjs(startDate)),
+        dateTo: globalDateCache.getDayUsingDayjs(dayjs(endDate)),
+      })
     );
+  };
+
+  const handleStartDateChange = (date: UnifiedDay) => {
+    // exploreUrl?.setDateRange(
+    //   new FixedDateRangeSelector({ dateFrom: date, dateTo: dateTo ?? globalDateCache.today() })
+    // );
     setStartDate(date.dayjs.toDate());
   };
 
   const handleEndDateChange = (date: UnifiedDay) => {
-    exploreUrl?.setDateRange(new FixedDateRangeSelector({ dateFrom, dateTo: date }));
-    setStartDate(date.dayjs.toDate());
+    //exploreUrl?.setDateRange(new FixedDateRangeSelector({ dateFrom, dateTo: date }));
+    setEndDate(date.dayjs.toDate());
   };
 
   const handleStartDateRaw = (event: React.FocusEvent<HTMLInputElement>) => {
@@ -65,12 +76,14 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
   const handleStartDateSelect = (date: Date, event: React.SyntheticEvent<any> | undefined) => {
     if (event) {
       handleStartDateChange(globalDateCache.getDayUsingDayjs(dayjs(date)));
+      starDateRef.current?.setFocus();
     }
   };
 
   const handleEndDateSelect = (date: Date, event: React.SyntheticEvent<any> | undefined) => {
     if (event) {
       handleEndDateChange(globalDateCache.getDayUsingDayjs(dayjs(date)));
+      endDateRef.current?.setFocus();
     }
   };
 
@@ -83,6 +96,7 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
         <div className='flex flex-nowrap'>
           <div className='flex flex-row items-end inline-block align-middle mr-1'>
             <ReactDatePicker
+              ref={starDateRef}
               enableTabLoop={false}
               disabledKeyboardNavigation={true}
               preventOpenOnFocus={true}
@@ -100,6 +114,8 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
               maxDate={endDate}
               calendarStartDay={1}
               useWeekdaysShort={true}
+              onBlur={changeDate}
+              shouldCloseOnSelect={false}
             />
           </div>
           <div className='flex flex-row items-center inline-block align-middle mr-1'>
@@ -107,6 +123,7 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
           </div>
           <div className=' flex-row items-end inline-block align-middle mr-1'>
             <ReactDatePicker
+              ref={endDateRef}
               enableTabLoop={false}
               disabledKeyboardNavigation={true}
               preventOpenOnFocus={true}
@@ -123,6 +140,8 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
               minDate={startDate}
               calendarStartDay={1}
               useWeekdaysShort={true}
+              onBlur={changeDate}
+              shouldCloseOnSelect={false}
             />
           </div>
         </div>
