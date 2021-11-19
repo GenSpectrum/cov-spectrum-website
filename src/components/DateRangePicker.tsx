@@ -17,8 +17,13 @@ const today = new Date();
 
 export const DateRangePicker = ({ dateRangeSelector }: Props) => {
   const { dateFrom, dateTo } = dateRangeSelector.getDateRange();
-  const [startDate, setStartDate] = useState<Date>(dateFrom ? dateFrom.dayjs.toDate() : minimumDate);
-  const [endDate, setEndDate] = useState<Date>(dateTo ? dateTo.dayjs.toDate() : today);
+  const initialStartDate = dateFrom ? dateFrom.dayjs.toDate() : minimumDate;
+  const initialEndDate = dateTo ? dateTo.dayjs.toDate() : today;
+  const prevDateFrom = globalDateCache.getDayUsingDayjs(dayjs(initialStartDate));
+  const prevDateTo = globalDateCache.getDayUsingDayjs(dayjs(initialEndDate));
+
+  const [startDate, setStartDate] = useState<Date>(initialStartDate);
+  const [endDate, setEndDate] = useState<Date>(initialEndDate);
   const starDateRef = useRef<ReactDatePicker>(null);
   const endDateRef = useRef<ReactDatePicker>(null);
   const exploreUrl = useExploreUrl();
@@ -36,10 +41,7 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
     const newDateFrom = globalDateCache.getDayUsingDayjs(dayjs(startDate));
     const newDateTo = globalDateCache.getDayUsingDayjs(dayjs(endDate));
 
-    if (
-      (dateFrom && dateFrom.string !== newDateFrom.string) ||
-      (dateTo && dateTo.string !== newDateTo.string)
-    ) {
+    if (prevDateFrom.string !== newDateFrom.string || prevDateTo.string !== newDateTo.string) {
       exploreUrl?.setDateRange(
         new FixedDateRangeSelector({
           dateFrom: newDateFrom,
