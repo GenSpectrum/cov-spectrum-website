@@ -33,23 +33,27 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
   }, [dateFrom, dateTo]);
 
   const changeDate = () => {
-    exploreUrl?.setDateRange(
-      new FixedDateRangeSelector({
-        dateFrom: globalDateCache.getDayUsingDayjs(dayjs(startDate)),
-        dateTo: globalDateCache.getDayUsingDayjs(dayjs(endDate)),
-      })
-    );
+    const newDateFrom = globalDateCache.getDayUsingDayjs(dayjs(startDate));
+    const newDateTo = globalDateCache.getDayUsingDayjs(dayjs(endDate));
+
+    if (
+      (dateFrom && dateFrom.string !== newDateFrom.string) ||
+      (dateTo && dateTo.string !== newDateTo.string)
+    ) {
+      exploreUrl?.setDateRange(
+        new FixedDateRangeSelector({
+          dateFrom: newDateFrom,
+          dateTo: newDateTo,
+        })
+      );
+    }
   };
 
   const handleStartDateChange = (date: UnifiedDay) => {
-    // exploreUrl?.setDateRange(
-    //   new FixedDateRangeSelector({ dateFrom: date, dateTo: dateTo ?? globalDateCache.today() })
-    // );
     setStartDate(date.dayjs.toDate());
   };
 
   const handleEndDateChange = (date: UnifiedDay) => {
-    //exploreUrl?.setDateRange(new FixedDateRangeSelector({ dateFrom, dateTo: date }));
     setEndDate(date.dayjs.toDate());
   };
 
