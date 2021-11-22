@@ -4,7 +4,7 @@
     "fillUpUntil": 12,
     "variants": [
       {
-        "pangoLineage": "B.1.1.7*,
+        "pangoLineage": "B.1.1.7*",
         "aaMutations": []
       },
       {
@@ -24,11 +24,11 @@
         "aaMutations": []
       },
       {
-        "pangoLineage": "AY.4*,
+        "pangoLineage": "AY.4*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "AY.4.2*,
+        "pangoLineage": "AY.4.2*",
         "aaMutations": []
       }
     ]
@@ -44,7 +44,7 @@
     "fillUpUntil": 0,
     "variants": [
       {
-        "pangoLineage": "B.1.1.7*,
+        "pangoLineage": "B.1.1.7*",
         "aaMutations": []
       },
       {
@@ -60,39 +60,39 @@
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.427*,
+        "pangoLineage": "B.1.427*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.429*,
+        "pangoLineage": "B.1.429*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "P.2*,
+        "pangoLineage": "P.2*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.525*,
+        "pangoLineage": "B.1.525*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "P.3*,
+        "pangoLineage": "P.3*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.526*,
+        "pangoLineage": "B.1.526*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.617.1*,
+        "pangoLineage": "B.1.617.1*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "C.37*,
+        "pangoLineage": "C.37*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.621*,
+        "pangoLineage": "B.1.621*",
         "aaMutations": []
       }
     ]
@@ -103,15 +103,15 @@
     "fillUpUntil": 0,
     "variants": [
       {
-        "pangoLineage": "B.1.1.7*,
+        "pangoLineage": "B.1.1.7*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.351*,
+        "pangoLineage": "B.1.351*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "P.1*,
+        "pangoLineage": "P.1*",
         "aaMutations": []
       },
       {
@@ -119,39 +119,39 @@
         "aaMutations": []
       },
       {
-        "pangoLineage": "P.2*,
+        "pangoLineage": "P.2*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.525*,
+        "pangoLineage": "B.1.525*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.1.318*,
+        "pangoLineage": "B.1.1.318*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "P.3*,
+        "pangoLineage": "P.3*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.617.1*,
+        "pangoLineage": "B.1.617.1*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.617.3*,
+        "pangoLineage": "B.1.617.3*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "AV.1*,
+        "pangoLineage": "AV.1*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "C.36.3*,
+        "pangoLineage": "C.36.3*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "C.37*,
+        "pangoLineage": "C.37*",
         "aaMutations": []
       }
     ]
