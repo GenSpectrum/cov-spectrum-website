@@ -162,51 +162,51 @@
     "fillUpUntil": 0,
     "variants": [
       {
-        "pangoLineage": "B.1.1.7",
+        "pangoLineage": "B.1.1.7*",
         "aaMutations": ["S:E484K"]
       },
       {
-        "pangoLineage": "B.1.427",
+        "pangoLineage": "B.1.427*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.429",
+        "pangoLineage": "B.1.429*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.1.7",
+        "pangoLineage": "B.1.1.7*",
         "aaMutations": ["S:S494P"]
       },
       {
-        "pangoLineage": "A.27",
+        "pangoLineage": "A.27*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.526",
+        "pangoLineage": "B.1.526*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.1.7",
+        "pangoLineage": "B.1.1.7*",
         "aaMutations": ["S:Q677H"]
       },
       {
-        "pangoLineage": "B.1.620",
+        "pangoLineage": "B.1.620*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.214.2",
+        "pangoLineage": "B.1.214.2*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "R.1",
+        "pangoLineage": "R.1*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.621",
+        "pangoLineage": "B.1.621*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "AT.1",
+        "pangoLineage": "AT.1*",
         "aaMutations": []
       },
       {
@@ -218,7 +218,7 @@
         "aaMutations": ["S:E484A"]
       },
       {
-        "pangoLineage": "P.1",
+        "pangoLineage": "P.1*",
         "aaMutations": ["S:N501T", "S:E484Q"]
       }
     ]
@@ -228,15 +228,15 @@
     "fillUpUntil": 0,
     "variants": [
       {
-        "pangoLineage": "B.1.1.7",
+        "pangoLineage": "B.1.1.7*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.351",
+        "pangoLineage": "B.1.351*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "P.1",
+        "pangoLineage": "P.1*",
         "aaMutations": []
       },
       {
@@ -244,31 +244,31 @@
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.621",
+        "pangoLineage": "B.1.621*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.1.7",
+        "pangoLineage": "B.1.1.7*",
         "aaMutations": ["S:E484K"]
       },
       {
-        "pangoLineage": "B.1.315",
+        "pangoLineage": "B.1.315*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.1.318",
+        "pangoLineage": "B.1.1.318*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.525",
+        "pangoLineage": "B.1.525*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.526",
+        "pangoLineage": "B.1.526*",
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.620",
+        "pangoLineage": "B.1.620*",
         "aaMutations": []
       },
       {
