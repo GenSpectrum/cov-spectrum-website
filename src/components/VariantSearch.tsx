@@ -167,7 +167,7 @@ export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = fa
 
   /**
    * Handles the input change:
-   * 1) when input value contains ",", call the handleCommaSeparatedInput function
+   * 1) when input value contains "," or "+", call the handleCommaSeparatedInput function
    * 2) otherwise, set the input value to the new value and keep menu window open
    * 3) when input change action is menu-close or input-blur, close menu window
    * @param newValue the new input value
