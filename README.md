@@ -49,6 +49,14 @@ Certain models and analyses require very different data than the main applicatio
 
 There is also some miscellaneous documentation about date handling ([./docs/date-cache.md](./docs/date-cache.md)), routing ([./docs/routing.md](./docs/routing.md)) and export buttons ([./docs/export.md](./docs/export.md)).
 
+## Styling
+
+Tailwind.css is used for most of the styling, though there are some custom components.
+
+### Screen Size Breakpoints
+
+`md` (medium) as defined with styled-components serves as a breakpoint between 'mobile' and 'desktop' sizes.
+
 ## Sponsors
 
 [![Vercel Sponsorship Logo](public/img/powered-by-vercel.svg)](https://vercel.com/?utm_source=cov-spectrum&utm_campaign=oss)
