@@ -24,8 +24,8 @@ export const Chen2021FitnessPreview = ({ locationSelector, variantSelector }: Pr
     return <Loader />;
   }
 
-  if (!modelData) {
-    return <>A transmission advantage cannot be estimated for this variant.</>;
+  if (!modelData || modelData.params.fd.ciUpper - modelData.params.fd.ciLower > 1) {
+    return <>There is not enough data to provide a useful estimate.</>;
   }
 
   return (
