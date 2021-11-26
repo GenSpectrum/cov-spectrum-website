@@ -49,10 +49,19 @@ export const App = () => {
           <Route exact path='/story'>
             <StoryOverviewPage />
           </Route>
+          <Route exact path='/stories'>
+            <StoryOverviewPage />
+          </Route>
           <Route exact path='/story/wastewater-in-switzerland'>
             <WasteWaterStoryPage />
           </Route>
+          <Route exact path='/stories/wastewater-in-switzerland'>
+            <WasteWaterStoryPage />
+          </Route>
           <Route path='/story/wastewater-in-switzerland/location/:location'>
+            <WasteWaterLocationPage />
+          </Route>
+          <Route path='/stories/wastewater-in-switzerland/location/:location'>
             <WasteWaterLocationPage />
           </Route>
           <Route path='/about'>
