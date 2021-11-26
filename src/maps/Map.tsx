@@ -12,6 +12,7 @@ import japan from './japan.json';
 import spain from './spain.json';
 import switzerland from './switzerland.json';
 import usa from './usa.json';
+import southafrica from './southafrica.json';
 
 export interface VectorMapLayer {
   /** Unique ID of each layer. */
@@ -204,6 +205,8 @@ const Map = ({ data: inputData, country }: Props) => {
     },
   ];
 
+  console.log('country is.', country);
+
   return (
     <ChartAndMetrics
       metrics={metrics}
@@ -220,6 +223,7 @@ const Map = ({ data: inputData, country }: Props) => {
         {country === 'Spain' && <VectorMap {...spain} layerProps={layerProps} />}
         {country === 'Switzerland' && <VectorMap {...switzerland} layerProps={layerProps} />}
         {country === 'United States' && <VectorMap {...usa} layerProps={layerProps} />}
+        {country === 'South Africa' && <VectorMap {...southafrica} layerProps={layerProps} />}
       </Wrapper>
     </ChartAndMetrics>
   );
