@@ -22,12 +22,16 @@ const StoryPreviewWrapper = ({
 
 const StoriesOverview = () => (
   <div className='max-w-4xl mx-auto px-4 md:px-8'>
-    <StoryPreviewWrapper title='Tracking B1.1.529, a highly contageous variant' id='b11'>
+    <StoryPreviewWrapper title='Tracking B.1.1.529 (Omicron) variant' id='omicron'>
       <div className='italic'>
         by{' '}
         <ExternalLink url='https://bsse.ethz.ch/cbg/'>Computational Biology Group, ETH Zurich</ExternalLink>
       </div>
-      <p>New Countagious variant was found, </p>
+      <p>
+        Scientists are concerned. Not much about this variant is known yet. There are concerns that it may be
+        more contagious and vaccines less effective compared to the dominant Delta variant. Scientists are
+        working hard to gather more genetic samples of positive cases to better understand the situation.
+      </p>
     </StoryPreviewWrapper>
     <StoryPreviewWrapper title='Wastewater in Switzerland' id='wastewater-in-switzerland'>
       <div className='italic'>

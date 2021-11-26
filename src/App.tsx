@@ -13,7 +13,7 @@ import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLoca
 import { SamplingStrategy } from './SamplingStrategy';
 import { baseLocation } from './index';
 import StoriesOverview from './stories/StoriesOverview';
-import Story from './stories/Story';
+import StoryRouter from './stories/StoryRouter';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -67,7 +67,7 @@ export const App = () => {
             <StoriesOverview />
           </Route>
           <Route path='/stories/:storyId'>
-            <Story />
+            <StoryRouter />
           </Route>
           <Route path='/about'>
             <AboutPage />
