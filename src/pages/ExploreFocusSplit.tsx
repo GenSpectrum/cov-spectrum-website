@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router';
 import {
   SplitExploreWrapper,
@@ -23,6 +23,10 @@ import { PromiseFn, useAsync } from 'react-async';
 import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { AsyncDataset } from '../data/AsyncDataset';
 import { Dataset } from '../data/Dataset';
+import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
+import { VariantHeader } from '../components/VariantHeader';
+import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
+import { isEqual } from 'lodash';
 
 interface Props {
   isSmallScreen: boolean;
@@ -33,10 +37,19 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     validUrl: true,
   };
 
+  const [variantSelector, setVariantSelector] = useState<LocationDateVariantSelector>();
+
   const variantDataset = useQuery(
     signal => DetailedSampleAggData.fromApi({ location: location!, dateRange, variant }, signal),
     [dateRange, location, variant]
   );
+
+  useEffect(() => {
+    if (variantDataset.isSuccess && variantDataset.data!.selector.variant) {
+      setVariantSelector(variantDataset.data!.selector);
+    }
+  }, [variantDataset]);
+
   const wholeDatasetWithoutDateFilter = useQuery(
     // Used by the explore page
     signal => DetailedSampleAggData.fromApi({ location: location! }, signal),
@@ -131,23 +144,32 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   );
 
   return makeLayout(
-    variant &&
+    <>
+      {variantSelector && isEqual(variant, variantSelector.variant) && (
+        <VariantHeader
+          dateRange={variantSelector.dateRange!} // TODO is date range always available?
+          variant={variantSelector.variant!}
+          controls={<FocusVariantHeaderControls selector={variantSelector} />}
+        />
+      )}
+      {variant &&
       variantDataset.isSuccess &&
       wholeDatasetWithDateFilter.isSuccess &&
       variantInternationalDateCountDataset.isSuccess &&
       wholeInternationalDateCountDataset.isSuccess ? (
-      <FocusPage
-        key={focusKey}
-        variantDataset={variantDataset.data!}
-        wholeDataset={wholeDatasetWithDateFilter.data!}
-        caseCountDataset={caseCountDataset}
-        variantInternationalDateCountDataset={variantInternationalDateCountDataset.data!}
-        wholeInternationalDateCountDataset={wholeInternationalDateCountDataset.data!}
-        onVariantSelect={setVariant!}
-      />
-    ) : (
-      <Loader />
-    ),
+        <FocusPage
+          key={focusKey}
+          variantDataset={variantDataset.data!}
+          wholeDataset={wholeDatasetWithDateFilter.data!}
+          caseCountDataset={caseCountDataset}
+          variantInternationalDateCountDataset={variantInternationalDateCountDataset.data!}
+          wholeInternationalDateCountDataset={wholeInternationalDateCountDataset.data!}
+          onVariantSelect={setVariant!}
+        />
+      ) : (
+        <Loader />
+      )}
+    </>,
     variant &&
       variantDataset.isSuccess &&
       wholeDatasetWithDateFilter.isSuccess &&
