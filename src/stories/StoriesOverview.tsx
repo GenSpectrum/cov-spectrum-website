@@ -12,7 +12,7 @@ const StoryPreviewWrapper = ({
 }) => {
   return (
     <div className='w-full bg-blue-50 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-800'>
-      <a href={`/story/${id}`}>
+      <a href={`/stories/${id}`}>
         <h2 className='font-bold mb-2 mt-0'>{title}</h2>
       </a>
       <p>{children}</p>
@@ -22,7 +22,7 @@ const StoryPreviewWrapper = ({
 
 const StoriesOverview = () => (
   <div className='max-w-4xl mx-auto px-4 md:px-8'>
-    <StoryPreviewWrapper title='New Contageous Covid-19 Variant B1.1.529' id='b11'>
+    <StoryPreviewWrapper title='Tracking B1.1.529, a highly contageous variant' id='b11'>
       <div className='italic'>
         by{' '}
         <ExternalLink url='https://bsse.ethz.ch/cbg/'>Computational Biology Group, ETH Zurich</ExternalLink>

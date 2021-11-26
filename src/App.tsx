@@ -63,7 +63,7 @@ export const App = () => {
           <Route path='/stories/wastewater-in-switzerland/location/:location'>
             <WasteWaterLocationPage />
           </Route>
-          <Route path='/stories'>
+          <Route exact path='/stories'>
             <StoriesOverview />
           </Route>
           <Route path='/stories/:storyId'>

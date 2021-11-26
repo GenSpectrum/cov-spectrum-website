@@ -8,3 +8,5 @@ const B11 = () => {
     </div>
   );
 };
+
+export default B11;
