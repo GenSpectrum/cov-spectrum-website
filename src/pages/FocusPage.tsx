@@ -1,10 +1,8 @@
 import { mapValues } from 'lodash';
 import React, { useEffect, useMemo, useState } from 'react';
-import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
 import Loader from '../components/Loader';
 import { NamedCard } from '../components/NamedCard';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
-import { VariantHeader } from '../components/VariantHeader';
 import { VariantLineages } from '../components/VariantLineages';
 import { VariantMutations } from '../components/VariantMutations';
 import { Button, ButtonVariant, ShowMoreButton } from '../helpers/ui';
@@ -260,11 +258,6 @@ export const FocusPage = ({
   return (
     <>
       <div>
-        <VariantHeader
-          dateRange={variantDataset.selector.dateRange!} // TODO is date range always available?
-          variant={variantDataset.selector.variant!}
-          controls={<FocusVariantHeaderControls selector={variantDataset.selector} />}
-        />
         <CoreMetrics
           variantSampleSet={DateCountSampleData.fromDetailedSampleAggDataset(variantDataset)}
           wholeSampleSet={DateCountSampleData.fromDetailedSampleAggDataset(wholeDataset)}

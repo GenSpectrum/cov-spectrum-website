@@ -4,6 +4,13 @@
     "fillUpUntil": 12,
     "variants": [
       {
+        "aaMutations": ["S:67V", "S:339D"]
+      },
+      {
+        "pangoLineage": "B.1.617.2*",
+        "aaMutations": []
+      },
+      {
         "pangoLineage": "B.1.1.7*",
         "aaMutations": []
       },
@@ -16,15 +23,7 @@
         "aaMutations": []
       },
       {
-        "pangoLineage": "B.1.617.2*",
-        "aaMutations": []
-      },
-      {
         "pangoLineage": "B.1.1.318*",
-        "aaMutations": []
-      },
-      {
-        "pangoLineage": "AY.4*",
         "aaMutations": []
       },
       {

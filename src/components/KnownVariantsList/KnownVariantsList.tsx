@@ -133,6 +133,26 @@ export function convertKnownVariantChartData({
   }));
 }
 
+const Grid = ({
+  children,
+  isHorizontal,
+}: {
+  children: JSX.Element[] | JSX.Element;
+  isHorizontal: boolean;
+}) => {
+  return (
+    <div className={`w-full ${isHorizontal ? 'overflow-x-scroll' : ''}`}>
+      <div
+        className={`w-full grid gap-x-2 md:gap-2 ${
+          isHorizontal ? 'w-max grid-flow-col overflow-hidden auto-rows-min auto-cols-min' : 'grid-cols-2'
+        }`}
+      >
+        {children}
+      </div>
+    </div>
+  );
+};
+
 interface Props {
   onVariantSelect: (selection: VariantSelector) => void;
   variantSelector: VariantSelector | undefined;
@@ -158,20 +178,8 @@ export const KnownVariantsList = ({
 
   const KnownVariantLoader = () => {
     const loaders = getLoadVariantCardLoaders();
-    return <Grid>{loaders}</Grid>;
+    return <Grid isHorizontal={isHorizontal}>{loaders}</Grid>;
   };
-
-  const Grid = ({ children }: { children: JSX.Element[] | JSX.Element }) => (
-    <div className={`w-full ${isHorizontal ? 'overflow-x-scroll' : ''}`}>
-      <div
-        className={`w-full grid gap-x-2 md:gap-2 ${
-          isHorizontal ? 'w-max grid-flow-col overflow-hidden auto-rows-min auto-cols-min' : 'grid-cols-2'
-        }`}
-      >
-        {children}
-      </div>
-    </div>
-  );
 
   const pangoCountDataset = useQuery(
     signal =>
@@ -242,7 +250,7 @@ export const KnownVariantsList = ({
         selected={selectedVariantList}
         onSelect={setSelectedVariantList}
       />
-      <Grid>
+      <Grid isHorizontal={isHorizontal}>
         {chartData.map(({ selector, chartData, recentProportion }) => (
           <div className={`${isHorizontal && 'h-full w-36'}`}>
             <KnownVariantCard
@@ -250,7 +258,9 @@ export const KnownVariantsList = ({
               name={formatVariantDisplayName(selector, true)}
               chartData={chartData}
               recentProportion={recentProportion}
-              onClick={() => onVariantSelect(selector)}
+              onClick={() => {
+                onVariantSelect(selector);
+              }}
               selected={
                 variantSelector &&
                 formatVariantDisplayName(variantSelector, true) === formatVariantDisplayName(selector, true)
