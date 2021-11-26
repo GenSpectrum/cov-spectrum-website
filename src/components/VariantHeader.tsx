@@ -39,7 +39,7 @@ export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Pro
   }, [variant.pangoLineage]);
 
   return (
-    <div className='ml-1 md:ml-3 w-full relative'>
+    <div className='pt-10 lg:pt-0 ml-1 md:ml-3 w-full relative'>
       <div className='absolute top-0 right-0 md:right-4'>{controls}</div>
       <div className='flex'>
         <div className='flex-grow flex flex-row flex-wrap items-end'>
