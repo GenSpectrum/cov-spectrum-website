@@ -29,6 +29,7 @@ const countriesWithMaps = [
   'Switzerland',
   'United States',
   'South Africa',
+  'Botswana',
 ];
 
 export const VariantDivisionDistributionChart = ({

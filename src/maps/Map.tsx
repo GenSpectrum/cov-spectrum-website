@@ -13,6 +13,7 @@ import spain from './spain.json';
 import switzerland from './switzerland.json';
 import usa from './usa.json';
 import southafrica from './southafrica.json';
+import botswana from './botswana.json';
 
 export interface VectorMapLayer {
   /** Unique ID of each layer. */
@@ -108,9 +109,7 @@ const Wrapper = styled.div`
         p.data.map(d => {
           return `&[name="${d.division}"] {
         fill: ${
-          p.focusDivision !== null && p.focusDivision === d.division
-            ? colors.active
-            : colorScale(d.prevalence || 0)
+          p.focusDivision == null && p.focusDivision === d.division ? colors : colorScale(d.prevalence || 0)
         };
       }`;
         })}
@@ -224,6 +223,7 @@ const Map = ({ data: inputData, country }: Props) => {
         {country === 'Switzerland' && <VectorMap {...switzerland} layerProps={layerProps} />}
         {country === 'United States' && <VectorMap {...usa} layerProps={layerProps} />}
         {country === 'South Africa' && <VectorMap {...southafrica} layerProps={layerProps} />}
+        {country === 'Botswana' && <VectorMap {...botswana} layerProps={layerProps} />}
       </Wrapper>
     </ChartAndMetrics>
   );
