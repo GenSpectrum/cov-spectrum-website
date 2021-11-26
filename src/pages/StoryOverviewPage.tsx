@@ -15,6 +15,13 @@ const Story = ({ title, id, children }: { title: string; id: string; children: R
 export const StoryOverviewPage = () => {
   return (
     <div className='max-w-4xl mx-auto px-4 md:px-8'>
+      <Story title='New Contageous Covid-19 Variant B1.1.529' id='b11'>
+        <div className='italic'>
+          by{' '}
+          <ExternalLink url='https://bsse.ethz.ch/cbg/'>Computational Biology Group, ETH Zurich</ExternalLink>
+        </div>
+        <p>New Countagious variant was found, </p>
+      </Story>
       <Story title='Wastewater in Switzerland' id='wastewater-in-switzerland'>
         <div className='italic'>
           by{' '}

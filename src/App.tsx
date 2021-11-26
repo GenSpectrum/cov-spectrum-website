@@ -12,6 +12,8 @@ import { WasteWaterStoryPage } from './models/wasteWater/story/WasteWaterStoryPa
 import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLocationPage';
 import { SamplingStrategy } from './SamplingStrategy';
 import { baseLocation } from './index';
+import StoriesOverview from './stories/StoriesOverview';
+import Story from './stories/Story';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -49,9 +51,6 @@ export const App = () => {
           <Route exact path='/story'>
             <StoryOverviewPage />
           </Route>
-          <Route exact path='/stories'>
-            <StoryOverviewPage />
-          </Route>
           <Route exact path='/story/wastewater-in-switzerland'>
             <WasteWaterStoryPage />
           </Route>
@@ -63,6 +62,12 @@ export const App = () => {
           </Route>
           <Route path='/stories/wastewater-in-switzerland/location/:location'>
             <WasteWaterLocationPage />
+          </Route>
+          <Route path='/stories'>
+            <StoriesOverview />
+          </Route>
+          <Route path='/stories/:storyId'>
+            <Story />
           </Route>
           <Route path='/about'>
             <AboutPage />
