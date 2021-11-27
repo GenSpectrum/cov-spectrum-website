@@ -23,26 +23,58 @@ const UpdateBox = ({
   );
 };
 
+const SectionTitle = ({ title }: { title: string }) => {
+  return (
+    <>
+      <hr className='pt-4' />
+      <h2>{title}</h2>
+    </>
+  );
+};
+
+enum STATUS {
+  WARNING = 'red-100',
+  DEFAULT = 'yellow-100',
+  SECONDARY = 'gray-100',
+}
+
+const StatusBox = ({
+  title,
+  description,
+  type = STATUS.DEFAULT,
+}: {
+  title: string;
+  description?: string;
+  type?: STATUS;
+}) => {
+  return (
+    <div className={`bg-${type} rounded-xl px-4 py-2 my-4`}>
+      <h2 className=''>{title}</h2>
+      {description && <p>{description}</p>}
+    </div>
+  );
+};
+
 const Omicron = () => {
   return (
     <div className='mx-auto max-w-5xl px-4 py-2'>
-      <h1>Tracking B.1.1.529 (Omicron) variant</h1>
-      <div className='bg-red-100 px-4 py-2 rounded-lg shadow my-2'>
-        <h2>Scientists are concerned</h2>
-        <p>
-          Not much about this variant is known yet. There are concerns that it may be more contagious and
+      <h1>Tracking B.1.1.529 Omicron, a more contagious variant?</h1>
+      <StatusBox
+        title='Scientists are concerned'
+        description=' Not much about this variant is known yet. There are concerns that it may be more contagious and
           vaccines less effective compared to the dominant Delta variant. Scientists are working hard to
-          analyze more samples to better understand the situation.
-        </p>
-      </div>
+          analyze more samples to better understand the situation.'
+        type={STATUS.WARNING}
+      />
 
-      {/* <hr className='mt-4' />
-      <h2>Global spread</h2>
-      <p>International Comparison</p>
-      <p>Global map visual of the variant</p> */}
+      <SectionTitle title='Global spread' />
+      <StatusBox
+        title='Cases detected in multiple countries'
+        description='Omicron cases have been detected in multiple countries'
+        type={STATUS.SECONDARY}
+      />
 
-      <hr className='mt-4' />
-      <h2>Updates</h2>
+      <SectionTitle title='Articles' />
       <UpdateBox
         title='Classification of Omicron (B.1.1.529): SARS-CoV-2 Variant of Concern'
         url='https://www.who.int/news/item/26-11-2021-classification-of-omicron-(b.1.1.529)-sars-cov-2-variant-of-concern'
