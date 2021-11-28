@@ -86,8 +86,6 @@ const Omicron = () => {
         dateTo: globalDateCache.today(),
       }),
     }).then(r => {
-      console.log('variant sample set is...');
-      console.log(r);
       setVariantSampleSet(r);
     });
     CountryDateCountSampleData.fromApi({
