@@ -22,7 +22,7 @@ const StoryPreviewWrapper = ({
 
 const StoriesOverview = () => (
   <div className='max-w-4xl mx-auto px-4 md:px-8'>
-    <StoryPreviewWrapper title='Tracking B.1.1.529 (Omicron) variant' id='omicron'>
+    <StoryPreviewWrapper title='Tracking Omicron (B.1.1.529), a more contagious variant?' id='omicron'>
       <div className='italic'>
         by{' '}
         <ExternalLink url='https://bsse.ethz.ch/cbg/'>Computational Biology Group, ETH Zurich</ExternalLink>
