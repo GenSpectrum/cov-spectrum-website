@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 // import { csv } from 'd3-fetch';
 import { scaleLinear } from 'd3-scale';
 import { ComposableMap, Geographies, Geography, Sphere, Graticule } from 'react-simple-maps';
@@ -27,10 +27,6 @@ const RegionMap = ({ selector, data }: Props) => {
     .range(['#ffedea', '#ff5233']);
   const randomTooltipId = Math.random() * 5 + '';
 
-  useEffect(() => {
-    ReactTooltip.rebuild();
-    console.log('rebuild');
-  }, [tooltipContent]);
   return (
     <>
       <ComposableMap
@@ -50,11 +46,12 @@ const RegionMap = ({ selector, data }: Props) => {
                 return (
                   <Geography
                     onMouseEnter={() => {
+                      ReactTooltip.rebuild();
                       setTooltipContent(`${geo.properties.NAME_LONG}${d ? ' (' + d.value + ')' : ' (n/a)'}`);
                     }}
-                    onClick={() => {
-                      setTooltipContent(`${geo.properties.NAME_LONG}${d ? ' (' + d.value + ')' : ' (n/a)'}`);
-                    }}
+                    // onClick={() => {
+                    //   setTooltipContent(`${geo.properties.NAME_LONG}${d ? ' (' + d.value + ')' : ' (n/a)'}`);
+                    // }}
                     onMouseLeave={() => {
                       setTooltipContent('');
                     }}
