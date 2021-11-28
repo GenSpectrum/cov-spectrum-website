@@ -7,6 +7,7 @@ import {
   DivisionCountSampleData,
   DivisionCountSampleDataset,
 } from '../data/sample/DivisionCountSampleDataset';
+import RegionMap from '../maps/RegionMap';
 
 export type VariantDivisionDistributionChartProps = {
   variantSampleSet: DivisionCountSampleDataset;
@@ -37,6 +38,7 @@ export const VariantDivisionDistributionChart = ({
   wholeSampleSet,
 }: VariantDivisionDistributionChartProps) => {
   const country = wholeSampleSet.selector.location.country;
+
   const processedData = useMemo(() => {
     const variantDivisions = DivisionCountSampleData.proportionByDivision(
       variantSampleSet.payload,
@@ -80,6 +82,10 @@ export const VariantDivisionDistributionChart = ({
     <DownloadWrapper name='VariantDivisionDistributionChart' csvData={csvData}>
       {country && countriesWithMaps.includes(country) ? (
         <Map data={processedData} country={country} />
+      ) : country === 'World' ? (
+        <>
+          <RegionMap region='World' />{' '}
+        </>
       ) : (
         <Wrapper>
           <Table striped bordered hover>
