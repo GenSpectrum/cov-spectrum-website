@@ -16,10 +16,10 @@ export enum REGION {
 }
 
 interface Props {
-  selector: LocationDateVariantSelector;
+  selector?: LocationDateVariantSelector;
   data: { country: string; value: number }[];
 }
-const RegionMap = ({ selector, data }: Props) => {
+const RegionMap = ({ data }: Props) => {
   const [tooltipContent, setTooltipContent] = useState('help');
   const values: number[] = data.map(s => s.value);
   const colorScale = scaleLinear<String, string>()
