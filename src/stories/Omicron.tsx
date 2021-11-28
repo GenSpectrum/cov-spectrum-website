@@ -7,8 +7,8 @@ import {
 import { globalDateCache } from '../helpers/date-cache';
 // import { InternationalComparison } from '../components/InternationalComparison';
 // import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
-import { VariantInternationalComparisonChartWidget } from '../widgets/VariantInternationalComparisonChartWidget';
-import { VariantInternationalComparisonMapWidget } from '../widgets/VariantInternationalComparisonMapWidget';
+import { VariantInternationalComparisonChart } from '../widgets/VariantInternationalComparisonChart';
+import { VariantInternationalComparisonMap } from '../widgets/VariantInternationalComparisonMap';
 // import RegionMap from '../maps/RegionMap';
 // import { InternationalComparison } from '../components/InternationalComparison';
 
@@ -99,8 +99,6 @@ const Omicron = () => {
         dateTo: globalDateCache.today(),
       }),
     }).then(r => {
-      console.log('whole sample set is...');
-      console.log(r);
       setWholeSampleSet(r);
     });
   }, []);
@@ -122,43 +120,24 @@ const Omicron = () => {
         description='Omicron cases have been detected in multiple countries. Below is a chart of the estimated proportion of all positive cases which are of the Omicron variant.'
         type={STATUS.SECONDARY}
       />
-      {/* <RegionMap
-        selector={{
-          location: {
-            country: 'switzerland',
-          },
-          variant: {
-            aaMutations: ['S:67V', 'S:339D'],
-          },
-        }}
-      /> */}
       {variantSampleSet && wholeSampleSet && (
-        // <InternationalComparison
-        //   locationSelector={{
-        //     country: 'switzerland',
-        //   }}
-        //   variantInternationalDateCountDataset={variantSampleSet}
-        //   wholeInternationalDateCountDataset={wholeSampleSet}
-        // />
         <>
-          <VariantInternationalComparisonMapWidget.ShareableComponent
-            preSelectedCountries={[]}
-            height={300}
-            title='International comparison'
-            toolbarChildren={[]}
-            variantInternationalSampleSet={variantSampleSet}
-            wholeInternationalSampleSet={wholeSampleSet}
-            logScale={false}
-          />
-          <VariantInternationalComparisonChartWidget.ShareableComponent
-            preSelectedCountries={[]}
-            height={300}
-            title='International comparison'
-            toolbarChildren={[]}
-            variantInternationalSampleSet={variantSampleSet}
-            wholeInternationalSampleSet={wholeSampleSet}
-            logScale={false}
-          />
+          <SectionTitle title='Omicron share of all sequences over time, by country' />
+          <div className='w-full h-96 my-4 mb-10'>
+            <VariantInternationalComparisonChart
+              preSelectedCountries={[]}
+              variantInternationalSampleSet={variantSampleSet}
+              wholeInternationalSampleSet={wholeSampleSet}
+              logScale={false}
+            />
+          </div>
+          <h2>Map of total number of Omicron cases</h2>
+          <div className='w-full my-4 mb-0 md:mb-32'>
+            <VariantInternationalComparisonMap
+              variantInternationalSampleSet={variantSampleSet}
+              wholeInternationalSampleSet={wholeSampleSet}
+            />
+          </div>
         </>
       )}
       <SectionTitle title='Articles' />

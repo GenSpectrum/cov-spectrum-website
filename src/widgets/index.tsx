@@ -13,7 +13,7 @@ import { SequencingIntensityChartWidget } from './SequencingIntensityChartWidget
 import { EstimatedCasesChartWidget } from './EstimatedCasesChartWidget';
 import { VariantInternationalComparisonChartWidget } from './VariantInternationalComparisonChartWidget';
 import { VariantDivisionDistributionChartWidget } from './VariantDivisionDistributionChartWidget';
-import { VariantInternationalComparisonMapWidget } from './VariantInternationalComparisonMapWidget';
+// import { VariantInternationalComparisonMapWidget } from './VariantInternationalComparisonMapWidget';
 
 export const allWidgets = [
   ArticleListWidget,
@@ -25,7 +25,7 @@ export const allWidgets = [
   VariantAgeDistributionChartWidget,
   VariantDivisionDistributionChartWidget,
   VariantInternationalComparisonChartWidget,
-  VariantInternationalComparisonMapWidget,
+  // VariantInternationalComparisonMapWidget,
   VariantTimeDistributionChartWidget,
   Chen2021FitnessWidget,
   WasteWaterHeatMapWidget,
