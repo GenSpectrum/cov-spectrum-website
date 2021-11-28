@@ -39,19 +39,16 @@ const RegionMap = ({ selector, data }: Props) => {
         <Sphere stroke='#E4E5E6' strokeWidth={0.5} fill='transparent' id='background-sphere' />
         <Graticule stroke='#E4E5E6' strokeWidth={0.5} />
         {
-          <Geographies geography={world} data-for={randomTooltipId} data-tip={tooltipContent}>
+          <Geographies geography={world} data-for={randomTooltipId} data-tip=''>
             {({ geographies }) =>
               geographies.map(geo => {
                 const d = data.find(s => s?.country === geo.properties.NAME_LONG);
                 return (
                   <Geography
                     onMouseEnter={() => {
-                      ReactTooltip.rebuild();
+                      // ReactTooltip.rebuild();
                       setTooltipContent(`${geo.properties.NAME_LONG}${d ? ' (' + d.value + ')' : ' (n/a)'}`);
                     }}
-                    // onClick={() => {
-                    //   setTooltipContent(`${geo.properties.NAME_LONG}${d ? ' (' + d.value + ')' : ' (n/a)'}`);
-                    // }}
                     onMouseLeave={() => {
                       setTooltipContent('');
                     }}
@@ -65,7 +62,7 @@ const RegionMap = ({ selector, data }: Props) => {
           </Geographies>
         }
       </ComposableMap>
-      <ReactTooltip id={randomTooltipId}></ReactTooltip>
+      <ReactTooltip id={randomTooltipId}>{tooltipContent}</ReactTooltip>
     </>
   );
 };

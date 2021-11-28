@@ -122,7 +122,7 @@ const Omicron = () => {
       />
       {variantSampleSet && wholeSampleSet && (
         <>
-          <SectionTitle title='Omicron share of all sequences over time, by country' />
+          <h2>Omicron share of all sequences, by country over time</h2>
           <div className='w-full h-96 my-4 mb-10'>
             <VariantInternationalComparisonChart
               preSelectedCountries={[]}
@@ -131,7 +131,7 @@ const Omicron = () => {
               logScale={false}
             />
           </div>
-          <h2>Map of total number of Omicron cases</h2>
+          <h2>Number of confirmed Omicron cases, total by country</h2>
           <div className='w-full my-4 mb-0 md:mb-32'>
             <VariantInternationalComparisonMap
               variantInternationalSampleSet={variantSampleSet}
