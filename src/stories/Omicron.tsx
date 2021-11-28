@@ -1,4 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import {
+  CountryDateCountSampleData,
+  CountryDateCountSampleDataset,
+} from '../data/sample/CountryDateCountSampleDataset';
+// import { InternationalComparison } from '../components/InternationalComparison';
+// import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
+import RegionMap from '../maps/RegionMap';
 
 const UpdateBox = ({
   title,
@@ -56,6 +63,33 @@ const StatusBox = ({
 };
 
 const Omicron = () => {
+  const [variantSampleSet, setVariantSampleSet] = useState<CountryDateCountSampleDataset | null>(null);
+  const [wholeSampleSet, setWholeSampleSet] = useState<CountryDateCountSampleDataset | null>(null);
+
+  useEffect(() => {
+    CountryDateCountSampleData.fromApi({
+      location: {
+        country: 'switzerland',
+      },
+      variant: {
+        aaMutations: ['S:67V', 'S:339D'],
+      },
+    }).then(r => {
+      console.log('variant sample set is...');
+      console.log(r);
+      setVariantSampleSet(r);
+    });
+    CountryDateCountSampleData.fromApi({
+      location: {
+        country: 'switzerland',
+      },
+    }).then(r => {
+      console.log('whole sample set is...');
+      console.log(r);
+      setWholeSampleSet(r);
+    });
+  }, []);
+
   return (
     <div className='mx-auto max-w-5xl px-4 py-2'>
       <h1>Tracking B.1.1.529 Omicron, a more contagious variant?</h1>
@@ -73,7 +107,24 @@ const Omicron = () => {
         description='Omicron cases have been detected in multiple countries'
         type={STATUS.SECONDARY}
       />
-
+      <RegionMap
+        selector={{
+          location: {
+            country: 'switzerland',
+          },
+          variant: {
+            aaMutations: ['S:67V', 'S:339D'],
+          },
+        }}
+      />
+      {/* <VariantInternationalComparisonChart /> */}
+      {/* <InternationalComparison
+        locationSelector={{
+          country: 'switzerland',
+        }}
+        variantInternationalDateCountDataset={CountryDateCountSampleData}
+        wholeInternationalDateCountDataset={CountryDateCountSampleData}
+      /> */}
       <SectionTitle title='Articles' />
       <UpdateBox
         title='Classification of Omicron (B.1.1.529): SARS-CoV-2 Variant of Concern'

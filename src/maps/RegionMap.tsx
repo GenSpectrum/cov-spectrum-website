@@ -2,17 +2,24 @@ import React, { useState } from 'react';
 // import { csv } from 'd3-fetch';
 import { scaleLinear } from 'd3-scale';
 import { ComposableMap, Geographies, Geography, Sphere, Graticule } from 'react-simple-maps';
+import { default as world } from './world.json';
+import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 
-const geoUrl =
-  'https://raw.githubusercontent.com/zcreativelabs/react-simple-maps/master/topojson-maps/world-110m.json';
-
-const colorScale = scaleLinear<String, string>().domain([0.29, 0.68]).range(['#ffedea', '#ff5233']);
-interface Props {
-  region: string;
+export enum REGION {
+  WORLD = 'world',
+  EUROPE = 'europe',
+  AFRICA = 'africa',
+  AMERICA = 'america',
+  ASIA = 'asia',
+  OCEANIA = 'oceania',
 }
-const RegionMap = ({ region }: Props) => {
-  const [data, setData] = useState([]);
 
+interface Props {
+  selector: LocationDateVariantSelector;
+}
+const RegionMap = ({ selector }: Props) => {
+  const [data, setData] = useState([]);
+  const colorScale = scaleLinear<String, string>().domain([0.29, 0.68]).range(['#ffedea', '#ff5233']);
   return (
     <ComposableMap
       projectionConfig={{
@@ -20,13 +27,14 @@ const RegionMap = ({ region }: Props) => {
         scale: 147,
       }}
     >
-      <Sphere stroke='#E4E5E6' strokeWidth={0.5} fill='black' id='sdlfkjsd' />
+      <Sphere stroke='#E4E5E6' strokeWidth={0.5} fill='transparent' id='background-sphere' />
       <Graticule stroke='#E4E5E6' strokeWidth={0.5} />
-      {data.length > 0 && (
-        <Geographies geography={geoUrl}>
+      {
+        <Geographies geography={world}>
           {({ geographies }) =>
             geographies.map(geo => {
               // const d = data.find(s => s?.ISO3 === geo.properties.ISO_A3);
+              // console.log(geo);
               return (
                 <Geography
                   key={geo.rsmKey}
@@ -37,7 +45,7 @@ const RegionMap = ({ region }: Props) => {
             })
           }
         </Geographies>
-      )}
+      }
     </ComposableMap>
   );
 };

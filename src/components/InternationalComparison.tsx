@@ -18,6 +18,10 @@ export const InternationalComparison = ({
   locationSelector,
 }: Props) => {
   const [logScale, setLogScale] = useState<boolean>(false);
+
+  console.log('values are');
+  console.log(wholeInternationalDateCountDataset);
+  console.log(variantInternationalDateCountDataset);
   return (
     <>
       <VariantInternationalComparisonChartWidget.ShareableComponent
