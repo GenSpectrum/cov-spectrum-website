@@ -26,10 +26,6 @@ export const VariantInternationalComparisonMap = ({
     }));
   }, [variantSamplesByCountry]);
 
-  useEffect(() => {
-    console.log('map data is..', mapData);
-  }, [mapData]);
-
   return (
     <Wrapper>
       <ChartAndMetricsWrapper>
