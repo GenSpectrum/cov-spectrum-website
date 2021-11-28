@@ -103,7 +103,7 @@ const Omicron = () => {
 
   return (
     <div className='mx-auto max-w-5xl px-4 py-2'>
-      <h1>Tracking B.1.1.529 Omicron, a more contagious variant?</h1>
+      <h1>Tracking Omicron (B.1.1.529), a more contagious variant?</h1>
       <StatusBox
         title='Scientists are concerned'
         description=' Not much about this variant is known yet. There are concerns that it may be more contagious and

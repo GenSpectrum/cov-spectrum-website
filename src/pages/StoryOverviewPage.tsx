@@ -15,7 +15,7 @@ const Story = ({ title, id, children }: { title: string; id: string; children: R
 export const StoryOverviewPage = () => {
   return (
     <div className='max-w-4xl mx-auto px-4 md:px-8'>
-      <Story title='New Contageous Covid-19 Variant B1.1.529' id='b11'>
+      <Story title='Tracking Omicron (B.1.1.529), a more contagious variant?' id='omicron'>
         <div className='italic'>
           by{' '}
           <ExternalLink url='https://bsse.ethz.ch/cbg/'>Computational Biology Group, ETH Zurich</ExternalLink>
