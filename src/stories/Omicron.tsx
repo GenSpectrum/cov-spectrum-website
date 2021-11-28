@@ -8,6 +8,7 @@ import { globalDateCache } from '../helpers/date-cache';
 // import { InternationalComparison } from '../components/InternationalComparison';
 // import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
 import { VariantInternationalComparisonChartWidget } from '../widgets/VariantInternationalComparisonChartWidget';
+import { VariantInternationalComparisonMapWidget } from '../widgets/VariantInternationalComparisonMapWidget';
 // import RegionMap from '../maps/RegionMap';
 // import { InternationalComparison } from '../components/InternationalComparison';
 
@@ -139,15 +140,26 @@ const Omicron = () => {
         //   variantInternationalDateCountDataset={variantSampleSet}
         //   wholeInternationalDateCountDataset={wholeSampleSet}
         // />
-        <VariantInternationalComparisonChartWidget.ShareableComponent
-          preSelectedCountries={[]}
-          height={300}
-          title='International comparison'
-          toolbarChildren={[]}
-          variantInternationalSampleSet={variantSampleSet}
-          wholeInternationalSampleSet={wholeSampleSet}
-          logScale={false}
-        />
+        <>
+          <VariantInternationalComparisonMapWidget.ShareableComponent
+            preSelectedCountries={[]}
+            height={300}
+            title='International comparison'
+            toolbarChildren={[]}
+            variantInternationalSampleSet={variantSampleSet}
+            wholeInternationalSampleSet={wholeSampleSet}
+            logScale={false}
+          />
+          <VariantInternationalComparisonChartWidget.ShareableComponent
+            preSelectedCountries={[]}
+            height={300}
+            title='International comparison'
+            toolbarChildren={[]}
+            variantInternationalSampleSet={variantSampleSet}
+            wholeInternationalSampleSet={wholeSampleSet}
+            logScale={false}
+          />
+        </>
       )}
       <SectionTitle title='Articles' />
       <UpdateBox
