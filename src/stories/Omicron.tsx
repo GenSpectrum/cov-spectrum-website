@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from 'react';
+import { FixedDateRangeSelector } from '../data/DateRangeSelector';
 import {
   CountryDateCountSampleData,
   CountryDateCountSampleDataset,
 } from '../data/sample/CountryDateCountSampleDataset';
+import { globalDateCache } from '../helpers/date-cache';
 // import { InternationalComparison } from '../components/InternationalComparison';
 // import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
-import RegionMap from '../maps/RegionMap';
+import { VariantInternationalComparisonChartWidget } from '../widgets/VariantInternationalComparisonChartWidget';
+// import RegionMap from '../maps/RegionMap';
+// import { InternationalComparison } from '../components/InternationalComparison';
 
 const UpdateBox = ({
   title,
@@ -66,6 +70,8 @@ const Omicron = () => {
   const [variantSampleSet, setVariantSampleSet] = useState<CountryDateCountSampleDataset | null>(null);
   const [wholeSampleSet, setWholeSampleSet] = useState<CountryDateCountSampleDataset | null>(null);
 
+  const FROM_DATE = '2021-10-24';
+
   useEffect(() => {
     CountryDateCountSampleData.fromApi({
       location: {
@@ -74,6 +80,10 @@ const Omicron = () => {
       variant: {
         aaMutations: ['S:67V', 'S:339D'],
       },
+      dateRange: new FixedDateRangeSelector({
+        dateFrom: globalDateCache.getDay(FROM_DATE),
+        dateTo: globalDateCache.today(),
+      }),
     }).then(r => {
       console.log('variant sample set is...');
       console.log(r);
@@ -83,6 +93,10 @@ const Omicron = () => {
       location: {
         country: 'switzerland',
       },
+      dateRange: new FixedDateRangeSelector({
+        dateFrom: globalDateCache.getDay(FROM_DATE),
+        dateTo: globalDateCache.today(),
+      }),
     }).then(r => {
       console.log('whole sample set is...');
       console.log(r);
@@ -104,10 +118,10 @@ const Omicron = () => {
       <SectionTitle title='Global spread' />
       <StatusBox
         title='Cases detected in multiple countries'
-        description='Omicron cases have been detected in multiple countries'
+        description='Omicron cases have been detected in multiple countries. Below is a chart of the estimated proportion of all positive cases which are of the Omicron variant.'
         type={STATUS.SECONDARY}
       />
-      <RegionMap
+      {/* <RegionMap
         selector={{
           location: {
             country: 'switzerland',
@@ -116,15 +130,25 @@ const Omicron = () => {
             aaMutations: ['S:67V', 'S:339D'],
           },
         }}
-      />
-      {/* <VariantInternationalComparisonChart /> */}
-      {/* <InternationalComparison
-        locationSelector={{
-          country: 'switzerland',
-        }}
-        variantInternationalDateCountDataset={CountryDateCountSampleData}
-        wholeInternationalDateCountDataset={CountryDateCountSampleData}
       /> */}
+      {variantSampleSet && wholeSampleSet && (
+        // <InternationalComparison
+        //   locationSelector={{
+        //     country: 'switzerland',
+        //   }}
+        //   variantInternationalDateCountDataset={variantSampleSet}
+        //   wholeInternationalDateCountDataset={wholeSampleSet}
+        // />
+        <VariantInternationalComparisonChartWidget.ShareableComponent
+          preSelectedCountries={[]}
+          height={300}
+          title='International comparison'
+          toolbarChildren={[]}
+          variantInternationalSampleSet={variantSampleSet}
+          wholeInternationalSampleSet={wholeSampleSet}
+          logScale={false}
+        />
+      )}
       <SectionTitle title='Articles' />
       <UpdateBox
         title='Classification of Omicron (B.1.1.529): SARS-CoV-2 Variant of Concern'
