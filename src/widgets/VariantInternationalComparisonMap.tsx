@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 import { ChartAndMetricsWrapper, Wrapper } from './common';
 import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
 import { Utils } from '../services/Utils';
