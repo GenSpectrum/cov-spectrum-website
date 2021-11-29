@@ -37,6 +37,7 @@ export const VariantDivisionDistributionChart = ({
   wholeSampleSet,
 }: VariantDivisionDistributionChartProps) => {
   const country = wholeSampleSet.selector.location.country;
+  console.log('selector is', variantSampleSet.selector);
   const processedData = useMemo(() => {
     const variantDivisions = DivisionCountSampleData.proportionByDivision(
       variantSampleSet.payload,

@@ -123,7 +123,7 @@ const Header = () => {
                     Done
                   </Button>
                 </div>
-                <a className={getDropdownButtonClasses('/story')} href='/story'>
+                <a className={getDropdownButtonClasses('/stories')} href='/stories'>
                   Stories
                 </a>
                 <a className={getDropdownButtonClasses('/about')} href='/about'>
@@ -204,7 +204,7 @@ const Header = () => {
                       <div className='text-gray-500 text-sm'>
                         Enabled by{' '}
                         <ExternalLink url='https://nextstrain.org/blog/2021-07-08-ncov-open-announcement'>
-                          <span className='border border-gray-500 text-gray-800 border-2 px-2 py-0.5 rounded-xl'>
+                          <span className=' border-gray-500 text-gray-800 border-2 px-2 py-0.5 rounded-xl'>
                             open
                           </span>
                         </ExternalLink>{' '}
@@ -221,7 +221,7 @@ const Header = () => {
               </div>
               <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>
                 <div className='ml-1 flex items-center'>
-                  <a className={getButtonClasses('/story')} href='/story'>
+                  <a className={getButtonClasses('/stories')} href='/stories'>
                     Stories
                   </a>
                   <a className={getButtonClasses('/about')} href='/about'>

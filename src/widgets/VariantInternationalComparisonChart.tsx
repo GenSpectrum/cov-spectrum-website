@@ -56,13 +56,6 @@ const colorStyles: Partial<Styles<any, true, any>> = {
   },
 };
 
-export type VariantInternationalComparisonChartProps = {
-  preSelectedCountries: string[];
-  logScale?: boolean;
-  variantInternationalSampleSet: CountryDateCountSampleDataset;
-  wholeInternationalSampleSet: CountryDateCountSampleDataset;
-};
-
 const SelectWrapper = styled.div`
   margin: 0rem 0rem 0.5rem 0rem;
 `;
@@ -95,9 +88,16 @@ const getPlaceColor = (place: string): string => {
   return place === 'Switzerland' ? chroma('red').hex() : chroma.random().darken().hex();
 };
 
+export type VariantInternationalComparisonChartProps = {
+  preSelectedCountries: string[];
+  logScale?: boolean;
+  variantInternationalSampleSet: CountryDateCountSampleDataset;
+  wholeInternationalSampleSet: CountryDateCountSampleDataset;
+};
+
 export const VariantInternationalComparisonChart = ({
-  preSelectedCountries,
-  logScale,
+  preSelectedCountries = [],
+  logScale = false,
   variantInternationalSampleSet,
   wholeInternationalSampleSet,
 }: VariantInternationalComparisonChartProps) => {
