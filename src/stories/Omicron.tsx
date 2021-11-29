@@ -146,7 +146,7 @@ const Omicron = () => {
               <h3 className='text-gray-500'>Share of all cases</h3>
             </button>
           </div> */}
-          <div className='w-full mb-4 mt-0 md:mb-32 border-2 rounded-tr-xl rounded-br-xl rounded-bl-xl'>
+          <div className='w-full mb-4 mt-0 md:mb-32 border-2 rounded-tl-xl rounded-tr-xl rounded-br-xl rounded-bl-xl'>
             <VariantInternationalComparisonMap
               variantInternationalSampleSet={variantSampleSet}
               wholeInternationalSampleSet={wholeSampleSet}
