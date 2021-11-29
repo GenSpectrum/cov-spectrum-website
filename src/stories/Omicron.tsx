@@ -9,7 +9,7 @@ import { globalDateCache } from '../helpers/date-cache';
 // import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
 import { VariantInternationalComparisonChart } from '../widgets/VariantInternationalComparisonChart';
 import { VariantInternationalComparisonMap } from '../widgets/VariantInternationalComparisonMap';
-import { ExternalLink } from "../components/ExternalLink";
+import { ExternalLink } from '../components/ExternalLink';
 // import RegionMap from '../maps/RegionMap';
 // import { InternationalComparison } from '../components/InternationalComparison';
 
@@ -26,9 +26,7 @@ const UpdateBox = ({
 }) => {
   return (
     <ExternalLink url={url}>
-      <div
-        className='bg-yellow-100 rounded-xl shadow px-4 py-2 my-4 cursor-pointer text-black'
-      >
+      <div className='bg-yellow-100 rounded-xl shadow px-4 py-2 my-4 cursor-pointer text-black'>
         <h2 className='underline'>{title}</h2>
         {description && <p>{description}</p>}
         <p className='text-gray-500'>{source}</p>
