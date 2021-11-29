@@ -150,6 +150,21 @@ const Omicron = () => {
           </div>
         </>
       )}
+
+      <h2>Region pages</h2>
+      <div className='flex flex-row flex-wrap justify-between mt-3 mb-10'>
+        {['World', 'Africa', 'Europe', 'Asia', 'North America', 'South America', 'Oceania'].map(place => (
+          <div className='mx-5'>
+            <ExternalLink
+              url={`/explore/${place}/AllSamples/AllTimes/variants?pangoLineage=B.1.1.529`}
+              newWindow={false}
+            >
+              {place}
+            </ExternalLink>
+          </div>
+        ))}
+      </div>
+
       <SectionTitle title='Resources' />
       <UpdateBox
         title='Classification of Omicron (B.1.1.529): SARS-CoV-2 Variant of Concern'
