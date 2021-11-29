@@ -40,7 +40,7 @@ const RegionMap = ({ data }: Props) => {
         }}
         height={HEIGHT}
       >
-        <ZoomableGroup maxZoom={4}>
+        <ZoomableGroup disablePanning={true} maxZoom={4}>
           <Sphere stroke='#E4E5E6' strokeWidth={0.5} fill='transparent' id='background-sphere' />
           <Graticule stroke='#E4E5E6' strokeWidth={0.5} />
           {
@@ -52,7 +52,7 @@ const RegionMap = ({ data }: Props) => {
                     <Geography
                       onMouseEnter={() => {
                         setTooltipContent(
-                          `${geo.properties.NAME_LONG}${d ? ' (' + d.value + ')' : ' (n/a)'}`
+                          `${geo.properties.NAME_LONG}${d ? ' (' + d.value + ')' : ' (N/A)'}`
                         );
                       }}
                       onMouseLeave={() => {

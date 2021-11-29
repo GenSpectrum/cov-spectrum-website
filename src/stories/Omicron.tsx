@@ -129,7 +129,7 @@ const Omicron = () => {
               logScale={false}
             />
           </div>
-          <h2>Omicron world map</h2>
+          <h2>Omicron total cases by location</h2>
           {/* <div className='space-x-1 bg-white'>
             <button
               key={'label'}
