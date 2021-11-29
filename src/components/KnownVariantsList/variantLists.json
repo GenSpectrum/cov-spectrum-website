@@ -4,7 +4,7 @@
     "fillUpUntil": 12,
     "variants": [
       {
-        "aaMutations": ["S:67V", "S:339D"]
+        "pangoLineage": "B.1.1.529"
       },
       {
         "pangoLineage": "B.1.617.2*",

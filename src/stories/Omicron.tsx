@@ -5,7 +5,6 @@ import {
   CountryDateCountSampleDataset,
 } from '../data/sample/CountryDateCountSampleDataset';
 import { globalDateCache } from '../helpers/date-cache';
-import { VariantInternationalComparisonChart } from '../widgets/VariantInternationalComparisonChart';
 import { VariantInternationalComparisonMap } from '../widgets/VariantInternationalComparisonMap';
 import { ExternalLink } from '../components/ExternalLink';
 
@@ -71,11 +70,9 @@ const Omicron = () => {
 
   useEffect(() => {
     CountryDateCountSampleData.fromApi({
-      location: {
-        country: 'switzerland',
-      },
+      location: {},
       variant: {
-        aaMutations: ['S:67V', 'S:339D'],
+        pangoLineage: 'B.1.1.529',
       },
       dateRange: new FixedDateRangeSelector({
         dateFrom: globalDateCache.getDay(FROM_DATE),
@@ -85,9 +82,7 @@ const Omicron = () => {
       setVariantSampleSet(r);
     });
     CountryDateCountSampleData.fromApi({
-      location: {
-        country: 'switzerland',
-      },
+      location: {},
       dateRange: new FixedDateRangeSelector({
         dateFrom: globalDateCache.getDay(FROM_DATE),
         dateTo: globalDateCache.today(),
@@ -112,21 +107,22 @@ const Omicron = () => {
       <SectionTitle title='Global spread' />
       <StatusBox
         title='Cases detected in multiple countries'
-        description='Omicron cases have been detected in multiple countries. The below chart and map show its spread
+        description='Omicron cases have been detected in multiple countries. The below map shows its spread
         across the globe.'
         type={STATUS.SECONDARY}
       />
       {variantSampleSet && wholeSampleSet && (
         <>
-          <h2>Omicron share of all sequences over time, international comparison</h2>
-          <div className='w-full h-96 my-4 mb-10'>
-            <VariantInternationalComparisonChart
-              preSelectedCountries={[]}
-              variantInternationalSampleSet={variantSampleSet}
-              wholeInternationalSampleSet={wholeSampleSet}
-              logScale={false}
-            />
-          </div>
+          {/*I deactivated the plot for now because the values are currently unreliable.*/}
+          {/*<h2>Omicron share of all sequences over time, international comparison</h2>*/}
+          {/*<div className='w-full h-96 my-4 mb-10'>*/}
+          {/*  <VariantInternationalComparisonChart*/}
+          {/*    preSelectedCountries={[]}*/}
+          {/*    variantInternationalSampleSet={variantSampleSet}*/}
+          {/*    wholeInternationalSampleSet={wholeSampleSet}*/}
+          {/*    logScale={false}*/}
+          {/*  />*/}
+          {/*</div>*/}
           <h2>Omicron total cases by location</h2>
           {/* <div className='space-x-1 bg-white'>
             <button

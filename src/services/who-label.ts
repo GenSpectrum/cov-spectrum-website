@@ -57,6 +57,10 @@ export const WHO_LABELS: { [key: string]: { label: string; type: VariantType } |
     label: 'Lambda',
     type: VariantType.INTEREST,
   },
+  'B.1.1.529': {
+    label: 'Omicron',
+    type: VariantType.CONCERN,
+  },
 };
 
 export const getWHOLabel = (pangoLineage: string): string | undefined => {
