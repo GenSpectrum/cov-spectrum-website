@@ -5,13 +5,9 @@ import {
   CountryDateCountSampleDataset,
 } from '../data/sample/CountryDateCountSampleDataset';
 import { globalDateCache } from '../helpers/date-cache';
-// import { InternationalComparison } from '../components/InternationalComparison';
-// import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
 import { VariantInternationalComparisonChart } from '../widgets/VariantInternationalComparisonChart';
 import { VariantInternationalComparisonMap } from '../widgets/VariantInternationalComparisonMap';
 import { ExternalLink } from '../components/ExternalLink';
-// import RegionMap from '../maps/RegionMap';
-// import { InternationalComparison } from '../components/InternationalComparison';
 
 const UpdateBox = ({
   title,
