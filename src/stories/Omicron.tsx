@@ -129,8 +129,26 @@ const Omicron = () => {
               logScale={false}
             />
           </div>
-          <h2>Total number of confirmed Omicron cases</h2>
-          <div className='w-full my-4 mb-0 md:mb-32'>
+          <h2>Omicron world map</h2>
+          {/* <div className='space-x-1 bg-white'>
+            <button
+              key={'label'}
+              className={`border-t-2 border-l-2 border-r-2 bg-white w-auto px-4 text-center text-sm outline-none rounded-t transform translate-y-0.5`}
+              onClick={_ => console.log('click')}
+            >
+              <h3>Total number of cases</h3>
+            </button>
+            <button
+              key={'label'}
+              className={`border-t-2 border-l-2 border-r-2 w-auto px-4 text-center text-sm outline-none rounded-t transform translate-y-0.5
+              
+            `}
+              onClick={_ => console.log('click')}
+            >
+              <h3 className='text-gray-500'>Share of all cases</h3>
+            </button>
+          </div> */}
+          <div className='w-full mb-4 mt-0 md:mb-32 border-2 rounded-tr-xl rounded-br-xl rounded-bl-xl'>
             <VariantInternationalComparisonMap
               variantInternationalSampleSet={variantSampleSet}
               wholeInternationalSampleSet={wholeSampleSet}

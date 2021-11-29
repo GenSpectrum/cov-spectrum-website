@@ -15,6 +15,7 @@ export enum REGION {
   OCEANIA = 'oceania',
 }
 
+const HEIGHT = 400;
 interface Props {
   selector?: LocationDateVariantSelector;
   data: { country: string; value: number }[];
@@ -24,10 +25,10 @@ const RegionMap = ({ data }: Props) => {
   const values: number[] = data.map(s => s.value);
   const colorScale = scaleLinear<String, string>()
     .domain([0, Math.max(...values)])
-    .range(['#ffedea', '#ff5233']);
+    .range(['#ffedea', '#da2727']);
   const hoverColorScale = scaleLinear<String, string>()
     .domain([0, Math.max(...values)])
-    .range(['#eaeeff', '#3352ff']);
+    .range(['#eaeeff', '#2e42b0']);
   const randomTooltipId = Math.random() * 5 + '';
 
   return (
@@ -37,7 +38,7 @@ const RegionMap = ({ data }: Props) => {
           rotate: [-10, 0, 0],
           scale: 147,
         }}
-        height={400}
+        height={HEIGHT}
       >
         <ZoomableGroup maxZoom={4}>
           <Sphere stroke='#E4E5E6' strokeWidth={0.5} fill='transparent' id='background-sphere' />
@@ -50,7 +51,6 @@ const RegionMap = ({ data }: Props) => {
                   return (
                     <Geography
                       onMouseEnter={() => {
-                        // ReactTooltip.rebuild();
                         setTooltipContent(
                           `${geo.properties.NAME_LONG}${d ? ' (' + d.value + ')' : ' (n/a)'}`
                         );
@@ -63,7 +63,7 @@ const RegionMap = ({ data }: Props) => {
                       fill={d ? colorScale(d.value) : '#F5F4F6'}
                       style={{
                         default: { outline: 'none' },
-                        hover: { outline: 'none', fill: d ? hoverColorScale(d.value) : '#dcdcdc' },
+                        hover: { outline: 'none', fill: d ? hoverColorScale(d.value) : '#aeaeae' },
                         pressed: { outline: 'none' },
                       }}
                     />
