@@ -6,6 +6,7 @@ export const VariantSelectorEncodedSchema = zod.object({
   nextstrainClade: zod.string().optional(),
   aaMutations: zod.array(zod.string()).optional(),
   nucMutations: zod.array(zod.string()).optional(),
+  variantQuery: zod.string().optional(),
 });
 
 export type VariantSelector = zod.infer<typeof VariantSelectorEncodedSchema>;
@@ -25,14 +26,10 @@ export function addVariantSelectorToUrlSearchParams(selector: VariantSelector, p
   if (selector.nucMutations?.length) {
     params.set('nucMutations', selector.nucMutations.join(','));
   }
-  for (const k of ['pangoLineage', 'gisaidClade', 'nextstrainClade'] as const) {
+  for (const k of ['pangoLineage', 'gisaidClade', 'nextstrainClade', 'variantQuery'] as const) {
     const value = selector[k];
     if (value !== undefined) {
-      if (k === 'pangoLineage') {
-        params.set('pangoLineage', value);
-      } else {
-        params.set(k, value);
-      }
+      params.set(k, value);
     }
   }
 }
@@ -45,7 +42,7 @@ export function variantUrlFromSelector(selector: VariantSelector): string {
 
 export function variantIsOnlyDefinedBy(
   selector: VariantSelector,
-  field: 'pangoLineage' | 'gisaidClade' | 'nextstrainClade' | 'aaMutations' | 'nucMutations'
+  field: 'pangoLineage' | 'gisaidClade' | 'nextstrainClade' | 'aaMutations' | 'nucMutations' | 'variantQuery'
 ): boolean {
   // The field is not undefined:
   if (selector[field] === undefined) {
@@ -58,6 +55,7 @@ export function variantIsOnlyDefinedBy(
     'nextstrainClade',
     'aaMutations',
     'nucMutations',
+    'variantQuery',
   ] as const) {
     const fieldValue = selector[f];
     if (f !== field && fieldValue !== undefined) {
