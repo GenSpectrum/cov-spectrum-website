@@ -40,7 +40,7 @@ const RegionMap = ({ data }: Props) => {
         }}
         height={HEIGHT}
       >
-        <ZoomableGroup disablePanning={true} maxZoom={4}>
+        <ZoomableGroup disablePanning={true} maxZoom={8}>
           <Sphere stroke='#E4E5E6' strokeWidth={0.5} fill='transparent' id='background-sphere' />
           <Graticule stroke='#E4E5E6' strokeWidth={0.5} />
           {
