@@ -25,10 +25,10 @@ const RegionMap = ({ data }: Props) => {
   const values: number[] = data.map(s => s.value);
   const colorScale = scaleLinear<String, string>()
     .domain([0, Math.max(...values)])
-    .range(['#ffedea', '#da2727']);
+    .range(['#edafa5', '#bb1919']);
   const hoverColorScale = scaleLinear<String, string>()
     .domain([0, Math.max(...values)])
-    .range(['#eaeeff', '#2e42b0']);
+    .range(['#a5a5ed', '#2237a9']);
   const randomTooltipId = Math.random() * 5 + '';
 
   return (
@@ -63,7 +63,7 @@ const RegionMap = ({ data }: Props) => {
                       fill={d ? colorScale(d.value) : '#F5F4F6'}
                       style={{
                         default: { outline: 'none' },
-                        hover: { outline: 'none', fill: d ? hoverColorScale(d.value) : '#aeaeae' },
+                        hover: { outline: 'none', fill: d ? hoverColorScale(d.value) : '#c7c6c6' },
                         pressed: { outline: 'none' },
                       }}
                     />
