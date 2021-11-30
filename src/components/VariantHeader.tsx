@@ -44,8 +44,14 @@ export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Pro
       <div className='flex'>
         <div className='flex-grow flex flex-row flex-wrap items-end'>
           <h1 className='md:mr-2'>
-            {formatVariantDisplayName(variant)}
-            {label && ` (${label})`}
+            {!variant.variantQuery ? (
+              <>
+                {formatVariantDisplayName(variant)}
+                {label && ` (${label})`}
+              </>
+            ) : (
+              <>{variant.variantQuery}</>
+            )}
             {!!titleSuffix && ' - '}
             {titleSuffix}
           </h1>
