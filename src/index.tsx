@@ -8,11 +8,15 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import { fetchCurrentUserCountry } from './data/api';
 import { LocationService } from './services/LocationService';
+import { fetchLapisDataVersionDate } from './data/api-lapis';
 
 export let baseLocation = 'Europe';
 
 async function main() {
   try {
+    // Fetch current data version of LAPIS
+    await fetchLapisDataVersionDate();
+
     // Find out the country/region of the user
     const [currentUserCountry, allLocationNames] = await Promise.all([
       fetchCurrentUserCountry(),
