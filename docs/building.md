@@ -11,8 +11,8 @@ To build the application, the following environment variables are required:
 To run the frontend locally for development, but use the **production** server use:
 
 ```
-env REACT_APP_SERVER_HOST=https://cov-spectrum.ethz.ch/api/v2 \
-    REACT_APP_LAPIS_HOST=https://cov-spectrum.ethz.ch/gisaid/api/v1
+env REACT_APP_SERVER_HOST=https://cov-spectrum.org/api/v2 \
+    REACT_APP_LAPIS_HOST=https://lapis.cov-spectrum.org/gisaid/v1
     REACT_APP_WEBSITE_HOST=http://localhost:3000 \
     npm run start
 ```

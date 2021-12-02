@@ -6,7 +6,7 @@ Most of the plots and tables on CoV-Spectrum can be embedded into other websites
 
 The content of an iframe is encoded in the `src`-URL. The URLs for the CoV-Spectrum widgets have the following structure:
 
-`https://cov-spectrum.ethz.ch/embed/<widget-name>?json=<widget-parameters>&sharedWidgetJson=<sharing-configurations>`
+`https://cov-spectrum.org/embed/<widget-name>?json=<widget-parameters>&sharedWidgetJson=<sharing-configurations>`
 
 The `<widget-parameters>` and `<sharing-configurations>` are JSON objects encoded with `encodeURIComponent()`.
 

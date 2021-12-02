@@ -31,8 +31,7 @@ export const App = () => {
           <Alert variant={AlertVariant.WARNING}>
             <div className='text-center font-bold'>
               Note: This is a preview deployment. Please visit{' '}
-              <a href='https://cov-spectrum.ethz.ch'>https://cov-spectrum.ethz.ch</a> for the official
-              website.
+              <a href='https://cov-spectrum.org'>https://cov-spectrum.org</a> for the official website.
             </div>
           </Alert>
         )}

@@ -1,6 +1,6 @@
 # API
 
-CoV-Spectrum uses two REST APIs. Genome sequence data are coming from [LAPIS](https://github.com/cevo-public/LAPIS) which is a general purpose API for querying sequencing data. LAPIS is being developed as an individual software. It is [documented here](https://cov-spectrum.ethz.ch/public). The frontend code makes requests to this API through functions in [src/data/api-lapis.ts](/src/data/api-lapis.ts).
+CoV-Spectrum uses two REST APIs. Genome sequence data are coming from [LAPIS](https://github.com/cevo-public/LAPIS) which is a general purpose API for querying sequencing data. LAPIS is being developed as an individual software. It is [documented here](https://lapis.cov-spectrum.org/). The frontend code makes requests to this API through functions in [src/data/api-lapis.ts](/src/data/api-lapis.ts).
 
 In addition, CoV-Spectrum has an own and dedicated API. This API provides data that are specific to CoV-Spectrum. It includes case data, operations for login, etc. The code is in the [cov-spectrum-server repository](https://github.com/cevo-public/cov-spectrum-server). The frontend code makes requests to this API through functions in [src/data/api.ts](/src/data/api.ts).
 
