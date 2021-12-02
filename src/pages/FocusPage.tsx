@@ -296,6 +296,50 @@ export const FocusPage = ({
             />
           </GridCell>
           <GridCell minWidth={600}>
+            <VariantInternationalComparisonChartWidget.ShareableComponent
+              preSelectedCountries={country ? [country] : []}
+              height={300}
+              title='International comparison'
+              toolbarChildren={deepFocusButtons.internationalComparison}
+              variantInternationalSampleSet={variantInternationalDateCountDataset}
+              wholeInternationalSampleSet={wholeInternationalDateCountDataset}
+              logScale={false}
+            />
+          </GridCell>
+          <GridCell minWidth={600}>
+            {
+              <VariantDivisionDistributionChartWidget.ShareableComponent
+                title='Geographic distribution'
+                variantSampleSet={DivisionCountSampleData.fromDetailedSampleAggDataset(variantDataset)}
+                wholeSampleSet={DivisionCountSampleData.fromDetailedSampleAggDataset(wholeDataset)}
+              />
+            }
+          </GridCell>
+          <GridCell minWidth={600}>
+            <NamedCard
+              title='Transmission advantage'
+              toolbar={[
+                deepFocusButtons.chen2021Fitness,
+                createDivisionBreakdownButton('Chen2021Fitness', setShowChen2021FitnessDivGrid),
+              ]}
+              description={`
+             If variants spread pre-dominantly by local transmission across demographic groups, this
+             estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
+             advantage estimate reflects the advantage compared to co-circulating strains. Thus, as new variants
+              spread, the advantage of the focal variant may decrease. When absolute numbers of a variant are low, the 
+              advantage may merely reflect the current importance of introductions from abroad or
+               the variant spreading in a particular demographic group. In this case, the estimate does not
+                provide information on the transmission advantage.`}
+            >
+              <div style={{ height: 300 }}>
+                <Chen2021FitnessPreview
+                  locationSelector={variantDataset.selector.location}
+                  variantSelector={variantDataset.selector.variant!}
+                />
+              </div>
+            </NamedCard>
+          </GridCell>
+          <GridCell minWidth={600}>
             {
               <VariantAgeDistributionChartWidget.ShareableComponent
                 title='Age demographics'
@@ -323,53 +367,7 @@ export const FocusPage = ({
               />
             </GridCell>
           )}
-          <GridCell minWidth={600}>
-            <NamedCard
-              title='Transmission advantage'
-              toolbar={[
-                deepFocusButtons.chen2021Fitness,
-                createDivisionBreakdownButton('Chen2021Fitness', setShowChen2021FitnessDivGrid),
-              ]}
-              description={`
-             If variants spread pre-dominantly by local transmission across demographic groups, this
-             estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
-             advantage estimate reflects the advantage compared to co-circulating strains. Thus, as new variants
-              spread, the advantage of the focal variant may decrease. When absolute numbers of a variant are low, the 
-              advantage may merely reflect the current importance of introductions from abroad or
-               the variant spreading in a particular demographic group. In this case, the estimate does not
-                provide information on the transmission advantage.`}
-            >
-              <div style={{ height: 300 }}>
-                <Chen2021FitnessPreview
-                  locationSelector={variantDataset.selector.location}
-                  variantSelector={variantDataset.selector.variant!}
-                />
-              </div>
-            </NamedCard>
-          </GridCell>
-          <GridCell minWidth={600}>
-            {
-              <VariantDivisionDistributionChartWidget.ShareableComponent
-                title='Geographic distribution'
-                variantSampleSet={DivisionCountSampleData.fromDetailedSampleAggDataset(variantDataset)}
-                wholeSampleSet={DivisionCountSampleData.fromDetailedSampleAggDataset(wholeDataset)}
-              />
-            }
-          </GridCell>
           {wasteWaterSummaryPlot}
-          {
-            <GridCell minWidth={600}>
-              <VariantInternationalComparisonChartWidget.ShareableComponent
-                preSelectedCountries={country ? [country] : []}
-                height={300}
-                title='International comparison'
-                toolbarChildren={deepFocusButtons.internationalComparison}
-                variantInternationalSampleSet={variantInternationalDateCountDataset}
-                wholeInternationalSampleSet={wholeInternationalDateCountDataset}
-                logScale={false}
-              />
-            </GridCell>
-          }
           {pangoLineageQuery && ( // TODO Check that nothing else is set
             <GridCell minWidth={800}>
               {articleDataset && articleDataset.isSuccess ? (
