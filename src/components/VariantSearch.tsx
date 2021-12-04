@@ -10,8 +10,8 @@ import { isValidPangoLineageQuery, VariantSelector } from '../data/VariantSelect
 import { isValidNucMutation } from '../helpers/nuc-mutation';
 import { useQuery } from '../helpers/query-hook';
 import { InternalLink } from './InternalLink';
-import { ExternalLink } from './ExternalLink';
 import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
+import Form from 'react-bootstrap/esm/Form';
 
 type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
 
@@ -69,6 +69,8 @@ export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = fa
   const [selectedOptions, setSelectedOptions] = useState<SearchOption[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
+  const [variantQuery, setVariantQuery] = useState('');
+  const [advancedSearch, setAdvancedSearch] = useState(false);
 
   const pangoLineages = useQuery(
     signal =>
@@ -80,7 +82,13 @@ export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = fa
 
   useDeepCompareEffect(() => {
     if (currentSelection) {
-      setSelectedOptions(variantSelectorToOptions(currentSelection));
+      if (currentSelection.variantQuery) {
+        setAdvancedSearch(true);
+        setVariantQuery(currentSelection.variantQuery);
+      } else {
+        setAdvancedSearch(false);
+        setSelectedOptions(variantSelectorToOptions(currentSelection));
+      }
     }
   }, [currentSelection]);
 
@@ -275,19 +283,14 @@ export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = fa
             Search for pango lineages, amino acid mutations, and nucleotide mutations (
             <InternalLink path='/about#faq-search-variants'>see documentation</InternalLink>):
           </p>
-          <p>
-            <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website/issues/278'>
-              We are still improving the nucleotide search (#278 on Github).
-            </ExternalLink>
-          </p>
         </div>
       )}
 
-      {
-        <form
-          className='w-full flex flex-row items-center'
-          onSubmit={e => {
-            e.preventDefault();
+      <form
+        className='w-full flex flex-row items-center'
+        onSubmit={e => {
+          e.preventDefault();
+          if (!advancedSearch) {
             const selector: VariantSelector = {
               aaMutations: [],
               nucMutations: [],
@@ -302,12 +305,17 @@ export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = fa
               }
             }
             onVariantSelect(selector);
-          }}
-        >
+          } else {
+            console.log({ variantQuery });
+            onVariantSelect({ variantQuery });
+          }
+        }}
+      >
+        {!advancedSearch ? (
           <AsyncSelect
             className='w-full mr-2'
             components={{ DropdownIndicator }}
-            placeholder='B.1.1.7, S:484K, C913T, ...'
+            placeholder='Ex: B.1.1.7, S:484K, C913'
             isMulti
             defaultOptions={suggestOptions('')}
             loadOptions={promiseOptions}
@@ -329,12 +337,28 @@ export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = fa
             inputValue={inputValue}
             menuIsOpen={menuIsOpen}
           />
+        ) : (
+          <Form.Control
+            type='text'
+            placeholder='Ex: (B.1.1.529 | S:67V) & !C913T'
+            className='w-full mr-2'
+            value={variantQuery}
+            onChange={e => setVariantQuery(e.target.value)}
+          />
+        )}
 
-          <Button variant={ButtonVariant.PRIMARY} className='w-40'>
-            Search
-          </Button>
-        </form>
-      }
+        <Button variant={ButtonVariant.PRIMARY} className='w-40'>
+          Search
+        </Button>
+      </form>
+      <div>
+        <Form.Check
+          type='checkbox'
+          label='Advanced search'
+          checked={advancedSearch}
+          onChange={_ => setAdvancedSearch(!advancedSearch)}
+        />
+      </div>
     </div>
   );
 };

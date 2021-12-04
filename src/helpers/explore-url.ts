@@ -153,6 +153,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
       nextstrainClade: query.get('nextstrainClade') ?? undefined,
       aaMutations: query.get('aaMutations')?.split(','),
       nucMutations: query.get('nucMutations')?.split(','),
+      variantQuery: query.get('variantQuery') ?? undefined,
     };
   }
 
