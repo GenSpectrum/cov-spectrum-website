@@ -63,7 +63,7 @@ const RegionMap = ({ data }: Props) => {
                       fill={d ? colorScale(d.value) : '#F5F4F6'}
                       style={{
                         default: { outline: 'none' },
-                        hover: { outline: 'none', fill: d ? hoverColorScale(d.value) : '#c7c6c6' },
+                        hover: { outline: 'none', fill: d ? hoverColorScale(d.value) : '#aeaeae' },
                         pressed: { outline: 'none' },
                       }}
                     />
