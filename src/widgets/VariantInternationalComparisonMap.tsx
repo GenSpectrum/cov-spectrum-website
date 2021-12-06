@@ -26,7 +26,6 @@ const getMarks = (avilableDates: UnifiedDay[], selectedRange: number[]) => {
       ),
     [selectedRange[1]]: <p className={MARK_CLASSES}>{avilableDates[selectedRange[1]].string}</p>,
   };
-  console.log(marks);
   return marks;
 };
 
@@ -63,10 +62,6 @@ export const VariantInternationalComparisonMap = ({
       }))
       .filter(e => e.value > 0);
   }, [variantSamplesByCountry, selectedDates]);
-
-  useEffect(() => {
-    console.log('keys are', availableDates);
-  }, [availableDates]);
 
   const handleRangeChange = (value: number[]) => {
     setSelectedRange(value);
