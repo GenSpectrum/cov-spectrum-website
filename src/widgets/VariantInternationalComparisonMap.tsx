@@ -8,19 +8,14 @@ import Range from 'rc-slider/lib/Range';
 import 'rc-slider/assets/index.css';
 import { UnifiedDay } from '../helpers/date-cache';
 
-enum DataMode {
-  CUMULATIVE_TOTAL,
-  PROPORTION_OF_TOTAL_IN_TIMEFRAME,
-}
-
 export type VariantInternationalComparisonMapProps = {
   variantInternationalSampleSet: CountryDateCountSampleDataset;
   wholeInternationalSampleSet?: CountryDateCountSampleDataset;
-  withTimeline: boolean;
+  withTimeline?: boolean;
 };
 
 const getMarks = (avilableDates: UnifiedDay[], selectedRange: number[]) => {
-  const MARK_CLASSES = 'w-32 bg-white hover:z-10 h-4 mt-0 pb-2';
+  const MARK_CLASSES = 'w-20 md:w-32 bg-white hover:z-10 h-4 mt-0.5 pb-2';
 
   const marks = {
     [selectedRange[0]]:
@@ -37,9 +32,7 @@ const getMarks = (avilableDates: UnifiedDay[], selectedRange: number[]) => {
 
 export const VariantInternationalComparisonMap = ({
   variantInternationalSampleSet,
-  withTimeline = false,
 }: VariantInternationalComparisonMapProps) => {
-  const [endDate, setEndDate] = useState();
   const [selectedRange, setSelectedRange] = useState([0, 0]);
 
   const variantSamplesByCountry: Map<string, CountryDateCountSampleEntry[]> = useMemo(() => {
@@ -86,13 +79,18 @@ export const VariantInternationalComparisonMap = ({
           <RegionMap data={mapData} selector={variantInternationalSampleSet.selector} />
         </div>
       </ChartAndMetricsWrapper>
-      <div id='slider-wrapper' className='pb-10 px-16'>
+      <div id='slider-wrapper' className='pb-5 px-12 md:pb-8 md:px-16 transform -translate-y-2'>
         <Range
           min={0}
           max={availableDates.length - 1}
           marks={getMarks(availableDates as UnifiedDay[], selectedRange)}
           value={selectedRange}
           onChange={handleRangeChange}
+          trackStyle={[{ backgroundColor: 'red' }]}
+          handleStyle={[
+            { backgroundColor: 'red', border: 'red' },
+            { backgroundColor: 'red', border: 'red', boxShadow: 'black' },
+          ]}
         />
       </div>
     </Wrapper>
