@@ -20,9 +20,16 @@ export type VariantInternationalComparisonMapProps = {
 };
 
 const getMarks = (avilableDates: UnifiedDay[], selectedRange: number[]) => {
+  const MARK_CLASSES = 'w-32 bg-white hover:z-10 h-4 mt-0 pb-2';
+
   const marks = {
-    [selectedRange[0]]: avilableDates[selectedRange[0]].string,
-    [selectedRange[1]]: avilableDates[selectedRange[1]].string,
+    [selectedRange[0]]:
+      selectedRange[1] - selectedRange[0] > 2 ? (
+        <p className={MARK_CLASSES}>{avilableDates[selectedRange[0]].string}</p>
+      ) : (
+        ''
+      ),
+    [selectedRange[1]]: <p className={MARK_CLASSES}>{avilableDates[selectedRange[1]].string}</p>,
   };
   console.log(marks);
   return marks;
@@ -79,7 +86,7 @@ export const VariantInternationalComparisonMap = ({
           <RegionMap data={mapData} selector={variantInternationalSampleSet.selector} />
         </div>
       </ChartAndMetricsWrapper>
-      <div id='slider-wrapper' className=''>
+      <div id='slider-wrapper' className='pb-10 px-16'>
         <Range
           min={0}
           max={availableDates.length - 1}
