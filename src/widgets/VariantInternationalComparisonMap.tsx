@@ -75,7 +75,6 @@ export const VariantInternationalComparisonMap = ({
   };
 
   useInterval(() => {
-    console.log('interval');
     setSelectedRange([0, (selectedRange[1] + 1) % availableDates.length]);
   }, animationInterval);
 
