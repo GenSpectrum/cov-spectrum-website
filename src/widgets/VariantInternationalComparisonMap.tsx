@@ -7,6 +7,10 @@ import RegionMap from '../maps/RegionMap';
 import Range from 'rc-slider/lib/Range';
 import 'rc-slider/assets/index.css';
 import { UnifiedDay } from '../helpers/date-cache';
+import { FaPause, FaPlay } from 'react-icons/fa';
+import useInterval from '../helpers/interval';
+
+const TOTAL_ANIMATION_DURATION = 10 * 1000;
 
 export type VariantInternationalComparisonMapProps = {
   variantInternationalSampleSet: CountryDateCountSampleDataset;
@@ -16,7 +20,6 @@ export type VariantInternationalComparisonMapProps = {
 
 const getMarks = (avilableDates: UnifiedDay[], selectedRange: number[]) => {
   const MARK_CLASSES = 'w-20 md:w-32 bg-white hover:z-10 h-4 mt-0.5 pb-2';
-
   const marks = {
     [selectedRange[0]]:
       selectedRange[1] - selectedRange[0] > 2 ? (
@@ -24,7 +27,9 @@ const getMarks = (avilableDates: UnifiedDay[], selectedRange: number[]) => {
       ) : (
         ''
       ),
-    [selectedRange[1]]: <p className={MARK_CLASSES}>{avilableDates[selectedRange[1]].string}</p>,
+    [selectedRange[1]]: (
+      <p className={MARK_CLASSES + 'font-bold'}>{avilableDates[selectedRange[1]].string}</p>
+    ),
   };
   return marks;
 };
@@ -33,6 +38,7 @@ export const VariantInternationalComparisonMap = ({
   variantInternationalSampleSet,
 }: VariantInternationalComparisonMapProps) => {
   const [selectedRange, setSelectedRange] = useState([0, 0]);
+  const [animationInterval, setAnimationInterval] = useState<number | null>(null);
 
   const variantSamplesByCountry: Map<string, CountryDateCountSampleEntry[]> = useMemo(() => {
     const map = Utils.groupBy(variantInternationalSampleSet.payload, e => e.country);
@@ -65,7 +71,13 @@ export const VariantInternationalComparisonMap = ({
 
   const handleRangeChange = (value: number[]) => {
     setSelectedRange(value);
+    setAnimationInterval(null);
   };
+
+  useInterval(() => {
+    console.log('interval');
+    setSelectedRange([0, (selectedRange[1] + 1) % availableDates.length]);
+  }, animationInterval);
 
   return (
     <Wrapper>
@@ -74,7 +86,23 @@ export const VariantInternationalComparisonMap = ({
           <RegionMap data={mapData} selector={variantInternationalSampleSet.selector} />
         </div>
       </ChartAndMetricsWrapper>
-      <div id='slider-wrapper' className='pb-5 px-12 md:pb-8 md:px-16 transform -translate-y-2'>
+      <div
+        id='slider-wrapper'
+        className='pb-5 px-12 md:pb-8 md:px-16 transform -translate-y-2 flex flex-row items-center'
+      >
+        <button
+          className='mr-6 fill-current transform '
+          onClick={e => {
+            e.preventDefault();
+            if (animationInterval !== null) {
+              setAnimationInterval(null);
+            } else {
+              setAnimationInterval(Math.round(Math.round(TOTAL_ANIMATION_DURATION / availableDates.length)));
+            }
+          }}
+        >
+          {animationInterval === null ? <FaPlay /> : <FaPause />}
+        </button>
         <Range
           min={0}
           max={availableDates.length - 1}
