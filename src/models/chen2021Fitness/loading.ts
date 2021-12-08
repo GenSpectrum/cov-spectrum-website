@@ -9,17 +9,21 @@ import { dateToString } from './format-value';
 import { addLocationSelectorToUrlSearchParams, LocationSelector } from '../../data/LocationSelector';
 import { addVariantSelectorToUrlSearchParams, VariantSelector } from '../../data/VariantSelector';
 import { LocationService } from '../../services/LocationService';
+import { addSamplingStrategyToUrlSearchParams, SamplingStrategy } from '../../data/SamplingStrategy';
 
 export function fillRequestWithDefaults({
   locationSelector,
   variantSelector,
+  samplingStrategy,
 }: {
   locationSelector: LocationSelector;
   variantSelector: VariantSelector;
+  samplingStrategy: SamplingStrategy;
 }): Chen2021FitnessRequest {
   return {
     location: locationSelector,
     variant: variantSelector,
+    samplingStrategy,
     alpha: 0.95,
     generationTime: 4.8,
     reproductionNumberWildtype: 1,
@@ -54,6 +58,7 @@ const getData = async (
   }
   addLocationSelectorToUrlSearchParams(params.location, urlSearchParams);
   addVariantSelectorToUrlSearchParams(params.variant, urlSearchParams);
+  addSamplingStrategyToUrlSearchParams(params.samplingStrategy, urlSearchParams);
   const url = `/computed/model/chen2021Fitness?` + urlSearchParams.toString();
   const response = await get(url, signal);
   if (response.status !== 200) {

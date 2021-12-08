@@ -12,6 +12,7 @@ import {
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
 import { DetailedSampleAggData } from '../data/sample/DetailedSampleAggDataset';
 import { AsyncStatusTypes } from '../data/AsyncDataset';
+import { SamplingStrategy } from '../data/SamplingStrategy';
 
 export const SequencingRepresentativenessChartWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -26,7 +27,14 @@ export const SequencingRepresentativenessChartWidget = new Widget(
           payload: (await CaseCountData.fromApi(selector, signal)).payload,
           status: AsyncStatusTypes.fulfilled,
         } as CaseCountAsyncDataset,
-        sampleDataset: await DetailedSampleAggData.fromApi(decodeLocationDateSelector(encoded), signal),
+        sampleDataset: await DetailedSampleAggData.fromApi(
+          {
+            ...decodeLocationDateSelector(encoded),
+            // TODO This is actually a bug. The sampling strategy filter should be applied
+            samplingStrategy: SamplingStrategy.AllSamples,
+          },
+          signal
+        ),
       };
     }
   ),

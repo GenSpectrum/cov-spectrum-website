@@ -22,6 +22,7 @@ import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { ContributorsEntry } from './ContributorsEntry';
 import { parseSampleDetailsEntry, SampleDetailsEntry, SampleDetailsEntryRaw } from './SampleDetailsEntry';
 import { OrderAndLimitConfig } from './OrderAndLimitConfig';
+import { addSamplingStrategyToUrlSearchParams } from './SamplingStrategy';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 
@@ -123,6 +124,9 @@ export async function fetchMutationProportions(
   if (selector.variant) {
     addVariantSelectorToUrlSearchParams(selector.variant, params);
   }
+  if (selector.samplingStrategy) {
+    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
+  }
 
   const res = await get(`/sample/${sequenceType}-mutations?${params.toString()}`, signal);
   if (!res.ok) {
@@ -146,6 +150,9 @@ export async function fetchSampleDetails(
   if (selector.variant) {
     addVariantSelectorToUrlSearchParams(selector.variant, params);
   }
+  if (selector.samplingStrategy) {
+    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
+  }
 
   const res = await get(`/sample/details?${params.toString()}`, signal);
   if (!res.ok) {
@@ -168,6 +175,9 @@ export async function fetchContributors(
   }
   if (selector.variant) {
     addVariantSelectorToUrlSearchParams(selector.variant, params);
+  }
+  if (selector.samplingStrategy) {
+    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
   }
 
   const res = await get(`/sample/contributors?${params.toString()}`, signal);
@@ -193,6 +203,9 @@ export async function getLinkToStrainNames(
   if (selector.variant) {
     addVariantSelectorToUrlSearchParams(selector.variant, params);
   }
+  if (selector.samplingStrategy) {
+    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
+  }
   return `${HOST}/sample/strain-names?${params.toString()}`;
 }
 
@@ -210,6 +223,9 @@ export async function getLinkToGisaidEpiIsl(
   }
   if (selector.variant) {
     addVariantSelectorToUrlSearchParams(selector.variant, params);
+  }
+  if (selector.samplingStrategy) {
+    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
   }
   return `${HOST}/sample/gisaid-epi-isl?${params.toString()}`;
 }
@@ -229,6 +245,9 @@ async function _fetchAggSamples(
   }
   if (selector.variant) {
     addVariantSelectorToUrlSearchParams(selector.variant, params);
+  }
+  if (selector.samplingStrategy) {
+    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
   }
 
   const res = await get(`/sample/aggregated?${params.toString()}`, signal);

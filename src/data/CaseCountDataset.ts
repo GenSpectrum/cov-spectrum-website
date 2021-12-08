@@ -2,7 +2,6 @@ import { Dataset } from './Dataset';
 import { CaseCountEntry } from './CaseCountEntry';
 import { fetchCaseCounts } from './api';
 import { LocationDateSelector } from './LocationDateSelector';
-import { LocationDateVariantSelector } from './LocationDateVariantSelector';
 import { AsyncDataset } from './AsyncDataset';
 
 export type CaseCountDataset = Dataset<LocationDateSelector, CaseCountEntry[]>;
@@ -19,7 +18,7 @@ export class CaseCountData {
   static split(
     dataset: CaseCountDataset,
     getKey: (entry: CaseCountEntry) => string,
-    getNewSelector: (oldSelector: LocationDateSelector, entry: CaseCountEntry) => LocationDateVariantSelector
+    getNewSelector: (oldSelector: LocationDateSelector, entry: CaseCountEntry) => LocationDateSelector
   ): Map<string, CaseCountDataset> {
     const map = new Map<string, CaseCountDataset>();
     const oldSelector = dataset.selector;

@@ -17,17 +17,20 @@ import {
   encodeDateRangeSelector,
 } from './DateRangeSelector';
 import * as zod from 'zod';
+import { SamplingStrategy } from './SamplingStrategy';
 
 export type LocationDateVariantSelector = {
   location: LocationSelector;
   dateRange?: DateRangeSelector;
   variant?: VariantSelector;
+  samplingStrategy: SamplingStrategy;
 };
 
 export const LocationDateVariantSelectorEncodedSchema = zod.object({
   location: LocationSelectorEncodedSchema,
   dateRange: DateRangeSelectorEncodedSchema.optional(),
   variant: VariantSelectorEncodedSchema.optional(),
+  samplingStrategy: zod.nativeEnum(SamplingStrategy).optional(),
 });
 
 export function encodeLocationDateVariantSelector(
@@ -37,6 +40,7 @@ export function encodeLocationDateVariantSelector(
     location: encodeLocationSelector(selector.location),
     dateRange: selector.dateRange ? encodeDateRangeSelector(selector.dateRange) : undefined,
     variant: selector.variant ? encodeVariantSelector(selector.variant) : undefined,
+    samplingStrategy: selector.samplingStrategy,
   };
 }
 
@@ -47,5 +51,6 @@ export function decodeLocationDateVariantSelector(
     location: decodeLocationSelector(encoded.location),
     dateRange: encoded.dateRange ? decodeDateRangeSelector(encoded.dateRange) : undefined,
     variant: encoded.variant ? decodeVariantSelector(encoded.variant) : undefined,
+    samplingStrategy: encoded.samplingStrategy ?? SamplingStrategy.AllSamples,
   };
 }

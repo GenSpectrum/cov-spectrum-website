@@ -12,6 +12,7 @@ import {
   encodeVariantSelector,
   VariantSelectorEncodedSchema,
 } from '../../data/VariantSelector';
+import { decodeSamplingStrategy, SamplingStrategy } from '../../data/SamplingStrategy';
 
 export const Chen2021FitnessWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -22,10 +23,12 @@ export const Chen2021FitnessWidget = new Widget(
     async (v: ContainerProps) => ({
       location: encodeLocationSelector(v.locationSelector),
       variant: encodeVariantSelector(v.variantSelector),
+      samplingStrategy: v.samplingStrategy,
     }),
     async v => ({
       locationSelector: decodeLocationSelector(v.location),
       variantSelector: decodeVariantSelector(v.variant),
+      samplingStrategy: decodeSamplingStrategy(v.samplingStrategy) ?? SamplingStrategy.AllSamples,
     })
   ),
   Chen2021FitnessContainer,

@@ -11,6 +11,7 @@ import { Button, ButtonVariant } from './helpers/ui';
 import { useExploreUrl } from './helpers/explore-url';
 import { useHistory } from 'react-router';
 import { alternativeSequenceDataSourceUrl, sequenceDataSource } from './helpers/sequence-data-source';
+import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrategySelect';
 
 const letters = [
   { color: 'darkgray', text: 'cov' },
@@ -216,6 +217,7 @@ const Header = () => {
                 </div>
                 <div className='flex items-center z-20 mt-2 md:mt-0'>
                   <HeaderCountrySelect />
+                  <HeaderSamplingStrategySelect />
                   <FilterDropdown />
                 </div>
               </div>

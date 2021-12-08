@@ -3,9 +3,9 @@ import { useCallback } from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import { VariantSelector, variantUrlFromSelector } from '../data/VariantSelector';
 import {
-  LocationSelector,
   decodeLocationSelectorFromSingleString,
   encodeLocationSelectorToSingleString,
+  LocationSelector,
 } from '../data/LocationSelector';
 import { DateRangeSelector } from '../data/DateRangeSelector';
 import {
@@ -14,7 +14,7 @@ import {
   dateRangeUrlToSelector,
   isDateRangeEncoded,
 } from '../data/DateRangeUrlEncoded';
-import { SamplingStrategy } from '../SamplingStrategy';
+import { decodeSamplingStrategy, SamplingStrategy } from '../data/SamplingStrategy';
 import { baseLocation } from '../index';
 
 export interface ExploreUrl {
@@ -22,10 +22,12 @@ export interface ExploreUrl {
   location: LocationSelector;
   dateRange: DateRangeSelector;
   variant?: VariantSelector;
+  samplingStrategy: SamplingStrategy;
 
   setLocation: (location: LocationSelector) => void;
   setDateRange: (dateRange: DateRangeSelector) => void;
   setVariant: (variant: VariantSelector) => void;
+  setSamplingStrategy: (samplingStrategy: SamplingStrategy) => void;
   getOverviewPageUrl: () => string;
   getDeepExplorePageUrl: (pagePath: string) => string;
   getDeepFocusPageUrl: (pagePath: string) => string;
@@ -38,6 +40,8 @@ function useQuery() {
 
 const defaultDateRange: DateRangeUrlEncoded = 'AllTimes';
 
+const defaultSamplingStrategy: SamplingStrategy = SamplingStrategy.AllSamples;
+
 export function useExploreUrl(): ExploreUrl | undefined {
   const history = useHistory();
   const locationState = useLocation();
@@ -45,13 +49,17 @@ export function useExploreUrl(): ExploreUrl | undefined {
   const routeMatches = {
     explore: useRouteMatch<{}>(`/explore/`),
     country: useRouteMatch<{ location: string }>(`/explore/:location/`),
-    locationSampling: useRouteMatch<{ location: string }>(`/explore/:location/AllSamples`),
-    locationSamplingDate: useRouteMatch<{ location: string; dateRange: string }>(
-      `/explore/:location/AllSamples/:dateRange`
+    locationSampling: useRouteMatch<{ location: string; samplingStrategy: string }>(
+      `/explore/:location/:samplingStrategy`
     ),
-    locationSamplingDateVariant: useRouteMatch<{ location: string; dateRange: string }>(
-      `/explore/:location/AllSamples/:dateRange/variants`
+    locationSamplingDate: useRouteMatch<{ location: string; samplingStrategy: string; dateRange: string }>(
+      `/explore/:location/:samplingStrategy/:dateRange`
     ),
+    locationSamplingDateVariant: useRouteMatch<{
+      location: string;
+      samplingStrategy: string;
+      dateRange: string;
+    }>(`/explore/:location/:samplingStrategy/:dateRange/variants`),
   };
   let query = useQuery();
 
@@ -70,18 +78,33 @@ export function useExploreUrl(): ExploreUrl | undefined {
     },
     [history, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
   );
+  const setSamplingStrategy = useCallback(
+    (samplingStrategy: SamplingStrategy) => {
+      if (!routeMatches.locationSamplingDate) {
+        return;
+      }
+      const oldPrefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/`;
+      const currentPath = locationState.pathname + locationState.search;
+      assert(currentPath.startsWith(oldPrefix));
+      const suffix = currentPath.slice(oldPrefix.length);
+      history.push(
+        `/explore/${routeMatches.locationSamplingDate.params.location}/${samplingStrategy}/${suffix}`
+      );
+    },
+    [history, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
+  );
   const setDateRange = useCallback(
     (dateRange: DateRangeSelector) => {
       if (!routeMatches.locationSamplingDate) {
         return;
       }
-      const oldPrefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${SamplingStrategy.AllSamples}/${routeMatches.locationSamplingDate.params.dateRange}`;
+      const oldPrefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
       const currentPath = locationState.pathname + locationState.search;
       assert(currentPath.startsWith(oldPrefix));
       const suffix = currentPath.slice(oldPrefix.length);
       const dateRangeEncoded = dateRangeUrlFromSelector(dateRange);
       history.push(
-        `/explore/${routeMatches.locationSamplingDate.params.location}/${SamplingStrategy.AllSamples}/${dateRangeEncoded}${suffix}`
+        `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${dateRangeEncoded}${suffix}`
       );
     },
     [history, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
@@ -91,7 +114,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
       if (!routeMatches.locationSamplingDate) {
         return;
       }
-      const prefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${SamplingStrategy.AllSamples}/${routeMatches.locationSamplingDate.params.dateRange}`;
+      const prefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
       const currentPath = locationState.pathname + locationState.search;
       assert(currentPath.startsWith(prefix));
       const variantEncoded = variantUrlFromSelector(variant);
@@ -118,13 +141,13 @@ export function useExploreUrl(): ExploreUrl | undefined {
   // Redirecting if the explore URL is not complete
   if (!routeMatches.locationSamplingDate) {
     if (routeMatches.locationSampling) {
-      const { location } = routeMatches.locationSampling.params;
-      history.push(`/explore/${location}/${SamplingStrategy.AllSamples}/`);
+      const { location, samplingStrategy } = routeMatches.locationSampling.params;
+      history.push(`/explore/${location}/${samplingStrategy}/`);
     } else if (routeMatches.country) {
       const { location } = routeMatches.country.params;
-      history.push(`/explore/${location}/${SamplingStrategy.AllSamples}/${defaultDateRange}`);
+      history.push(`/explore/${location}/${defaultSamplingStrategy}/${defaultDateRange}`);
     } else if (routeMatches.explore) {
-      history.push(`/explore/${baseLocation}/${SamplingStrategy.AllSamples}/${defaultDateRange}`);
+      history.push(`/explore/${baseLocation}/${defaultSamplingStrategy}/${defaultDateRange}`);
     }
     // Don't redirect/do anything if /explore/ is not matched.
     return undefined;
@@ -133,13 +156,20 @@ export function useExploreUrl(): ExploreUrl | undefined {
   const encoded = {
     location: routeMatches.locationSamplingDate.params.location,
     dateRange: routeMatches.locationSamplingDate.params.dateRange,
+    samplingStrategy: routeMatches.locationSamplingDate.params.samplingStrategy,
   };
 
   // Parse location and date range
   const locationSelector = decodeLocationSelectorFromSingleString(encoded.location);
+  const samplingStrategy = decodeSamplingStrategy(encoded.samplingStrategy);
+  if (samplingStrategy === null) {
+    // Redirecting because of an invalid sampling strategy
+    history.push(`/explore/${encoded.location}/${defaultSamplingStrategy}/${encoded.dateRange}`);
+    return undefined;
+  }
   if (!isDateRangeEncoded(encoded.dateRange)) {
     // Redirecting because of an invalid date range
-    history.push(`/explore/${encoded.location}/${SamplingStrategy.AllSamples}/${defaultDateRange}`);
+    history.push(`/explore/${encoded.location}/${encoded.samplingStrategy}/${defaultDateRange}`);
     return undefined;
   }
   const dateRangeSelector = dateRangeUrlToSelector(encoded.dateRange);
@@ -162,8 +192,10 @@ export function useExploreUrl(): ExploreUrl | undefined {
     location: locationSelector,
     dateRange: dateRangeSelector,
     variant: variantSelector,
+    samplingStrategy,
 
     setLocation,
+    setSamplingStrategy,
     setDateRange,
     setVariant,
     getOverviewPageUrl,

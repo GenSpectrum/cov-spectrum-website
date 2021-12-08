@@ -8,19 +8,25 @@ import { dateToString } from './format-value';
 import { ExternalLink } from '../../components/ExternalLink';
 import { LocationSelector } from '../../data/LocationSelector';
 import { VariantSelector } from '../../data/VariantSelector';
+import { SamplingStrategy } from '../../data/SamplingStrategy';
 
 export type ContainerProps = {
   locationSelector: LocationSelector;
   variantSelector: VariantSelector;
+  samplingStrategy: SamplingStrategy;
 };
 
 const SectionHeader = styled.h5`
   margin-top: 20px;
 `;
 
-export const Chen2021FitnessContainer = ({ locationSelector, variantSelector }: ContainerProps) => {
+export const Chen2021FitnessContainer = ({
+  locationSelector,
+  variantSelector,
+  samplingStrategy,
+}: ContainerProps) => {
   const [paramData, setParamData] = useState<Chen2021FitnessRequest>(() =>
-    fillRequestWithDefaults({ locationSelector, variantSelector })
+    fillRequestWithDefaults({ locationSelector, variantSelector, samplingStrategy })
   );
   const [formGenerationTime, setFormGenerationTime] = useState(paramData.generationTime.toString());
   const [formReproductionNumberWildtype, setFormReproductionNumberWildtype] = useState(

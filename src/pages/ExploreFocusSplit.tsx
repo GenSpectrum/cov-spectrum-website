@@ -1,10 +1,10 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router';
 import {
-  SplitExploreWrapper,
-  SplitFocusWrapper,
   RawFullContentWrapper,
   ScrollableFullContentWrapper,
+  SplitExploreWrapper,
+  SplitFocusWrapper,
   SplitParentWrapper,
 } from '../helpers/app-layout';
 import { useExploreUrl } from '../helpers/explore-url';
@@ -27,21 +27,32 @@ import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderCont
 import { VariantHeader } from '../components/VariantHeader';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { isEqual } from 'lodash';
+import { SamplingStrategy } from '../data/SamplingStrategy';
 
 interface Props {
   isSmallScreen: boolean;
 }
 
 export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
-  const { validUrl, location, dateRange, variant, focusKey, setVariant } = useExploreUrl() ?? {
+  const {
+    validUrl,
+    location,
+    samplingStrategy,
+    dateRange,
+    variant,
+    focusKey,
+    setVariant,
+  } = useExploreUrl() ?? {
     validUrl: true,
+    samplingStrategy: SamplingStrategy.AllSamples,
   };
 
   const [variantSelector, setVariantSelector] = useState<LocationDateVariantSelector>();
 
   const variantDataset = useQuery(
-    signal => DetailedSampleAggData.fromApi({ location: location!, dateRange, variant }, signal),
-    [dateRange, location, variant]
+    signal =>
+      DetailedSampleAggData.fromApi({ location: location!, samplingStrategy, dateRange, variant }, signal),
+    [dateRange, location, variant, samplingStrategy]
   );
 
   useEffect(() => {
@@ -52,8 +63,8 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
 
   const wholeDatasetWithoutDateFilter = useQuery(
     // Used by the explore page
-    signal => DetailedSampleAggData.fromApi({ location: location! }, signal),
-    [location]
+    signal => DetailedSampleAggData.fromApi({ location: location!, samplingStrategy }, signal),
+    [location, samplingStrategy]
   );
   const wholeDateCountSampleDatasetWithoutDateFilter: DateCountSampleDataset | undefined = useMemo(() => {
     if (wholeDatasetWithoutDateFilter.isSuccess && wholeDatasetWithoutDateFilter.data) {
@@ -62,8 +73,8 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   }, [wholeDatasetWithoutDateFilter.isSuccess, wholeDatasetWithoutDateFilter.data]);
   const wholeDatasetWithDateFilter = useQuery(
     // Used by the focus page
-    signal => DetailedSampleAggData.fromApi({ location: location!, dateRange }, signal),
-    [location, dateRange]
+    signal => DetailedSampleAggData.fromApi({ location: location!, dateRange, samplingStrategy }, signal),
+    [location, dateRange, samplingStrategy]
   );
 
   const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(
@@ -72,12 +83,13 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   );
 
   const wholeInternationalDateCountDataset = useQuery(
-    signal => CountryDateCountSampleData.fromApi({ location: {}, dateRange }, signal),
-    [dateRange]
+    signal => CountryDateCountSampleData.fromApi({ location: {}, dateRange, samplingStrategy }, signal),
+    [dateRange, samplingStrategy]
   );
   const variantInternationalDateCountDataset = useQuery(
-    signal => CountryDateCountSampleData.fromApi({ location: {}, dateRange, variant }, signal),
-    [dateRange, variant]
+    signal =>
+      CountryDateCountSampleData.fromApi({ location: {}, dateRange, samplingStrategy, variant }, signal),
+    [dateRange, variant, samplingStrategy]
   );
 
   const { path } = useRouteMatch();

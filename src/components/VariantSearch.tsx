@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import AsyncSelect from 'react-select/async';
-import { components } from 'react-select';
+import { components, InputActionMeta, Styles } from 'react-select';
 import { isValidAAMutation } from '../helpers/aa-mutation';
-import { InputActionMeta, Styles } from 'react-select';
 import { CSSPseudos } from 'styled-components';
 import { Button, ButtonVariant } from '../helpers/ui';
 import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
@@ -12,6 +11,7 @@ import { useQuery } from '../helpers/query-hook';
 import { InternalLink } from './InternalLink';
 import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 import Form from 'react-bootstrap/esm/Form';
+import { SamplingStrategy } from '../data/SamplingStrategy';
 
 type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
 
@@ -74,9 +74,10 @@ export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = fa
 
   const pangoLineages = useQuery(
     signal =>
-      PangoCountSampleData.fromApi({ location: {} }, signal).then(dataset =>
-        dataset.payload.filter(e => e.pangoLineage).map(e => e.pangoLineage!)
-      ),
+      PangoCountSampleData.fromApi(
+        { location: {}, samplingStrategy: SamplingStrategy.AllSamples },
+        signal
+      ).then(dataset => dataset.payload.filter(e => e.pangoLineage).map(e => e.pangoLineage!)),
     []
   );
 

@@ -8,6 +8,7 @@ import { globalDateCache } from '../helpers/date-cache';
 import { VariantInternationalComparisonMap } from '../widgets/VariantInternationalComparisonMap';
 import { ExternalLink } from '../components/ExternalLink';
 import { VariantInternationalComparisonChart } from '../widgets/VariantInternationalComparisonChart';
+import { SamplingStrategy } from '../data/SamplingStrategy';
 
 const UpdateBox = ({
   title,
@@ -79,6 +80,7 @@ const Omicron = () => {
         dateFrom: globalDateCache.getDay(FROM_DATE),
         dateTo: globalDateCache.today(),
       }),
+      samplingStrategy: SamplingStrategy.AllSamples,
     }).then(r => {
       setVariantSampleSet(r);
     });
@@ -88,6 +90,7 @@ const Omicron = () => {
         dateFrom: globalDateCache.getDay(FROM_DATE),
         dateTo: globalDateCache.today(),
       }),
+      samplingStrategy: SamplingStrategy.AllSamples,
     }).then(r => {
       setWholeSampleSet(r);
     });

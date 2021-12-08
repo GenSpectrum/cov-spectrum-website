@@ -43,6 +43,7 @@ const routes: DeepRoute<LoadedProps>[] = [
       <Chen2021FitnessWidget.ShareableComponent
         locationSelector={props.variantDataset.selector.location}
         variantSelector={props.variantDataset.selector.variant!}
+        samplingStrategy={props.variantDataset.selector.samplingStrategy}
         widgetLayout={MinimalWidgetLayout}
         title='Transmission advantage'
       />
