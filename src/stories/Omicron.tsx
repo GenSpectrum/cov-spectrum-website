@@ -7,6 +7,7 @@ import {
 import { globalDateCache } from '../helpers/date-cache';
 import { VariantInternationalComparisonMap } from '../widgets/VariantInternationalComparisonMap';
 import { ExternalLink } from '../components/ExternalLink';
+import { VariantInternationalComparisonChart } from '../widgets/VariantInternationalComparisonChart';
 
 const UpdateBox = ({
   title,
@@ -114,15 +115,15 @@ const Omicron = () => {
       {variantSampleSet && wholeSampleSet && (
         <>
           {/*I deactivated the plot for now because the values are currently unreliable.*/}
-          {/*<h2>Omicron share of all sequences over time, international comparison</h2>*/}
-          {/*<div className='w-full h-96 my-4 mb-10'>*/}
-          {/*  <VariantInternationalComparisonChart*/}
-          {/*    preSelectedCountries={[]}*/}
-          {/*    variantInternationalSampleSet={variantSampleSet}*/}
-          {/*    wholeInternationalSampleSet={wholeSampleSet}*/}
-          {/*    logScale={false}*/}
-          {/*  />*/}
-          {/*</div>*/}
+          <h2>Omicron share of all sequences over time, international comparison</h2>
+          <div className='w-full h-96 my-4 mb-10'>
+            <VariantInternationalComparisonChart
+              preSelectedCountries={[]}
+              variantInternationalSampleSet={variantSampleSet}
+              wholeInternationalSampleSet={wholeSampleSet}
+              logScale={false}
+            />
+          </div>
           <h2>Omicron total cases by location</h2>
           {/* <div className='space-x-1 bg-white'>
             <button
@@ -146,6 +147,7 @@ const Omicron = () => {
             <VariantInternationalComparisonMap
               variantInternationalSampleSet={variantSampleSet}
               wholeInternationalSampleSet={wholeSampleSet}
+              withTimeline={false}
             />
           </div>
         </>

@@ -25,10 +25,10 @@ const RegionMap = ({ data }: Props) => {
   const values: number[] = data.map(s => s.value);
   const colorScale = scaleLinear<String, string>()
     .domain([0, Math.max(...values)])
-    .range(['#ffedea', '#da2727']);
+    .range(['#edafa5', '#bb1919']);
   const hoverColorScale = scaleLinear<String, string>()
     .domain([0, Math.max(...values)])
-    .range(['#eaeeff', '#2e42b0']);
+    .range(['#a5a5ed', '#2237a9']);
   const randomTooltipId = Math.random() * 5 + '';
 
   return (
@@ -40,7 +40,7 @@ const RegionMap = ({ data }: Props) => {
         }}
         height={HEIGHT}
       >
-        <ZoomableGroup disablePanning={true} maxZoom={4}>
+        <ZoomableGroup disablePanning={true} maxZoom={8}>
           <Sphere stroke='#E4E5E6' strokeWidth={0.5} fill='transparent' id='background-sphere' />
           <Graticule stroke='#E4E5E6' strokeWidth={0.5} />
           {

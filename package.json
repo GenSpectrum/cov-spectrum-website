@@ -39,6 +39,7 @@
     "json2csv": "^5.0.6",
     "lodash": "^4.17.21",
     "plotly.js": "^1.58.4",
+    "rc-slider": "^9.7.5",
     "react": "^17.0.1",
     "react-async": "^10.0.1",
     "react-bootstrap": "^1.4.3",
