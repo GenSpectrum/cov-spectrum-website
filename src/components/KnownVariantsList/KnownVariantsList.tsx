@@ -187,6 +187,7 @@ export const KnownVariantsList = ({
         {
           location: wholeDateCountSampleDataset.selector.location,
           dateRange: new SpecialDateRangeSelector('Past3M'),
+          samplingStrategy: wholeDateCountSampleDataset.selector.samplingStrategy,
         },
         signal
       ),
@@ -215,6 +216,7 @@ export const KnownVariantsList = ({
         location: wholeDateCountSampleDataset.selector.location,
         dateRange: new SpecialDateRangeSelector('Past3M'),
         variant: variantSelector,
+        samplingStrategy: wholeDateCountSampleDataset.selector.samplingStrategy,
       };
     };
 

@@ -335,6 +335,7 @@ export const FocusPage = ({
                 <Chen2021FitnessPreview
                   locationSelector={variantDataset.selector.location}
                   variantSelector={variantDataset.selector.variant!}
+                  samplingStrategy={variantDataset.selector.samplingStrategy}
                 />
               </div>
             </NamedCard>
@@ -465,6 +466,7 @@ export const FocusPage = ({
                 <Chen2021FitnessPreview
                   locationSelector={d.variant.selector.location}
                   variantSelector={variantDataset.selector.variant!}
+                  samplingStrategy={variantDataset.selector.samplingStrategy}
                 />
               </div>
             </NamedCard>

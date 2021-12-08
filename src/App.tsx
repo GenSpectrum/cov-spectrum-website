@@ -10,7 +10,7 @@ import { Alert, AlertVariant } from './helpers/ui';
 import { StoryOverviewPage } from './pages/StoryOverviewPage';
 import { WasteWaterStoryPage } from './models/wasteWater/story/WasteWaterStoryPage';
 import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLocationPage';
-import { SamplingStrategy } from './SamplingStrategy';
+import { SamplingStrategy } from './data/SamplingStrategy';
 import { baseLocation } from './index';
 import StoriesOverview from './stories/StoriesOverview';
 import StoryRouter from './stories/StoryRouter';

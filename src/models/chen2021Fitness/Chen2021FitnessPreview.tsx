@@ -6,17 +6,19 @@ import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../../wid
 import Metric, { MetricsWrapper } from '../../widgets/Metrics';
 import { LocationSelector } from '../../data/LocationSelector';
 import { VariantSelector } from '../../data/VariantSelector';
+import { SamplingStrategy } from '../../data/SamplingStrategy';
 
 type Props = {
   locationSelector: LocationSelector;
   variantSelector: VariantSelector;
+  samplingStrategy: SamplingStrategy;
 };
 
-export const Chen2021FitnessPreview = ({ locationSelector, variantSelector }: Props) => {
-  const request = useMemo(() => fillRequestWithDefaults({ locationSelector, variantSelector }), [
-    locationSelector,
-    variantSelector,
-  ]);
+export const Chen2021FitnessPreview = ({ locationSelector, variantSelector, samplingStrategy }: Props) => {
+  const request = useMemo(
+    () => fillRequestWithDefaults({ locationSelector, variantSelector, samplingStrategy }),
+    [locationSelector, variantSelector, samplingStrategy]
+  );
 
   const { modelData, loading } = useModelData(request);
 
