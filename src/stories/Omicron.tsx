@@ -72,7 +72,7 @@ const Omicron = () => {
     CountryDateCountSampleData.fromApi({
       location: {},
       variant: {
-        pangoLineage: 'B.1.1.529',
+        pangoLineage: 'B.1.1.529*',
       },
       dateRange: new FixedDateRangeSelector({
         dateFrom: globalDateCache.getDay(FROM_DATE),
@@ -156,7 +156,7 @@ const Omicron = () => {
         {['World', 'Africa', 'Europe', 'Asia', 'North America', 'South America', 'Oceania'].map(place => (
           <div className='mx-5'>
             <ExternalLink
-              url={`/explore/${place}/AllSamples/AllTimes/variants?pangoLineage=B.1.1.529`}
+              url={`/explore/${place}/AllSamples/AllTimes/variants?pangoLineage=B.1.1.529*`}
               newWindow={false}
             >
               {place}
