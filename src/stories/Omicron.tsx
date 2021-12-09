@@ -10,6 +10,8 @@ import { ExternalLink } from '../components/ExternalLink';
 import { VariantInternationalComparisonChart } from '../widgets/VariantInternationalComparisonChart';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 
+const TITLE = 'Tracking Omicron (B.1.1.529)';
+
 const UpdateBox = ({
   title,
   url,
@@ -71,6 +73,8 @@ const Omicron = () => {
   const FROM_DATE = '2021-10-24';
 
   useEffect(() => {
+    document.title = TITLE;
+
     CountryDateCountSampleData.fromApi({
       location: {},
       variant: {
@@ -98,7 +102,7 @@ const Omicron = () => {
 
   return (
     <div className='mx-auto max-w-5xl px-4 py-2'>
-      <h1>Tracking Omicron (B.1.1.529)</h1>
+      <h1>{TITLE}</h1>
       <StatusBox
         title='A new variant of concern'
         description='Omicron was declared as a variant of concern (VOC) by the WHO on 26 November 2021. Not much about this
