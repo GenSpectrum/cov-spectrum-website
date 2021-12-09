@@ -8,5 +8,6 @@ export const wastewaterVariantColors: {
   'B.1.617.2': '#66A366',
   'B.1.617.3': '#7067CF',
   'C.36.3': '#B7C0EE',
+  'B.1.1.529': '#F19F07',
   'undetermined': '#999696',
 };
