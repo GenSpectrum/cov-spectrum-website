@@ -38,14 +38,14 @@ const routes: DeepRoute<LoadedProps>[] = [
   },
   {
     key: 'chen-2021-fitness',
-    title: 'Transmission advantage',
+    title: 'Relative growth advantage',
     content: props => (
       <Chen2021FitnessWidget.ShareableComponent
         locationSelector={props.variantDataset.selector.location}
         variantSelector={props.variantDataset.selector.variant!}
         samplingStrategy={props.variantDataset.selector.samplingStrategy}
         widgetLayout={MinimalWidgetLayout}
-        title='Transmission advantage'
+        title='Relative growth advantage'
       />
     ),
   },

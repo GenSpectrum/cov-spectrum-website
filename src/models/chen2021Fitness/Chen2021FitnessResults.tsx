@@ -29,7 +29,7 @@ export const Chen2021FitnessResults = ({ request }: ResultsProps) => {
   }
 
   if (!modelData) {
-    return <>A transmission advantage cannot be estimated for this variant.</>;
+    return <>A relative growth advantage cannot be estimated for this variant.</>;
   }
 
   return (
@@ -38,8 +38,8 @@ export const Chen2021FitnessResults = ({ request }: ResultsProps) => {
         <div>Logistic growth rate a: {modelData && formatValueWithCI(modelData.params.a)}</div>
         {/*TODO t_0 is currently difficult (or impossible?) to interpret.*/}
         {/*<div>Sigmoid's midpoint t_0: {modelData && formatValueWithCI(modelData.params.t0, 0)}</div>*/}
-        <div>Transmission advantage f_c: {modelData && formatValueWithCI(modelData.params.fc)}</div>
-        <div>Transmission advantage f_d: {modelData && formatValueWithCI(modelData.params.fd)}</div>
+        <div>Relative growth advantage f_c: {modelData && formatValueWithCI(modelData.params.fc)}</div>
+        <div>Relative growth advantage f_d: {modelData && formatValueWithCI(modelData.params.fd)}</div>
       </Info>
 
       <PackedGrid maxColumns={2}>

@@ -317,19 +317,20 @@ export const FocusPage = ({
           </GridCell>
           <GridCell minWidth={600}>
             <NamedCard
-              title='Transmission advantage'
+              title='Relative growth advantage'
               toolbar={[
                 deepFocusButtons.chen2021Fitness,
                 createDivisionBreakdownButton('Chen2021Fitness', setShowChen2021FitnessDivGrid),
               ]}
               description={`
-             If variants spread pre-dominantly by local transmission across demographic groups, this
-             estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
-             advantage estimate reflects the advantage compared to co-circulating strains. Thus, as new variants
-              spread, the advantage of the focal variant may decrease. When absolute numbers of a variant are low, the 
-              advantage may merely reflect the current importance of introductions from abroad or
-               the variant spreading in a particular demographic group. In this case, the estimate does not
-                provide information on the transmission advantage.`}
+             If variants spread pre-dominantly by local transmission across demographic groups, this estimate reflects 
+             the relative growth advantage of the focal variant. Importantly, the relative growth advantage estimate 
+             reflects the advantage compared to co-circulating strains. Thus, as new variants spread, the advantage of 
+             the focal variant may decrease. Many factors can contribute to a growth advantage, including an intrinsic 
+             transmission advantage and immune evasion. When absolute numbers of a variant are low, the advantage may 
+             merely reflect the current importance of introductions from abroad or the variant spreading in a particular
+              demographic group. In this case, the estimate does not provide information on any intrinsic fitness 
+              advantages.`}
             >
               <div style={{ height: 300 }}>
                 <Chen2021FitnessPreview
@@ -454,13 +455,14 @@ export const FocusPage = ({
               title={division}
               toolbar={deepFocusButtons.chen2021Fitness}
               description={`
-             If variants spread pre-dominantly by local transmission across demographic groups, this
-             estimate reflects the transmission advantage of the focal variant. Importantly, the transmission
-             advantage estimate reflects the advantage compared to co-circulating strains. Thus, as new variants
-              spread, the advantage of the focal variant may decrease. When absolute numbers of a variant are low, the 
-              advantage may merely reflect the current importance of introductions from abroad or
-               the variant spreading in a particular demographic group. In this case, the estimate does not
-                provide information on the transmission advantage.`}
+             If variants spread pre-dominantly by local transmission across demographic groups, this estimate reflects 
+             the relative growth advantage of the focal variant. Importantly, the relative growth advantage estimate 
+             reflects the advantage compared to co-circulating strains. Thus, as new variants spread, the advantage of 
+             the focal variant may decrease. Many factors can contribute to a growth advantage, including an intrinsic 
+             transmission advantage and immune evasion. When absolute numbers of a variant are low, the advantage may 
+             merely reflect the current importance of introductions from abroad or the variant spreading in a particular
+              demographic group. In this case, the estimate does not provide information on any intrinsic fitness 
+              advantages.`}
             >
               <div style={{ height: 300 }}>
                 <Chen2021FitnessPreview
@@ -473,7 +475,7 @@ export const FocusPage = ({
           )}
           show={showChen2021FitnessDivGrid}
           handleClose={() => setShowChen2021FitnessDivGrid(false)}
-          header='Transmission advantage'
+          header='Relative growth advantage'
         />
       )}
     </>
