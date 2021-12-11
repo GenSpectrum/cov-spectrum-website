@@ -48,7 +48,7 @@ export const AboutPage = () => {
       </p>
       <p>If you would like to reference CoV-Spectrum in scientific works, please cite our pre-print:</p>
       <div className='p-4 mt-4 mb-6 bg-gray-100 rounded-xl'>
-        Chen, C., Nadeau, S., Yared, M., Voinov, P., & Stadler, T.:{' '}
+        Chen, C., Nadeau, S., Yared, M., Voinov, P., Ning, X., Roemer, C. & Stadler, T.:{' '}
         <ExternalLink url='https://arxiv.org/abs/2106.08106'>
           CoV-Spectrum: Analysis of globally shared SARS-CoV-2 data to Identify and Characterize New Variants
         </ExternalLink>{' '}
