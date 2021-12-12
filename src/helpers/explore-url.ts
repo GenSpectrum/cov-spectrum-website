@@ -38,9 +38,9 @@ function useQuery() {
   return new URLSearchParams(useLocation().search);
 }
 
-const defaultDateRange: DateRangeUrlEncoded = 'AllTimes';
+export const defaultDateRange: DateRangeUrlEncoded = 'Past6M';
 
-const defaultSamplingStrategy: SamplingStrategy = SamplingStrategy.AllSamples;
+export const defaultSamplingStrategy: SamplingStrategy = SamplingStrategy.AllSamples;
 
 export function useExploreUrl(): ExploreUrl | undefined {
   const history = useHistory();

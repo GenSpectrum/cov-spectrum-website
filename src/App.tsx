@@ -10,10 +10,10 @@ import { Alert, AlertVariant } from './helpers/ui';
 import { StoryOverviewPage } from './pages/StoryOverviewPage';
 import { WasteWaterStoryPage } from './models/wasteWater/story/WasteWaterStoryPage';
 import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLocationPage';
-import { SamplingStrategy } from './data/SamplingStrategy';
 import { baseLocation } from './index';
 import StoriesOverview from './stories/StoriesOverview';
 import StoryRouter from './stories/StoryRouter';
+import { defaultDateRange, defaultSamplingStrategy } from './helpers/explore-url';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -37,7 +37,7 @@ export const App = () => {
         )}
         <Switch>
           <Route exact path='/'>
-            <Redirect to={`/explore/${baseLocation}/${SamplingStrategy.AllSamples}/AllTimes`} />
+            <Redirect to={`/explore/${baseLocation}/${defaultSamplingStrategy}/${defaultDateRange}`} />
           </Route>
           <Route path='/login'>
             <LoginWrapper>
