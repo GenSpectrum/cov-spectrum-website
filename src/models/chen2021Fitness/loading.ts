@@ -10,13 +10,16 @@ import { addLocationSelectorToUrlSearchParams, LocationSelector } from '../../da
 import { addVariantSelectorToUrlSearchParams, VariantSelector } from '../../data/VariantSelector';
 import { LocationService } from '../../services/LocationService';
 import { addSamplingStrategyToUrlSearchParams, SamplingStrategy } from '../../data/SamplingStrategy';
+import { DateRangeSelector } from '../../data/DateRangeSelector';
 
 export function fillRequestWithDefaults({
   locationSelector,
+  dateRangeSelector,
   variantSelector,
   samplingStrategy,
 }: {
   locationSelector: LocationSelector;
+  dateRangeSelector?: DateRangeSelector;
   variantSelector: VariantSelector;
   samplingStrategy: SamplingStrategy;
 }): Chen2021FitnessRequest {
@@ -27,8 +30,10 @@ export function fillRequestWithDefaults({
     alpha: 0.95,
     generationTime: 4.8,
     reproductionNumberWildtype: 1,
-    plotStartDate: new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
-    plotEndDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+    plotStartDate:
+      dateRangeSelector?.getDateRange()?.dateFrom?.dayjs.toDate() ??
+      new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
+    plotEndDate: dateRangeSelector?.getDateRange()?.dateTo?.dayjs.toDate() ?? new Date(),
     initialWildtypeCases: 1000,
     initialVariantCases: 100,
   };

@@ -7,17 +7,24 @@ import Metric, { MetricsWrapper } from '../../widgets/Metrics';
 import { LocationSelector } from '../../data/LocationSelector';
 import { VariantSelector } from '../../data/VariantSelector';
 import { SamplingStrategy } from '../../data/SamplingStrategy';
+import { DateRangeSelector } from '../../data/DateRangeSelector';
 
 type Props = {
   locationSelector: LocationSelector;
+  dateRangeSelector: DateRangeSelector;
   variantSelector: VariantSelector;
   samplingStrategy: SamplingStrategy;
 };
 
-export const Chen2021FitnessPreview = ({ locationSelector, variantSelector, samplingStrategy }: Props) => {
+export const Chen2021FitnessPreview = ({
+  locationSelector,
+  dateRangeSelector,
+  variantSelector,
+  samplingStrategy,
+}: Props) => {
   const request = useMemo(
-    () => fillRequestWithDefaults({ locationSelector, variantSelector, samplingStrategy }),
-    [locationSelector, variantSelector, samplingStrategy]
+    () => fillRequestWithDefaults({ locationSelector, dateRangeSelector, variantSelector, samplingStrategy }),
+    [locationSelector, dateRangeSelector, variantSelector, samplingStrategy]
   );
 
   const { modelData, loading } = useModelData(request);

@@ -335,6 +335,7 @@ export const FocusPage = ({
               <div style={{ height: 300 }}>
                 <Chen2021FitnessPreview
                   locationSelector={variantDataset.selector.location}
+                  dateRangeSelector={variantDataset.selector.dateRange!}
                   variantSelector={variantDataset.selector.variant!}
                   samplingStrategy={variantDataset.selector.samplingStrategy}
                 />
@@ -467,6 +468,7 @@ export const FocusPage = ({
               <div style={{ height: 300 }}>
                 <Chen2021FitnessPreview
                   locationSelector={d.variant.selector.location}
+                  dateRangeSelector={variantDataset.selector.dateRange!}
                   variantSelector={variantDataset.selector.variant!}
                   samplingStrategy={variantDataset.selector.samplingStrategy}
                 />
