@@ -316,7 +316,7 @@ export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = fa
           <AsyncSelect
             className='w-full mr-2'
             components={{ DropdownIndicator }}
-            placeholder='Ex: B.1.1.7, S:484K, C913'
+            placeholder='B.1.1.7, S:484K, C913'
             isMulti
             defaultOptions={suggestOptions('')}
             loadOptions={promiseOptions}
@@ -341,7 +341,7 @@ export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = fa
         ) : (
           <Form.Control
             type='text'
-            placeholder='Ex: (B.1.1.529* | S:67V) & !C913T'
+            placeholder='(B.1.1.529* | S:67V) & !C913T'
             className='w-full mr-2'
             value={variantQuery}
             onChange={e => setVariantQuery(e.target.value)}
