@@ -333,7 +333,7 @@ export const FocusPage = ({
               demographic group. In this case, the estimate does not provide information on any intrinsic fitness 
               advantages.`}
             >
-              <div style={{ height: 300 }}>
+              <div style={{ height: 400 }}>
                 <Chen2021FitnessPreview
                   locationSelector={variantDataset.selector.location}
                   dateRangeSelector={variantDataset.selector.dateRange!}

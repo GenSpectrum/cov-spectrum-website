@@ -8,6 +8,7 @@ import { LocationSelector } from '../../data/LocationSelector';
 import { VariantSelector } from '../../data/VariantSelector';
 import { SamplingStrategy } from '../../data/SamplingStrategy';
 import { DateRangeSelector } from '../../data/DateRangeSelector';
+import { ExternalLink } from '../../components/ExternalLink';
 
 type Props = {
   locationSelector: LocationSelector;
@@ -87,6 +88,16 @@ export const Chen2021FitnessPreview = ({
           />
         </MetricsWrapper>
       </ChartAndMetricsWrapper>
+      <div className='mt-8'>
+        <h2>Reference</h2>
+        <small>
+          Chen, Chaoran, et al. "Quantification of the spread of SARS-CoV-2 variant B. 1.1. 7 in Switzerland."
+          Epidemics (2021); doi:{' '}
+          <ExternalLink url='https://doi.org/10.1016/j.epidem.2021.100480'>
+            10.1016/j.epidem.2021.100480
+          </ExternalLink>
+        </small>
+      </div>
     </Wrapper>
   );
 };
