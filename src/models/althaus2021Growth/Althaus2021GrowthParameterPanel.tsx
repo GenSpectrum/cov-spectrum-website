@@ -113,7 +113,8 @@ export const Althaus2021GrowthParameterPanel = ({ defaultParams, setParams }: Pr
               <Form.Control
                 type='number'
                 value={p.value}
-                onChange={e => change(p.attribute, Number.parseInt(e.target.value))}
+                step={p.step}
+                onChange={e => change(p.attribute, Number.parseFloat(e.target.value))}
                 disabled={estimateAttribute === p.attribute}
                 className='w-20 ml-4'
               />

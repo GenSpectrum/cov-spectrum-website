@@ -1,26 +1,15 @@
 import { Widget } from '../../widgets/Widget';
 import { AsyncZodQueryEncoder } from '../../helpers/query-encoder';
-import * as zod from 'zod';
-import {
-  decodeLocationSelector,
-  encodeLocationSelector,
-  LocationSelectorEncodedSchema,
-} from '../../data/LocationSelector';
-import {
-  decodeVariantSelector,
-  encodeVariantSelector,
-  VariantSelectorEncodedSchema,
-} from '../../data/VariantSelector';
+import { decodeLocationSelector, encodeLocationSelector } from '../../data/LocationSelector';
+import { decodeVariantSelector, encodeVariantSelector } from '../../data/VariantSelector';
 import { decodeSamplingStrategy, SamplingStrategy } from '../../data/SamplingStrategy';
 import { Althaus2021GrowthContainer, ContainerProps } from './Althaus2021GrowthContainer';
 import { decodeDateRangeSelector, encodeDateRangeSelector } from '../../data/DateRangeSelector';
+import { LocationDateVariantSelectorEncodedSchema } from '../../data/LocationDateVariantSelector';
 
 export const Althaus2021GrowthWidget = new Widget(
   new AsyncZodQueryEncoder(
-    zod.object({
-      location: LocationSelectorEncodedSchema,
-      variant: VariantSelectorEncodedSchema,
-    }),
+    LocationDateVariantSelectorEncodedSchema,
     async (v: ContainerProps) => ({
       location: encodeLocationSelector(v.locationSelector),
       dateRange: encodeDateRangeSelector(v.dateRangeSelector),
