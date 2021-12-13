@@ -345,7 +345,7 @@ export const FocusPage = ({
           </GridCell>
           <GridCell minWidth={700}>
             <Althaus2021GrowthWidget.ShareableComponent
-              title='Relative growth advantage 2'
+              title='Relative growth advantage'
               locationSelector={variantDataset.selector.location}
               dateRangeSelector={variantDataset.selector.dateRange!}
               variantSelector={variantDataset.selector.variant!}
