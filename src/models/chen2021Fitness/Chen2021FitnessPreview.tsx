@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import Loader from '../../components/Loader';
 import { Chen2021ProportionPlot } from './Chen2021ProportionPlot';
 import { fillRequestWithDefaults, useModelData } from './loading';
@@ -26,15 +26,30 @@ export const Chen2021FitnessPreview = ({
     () => fillRequestWithDefaults({ locationSelector, dateRangeSelector, variantSelector, samplingStrategy }),
     [locationSelector, dateRangeSelector, variantSelector, samplingStrategy]
   );
-
   const { modelData, loading } = useModelData(request);
+  const [showPlotAnyways, setShowPlotAnyways] = useState(false);
 
   if (loading) {
     return <Loader />;
   }
 
-  if (!modelData || modelData.params.fd.ciUpper - modelData.params.fd.ciLower > 1) {
-    return <>There is not enough data to provide a useful estimate.</>;
+  if (!modelData) {
+    return <>It was not possible to estimate the relative growth advantage.</>;
+  }
+
+  if (!showPlotAnyways && modelData.params.fd.ciUpper - modelData.params.fd.ciLower > 1) {
+    return (
+      <>
+        <p>
+          <b>There is not enough data to provide a reliable estimate.</b>
+        </p>
+        <div>
+          <button className='underline' onClick={() => setShowPlotAnyways(true)}>
+            I understand the danger and want to see the plot anyways.
+          </button>
+        </div>
+      </>
+    );
   }
 
   return (
