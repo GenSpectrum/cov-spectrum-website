@@ -11,6 +11,31 @@ type Props = {
   defaultParams: Althaus2021GrowthParameters;
 };
 
+type ParamEntry = {
+  label: string;
+  attribute: Althaus2021GrowthParametersAttribute;
+  value: number;
+  softMin: number;
+  softMax: number;
+  hardMin: number;
+  hardMax: number;
+  step: number;
+};
+
+/**
+ * A yellow border should be shown if the value is outside [softMin; softMax]. A red border should be shown if the
+ * value is outside [hardMin; hardMax].
+ */
+function drawParamEntryWarnBorders(entry: ParamEntry): string {
+  if (entry.value < entry.hardMin || entry.value > entry.hardMax) {
+    return 'border-2 border-red-600';
+  }
+  if (entry.value < entry.softMin || entry.value > entry.softMax) {
+    return 'border-2 border-yellow-300';
+  }
+  return '';
+}
+
 function transformParameterNotation(
   growthRate: number,
   programParameters: Althaus2021GrowthParameters
@@ -73,60 +98,65 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
     [setCurrentParams, estimateAttribute, growthRate]
   );
 
-  const paramEntries: {
-    label: string;
-    attribute: Althaus2021GrowthParametersAttribute;
-    value: number;
-    min: number;
-    max: number;
-    step: number;
-  }[] = [
+  const paramEntries: ParamEntry[] = [
     {
       label: 'Increase in transmissibility τ',
       attribute: 'transmissibilityIncrease',
       value: currentParams.transmissibilityIncrease,
-      min: -5,
-      max: 5,
+      softMin: -5,
+      softMax: 5,
+      hardMin: -Infinity,
+      hardMax: Infinity,
       step: 0.05,
     },
     {
       label: 'Increase in infectious duration κ',
       attribute: 'durationIncrease',
       value: currentParams.durationIncrease,
-      min: -5,
-      max: 5,
+      softMin: -1,
+      softMax: 3,
+      hardMin: -0.9999,
+      hardMax: Infinity,
       step: 0.05,
     },
     {
       label: 'Immune evasion ε',
       attribute: 'immuneEvasion',
       value: currentParams.immuneEvasion,
-      min: 0,
-      max: 1,
+      softMin: 0,
+      softMax: 1,
+      hardMin: 0,
+      hardMax: 1,
       step: 0.05,
     },
     {
       label: 'Proportion of susceptibles S',
       attribute: 'susceptiblesProportion',
       value: currentParams.susceptiblesProportion,
-      min: 0,
-      max: 1,
+      softMin: 0,
+      softMax: 1,
+      hardMin: 0,
+      hardMax: 1,
       step: 0.05,
     },
     {
       label: 'Reproduction number (wildtype) R_W',
       attribute: 'reproductionNumberWildtype',
       value: currentParams.reproductionNumberWildtype,
-      min: 0.05,
-      max: 5,
+      softMin: 0.05,
+      softMax: 5,
+      hardMin: 0.0001,
+      hardMax: Infinity,
       step: 0.05,
     },
     {
       label: 'Generation time (wildtype) D',
       attribute: 'generationTime',
       value: currentParams.generationTime,
-      min: 3,
-      max: 10,
+      softMin: 3,
+      softMax: 10,
+      hardMin: 0,
+      hardMax: Infinity,
       step: 0.1,
     },
   ];
@@ -144,8 +174,8 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
               */}
               <Slider
                 value={p.value}
-                min={p.min}
-                max={p.max}
+                min={p.softMin}
+                max={p.softMax}
                 step={p.step}
                 onChange={value => change(p.attribute, value)}
                 disabled={estimateAttribute === p.attribute}
@@ -157,7 +187,7 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
                 step={p.step}
                 onChange={e => change(p.attribute, Number.parseFloat(e.target.value))}
                 disabled={estimateAttribute === p.attribute}
-                className='w-20 ml-4'
+                className={`w-20 ml-4 ${drawParamEntryWarnBorders(p)}`}
               />
               <Form.Check
                 type='checkbox'
