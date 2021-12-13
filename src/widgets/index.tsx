@@ -13,6 +13,7 @@ import { SequencingIntensityChartWidget } from './SequencingIntensityChartWidget
 import { EstimatedCasesChartWidget } from './EstimatedCasesChartWidget';
 import { VariantInternationalComparisonChartWidget } from './VariantInternationalComparisonChartWidget';
 import { VariantDivisionDistributionChartWidget } from './VariantDivisionDistributionChartWidget';
+import { Althaus2021GrowthWidget } from '../models/althaus2021Growth/Althaus2021GrowthWidget';
 // import { VariantInternationalComparisonMapWidget } from './VariantInternationalComparisonMapWidget';
 
 export const allWidgets = [
@@ -27,6 +28,7 @@ export const allWidgets = [
   VariantInternationalComparisonChartWidget,
   // VariantInternationalComparisonMapWidget,
   VariantTimeDistributionChartWidget,
+  Althaus2021GrowthWidget,
   Chen2021FitnessWidget,
   WasteWaterHeatMapWidget,
   WasteWaterLocationTimeWidget,
