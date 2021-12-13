@@ -21,9 +21,9 @@ const defaultParams: Althaus2021GrowthParameters = {
   transmissibilityIncrease: 0.6,
   durationIncrease: 0,
   immuneEvasion: 0,
-  susceptiblesProportion: 0.6,
+  susceptiblesProportion: 0.5,
   reproductionNumberWildtype: 1,
-  generationTime: 5.4,
+  generationTime: 5.2,
 };
 
 export const Althaus2021GrowthContainer = ({
@@ -81,10 +81,7 @@ export const Althaus2021GrowthContainer = ({
           {logisticGrowthRate.ciLower.toFixed(4)}, {logisticGrowthRate.ciUpper.toFixed(4)}]
         </b>
       </div>
-      <Althaus2021GrowthParameterPanel
-        defaultParams={defaultParams}
-        setParams={params => console.log('new params', params)}
-      />
+      <Althaus2021GrowthParameterPanel growthRate={logisticGrowthRate.value} defaultParams={defaultParams} />
       <div className='mt-4'>
         <h2>Reference</h2>
         <small>

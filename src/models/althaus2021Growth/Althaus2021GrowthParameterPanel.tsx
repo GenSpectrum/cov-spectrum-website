@@ -4,32 +4,73 @@ import { useDeepCompareEffect } from '../../helpers/deep-compare-hooks';
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { Form } from 'react-bootstrap';
+import { althaus2021GrowthMath, MathVariables } from './althaus2021Growth-math';
 
 type Props = {
+  growthRate: number;
   defaultParams: Althaus2021GrowthParameters;
-  setParams: (params: Althaus2021GrowthParameters) => void;
 };
 
-export const Althaus2021GrowthParameterPanel = ({ defaultParams, setParams }: Props) => {
-  const [currentParams, setCurrentParams] = useState(defaultParams);
-  useDeepCompareEffect(() => setCurrentParams(defaultParams), [defaultParams]);
+function transformParameterNotation(
+  growthRate: number,
+  programParameters: Althaus2021GrowthParameters
+): MathVariables {
+  return {
+    ρ: growthRate,
+    τ: programParameters.transmissibilityIncrease,
+    κ: programParameters.durationIncrease,
+    ε: programParameters.immuneEvasion,
+    S: programParameters.susceptiblesProportion,
+    R: programParameters.reproductionNumberWildtype,
+    D: programParameters.generationTime,
+  };
+}
 
+const mathFunctions = new Map([
+  ['transmissibilityIncrease', althaus2021GrowthMath.τ],
+  ['durationIncrease', althaus2021GrowthMath.κ],
+  ['immuneEvasion', althaus2021GrowthMath.ε],
+  ['susceptiblesProportion', althaus2021GrowthMath.S],
+  ['reproductionNumberWildtype', althaus2021GrowthMath.R],
+  ['generationTime', althaus2021GrowthMath.D],
+] as [Althaus2021GrowthParametersAttribute, (vars: MathVariables) => number][]);
+
+export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: Props) => {
   const [estimateAttribute, setEstimateAttribute] = useState<Althaus2021GrowthParametersAttribute>(
     'transmissibilityIncrease'
   );
+  const [currentParams, setCurrentParams] = useState({
+    ...defaultParams,
+    [estimateAttribute]: mathFunctions.get(estimateAttribute)!(
+      transformParameterNotation(growthRate, defaultParams)
+    ),
+  });
+  useDeepCompareEffect(
+    () =>
+      setCurrentParams({
+        ...defaultParams,
+        [estimateAttribute]: mathFunctions.get(estimateAttribute)!(
+          transformParameterNotation(growthRate, defaultParams)
+        ),
+      }),
+    [defaultParams, growthRate]
+  );
 
   const change = useCallback(
-    (attr: Althaus2021GrowthParametersAttribute, value: number) => {
-      const newParams = {
-        ...currentParams,
-        [attr]: value,
-      };
-      setCurrentParams(newParams);
-      setParams(newParams);
-    },
+    (attr: Althaus2021GrowthParametersAttribute, value: number) =>
+      setCurrentParams(currentParams => {
+        const newParams = {
+          ...currentParams,
+          [attr]: value,
+        };
+        newParams[estimateAttribute] = mathFunctions.get(estimateAttribute)!(
+          transformParameterNotation(growthRate, newParams)
+        );
+        return newParams;
+      }),
     // Don't trigger this function when currentParams changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [setCurrentParams, setParams]
+    [setCurrentParams, estimateAttribute, growthRate]
   );
 
   const paramEntries: {
@@ -41,7 +82,7 @@ export const Althaus2021GrowthParameterPanel = ({ defaultParams, setParams }: Pr
     step: number;
   }[] = [
     {
-      label: 'Increase in transmissibility',
+      label: 'Increase in transmissibility τ',
       attribute: 'transmissibilityIncrease',
       value: currentParams.transmissibilityIncrease,
       min: -5,
@@ -49,7 +90,7 @@ export const Althaus2021GrowthParameterPanel = ({ defaultParams, setParams }: Pr
       step: 0.05,
     },
     {
-      label: 'Increase in infectious duration',
+      label: 'Increase in infectious duration κ',
       attribute: 'durationIncrease',
       value: currentParams.durationIncrease,
       min: -5,
@@ -57,7 +98,7 @@ export const Althaus2021GrowthParameterPanel = ({ defaultParams, setParams }: Pr
       step: 0.05,
     },
     {
-      label: 'Immune evasion',
+      label: 'Immune evasion ε',
       attribute: 'immuneEvasion',
       value: currentParams.immuneEvasion,
       min: 0,
@@ -65,7 +106,7 @@ export const Althaus2021GrowthParameterPanel = ({ defaultParams, setParams }: Pr
       step: 0.05,
     },
     {
-      label: 'Proportion of susceptibles',
+      label: 'Proportion of susceptibles S',
       attribute: 'susceptiblesProportion',
       value: currentParams.susceptiblesProportion,
       min: 0,
@@ -73,7 +114,7 @@ export const Althaus2021GrowthParameterPanel = ({ defaultParams, setParams }: Pr
       step: 0.05,
     },
     {
-      label: 'Reproduction number (wildtype)',
+      label: 'Reproduction number (wildtype) R_W',
       attribute: 'reproductionNumberWildtype',
       value: currentParams.reproductionNumberWildtype,
       min: 0.05,
@@ -81,7 +122,7 @@ export const Althaus2021GrowthParameterPanel = ({ defaultParams, setParams }: Pr
       step: 0.05,
     },
     {
-      label: 'Generation time (wildtype)',
+      label: 'Generation time (wildtype) D',
       attribute: 'generationTime',
       value: currentParams.generationTime,
       min: 3,
