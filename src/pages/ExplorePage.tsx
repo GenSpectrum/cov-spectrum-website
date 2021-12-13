@@ -49,7 +49,7 @@ export const ExplorePage = ({
     return null;
   }
   return (
-    <div className={`w-full h-full overflow-hidden`}>
+    <div className={`w-full h-full overflow-auto`}>
       {isLandingPage ? (
         <div className={`w-full h-full overflow-hidden mx-auto max-w-6xl mt-4`}>
           <div className='p-2 mr-4 '>
