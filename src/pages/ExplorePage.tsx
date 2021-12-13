@@ -49,9 +49,9 @@ export const ExplorePage = ({
     return null;
   }
   return (
-    <div className={`w-full h-full overflow-auto`}>
+    <div className={`w-full`}>
       {isLandingPage ? (
-        <div className={`w-full h-full overflow-hidden mx-auto max-w-6xl mt-4`}>
+        <div className={`w-full mx-auto max-w-6xl mt-4`}>
           <div className='p-2 mr-4 '>
             <h1>Detect and analyze variants of SARS-CoV-2</h1>
             <VariantSearch
