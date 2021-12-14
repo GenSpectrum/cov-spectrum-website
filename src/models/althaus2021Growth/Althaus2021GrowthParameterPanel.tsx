@@ -5,9 +5,10 @@ import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { Form } from 'react-bootstrap';
 import { althaus2021GrowthMath, MathVariables } from './althaus2021Growth-math';
+import { ValueWithCI } from '../chen2021Fitness/chen2021Fitness-types';
 
 type Props = {
-  growthRate: number;
+  growthRate: ValueWithCI;
   defaultParams: Althaus2021GrowthParameters;
 };
 
@@ -20,6 +21,7 @@ type ParamEntry = {
   hardMin: number;
   hardMax: number;
   step: number;
+  estimable: boolean;
 };
 
 /**
@@ -36,12 +38,9 @@ function drawParamEntryWarnBorders(entry: ParamEntry): string {
   return '';
 }
 
-function transformParameterNotation(
-  growthRate: number,
-  programParameters: Althaus2021GrowthParameters
-): MathVariables {
+function transformParameterNotation(programParameters: Althaus2021GrowthParameters): MathVariables {
   return {
-    ρ: growthRate,
+    ρ: programParameters.growthRate,
     τ: programParameters.transmissibilityIncrease,
     κ: programParameters.durationIncrease,
     ε: programParameters.immuneEvasion,
@@ -49,6 +48,10 @@ function transformParameterNotation(
     R: programParameters.reproductionNumberWildtype,
     D: programParameters.generationTime,
   };
+}
+
+function calc(attribute: Althaus2021GrowthParametersAttribute, parameters: Althaus2021GrowthParameters) {
+  return mathFunctions.get(attribute)!(transformParameterNotation(parameters));
 }
 
 const mathFunctions = new Map([
@@ -66,19 +69,15 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
   );
   const [currentParams, setCurrentParams] = useState({
     ...defaultParams,
-    [estimateAttribute]: mathFunctions.get(estimateAttribute)!(
-      transformParameterNotation(growthRate, defaultParams)
-    ),
+    [estimateAttribute]: calc(estimateAttribute, defaultParams),
   });
   useDeepCompareEffect(
     () =>
       setCurrentParams({
         ...defaultParams,
-        [estimateAttribute]: mathFunctions.get(estimateAttribute)!(
-          transformParameterNotation(growthRate, defaultParams)
-        ),
+        [estimateAttribute]: calc(estimateAttribute, defaultParams),
       }),
-    [defaultParams, growthRate]
+    [defaultParams]
   );
 
   const change = useCallback(
@@ -88,17 +87,32 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
           ...currentParams,
           [attr]: value,
         };
-        newParams[estimateAttribute] = mathFunctions.get(estimateAttribute)!(
-          transformParameterNotation(growthRate, newParams)
-        );
+        newParams[estimateAttribute] = calc(estimateAttribute, newParams);
         return newParams;
       }),
     // Don't trigger this function when currentParams changes
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [setCurrentParams, estimateAttribute, growthRate]
+    [setCurrentParams, estimateAttribute]
   );
 
   const paramEntries: ParamEntry[] = [
+    {
+      label: (
+        <>
+          <b>
+            Assumed logistic growth rate <i>ρ</i>
+          </b>
+        </>
+      ),
+      attribute: 'growthRate',
+      value: currentParams.growthRate,
+      softMin: growthRate.ciLower,
+      softMax: growthRate.ciUpper,
+      hardMin: growthRate.ciLower - 0.0001,
+      hardMax: growthRate.ciUpper + 0.0001,
+      step: 0.0001,
+      estimable: false,
+    },
     {
       label: (
         <>
@@ -112,6 +126,7 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMin: -Infinity,
       hardMax: Infinity,
       step: 0.05,
+      estimable: true,
     },
     {
       label: (
@@ -126,6 +141,7 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMin: -0.9999,
       hardMax: Infinity,
       step: 0.05,
+      estimable: true,
     },
     {
       label: (
@@ -140,6 +156,7 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMin: 0,
       hardMax: 1,
       step: 0.05,
+      estimable: true,
     },
     {
       label: (
@@ -154,6 +171,7 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMin: 0,
       hardMax: 1,
       step: 0.05,
+      estimable: true,
     },
     {
       label: (
@@ -171,6 +189,7 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMin: 0.0001,
       hardMax: Infinity,
       step: 0.05,
+      estimable: true,
     },
     {
       label: (
@@ -185,6 +204,7 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMin: 0,
       hardMax: Infinity,
       step: 0.1,
+      estimable: true,
     },
   ];
 
@@ -213,15 +233,16 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
                 value={p.value}
                 step={p.step}
                 onChange={e => change(p.attribute, Number.parseFloat(e.target.value))}
-                disabled={estimateAttribute === p.attribute}
-                className={`w-20 ml-4 ${drawParamEntryWarnBorders(p)}`}
+                disabled={!p.estimable || estimateAttribute === p.attribute}
+                className={`w-24 ml-4 ${drawParamEntryWarnBorders(p)}`}
               />
               <Form.Check
                 type='checkbox'
                 label='Estimate'
                 checked={estimateAttribute === p.attribute}
                 onChange={() => setEstimateAttribute(p.attribute)} // It is not allowed to uncheck something.
-                className='ml-2'
+                disabled={!p.estimable}
+                className={`ml-2 ${!p.estimable ? 'invisible' : ''}`}
               />
             </div>
           </div>

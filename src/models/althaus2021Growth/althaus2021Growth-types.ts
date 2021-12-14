@@ -1,4 +1,5 @@
 export type Althaus2021GrowthParametersAttribute =
+  | 'growthRate'
   | 'transmissibilityIncrease'
   | 'durationIncrease'
   | 'immuneEvasion'
@@ -7,6 +8,7 @@ export type Althaus2021GrowthParametersAttribute =
   | 'generationTime';
 
 export type Althaus2021GrowthParameters = {
+  growthRate: number;
   transmissibilityIncrease: number;
   durationIncrease: number;
   immuneEvasion: number;
