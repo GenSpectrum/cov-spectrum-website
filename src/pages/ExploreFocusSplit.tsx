@@ -10,7 +10,6 @@ import {
 import { useExploreUrl } from '../helpers/explore-url';
 import { DeepFocusPage } from './DeepFocusPage';
 import { ExplorePage } from './ExplorePage';
-import { FocusEmptyPage } from './FocusEmptyPage';
 import { FocusPage } from './FocusPage';
 import { DeepExplorePage } from './DeepExplorePage';
 import { DetailedSampleAggData } from '../data/sample/DetailedSampleAggDataset';
@@ -99,14 +98,21 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     return null;
   }
 
-  const explorePage = (isSmallExplore = false) =>
+  interface ExploreProperties {
+    isSmallScreen: boolean;
+    isLandingPage?: boolean;
+  }
+
+  const getExplorePage = ({ isSmallScreen, isLandingPage = false }: ExploreProperties) =>
     wholeDateCountSampleDatasetWithoutDateFilter ? (
       <ExplorePage
         onVariantSelect={setVariant!}
         selection={variant}
         wholeDateCountSampleDataset={wholeDateCountSampleDatasetWithoutDateFilter}
         caseCountDataset={caseCountDataset}
-        isSmallExplore={isSmallExplore}
+        isSmallExplore={isSmallScreen}
+        isLandingPage={isLandingPage}
+        wholeDataset={wholeDatasetWithoutDateFilter.data!}
       />
     ) : (
       <Loader />
@@ -121,26 +127,19 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     <>
       <Switch>
         <Route exact path={`${path}`}>
-          {isSmallScreen ? (
-            <ScrollableFullContentWrapper>{explorePage(false)}</ScrollableFullContentWrapper>
-          ) : (
-            <SplitParentWrapper>
-              <SplitExploreWrapper>{explorePage(false)}</SplitExploreWrapper>
-              <SplitFocusWrapper>
-                <FocusEmptyPage />
-              </SplitFocusWrapper>
-            </SplitParentWrapper>
-          )}
+          <ScrollableFullContentWrapper>
+            {getExplorePage({ isSmallScreen: isSmallScreen, isLandingPage: true })}
+          </ScrollableFullContentWrapper>
         </Route>
         <Route exact path={`${path}/variants`}>
           {isSmallScreen ? (
             <SplitParentWrapper>
-              <SplitExploreWrapper>{explorePage(true)}</SplitExploreWrapper>
+              <SplitExploreWrapper>{getExplorePage({ isSmallScreen: true })}</SplitExploreWrapper>
               <SplitFocusWrapper>{focusContent}</SplitFocusWrapper>
             </SplitParentWrapper>
           ) : (
             <SplitParentWrapper>
-              <SplitExploreWrapper>{explorePage(false)}</SplitExploreWrapper>
+              <SplitExploreWrapper>{getExplorePage({ isSmallScreen: false })}</SplitExploreWrapper>
               <SplitFocusWrapper>{focusContent}</SplitFocusWrapper>
             </SplitParentWrapper>
           )}
