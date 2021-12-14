@@ -12,7 +12,7 @@ type Props = {
 };
 
 type ParamEntry = {
-  label: string;
+  label: JSX.Element;
   attribute: Althaus2021GrowthParametersAttribute;
   value: number;
   softMin: number;
@@ -100,7 +100,11 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
 
   const paramEntries: ParamEntry[] = [
     {
-      label: 'Increase in transmissibility τ',
+      label: (
+        <>
+          Increase in transmissibility <i>τ</i>
+        </>
+      ),
       attribute: 'transmissibilityIncrease',
       value: currentParams.transmissibilityIncrease,
       softMin: -5,
@@ -110,7 +114,11 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       step: 0.05,
     },
     {
-      label: 'Increase in infectious duration κ',
+      label: (
+        <>
+          Increase in infectious duration <i>κ</i>
+        </>
+      ),
       attribute: 'durationIncrease',
       value: currentParams.durationIncrease,
       softMin: -1,
@@ -120,7 +128,11 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       step: 0.05,
     },
     {
-      label: 'Immune evasion ε',
+      label: (
+        <>
+          Immune evasion <i>ε</i>
+        </>
+      ),
       attribute: 'immuneEvasion',
       value: currentParams.immuneEvasion,
       softMin: 0,
@@ -130,7 +142,11 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       step: 0.05,
     },
     {
-      label: 'Proportion of susceptibles S',
+      label: (
+        <>
+          Proportion of susceptibles <i>S</i>
+        </>
+      ),
       attribute: 'susceptiblesProportion',
       value: currentParams.susceptiblesProportion,
       softMin: 0,
@@ -140,7 +156,14 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       step: 0.05,
     },
     {
-      label: 'Reproduction number (wildtype) R_W',
+      label: (
+        <>
+          Reproduction number (wildtype){' '}
+          <i>
+            R<sub>W</sub>
+          </i>
+        </>
+      ),
       attribute: 'reproductionNumberWildtype',
       value: currentParams.reproductionNumberWildtype,
       softMin: 0.05,
@@ -150,7 +173,11 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       step: 0.05,
     },
     {
-      label: 'Generation time (wildtype) D',
+      label: (
+        <>
+          Generation time (wildtype) <i>D</i>
+        </>
+      ),
       attribute: 'generationTime',
       value: currentParams.generationTime,
       softMin: 3,
