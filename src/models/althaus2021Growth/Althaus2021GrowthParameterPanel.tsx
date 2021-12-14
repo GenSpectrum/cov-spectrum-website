@@ -248,6 +248,18 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
           </div>
         ))}
       </div>
+      <button
+        className='underline'
+        onClick={() => {
+          setCurrentParams({
+            ...defaultParams,
+            [estimateAttribute]: calc(estimateAttribute, defaultParams),
+          });
+          setEstimateAttribute('transmissibilityIncrease');
+        }}
+      >
+        Reset
+      </button>
     </>
   );
 };
