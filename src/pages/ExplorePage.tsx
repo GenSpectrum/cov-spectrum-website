@@ -90,6 +90,18 @@ export const ExplorePage = ({
               </div>
             </div>
           </div>
+          <Footer>
+            <div>
+              The sequence data was updated on: {dayjs(getCurrentLapisDataVersionDate()).toISOString()}
+            </div>
+            {sequenceDataSource === 'gisaid' && (
+              <div>
+                Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
+                <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
+              </div>
+            )}
+            <VercelSponsorshipLogo />
+          </Footer>
         </div>
       ) : (
         <>
