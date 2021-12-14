@@ -161,7 +161,7 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
     {
       label: (
         <>
-          Proportion of susceptibles <i>S</i>
+          Proportion of susceptibles (wildtype) <i>S</i>
         </>
       ),
       attribute: 'susceptiblesProportion',
