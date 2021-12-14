@@ -70,9 +70,13 @@ export const Althaus2021GrowthContainer = ({
       <div className='mb-6'>
         <ExpandableTextBox
           text='
-        This is a long description.
+        Assuming local transmissions and random sampling, there are three main mechanism to explain the relative growth
+        of a variant: an increase in transmissibility, an increase of infectious duration, and immune evasion. Further,
+        in our model, these values depend on the proportion of susceptibles, the reproduction number of the wildtype
+        (the background variant that we compare to), and the generation time of the wildtype. The following calculator
+        can be used to estimate one parameter given the others.
       '
-          maxChars={60}
+          maxChars={120}
         />
       </div>
       <div className='mb-6'>
