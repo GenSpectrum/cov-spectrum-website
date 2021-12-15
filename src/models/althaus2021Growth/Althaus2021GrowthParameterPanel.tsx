@@ -127,8 +127,8 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMax: growthRate.ciUpper + 0.0001,
       step: 0.0001,
       estimable: false,
-      formatter: percentageFormatter,
-      parser: percentageParser,
+      formatter: basicFormatter,
+      parser: basicParser,
     },
     {
       label: (
@@ -280,11 +280,11 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       <button
         className='underline'
         onClick={() => {
+          setEstimateAttribute('transmissibilityIncrease');
           setCurrentParams({
             ...defaultParams,
-            [estimateAttribute]: calc(estimateAttribute, defaultParams),
+            transmissibilityIncrease: calc('transmissibilityIncrease', defaultParams),
           });
-          setEstimateAttribute('transmissibilityIncrease');
         }}
       >
         Reset

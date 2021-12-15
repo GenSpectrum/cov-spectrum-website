@@ -65,7 +65,7 @@ export const Althaus2021GrowthContainer = ({
     generationTime: 5.2,
   };
 
-  const formatGrowthVal = (value: number): string => (value * 100).toFixed(2) + '%';
+  const formatGrowthVal = (value: number): string => value.toFixed(2);
 
   return (
     <>
