@@ -123,8 +123,8 @@ export const Chen2021FitnessContainer = ({
         <h1>References</h1>
         <ul className='list-disc'>
           <li>
-            Chen, Chaoran, et al. "Quantification of the spread of SARS-CoV-2 variant B. 1.1. 7 in
-            Switzerland." Epidemics (2021); doi:{' '}
+            Chen, Chaoran, et al. "Quantification of the spread of SARS-CoV-2 variant B.1.1.7 in Switzerland."
+            Epidemics (2021); doi:{' '}
             <ExternalLink url='https://doi.org/10.1016/j.epidem.2021.100480'>
               10.1016/j.epidem.2021.100480
             </ExternalLink>

@@ -30,6 +30,7 @@ import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021Fitnes
 import { useExploreUrl } from '../helpers/explore-url';
 import { useQuery } from '../helpers/query-hook';
 import { CoreMetrics } from '../components/CoreMetrics';
+import { Althaus2021GrowthWidget } from '../models/althaus2021Growth/Althaus2021GrowthWidget';
 
 interface Props {
   variantDataset: DetailedSampleAggDataset;
@@ -332,7 +333,7 @@ export const FocusPage = ({
               demographic group. In this case, the estimate does not provide information on any intrinsic fitness 
               advantages.`}
             >
-              <div style={{ height: 300 }}>
+              <div style={{ height: 400 }}>
                 <Chen2021FitnessPreview
                   locationSelector={variantDataset.selector.location}
                   dateRangeSelector={variantDataset.selector.dateRange!}
@@ -341,6 +342,15 @@ export const FocusPage = ({
                 />
               </div>
             </NamedCard>
+          </GridCell>
+          <GridCell minWidth={700}>
+            <Althaus2021GrowthWidget.ShareableComponent
+              title='Relative growth advantage'
+              locationSelector={variantDataset.selector.location}
+              dateRangeSelector={variantDataset.selector.dateRange!}
+              variantSelector={variantDataset.selector.variant!}
+              samplingStrategy={variantDataset.selector.samplingStrategy}
+            />
           </GridCell>
           <GridCell minWidth={600}>
             {
