@@ -22,6 +22,21 @@ type ParamEntry = {
   hardMax: number;
   step: number;
   estimable: boolean;
+  formatter: (value: number) => string;
+  parser: (text: string) => number;
+};
+
+const basicFormatter = (value: number) => value.toFixed(2);
+
+const basicParser = (text: string) => Number.parseFloat(text);
+
+const percentageFormatter = (value: number) => Math.round(value * 100) + '%';
+
+const percentageParser = (text: string) => {
+  if (!text.endsWith('%')) {
+    text += '%';
+  }
+  return Number.parseFloat(text.substring(0, text.length - 1)) / 100;
 };
 
 /**
@@ -100,7 +115,7 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       label: (
         <>
           <b>
-            Assumed logistic growth rate <i>ρ</i>
+            Assumed logistic growth rate <i>ρ</i> (per day)
           </b>
         </>
       ),
@@ -112,6 +127,8 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMax: growthRate.ciUpper + 0.0001,
       step: 0.0001,
       estimable: false,
+      formatter: percentageFormatter,
+      parser: percentageParser,
     },
     {
       label: (
@@ -127,6 +144,8 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMax: Infinity,
       step: 0.05,
       estimable: true,
+      formatter: percentageFormatter,
+      parser: percentageParser,
     },
     {
       label: (
@@ -142,6 +161,8 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMax: Infinity,
       step: 0.05,
       estimable: true,
+      formatter: percentageFormatter,
+      parser: percentageParser,
     },
     {
       label: (
@@ -157,6 +178,8 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMax: 1,
       step: 0.05,
       estimable: true,
+      formatter: percentageFormatter,
+      parser: percentageParser,
     },
     {
       label: (
@@ -172,6 +195,8 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMax: 1,
       step: 0.05,
       estimable: true,
+      formatter: percentageFormatter,
+      parser: percentageParser,
     },
     {
       label: (
@@ -190,11 +215,13 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMax: Infinity,
       step: 0.05,
       estimable: true,
+      formatter: basicFormatter,
+      parser: basicParser,
     },
     {
       label: (
         <>
-          Generation time (wildtype) <i>D</i>
+          Generation time (wildtype) <i>D</i> (in days)
         </>
       ),
       attribute: 'generationTime',
@@ -205,6 +232,8 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
       hardMax: Infinity,
       step: 0.1,
       estimable: true,
+      formatter: basicFormatter,
+      parser: basicParser,
     },
   ];
 
@@ -229,10 +258,10 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
                 style={{ minWidth: '100px' }}
               />
               <Form.Control
-                type='number'
-                value={p.value}
+                type='text'
+                value={p.formatter(p.value)}
                 step={p.step}
-                onChange={e => change(p.attribute, Number.parseFloat(e.target.value))}
+                onChange={e => change(p.attribute, p.parser(e.target.value))}
                 disabled={!p.estimable || estimateAttribute === p.attribute}
                 className={`w-24 ml-4 ${drawParamEntryWarnBorders(p)}`}
               />

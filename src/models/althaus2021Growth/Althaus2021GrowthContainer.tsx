@@ -65,6 +65,8 @@ export const Althaus2021GrowthContainer = ({
     generationTime: 5.2,
   };
 
+  const formatGrowthVal = (value: number): string => (value * 100).toFixed(2) + '%';
+
   return (
     <>
       <div className='mb-6'>
@@ -85,8 +87,8 @@ export const Althaus2021GrowthContainer = ({
       </div>
       <div className='mb-6'>
         <b>
-          Estimated logistic growth rate: {logisticGrowthRate.value.toFixed(4)} [
-          {logisticGrowthRate.ciLower.toFixed(4)}, {logisticGrowthRate.ciUpper.toFixed(4)}]
+          Estimated logistic growth rate (per day): {formatGrowthVal(logisticGrowthRate.value)} [
+          {formatGrowthVal(logisticGrowthRate.ciLower)}, {formatGrowthVal(logisticGrowthRate.ciUpper)}]
         </b>
       </div>
       <Althaus2021GrowthParameterPanel growthRate={logisticGrowthRate} defaultParams={defaultParams} />
