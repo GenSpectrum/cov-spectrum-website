@@ -19,17 +19,20 @@ export function decodeVariantSelector(encoded: VariantSelector): VariantSelector
   return encoded;
 }
 
-export function addVariantSelectorToUrlSearchParams(selector: VariantSelector, params: URLSearchParams) {
+export function addVariantSelectorToUrlSearchParams(selector: VariantSelector, params: URLSearchParams, index?: number) {
   if (selector.aaMutations?.length) {
-    params.set('aaMutations', selector.aaMutations.join(','));
+    const aaMutationsKey = index && index > 0 ? `aaMutations${index}` : 'aaMutations'
+    params.set(aaMutationsKey, selector.aaMutations.join(','));
   }
   if (selector.nucMutations?.length) {
-    params.set('nucMutations', selector.nucMutations.join(','));
+    const nucMutationsKey = index && index > 0 ? `nucMutations${index}` : 'nucMutations'
+    params.set(nucMutationsKey, selector.nucMutations.join(','));
   }
   for (const k of ['pangoLineage', 'gisaidClade', 'nextstrainClade', 'variantQuery'] as const) {
     const value = selector[k];
     if (value !== undefined) {
-      params.set(k, value);
+      const key = index && index > 0 ? `${k}${index}` : k;
+      params.set(key, value);
     }
   }
 }
@@ -39,6 +42,39 @@ export function variantUrlFromSelector(selector: VariantSelector): string {
   addVariantSelectorToUrlSearchParams(selector, params);
   return params.toString();
 }
+
+export function variantListUrlFromSelectors(selectors: VariantSelector[]): string {
+  const params = new URLSearchParams();
+  selectors.map(function(selector, index) {
+    addVariantSelectorToUrlSearchParams(selector, params, index);
+  });
+  return params.toString();
+}
+
+export function decodeVariantListFromUrl(query: string): VariantSelector[] {
+    const params = query.split("&");
+    const selectors:VariantSelector[] = [];
+    params.forEach((param) => {
+      for (const k of ['aaMutations', 'nucMutations', 'pangoLineage', 'gisaidClade', 'nextstrainClade', 'variantQuery'] as const) {
+        const regex = new RegExp(k + "(.*)=(.*)")
+        const found = param.match(regex)
+        if(found && found.length >= 3){
+          const index = found[1] ? parseInt(found[1]) : 0;
+          const valueString = decodeURIComponent(found[2])
+          const value = k === 'aaMutations' || k === 'nucMutations' ? valueString.split(",") : valueString
+          let selector = selectors[index]
+          if(selector) {
+            selectors[index] = {...selector, [k]: value}
+          }else{
+            selector = {[k]: value}
+            selectors.splice(index, 0, selector);
+          }
+        }
+      }
+    });
+    return selectors;
+}
+
 
 export function variantIsOnlyDefinedBy(
   selector: VariantSelector,
