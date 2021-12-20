@@ -83,6 +83,8 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
             line: {
               color: '#1f77b4',
             },
+            text: modelData.plotAbsoluteNumbers.wildtypeCases.map(n => n.toString()),
+            hovertemplate: '%{text}',
           },
           {
             name: 'Variant',
@@ -94,6 +96,8 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
             line: {
               color: '#ff7f0f',
             },
+            text: modelData.plotAbsoluteNumbers.variantCases.map(n => n.toString()),
+            hovertemplate: '%{text}',
           },
           {
             name: 'Variant (upper bound)',
