@@ -17,6 +17,14 @@ function daysBetween(date1: Date, date2: Date): number {
   );
 }
 
+function arrAdd(arr1: number[], arr2: number[]): number[] {
+  const result = [];
+  for (let i = 0; i < arr1.length; i++) {
+    result.push(arr1[i] + arr2[i]);
+  }
+  return result;
+}
+
 const maxInt = 2147483647;
 
 export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
@@ -66,17 +74,6 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
         style={{ width: '100%', height: '90%' }}
         data={[
           {
-            name: 'Variant',
-            type: 'scatter',
-            mode: 'lines',
-            x: modelData.plotAbsoluteNumbers.t.map(dateString => new Date(dateString)),
-            y: modelData.plotAbsoluteNumbers.variantCases,
-            stackgroup: 'one',
-            line: {
-              color: '#ff7f0f',
-            },
-          },
-          {
             name: 'Wildtype',
             type: 'scatter',
             mode: 'lines',
@@ -85,6 +82,17 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
             stackgroup: 'one',
             line: {
               color: '#1f77b4',
+            },
+          },
+          {
+            name: 'Variant',
+            type: 'scatter',
+            mode: 'lines',
+            x: modelData.plotAbsoluteNumbers.t.map(dateString => new Date(dateString)),
+            y: modelData.plotAbsoluteNumbers.variantCases,
+            stackgroup: 'one',
+            line: {
+              color: '#ff7f0f',
             },
           },
           {
@@ -97,7 +105,9 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
               color: '#ff7f0f',
             },
             x: modelData.plotAbsoluteNumbers.t.map(dateString => new Date(dateString)),
-            y: variantCaseNumbers.variantCasesUpper,
+            y: arrAdd(variantCaseNumbers.variantCasesUpper, modelData.plotAbsoluteNumbers.wildtypeCases),
+            text: variantCaseNumbers.variantCasesUpper.map(n => n.toString()),
+            hovertemplate: '%{text}',
           },
           {
             name: 'Variant (lower bound)',
@@ -109,7 +119,9 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
               color: '#ff7f0f',
             },
             x: modelData.plotAbsoluteNumbers.t.map(dateString => new Date(dateString)),
-            y: variantCaseNumbers.variantCasesLower,
+            y: arrAdd(variantCaseNumbers.variantCasesLower, modelData.plotAbsoluteNumbers.wildtypeCases),
+            text: variantCaseNumbers.variantCasesLower.map(n => n.toString()),
+            hovertemplate: '%{text}',
           },
         ]}
         layout={{
