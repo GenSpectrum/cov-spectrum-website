@@ -25,23 +25,27 @@ const Footer = styled.footer`
 `;
 interface Props {
   onVariantSelect: (selection: VariantSelector) => void;
-  selection: VariantSelector | undefined;
+  selections?: VariantSelector[];
+  selection?: VariantSelector;
   wholeDateCountSampleDataset: DateCountSampleDataset;
   caseCountDataset: CaseCountAsyncDataset;
   wholeDataset: DetailedSampleAggDataset;
   isSmallExplore: boolean;
   isLandingPage?: boolean;
+  isCompareMode?: boolean;
 }
 
 //small explore means the explore section is small (for mobile)
 export const ExplorePage = ({
   onVariantSelect,
+  selections,
   selection,
   wholeDateCountSampleDataset,
   caseCountDataset,
   wholeDataset,
   isSmallExplore,
   isLandingPage = false,
+  isCompareMode = false,
 }: Props) => {
   const isWideLandingPage = !isSmallExplore && isLandingPage;
   const exploreUrl = useExploreUrl();
@@ -69,6 +73,8 @@ export const ExplorePage = ({
                 wholeDateCountSampleDataset={wholeDateCountSampleDataset}
                 variantSelector={selection}
                 isHorizontal={false}
+                isLandingPage={isLandingPage}
+                isCompareMode={false}
               />
             </div>
             <div className='p-2'>
@@ -105,19 +111,15 @@ export const ExplorePage = ({
         </div>
       ) : (
         <>
-          <div id='explore-search-bar' className={`${isWideLandingPage ? 'mt-8' : 'mt-4'}`}>
-            <VariantSearch
-              onVariantSelect={onVariantSelect}
-              currentSelection={selection}
-              isSimple={isSmallExplore}
-            />
-          </div>
           <div id='explore-selectors'>
             <KnownVariantsList
               onVariantSelect={onVariantSelect}
               wholeDateCountSampleDataset={wholeDateCountSampleDataset}
               variantSelector={selection}
+              variantSelectors={selections}
               isHorizontal={isSmallExplore}
+              isLandingPage={isLandingPage}
+              isCompareMode={isCompareMode}
             />
             {!isSmallExplore ? (
               <div className='w-full h-full'>

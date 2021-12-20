@@ -19,7 +19,7 @@ import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampl
 import Loader from '../components/Loader';
 import { useQuery } from '../helpers/query-hook';
 import { PromiseFn, useAsync } from 'react-async';
-import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
+import { useDeepCompareEffect, useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { AsyncDataset } from '../data/AsyncDataset';
 import { Dataset } from '../data/Dataset';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
@@ -27,6 +27,12 @@ import { VariantHeader } from '../components/VariantHeader';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { isEqual } from 'lodash';
 import { SamplingStrategy } from '../data/SamplingStrategy';
+import { VariantSelector } from '../data/VariantSelector';
+import { VariantSearch } from '../components/VariantSearch';
+import { CompareModeToggleSwitch } from '../components/CompareModeToggle';
+import { DateRangePicker } from '../components/DateRangePicker';
+import { VariantCompare } from '../components/VariantCompare';
+import { CompareVariantsHeader } from '../components/VariantsHeader';
 
 interface Props {
   isSmallScreen: boolean;
@@ -39,14 +45,42 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     samplingStrategy,
     dateRange,
     variant,
+    variants,
     focusKey,
     setVariant,
+    setVariants,
   } = useExploreUrl() ?? {
     validUrl: true,
     samplingStrategy: SamplingStrategy.AllSamples,
   };
-
   const [variantSelector, setVariantSelector] = useState<LocationDateVariantSelector>();
+  const [variantSelectors, setVariantSelectors] = useState<LocationDateVariantSelector[]>();
+  const [compareMode, setCompareMode] = useState<boolean>(false);
+
+  const handleModeChange = () => {
+    if (!compareMode === false) {
+      if (variants?.length) {
+        setVariant!(variants[0]);
+      } else if (variant) {
+        setVariant!(variant);
+      }
+    }
+    setCompareMode(!compareMode);
+  };
+
+  const selectVariant = (variant: VariantSelector) => {
+    if (compareMode) {
+      if (variants && !variants.find(v => isEqual(v, variant))) {
+        variants.push(variant);
+        setVariants!(variants);
+      } else if (variants && variants.find(v => isEqual(v, variant))) {
+        // remove variant from list
+        setVariants!(variants.filter(v => !isEqual(v, variant)));
+      }
+    } else {
+      setVariant!(variant);
+    }
+  };
 
   const variantDataset = useQuery(
     signal =>
@@ -54,9 +88,29 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     [dateRange, location, variant, samplingStrategy]
   );
 
+  const variantDatasets = useQuery(
+    signal => {
+      const promises = variants!.map(variant => {
+        return DetailedSampleAggData.fromApi(
+          { location: location!, samplingStrategy, dateRange, variant },
+          signal
+        );
+      });
+      return Promise.all(promises);
+    },
+    [dateRange, location, variants, samplingStrategy]
+  );
+
+  useDeepCompareEffect(() => {
+    if (variantDatasets.isSuccess && variantDatasets.data) {
+      console.log('multi datasets: :', variantDatasets);
+      setVariantSelectors(variantDatasets.data.map(dataset => dataset.selector));
+    }
+  }, [variantDatasets]);
+
   useEffect(() => {
-    if (variantDataset.isSuccess && variantDataset.data!.selector.variant) {
-      setVariantSelector(variantDataset.data!.selector);
+    if (variantDataset.isSuccess && variantDataset.data) {
+      setVariantSelector(variantDataset.data.selector);
     }
   }, [variantDataset]);
 
@@ -106,13 +160,15 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   const getExplorePage = ({ isSmallScreen, isLandingPage = false }: ExploreProperties) =>
     wholeDateCountSampleDatasetWithoutDateFilter ? (
       <ExplorePage
-        onVariantSelect={setVariant!}
+        onVariantSelect={selectVariant}
         selection={variant}
+        selections={variants}
         wholeDateCountSampleDataset={wholeDateCountSampleDatasetWithoutDateFilter}
         caseCountDataset={caseCountDataset}
         isSmallExplore={isSmallScreen}
         isLandingPage={isLandingPage}
         wholeDataset={wholeDatasetWithoutDateFilter.data!}
+        isCompareMode={compareMode}
       />
     ) : (
       <Loader />
@@ -156,12 +212,32 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
 
   return makeLayout(
     <>
-      {variantSelector && isEqual(variant, variantSelector.variant) && (
+      <div className='flex'>
+        <div className='flex-grow flex flex-row flex-wrap items-center'>
+          <div className='md:mr-2'>
+            <CompareModeToggleSwitch handleModeChange={handleModeChange} />
+          </div>
+          <DateRangePicker dateRangeSelector={dateRange!} />
+        </div>
+      </div>
+      {compareMode ? (
+        <VariantCompare
+          onVariantSelect={selectVariant}
+          currentSelections={variants}
+          isSimple={isSmallScreen}
+        />
+      ) : (
+        <VariantSearch onVariantSelect={selectVariant} currentSelection={variant} isSimple={isSmallScreen} />
+      )}
+      {!compareMode && variantSelector && isEqual(variant, variantSelector.variant) && (
         <VariantHeader
           dateRange={variantSelector.dateRange!} // TODO is date range always available?
           variant={variantSelector.variant!}
           controls={<FocusVariantHeaderControls selector={variantSelector} />}
         />
+      )}
+      {compareMode && variantSelectors && (
+        <CompareVariantsHeader onVariantSelect={selectVariant} variants={variants} />
       )}
       {variant &&
       variantDataset.isSuccess &&
@@ -175,7 +251,7 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
           caseCountDataset={caseCountDataset}
           variantInternationalDateCountDataset={variantInternationalDateCountDataset.data!}
           wholeInternationalDateCountDataset={wholeInternationalDateCountDataset.data!}
-          onVariantSelect={setVariant!}
+          onVariantSelect={selectVariant}
         />
       ) : (
         <Loader />
