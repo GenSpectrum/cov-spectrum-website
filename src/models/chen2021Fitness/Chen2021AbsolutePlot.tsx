@@ -66,20 +66,26 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
         style={{ width: '100%', height: '90%' }}
         data={[
           {
-            name: 'Wildtype',
-            type: 'scatter',
-            mode: 'lines',
-            x: modelData.plotAbsoluteNumbers.t.map(dateString => new Date(dateString)),
-            y: modelData.plotAbsoluteNumbers.wildtypeCases,
-            stackgroup: 'one',
-          },
-          {
             name: 'Variant',
             type: 'scatter',
             mode: 'lines',
             x: modelData.plotAbsoluteNumbers.t.map(dateString => new Date(dateString)),
             y: modelData.plotAbsoluteNumbers.variantCases,
             stackgroup: 'one',
+            line: {
+              color: '#ff7f0f',
+            },
+          },
+          {
+            name: 'Wildtype',
+            type: 'scatter',
+            mode: 'lines',
+            x: modelData.plotAbsoluteNumbers.t.map(dateString => new Date(dateString)),
+            y: modelData.plotAbsoluteNumbers.wildtypeCases,
+            stackgroup: 'one',
+            line: {
+              color: '#1f77b4',
+            },
           },
           {
             name: 'Variant (upper bound)',
