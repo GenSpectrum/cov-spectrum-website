@@ -49,7 +49,7 @@ export function variantUrlFromSelector(selector: VariantSelector): string {
 
 export function variantListUrlFromSelectors(selectors: VariantSelector[]): string {
   const params = new URLSearchParams();
-  selectors.map(function (selector, index) {
+  selectors.forEach(function (selector, index) {
     addVariantSelectorToUrlSearchParams(selector, params, index);
   });
   return params.toString();

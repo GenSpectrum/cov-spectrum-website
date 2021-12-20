@@ -21,7 +21,7 @@ const KnownVariantCardLoader = (
   </div>
 );
 
-const getLoadVariantCardLoaders = (isLandingPage: boolean) => {
+const getLoadVariantCardLoaders = () => {
   let loaders = [];
   for (let i = 0; i < 12; i++) {
     loaders.push(KnownVariantCardLoader);
@@ -190,7 +190,7 @@ export const KnownVariantsList = ({
   const [chartData, setChartData] = useState<KnownVariantWithChartData[] | undefined>(undefined);
 
   const KnownVariantLoader = () => {
-    const loaders = getLoadVariantCardLoaders(isLandingPage);
+    const loaders = getLoadVariantCardLoaders();
     return (
       <Grid isHorizontal={isHorizontal} isLandingPage={isLandingPage}>
         {loaders}

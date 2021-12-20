@@ -9,7 +9,7 @@ export interface Props {
   onVariantSelect: (selection: VariantSelector) => void;
 }
 
-export const CompareVariantsHeader = ({ variants, titleSuffix, controls, onVariantSelect }: Props) => {
+export const CompareVariantsHeader = ({ variants, titleSuffix, onVariantSelect }: Props) => {
   return (
     <div className='pt-10 lg:pt-0 ml-1 my-2 md:ml-3 w-full relative'>
       <div className='flex'>

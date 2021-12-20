@@ -55,7 +55,7 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   };
   const [variantSelector, setVariantSelector] = useState<LocationDateVariantSelector>();
   const [variantSelectors, setVariantSelectors] = useState<LocationDateVariantSelector[]>();
-  const [compareMode, setCompareMode] = useState<boolean>(false);
+  const [compareMode, setCompareMode] = useState<boolean>(variants?.length ? true : false);
 
   const handleModeChange = () => {
     if (!compareMode === false) {

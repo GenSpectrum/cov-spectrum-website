@@ -11,7 +11,7 @@ export interface Props {
   controls?: React.ReactChild | React.ReactChild[];
 }
 
-export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Props) => {
+export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
   const [resolvedFullName, setResolvedFullName] = useState<string | undefined>();
 
   const label = variantIsOnlyDefinedBy(variant, 'pangoLineage')
