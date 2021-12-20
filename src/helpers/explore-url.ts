@@ -2,10 +2,10 @@ import assert from 'assert';
 import { useCallback } from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import {
-    decodeVariantListFromUrl,
-    variantListUrlFromSelectors,
-    VariantSelector,
-    variantUrlFromSelector
+  decodeVariantListFromUrl,
+  variantListUrlFromSelectors,
+  VariantSelector,
+  variantUrlFromSelector,
 } from '../data/VariantSelector';
 import {
   decodeLocationSelectorFromSingleString,
@@ -26,17 +26,23 @@ export interface ExploreUrl {
   validUrl: true;
   location: LocationSelector;
   dateRange: DateRangeSelector;
+  variant?: VariantSelector;
   variants: VariantSelector[];
   samplingStrategy: SamplingStrategy;
 
   setLocation: (location: LocationSelector) => void;
   setDateRange: (dateRange: DateRangeSelector) => void;
+  setVariant: (variant: VariantSelector) => void;
   setVariants: (variants: VariantSelector[]) => void;
   setSamplingStrategy: (samplingStrategy: SamplingStrategy) => void;
   getOverviewPageUrl: () => string;
   getDeepExplorePageUrl: (pagePath: string) => string;
   getDeepFocusPageUrl: (pagePath: string) => string;
   focusKey: string;
+}
+
+function useQuery(queryString: string) {
+  return new URLSearchParams(queryString);
 }
 
 export const defaultDateRange: DateRangeUrlEncoded = 'Past6M';
@@ -66,7 +72,8 @@ export function useExploreUrl(): ExploreUrl | undefined {
       dateRange: string;
     }>(`/explore/:location/:samplingStrategy/:dateRange/variants`),
   };
-  let query = useLocation().search;
+  let queryString = useLocation().search;
+  let query = useQuery(queryString);
 
   // Create navigation functions
   const setLocation = useCallback(
@@ -115,16 +122,30 @@ export function useExploreUrl(): ExploreUrl | undefined {
     [history, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
   );
 
+  const setVariant = useCallback(
+    (variant: VariantSelector) => {
+      if (!routeMatches.locationSamplingDate) {
+        return;
+      }
+      const prefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
+      const currentPath = locationState.pathname + locationState.search;
+      assert(currentPath.startsWith(prefix));
+      const variantEncoded = variantUrlFromSelector(variant);
+      history.push(`${prefix}/variants?${variantEncoded}`);
+    },
+    [history, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
+  );
+
   const setVariants = useCallback(
     (variants: VariantSelector[]) => {
-        if (!routeMatches.locationSamplingDate) {
-            return;
-        }
-        const prefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
-        const currentPath = locationState.pathname + locationState.search;
-        assert(currentPath.startsWith(prefix));
-        const variantsEncoded = variantListUrlFromSelectors(variants);
-        history.push(`${prefix}/variants?${variantsEncoded}`);
+      if (!routeMatches.locationSamplingDate) {
+        return;
+      }
+      const prefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
+      const currentPath = locationState.pathname + locationState.search;
+      assert(currentPath.startsWith(prefix));
+      const variantsEncoded = variantListUrlFromSelectors(variants);
+      history.push(`${prefix}/variants?${variantsEncoded}`);
     },
     [history, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
   );
@@ -182,19 +203,29 @@ export function useExploreUrl(): ExploreUrl | undefined {
   const dateRangeSelector = dateRangeUrlToSelector(encoded.dateRange);
 
   if (routeMatches.locationSamplingDateVariant) {
-    variantSelectors = decodeVariantListFromUrl(query);
+    variantSelector = {
+      pangoLineage: query.get('pangoLineage') ?? undefined,
+      gisaidClade: query.get('gisaidClade') ?? undefined,
+      nextstrainClade: query.get('nextstrainClade') ?? undefined,
+      aaMutations: query.get('aaMutations')?.split(','),
+      nucMutations: query.get('nucMutations')?.split(','),
+      variantQuery: query.get('variantQuery') ?? undefined,
+    };
+    variantSelectors = decodeVariantListFromUrl(queryString);
   }
 
   return {
     validUrl: true,
     location: locationSelector,
     dateRange: dateRangeSelector,
+    variant: variantSelector,
     variants: variantSelectors,
     samplingStrategy,
 
     setLocation,
     setSamplingStrategy,
     setDateRange,
+    setVariant,
     setVariants,
     getOverviewPageUrl,
     getDeepExplorePageUrl,

@@ -20,7 +20,8 @@ const KnownVariantCardLoader = (
     <div className={`h-20 bg-gradient-to-r from-gray-400 to-gray-300 rounded w-full`}></div>
   </div>
 );
-const getLoadVariantCardLoaders = () => {
+
+const getLoadVariantCardLoaders = (isLandingPage: boolean) => {
   let loaders = [];
   for (let i = 0; i < 12; i++) {
     loaders.push(KnownVariantCardLoader);
@@ -136,15 +137,21 @@ export function convertKnownVariantChartData({
 const Grid = ({
   children,
   isHorizontal,
+  isLandingPage,
 }: {
   children: JSX.Element[] | JSX.Element;
   isHorizontal: boolean;
+  isLandingPage: boolean;
 }) => {
   return (
     <div className={`w-full ${isHorizontal ? 'overflow-x-scroll' : ''}`}>
       <div
         className={`w-full grid gap-x-2 md:gap-2 ${
-          isHorizontal ? 'w-max grid-flow-col overflow-hidden auto-rows-min auto-cols-min' : 'grid-cols-2'
+          isHorizontal
+            ? 'w-max grid-flow-col overflow-hidden auto-rows-min auto-cols-min'
+            : isLandingPage
+            ? 'grid-cols-2'
+            : 'grid-cols-1'
         }`}
       >
         {children}
@@ -156,8 +163,11 @@ const Grid = ({
 interface Props {
   onVariantSelect: (selection: VariantSelector) => void;
   variantSelector: VariantSelector | undefined;
+  variantSelectors?: VariantSelector[];
   wholeDateCountSampleDataset: DateCountSampleDataset;
   isHorizontal: boolean;
+  isLandingPage: boolean;
+  isCompareMode: boolean;
 }
 
 /**
@@ -170,16 +180,28 @@ interface Props {
 export const KnownVariantsList = ({
   onVariantSelect,
   variantSelector,
+  variantSelectors,
   wholeDateCountSampleDataset,
   isHorizontal = false,
+  isLandingPage,
+  isCompareMode,
 }: Props) => {
   const [selectedVariantList, setSelectedVariantList] = useState(VARIANT_LISTS[0].name);
   const [chartData, setChartData] = useState<KnownVariantWithChartData[] | undefined>(undefined);
 
   const KnownVariantLoader = () => {
-    const loaders = getLoadVariantCardLoaders();
-    return <Grid isHorizontal={isHorizontal}>{loaders}</Grid>;
+    const loaders = getLoadVariantCardLoaders(isLandingPage);
+    return (
+      <Grid isHorizontal={isHorizontal} isLandingPage={isLandingPage}>
+        {loaders}
+      </Grid>
+    );
   };
+
+  useEffect(() => {
+    console.log('isCompareMode: ', isCompareMode);
+    console.log();
+  }, [isCompareMode]);
 
   const pangoCountDataset = useQuery(
     signal =>
@@ -245,6 +267,13 @@ export const KnownVariantsList = ({
     );
   }
 
+  const checkSelected = (selector: VariantSelector, variantSelector?: VariantSelector): boolean => {
+    return (
+      variantSelector !== undefined &&
+      formatVariantDisplayName(variantSelector, true) === formatVariantDisplayName(selector, true)
+    );
+  };
+
   return (
     <>
       <KnownVariantsListSelection
@@ -252,7 +281,7 @@ export const KnownVariantsList = ({
         selected={selectedVariantList}
         onSelect={setSelectedVariantList}
       />
-      <Grid isHorizontal={isHorizontal}>
+      <Grid isHorizontal={isHorizontal} isLandingPage={isLandingPage}>
         {chartData.map(({ selector, chartData, recentProportion }) => (
           <div className={`${isHorizontal && 'h-full w-36'}`}>
             <KnownVariantCard
@@ -264,8 +293,11 @@ export const KnownVariantsList = ({
                 onVariantSelect(selector);
               }}
               selected={
-                variantSelector &&
-                formatVariantDisplayName(variantSelector, true) === formatVariantDisplayName(selector, true)
+                isCompareMode
+                  ? variantSelectors &&
+                    variantSelectors.find(variantSelector => checkSelected(selector, variantSelector)) !==
+                      undefined
+                  : checkSelected(selector, variantSelector)
               }
             />
           </div>

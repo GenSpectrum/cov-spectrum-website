@@ -85,7 +85,9 @@ export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, s
   return (
     <Card
       as={StyledCard}
-      className={`shadow-md border-0 m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl w-full`}
+      className={`shadow-md m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl w-full ${
+        selected ? 'border-4 border-blue-500' : ''
+      }`}
       onClick={onClick}
       selected={selected}
     >

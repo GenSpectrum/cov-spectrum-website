@@ -19,21 +19,25 @@ export function decodeVariantSelector(encoded: VariantSelector): VariantSelector
   return encoded;
 }
 
-export function addVariantSelectorToUrlSearchParams(selector: VariantSelector, params: URLSearchParams, index?: number) {
-  if (selector.aaMutations?.length) {
-    const aaMutationsKey = index && index > 0 ? `aaMutations${index}` : 'aaMutations'
-    params.set(aaMutationsKey, selector.aaMutations.join(','));
-  }
-  if (selector.nucMutations?.length) {
-    const nucMutationsKey = index && index > 0 ? `nucMutations${index}` : 'nucMutations'
-    params.set(nucMutationsKey, selector.nucMutations.join(','));
-  }
+export function addVariantSelectorToUrlSearchParams(
+  selector: VariantSelector,
+  params: URLSearchParams,
+  index?: number
+) {
   for (const k of ['pangoLineage', 'gisaidClade', 'nextstrainClade', 'variantQuery'] as const) {
     const value = selector[k];
     if (value !== undefined) {
       const key = index && index > 0 ? `${k}${index}` : k;
       params.set(key, value);
     }
+  }
+  if (selector.aaMutations?.length) {
+    const aaMutationsKey = index && index > 0 ? `aaMutations${index}` : 'aaMutations';
+    params.set(aaMutationsKey, selector.aaMutations.join(','));
+  }
+  if (selector.nucMutations?.length) {
+    const nucMutationsKey = index && index > 0 ? `nucMutations${index}` : 'nucMutations';
+    params.set(nucMutationsKey, selector.nucMutations.join(','));
   }
 }
 
@@ -45,36 +49,42 @@ export function variantUrlFromSelector(selector: VariantSelector): string {
 
 export function variantListUrlFromSelectors(selectors: VariantSelector[]): string {
   const params = new URLSearchParams();
-  selectors.map(function(selector, index) {
+  selectors.map(function (selector, index) {
     addVariantSelectorToUrlSearchParams(selector, params, index);
   });
   return params.toString();
 }
 
 export function decodeVariantListFromUrl(query: string): VariantSelector[] {
-    const params = query.split("&");
-    const selectors:VariantSelector[] = [];
-    params.forEach((param) => {
-      for (const k of ['aaMutations', 'nucMutations', 'pangoLineage', 'gisaidClade', 'nextstrainClade', 'variantQuery'] as const) {
-        const regex = new RegExp(k + "(.*)=(.*)")
-        const found = param.match(regex)
-        if(found && found.length >= 3){
-          const index = found[1] ? parseInt(found[1]) : 0;
-          const valueString = decodeURIComponent(found[2])
-          const value = k === 'aaMutations' || k === 'nucMutations' ? valueString.split(",") : valueString
-          let selector = selectors[index]
-          if(selector) {
-            selectors[index] = {...selector, [k]: value}
-          }else{
-            selector = {[k]: value}
-            selectors.splice(index, 0, selector);
-          }
+  const params = query.split('&');
+  const selectors: VariantSelector[] = [];
+  params.forEach(param => {
+    for (const k of [
+      'aaMutations',
+      'nucMutations',
+      'pangoLineage',
+      'gisaidClade',
+      'nextstrainClade',
+      'variantQuery',
+    ] as const) {
+      const regex = new RegExp(k + '(.*)=(.*)');
+      const found = param.match(regex);
+      if (found && found.length >= 3) {
+        const index = found[1] ? parseInt(found[1]) : 0;
+        const valueString = decodeURIComponent(found[2]);
+        const value = k === 'aaMutations' || k === 'nucMutations' ? valueString.split(',') : valueString;
+        let selector = selectors[index];
+        if (selector) {
+          selectors[index] = { ...selector, [k]: value };
+        } else {
+          selector = { [k]: value };
+          selectors.splice(index, 0, selector);
         }
       }
-    });
-    return selectors;
+    }
+  });
+  return selectors;
 }
-
 
 export function variantIsOnlyDefinedBy(
   selector: VariantSelector,

@@ -82,3 +82,27 @@ code {
 .custom-date-filter-input:hover {
   cursor: pointer;
 }
+
+/* for custom-switch-lg */
+
+.custom-switch.custom-switch-lg .custom-control-label {
+  padding-left: 2rem;
+  padding-top: 0.3rem;
+  vertical-align: middle;
+}
+
+.custom-switch.custom-switch-lg .custom-control-label::before {
+  height: 1.8rem;
+  width: calc(3rem + 0.75rem);
+  border-radius: 4rem;
+}
+
+.custom-switch.custom-switch-lg .custom-control-label::after {
+  width: calc(2rem - 4px);
+  height: calc(1.8rem - 4px);
+  border-radius: calc(3rem - (1.8rem / 2));
+}
+
+.custom-switch.custom-switch-lg .custom-control-input:checked ~ .custom-control-label::after {
+  transform: translateX(calc(2rem - 0.25rem));
+}

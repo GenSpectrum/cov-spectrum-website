@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
 import { getWHOLabel, getWHOVariantType } from '../services/who-label';
-import { DateRangePicker } from './DateRangePicker';
 import { formatVariantDisplayName, variantIsOnlyDefinedBy, VariantSelector } from '../data/VariantSelector';
 import { DateRangeSelector } from '../data/DateRangeSelector';
 
@@ -56,7 +55,6 @@ export const VariantHeader = ({ variant, titleSuffix, controls, dateRange }: Pro
             {titleSuffix}
           </h1>
           {type && <h3 className='text-gray-500 sm:mr-2'>{`variant of ${type}`}</h3>}
-          {dateRange && <DateRangePicker dateRangeSelector={dateRange} />}
         </div>
       </div>
       {resolvedFullName && <h3 className=' text-gray-500'>Alias for {resolvedFullName}</h3>}
