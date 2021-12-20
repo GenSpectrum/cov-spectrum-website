@@ -54,7 +54,7 @@ export const Chen2021FitnessResults = ({ request }: ResultsProps) => {
         </GridCell>
         <GridCell minWidth={600}>
           <NamedCard title='Absolute'>
-            <Chen2021AbsolutePlot modelData={modelData} />
+            <Chen2021AbsolutePlot modelData={modelData} request={request} />
           </NamedCard>
         </GridCell>
       </PackedGrid>
