@@ -215,7 +215,7 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
       <div className='flex'>
         <div className='flex-grow flex flex-row flex-wrap items-center'>
           <div className='md:mr-2'>
-            <CompareModeToggleSwitch handleModeChange={handleModeChange} />
+            <CompareModeToggleSwitch compareMode={compareMode} handleModeChange={handleModeChange} />
           </div>
           <DateRangePicker dateRangeSelector={dateRange!} />
         </div>
