@@ -16,6 +16,11 @@ export type ContainerProps = {
   samplingStrategy: SamplingStrategy;
 };
 
+type ChangePointFormEntry = {
+  reproductionNumberString: string;
+  dateString: string;
+};
+
 const SectionHeader = styled.h5`
   margin-top: 20px;
 `;
@@ -40,6 +45,7 @@ export const Chen2021FitnessContainer = ({
   );
   const [formPlotStartDate, setFormPlotStartDate] = useState(dateToString(paramData.plotStartDate));
   const [formPlotEndDate, setFormPlotEndDate] = useState(dateToString(paramData.plotEndDate));
+  const [changePoints, setChangePoints] = useState<ChangePointFormEntry[]>([]);
 
   useEffect(() => {
     setParamData(p => ({
@@ -58,6 +64,66 @@ export const Chen2021FitnessContainer = ({
       initialWildtypeCases: parseInt(formInitialWildtypeCases),
       plotStartDate: new Date(formPlotStartDate),
       plotEndDate: new Date(formPlotEndDate),
+      changePoints: changePoints.map(x => ({
+        reproductionNumber: parseFloat(x.reproductionNumberString),
+        date: new Date(x.dateString),
+      })),
+    });
+  };
+
+  const addChangePoint = () => {
+    setChangePoints(prev => [
+      ...prev,
+      {
+        reproductionNumberString: '1',
+        dateString: formPlotStartDate,
+      },
+    ]);
+  };
+
+  const setChangePointDate = (index: number, dateString: string) => {
+    setChangePoints(prev => {
+      const newList = [];
+      for (let i = 0; i < prev.length; i++) {
+        if (i !== index) {
+          newList.push(prev[i]);
+        } else {
+          newList.push({
+            ...prev[i],
+            dateString,
+          });
+        }
+      }
+      return newList;
+    });
+  };
+
+  const setChangePointR = (index: number, reproductionNumberString: string) => {
+    setChangePoints(prev => {
+      const newList = [];
+      for (let i = 0; i < prev.length; i++) {
+        if (i !== index) {
+          newList.push(prev[i]);
+        } else {
+          newList.push({
+            ...prev[i],
+            reproductionNumberString,
+          });
+        }
+      }
+      return newList;
+    });
+  };
+
+  const removeChangePoint = (index: number) => {
+    setChangePoints(prev => {
+      const newList = [];
+      for (let i = 0; i < prev.length; i++) {
+        if (i !== index) {
+          newList.push(prev[i]);
+        }
+      }
+      return newList;
     });
   };
 
@@ -114,8 +180,40 @@ export const Chen2021FitnessContainer = ({
               <Form.Control value={formPlotEndDate} onChange={x => setFormPlotEndDate(x.target.value)} />
             </Form.Group>
           </Form.Row>
+          <div className='font-bold'>Changes in reproduction number of the wildtype</div>
+          {changePoints.map(({ reproductionNumberString, dateString }, i) => (
+            <Form.Row>
+              <Form.Group as={Col} controlId={`changePointDate-${i}`}>
+                <Form.Label>Date</Form.Label>
+                <Form.Control value={dateString} onChange={x => setChangePointDate(i, x.target.value)} />
+              </Form.Group>
+              <Form.Group as={Col} controlId={`changePointR-${i}`}>
+                <Form.Label>Reproduction number</Form.Label>
+                <Form.Control
+                  value={reproductionNumberString}
+                  onChange={x => setChangePointR(i, x.target.value)}
+                />
+              </Form.Group>
+              <button
+                className='underline outline-none'
+                onClick={e => {
+                  e.preventDefault();
+                  removeChangePoint(i);
+                }}
+              >
+                Remove
+              </button>
+            </Form.Row>
+          ))}
         </Form>
-        <Button onClick={compute}>Compute</Button>
+        <div>
+          <button className='underline outline-none' onClick={addChangePoint}>
+            Add change point
+          </button>
+        </div>
+        <Button onClick={compute} className='mt-4'>
+          Compute
+        </Button>
       </div>
       <h1 className='ml-6 mt-8'>Results</h1>
       <Chen2021FitnessResults request={paramData} />

@@ -14,6 +14,12 @@ export type Chen2021FitnessRequest = {
   plotEndDate: Date;
   initialWildtypeCases: number;
   initialVariantCases: number;
+  changePoints?: ChangePoint[];
+};
+
+export type ChangePoint = {
+  reproductionNumber: number;
+  date: Date;
 };
 
 export const ValueWithCISchema = zod.object({
