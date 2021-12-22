@@ -30,7 +30,14 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
   const specialDateRanges: SpecialDateRange[] = ['AllTimes', 'Y2020', 'Y2021', 'Past3M', 'Past6M'];
   return (
     <Form inline>
-      <Form.Control as='select' custom id='dateRangeSelect' value={value} onChange={handleChange}>
+      <Form.Control
+        as='select'
+        custom
+        id='dateRangeSelect'
+        value={value}
+        onChange={handleChange}
+        className='rounded-l rounded-r-none'
+      >
         <option value='' disabled>
           Custom Range
         </option>

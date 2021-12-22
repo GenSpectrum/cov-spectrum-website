@@ -1,12 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react';
+import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { HeaderDateRangeSelect } from './HeaderDateRangeSelect';
 import { useExploreUrl } from '../helpers/explore-url';
 import dayjs from 'dayjs';
-import { HiArrowNarrowRight } from 'react-icons/hi';
-import ReactDatePicker from 'react-datepicker';
-import { DateRangeSelector, dateStringRegex, FixedDateRangeSelector } from '../data/DateRangeSelector';
-import { globalDateCache, UnifiedDay } from '../helpers/date-cache';
+import {
+  DateRangeSelector,
+  dateRangeStringRegex,
+  dateStringRegex,
+  FixedDateRangeSelector,
+} from '../data/DateRangeSelector';
+import { globalDateCache } from '../helpers/date-cache';
 
 interface Props {
   dateRangeSelector: DateRangeSelector;
@@ -22,135 +26,76 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
   const prevDateFrom = globalDateCache.getDayUsingDayjs(dayjs(initialStartDate));
   const prevDateTo = globalDateCache.getDayUsingDayjs(dayjs(initialEndDate));
 
-  const [startDate, setStartDate] = useState<Date>(initialStartDate);
-  const [endDate, setEndDate] = useState<Date>(initialEndDate);
-  const starDateRef = useRef<ReactDatePicker>(null);
-  const endDateRef = useRef<ReactDatePicker>(null);
+  const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([initialStartDate, initialEndDate]);
+  const [startDate, endDate] = dateRange;
+  const datePickerRef = useRef<ReactDatePicker>(null);
   const exploreUrl = useExploreUrl();
 
   useEffect(() => {
     const startDate = dateFrom ? dateFrom.dayjs.toDate() : minimumDate;
     const endDate = dateTo ? dateTo.dayjs.toDate() : today;
-    setStartDate(startDate);
-    setEndDate(endDate);
-
-    return () => {};
+    setDateRange([startDate, endDate]);
   }, [dateFrom, dateTo]);
 
   const changeDate = () => {
-    const newDateFrom = globalDateCache.getDayUsingDayjs(dayjs(startDate));
-    const newDateTo = globalDateCache.getDayUsingDayjs(dayjs(endDate));
+    if (startDate && endDate && startDate <= endDate) {
+      const newDateFrom = globalDateCache.getDayUsingDayjs(dayjs(startDate));
+      const newDateTo = globalDateCache.getDayUsingDayjs(dayjs(endDate));
 
-    if (prevDateFrom.string !== newDateFrom.string || prevDateTo.string !== newDateTo.string) {
-      exploreUrl?.setDateRange(
-        new FixedDateRangeSelector({
-          dateFrom: newDateFrom,
-          dateTo: newDateTo,
-        })
-      );
+      if (prevDateFrom.string !== newDateFrom.string || prevDateTo.string !== newDateTo.string) {
+        exploreUrl?.setDateRange(
+          new FixedDateRangeSelector({
+            dateFrom: newDateFrom,
+            dateTo: newDateTo,
+          })
+        );
+        if (datePickerRef.current?.isCalendarOpen()) {
+          datePickerRef.current?.setOpen(false);
+        }
+      }
     }
   };
 
-  const handleStartDateChange = (date: UnifiedDay) => {
-    setStartDate(date.dayjs.toDate());
-  };
-
-  const handleEndDateChange = (date: UnifiedDay) => {
-    setEndDate(date.dayjs.toDate());
-  };
-
-  const handleStartDateRaw = (event: React.FocusEvent<HTMLInputElement>) => {
-    if (event && event.target && event.target.value && dateStringRegex.test(event.target.value)) {
-      handleStartDateChange(globalDateCache.getDay(event.target.value));
+  const handleDateRangeChangeRaw = (event: React.FocusEvent<HTMLInputElement>) => {
+    if (
+      event &&
+      event.target &&
+      event.target.value &&
+      (dateStringRegex.test(event.target.value) || dateRangeStringRegex.test(event.target.value))
+    ) {
+      const range = event.target.value.split(' - ');
+      const start = range?.length > 0 ? globalDateCache.getDay(range[0]).dayjs.toDate() : null;
+      const end = range?.length > 1 ? globalDateCache.getDay(range[1]).dayjs.toDate() : null;
+      setDateRange([start, end]);
     }
   };
 
-  const handleEndDateRaw = (event: React.FocusEvent<HTMLInputElement>) => {
-    if (event && event.target && event.target.value && dateStringRegex.test(event.target.value)) {
-      handleEndDateChange(globalDateCache.getDay(event.target.value));
-    }
-  };
-
-  const handleStartDateMonthChange = (date: Date) => {
-    setStartDate(date);
-  };
-
-  const handleEndDateMonthChange = (date: Date) => {
-    setEndDate(date);
-  };
-
-  const handleStartDateSelect = (date: Date, event: React.SyntheticEvent<any> | undefined) => {
-    if (event) {
-      handleStartDateChange(globalDateCache.getDayUsingDayjs(dayjs(date)));
-      starDateRef.current?.setFocus();
-    }
-  };
-
-  const handleEndDateSelect = (date: Date, event: React.SyntheticEvent<any> | undefined) => {
-    if (event) {
-      handleEndDateChange(globalDateCache.getDayUsingDayjs(dayjs(date)));
-      endDateRef.current?.setFocus();
-    }
+  const handleDateRangeChange = (update: [Date, Date]) => {
+    setDateRange(update);
   };
 
   return (
     <>
-      <div className='flex flex-wrap '>
-        <div className='flex flex-row items-end inline-block align-middle mr-1'>
-          <HeaderDateRangeSelect exploreUrl={exploreUrl} />
-        </div>
-        <div className='flex flex-nowrap'>
-          <div className='flex flex-row items-end inline-block align-middle mr-1'>
-            <ReactDatePicker
-              ref={starDateRef}
-              enableTabLoop={false}
-              disabledKeyboardNavigation={true}
-              preventOpenOnFocus={true}
-              className='border rounded py-1.5 pl-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
-              dateFormat='yyyy-MM-dd'
-              selected={startDate}
-              onChangeRaw={handleStartDateRaw}
-              onChange={() => {}}
-              onMonthChange={handleStartDateMonthChange}
-              onSelect={handleStartDateSelect}
-              selectsStart
-              startDate={startDate}
-              endDate={endDate}
-              minDate={minimumDate}
-              maxDate={endDate}
-              calendarStartDay={1}
-              useWeekdaysShort={true}
-              onBlur={changeDate}
-              shouldCloseOnSelect={false}
-            />
-          </div>
-          <div className='flex flex-row items-center inline-block align-middle mr-1'>
-            <HiArrowNarrowRight />
-          </div>
-          <div className=' flex-row items-end inline-block align-middle mr-1'>
-            <ReactDatePicker
-              ref={endDateRef}
-              enableTabLoop={false}
-              disabledKeyboardNavigation={true}
-              preventOpenOnFocus={true}
-              className='border rounded py-1.5 pl-3 w-28 focus:outline-none focus:ring focus:border-blue-200'
-              dateFormat='yyyy-MM-dd'
-              selected={endDate}
-              onChangeRaw={handleEndDateRaw}
-              onChange={() => {}}
-              onMonthChange={handleEndDateMonthChange}
-              onSelect={handleEndDateSelect}
-              selectsEnd
-              startDate={startDate}
-              endDate={endDate}
-              minDate={startDate}
-              calendarStartDay={1}
-              useWeekdaysShort={true}
-              onBlur={changeDate}
-              shouldCloseOnSelect={false}
-            />
-          </div>
-        </div>
+      <div className='w-full flex flex-row items-center'>
+        <HeaderDateRangeSelect exploreUrl={exploreUrl} />
+        <ReactDatePicker
+          ref={datePickerRef}
+          className='border rounded py-1.5 px-1.5 focus:outline-none focus:ring focus:border-blue-200 rounded-l-none border-left-0'
+          dateFormat='yyyy-MM-dd'
+          selectsRange={true}
+          startDate={startDate}
+          endDate={endDate}
+          minDate={minimumDate}
+          onChangeRaw={handleDateRangeChangeRaw}
+          onChange={handleDateRangeChange}
+          calendarStartDay={1}
+          useWeekdaysShort={true}
+          disabledKeyboardNavigation={true}
+          onBlur={changeDate}
+          onKeyDown={changeDate}
+          shouldCloseOnSelect={false}
+          onClickOutside={changeDate}
+        />
       </div>
     </>
   );

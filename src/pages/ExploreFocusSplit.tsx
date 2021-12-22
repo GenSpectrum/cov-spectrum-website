@@ -28,6 +28,8 @@ import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector
 import { isEqual } from 'lodash';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 import { VariantSearch } from '../components/VariantSearch';
+import { DateRangePicker } from '../components/DateRangePicker';
+import { InternalLink } from '../components/InternalLink';
 
 interface Props {
   isSmallScreen: boolean;
@@ -157,8 +159,21 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
 
   return makeLayout(
     <>
-      <div id='variant-search-bar'>
-        <VariantSearch onVariantSelect={setVariant!} currentSelection={variant} isSimple={isSmallScreen} />
+      {!isSmallScreen && (
+        <div className='text-sm mb-2'>
+          <p>
+            Search for pango lineages, amino acid mutations, and nucleotide mutations (
+            <InternalLink path='/about#faq-search-variants'>see documentation</InternalLink>):
+          </p>
+        </div>
+      )}
+      <div id='variant-search-bar' className='flex flex-row flex-wrap m-1'>
+        <div className='m-1'>
+          <DateRangePicker dateRangeSelector={dateRange!} />
+        </div>
+        <div className='m-1 flex-grow'>
+          <VariantSearch onVariantSelect={setVariant!} currentSelection={variant} isSimple={isSmallScreen} />
+        </div>
       </div>
       {variantSelector && isEqual(variant, variantSelector.variant) && (
         <VariantHeader
