@@ -43,7 +43,6 @@ export const ExplorePage = ({
   isSmallExplore,
   isLandingPage = false,
 }: Props) => {
-  const isWideLandingPage = !isSmallExplore && isLandingPage;
   const exploreUrl = useExploreUrl();
   if (!exploreUrl) {
     return null;
