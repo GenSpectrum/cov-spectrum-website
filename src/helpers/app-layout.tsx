@@ -46,11 +46,11 @@ export const SplitParentWrapper = ({ children }: { children: React.ReactNode }) 
 };
 
 export const SplitExploreWrapper = ({ children }: { children: React.ReactNode }) => {
-  return <div className='px-2 md:px-4 lg:col-span-2 2xl:col-span-1 overflow-auto'>{children}</div>;
+  return <div className='px-2 py-2 md:px-4 lg:col-span-2 2xl:col-span-1'>{children}</div>;
 };
 
 export const SplitFocusWrapper = ({ children }: { children: React.ReactNode }) => {
-  return <div className='px-2 md:px-4 lg:col-span-3 overflow-auto'>{children}</div>;
+  return <div className='px-2 py-2 md:px-4 lg:col-span-3'>{children}</div>;
 };
 
 export const ScrollableFullContentWrapper = ({ children }: { children: React.ReactNode }) => {

@@ -69,6 +69,7 @@ export const ExplorePage = ({
                 wholeDateCountSampleDataset={wholeDateCountSampleDataset}
                 variantSelector={selection}
                 isHorizontal={false}
+                isLandingPage={isLandingPage}
               />
             </div>
             <div className='p-2'>
@@ -105,19 +106,13 @@ export const ExplorePage = ({
         </div>
       ) : (
         <>
-          <div id='explore-search-bar' className={`${isWideLandingPage ? 'mt-8' : 'mt-4'}`}>
-            <VariantSearch
-              onVariantSelect={onVariantSelect}
-              currentSelection={selection}
-              isSimple={isSmallExplore}
-            />
-          </div>
           <div id='explore-selectors'>
             <KnownVariantsList
               onVariantSelect={onVariantSelect}
               wholeDateCountSampleDataset={wholeDateCountSampleDataset}
               variantSelector={selection}
               isHorizontal={isSmallExplore}
+              isLandingPage={isLandingPage}
             />
             {!isSmallExplore ? (
               <div className='w-full h-full'>

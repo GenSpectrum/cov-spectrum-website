@@ -27,6 +27,7 @@ import { VariantHeader } from '../components/VariantHeader';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { isEqual } from 'lodash';
 import { SamplingStrategy } from '../data/SamplingStrategy';
+import { VariantSearch } from '../components/VariantSearch';
 
 interface Props {
   isSmallScreen: boolean;
@@ -156,6 +157,9 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
 
   return makeLayout(
     <>
+      <div id='variant-search-bar'>
+        <VariantSearch onVariantSelect={setVariant!} currentSelection={variant} isSimple={isSmallScreen} />
+      </div>
       {variantSelector && isEqual(variant, variantSelector.variant) && (
         <VariantHeader
           dateRange={variantSelector.dateRange!} // TODO is date range always available?

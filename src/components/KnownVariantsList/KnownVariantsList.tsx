@@ -136,15 +136,21 @@ export function convertKnownVariantChartData({
 const Grid = ({
   children,
   isHorizontal,
+  isLandingPage,
 }: {
   children: JSX.Element[] | JSX.Element;
   isHorizontal: boolean;
+  isLandingPage: boolean;
 }) => {
   return (
     <div className={`w-full ${isHorizontal ? 'overflow-x-scroll' : ''}`}>
       <div
         className={`w-full grid gap-x-2 md:gap-2 ${
-          isHorizontal ? 'w-max grid-flow-col overflow-hidden auto-rows-min auto-cols-min' : 'grid-cols-2'
+          isHorizontal
+            ? 'w-max grid-flow-col overflow-hidden auto-rows-min auto-cols-min'
+            : isLandingPage
+            ? 'grid-cols-2'
+            : 'grid-cols-1'
         }`}
       >
         {children}
@@ -158,6 +164,7 @@ interface Props {
   variantSelector: VariantSelector | undefined;
   wholeDateCountSampleDataset: DateCountSampleDataset;
   isHorizontal: boolean;
+  isLandingPage: boolean;
 }
 
 /**
@@ -172,13 +179,18 @@ export const KnownVariantsList = ({
   variantSelector,
   wholeDateCountSampleDataset,
   isHorizontal = false,
+  isLandingPage,
 }: Props) => {
   const [selectedVariantList, setSelectedVariantList] = useState(VARIANT_LISTS[0].name);
   const [chartData, setChartData] = useState<KnownVariantWithChartData[] | undefined>(undefined);
 
   const KnownVariantLoader = () => {
     const loaders = getLoadVariantCardLoaders();
-    return <Grid isHorizontal={isHorizontal}>{loaders}</Grid>;
+    return (
+      <Grid isHorizontal={isHorizontal} isLandingPage={isLandingPage}>
+        {loaders}
+      </Grid>
+    );
   };
 
   const pangoCountDataset = useQuery(
@@ -252,7 +264,7 @@ export const KnownVariantsList = ({
         selected={selectedVariantList}
         onSelect={setSelectedVariantList}
       />
-      <Grid isHorizontal={isHorizontal}>
+      <Grid isHorizontal={isHorizontal} isLandingPage={isLandingPage}>
         {chartData.map(({ selector, chartData, recentProportion }) => (
           <div className={`${isHorizontal && 'h-full w-36'}`}>
             <KnownVariantCard
