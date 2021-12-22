@@ -8,7 +8,7 @@ import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
 import { isValidPangoLineageQuery, VariantSelector } from '../data/VariantSelector';
 import { isValidNucMutation } from '../helpers/nuc-mutation';
 import { useQuery } from '../helpers/query-hook';
-import { InternalLink } from './InternalLink';
+// import { InternalLink } from './InternalLink';
 import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 import Form from 'react-bootstrap/esm/Form';
 import { SamplingStrategy } from '../data/SamplingStrategy';
@@ -65,7 +65,7 @@ type Props = {
   isSimple: boolean;
 };
 
-export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = false }: Props) => {
+export const VariantSearch = ({ onVariantSelect, currentSelection }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<SearchOption[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
@@ -278,15 +278,6 @@ export const VariantSearch = ({ onVariantSelect, currentSelection, isSimple = fa
 
   return (
     <div>
-      {!isSimple && (
-        <div className='text-sm mb-2'>
-          <p>
-            Search for pango lineages, amino acid mutations, and nucleotide mutations (
-            <InternalLink path='/about#faq-search-variants'>see documentation</InternalLink>):
-          </p>
-        </div>
-      )}
-
       <form
         className='w-full flex flex-row items-center'
         onSubmit={e => {
