@@ -1,0 +1,344 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`<VariantTimeDistributionBarChart> renders correctly 1`] = `
+<div
+  className="relative h-full"
+>
+  <div
+    className="flex flex-col h-full w-full"
+    id="chart-and-metrics-Proportion of all samples sequenced on week 50, 2021 "
+  >
+    <h3
+      className="my-0 pb-4 pr-10 pt-0 text-gray-500"
+      id="chart-title-Proportion of all samples sequenced on week 50, 2021 "
+    >
+      Proportion of all samples sequenced on week 50, 2021 
+    </h3>
+    <div
+      className="flex flex-col lg:flex-row h-full"
+    >
+      <div
+        className="w-full h-full"
+      >
+        <div
+          className="recharts-responsive-container"
+          style={
+            Object {
+              "height": "100%",
+              "maxHeight": undefined,
+              "minHeight": undefined,
+              "minWidth": undefined,
+              "width": "100%",
+            }
+          }
+        />
+      </div>
+      <div
+        className="pl-2 pt-1 flex flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
+      >
+        <div
+          className="flex flex-col justify-end w-full pr-1 mb-2 overflow-hidden h-full md:w-40"
+          id="metric-with-tooltip"
+        >
+          <div
+            data-for="metric-tooltip-Proportion"
+            data-tip="Proportion relative to all samples collected"
+          >
+            <div
+              className="flex w-full"
+            >
+              <div
+                className="w-auto grow-0 text-3xl md:text-5xl"
+                style={
+                  Object {
+                    "color": "#1F407A",
+                  }
+                }
+              >
+                9
+                %
+              </div>
+              <div
+                className="sc-bdfBwQ kGXcMt self-end"
+              />
+            </div>
+            <div
+              className="flex text-base text-gray-400 h-7 justify-start"
+              id="metric-title"
+            >
+              <p
+                className="w-auto overflow-clip"
+              >
+                Proportion 
+              </p>
+              <div
+                className="flex items-center pl-1 grow fill-current text-gray-600"
+                id="info-wrapper"
+              >
+                <svg
+                  fill="currentColor"
+                  height="1em"
+                  stroke="currentColor"
+                  strokeWidth="0"
+                  style={
+                    Object {
+                      "color": undefined,
+                    }
+                  }
+                  viewBox="0 0 24 24"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 6C9.831 6 8.066 7.765 8.066 9.934h2C10.066 8.867 10.934 8 12 8s1.934.867 1.934 1.934c0 .598-.481 1.032-1.216 1.626-.255.207-.496.404-.691.599C11.029 13.156 11 14.215 11 14.333V15h2l-.001-.633c.001-.016.033-.386.441-.793.15-.15.339-.3.535-.458.779-.631 1.958-1.584 1.958-3.182C15.934 7.765 14.169 6 12 6zM11 16H13V18H11z"
+                  />
+                  <path
+                    d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div
+            className="__react_component_tooltip t***masked*** place-top type-dark"
+            data-id="tooltip"
+            id="metric-tooltip-Proportion"
+          >
+            <style
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "
+  	.t***masked*** {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t***masked***.place-top {
+        margin-top: -10px;
+    }
+    .t***masked***.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t***masked***.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t***masked***.place-bottom {
+        margin-top: 10px;
+    }
+    .t***masked***.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t***masked***.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t***masked***.place-left {
+        margin-left: -10px;
+    }
+    .t***masked***.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t***masked***.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t***masked***.place-right {
+        margin-left: 10px;
+    }
+    .t***masked***.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t***masked***.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  ",
+                }
+              }
+            />
+          </div>
+        </div>
+        <div
+          className="flex flex-col justify-end w-full pr-1 mb-2 overflow-hidden h-full md:w-40"
+          id="metric-with-tooltip"
+        >
+          <div
+            data-for="metric-tooltip-Samples"
+            data-tip="Number of samples of the variant collected in this time frame"
+          >
+            <div
+              className="flex w-full"
+            >
+              <div
+                className="w-auto grow-0 text-3xl md:text-5xl"
+                style={
+                  Object {
+                    "color": "#7f8c8d",
+                  }
+                }
+              >
+                30
+              </div>
+              <div
+                className="sc-bdfBwQ kGXcMt self-end"
+              />
+            </div>
+            <div
+              className="flex text-base text-gray-400 h-7 justify-start"
+              id="metric-title"
+            >
+              <p
+                className="w-auto overflow-clip"
+              >
+                Samples 
+              </p>
+              <div
+                className="flex items-center pl-1 grow fill-current text-gray-600"
+                id="info-wrapper"
+              >
+                <svg
+                  fill="currentColor"
+                  height="1em"
+                  stroke="currentColor"
+                  strokeWidth="0"
+                  style={
+                    Object {
+                      "color": undefined,
+                    }
+                  }
+                  viewBox="0 0 24 24"
+                  width="1em"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M12 6C9.831 6 8.066 7.765 8.066 9.934h2C10.066 8.867 10.934 8 12 8s1.934.867 1.934 1.934c0 .598-.481 1.032-1.216 1.626-.255.207-.496.404-.691.599C11.029 13.156 11 14.215 11 14.333V15h2l-.001-.633c.001-.016.033-.386.441-.793.15-.15.339-.3.535-.458.779-.631 1.958-1.584 1.958-3.182C15.934 7.765 14.169 6 12 6zM11 16H13V18H11z"
+                  />
+                  <path
+                    d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div
+            className="__react_component_tooltip t***masked*** place-top type-dark"
+            data-id="tooltip"
+            id="metric-tooltip-Samples"
+          >
+            <style
+              dangerouslySetInnerHTML={
+                Object {
+                  "__html": "
+  	.t***masked*** {
+	    color: #fff;
+	    background: #222;
+	    border: 1px solid transparent;
+  	}
+
+  	.t***masked***.place-top {
+        margin-top: -10px;
+    }
+    .t***masked***.place-top::before {
+        border-top: 8px solid transparent;
+    }
+    .t***masked***.place-top::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        bottom: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-top-color: #222;
+        border-top-style: solid;
+        border-top-width: 6px;
+    }
+
+    .t***masked***.place-bottom {
+        margin-top: 10px;
+    }
+    .t***masked***.place-bottom::before {
+        border-bottom: 8px solid transparent;
+    }
+    .t***masked***.place-bottom::after {
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        top: -6px;
+        left: 50%;
+        margin-left: -8px;
+        border-bottom-color: #222;
+        border-bottom-style: solid;
+        border-bottom-width: 6px;
+    }
+
+    .t***masked***.place-left {
+        margin-left: -10px;
+    }
+    .t***masked***.place-left::before {
+        border-left: 8px solid transparent;
+    }
+    .t***masked***.place-left::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        right: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-left-color: #222;
+        border-left-style: solid;
+        border-left-width: 6px;
+    }
+
+    .t***masked***.place-right {
+        margin-left: 10px;
+    }
+    .t***masked***.place-right::before {
+        border-right: 8px solid transparent;
+    }
+    .t***masked***.place-right::after {
+        border-top: 5px solid transparent;
+        border-bottom: 5px solid transparent;
+        left: -6px;
+        top: 50%;
+        margin-top: -4px;
+        border-right-color: #222;
+        border-right-style: solid;
+        border-right-width: 6px;
+    }
+  ",
+                }
+              }
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
