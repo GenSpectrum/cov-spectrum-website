@@ -1,10 +1,10 @@
-import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
-import { SamplingStrategy } from '../data/SamplingStrategy';
-import { SpecialDateRangeSelector } from '../data/DateRangeSelector';
-import { globalDateCache } from './date-cache';
-import { DivisionCountSampleDataset } from '../data/sample/DivisionCountSampleDataset';
-import { AgeCountSampleDataset } from '../data/sample/AgeCountSampleDataset';
-import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
+import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
+import { SamplingStrategy } from '../../data/SamplingStrategy';
+import { SpecialDateRangeSelector } from '../../data/DateRangeSelector';
+import { globalDateCache } from '../date-cache';
+import { DivisionCountSampleDataset } from '../../data/sample/DivisionCountSampleDataset';
+import { AgeCountSampleDataset } from '../../data/sample/AgeCountSampleDataset';
+import { CountryDateCountSampleDataset } from '../../data/sample/CountryDateCountSampleDataset';
 
 // Based on /explore/Germany/AllSamples/Past6M/variants?pangoLineage=B.1.1.529* from 2021-12-26
 export const dataset0: {

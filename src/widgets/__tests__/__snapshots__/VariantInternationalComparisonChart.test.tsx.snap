@@ -276,20 +276,7 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
   >
     <div
       className="sc-dlfnbm bcBhUh"
-    >
-      <div
-        className="recharts-responsive-container"
-        style={
-          Object {
-            "height": "100%",
-            "maxHeight": undefined,
-            "minHeight": undefined,
-            "minWidth": undefined,
-            "width": "100%",
-          }
-        }
-      />
-    </div>
+    />
   </div>
 </div>
 `;
