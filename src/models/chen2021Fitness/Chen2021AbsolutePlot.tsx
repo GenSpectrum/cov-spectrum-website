@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { TitleWrapper } from '../../widgets/common';
 import { Plot } from '../../components/Plot';
 import { ChangePoint, Chen2021FitnessRequest, Chen2021FitnessResponse } from './chen2021Fitness-types';
+import { parse } from 'json2csv';
 
 interface Props {
   modelData: Chen2021FitnessResponse;
@@ -140,8 +141,33 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
     return { variantCases, variantCasesLower, variantCasesUpper, wildtypeCases };
   }, [modelData, request]);
 
+  const downloadData = () => {
+    const data = [];
+    for (let i = 0; i < modelData.plotAbsoluteNumbers.t.length; i++) {
+      data.push({
+        date: modelData.plotAbsoluteNumbers.t[i],
+        wildtype: caseNumbers.wildtypeCases[i],
+        variant: caseNumbers.variantCases[i],
+        variantUpper: caseNumbers.variantCasesUpper[i],
+        variantLower: caseNumbers.variantCasesLower[i],
+      });
+    }
+    const csv = parse(data);
+    // Download as file
+    const element = document.createElement('a');
+    const file = new Blob([csv], { type: 'text/csv' });
+    element.href = URL.createObjectURL(file);
+    element.download = 'estimated_absolute_cases.csv';
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
+  };
+
   return (
     <>
+      <button onClick={downloadData} className='hover:underline outline-none'>
+        Download data
+      </button>
       <TitleWrapper id='graph_title'>Changes in absolute case numbers through time**</TitleWrapper>
       <Plot
         style={{ width: '100%', height: '90%' }}
