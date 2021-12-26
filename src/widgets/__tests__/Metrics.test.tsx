@@ -1,7 +1,7 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
-import Metric from './Metrics';
-import { maskUuid } from '../helpers/snapshot-tests-masking';
+import Metric from '../Metrics';
+import { maskUuid } from '../../helpers/snapshot-tests-masking';
 
 describe('<Metric>', () => {
   it('renders correctly', () => {
