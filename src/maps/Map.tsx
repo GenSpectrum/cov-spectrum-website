@@ -204,8 +204,6 @@ const Map = ({ data: inputData, country }: Props) => {
     },
   ];
 
-  console.log('country is.', country);
-
   return (
     <ChartAndMetrics
       metrics={metrics}

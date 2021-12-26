@@ -27,6 +27,7 @@
     "@types/react-router-dom": "^5.1.7",
     "@types/react-select": "^4.0.15",
     "@types/react-simple-maps": "^1.0.3",
+    "@types/react-test-renderer": "^17.0.1",
     "@types/react-tooltip": "^4.2.4",
     "@types/recharts": "^1.8.19",
     "@types/styled-components": "^5.1.7",
@@ -59,6 +60,7 @@
     "react-scripts": "4.0.1",
     "react-select": "^4.3.0",
     "react-simple-maps": "^2.3.0",
+    "react-test-renderer": "^17.0.1",
     "react-tooltip": "^4.2.14",
     "recharts": "^2.0.8",
     "styled-components": "^5.2.1",
@@ -119,10 +121,12 @@
     "autoprefixer": "^9.8.6",
     "eslint": "^7.32.0",
     "eslint-plugin-unused-imports": "^1.1.4",
+    "jest-canvas-mock": "^2.3.1",
     "jest-puppeteer": "^6.0.0",
     "postcss": "^7.0.35",
     "prettier": "^2.2.1",
     "puppeteer": "^10.4.0",
+    "resize-observer-polyfill": "^1.5.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2"
   }
 }

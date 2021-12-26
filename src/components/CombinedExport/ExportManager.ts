@@ -1,4 +1,5 @@
 import React from 'react';
+import { env } from '../../env';
 
 export interface RegisteredExport {
   label: string;
@@ -41,4 +42,4 @@ export class ExportManager {
   }
 }
 
-export const ExportManagerContext = React.createContext(new ExportManager(true));
+export const ExportManagerContext = React.createContext(new ExportManager(!env.isTesting));
