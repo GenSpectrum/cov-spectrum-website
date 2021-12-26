@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<VariantTimeDistributionLineChart> renders correctly 1`] = `
+exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
 <div
   className="relative h-full"
 >
@@ -11,6 +11,16 @@ exports[`<VariantTimeDistributionLineChart> renders correctly 1`] = `
       className="my-0 pb-4 pr-10 pt-0 text-gray-500"
     >
       Proportion of all samples
+       
+      from 
+      <b>
+        2021-12-19
+      </b>
+       to
+       
+      <b>
+        2021-12-25
+      </b>
     </h3>
     <div
       className="sc-dlfnbm kFNgoS"
@@ -53,7 +63,7 @@ exports[`<VariantTimeDistributionLineChart> renders correctly 1`] = `
                   }
                 }
               >
-                NA
+                0.0%
               </div>
               <div
                 className="sc-bdfBwQ kGXcMt self-end"
@@ -203,7 +213,7 @@ exports[`<VariantTimeDistributionLineChart> renders correctly 1`] = `
                   }
                 }
               >
-                NA
+                0.0-100.0%
               </div>
               <div
                 className="sc-bdfBwQ kGXcMt self-end"

@@ -4,15 +4,18 @@ import renderer, { act } from 'react-test-renderer';
 import { maskUuid } from '../helpers/snapshot-tests-masking';
 import React from 'react';
 import { dataset0 } from '../helpers/snapshot-tests-data';
-import VariantTimeDistributionLineChart from './VariantTimeDistributionLineChart';
+import { VariantDivisionDistributionChart } from './VariantDivisionDistributionChart';
 
 window.ResizeObserver = ResizeObserver;
 
-describe('<VariantTimeDistributionLineChart>', () => {
+describe('<VariantDivisionDistributionChart>', () => {
   it('dataset0 renders correctly', async () => {
-    const { variantDateCount, wholeDateCount } = dataset0;
+    const { variantDivisionCount, wholeDivisionCount } = dataset0;
     const tree = renderer.create(
-      <VariantTimeDistributionLineChart variantSampleSet={variantDateCount} wholeSampleSet={wholeDateCount} />
+      <VariantDivisionDistributionChart
+        variantSampleSet={variantDivisionCount}
+        wholeSampleSet={wholeDivisionCount}
+      />
     );
     await act(async () => {});
     const snapshot = tree.toJSON();

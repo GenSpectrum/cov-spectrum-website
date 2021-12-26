@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<VariantTimeDistributionBarChart> renders correctly 1`] = `
+exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
 <div
   className="relative h-full"
 >
