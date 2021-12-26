@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      REACT_APP_IS_TESTING: true
     strategy:
       matrix:
         node-version: [15.x]
