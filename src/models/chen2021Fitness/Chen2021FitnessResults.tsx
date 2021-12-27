@@ -35,11 +35,20 @@ export const Chen2021FitnessResults = ({ request }: ResultsProps) => {
   return (
     <>
       <Info title=''>
-        <div>Logistic growth rate a: {modelData && formatValueWithCI(modelData.params.a)}</div>
+        <div>Logistic growth rate a: {formatValueWithCI(modelData.params.a)}</div>
         {/*TODO t_0 is currently difficult (or impossible?) to interpret.*/}
         {/*<div>Sigmoid's midpoint t_0: {modelData && formatValueWithCI(modelData.params.t0, 0)}</div>*/}
-        <div>Relative growth advantage f_c: {modelData && formatValueWithCI(modelData.params.fc)}</div>
-        <div>Relative growth advantage f_d: {modelData && formatValueWithCI(modelData.params.fd)}</div>
+        <div>
+          Relative growth advantage f<sub>c</sub>: {formatValueWithCI(modelData.params.fc)}
+        </div>
+        {modelData.changePoints?.map(({ t, fc }) => (
+          <>
+            Relative growth advantage f<sub>c</sub> after {t}: {formatValueWithCI(fc)}
+          </>
+        ))}
+        <div>
+          Relative growth advantage f<sub>d</sub>: {formatValueWithCI(modelData.params.fd)}
+        </div>
       </Info>
 
       <PackedGrid maxColumns={2}>

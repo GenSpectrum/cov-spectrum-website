@@ -64,6 +64,15 @@ const getData = async (
   addLocationSelectorToUrlSearchParams(params.location, urlSearchParams);
   addVariantSelectorToUrlSearchParams(params.variant, urlSearchParams);
   addSamplingStrategyToUrlSearchParams(params.samplingStrategy, urlSearchParams);
+  if (params.changePoints && params.changePoints.length) {
+    const changePointsEncoded = params.changePoints
+      .map(
+        ({ date, reproductionNumberWildtype }) =>
+          date.toISOString().substring(0, 10) + ':' + reproductionNumberWildtype
+      )
+      .join(',');
+    urlSearchParams.set('changePoints', changePointsEncoded);
+  }
   const url = `/computed/model/chen2021Fitness?` + urlSearchParams.toString();
   const response = await get(url, signal);
   if (response.status !== 200) {

@@ -1,7 +1,13 @@
 import React, { useMemo } from 'react';
 import { TitleWrapper } from '../../widgets/common';
 import { Plot } from '../../components/Plot';
-import { ChangePoint, Chen2021FitnessRequest, Chen2021FitnessResponse } from './chen2021Fitness-types';
+import {
+  ChangePoint,
+  ChangePointWithFc,
+  Chen2021FitnessRequest,
+  Chen2021FitnessResponse,
+  ValueWithCI,
+} from './chen2021Fitness-types';
 import { parse } from 'json2csv';
 
 interface Props {
@@ -62,13 +68,13 @@ function calculateCases(
       days: number;
     }[] = [];
     let daysOffset = d;
-    for (let { date, reproductionNumber } of filteredChangePoints) {
+    for (let { date, reproductionNumberWildtype } of filteredChangePoints) {
       if (d < date) {
         continue;
       }
       const appliedDays = Math.min(daysBetween(daysOffset, date), daysBetween(daysOffset, startDate));
       appliedChangePoints.push({
-        r: reproductionNumber,
+        r: reproductionNumberWildtype,
         days: appliedDays,
       });
       daysOffset = date;
@@ -82,10 +88,13 @@ function calculateCases(
   });
 }
 
-function transformChangePoints(changePointWildtype: ChangePoint[], fc: number): ChangePoint[] {
+function transformChangePoints(
+  changePointWildtype: ChangePointWithFc[],
+  field: 'value' | 'ciLower' | 'ciUpper'
+): ChangePoint[] {
   return changePointWildtype.map(c => ({
     date: c.date,
-    reproductionNumber: (1 + fc) * c.reproductionNumber,
+    reproductionNumberWildtype: (1 + c.fc[field]) * c.reproductionNumberWildtype,
   }));
 }
 
@@ -94,17 +103,34 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
     // Prepare and transform the change points of the reproduction number
     const changePointsWildtype = [
       {
-        reproductionNumber: request.reproductionNumberWildtype,
         date: request.plotStartDate,
+        reproductionNumberWildtype: request.reproductionNumberWildtype,
+        fc: modelData.params.fc,
       },
     ];
     if (request.changePoints) {
-      changePointsWildtype.push(...request.changePoints);
+      const fcChangePointMap = new Map<string, ValueWithCI>(); // date string -> fc
+      modelData.changePoints?.forEach(({ t, fc }) => {
+        fcChangePointMap.set(t, fc);
+      });
+      for (let { date } of request.changePoints) {
+        const fc = fcChangePointMap.get(date.toISOString().substring(0, 10));
+        if (!fc) {
+          return undefined;
+        }
+      }
+      changePointsWildtype.push(
+        ...request.changePoints.map(({ date, reproductionNumberWildtype }) => ({
+          date,
+          reproductionNumberWildtype,
+          fc: fcChangePointMap.get(date.toISOString().substring(0, 10))!,
+        }))
+      );
     }
     const changePointsVariant = {
-      value: transformChangePoints(changePointsWildtype, modelData.params.fc.value),
-      ciLower: transformChangePoints(changePointsWildtype, modelData.params.fc.ciLower),
-      ciUpper: transformChangePoints(changePointsWildtype, modelData.params.fc.ciUpper),
+      value: transformChangePoints(changePointsWildtype, 'value'),
+      ciLower: transformChangePoints(changePointsWildtype, 'ciLower'),
+      ciUpper: transformChangePoints(changePointsWildtype, 'ciUpper'),
     };
 
     // Calculate case numbers
@@ -140,6 +166,10 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
 
     return { variantCases, variantCasesLower, variantCasesUpper, wildtypeCases };
   }, [modelData, request]);
+
+  if (!caseNumbers) {
+    return <></>;
+  }
 
   const downloadData = () => {
     const data = [];
