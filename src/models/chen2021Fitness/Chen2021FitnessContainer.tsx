@@ -65,7 +65,7 @@ export const Chen2021FitnessContainer = ({
       plotStartDate: new Date(formPlotStartDate),
       plotEndDate: new Date(formPlotEndDate),
       changePoints: changePoints.map(x => ({
-        reproductionNumber: parseFloat(x.reproductionNumberString),
+        reproductionNumberWildtype: parseFloat(x.reproductionNumberString),
         date: new Date(x.dateString),
       })),
     });

@@ -17,15 +17,26 @@ export type Chen2021FitnessRequest = {
   changePoints?: ChangePoint[];
 };
 
-export type ChangePoint = {
-  reproductionNumber: number;
-  date: Date;
-};
-
 export const ValueWithCISchema = zod.object({
   value: zod.number(),
   ciLower: zod.number(),
   ciUpper: zod.number(),
+});
+
+export type ChangePoint = {
+  reproductionNumberWildtype: number;
+  date: Date;
+};
+
+export type ChangePointWithFc = {
+  reproductionNumberWildtype: number;
+  date: Date;
+  fc: ValueWithCI;
+};
+
+export const ChangePointResultSchema = zod.object({
+  t: zod.string(),
+  fc: ValueWithCISchema,
 });
 
 export const Chen2021FitnessResponseSchema = zod.object({
@@ -52,7 +63,9 @@ export const Chen2021FitnessResponseSchema = zod.object({
     ciLower: zod.array(zod.number()),
     ciUpper: zod.array(zod.number()),
   }),
+  changePoints: zod.array(ChangePointResultSchema).nullish(),
 });
 
 export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
 export type Chen2021FitnessResponse = zod.infer<typeof Chen2021FitnessResponseSchema>;
+export type ChangePointResult = zod.infer<typeof ChangePointResultSchema>;
