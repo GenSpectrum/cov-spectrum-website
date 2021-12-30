@@ -46,13 +46,15 @@ export const AboutPage = () => {
         </ExternalLink>{' '}
         or send an email to <EmailLink email='chaoran.chen@bsse.ethz.ch' />.
       </p>
-      <p>If you would like to reference CoV-Spectrum in scientific works, please cite our pre-print:</p>
+      <p>If you would like to reference CoV-Spectrum in scientific works, please cite our publication:</p>
       <div className='p-4 mt-4 mb-6 bg-gray-100 rounded-xl'>
-        Chen, C., Nadeau, S., Yared, M., Voinov, P., Ning, X., Roemer, C. & Stadler, T.:{' '}
-        <ExternalLink url='https://arxiv.org/abs/2106.08106'>
-          CoV-Spectrum: Analysis of globally shared SARS-CoV-2 data to Identify and Characterize New Variants
-        </ExternalLink>{' '}
-        (2021); arXiv: 2106.08106.
+        Chen, C., Nadeau, S., Yared, M., Voinov, P., Ning, X., Roemer, C. & Stadler, T. "CoV-Spectrum:
+        Analysis of globally shared SARS-CoV-2 data to Identify and Characterize New Variants" Bioinformatics
+        (2021); doi:{' '}
+        <ExternalLink url='https://doi.org/10.1093/bioinformatics/btab856'>
+          10.1093/bioinformatics/btab856
+        </ExternalLink>
+        .
       </div>
       <h1 id='faq'>FAQ</h1>
       <Question title='What is a variant?' id='faq-variant'>
