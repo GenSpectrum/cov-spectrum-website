@@ -9,13 +9,10 @@ import { CoVariantsIntegration } from '../services/external-integrations/CoVaria
 import { useState } from 'react';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { FaDownload } from 'react-icons/fa';
-import { ContributorsData } from '../data/ContributorsDataset';
-import { parse } from 'json2csv';
 import { UsherIntegration } from '../services/external-integrations/UsherIntegration';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
-import { SampleDetailsData } from '../data/SampleDetailsDataset';
-import { serializeSampleDetailsEntryToRaw } from '../data/SampleDetailsEntry';
 import { TaxoniumIntegration } from '../services/external-integrations/TaxoniumIntegration';
+import { getCsvLinkToContributors, getCsvLinkToDetails } from '../data/api-lapis';
 
 export interface Props {
   selector: LocationDateVariantSelector;
@@ -40,49 +37,22 @@ export const FocusVariantHeaderControls = React.memo(
       setShowDropdown(false);
     };
 
-    const [isDownloadingSequenceList, setIsDownloadingSequenceList] = useState(false);
     const downloadSequenceList = async () => {
-      setIsDownloadingSequenceList(true);
-
-      let csv;
+      let link;
       // If the open version is used, all the metadata will be downloaded. If GISAID is used, only the contributors
       // will be downloaded.
       if (sequenceDataSource === 'open') {
-        const detailsDataset = await SampleDetailsData.fromApi(selector);
-        csv = parse(detailsDataset.payload.map(serializeSampleDetailsEntryToRaw));
+        link = await getCsvLinkToDetails(selector);
       } else {
-        const contributorsDataset = await ContributorsData.fromApi(selector);
-        csv = parse(contributorsDataset.payload);
+        link = await getCsvLinkToContributors(selector);
       }
-
-      // Download as file
-      const element = document.createElement('a');
-      const file = new Blob([csv], { type: 'text/csv' });
-      element.href = URL.createObjectURL(file);
-      element.download = 'sequences.csv';
-      document.body.appendChild(element);
-      element.click();
-      document.body.removeChild(element);
-
-      setIsDownloadingSequenceList(false);
+      window.open(link, '_blank');
     };
 
     return (
       <>
-        <Button
-          className='mr-2 mt-3'
-          size='sm'
-          variant='secondary'
-          onClick={downloadSequenceList}
-          disabled={isDownloadingSequenceList}
-        >
-          {!isDownloadingSequenceList ? (
-            <>
-              Sequence list <FaDownload className='inline-block ml-1' />
-            </>
-          ) : (
-            <>Downloading...</>
-          )}
+        <Button className='mr-2 mt-3' size='sm' variant='secondary' onClick={downloadSequenceList}>
+          Sequence list <FaDownload className='inline-block ml-1' />
         </Button>
         <DropdownButton
           as={ButtonGroup}

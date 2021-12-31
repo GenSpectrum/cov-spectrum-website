@@ -19,8 +19,6 @@ import { MutationProportionEntry } from './MutationProportionEntry';
 import dayjs from 'dayjs';
 import { LocationService } from '../services/LocationService';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
-import { ContributorsEntry } from './ContributorsEntry';
-import { parseSampleDetailsEntry, SampleDetailsEntry, SampleDetailsEntryRaw } from './SampleDetailsEntry';
 import { OrderAndLimitConfig } from './OrderAndLimitConfig';
 import { addSamplingStrategyToUrlSearchParams } from './SamplingStrategy';
 
@@ -136,58 +134,6 @@ export async function fetchMutationProportions(
   return _extractLapisData(body);
 }
 
-export async function fetchSampleDetails(
-  selector: LocationDateVariantSelector,
-  signal?: AbortSignal
-): Promise<SampleDetailsEntry[]> {
-  const params = new URLSearchParams();
-  _addDefaultsToSearchParams(params);
-  selector = await _mapCountryName(selector);
-  addLocationSelectorToUrlSearchParams(selector.location, params);
-  if (selector.dateRange) {
-    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
-  }
-  if (selector.variant) {
-    addVariantSelectorToUrlSearchParams(selector.variant, params);
-  }
-  if (selector.samplingStrategy) {
-    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
-  }
-
-  const res = await get(`/sample/details?${params.toString()}`, signal);
-  if (!res.ok) {
-    throw new Error('Error fetching contributors data');
-  }
-  const body = (await res.json()) as LapisResponse<SampleDetailsEntryRaw[]>;
-  return _extractLapisData(body).map(parseSampleDetailsEntry);
-}
-
-export async function fetchContributors(
-  selector: LocationDateVariantSelector,
-  signal?: AbortSignal
-): Promise<ContributorsEntry[]> {
-  const params = new URLSearchParams();
-  _addDefaultsToSearchParams(params);
-  selector = await _mapCountryName(selector);
-  addLocationSelectorToUrlSearchParams(selector.location, params);
-  if (selector.dateRange) {
-    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
-  }
-  if (selector.variant) {
-    addVariantSelectorToUrlSearchParams(selector.variant, params);
-  }
-  if (selector.samplingStrategy) {
-    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
-  }
-
-  const res = await get(`/sample/contributors?${params.toString()}`, signal);
-  if (!res.ok) {
-    throw new Error('Error fetching contributors data');
-  }
-  const body = (await res.json()) as LapisResponse<ContributorsEntry[]>;
-  return _extractLapisData(body);
-}
-
 export async function getLinkToStrainNames(
   selector: LocationDateVariantSelector,
   orderAndLimit?: OrderAndLimitConfig
@@ -228,6 +174,44 @@ export async function getLinkToGisaidEpiIsl(
     addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
   }
   return `${HOST}/sample/gisaid-epi-isl?${params.toString()}`;
+}
+
+export async function getCsvLinkToContributors(selector: LocationDateVariantSelector): Promise<string> {
+  const params = new URLSearchParams();
+  _addDefaultsToSearchParams(params);
+  selector = await _mapCountryName(selector);
+  addLocationSelectorToUrlSearchParams(selector.location, params);
+  if (selector.dateRange) {
+    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
+  }
+  if (selector.variant) {
+    addVariantSelectorToUrlSearchParams(selector.variant, params);
+  }
+  if (selector.samplingStrategy) {
+    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
+  }
+  params.set('forDownload', 'true');
+  params.set('dataFormat', 'csv');
+  return `${HOST}/sample/contributors?${params.toString()}`;
+}
+
+export async function getCsvLinkToDetails(selector: LocationDateVariantSelector): Promise<string> {
+  const params = new URLSearchParams();
+  _addDefaultsToSearchParams(params);
+  selector = await _mapCountryName(selector);
+  addLocationSelectorToUrlSearchParams(selector.location, params);
+  if (selector.dateRange) {
+    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
+  }
+  if (selector.variant) {
+    addVariantSelectorToUrlSearchParams(selector.variant, params);
+  }
+  if (selector.samplingStrategy) {
+    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
+  }
+  params.set('forDownload', 'true');
+  params.set('dataFormat', 'csv');
+  return `${HOST}/sample/details?${params.toString()}`;
 }
 
 async function _fetchAggSamples(
