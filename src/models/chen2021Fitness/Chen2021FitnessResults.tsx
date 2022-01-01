@@ -54,16 +54,20 @@ export const Chen2021FitnessResults = ({ request }: ResultsProps) => {
       <PackedGrid maxColumns={2}>
         <GridCell minWidth={600}>
           <NamedCard title='Proportion'>
-            <Chen2021ProportionPlot
-              modelData={modelData}
-              plotStartDate={request.plotStartDate}
-              plotEndDate={request.plotEndDate}
-            />
+            <div style={{ height: 500 }}>
+              <Chen2021ProportionPlot
+                modelData={modelData}
+                plotStartDate={request.plotStartDate}
+                plotEndDate={request.plotEndDate}
+              />
+            </div>
           </NamedCard>
         </GridCell>
         <GridCell minWidth={600}>
           <NamedCard title='Absolute'>
-            <Chen2021AbsolutePlot modelData={modelData} request={request} />
+            <div style={{ height: 500 }}>
+              <Chen2021AbsolutePlot modelData={modelData} request={request} />
+            </div>
           </NamedCard>
         </GridCell>
       </PackedGrid>

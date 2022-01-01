@@ -5,7 +5,6 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import { scrollableContainerPaddingPx, scrollableContainerStyle } from './scrollable-container';
 import { Route, Switch } from 'react-router';
 
 export interface DeepRoute<Props> {
@@ -15,20 +14,19 @@ export interface DeepRoute<Props> {
 }
 
 const HeaderWrapper = styled.div`
-  padding: ${scrollableContainerPaddingPx}px;
   border-bottom: 1px solid #dee2e6;
   background: var(--light);
+  padding: 15px;
 `;
 
 const ContentWrapper = styled.div`
-  ${scrollableContainerStyle};
-  height: 100px;
   flex-grow: 1;
+  padding: 15px;
 `;
 
 export function makeLayout(header: JSX.Element, content: JSX.Element) {
   return (
-    <div className='flex flex-col h-full bg-white'>
+    <div className='flex flex-col bg-white'>
       <HeaderWrapper>{header}</HeaderWrapper>
       <ContentWrapper>{content}</ContentWrapper>
     </div>

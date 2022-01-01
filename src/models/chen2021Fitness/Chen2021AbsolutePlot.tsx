@@ -200,7 +200,7 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
       </button>
       <TitleWrapper id='graph_title'>Changes in absolute case numbers through time**</TitleWrapper>
       <Plot
-        style={{ width: '100%', height: '90%' }}
+        style={{ width: '100%', height: '75%' }}
         data={[
           {
             name: 'Wildtype',

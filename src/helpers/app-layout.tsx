@@ -28,8 +28,6 @@ export const fullGridStyle = css`
 
 export const RawFullContentWrapper = styled.div`
   ${fullGridStyle}
-  width: 100vw;
-  height: 100%;
 `;
 
 export const LoginWrapper = styled.div`
