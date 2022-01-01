@@ -14,19 +14,32 @@ import { baseLocation } from './index';
 import StoriesOverview from './stories/StoriesOverview';
 import StoryRouter from './stories/StoryRouter';
 import { defaultDateRange, defaultSamplingStrategy } from './helpers/explore-url';
+import dayjs from 'dayjs';
+import { getCurrentLapisDataVersionDate } from './data/api-lapis';
+import { sequenceDataSource } from './helpers/sequence-data-source';
+import { ExternalLink } from './components/ExternalLink';
+import { VercelSponsorshipLogo } from './components/VercelSponsorshipLogo';
+import styled from 'styled-components';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
+
+const Footer = styled.footer`
+  margin-top: 50px;
+  padding-top: 20px;
+  border-top: 1px solid darkgray;
+  font-size: small;
+`;
 
 export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
   return (
-    <div className='pt-32 md:pt-20 h-screen w-full overflow-hidden'>
-      <div className='fixed top-0 inset-x-0 h-32 md:h-20 z-50'>
+    <div className='w-full'>
+      <div className='h-32 md:h-20'>
         <Header />
       </div>
-      <div ref={ref} className='static w-full h-full z-0 overflow-auto'>
+      <div ref={ref} className='w-full'>
         {isPreview && (
           <Alert variant={AlertVariant.WARNING}>
             <div className='text-center font-bold'>
@@ -73,6 +86,16 @@ export const App = () => {
           </Route>
         </Switch>
       </div>
+      <Footer className='text-center'>
+        <div>The sequence data was updated on: {dayjs(getCurrentLapisDataVersionDate()).toISOString()}</div>
+        {sequenceDataSource === 'gisaid' && (
+          <div>
+            Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
+            <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
+          </div>
+        )}
+        <VercelSponsorshipLogo />
+      </Footer>
     </div>
   );
 };

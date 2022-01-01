@@ -3,7 +3,8 @@ import { globalDateCache } from '../helpers/date-cache';
 import dayjs from 'dayjs';
 import * as zod from 'zod';
 
-export const dateStringRegex = /^\d{4}-\d{2}-\d{2}$/;
+export const dateStringRegex = /\d{4}-\d{2}-\d{2}$/;
+export const dateRangeStringRegex = /\d{4}-\d{2}-\d{2} - \d{4}-\d{2}-\d{2}$/;
 export const DateStringSchema = zod.string().regex(dateStringRegex);
 
 export interface DateRangeSelector {
