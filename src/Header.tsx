@@ -12,6 +12,7 @@ import { useExploreUrl } from './helpers/explore-url';
 import { useHistory } from 'react-router';
 import { alternativeSequenceDataSourceUrl, sequenceDataSource } from './helpers/sequence-data-source';
 import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrategySelect';
+import { encodeLocationSelectorToSingleString } from './data/LocationSelector';
 
 const letters = [
   { color: 'darkgray', text: 'cov' },
@@ -25,17 +26,26 @@ const letters = [
   { color: '#F18805', text: 'M' },
 ];
 
-const Logo = (
-  <a href='/' className='flex flex-row items-center hover:no-underline md:mb-0.5'>
-    <div>
-      {letters.map((l: { color: string; text: string }, i) => (
-        <span key={i} style={{ color: l.color, fontWeight: 'bold', fontSize: '1.75rem' }}>
-          {l.text}
-        </span>
-      ))}
-    </div>
-  </a>
-);
+const Logo = () => {
+  const locationState = useLocation();
+  const exploreUrl = useExploreUrl();
+  let redirectLink = '/';
+  if (locationState.pathname.startsWith('/explore/') && exploreUrl?.location) {
+    redirectLink = `/explore/${encodeLocationSelectorToSingleString(exploreUrl?.location)}`;
+  }
+
+  return (
+    <a href={redirectLink} className='flex flex-row items-center hover:no-underline md:mb-0.5'>
+      <div>
+        {letters.map((l: { color: string; text: string }, i) => (
+          <span key={i} style={{ color: l.color, fontWeight: 'bold', fontSize: '1.75rem' }}>
+            {l.text}
+          </span>
+        ))}
+      </div>
+    </a>
+  );
+};
 
 const BackToExplore = () => {
   const history = useHistory();
@@ -189,7 +199,9 @@ const Header = () => {
             <div className='w-full h-full flex justify-center md:justify-between items-center'>
               <div id='logo-and-search' className='flex h-full md:flex-row flex-column justify-center'>
                 <div id='logo-and-gsid' className='flex flex-column items-center justify-center md:pr-4'>
-                  <div>{Logo}</div>
+                  <div>
+                    <Logo />
+                  </div>
                   {sequenceDataSource === 'gisaid' ? (
                     <>
                       <div className='text-xs flex flex-row justify-between space-x-1'>
