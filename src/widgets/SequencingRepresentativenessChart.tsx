@@ -5,15 +5,15 @@ import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from './common'
 import { Bar, BarChart, ResponsiveContainer, Tooltip, XAxis, YAxis, Text, Cell } from 'recharts';
 import Metrics, { MetricsWrapper } from './Metrics';
 import { kFormat } from '../helpers/number';
-import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
 import { CaseCountEntry } from '../data/CaseCountEntry';
-import { DetailedSampleAggEntry } from '../data/sample/DetailedSampleAggEntry';
 import Loader from '../components/Loader';
 import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
+import { DatelessCountrylessCountSampleDataset } from '../data/sample/DatelessCountrylessCountSampleDataset';
+import { DatelessCountrylessCountSampleEntry } from '../data/sample/DatelessCountrylessCountSampleEntry';
 
 export type SequencingRepresentativenessChartProps = {
   caseDataset: CaseCountAsyncDataset;
-  sampleDataset: DetailedSampleAggDataset;
+  sampleDataset: DatelessCountrylessCountSampleDataset;
 };
 
 type PlotEntry = {
@@ -39,7 +39,7 @@ export const attributes: {
 ];
 
 function prepareCountsData(
-  counts: (CaseCountEntry | DetailedSampleAggEntry)[],
+  counts: (CaseCountEntry | DatelessCountrylessCountSampleEntry)[],
   attributes: Attribute[]
 ): Map<string, number> {
   const grouped = Utils.groupBy(counts, el => {

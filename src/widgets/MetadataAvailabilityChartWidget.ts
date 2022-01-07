@@ -5,16 +5,16 @@ import {
   encodeLocationDateSelector,
   LocationDateSelectorEncodedSchema,
 } from '../data/LocationDateSelector';
-import { DetailedSampleAggData } from '../data/sample/DetailedSampleAggDataset';
 import { MetadataAvailabilityChart, MetadataAvailabilityChartProps } from './MetadataAvailabilityChart';
 import { SamplingStrategy } from '../data/SamplingStrategy';
+import { DatelessCountrylessCountSampleData } from '../data/sample/DatelessCountrylessCountSampleDataset';
 
 export const MetadataAvailabilityChartWidget = new Widget(
   new AsyncZodQueryEncoder(
     LocationDateSelectorEncodedSchema,
     async (decoded: MetadataAvailabilityChartProps) => encodeLocationDateSelector(decoded.sampleSet.selector),
     async (encoded, signal) => ({
-      sampleSet: await DetailedSampleAggData.fromApi(
+      sampleSet: await DatelessCountrylessCountSampleData.fromApi(
         {
           ...decodeLocationDateSelector(encoded),
           // TODO This is actually a bug. The sampling strategy filter should be applied

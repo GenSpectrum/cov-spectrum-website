@@ -7,6 +7,7 @@ import { SequencingIntensityChartWidget } from '../widgets/SequencingIntensityCh
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
 import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
+import { DatelessCountrylessCountSampleData } from '../data/sample/DatelessCountrylessCountSampleDataset';
 
 interface Props {
   wholeDataset: DetailedSampleAggDataset;
@@ -28,7 +29,7 @@ export const SequencingCoverageDeepExplore = React.memo(({ wholeDataset, caseCou
       <GridCell minWidth={600}>
         <MetadataAvailabilityChartWidget.ShareableComponent
           title='Metadata Availability'
-          sampleSet={wholeDataset}
+          sampleSet={DatelessCountrylessCountSampleData.fromDetailedSampleAggDataset(wholeDataset)}
           height={300}
         />
       </GridCell>
@@ -37,7 +38,7 @@ export const SequencingCoverageDeepExplore = React.memo(({ wholeDataset, caseCou
           <SequencingRepresentativenessChartWidget.ShareableComponent
             title='Sequencing Intensity by Attribute'
             caseDataset={caseCountDataset}
-            sampleDataset={wholeDataset}
+            sampleDataset={DatelessCountrylessCountSampleData.fromDetailedSampleAggDataset(wholeDataset)}
             height={500}
           />
         </GridCell>

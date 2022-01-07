@@ -10,9 +10,9 @@ import {
   LocationDateSelectorEncodedSchema,
 } from '../data/LocationDateSelector';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
-import { DetailedSampleAggData } from '../data/sample/DetailedSampleAggDataset';
 import { AsyncStatusTypes } from '../data/AsyncDataset';
 import { SamplingStrategy } from '../data/SamplingStrategy';
+import { DatelessCountrylessCountSampleData } from '../data/sample/DatelessCountrylessCountSampleDataset';
 
 export const SequencingRepresentativenessChartWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -27,7 +27,7 @@ export const SequencingRepresentativenessChartWidget = new Widget(
           payload: (await CaseCountData.fromApi(selector, signal)).payload,
           status: AsyncStatusTypes.fulfilled,
         } as CaseCountAsyncDataset,
-        sampleDataset: await DetailedSampleAggData.fromApi(
+        sampleDataset: await DatelessCountrylessCountSampleData.fromApi(
           {
             ...decodeLocationDateSelector(encoded),
             // TODO This is actually a bug. The sampling strategy filter should be applied

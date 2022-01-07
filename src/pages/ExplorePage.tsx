@@ -9,6 +9,7 @@ import { useExploreUrl } from '../helpers/explore-url';
 import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
 import { MetadataAvailabilityChartWidget } from '../widgets/MetadataAvailabilityChartWidget';
 import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
+import { DatelessCountrylessCountSampleData } from '../data/sample/DatelessCountrylessCountSampleDataset';
 
 interface Props {
   onVariantSelect: (selection: VariantSelector) => void;
@@ -71,7 +72,7 @@ export const ExplorePage = ({
               <div>
                 <MetadataAvailabilityChartWidget.ShareableComponent
                   title='Metadata Availability'
-                  sampleSet={wholeDataset}
+                  sampleSet={DatelessCountrylessCountSampleData.fromDetailedSampleAggDataset(wholeDataset)}
                   height={300}
                 />
               </div>

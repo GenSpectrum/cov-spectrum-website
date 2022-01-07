@@ -3,10 +3,10 @@ import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } f
 import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import Metrics, { MetricsWrapper } from './Metrics';
 import { kFormat } from '../helpers/number';
-import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
+import { DatelessCountrylessCountSampleDataset } from '../data/sample/DatelessCountrylessCountSampleDataset';
 
 export type MetadataAvailabilityChartProps = {
-  sampleSet: DetailedSampleAggDataset;
+  sampleSet: DatelessCountrylessCountSampleDataset;
 };
 
 type PlotEntry = {
