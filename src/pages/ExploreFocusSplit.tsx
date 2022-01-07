@@ -1,8 +1,7 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router';
 import {
   RawFullContentWrapper,
-  ScrollableFullContentWrapper,
   SplitExploreWrapper,
   SplitFocusWrapper,
   SplitParentWrapper,
@@ -14,14 +13,10 @@ import { FocusPage } from './FocusPage';
 import { DeepExplorePage } from './DeepExplorePage';
 import { DetailedSampleAggData } from '../data/sample/DetailedSampleAggDataset';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
-import { DateCountSampleData, DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
+import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
 import Loader from '../components/Loader';
 import { useQuery } from '../helpers/query-hook';
-import { PromiseFn, useAsync } from 'react-async';
-import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
-import { AsyncDataset } from '../data/AsyncDataset';
-import { Dataset } from '../data/Dataset';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
 import { VariantHeader } from '../components/VariantHeader';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
@@ -30,6 +25,7 @@ import { SamplingStrategy } from '../data/SamplingStrategy';
 import { VariantSearch } from '../components/VariantSearch';
 import { DateRangePicker } from '../components/DateRangePicker';
 import { InternalLink } from '../components/InternalLink';
+import { useAsyncDataset } from '../helpers/use-async-dataset';
 
 interface Props {
   isSmallScreen: boolean;
@@ -68,11 +64,11 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     signal => DetailedSampleAggData.fromApi({ location: location!, samplingStrategy }, signal),
     [location, samplingStrategy]
   );
-  const wholeDateCountSampleDatasetWithoutDateFilter: DateCountSampleDataset | undefined = useMemo(() => {
-    if (wholeDatasetWithoutDateFilter.isSuccess && wholeDatasetWithoutDateFilter.data) {
-      return DateCountSampleData.fromDetailedSampleAggDataset(wholeDatasetWithoutDateFilter.data);
-    }
-  }, [wholeDatasetWithoutDateFilter.isSuccess, wholeDatasetWithoutDateFilter.data]);
+  const wholeDateCountSampleDatasetWithoutDateFilter = useQuery(
+    // Used by the explore page
+    signal => DateCountSampleData.fromApi({ location: location!, samplingStrategy }, signal),
+    [location, samplingStrategy]
+  );
   const wholeDatasetWithDateFilter = useQuery(
     // Used by the focus page
     signal => DetailedSampleAggData.fromApi({ location: location!, dateRange, samplingStrategy }, signal),
@@ -106,16 +102,13 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     isLandingPage?: boolean;
   }
 
-  const getExplorePage = ({ isSmallScreen, isLandingPage = false }: ExploreProperties) =>
-    wholeDateCountSampleDatasetWithoutDateFilter ? (
+  const getExplorePage = ({ isSmallScreen }: ExploreProperties) =>
+    wholeDateCountSampleDatasetWithoutDateFilter.data ? (
       <ExplorePage
         onVariantSelect={setVariant!}
         selection={variant}
-        wholeDateCountSampleDataset={wholeDateCountSampleDatasetWithoutDateFilter}
-        caseCountDataset={caseCountDataset}
+        wholeDateCountSampleDataset={wholeDateCountSampleDatasetWithoutDateFilter.data}
         isSmallExplore={isSmallScreen}
-        isLandingPage={isLandingPage}
-        wholeDataset={wholeDatasetWithoutDateFilter.data!}
       />
     ) : (
       <Loader />
@@ -129,11 +122,6 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
   const makeLayout = (focusContent: React.ReactNode, deepFocusContent: React.ReactNode): JSX.Element => (
     <>
       <Switch>
-        <Route exact path={`${path}`}>
-          <ScrollableFullContentWrapper>
-            {getExplorePage({ isSmallScreen: isSmallScreen, isLandingPage: true })}
-          </ScrollableFullContentWrapper>
-        </Route>
         <Route exact path={`${path}/variants`}>
           {isSmallScreen ? (
             <SplitParentWrapper>
@@ -217,29 +205,3 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
     )
   );
 };
-
-/**
- * This hook returns an AsyncDataset and updates it when the selector changes. It does not watch for changes of the
- * promiseFn.
- */
-function useAsyncDataset<Selector, Payload>(
-  selector: Selector,
-  promiseFn: PromiseFn<Dataset<Selector, Payload>>
-): AsyncDataset<Selector, Payload> {
-  const { memorizedPromiseFn, memorizedSelector } = useDeepCompareMemo(
-    () => ({
-      memorizedSelector: selector,
-      memorizedPromiseFn: promiseFn,
-    }),
-    [selector]
-  );
-  const caseCountDatasetAsync = useAsync(memorizedPromiseFn, { selector });
-  return useMemo(
-    () => ({
-      selector: memorizedSelector,
-      payload: caseCountDatasetAsync.data?.payload,
-      status: caseCountDatasetAsync.status,
-    }),
-    [caseCountDatasetAsync, memorizedSelector]
-  );
-}

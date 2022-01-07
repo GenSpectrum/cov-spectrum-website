@@ -20,6 +20,7 @@ import { sequenceDataSource } from './helpers/sequence-data-source';
 import { ExternalLink } from './components/ExternalLink';
 import { VercelSponsorshipLogo } from './components/VercelSponsorshipLogo';
 import styled from 'styled-components';
+import { ExplorePage2 } from './pages2/ExplorePage2';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -56,6 +57,9 @@ export const App = () => {
             <LoginWrapper>
               <LoginPage />
             </LoginWrapper>
+          </Route>
+          <Route exact path='/explore/:country/:samplingStrategy/:dateRange'>
+            <ExplorePage2 />
           </Route>
           <Route path='/explore/:country/:samplingStrategy/:dateRange'>
             <ExploreFocusSplit isSmallScreen={isSmallScreen} />
