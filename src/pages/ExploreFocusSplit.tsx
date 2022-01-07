@@ -9,7 +9,6 @@ import {
 import { useExploreUrl } from '../helpers/explore-url';
 import { DeepFocusPage } from './DeepFocusPage';
 import { ExplorePage } from './ExplorePage';
-import { FocusPage } from './FocusPage';
 import { DeepExplorePage } from './DeepExplorePage';
 import { DetailedSampleAggData } from '../data/sample/DetailedSampleAggDataset';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
@@ -169,23 +168,6 @@ export const ExploreFocusSplit = ({ isSmallScreen }: Props) => {
           variant={variantSelector.variant!}
           controls={<FocusVariantHeaderControls selector={variantSelector} />}
         />
-      )}
-      {variant &&
-      variantDataset.isSuccess &&
-      wholeDatasetWithDateFilter.isSuccess &&
-      variantInternationalDateCountDataset.isSuccess &&
-      wholeInternationalDateCountDataset.isSuccess ? (
-        <FocusPage
-          key={focusKey}
-          variantDataset={variantDataset.data!}
-          wholeDataset={wholeDatasetWithDateFilter.data!}
-          caseCountDataset={caseCountDataset}
-          variantInternationalDateCountDataset={variantInternationalDateCountDataset.data!}
-          wholeInternationalDateCountDataset={wholeInternationalDateCountDataset.data!}
-          onVariantSelect={setVariant!}
-        />
-      ) : (
-        <Loader />
       )}
     </>,
     variant &&

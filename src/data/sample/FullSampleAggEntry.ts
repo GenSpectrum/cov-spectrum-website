@@ -15,6 +15,19 @@ export type FullSampleAggEntry = {
   count: number;
 };
 
+export type FullSampleAggEntryField =
+  | 'date'
+  | 'region'
+  | 'country'
+  | 'division'
+  | 'age'
+  | 'sex'
+  | 'hospitalized'
+  | 'died'
+  | 'fullyVaccinated'
+  | 'pangoLineage'
+  | 'count';
+
 export type FullSampleAggEntryRaw = Omit<FullSampleAggEntry, 'date'> & {
   date: string | null;
 };

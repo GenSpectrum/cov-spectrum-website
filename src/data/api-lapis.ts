@@ -222,7 +222,7 @@ export async function getCsvLinkToDetails(selector: LocationDateVariantSelector)
   return `${HOST}/sample/details?${params.toString()}`;
 }
 
-async function _fetchAggSamples(
+export async function _fetchAggSamples(
   selector: LocationDateVariantSelector,
   fields: string[],
   signal?: AbortSignal

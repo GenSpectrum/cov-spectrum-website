@@ -21,6 +21,7 @@ import { ExternalLink } from './components/ExternalLink';
 import { VercelSponsorshipLogo } from './components/VercelSponsorshipLogo';
 import styled from 'styled-components';
 import { ExplorePage2 } from './pages2/ExplorePage2';
+import { FocusPage2 } from './pages2/FocusPage2';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -60,6 +61,9 @@ export const App = () => {
           </Route>
           <Route exact path='/explore/:country/:samplingStrategy/:dateRange'>
             <ExplorePage2 />
+          </Route>
+          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants'>
+            <FocusPage2 isSmallScreen={isSmallScreen} />
           </Route>
           <Route path='/explore/:country/:samplingStrategy/:dateRange'>
             <ExploreFocusSplit isSmallScreen={isSmallScreen} />
