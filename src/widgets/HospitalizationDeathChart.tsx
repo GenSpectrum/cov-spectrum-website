@@ -124,9 +124,9 @@ export const HospitalizationDeathChart = ({
         const counts = samples.reduce(
           (prev, curr) => {
             if (curr[field]) {
-              return { true: prev.true + 1, false: prev.false };
+              return { true: prev.true + curr.count, false: prev.false };
             } else if (curr[field] === false) {
-              return { true: prev.true, false: prev.false + 1 };
+              return { true: prev.true, false: prev.false + curr.count };
             } else {
               return prev;
             }
