@@ -19,13 +19,13 @@ import { sequenceDataSource } from './helpers/sequence-data-source';
 import { ExternalLink } from './components/ExternalLink';
 import { VercelSponsorshipLogo } from './components/VercelSponsorshipLogo';
 import styled from 'styled-components';
-import { ExplorePage2 } from './pages2/ExplorePage2';
-import { FocusPage2 } from './pages2/FocusPage2';
-import { DeepInternationalComparisonPage } from './pages2/DeepInternationalComparisonPage';
-import { DeepChen2021FitnessPage } from './pages2/DeepChen2021FitnessPage';
-import { DeepHospitalizationDeathPage } from './pages2/DeepHospitalizationDeathPage';
-import { DeepWastewaterPage } from './pages2/DeepWastewaterPage';
-import { DeepSequencingCoveragePage } from './pages2/DeepSequencingCoveragePage';
+import { ExplorePage } from './pages/ExplorePage';
+import { FocusPage } from './pages/FocusPage';
+import { DeepInternationalComparisonPage } from './pages/DeepInternationalComparisonPage';
+import { DeepChen2021FitnessPage } from './pages/DeepChen2021FitnessPage';
+import { DeepHospitalizationDeathPage } from './pages/DeepHospitalizationDeathPage';
+import { DeepWastewaterPage } from './pages/DeepWastewaterPage';
+import { DeepSequencingCoveragePage } from './pages/DeepSequencingCoveragePage';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -64,13 +64,13 @@ export const App = () => {
             </LoginWrapper>
           </Route>
           <Route exact path='/explore/:country/:samplingStrategy/:dateRange'>
-            <ExplorePage2 />
+            <ExplorePage />
           </Route>
           <Route exact path='/explore/:country/:samplingStrategy/:dateRange/sequencing-coverage'>
             <DeepSequencingCoveragePage />
           </Route>
           <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants'>
-            <FocusPage2 isSmallScreen={isSmallScreen} />
+            <FocusPage isSmallScreen={isSmallScreen} />
           </Route>
           <Route
             exact

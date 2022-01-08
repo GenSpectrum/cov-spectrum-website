@@ -47,7 +47,7 @@ type Props = {
   isSmallScreen: boolean;
 };
 
-export const FocusPage2 = ({ isSmallScreen }: Props) => {
+export const FocusPage = ({ isSmallScreen }: Props) => {
   const exploreUrl = useExploreUrl();
   const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
   const [showEstimatedCasesDivGrid, setShowEstimatedCasesDivGrid] = useState(false);

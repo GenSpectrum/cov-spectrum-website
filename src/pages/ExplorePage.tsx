@@ -12,7 +12,7 @@ import { useQuery } from '../helpers/query-hook';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import Loader from '../components/Loader';
 
-export const ExplorePage2 = () => {
+export const ExplorePage = () => {
   const exploreUrl = useExploreUrl();
 
   // Fetch data
