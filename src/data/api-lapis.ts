@@ -1,6 +1,5 @@
 import { LocationDateVariantSelector } from './LocationDateVariantSelector';
 import { LapisInformation, LapisResponse } from './LapisResponse';
-import { DetailedSampleAggEntry } from './sample/DetailedSampleAggEntry';
 import { DateCountSampleEntry } from './sample/DateCountSampleEntry';
 import { AgeCountSampleEntry } from './sample/AgeCountSampleEntry';
 import { DivisionCountSampleEntry } from './sample/DivisionCountSampleEntry';
@@ -54,17 +53,6 @@ export async function fetchLapisDataVersionDate(signal?: AbortSignal) {
 
 export function getCurrentLapisDataVersionDate(): Date | undefined {
   return currentLapisDataVersion !== undefined ? dayjs.unix(currentLapisDataVersion).toDate() : undefined;
-}
-
-export async function fetchDetailedSamples(
-  selector: LocationDateVariantSelector,
-  signal?: AbortSignal
-): Promise<DetailedSampleAggEntry[]> {
-  return _fetchAggSamples(
-    selector,
-    ['date', 'region', 'country', 'division', 'age', 'sex', 'hospitalized', 'died', 'fullyVaccinated'],
-    signal
-  );
 }
 
 export async function fetchDateCountSamples(

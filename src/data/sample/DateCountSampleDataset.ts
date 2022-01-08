@@ -2,8 +2,6 @@ import { Dataset } from '../Dataset';
 import { LocationDateVariantSelector } from '../LocationDateVariantSelector';
 import { DateCountSampleEntry } from './DateCountSampleEntry';
 import { fetchDateCountSamples } from '../api-lapis';
-import { DetailedSampleAggDataset } from './DetailedSampleAggDataset';
-import { Utils } from '../../services/Utils';
 import { UnifiedDay, UnifiedIsoWeek } from '../../helpers/date-cache';
 
 export type DateCountSampleDataset = Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>;
@@ -16,21 +14,6 @@ export class DateCountSampleData {
     return {
       selector: selector,
       payload: await fetchDateCountSamples(selector, signal),
-    };
-  }
-
-  static fromDetailedSampleAggDataset(dataset: DetailedSampleAggDataset): DateCountSampleDataset {
-    const grouped = Utils.groupBy(dataset.payload, d => d.date);
-    const newPayload = [];
-    for (let [date, entries] of grouped.entries()) {
-      newPayload.push({
-        date,
-        count: entries.reduce((prev, curr) => prev + curr.count, 0),
-      });
-    }
-    return {
-      selector: dataset.selector,
-      payload: newPayload,
     };
   }
 
