@@ -64,7 +64,7 @@ export const App = () => {
             </LoginWrapper>
           </Route>
           <Route exact path='/explore/:country/:samplingStrategy/:dateRange'>
-            <ExplorePage />
+            <ExplorePage isSmallScreen={isSmallScreen} />
           </Route>
           <Route exact path='/explore/:country/:samplingStrategy/:dateRange/sequencing-coverage'>
             <DeepSequencingCoveragePage />

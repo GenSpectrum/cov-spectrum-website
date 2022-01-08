@@ -12,7 +12,11 @@ import { useQuery } from '../helpers/query-hook';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import Loader from '../components/Loader';
 
-export const ExplorePage = () => {
+type Props = {
+  isSmallScreen: boolean;
+};
+
+export const ExplorePage = ({ isSmallScreen }: Props) => {
   const exploreUrl = useExploreUrl();
 
   // Fetch data
@@ -50,7 +54,7 @@ export const ExplorePage = () => {
         <h1>Detect and analyze variants of SARS-CoV-2</h1>
         <VariantSearch onVariantSelect={exploreUrl.setVariant} isSimple={false} />
       </div>
-      <div className={`grid grid-cols-2 h-full`}>
+      <div className={`grid ${isSmallScreen ? '' : 'grid-cols-2'} h-full`}>
         <div className='p-2'>
           <h1 className='mt-4'>Known variants</h1>
           <p>Which variant would you like to explore?</p>
