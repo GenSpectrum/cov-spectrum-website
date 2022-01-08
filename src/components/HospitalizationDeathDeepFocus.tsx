@@ -4,11 +4,11 @@ import styled from 'styled-components';
 import { Alert, AlertVariant } from '../helpers/ui';
 import { GridCell, PackedGrid } from './PackedGrid';
 import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
-import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
+import { HospDiedAgeSampleDataset } from '../data/sample/HospDiedAgeSampleDataset';
 
 interface Props {
-  variantSampleSet: DetailedSampleAggDataset;
-  wholeSampleSet: DetailedSampleAggDataset;
+  variantSampleSet: HospDiedAgeSampleDataset;
+  wholeSampleSet: HospDiedAgeSampleDataset;
   variantName: string;
 }
 

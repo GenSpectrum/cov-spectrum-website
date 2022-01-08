@@ -29,6 +29,7 @@ export interface ExploreUrl {
   setVariant: (variant: VariantSelector) => void;
   setSamplingStrategy: (samplingStrategy: SamplingStrategy) => void;
   getOverviewPageUrl: () => string;
+  getExplorePageUrl: () => string;
   getDeepExplorePageUrl: (pagePath: string) => string;
   getDeepFocusPageUrl: (pagePath: string) => string;
   focusKey: string;
@@ -125,6 +126,9 @@ export function useExploreUrl(): ExploreUrl | undefined {
   const getOverviewPageUrl = useCallback(() => {
     return `${routeMatches.locationSamplingDate?.url}/variants${locationState.search}`;
   }, [locationState.search, routeMatches.locationSamplingDate?.url]);
+  const getExplorePageUrl = useCallback(() => {
+    return `${routeMatches.locationSamplingDate?.url}`;
+  }, [routeMatches.locationSamplingDate?.url]);
   const getDeepExplorePageUrl = useCallback(
     (pagePath: string) => {
       return `${routeMatches.locationSamplingDate?.url}${pagePath}${locationState.search}`;
@@ -199,6 +203,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     setDateRange,
     setVariant,
     getOverviewPageUrl,
+    getExplorePageUrl,
     getDeepExplorePageUrl,
     getDeepFocusPageUrl,
     focusKey: locationState.pathname + locationState.search,

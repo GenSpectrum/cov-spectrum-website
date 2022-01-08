@@ -3,7 +3,6 @@ import { Redirect, Route, Switch } from 'react-router-dom';
 import Header from './Header';
 import { LoginWrapper } from './helpers/app-layout';
 import { AboutPage } from './pages/AboutPage';
-import { ExploreFocusSplit } from './pages/ExploreFocusSplit';
 import { LoginPage } from './pages/LoginPage';
 import { useResizeDetector } from 'react-resize-detector';
 import { Alert, AlertVariant } from './helpers/ui';
@@ -22,6 +21,11 @@ import { VercelSponsorshipLogo } from './components/VercelSponsorshipLogo';
 import styled from 'styled-components';
 import { ExplorePage2 } from './pages2/ExplorePage2';
 import { FocusPage2 } from './pages2/FocusPage2';
+import { DeepInternationalComparisonPage } from './pages2/DeepInternationalComparisonPage';
+import { DeepChen2021FitnessPage } from './pages2/DeepChen2021FitnessPage';
+import { DeepHospitalizationDeathPage } from './pages2/DeepHospitalizationDeathPage';
+import { DeepWastewaterPage } from './pages2/DeepWastewaterPage';
+import { DeepSequencingCoveragePage } from './pages2/DeepSequencingCoveragePage';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -62,11 +66,26 @@ export const App = () => {
           <Route exact path='/explore/:country/:samplingStrategy/:dateRange'>
             <ExplorePage2 />
           </Route>
+          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/sequencing-coverage'>
+            <DeepSequencingCoveragePage />
+          </Route>
           <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants'>
             <FocusPage2 isSmallScreen={isSmallScreen} />
           </Route>
-          <Route path='/explore/:country/:samplingStrategy/:dateRange'>
-            <ExploreFocusSplit isSmallScreen={isSmallScreen} />
+          <Route
+            exact
+            path='/explore/:country/:samplingStrategy/:dateRange/variants/international-comparison'
+          >
+            <DeepInternationalComparisonPage />
+          </Route>
+          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants/hospitalization-death'>
+            <DeepHospitalizationDeathPage />
+          </Route>
+          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants/waste-water'>
+            <DeepWastewaterPage />
+          </Route>
+          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants/chen-2021-fitness'>
+            <DeepChen2021FitnessPage />
           </Route>
           <Route exact path='/story'>
             <StoryOverviewPage />
