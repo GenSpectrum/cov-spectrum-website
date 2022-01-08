@@ -9,30 +9,22 @@ import { DatelessCountrylessCountSampleData } from '../data/sample/DatelessCount
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
 import { useAsyncDataset } from '../helpers/use-async-dataset';
+import { useSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 
 export const DeepSequencingCoveragePage = () => {
   const exploreUrl = useExploreUrl();
 
   // Fetch data
+  const { lsSelector, lSelector } = useSelectorsFromExploreUrl(exploreUrl!);
   const wholeDatelessDataset = useQuery(
-    signal =>
-      DatelessCountrylessCountSampleData.fromApi(
-        { location: exploreUrl?.location!, samplingStrategy: exploreUrl?.samplingStrategy! },
-        signal
-      ),
-    [exploreUrl?.location, exploreUrl?.samplingStrategy]
+    signal => DatelessCountrylessCountSampleData.fromApi(lsSelector, signal),
+    [lsSelector]
   );
-  const wholeDateCountDataset = useQuery(
-    signal =>
-      DateCountSampleData.fromApi(
-        { location: exploreUrl?.location!, samplingStrategy: exploreUrl?.samplingStrategy! },
-        signal
-      ),
-    [exploreUrl?.location, exploreUrl?.samplingStrategy]
-  );
-  const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(
-    { location: exploreUrl?.location! },
-    ({ selector }, { signal }) => CaseCountData.fromApi(selector, signal)
+  const wholeDateCountDataset = useQuery(signal => DateCountSampleData.fromApi(lsSelector, signal), [
+    lsSelector,
+  ]);
+  const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(lSelector, ({ selector }, { signal }) =>
+    CaseCountData.fromApi(selector, signal)
   );
 
   if (!exploreUrl) {

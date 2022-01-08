@@ -7,21 +7,12 @@ import { makeLayout } from '../helpers/deep-page';
 import { InternationalComparison } from '../components/InternationalComparison';
 import { useQuery } from '../helpers/query-hook';
 import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
+import { useSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 
 export const DeepInternationalComparisonPage = () => {
   const exploreUrl = useExploreUrl();
 
-  const dvsSelector = {
-    location: {},
-    dateRange: exploreUrl?.dateRange,
-    samplingStrategy: exploreUrl?.samplingStrategy!,
-    variant: exploreUrl?.variant,
-  };
-  const dsSelector = {
-    location: {},
-    dateRange: exploreUrl?.dateRange,
-    samplingStrategy: exploreUrl?.samplingStrategy!,
-  };
+  const { dvsSelector, dsSelector } = useSelectorsFromExploreUrl(exploreUrl!);
   const variantInternationalDateCount = useQuery(
     signal => CountryDateCountSampleData.fromApi(dvsSelector, signal),
     [dvsSelector]

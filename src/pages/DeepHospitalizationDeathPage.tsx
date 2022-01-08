@@ -8,21 +8,12 @@ import React from 'react';
 import { HospitalizationDeathDeepFocus } from '../components/HospitalizationDeathDeepFocus';
 import { formatVariantDisplayName } from '../data/VariantSelector';
 import { HospDiedAgeSampleData } from '../data/sample/HospDiedAgeSampleDataset';
+import { useSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 
 export const DeepHospitalizationDeathPage = () => {
   const exploreUrl = useExploreUrl();
 
-  const ldvsSelector = {
-    location: exploreUrl?.location!,
-    dateRange: exploreUrl?.dateRange,
-    samplingStrategy: exploreUrl?.samplingStrategy!,
-    variant: exploreUrl?.variant,
-  };
-  const ldsSelector = {
-    location: exploreUrl?.location!,
-    dateRange: exploreUrl?.dateRange,
-    samplingStrategy: exploreUrl?.samplingStrategy!,
-  };
+  const { ldvsSelector, ldsSelector } = useSelectorsFromExploreUrl(exploreUrl!);
   const variantHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal), [
     ldvsSelector,
   ]);

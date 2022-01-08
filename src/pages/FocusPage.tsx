@@ -42,6 +42,7 @@ import { ArticleData } from '../data/ArticleDataset';
 import { ArticleListWidget } from '../widgets/ArticleListWidget';
 import { HospDiedAgeSampleData } from '../data/sample/HospDiedAgeSampleDataset';
 import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
+import { useSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 
 type Props = {
   isSmallScreen: boolean;
@@ -64,35 +65,14 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
   );
 
   // --- Fetch data ---
-  const ldvsSelector = {
-    location: exploreUrl?.location!,
-    dateRange: exploreUrl?.dateRange,
-    samplingStrategy: exploreUrl?.samplingStrategy!,
-    variant: exploreUrl?.variant,
-  };
-  const ldsSelector = {
-    location: exploreUrl?.location!,
-    dateRange: exploreUrl?.dateRange,
-    samplingStrategy: exploreUrl?.samplingStrategy!,
-  };
-  const lsSelector = {
-    location: exploreUrl?.location!,
-    samplingStrategy: exploreUrl?.samplingStrategy!,
-  };
-  const dvsSelector = {
-    location: {},
-    dateRange: exploreUrl?.dateRange,
-    samplingStrategy: exploreUrl?.samplingStrategy!,
-    variant: exploreUrl?.variant,
-  };
-  const dsSelector = {
-    location: {},
-    dateRange: exploreUrl?.dateRange,
-    samplingStrategy: exploreUrl?.samplingStrategy!,
-  };
-  const lSelector = {
-    location: exploreUrl?.location!,
-  };
+  const {
+    ldvsSelector,
+    ldsSelector,
+    lsSelector,
+    dvsSelector,
+    dsSelector,
+    lSelector,
+  } = useSelectorsFromExploreUrl(exploreUrl!);
   // Date counts
   const variantDateCount = useQuery(signal => DateCountSampleData.fromApi(ldvsSelector, signal), [
     ldvsSelector,
