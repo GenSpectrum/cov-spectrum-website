@@ -1,11 +1,10 @@
 /**
- * This file contains helper functions that are shared by the DeepExplorePage
- * and the DeepFocusPage.
+ * This file contains helper functions that are shared by the Deep... pages.
  */
 
 import React from 'react';
 import styled from 'styled-components';
-import { Route, Switch } from 'react-router';
+import Loader from '../components/Loader';
 
 export interface DeepRoute<Props> {
   key: string;
@@ -24,23 +23,11 @@ const ContentWrapper = styled.div`
   padding: 15px;
 `;
 
-export function makeLayout(header: JSX.Element, content: JSX.Element) {
+export function makeLayout(header: JSX.Element, content: JSX.Element | undefined) {
   return (
     <div className='flex flex-col bg-white'>
       <HeaderWrapper>{header}</HeaderWrapper>
-      <ContentWrapper>{content}</ContentWrapper>
+      <ContentWrapper>{content ?? <Loader />}</ContentWrapper>
     </div>
-  );
-}
-
-export function makeSwitch<Props>(routes: DeepRoute<Props>[], props: Props, pathPrefix: string) {
-  return (
-    <Switch>
-      {routes.map(route => (
-        <Route key={route.key} path={`${pathPrefix}/${route.key}`}>
-          {route.content(props)}
-        </Route>
-      ))}
-    </Switch>
   );
 }

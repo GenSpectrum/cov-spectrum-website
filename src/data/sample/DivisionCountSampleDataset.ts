@@ -2,8 +2,6 @@ import { Dataset } from '../Dataset';
 import { LocationDateVariantSelector } from '../LocationDateVariantSelector';
 import { DivisionCountSampleEntry } from './DivisionCountSampleEntry';
 import { fetchDivisionCountSamples } from '../api-lapis';
-import { DetailedSampleAggDataset } from './DetailedSampleAggDataset';
-import { Utils } from '../../services/Utils';
 
 export type DivisionCountSampleDataset = Dataset<LocationDateVariantSelector, DivisionCountSampleEntry[]>;
 
@@ -16,18 +14,6 @@ export class DivisionCountSampleData {
       selector: selector,
       payload: await fetchDivisionCountSamples(selector, signal),
     };
-  }
-
-  static fromDetailedSampleAggDataset(dataset: DetailedSampleAggDataset): DivisionCountSampleDataset {
-    const grouped = Utils.groupBy(dataset.payload, d => d.division);
-    const newPayload = [];
-    for (let [division, entries] of grouped.entries()) {
-      newPayload.push({
-        division,
-        count: entries.reduce((prev, curr) => prev + curr.count, 0),
-      });
-    }
-    return { selector: dataset.selector, payload: newPayload };
   }
 
   static countByDivisionGroup(data: DivisionCountSampleEntry[]): Map<string, number> {

@@ -1,6 +1,5 @@
 import { LocationDateVariantSelector } from './LocationDateVariantSelector';
 import { LapisInformation, LapisResponse } from './LapisResponse';
-import { DetailedSampleAggEntry } from './sample/DetailedSampleAggEntry';
 import { DateCountSampleEntry } from './sample/DateCountSampleEntry';
 import { AgeCountSampleEntry } from './sample/AgeCountSampleEntry';
 import { DivisionCountSampleEntry } from './sample/DivisionCountSampleEntry';
@@ -22,6 +21,7 @@ import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { OrderAndLimitConfig } from './OrderAndLimitConfig';
 import { addSamplingStrategyToUrlSearchParams } from './SamplingStrategy';
 import { DatelessCountrylessCountSampleEntry } from './sample/DatelessCountrylessCountSampleEntry';
+import { HospDiedAgeSampleEntry } from './sample/HospDiedAgeSampleEntry';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 
@@ -53,17 +53,6 @@ export async function fetchLapisDataVersionDate(signal?: AbortSignal) {
 
 export function getCurrentLapisDataVersionDate(): Date | undefined {
   return currentLapisDataVersion !== undefined ? dayjs.unix(currentLapisDataVersion).toDate() : undefined;
-}
-
-export async function fetchDetailedSamples(
-  selector: LocationDateVariantSelector,
-  signal?: AbortSignal
-): Promise<DetailedSampleAggEntry[]> {
-  return _fetchAggSamples(
-    selector,
-    ['date', 'region', 'country', 'division', 'age', 'sex', 'hospitalized', 'died', 'fullyVaccinated'],
-    signal
-  );
 }
 
 export async function fetchDateCountSamples(
@@ -99,6 +88,13 @@ export async function fetchDatelessCountrylessCountSamples(
   signal?: AbortSignal
 ): Promise<DatelessCountrylessCountSampleEntry[]> {
   return _fetchAggSamples(selector, ['division', 'age', 'sex', 'hospitalized', 'died'], signal);
+}
+
+export async function fetchHospDiedAgeSamples(
+  selector: LocationDateVariantSelector,
+  signal?: AbortSignal
+): Promise<HospDiedAgeSampleEntry[]> {
+  return _fetchAggSamples(selector, ['age', 'hospitalized', 'died'], signal);
 }
 
 export async function fetchSamplesCount(
@@ -222,7 +218,7 @@ export async function getCsvLinkToDetails(selector: LocationDateVariantSelector)
   return `${HOST}/sample/details?${params.toString()}`;
 }
 
-async function _fetchAggSamples(
+export async function _fetchAggSamples(
   selector: LocationDateVariantSelector,
   fields: string[],
   signal?: AbortSignal

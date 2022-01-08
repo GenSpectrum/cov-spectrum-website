@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Chen2021FitnessRequest } from './chen2021Fitness-types';
 import { Button, Col, Form } from 'react-bootstrap';
 import styled from 'styled-components';
@@ -9,6 +9,7 @@ import { ExternalLink } from '../../components/ExternalLink';
 import { LocationSelector } from '../../data/LocationSelector';
 import { VariantSelector } from '../../data/VariantSelector';
 import { SamplingStrategy } from '../../data/SamplingStrategy';
+import { useDeepCompareEffect } from '../../helpers/deep-compare-hooks';
 
 export type ContainerProps = {
   locationSelector: LocationSelector;
@@ -47,7 +48,7 @@ export const Chen2021FitnessContainer = ({
   const [formPlotEndDate, setFormPlotEndDate] = useState(dateToString(paramData.plotEndDate));
   const [changePoints, setChangePoints] = useState<ChangePointFormEntry[]>([]);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     setParamData(p => ({
       ...p,
       location: locationSelector,

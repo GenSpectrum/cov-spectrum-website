@@ -2,8 +2,6 @@ import { Dataset } from '../Dataset';
 import { LocationDateVariantSelector } from '../LocationDateVariantSelector';
 import { AgeCountSampleEntry } from './AgeCountSampleEntry';
 import { fetchAgeCountSamples } from '../api-lapis';
-import { DetailedSampleAggDataset } from './DetailedSampleAggDataset';
-import { Utils } from '../../services/Utils';
 
 export type AgeCountSampleDataset = Dataset<LocationDateVariantSelector, AgeCountSampleEntry[]>;
 
@@ -15,21 +13,6 @@ export class AgeCountSampleData {
     return {
       selector,
       payload: await fetchAgeCountSamples(selector, signal),
-    };
-  }
-
-  static fromDetailedSampleAggDataset(dataset: DetailedSampleAggDataset): AgeCountSampleDataset {
-    const grouped = Utils.groupBy(dataset.payload, d => d.age);
-    const newPayload = [];
-    for (let [age, entries] of grouped.entries()) {
-      newPayload.push({
-        age,
-        count: entries.reduce((prev, curr) => prev + curr.count, 0),
-      });
-    }
-    return {
-      selector: dataset.selector,
-      payload: newPayload,
     };
   }
 

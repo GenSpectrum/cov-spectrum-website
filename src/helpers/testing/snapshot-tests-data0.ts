@@ -7,7 +7,7 @@ import { AgeCountSampleDataset } from '../../data/sample/AgeCountSampleDataset';
 import { CountryDateCountSampleDataset } from '../../data/sample/CountryDateCountSampleDataset';
 import { CaseCountAsyncDataset } from '../../data/CaseCountDataset';
 
-// Based on /explore/Germany/AllSamples/Past6M/variants?pangoLineage=B.1.1.529* from 2021-12-26
+// Based on /explore/Germany/AllSamples/Y2021/variants?pangoLineage=B.1.1.529* from 2021-12-26
 export const dataset0: {
   variantDateCount: DateCountSampleDataset;
   wholeDateCount: DateCountSampleDataset;
@@ -23,7 +23,7 @@ export const dataset0: {
     selector: {
       location: { country: 'Germany' },
       samplingStrategy: SamplingStrategy.AllSamples,
-      dateRange: new SpecialDateRangeSelector('Past6M'),
+      dateRange: new SpecialDateRangeSelector('Y2021'),
       variant: { pangoLineage: 'B.1.1.529*' },
     },
     payload: [
@@ -58,7 +58,7 @@ export const dataset0: {
     selector: {
       location: { country: 'Germany' },
       samplingStrategy: SamplingStrategy.AllSamples,
-      dateRange: new SpecialDateRangeSelector('Past6M'),
+      dateRange: new SpecialDateRangeSelector('Y2021'),
     },
     payload: [
       { date: '2021-07-19', count: 323 },
@@ -247,7 +247,7 @@ export const dataset0: {
     selector: {
       location: { country: 'Germany' },
       samplingStrategy: SamplingStrategy.AllSamples,
-      dateRange: new SpecialDateRangeSelector('Past6M'),
+      dateRange: new SpecialDateRangeSelector('Y2021'),
       variant: { pangoLineage: 'B.1.1.529*' },
     },
     payload: [
@@ -271,7 +271,7 @@ export const dataset0: {
     selector: {
       location: { country: 'Germany' },
       samplingStrategy: SamplingStrategy.AllSamples,
-      dateRange: new SpecialDateRangeSelector('Past6M'),
+      dateRange: new SpecialDateRangeSelector('Y2021'),
     },
     payload: [
       { division: 'Rheinland-Pfalz', count: 5234 },
@@ -299,7 +299,7 @@ export const dataset0: {
     selector: {
       location: { country: 'Germany' },
       samplingStrategy: SamplingStrategy.AllSamples,
-      dateRange: new SpecialDateRangeSelector('Past6M'),
+      dateRange: new SpecialDateRangeSelector('Y2021'),
       variant: { pangoLineage: 'B.1.1.529*' },
     },
     payload: [
@@ -332,7 +332,7 @@ export const dataset0: {
     selector: {
       location: { country: 'Germany' },
       samplingStrategy: SamplingStrategy.AllSamples,
-      dateRange: new SpecialDateRangeSelector('Past6M'),
+      dateRange: new SpecialDateRangeSelector('Y2021'),
     },
     payload: [
       { age: 20, count: 53 },
@@ -445,7 +445,7 @@ export const dataset0: {
     selector: {
       location: {},
       samplingStrategy: SamplingStrategy.AllSamples,
-      dateRange: new SpecialDateRangeSelector('Past6M'),
+      dateRange: new SpecialDateRangeSelector('Y2021'),
       variant: { pangoLineage: 'B.1.1.529*' },
     },
     payload: [
@@ -1267,7 +1267,7 @@ export const dataset0: {
     selector: {
       location: {},
       samplingStrategy: SamplingStrategy.AllSamples,
-      dateRange: new SpecialDateRangeSelector('Past6M'),
+      dateRange: new SpecialDateRangeSelector('Y2021'),
     },
     payload: [
       { date: '2021-07-15', country: 'Bonaire', count: 3 },

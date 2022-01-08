@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 import styled from 'styled-components';
 import { Alert, AlertVariant } from '../helpers/ui';
-import { OMIT_LAST_N_WEEKS } from '../widgets/HospitalizationDeathChart';
 import { GridCell, PackedGrid } from './PackedGrid';
 import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
-import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
+import { HospDiedAgeSampleDataset } from '../data/sample/HospDiedAgeSampleDataset';
 
 interface Props {
-  variantSampleSet: DetailedSampleAggDataset;
-  wholeSampleSet: DetailedSampleAggDataset;
+  variantSampleSet: HospDiedAgeSampleDataset;
+  wholeSampleSet: HospDiedAgeSampleDataset;
   variantName: string;
 }
 
@@ -79,11 +78,7 @@ export const HospitalizationDeathDeepFocus = ({ variantSampleSet, wholeSampleSet
             </>
           )}
         </p>
-        <p>The following samples are omitted from the plots:</p>
-        <ul className='list-disc'>
-          <li>Samples from the last {OMIT_LAST_N_WEEKS} weeks</li>
-          <li>Samples for which no hospitalization or death outcome is known</li>
-        </ul>
+        <p>Samples for which no hospitalization or death outcome is known are omitted from the plots.</p>
         {relative ? (
           <p>
             The error bars show 95% confidence intervals where the data is modeled as the ratio of two
