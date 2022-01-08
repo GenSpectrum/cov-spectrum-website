@@ -301,7 +301,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                       }
                     }
                   >
-                    97
+                    110
                   </div>
                   <div
                     className="sc-hKgILt edDYek self-end"
@@ -741,7 +741,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                       }
                     }
                   >
-                    95
+                    108
                   </div>
                   <div
                     className="sc-hKgILt edDYek self-end"
