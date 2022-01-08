@@ -11,21 +11,17 @@ import { capitalize } from 'lodash';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import { useResizeDetector } from 'react-resize-detector';
 import React, { useMemo } from 'react';
-import { globalDateCache } from '../helpers/date-cache';
-import dayjs from 'dayjs';
 import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import assert from 'assert';
 import { approximateBinomialRatioConfidence } from '../helpers/binomial-ratio-confidence';
 import DownloadWrapper from './DownloadWrapper';
-import { DetailedSampleAggDataset } from '../data/sample/DetailedSampleAggDataset';
 import { Utils } from '../services/Utils';
 import { AgeCountSampleData } from '../data/sample/AgeCountSampleDataset';
-
-export const OMIT_LAST_N_WEEKS = 4;
+import { HospDiedAgeSampleDataset } from '../data/sample/HospDiedAgeSampleDataset';
 
 export type HospitalizationDeathChartProps = {
-  variantSampleSet: DetailedSampleAggDataset;
-  wholeSampleSet: DetailedSampleAggDataset;
+  variantSampleSet: HospDiedAgeSampleDataset;
+  wholeSampleSet: HospDiedAgeSampleDataset;
   field: 'hospitalized' | 'died';
   variantName: string;
   extendedMetrics?: boolean;
@@ -105,18 +101,12 @@ export const HospitalizationDeathChart = ({
 
   const processedData = useMemo((): GroupValue[] => {
     const filterAndGroupByAge = (
-      originalSampleSet: DetailedSampleAggDataset
+      originalSampleSet: HospDiedAgeSampleDataset
     ): {
       ageGroup: string | null;
       counts: PerTrueFalse<number>;
     }[] => {
-      const lastWeek = globalDateCache.getDayUsingDayjs(
-        globalDateCache.getDayUsingDayjs(dayjs()).dayjs.subtract(OMIT_LAST_N_WEEKS, 'weeks')
-      ).isoWeek;
-      const filteredSamples = originalSampleSet.payload.filter(
-        entry => entry.date && !globalDateCache.weekIsBefore(lastWeek, entry.date.isoWeek)
-      );
-      const groupedByAgeGroup = Utils.groupBy(filteredSamples, e =>
+      const groupedByAgeGroup = Utils.groupBy(originalSampleSet.payload, e =>
         e.age !== null ? AgeCountSampleData.fromAgeToAgeGroup(e.age) : null
       );
       const filled = fillFromPrimitiveMap(groupedByAgeGroup, possibleAgeKeys, []);

@@ -22,6 +22,7 @@ import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { OrderAndLimitConfig } from './OrderAndLimitConfig';
 import { addSamplingStrategyToUrlSearchParams } from './SamplingStrategy';
 import { DatelessCountrylessCountSampleEntry } from './sample/DatelessCountrylessCountSampleEntry';
+import { HospDiedAgeSampleEntry } from './sample/HospDiedAgeSampleEntry';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 
@@ -99,6 +100,13 @@ export async function fetchDatelessCountrylessCountSamples(
   signal?: AbortSignal
 ): Promise<DatelessCountrylessCountSampleEntry[]> {
   return _fetchAggSamples(selector, ['division', 'age', 'sex', 'hospitalized', 'died'], signal);
+}
+
+export async function fetchHospDiedAgeSamples(
+  selector: LocationDateVariantSelector,
+  signal?: AbortSignal
+): Promise<HospDiedAgeSampleEntry[]> {
+  return _fetchAggSamples(selector, ['age', 'hospitalized', 'died'], signal);
 }
 
 export async function fetchSamplesCount(

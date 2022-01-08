@@ -40,6 +40,8 @@ import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterD
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
 import { ArticleData } from '../data/ArticleDataset';
 import { ArticleListWidget } from '../widgets/ArticleListWidget';
+import { HospDiedAgeSampleData } from '../data/sample/HospDiedAgeSampleDataset';
+import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
 
 type Props = {
   isSmallScreen: boolean;
@@ -95,11 +97,9 @@ export const FocusPage2 = ({ isSmallScreen }: Props) => {
   const variantDateCount = useQuery(signal => DateCountSampleData.fromApi(ldvsSelector, signal), [
     ldvsSelector,
   ]);
-  const wholeDateCountWithDateFilter = useQuery(
-    // Used by the focus page
-    signal => DateCountSampleData.fromApi(ldsSelector, signal),
-    [ldsSelector]
-  );
+  const wholeDateCountWithDateFilter = useQuery(signal => DateCountSampleData.fromApi(ldsSelector, signal), [
+    ldsSelector,
+  ]);
   const wholeDateCountWithoutDateFilter = useQuery(
     signal => DateCountSampleData.fromApi(lsSelector, signal),
     [lsSelector]
@@ -125,11 +125,17 @@ export const FocusPage2 = ({ isSmallScreen }: Props) => {
   const variantDivisionCount = useQuery(signal => DivisionCountSampleData.fromApi(ldvsSelector, signal), [
     ldvsSelector,
   ]);
-  const wholeDivisionCount = useQuery(
-    // Used by the focus page
-    signal => DivisionCountSampleData.fromApi(ldsSelector, signal),
-    [ldsSelector]
-  );
+  const wholeDivisionCount = useQuery(signal => DivisionCountSampleData.fromApi(ldsSelector, signal), [
+    ldsSelector,
+  ]);
+
+  // Hospitalization and death
+  const variantHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal), [
+    ldvsSelector,
+  ]);
+  const wholeHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldsSelector, signal), [
+    ldsSelector,
+  ]);
 
   // Cases
   const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(lSelector, ({ selector }, { signal }) =>
@@ -372,7 +378,9 @@ export const FocusPage2 = ({ isSmallScreen }: Props) => {
           variantDivisionCount.data &&
           wholeDivisionCount.data &&
           variantInternationalDateCount.data &&
-          wholeInternationalDateCount.data ? (
+          wholeInternationalDateCount.data &&
+          variantHospDeathAgeCount.data &&
+          wholeHospDeathAgeCount.data ? (
             <>
               <div>
                 <CoreMetrics
@@ -488,22 +496,21 @@ export const FocusPage2 = ({ isSmallScreen }: Props) => {
                       ]}
                     />
                   </GridCell>
-                  {/*TODO*/}
-                  {/*{country === 'Switzerland' && (*/}
-                  {/*  <GridCell minWidth={600}>*/}
-                  {/*    <HospitalizationDeathChartWidget.ShareableComponent*/}
-                  {/*      extendedMetrics={false}*/}
-                  {/*      relativeToOtherVariants={false}*/}
-                  {/*      field='hospitalized'*/}
-                  {/*      variantSampleSet={variantDateCount}*/}
-                  {/*      wholeSampleSet={wholeDataset}*/}
-                  {/*      variantName={variantDateCount.selector.variant?.pangoLineage ?? 'unnamed variant'}*/}
-                  {/*      title='Hospitalization probabilities'*/}
-                  {/*      height={300}*/}
-                  {/*      toolbarChildren={deepFocusButtons.hospitalizationAndDeath}*/}
-                  {/*    />*/}
-                  {/*  </GridCell>*/}
-                  {/*)}*/}
+                  {country === 'Switzerland' && (
+                    <GridCell minWidth={600}>
+                      <HospitalizationDeathChartWidget.ShareableComponent
+                        extendedMetrics={false}
+                        relativeToOtherVariants={false}
+                        field='hospitalized'
+                        variantSampleSet={variantHospDeathAgeCount.data}
+                        wholeSampleSet={wholeHospDeathAgeCount.data}
+                        variantName={exploreUrl.variant.pangoLineage ?? 'unnamed variant'}
+                        title='Hospitalization probabilities'
+                        height={300}
+                        toolbarChildren={deepFocusButtons.hospitalizationAndDeath}
+                      />
+                    </GridCell>
+                  )}
                   {wasteWaterSummaryPlot}
                   {exploreUrl?.variant?.pangoLineage && ( // TODO Check that nothing else is set
                     <GridCell minWidth={800}>
