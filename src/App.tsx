@@ -114,7 +114,7 @@ export const App = () => {
         </Switch>
       </div>
       <Footer className='text-center'>
-        <div>The sequence data was updated on: {dayjs(getCurrentLapisDataVersionDate()).toISOString()}</div>
+        <div>The sequence data was updated: {dayjs(getCurrentLapisDataVersionDate()).calendar()}</div>
         {sequenceDataSource === 'gisaid' && (
           <div>
             Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
