@@ -98,9 +98,9 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
             </div>
             <div className='m-1 flex-grow'>
               <VariantSearch
-                onVariantSelect={exploreUrl.setVariant}
-                currentSelection={exploreUrl.variant}
-                isSimple={isSmallScreen}
+                onVariantSelect={exploreUrl.setVariants}
+                currentSelection={exploreUrl.variants}
+                analysisMode={exploreUrl.analysisMode}
               />
             </div>
           </div>

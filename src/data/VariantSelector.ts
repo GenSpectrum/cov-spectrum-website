@@ -127,9 +127,12 @@ export function isValidPangoLineageQuery(query: string): boolean {
 }
 
 export function formatVariantDisplayName(
-  { pangoLineage, gisaidClade, nextstrainClade, nucMutations, aaMutations }: VariantSelector,
+  { pangoLineage, gisaidClade, nextstrainClade, nucMutations, aaMutations, variantQuery }: VariantSelector,
   dense = false
 ): string {
+  if (variantQuery) {
+    return variantQuery;
+  }
   const components = [
     pangoLineage,
     gisaidClade,

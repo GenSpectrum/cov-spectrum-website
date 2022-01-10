@@ -1,4 +1,3 @@
-import { VariantSearch } from '../components/VariantSearch';
 import { KnownVariantsList } from '../components/KnownVariantsList/KnownVariantsList';
 import { SequencingIntensityChartWidget } from '../widgets/SequencingIntensityChartWidget';
 import { ShowMoreButton } from '../helpers/ui';
@@ -11,6 +10,8 @@ import { useAsyncDataset } from '../helpers/use-async-dataset';
 import { useQuery } from '../helpers/query-hook';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import Loader from '../components/Loader';
+import { VariantSearch } from '../components/VariantSearch';
+import { AnalysisMode } from '../data/AnalysisMode';
 
 type Props = {
   isSmallScreen: boolean;
@@ -52,7 +53,7 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
     <div className={`w-full mx-auto max-w-6xl mt-4`}>
       <div className='p-2 mr-4 '>
         <h1>Detect and analyze variants of SARS-CoV-2</h1>
-        <VariantSearch onVariantSelect={exploreUrl.setVariant} isSimple={false} />
+        <VariantSearch onVariantSelect={exploreUrl.setVariants} analysisMode={AnalysisMode.Single} />
       </div>
       <div className={`grid ${isSmallScreen ? '' : 'grid-cols-2'} h-full`}>
         <div className='p-2'>
