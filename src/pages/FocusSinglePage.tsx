@@ -434,10 +434,10 @@ export const FocusSinglePage = () => {
               {wasteWaterSummaryPlot}
               {exploreUrl?.variant?.pangoLineage && ( // TODO Check that nothing else is set
                 <GridCell minWidth={800}>
-                  {articleDataset && articleDataset.isSuccess ? (
+                  {articleDataset.data && articleDataset.isSuccess ? (
                     <ArticleListWidget.ShareableComponent
                       title='Publications and pre-Prints'
-                      articleDataset={articleDataset.data!}
+                      articleDataset={articleDataset.data}
                     />
                   ) : (
                     <Loader />
