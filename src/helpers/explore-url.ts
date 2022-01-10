@@ -36,6 +36,7 @@ export interface ExploreUrl {
   setDateRange: (dateRange: DateRangeSelector) => void;
   setVariant: (variant: VariantSelector) => void;
   setVariants: (variants: VariantSelector[], analysisMode?: AnalysisMode) => void;
+  setAnalysisMode: (analysisMode: AnalysisMode) => void;
   setSamplingStrategy: (samplingStrategy: SamplingStrategy) => void;
   getOverviewPageUrl: () => string;
   getExplorePageUrl: () => string;
@@ -154,6 +155,24 @@ export function useExploreUrl(): ExploreUrl | undefined {
     },
     [history, locationState.pathname, locationState.search, query, routeMatches.locationSamplingDate]
   );
+  const setAnalysisMode = useCallback(
+    (analysisMode: AnalysisMode) => {
+      if (!routeMatches.locationSamplingDate) {
+        return;
+      }
+      const prefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
+      const newQueryParam = new URLSearchParams(queryString);
+      newQueryParam.delete('analysisMode');
+      if (analysisMode !== defaultAnalysisMode) {
+        newQueryParam.set('analysisMode', analysisMode);
+      }
+      const currentPath = locationState.pathname + locationState.search;
+      assert(currentPath.startsWith(prefix));
+      let path = `${prefix}/variants?${newQueryParam}`;
+      history.push(path);
+    },
+    [history, locationState.pathname, locationState.search, queryString, routeMatches.locationSamplingDate]
+  );
   const getOverviewPageUrl = useCallback(() => {
     return `${routeMatches.locationSamplingDate?.url}/variants${locationState.search}`;
   }, [locationState.search, routeMatches.locationSamplingDate?.url]);
@@ -241,6 +260,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     setDateRange,
     setVariant,
     setVariants,
+    setAnalysisMode,
     getOverviewPageUrl,
     getExplorePageUrl,
     getDeepExplorePageUrl,

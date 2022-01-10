@@ -20,12 +20,12 @@ import { ExternalLink } from './components/ExternalLink';
 import { VercelSponsorshipLogo } from './components/VercelSponsorshipLogo';
 import styled from 'styled-components';
 import { ExplorePage } from './pages/ExplorePage';
-import { FocusPage } from './pages/FocusPage';
 import { DeepInternationalComparisonPage } from './pages/DeepInternationalComparisonPage';
 import { DeepChen2021FitnessPage } from './pages/DeepChen2021FitnessPage';
 import { DeepHospitalizationDeathPage } from './pages/DeepHospitalizationDeathPage';
 import { DeepWastewaterPage } from './pages/DeepWastewaterPage';
 import { DeepSequencingCoveragePage } from './pages/DeepSequencingCoveragePage';
+import { FocusPage } from './pages/FocusPage';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 

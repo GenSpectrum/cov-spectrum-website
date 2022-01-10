@@ -161,7 +161,7 @@ const Grid = ({
 
 interface Props {
   onVariantSelect: (selection: VariantSelector) => void;
-  variantSelector: VariantSelector | undefined;
+  variantSelector: VariantSelector | VariantSelector[] | undefined;
   wholeDateCountSampleDataset: DateCountSampleDataset;
   isHorizontal: boolean;
   isLandingPage: boolean;
@@ -275,10 +275,7 @@ export const KnownVariantsList = ({
               onClick={() => {
                 onVariantSelect(selector);
               }}
-              selected={
-                variantSelector &&
-                formatVariantDisplayName(variantSelector, true) === formatVariantDisplayName(selector, true)
-              }
+              selected={variantSelector && isSelected(selector, variantSelector)}
             />
           </div>
         ))}
@@ -286,3 +283,25 @@ export const KnownVariantsList = ({
     </>
   );
 };
+
+function isSelected(
+  thisSelector: VariantSelector,
+  selector: VariantSelector | VariantSelector[] | undefined
+): boolean {
+  if (selector === undefined) {
+    return false;
+  }
+  let _selectors: VariantSelector[];
+  if (Array.isArray(selector)) {
+    _selectors = selector;
+  } else {
+    _selectors = [selector];
+  }
+  const thisSelectorFormatted = formatVariantDisplayName(thisSelector, true);
+  for (let s of _selectors) {
+    if (formatVariantDisplayName(s, true) === thisSelectorFormatted) {
+      return true;
+    }
+  }
+  return false;
+}

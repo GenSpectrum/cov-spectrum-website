@@ -1,7 +1,7 @@
 export enum AnalysisMode {
-  Single = 'single',
-  CompareEquals = 'compare-equals',
-  CompareToBaseline = 'compare-to-baseline',
+  Single = 'Single',
+  CompareEquals = 'CompareEquals',
+  CompareToBaseline = 'CompareToBaseline',
 }
 
 export function decodeAnalysisMode(encoded: string | null): AnalysisMode | null {
