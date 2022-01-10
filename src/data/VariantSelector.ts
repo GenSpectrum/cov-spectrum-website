@@ -19,17 +19,24 @@ export function decodeVariantSelector(encoded: VariantSelector): VariantSelector
   return encoded;
 }
 
-export function addVariantSelectorToUrlSearchParams(selector: VariantSelector, params: URLSearchParams) {
+export function addVariantSelectorToUrlSearchParams(
+  selector: VariantSelector,
+  params: URLSearchParams,
+  index?: number
+) {
   if (selector.aaMutations?.length) {
-    params.set('aaMutations', selector.aaMutations.join(','));
+    const aaMutationsKey = index && index > 0 ? `aaMutations${index}` : 'aaMutations';
+    params.set(aaMutationsKey, selector.aaMutations.join(','));
   }
   if (selector.nucMutations?.length) {
-    params.set('nucMutations', selector.nucMutations.join(','));
+    const nucMutationsKey = index && index > 0 ? `nucMutations${index}` : 'nucMutations';
+    params.set(nucMutationsKey, selector.nucMutations.join(','));
   }
   for (const k of ['pangoLineage', 'gisaidClade', 'nextstrainClade', 'variantQuery'] as const) {
     const value = selector[k];
     if (value !== undefined) {
-      params.set(k, value);
+      const key = index && index > 0 ? `${k}${index}` : k;
+      params.set(key, value);
     }
   }
 }
@@ -38,6 +45,51 @@ export function variantUrlFromSelector(selector: VariantSelector): string {
   const params = new URLSearchParams();
   addVariantSelectorToUrlSearchParams(selector, params);
   return params.toString();
+}
+
+export function variantListUrlFromSelectors(selectors: VariantSelector[]): string {
+  const params = new URLSearchParams();
+  selectors.forEach(function (selector, index) {
+    addVariantSelectorToUrlSearchParams(selector, params, index);
+  });
+  return params.toString();
+}
+
+export function decodeVariantListFromUrl(query: string): VariantSelector[] {
+  const params = new URLSearchParams(query);
+  // Find out how many variants are specified and which index/ID they have.
+  const variantIds = new Set<number>();
+  for (let key of params.keys()) {
+    // The number in "aaMutations1", "pangoLineage3", ... should be parsed out.
+    const match = key.match(
+      /(pangoLineage|gisaidClade|nextstrainClade|aaMutations|nucMutations|variantQuery)(\d+)/
+    );
+    if (match) {
+      variantIds.add(Number.parseInt(match[2]));
+    }
+  }
+  // Create the variant selectors.
+  const variants: VariantSelector[] = [
+    {
+      pangoLineage: params.get('pangoLineage') ?? undefined,
+      gisaidClade: params.get('gisaidClade') ?? undefined,
+      nextstrainClade: params.get('nextstrainClade') ?? undefined,
+      aaMutations: params.get('aaMutations')?.split(','),
+      nucMutations: params.get('nucMutations')?.split(','),
+      variantQuery: params.get('variantQuery') ?? undefined,
+    },
+  ];
+  for (let id of variantIds) {
+    variants.push({
+      pangoLineage: params.get('pangoLineage' + id) ?? undefined,
+      gisaidClade: params.get('gisaidClade' + id) ?? undefined,
+      nextstrainClade: params.get('nextstrainClade' + id) ?? undefined,
+      aaMutations: params.get('aaMutations' + id)?.split(','),
+      nucMutations: params.get('nucMutations' + id)?.split(','),
+      variantQuery: params.get('variantQuery' + id) ?? undefined,
+    });
+  }
+  return variants;
 }
 
 export function variantIsOnlyDefinedBy(

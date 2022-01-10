@@ -1,7 +1,12 @@
 import assert from 'assert';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
-import { VariantSelector, variantUrlFromSelector } from '../data/VariantSelector';
+import {
+  decodeVariantListFromUrl,
+  variantListUrlFromSelectors,
+  VariantSelector,
+  variantUrlFromSelector,
+} from '../data/VariantSelector';
 import {
   decodeLocationSelectorFromSingleString,
   encodeLocationSelectorToSingleString,
@@ -16,17 +21,21 @@ import {
 } from '../data/DateRangeUrlEncoded';
 import { decodeSamplingStrategy, SamplingStrategy } from '../data/SamplingStrategy';
 import { baseLocation } from '../index';
+import { AnalysisMode, decodeAnalysisMode } from '../data/AnalysisMode';
 
 export interface ExploreUrl {
   validUrl: true;
   location: LocationSelector;
   dateRange: DateRangeSelector;
   variant?: VariantSelector;
+  variants?: VariantSelector[];
   samplingStrategy: SamplingStrategy;
+  analysisMode: AnalysisMode;
 
   setLocation: (location: LocationSelector) => void;
   setDateRange: (dateRange: DateRangeSelector) => void;
   setVariant: (variant: VariantSelector) => void;
+  setVariants: (variants: VariantSelector[], analysisMode?: AnalysisMode) => void;
   setSamplingStrategy: (samplingStrategy: SamplingStrategy) => void;
   getOverviewPageUrl: () => string;
   getExplorePageUrl: () => string;
@@ -35,13 +44,15 @@ export interface ExploreUrl {
   focusKey: string;
 }
 
-function useQuery() {
-  return new URLSearchParams(useLocation().search);
+function useQuery(queryString: string) {
+  return useMemo(() => new URLSearchParams(queryString), [queryString]);
 }
 
 export const defaultDateRange: DateRangeUrlEncoded = 'Past6M';
 
 export const defaultSamplingStrategy: SamplingStrategy = SamplingStrategy.AllSamples;
+
+export const defaultAnalysisMode: AnalysisMode = AnalysisMode.Single;
 
 export function useExploreUrl(): ExploreUrl | undefined {
   const history = useHistory();
@@ -62,7 +73,8 @@ export function useExploreUrl(): ExploreUrl | undefined {
       dateRange: string;
     }>(`/explore/:location/:samplingStrategy/:dateRange/variants`),
   };
-  let query = useQuery();
+  let queryString = useLocation().search;
+  let query = useQuery(queryString);
 
   // Create navigation functions
   const setLocation = useCallback(
@@ -123,6 +135,25 @@ export function useExploreUrl(): ExploreUrl | undefined {
     },
     [history, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
   );
+  const setVariants = useCallback(
+    (variants: VariantSelector[], analysisMode?: AnalysisMode) => {
+      if (!routeMatches.locationSamplingDate) {
+        return;
+      }
+      const _analysisMode =
+        analysisMode ?? decodeAnalysisMode(query.get('analysisMode')) ?? defaultAnalysisMode;
+      const prefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
+      const currentPath = locationState.pathname + locationState.search;
+      assert(currentPath.startsWith(prefix));
+      const variantsEncoded = variantListUrlFromSelectors(variants);
+      let path = `${prefix}/variants?${variantsEncoded}`;
+      if (_analysisMode !== AnalysisMode.Single) {
+        path += `&analysisMode=${_analysisMode}`;
+      }
+      history.push(path);
+    },
+    [history, locationState.pathname, locationState.search, query, routeMatches.locationSamplingDate]
+  );
   const getOverviewPageUrl = useCallback(() => {
     return `${routeMatches.locationSamplingDate?.url}/variants${locationState.search}`;
   }, [locationState.search, routeMatches.locationSamplingDate?.url]);
@@ -180,6 +211,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
 
   // Get variant selector if given
   let variantSelector: VariantSelector | undefined = undefined;
+  let variantSelectors: VariantSelector[] | undefined = undefined;
   if (routeMatches.locationSamplingDateVariant) {
     variantSelector = {
       pangoLineage: query.get('pangoLineage') ?? undefined,
@@ -189,19 +221,26 @@ export function useExploreUrl(): ExploreUrl | undefined {
       nucMutations: query.get('nucMutations')?.split(','),
       variantQuery: query.get('variantQuery') ?? undefined,
     };
+    variantSelectors = decodeVariantListFromUrl(queryString);
   }
+
+  // Parse analysis mode
+  const analysisMode = decodeAnalysisMode(query.get('analysisMode')) ?? defaultAnalysisMode;
 
   return {
     validUrl: true,
     location: locationSelector,
     dateRange: dateRangeSelector,
     variant: variantSelector,
+    variants: variantSelectors,
     samplingStrategy,
+    analysisMode,
 
     setLocation,
     setSamplingStrategy,
     setDateRange,
     setVariant,
+    setVariants,
     getOverviewPageUrl,
     getExplorePageUrl,
     getDeepExplorePageUrl,
