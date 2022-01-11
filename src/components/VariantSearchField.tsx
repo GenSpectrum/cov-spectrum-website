@@ -61,9 +61,10 @@ type Props = {
   currentSelection?: VariantSelector;
   onVariantSelect: (selection: VariantSelector) => void;
   isSimple: boolean;
+  triggerSearch: () => void;
 };
 
-export const VariantSearchField = ({ onVariantSelect, currentSelection }: Props) => {
+export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerSearch }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<SearchOption[]>(
     currentSelection ? variantSelectorToOptions(currentSelection) : []
   );
@@ -302,7 +303,13 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection }: Props)
 
   return (
     <div>
-      <form className='w-full flex flex-row items-center'>
+      <form
+        className='w-full flex flex-row items-center'
+        onSubmit={e => {
+          e.preventDefault();
+          triggerSearch();
+        }}
+      >
         {!advancedSearch ? (
           <AsyncSelect
             className='w-full mr-2'

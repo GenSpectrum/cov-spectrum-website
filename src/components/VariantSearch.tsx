@@ -98,6 +98,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
             isSimple={false}
             currentSelection={selections[0].selector}
             onVariantSelect={newSelection => changeSelection(newSelection, 0)}
+            triggerSearch={submitSearch}
           />
         </div>
         <Button variant={ButtonVariant.PRIMARY} className='w-40' onClick={() => submitSearch()}>
@@ -123,6 +124,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
                     isSimple={false}
                     currentSelection={selection.selector}
                     onVariantSelect={newSelection => changeSelection(newSelection, index)}
+                    triggerSearch={submitSearch}
                   />
                 </div>
               </div>
@@ -153,6 +155,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
                 isSimple={false}
                 currentSelection={selections[0].selector}
                 onVariantSelect={newSelection => changeSelection(newSelection, 0)}
+                triggerSearch={submitSearch}
               />
             </div>
           </div>
@@ -169,6 +172,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
                     isSimple={false}
                     currentSelection={selection.selector}
                     onVariantSelect={newSelection => changeSelection(newSelection, index + 1)}
+                    triggerSearch={submitSearch}
                   />
                 </div>
               </div>
