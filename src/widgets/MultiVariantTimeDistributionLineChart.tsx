@@ -22,6 +22,7 @@ export type MultiVariantTimeDistributionLineChartProps = {
 export const MultiVariantTimeDistributionLineChart = ({
   variantSampleSets,
   wholeSampleSet,
+  analysisMode,
 }: MultiVariantTimeDistributionLineChartProps) => {
   const { plotData, ticks } = useMemo(() => {
     // fill in dates with zero samples and merge sample sets
@@ -133,13 +134,19 @@ export const MultiVariantTimeDistributionLineChart = ({
                 formatter={(value: number, name: string, props: any) => {
                   const index = Number.parseInt(name.replaceAll('variantProportion', ''));
                   const payload = props.payload;
+                  const proportionString = (payload[`variantProportion${index}`] * 100).toFixed(2) + '%';
+                  const proportionCiString =
+                    ' [' +
+                    (payload[`variantProportionCILower${index}`] * 100).toFixed(2) +
+                    '-' +
+                    (payload[`variantProportionCIUpper${index}`] * 100).toFixed(2) +
+                    '%]';
                   return [
-                    (payload[`variantProportion${index}`] * 100).toFixed(2) +
-                      '% [' +
-                      (payload[`variantProportionCILower${index}`] * 100).toFixed(2) +
-                      '-' +
-                      (payload[`variantProportionCIUpper${index}`] * 100).toFixed(2) +
-                      '%]',
+                    // It does not make sense to show a CI (as it is calculated right now) if the chosen variants are
+                    // not a subset of the baseline.
+                    // TODO Do show the CI if a variant is a subset of the baseline
+                    proportionString +
+                      (analysisMode !== AnalysisMode.CompareToBaseline ? proportionCiString : ''),
                     payload[`variantName${index}`],
                   ];
                 }}

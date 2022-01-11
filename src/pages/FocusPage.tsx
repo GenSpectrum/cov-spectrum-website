@@ -12,6 +12,7 @@ import { InternalLink } from '../components/InternalLink';
 import { DateRangePicker } from '../components/DateRangePicker';
 import { VariantSearch } from '../components/VariantSearch';
 import { FocusCompareEqualsPage } from './FocusCompareEqualsPage';
+import { FocusCompareToBaselinePage } from './FocusCompareToBaselinePage';
 
 type Props = {
   isSmallScreen: boolean;
@@ -36,7 +37,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
       subFocusPage = <FocusCompareEqualsPage />;
       break;
     case AnalysisMode.CompareToBaseline:
-      subFocusPage = <>Compare to baseline</>;
+      subFocusPage = <FocusCompareToBaselinePage />;
       break;
     default:
       throw new Error('Unexpected or undefined analysis mode: ' + exploreUrl.analysisMode);
