@@ -7,10 +7,11 @@ import Loader from '../components/Loader';
 import React from 'react';
 import { useQuery } from '../helpers/query-hook';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
-import { useSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
+import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 import { InternalLink } from '../components/InternalLink';
 import { DateRangePicker } from '../components/DateRangePicker';
 import { VariantSearch } from '../components/VariantSearch';
+import { FocusCompareEqualsPage } from './FocusCompareEqualsPage';
 
 type Props = {
   isSmallScreen: boolean;
@@ -20,7 +21,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
   const exploreUrl = useExploreUrl()!;
 
   // fetch data
-  const { lsSelector } = useSelectorsFromExploreUrl(exploreUrl);
+  const { lsSelector } = useSingleSelectorsFromExploreUrl(exploreUrl);
   const wholeDateCountWithoutDateFilter = useQuery(
     signal => DateCountSampleData.fromApi(lsSelector, signal),
     [lsSelector]
@@ -32,7 +33,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
       subFocusPage = <FocusSinglePage />;
       break;
     case AnalysisMode.CompareEquals:
-      subFocusPage = <>Compare equals</>;
+      subFocusPage = <FocusCompareEqualsPage />;
       break;
     case AnalysisMode.CompareToBaseline:
       subFocusPage = <>Compare to baseline</>;

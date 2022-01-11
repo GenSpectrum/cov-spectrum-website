@@ -37,7 +37,7 @@ import { ArticleData } from '../data/ArticleDataset';
 import { ArticleListWidget } from '../widgets/ArticleListWidget';
 import { HospDiedAgeSampleData } from '../data/sample/HospDiedAgeSampleDataset';
 import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
-import { useSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
+import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 
 export const FocusSinglePage = () => {
   const exploreUrl = useExploreUrl();
@@ -56,7 +56,7 @@ export const FocusSinglePage = () => {
   );
 
   // --- Fetch data ---
-  const { ldvsSelector, ldsSelector, dvsSelector, dsSelector, lSelector } = useSelectorsFromExploreUrl(
+  const { ldvsSelector, ldsSelector, dvsSelector, dsSelector, lSelector } = useSingleSelectorsFromExploreUrl(
     exploreUrl!
   );
   // Date counts

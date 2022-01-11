@@ -3,7 +3,7 @@ import { useDeepCompareMemo } from './deep-compare-hooks';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { LocationDateSelector } from '../data/LocationDateSelector';
 
-export type SelectorsFromExploreUrlHook = {
+export type SingleSelectorsFromExploreUrlHook = {
   ldvsSelector: LocationDateVariantSelector;
   ldsSelector: LocationDateVariantSelector;
   lsSelector: LocationDateVariantSelector;
@@ -12,16 +12,24 @@ export type SelectorsFromExploreUrlHook = {
   lSelector: LocationDateSelector;
 };
 
-export function useSelectorsFromExploreUrl(exploreUrl: ExploreUrl): SelectorsFromExploreUrlHook {
+export type MultipleSelectorsFromExploreUrlHook = {
+  ldvsSelectors: LocationDateVariantSelector[];
+};
+
+/**
+ * Returns selectors that use the first variant selector only.
+ */
+export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): SingleSelectorsFromExploreUrlHook {
+  const firstVariant = exploreUrl.variants ? exploreUrl.variants[0] : undefined;
   return {
     ldvsSelector: useDeepCompareMemo(
       () => ({
         location: exploreUrl.location!,
         dateRange: exploreUrl.dateRange,
         samplingStrategy: exploreUrl.samplingStrategy!,
-        variant: exploreUrl.variant,
+        variant: firstVariant,
       }),
-      [exploreUrl.dateRange, exploreUrl.location, exploreUrl.samplingStrategy, exploreUrl.variant]
+      [exploreUrl.dateRange, exploreUrl.location, exploreUrl.samplingStrategy, firstVariant]
     ),
     ldsSelector: useDeepCompareMemo(
       () => ({
@@ -43,9 +51,9 @@ export function useSelectorsFromExploreUrl(exploreUrl: ExploreUrl): SelectorsFro
         location: {},
         dateRange: exploreUrl.dateRange,
         samplingStrategy: exploreUrl.samplingStrategy!,
-        variant: exploreUrl.variant,
+        variant: firstVariant,
       }),
-      [exploreUrl.dateRange, exploreUrl.samplingStrategy, exploreUrl.variant]
+      [exploreUrl.dateRange, exploreUrl.samplingStrategy, firstVariant]
     ),
     dsSelector: useDeepCompareMemo(
       () => ({
@@ -60,6 +68,23 @@ export function useSelectorsFromExploreUrl(exploreUrl: ExploreUrl): SelectorsFro
         location: exploreUrl.location!,
       }),
       [exploreUrl.location]
+    ),
+  };
+}
+
+export function useMultipleSelectorsFromExploreUrl(
+  exploreUrl: ExploreUrl
+): MultipleSelectorsFromExploreUrlHook {
+  return {
+    ldvsSelectors: useDeepCompareMemo(
+      () =>
+        (exploreUrl.variants ?? []).map(variant => ({
+          location: exploreUrl.location!,
+          dateRange: exploreUrl.dateRange,
+          samplingStrategy: exploreUrl.samplingStrategy!,
+          variant,
+        })),
+      [exploreUrl.dateRange, exploreUrl.location, exploreUrl.samplingStrategy, exploreUrl.variants]
     ),
   };
 }

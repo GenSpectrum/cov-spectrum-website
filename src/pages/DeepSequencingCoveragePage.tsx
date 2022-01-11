@@ -9,13 +9,13 @@ import { DatelessCountrylessCountSampleData } from '../data/sample/DatelessCount
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
 import { useAsyncDataset } from '../helpers/use-async-dataset';
-import { useSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
+import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 
 export const DeepSequencingCoveragePage = () => {
   const exploreUrl = useExploreUrl();
 
   // Fetch data
-  const { lsSelector, lSelector } = useSelectorsFromExploreUrl(exploreUrl!);
+  const { lsSelector, lSelector } = useSingleSelectorsFromExploreUrl(exploreUrl!);
   const wholeDatelessDataset = useQuery(
     signal => DatelessCountrylessCountSampleData.fromApi(lsSelector, signal),
     [lsSelector]
