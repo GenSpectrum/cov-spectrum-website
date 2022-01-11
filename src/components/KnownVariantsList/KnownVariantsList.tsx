@@ -15,15 +15,14 @@ import { useQuery } from '../../helpers/query-hook';
 
 const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
 
-const KnownVariantCardLoader = (
-  <div className='animate-pulse w-full'>
-    <div className={`h-20 bg-gradient-to-r from-gray-400 to-gray-300 rounded w-full`}></div>
-  </div>
-);
 const getLoadVariantCardLoaders = () => {
   let loaders = [];
   for (let i = 0; i < 12; i++) {
-    loaders.push(KnownVariantCardLoader);
+    loaders.push(
+      <div className='animate-pulse w-full' key={i}>
+        <div className={`h-20 bg-gradient-to-r from-gray-400 to-gray-300 rounded w-full`} />
+      </div>
+    );
   }
   return loaders;
 };
@@ -161,7 +160,7 @@ const Grid = ({
 
 interface Props {
   onVariantSelect: (selection: VariantSelector) => void;
-  variantSelector: VariantSelector | undefined;
+  variantSelector: VariantSelector | VariantSelector[] | undefined;
   wholeDateCountSampleDataset: DateCountSampleDataset;
   isHorizontal: boolean;
   isLandingPage: boolean;
@@ -266,7 +265,7 @@ export const KnownVariantsList = ({
       />
       <Grid isHorizontal={isHorizontal} isLandingPage={isLandingPage}>
         {chartData.map(({ selector, chartData, recentProportion }) => (
-          <div className={`${isHorizontal && 'h-full w-36'}`}>
+          <div className={`${isHorizontal && 'h-full w-36'}`} key={formatVariantDisplayName(selector, true)}>
             <KnownVariantCard
               key={formatVariantDisplayName(selector, true)}
               name={formatVariantDisplayName(selector, true)}
@@ -275,10 +274,7 @@ export const KnownVariantsList = ({
               onClick={() => {
                 onVariantSelect(selector);
               }}
-              selected={
-                variantSelector &&
-                formatVariantDisplayName(variantSelector, true) === formatVariantDisplayName(selector, true)
-              }
+              selected={variantSelector && isSelected(selector, variantSelector)}
             />
           </div>
         ))}
@@ -286,3 +282,25 @@ export const KnownVariantsList = ({
     </>
   );
 };
+
+function isSelected(
+  thisSelector: VariantSelector,
+  selector: VariantSelector | VariantSelector[] | undefined
+): boolean {
+  if (selector === undefined) {
+    return false;
+  }
+  let _selectors: VariantSelector[];
+  if (Array.isArray(selector)) {
+    _selectors = selector;
+  } else {
+    _selectors = [selector];
+  }
+  const thisSelectorFormatted = formatVariantDisplayName(thisSelector, true);
+  for (let s of _selectors) {
+    if (formatVariantDisplayName(s, true) === thisSelectorFormatted) {
+      return true;
+    }
+  }
+  return false;
+}
