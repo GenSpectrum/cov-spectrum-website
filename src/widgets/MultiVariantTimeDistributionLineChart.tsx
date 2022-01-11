@@ -93,7 +93,11 @@ export const MultiVariantTimeDistributionLineChart = ({
       };
       for (let i = 0; i < numberOfVariants; i++) {
         const variantCount = d[`variantCount${i}`];
-        pd[`variantProportion${i}`] = variantCount / d.sequenced;
+        let proportion = variantCount / d.sequenced;
+        if (!Number.isFinite(proportion)) {
+          proportion = NaN;
+        }
+        pd[`variantProportion${i}`] = proportion;
         const wilsonInterval = calculateWilsonInterval(variantCount, d.sequenced);
         pd[`variantProportionCILower${i}`] = Math.max(wilsonInterval[0], 0);
         pd[`variantProportionCIUpper${i}`] = Math.max(wilsonInterval[1], 0);
