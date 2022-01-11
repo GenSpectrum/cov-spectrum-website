@@ -15,15 +15,14 @@ import { useQuery } from '../../helpers/query-hook';
 
 const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
 
-const KnownVariantCardLoader = (
-  <div className='animate-pulse w-full'>
-    <div className={`h-20 bg-gradient-to-r from-gray-400 to-gray-300 rounded w-full`}></div>
-  </div>
-);
 const getLoadVariantCardLoaders = () => {
   let loaders = [];
   for (let i = 0; i < 12; i++) {
-    loaders.push(KnownVariantCardLoader);
+    loaders.push(
+      <div className='animate-pulse w-full' key={i}>
+        <div className={`h-20 bg-gradient-to-r from-gray-400 to-gray-300 rounded w-full`} />
+      </div>
+    );
   }
   return loaders;
 };
@@ -266,7 +265,7 @@ export const KnownVariantsList = ({
       />
       <Grid isHorizontal={isHorizontal} isLandingPage={isLandingPage}>
         {chartData.map(({ selector, chartData, recentProportion }) => (
-          <div className={`${isHorizontal && 'h-full w-36'}`}>
+          <div className={`${isHorizontal && 'h-full w-36'}`} key={formatVariantDisplayName(selector, true)}>
             <KnownVariantCard
               key={formatVariantDisplayName(selector, true)}
               name={formatVariantDisplayName(selector, true)}

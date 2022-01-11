@@ -42,7 +42,9 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
           Custom Range
         </option>
         {specialDateRanges.map(d => (
-          <option value={d}>{specialDateRangeToString(d)}</option>
+          <option value={d} key={specialDateRangeToString(d)}>
+            {specialDateRangeToString(d)}
+          </option>
         ))}
       </Form.Control>
     </Form>

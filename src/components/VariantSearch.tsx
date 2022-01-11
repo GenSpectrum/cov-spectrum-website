@@ -113,7 +113,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
         <div className='flex-grow'>
           <div>
             {selections.map((selection, index) => (
-              <div className='flex'>
+              <div className='flex' key={selection.id}>
                 <button className='mr-2 mb-6 outline-none' onClick={() => removeSelection(index)}>
                   X
                 </button>
@@ -159,7 +159,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
           Comparing with:
           <div>
             {selections.slice(1).map((selection, index) => (
-              <div className='flex'>
+              <div className='flex' key={selection.id}>
                 <button className='mr-2 mb-6 outline-none' onClick={() => removeSelection(index + 1)}>
                   X
                 </button>
