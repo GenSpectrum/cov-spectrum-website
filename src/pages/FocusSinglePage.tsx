@@ -38,6 +38,8 @@ import { ArticleListWidget } from '../widgets/ArticleListWidget';
 import { HospDiedAgeSampleData } from '../data/sample/HospDiedAgeSampleDataset';
 import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
+import { ErrorBoundaryFallback } from '../components/ErrorBoundaryFallback';
+import * as Sentry from '@sentry/react';
 
 export const FocusSinglePage = () => {
   const exploreUrl = useExploreUrl();
@@ -447,7 +449,9 @@ export const FocusSinglePage = () => {
             </PackedGrid>
 
             <div className='m-4'>
-              <VariantMutations selector={variantDateCount.data.selector} />
+              <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
+                <VariantMutations selector={variantDateCount.data.selector} />
+              </Sentry.ErrorBoundary>
             </div>
           </div>
 

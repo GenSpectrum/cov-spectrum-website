@@ -9,10 +9,30 @@ import './index.css';
 import { fetchCurrentUserCountry } from './data/api';
 import { LocationService } from './services/LocationService';
 import { fetchLapisDataVersionDate } from './data/api-lapis';
+import * as Sentry from '@sentry/react';
+import { Integrations } from '@sentry/tracing';
+import { env } from './env';
 
 export let baseLocation = 'Europe';
 
 async function main() {
+  // Initialize Sentry
+  if (env.sentryDsn) {
+    Sentry.init({
+      dsn: env.sentryDsn,
+      environment: env.sentryEnvironment,
+      integrations: [new Integrations.BrowserTracing()],
+      tracesSampleRate: 0,
+      beforeSend: event => {
+        if (event.message === 'ResizeObserver loop limit exceeded') {
+          // This error should be very harmless and not impact the user experience.
+          return null;
+        }
+        return event;
+      },
+    });
+  }
+
   try {
     // Fetch current data version of LAPIS
     await fetchLapisDataVersionDate();
