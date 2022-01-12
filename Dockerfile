@@ -16,6 +16,8 @@ RUN npm set progress=false && \
     export REACT_APP_SERVER_HOST=https://cov-spectrum.org/api/v2 && \
     export REACT_APP_LAPIS_HOST=https://lapis.cov-spectrum.org/gisaid/v1 && \
     export REACT_APP_ALTERNATIVE_SEQUENCE_DATA_SOURCE_URL=https://open.cov-spectrum.org && \
+    export REACT_APP_SENTRY_DSN=https://56bc079276424c19be6ec7515cc8542c@o1113792.ingest.sentry.io/6144582 && \
+    export REACT_APP_SENTRY_ENVIRONMENT=prod-gisaid && \
     npm --quiet run build
 
 
