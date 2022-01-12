@@ -24,8 +24,13 @@ async function main() {
       integrations: [new Integrations.BrowserTracing()],
       tracesSampleRate: 0,
       beforeSend: event => {
-        if (event.message === 'ResizeObserver loop limit exceeded') {
+        if (
+          event.message === 'ResizeObserver loop limit exceeded' ||
+          event.message === 'ResizeObserver loop completed with undelivered notifications.'
+        ) {
           // This error should be very harmless and not impact the user experience.
+          // The error message is different in Chrome and Firefox.
+          // See https://stackoverflow.com/questions/64238740/how-to-ignore-the-resizeobserver-loop-limit-exceeded-in-testcafe
           return null;
         }
         return event;
