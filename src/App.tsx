@@ -17,7 +17,6 @@ import dayjs from 'dayjs';
 import { getCurrentLapisDataVersionDate } from './data/api-lapis';
 import { sequenceDataSource } from './helpers/sequence-data-source';
 import { ExternalLink } from './components/ExternalLink';
-import { VercelSponsorshipLogo } from './components/VercelSponsorshipLogo';
 import styled from 'styled-components';
 import { ExplorePage } from './pages/ExplorePage';
 import { DeepInternationalComparisonPage } from './pages/DeepInternationalComparisonPage';
@@ -121,7 +120,17 @@ export const App = () => {
             <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
           </div>
         )}
-        <VercelSponsorshipLogo />
+        <div className='flex flex-wrap justify-center items-center my-4 mt-8'>
+          <ExternalLink url='https://ethz.ch'>
+            <img className='h-5 mx-6' alt='ETH Zurich' src='/img/ethz.png' />
+          </ExternalLink>
+          <ExternalLink url='https://www.sib.swiss/'>
+            <img className='h-7 mx-6' alt='SIB Swiss Institute of Bioinformatics' src='/img/sib.svg' />
+          </ExternalLink>
+          <ExternalLink url='https://vercel.com/?utm_source=cov-spectrum&utm_campaign=oss'>
+            <img className='h-6 mx-6' alt='Powered by Vercel' src='/img/powered-by-vercel.svg' />
+          </ExternalLink>
+        </div>
       </Footer>
     </div>
   );
