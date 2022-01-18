@@ -12,7 +12,7 @@ Widgets consist of a React component, a "prop encoder", and a unique name. These
 
 The "Sequences over time" plot has a widget `VariantTimeDistributionPlot` that is defined in [src/widgets/VariantTimeDistributionPlot.tsx](/src/widgets/VariantTimeDistributionPlot.tsx). This `Widget` object wraps the normal React component `VariantTimeDistributionPlot`, a prop encoder defined with `AsyncZodQueryEncoder` (described below), and the unique name `"VariantTimeDistributionPlot"`.
 
-This widget is used in [src/pages/FocusPage.tsx](/src/pages/FocusPage.tsx) by using `VariantTimeDistributionPlotWidget.ShareableComponent` as a React component. Note that this renders `VariantTimeDistributionPlot`, but also a title, a card and a export button. This `SharableComponent` takes the props of `VariantTimeDistributionPlot`, but also some extra ones ("external" props, described below).
+This widget is used in [src/pages/FocusSinglePage.tsx](/src/pages/FocusSinglePage.tsx) by using `VariantTimeDistributionPlotWidget.ShareableComponent` as a React component. Note that this renders `VariantTimeDistributionPlot`, but also a title, a card and an export button. This `SharableComponent` takes the props of `VariantTimeDistributionPlot`, but also some extra ones ("external" props, described below).
 
 The widget is registered in [src/widgets/index.tsx](/src/widgets/index.tsx) so that the embed page works correctly.
 

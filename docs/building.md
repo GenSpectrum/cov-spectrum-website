@@ -17,6 +17,8 @@ env REACT_APP_SERVER_HOST=https://cov-spectrum.org/api/v2 \
     npm run start
 ```
 
+Many new features and the majority of the open issues can be implemented by only changing the frontend code. In most cases, there is no need to set up the backend locally.
+
 ## For production
 
 Production builds are done automatically in CI (see [.github/workflows/gisaid_docker.yml](/.github/workflows/gisaid_docker.yml)).
