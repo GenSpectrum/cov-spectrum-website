@@ -7,6 +7,12 @@
         "pangoLineage": "B.1.1.529*"
       },
       {
+        "pangoLineage": "BA.1*"
+      },
+      {
+        "pangoLineage": "BA.2*"
+      },
+      {
         "pangoLineage": "B.1.617.2*",
         "aaMutations": []
       },
@@ -20,14 +26,6 @@
       },
       {
         "pangoLineage": "P.1*",
-        "aaMutations": []
-      },
-      {
-        "pangoLineage": "B.1.1.318*",
-        "aaMutations": []
-      },
-      {
-        "pangoLineage": "AY.4.2*",
         "aaMutations": []
       }
     ]
