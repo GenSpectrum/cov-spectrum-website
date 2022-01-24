@@ -3,6 +3,20 @@ import { fetchReferenceGenomeInfo } from '../data/api';
 
 export class ReferenceGenomeService {
   private static data: Promise<ReferenceGenomeInfo> = ReferenceGenomeService.init();
+  static readonly genes = [
+    'E',
+    'N',
+    'M',
+    'ORF7a',
+    'ORF8',
+    'ORF6',
+    'ORF3a',
+    'ORF9b',
+    'ORF7b',
+    'S',
+    'ORF1a',
+    'ORF1b',
+  ];
 
   private static async init() {
     return fetchReferenceGenomeInfo();

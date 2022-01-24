@@ -11,6 +11,7 @@ import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { MultiVariantTimeDistributionLineChart } from '../widgets/MultiVariantTimeDistributionLineChart';
 import { NamedCard } from '../components/NamedCard';
 import { AnalysisMode } from '../data/AnalysisMode';
+import { VariantMutationComparison } from '../components/VariantMutationComparison';
 
 export const FocusCompareEqualsPage = () => {
   const exploreUrl = useExploreUrl()!;
@@ -51,6 +52,13 @@ export const FocusCompareEqualsPage = () => {
                     analysisMode={AnalysisMode.CompareEquals}
                   />
                 </div>
+              </NamedCard>
+            </GridCell>
+          )}
+          {ldvsSelectors.length === 2 && (
+            <GridCell minWidth={600}>
+              <NamedCard title='Amino acid changes'>
+                <VariantMutationComparison selectors={ldvsSelectors} />
               </NamedCard>
             </GridCell>
           )}
