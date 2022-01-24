@@ -2,20 +2,22 @@ import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector
 import { useQuery } from '../helpers/query-hook';
 import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
-import React, { useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import _ from 'lodash';
 import Table from 'react-bootstrap/Table';
 import { formatVariantDisplayName } from '../data/VariantSelector';
 import ReactTooltip from 'react-tooltip';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import Slider from 'rc-slider';
+import { sortAAMutationList } from '../helpers/aa-mutation';
 
 export interface Props {
   selectors: LocationDateVariantSelector[];
 }
 
-const minProportion = 0.5;
-
 export const VariantMutationComparison = ({ selectors }: Props) => {
+  const [minProportion, setMinProportion] = useState(0.5);
   const res = useQuery(
     signal => Promise.all(selectors.map(selector => MutationProportionData.fromApi(selector, 'aa', signal))),
     [selectors],
@@ -28,8 +30,12 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
     }
     // Find shared and non-shared mutations
     const [variant1, variant2] = res.data;
-    const variant1Mutations = variant1.payload.map(({ mutation }) => mutation);
-    const variant2Mutations = variant2.payload.map(({ mutation }) => mutation);
+    const variant1Mutations = variant1.payload
+      .filter(m => m.proportion >= minProportion)
+      .map(m => m.mutation);
+    const variant2Mutations = variant2.payload
+      .filter(m => m.proportion >= minProportion)
+      .map(m => m.mutation);
     const shared = _.intersection(variant1Mutations, variant2Mutations);
     const onlyVariant1 = _.pullAll(variant1Mutations, shared);
     const onlyVariant2 = _.pullAll(variant2Mutations, shared);
@@ -59,7 +65,7 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
       gene,
       ...muts,
     }));
-  }, [res.data]);
+  }, [res.data, minProportion]);
 
   if (selectors.length !== 2) {
     throw new Error(
@@ -78,8 +84,31 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
     <>
       <div>
         A mutation is considered as belonging to a variant if at least{' '}
-        <b>{(minProportion * 100).toFixed(0)}%</b> of the samples of the variant have the mutation. Please
-        note that we currently <b>do not</b> exclude the unknowns when calculating the proportions.
+        <OverlayTrigger
+          trigger='click'
+          overlay={
+            <Tooltip id='mutationMinProportion'>
+              <div>
+                <Slider
+                  value={Math.round(minProportion * 100)}
+                  min={5}
+                  max={100}
+                  step={5}
+                  onChange={value => setMinProportion(value / 100)}
+                  style={{ width: '100px' }}
+                />
+              </div>
+            </Tooltip>
+          }
+          rootClose={true}
+          placement='bottom'
+        >
+          <span className='cursor-pointer px-3 rounded bg-gray-100 hover:bg-gray-300 font-bold'>
+            {(minProportion * 100).toFixed(0)}%
+          </span>
+        </OverlayTrigger>{' '}
+        of the samples of the variant have the mutation. Please note that we currently <b>do not</b> exclude
+        the unknowns when calculating the proportions.
       </div>
       <div>
         <Table striped bordered hover>
@@ -130,7 +159,7 @@ function simpleMutationListFormat(mutations: string[]): JSX.Element {
   // Up to five mutations shall be shown on a line.
   let currentLine: string[] = [];
   const lines: string[][] = [currentLine];
-  for (let mutation of mutations) {
+  for (let mutation of sortAAMutationList(mutations)) {
     currentLine.push(mutation);
     if (currentLine.length >= 5) {
       currentLine = [];
