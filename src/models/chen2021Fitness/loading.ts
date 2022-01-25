@@ -96,8 +96,8 @@ export const fillRequestWithDefaults = (
       tStart: minT.t,
       tEnd: maxT.t + 14,
       reproductionNumberWildtype: 1,
-      initialCasesWildtype: minT.n - minT.k,
-      initialCasesVariant: minT.k,
+      initialCasesWildtype: Math.max(minT.n - minT.k, 1),
+      initialCasesVariant: Math.max(minT.k, 1),
       ...config,
     },
   };

@@ -61,8 +61,8 @@ export const Chen2021FitnessContainer = ({ variantDateCounts, wholeDateCounts }:
         reproductionNumberWildtype: parseFloat(formReproductionNumberWildtype),
         initialCasesVariant: parseInt(formInitialVariantCases),
         initialCasesWildtype: parseInt(formInitialWildtypeCases),
-        tStart: t0.dayjs.diff(globalDateCache.getDay(formPlotStartDate).dayjs, 'day'),
-        tEnd: t0.dayjs.diff(globalDateCache.getDay(formPlotEndDate).dayjs, 'day'),
+        tStart: globalDateCache.getDay(formPlotStartDate).dayjs.diff(t0.dayjs, 'day'),
+        tEnd: globalDateCache.getDay(formPlotEndDate).dayjs.diff(t0.dayjs, 'day'),
         // changePoints: changePoints.map(x => ({
         //   reproductionNumberWildtype: parseFloat(x.reproductionNumberString),
         //   date: new Date(x.dateString),
