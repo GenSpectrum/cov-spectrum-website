@@ -161,7 +161,7 @@ export const Chen2021AbsolutePlot = ({ modelData, request, t0, changePoints }: P
     const data = [];
     for (let i = 0; i < modelData.estimatedAbsoluteNumbers.t.length; i++) {
       data.push({
-        date: modelData.estimatedAbsoluteNumbers.t[i],
+        date: modelData.estimatedAbsoluteNumbers.t[i].string,
         wildtype: caseNumbers.wildtypeCases[i],
         variant: caseNumbers.variantCases[i],
         variantUpper: caseNumbers.variantCasesUpper[i],

@@ -5,12 +5,16 @@ import styled from 'styled-components';
 import { Chen2021FitnessResults } from './Chen2021FitnessResults';
 import { fillRequestWithDefaults, transformToRequestData } from './loading';
 import { ExternalLink } from '../../components/ExternalLink';
-import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
+import { DateCountSampleData } from '../../data/sample/DateCountSampleDataset';
 import { globalDateCache } from '../../helpers/date-cache';
+import { LocationDateVariantSelector } from '../../data/LocationDateVariantSelector';
+import dayjs from 'dayjs';
+import { useQuery } from '../../helpers/query-hook';
+import { FixedDateRangeSelector } from '../../data/DateRangeSelector';
+import Loader from '../../components/Loader';
 
 export type ContainerProps = {
-  variantDateCounts: DateCountSampleDataset;
-  wholeDateCounts: DateCountSampleDataset;
+  selector: LocationDateVariantSelector;
 };
 
 type ChangePointFormEntry = {
@@ -22,32 +26,16 @@ const SectionHeader = styled.h5`
   margin-top: 20px;
 `;
 
-export const Chen2021FitnessContainer = ({ variantDateCounts, wholeDateCounts }: ContainerProps) => {
-  const { request: requestData, t0 } =
-    useMemo(() => transformToRequestData(variantDateCounts, wholeDateCounts), [
-      variantDateCounts,
-      wholeDateCounts,
-    ]) ?? {};
-
-  const [paramData, setParamData] = useState<Chen2021FitnessRequest>(() =>
-    fillRequestWithDefaults(requestData)
-  );
-  const [formGenerationTime, setFormGenerationTime] = useState(paramData.config.generationTime.toString());
-  const [formReproductionNumberWildtype, setFormReproductionNumberWildtype] = useState(
-    paramData.config.reproductionNumberWildtype.toString()
-  );
-  const [formInitialVariantCases, setFormInitialVariantCases] = useState(
-    paramData.config.initialCasesVariant.toString()
-  );
-  const [formInitialWildtypeCases, setFormInitialWildtypeCases] = useState(
-    paramData.config.initialCasesWildtype.toString()
-  );
+export const Chen2021FitnessContainer = ({ selector }: ContainerProps) => {
+  // Form/param data
+  const [formGenerationTime, setFormGenerationTime] = useState('4.8');
+  const [formReproductionNumberWildtype, setFormReproductionNumberWildtype] = useState('1');
+  const [formInitialVariantCases, setFormInitialVariantCases] = useState('10');
+  const [formInitialWildtypeCases, setFormInitialWildtypeCases] = useState('1000');
   const [formPlotStartDate, setFormPlotStartDate] = useState(
-    t0.dayjs.add(paramData.config.tStart, 'day').format('YYYY-MM-DD')
+    dayjs().subtract(90, 'day').format('YYYY-MM-DD')
   );
-  const [formPlotEndDate, setFormPlotEndDate] = useState(
-    t0.dayjs.add(paramData.config.tEnd, 'day').format('YYYY-MM-DD')
-  );
+  const [formPlotEndDate, setFormPlotEndDate] = useState(dayjs().add(14, 'day').format('YYYY-MM-DD'));
   const [changePoints, setChangePoints] = useState<ChangePointFormEntry[]>([]);
 
   const changePointsTransformed: ChangePoint[] = useMemo(
@@ -59,7 +47,52 @@ export const Chen2021FitnessContainer = ({ variantDateCounts, wholeDateCounts }:
     [changePoints]
   );
 
-  useEffect(() => setParamData(p => fillRequestWithDefaults(requestData, p.config)), [requestData]);
+  // Fetch data
+  const [paramData, setParamData] = useState<Chen2021FitnessRequest | undefined>();
+  const { data: variantDateCounts } = useQuery(
+    signal =>
+      DateCountSampleData.fromApi(
+        {
+          ...selector,
+          dateRange: new FixedDateRangeSelector({
+            dateFrom: globalDateCache.getDay(formPlotStartDate),
+            dateTo: globalDateCache.getDay(formPlotEndDate),
+          }),
+        },
+        signal
+      ),
+    [selector, paramData]
+  );
+  const { data: wholeDateCounts } = useQuery(
+    signal =>
+      DateCountSampleData.fromApi(
+        {
+          ...selector,
+          dateRange: new FixedDateRangeSelector({
+            dateFrom: globalDateCache.getDay(formPlotStartDate),
+            dateTo: globalDateCache.getDay(formPlotEndDate),
+          }),
+          variant: {},
+        },
+        signal
+      ),
+    [selector, paramData]
+  );
+  const { request: requestData, t0 } =
+    useMemo(() => {
+      if (!variantDateCounts || !wholeDateCounts) {
+        return undefined;
+      }
+      return transformToRequestData(variantDateCounts, wholeDateCounts);
+    }, [variantDateCounts, wholeDateCounts]) ?? {};
+
+  useEffect(() => requestData && setParamData(p => fillRequestWithDefaults(requestData, p?.config)), [
+    requestData,
+  ]);
+
+  if (!requestData || !t0 || !variantDateCounts || !wholeDateCounts || !paramData) {
+    return <Loader />;
+  }
 
   const compute = () => {
     setParamData({

@@ -6,22 +6,13 @@ import {
   encodeLocationDateVariantSelector,
   LocationDateVariantSelectorEncodedSchema,
 } from '../../data/LocationDateVariantSelector';
-import { DateCountSampleData } from '../../data/sample/DateCountSampleDataset';
 
 export const Chen2021FitnessWidget = new Widget(
   new AsyncZodQueryEncoder(
     LocationDateVariantSelectorEncodedSchema,
-    async (v: ContainerProps) => encodeLocationDateVariantSelector(v.variantDateCounts.selector),
-    async (encoded, signal) => {
-      const variantSelector = decodeLocationDateVariantSelector(encoded);
-      const wholeSelector = {
-        ...variantSelector,
-        variant: undefined,
-      };
-      return {
-        variantDateCounts: await DateCountSampleData.fromApi(variantSelector, signal),
-        wholeDateCounts: await DateCountSampleData.fromApi(wholeSelector, signal),
-      };
+    async (v: ContainerProps) => encodeLocationDateVariantSelector(v.selector),
+    async encoded => {
+      return { selector: decodeLocationDateVariantSelector(encoded) };
     }
   ),
   Chen2021FitnessContainer,

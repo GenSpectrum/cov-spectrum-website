@@ -35,11 +35,7 @@ export const DeepChen2021FitnessPage = () => {
       titleSuffix='Relative growth advantage'
     />,
     variantDateCount.data && wholeDateCount.data ? (
-      <Chen2021FitnessWidget.ShareableComponent
-        title='Relative growth advantage'
-        variantDateCounts={variantDateCount.data}
-        wholeDateCounts={wholeDateCount.data}
-      />
+      <Chen2021FitnessWidget.ShareableComponent title='Relative growth advantage' selector={ldvsSelector} />
     ) : (
       <Loader />
     )
