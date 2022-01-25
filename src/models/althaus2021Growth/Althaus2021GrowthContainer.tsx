@@ -1,45 +1,33 @@
 import { Althaus2021GrowthParameterPanel } from './Althaus2021GrowthParameterPanel';
-import { LocationSelector } from '../../data/LocationSelector';
-import { VariantSelector } from '../../data/VariantSelector';
-import { SamplingStrategy } from '../../data/SamplingStrategy';
-import { DateRangeSelector } from '../../data/DateRangeSelector';
 import { ExpandableTextBox } from '../../components/ExpandableTextBox';
 import { Althaus2021GrowthParameters } from './althaus2021Growth-types';
-import React, { useMemo, useState } from 'react';
-import { fillRequestWithDefaults, useModelData } from '../chen2021Fitness/loading';
+import React, { useState } from 'react';
+import { useModelData } from '../chen2021Fitness/loading';
 import Loader from '../../components/Loader';
 import { ExternalLink } from '../../components/ExternalLink';
+import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
 
 export type ContainerProps = {
-  locationSelector: LocationSelector;
-  dateRangeSelector: DateRangeSelector;
-  variantSelector: VariantSelector;
-  samplingStrategy: SamplingStrategy;
+  variantDateCounts: DateCountSampleDataset;
+  wholeDateCounts: DateCountSampleDataset;
 };
 
-export const Althaus2021GrowthContainer = ({
-  locationSelector,
-  dateRangeSelector,
-  variantSelector,
-  samplingStrategy,
-}: ContainerProps) => {
+export const Althaus2021GrowthContainer = ({ variantDateCounts, wholeDateCounts }: ContainerProps) => {
   // We can use the same methods as chen2021Fitness to compute the logistic growth rate.
-  const request = useMemo(
-    () => fillRequestWithDefaults({ locationSelector, dateRangeSelector, variantSelector, samplingStrategy }),
-    [locationSelector, dateRangeSelector, variantSelector, samplingStrategy]
-  );
-  const { modelData, loading } = useModelData(request);
+  const { isLoading, data } = useModelData(variantDateCounts, wholeDateCounts);
   const [showPlotAnyways, setShowPlotAnyways] = useState(false);
 
-  if (loading) {
+  if (isLoading) {
     return <Loader />;
   }
 
-  if (!modelData) {
+  if (!data) {
     return <>It was not possible to estimate the relative growth advantage.</>;
   }
 
-  if (!showPlotAnyways && modelData.params.fd.ciUpper - modelData.params.fd.ciLower > 1) {
+  const res = data.response;
+
+  if (!showPlotAnyways && res.params.fd.ciUpper - res.params.fd.ciLower > 1) {
     return (
       <>
         <p>
@@ -54,7 +42,7 @@ export const Althaus2021GrowthContainer = ({
     );
   }
 
-  const logisticGrowthRate = modelData.params.a;
+  const logisticGrowthRate = res.params.a;
   const defaultParams: Althaus2021GrowthParameters = {
     growthRate: logisticGrowthRate.value,
     transmissibilityIncrease: 0.6,

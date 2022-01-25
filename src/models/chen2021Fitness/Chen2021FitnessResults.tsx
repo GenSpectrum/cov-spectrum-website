@@ -4,12 +4,15 @@ import { Chen2021AbsolutePlot } from './Chen2021AbsolutePlot';
 import { Chen2021FitnessRequest } from './chen2021Fitness-types';
 import { Chen2021ProportionPlot } from './Chen2021ProportionPlot';
 import { formatValueWithCI } from './format-value';
-import { useModelData } from './loading';
+import { getData } from './loading';
 import { GridCell, PackedGrid } from '../../components/PackedGrid';
 import { NamedCard } from '../../components/NamedCard';
+import { useQuery } from '../../helpers/query-hook';
+import { UnifiedDay } from '../../helpers/date-cache';
 
 type ResultsProps = {
   request: Chen2021FitnessRequest;
+  t0: UnifiedDay;
 };
 
 const Info = ({ title, children }: { title: string; children: React.ReactNode }) => {
@@ -21,33 +24,33 @@ const Info = ({ title, children }: { title: string; children: React.ReactNode })
   );
 };
 
-export const Chen2021FitnessResults = ({ request }: ResultsProps) => {
-  const { modelData, loading } = useModelData(request);
+export const Chen2021FitnessResults = ({ request, t0 }: ResultsProps) => {
+  const { data, isLoading } = useQuery(signal => getData(request, t0, signal), [request]);
 
-  if (loading) {
+  if (isLoading) {
     return <Loader />;
   }
 
-  if (!modelData) {
+  if (!data) {
     return <>A relative growth advantage cannot be estimated for this variant.</>;
   }
 
   return (
     <>
       <Info title=''>
-        <div>Logistic growth rate a: {formatValueWithCI(modelData.params.a)}</div>
+        <div>Logistic growth rate a: {formatValueWithCI(data.params.a)}</div>
         {/*TODO t_0 is currently difficult (or impossible?) to interpret.*/}
         {/*<div>Sigmoid's midpoint t_0: {modelData && formatValueWithCI(modelData.params.t0, 0)}</div>*/}
         <div>
-          Relative growth advantage f<sub>c</sub>: {formatValueWithCI(modelData.params.fc)}
+          Relative growth advantage f<sub>c</sub>: {formatValueWithCI(data.params.fc)}
         </div>
-        {modelData.changePoints?.map(({ t, fc }) => (
-          <>
-            Relative growth advantage f<sub>c</sub> after {t}: {formatValueWithCI(fc)}
-          </>
-        ))}
+        {/*{modelData.changePoints?.map(({ t, fc }) => (*/}
+        {/*  <>*/}
+        {/*    Relative growth advantage f<sub>c</sub> after {t}: {formatValueWithCI(fc)}*/}
+        {/*  </>*/}
+        {/*))}*/}
         <div>
-          Relative growth advantage f<sub>d</sub>: {formatValueWithCI(modelData.params.fd)}
+          Relative growth advantage f<sub>d</sub>: {formatValueWithCI(data.params.fd)}
         </div>
       </Info>
 
@@ -56,9 +59,9 @@ export const Chen2021FitnessResults = ({ request }: ResultsProps) => {
           <NamedCard title='Proportion'>
             <div style={{ height: 500 }}>
               <Chen2021ProportionPlot
-                modelData={modelData}
-                plotStartDate={request.plotStartDate}
-                plotEndDate={request.plotEndDate}
+                modelData={data}
+                plotStartDate={t0.dayjs.add(request.config.tStart, 'day').toDate()}
+                plotEndDate={t0.dayjs.add(request.config.tEnd, 'day').toDate()}
               />
             </div>
           </NamedCard>
@@ -66,7 +69,7 @@ export const Chen2021FitnessResults = ({ request }: ResultsProps) => {
         <GridCell minWidth={600}>
           <NamedCard title='Absolute'>
             <div style={{ height: 500 }}>
-              <Chen2021AbsolutePlot modelData={modelData} request={request} />
+              <Chen2021AbsolutePlot modelData={data} request={request} t0={t0} />
             </div>
           </NamedCard>
         </GridCell>

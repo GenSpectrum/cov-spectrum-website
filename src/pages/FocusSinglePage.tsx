@@ -390,10 +390,8 @@ export const FocusSinglePage = () => {
                 >
                   <div style={{ height: 400 }}>
                     <Chen2021FitnessPreview
-                      locationSelector={variantDateCount.data.selector.location}
-                      dateRangeSelector={variantDateCount.data.selector.dateRange!}
-                      variantSelector={variantDateCount.data.selector.variant!}
-                      samplingStrategy={variantDateCount.data.selector.samplingStrategy}
+                      variantDateCounts={variantDateCount.data}
+                      wholeDateCounts={wholeDateCountWithDateFilter.data}
                     />
                   </div>
                 </NamedCard>
@@ -401,10 +399,8 @@ export const FocusSinglePage = () => {
               <GridCell minWidth={700}>
                 <Althaus2021GrowthWidget.ShareableComponent
                   title='Relative growth advantage'
-                  locationSelector={variantDateCount.data.selector.location}
-                  dateRangeSelector={variantDateCount.data.selector.dateRange!}
-                  variantSelector={variantDateCount.data.selector.variant!}
-                  samplingStrategy={variantDateCount.data.selector.samplingStrategy}
+                  variantDateCounts={variantDateCount.data}
+                  wholeDateCounts={wholeDateCountWithDateFilter.data}
                 />
               </GridCell>
               <GridCell minWidth={600}>
@@ -535,15 +531,15 @@ export const FocusSinglePage = () => {
            advantages.`}
                 >
                   <div style={{ height: 350 }}>
-                    <Chen2021FitnessPreview
-                      locationSelector={{
-                        ...exploreUrl?.location!,
-                        [splitField]: division,
-                      }}
-                      dateRangeSelector={exploreUrl?.dateRange!}
-                      variantSelector={exploreUrl?.variant!}
-                      samplingStrategy={exploreUrl?.samplingStrategy}
-                    />
+                    {/*<Chen2021FitnessPreview*/}
+                    {/*  locationSelector={{*/}
+                    {/*    ...exploreUrl?.location!,*/}
+                    {/*    [splitField]: division,*/}
+                    {/*  }}*/}
+                    {/*  dateRangeSelector={exploreUrl?.dateRange!}*/}
+                    {/*  variantSelector={exploreUrl?.variant!}*/}
+                    {/*  samplingStrategy={exploreUrl?.samplingStrategy}*/}
+                    {/*/>*/}
                   </div>
                 </NamedCard>
               )}

@@ -1,20 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Chen2021FitnessRequest } from './chen2021Fitness-types';
 import { Button, Col, Form } from 'react-bootstrap';
 import styled from 'styled-components';
 import { Chen2021FitnessResults } from './Chen2021FitnessResults';
-import { fillRequestWithDefaults } from './loading';
-import { dateToString } from './format-value';
+import { fillRequestWithDefaults, transformToRequestData } from './loading';
 import { ExternalLink } from '../../components/ExternalLink';
-import { LocationSelector } from '../../data/LocationSelector';
-import { VariantSelector } from '../../data/VariantSelector';
-import { SamplingStrategy } from '../../data/SamplingStrategy';
-import { useDeepCompareEffect } from '../../helpers/deep-compare-hooks';
+import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
+import { globalDateCache } from '../../helpers/date-cache';
 
 export type ContainerProps = {
-  locationSelector: LocationSelector;
-  variantSelector: VariantSelector;
-  samplingStrategy: SamplingStrategy;
+  variantDateCounts: DateCountSampleDataset;
+  wholeDateCounts: DateCountSampleDataset;
 };
 
 type ChangePointFormEntry = {
@@ -26,49 +22,52 @@ const SectionHeader = styled.h5`
   margin-top: 20px;
 `;
 
-export const Chen2021FitnessContainer = ({
-  locationSelector,
-  variantSelector,
-  samplingStrategy,
-}: ContainerProps) => {
+export const Chen2021FitnessContainer = ({ variantDateCounts, wholeDateCounts }: ContainerProps) => {
+  const { request: requestData, t0 } =
+    useMemo(() => transformToRequestData(variantDateCounts, wholeDateCounts), [
+      variantDateCounts,
+      wholeDateCounts,
+    ]) ?? {};
+
   const [paramData, setParamData] = useState<Chen2021FitnessRequest>(() =>
-    fillRequestWithDefaults({ locationSelector, variantSelector, samplingStrategy })
+    fillRequestWithDefaults(requestData)
   );
-  const [formGenerationTime, setFormGenerationTime] = useState(paramData.generationTime.toString());
+  const [formGenerationTime, setFormGenerationTime] = useState(paramData.config.generationTime.toString());
   const [formReproductionNumberWildtype, setFormReproductionNumberWildtype] = useState(
-    paramData.reproductionNumberWildtype.toString()
+    paramData.config.reproductionNumberWildtype.toString()
   );
   const [formInitialVariantCases, setFormInitialVariantCases] = useState(
-    paramData.initialVariantCases.toString()
+    paramData.config.initialCasesVariant.toString()
   );
   const [formInitialWildtypeCases, setFormInitialWildtypeCases] = useState(
-    paramData.initialWildtypeCases.toString()
+    paramData.config.initialCasesWildtype.toString()
   );
-  const [formPlotStartDate, setFormPlotStartDate] = useState(dateToString(paramData.plotStartDate));
-  const [formPlotEndDate, setFormPlotEndDate] = useState(dateToString(paramData.plotEndDate));
+  const [formPlotStartDate, setFormPlotStartDate] = useState(
+    t0.dayjs.add(paramData.config.tStart, 'day').format('YYYY-MM-DD')
+  );
+  const [formPlotEndDate, setFormPlotEndDate] = useState(
+    t0.dayjs.add(paramData.config.tEnd, 'day').format('YYYY-MM-DD')
+  );
   const [changePoints, setChangePoints] = useState<ChangePointFormEntry[]>([]);
 
-  useDeepCompareEffect(() => {
-    setParamData(p => ({
-      ...p,
-      location: locationSelector,
-      variant: variantSelector,
-    }));
-  }, [locationSelector, variantSelector]);
+  useEffect(() => setParamData(p => fillRequestWithDefaults(requestData, p.config)), [requestData]);
 
   const compute = () => {
     setParamData({
-      ...paramData,
-      generationTime: parseFloat(formGenerationTime),
-      reproductionNumberWildtype: parseFloat(formReproductionNumberWildtype),
-      initialVariantCases: parseInt(formInitialVariantCases),
-      initialWildtypeCases: parseInt(formInitialWildtypeCases),
-      plotStartDate: new Date(formPlotStartDate),
-      plotEndDate: new Date(formPlotEndDate),
-      changePoints: changePoints.map(x => ({
-        reproductionNumberWildtype: parseFloat(x.reproductionNumberString),
-        date: new Date(x.dateString),
-      })),
+      data: paramData.data,
+      config: {
+        ...paramData.config,
+        generationTime: parseFloat(formGenerationTime),
+        reproductionNumberWildtype: parseFloat(formReproductionNumberWildtype),
+        initialCasesVariant: parseInt(formInitialVariantCases),
+        initialCasesWildtype: parseInt(formInitialWildtypeCases),
+        tStart: t0.dayjs.diff(globalDateCache.getDay(formPlotStartDate).dayjs, 'day'),
+        tEnd: t0.dayjs.diff(globalDateCache.getDay(formPlotEndDate).dayjs, 'day'),
+        // changePoints: changePoints.map(x => ({
+        //   reproductionNumberWildtype: parseFloat(x.reproductionNumberString),
+        //   date: new Date(x.dateString),
+        // })),
+      },
     });
   };
 
@@ -217,7 +216,7 @@ export const Chen2021FitnessContainer = ({
         </Button>
       </div>
       <h1 className='ml-6 mt-8'>Results</h1>
-      <Chen2021FitnessResults request={paramData} />
+      <Chen2021FitnessResults request={paramData} t0={t0} />
       <div className='ml-6'>
         <h1>References</h1>
         <ul className='list-disc'>

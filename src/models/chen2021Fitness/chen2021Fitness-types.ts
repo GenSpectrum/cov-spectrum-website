@@ -1,20 +1,25 @@
 import * as zod from 'zod';
-import { LocationSelector } from '../../data/LocationSelector';
-import { VariantSelector } from '../../data/VariantSelector';
-import { SamplingStrategy } from '../../data/SamplingStrategy';
+import { UnifiedDay } from '../../helpers/date-cache';
 
-export type Chen2021FitnessRequest = {
-  location: LocationSelector;
-  variant: VariantSelector;
-  samplingStrategy: SamplingStrategy;
+export type Chen2021FitnessRequestData = {
+  t: number[];
+  n: number[];
+  k: number[];
+};
+
+export type Chen2021FitnessRequestConfig = {
   alpha: number;
   generationTime: number;
+  tStart: number;
+  tEnd: number;
   reproductionNumberWildtype: number;
-  plotStartDate: Date;
-  plotEndDate: Date;
-  initialWildtypeCases: number;
-  initialVariantCases: number;
-  changePoints?: ChangePoint[];
+  initialCasesWildtype: number;
+  initialCasesVariant: number;
+};
+
+export type Chen2021FitnessRequest = {
+  data: Chen2021FitnessRequestData;
+  config: Chen2021FitnessRequestConfig;
 };
 
 export const ValueWithCISchema = zod.object({
@@ -39,33 +44,45 @@ export const ChangePointResultSchema = zod.object({
   fc: ValueWithCISchema,
 });
 
-export const Chen2021FitnessResponseSchema = zod.object({
-  daily: zod.object({
-    t: zod.array(zod.string()),
-    proportion: zod.array(zod.number()),
-    ciLower: zod.array(zod.number()),
-    ciUpper: zod.array(zod.number()),
-  }),
+export const Chen2021FitnessResponseRawSchema = zod.object({
   params: zod.object({
     a: ValueWithCISchema,
     t0: ValueWithCISchema,
     fc: ValueWithCISchema,
     fd: ValueWithCISchema,
   }),
-  plotAbsoluteNumbers: zod.object({
-    t: zod.array(zod.string()),
+  estimatedAbsoluteNumbers: zod.object({
+    t: zod.array(zod.number()),
     variantCases: zod.array(zod.number()),
     wildtypeCases: zod.array(zod.number()),
   }),
-  plotProportion: zod.object({
-    t: zod.array(zod.string()),
+  estimatedProportions: zod.object({
+    t: zod.array(zod.number()),
     proportion: zod.array(zod.number()),
     ciLower: zod.array(zod.number()),
     ciUpper: zod.array(zod.number()),
   }),
-  changePoints: zod.array(ChangePointResultSchema).nullish(),
 });
 
 export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
-export type Chen2021FitnessResponse = zod.infer<typeof Chen2021FitnessResponseSchema>;
+export type Chen2021FitnessResponseRaw = zod.infer<typeof Chen2021FitnessResponseRawSchema>;
+export type Chen2021FitnessResponse = {
+  params: {
+    a: ValueWithCI;
+    t0: ValueWithCI;
+    fc: ValueWithCI;
+    fd: ValueWithCI;
+  };
+  estimatedAbsoluteNumbers: {
+    t: UnifiedDay[];
+    variantCases: number[];
+    wildtypeCases: number[];
+  };
+  estimatedProportions: {
+    t: UnifiedDay[];
+    proportion: number[];
+    ciLower: number[];
+    ciUpper: number[];
+  };
+};
 export type ChangePointResult = zod.infer<typeof ChangePointResultSchema>;

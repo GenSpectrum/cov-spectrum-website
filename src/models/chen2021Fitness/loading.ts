@@ -1,80 +1,125 @@
 import {
   Chen2021FitnessRequest,
+  Chen2021FitnessRequestConfig,
+  Chen2021FitnessRequestData,
   Chen2021FitnessResponse,
-  Chen2021FitnessResponseSchema,
+  Chen2021FitnessResponseRawSchema,
 } from './chen2021Fitness-types';
-import { useEffect, useState } from 'react';
-import { get } from '../../data/api';
-import { dateToString } from './format-value';
-import { addLocationSelectorToUrlSearchParams, LocationSelector } from '../../data/LocationSelector';
-import { addVariantSelectorToUrlSearchParams, VariantSelector } from '../../data/VariantSelector';
-import { LocationService } from '../../services/LocationService';
-import { addSamplingStrategyToUrlSearchParams, SamplingStrategy } from '../../data/SamplingStrategy';
-import { DateRangeSelector } from '../../data/DateRangeSelector';
+import { useMemo } from 'react';
+import { globalDateCache, UnifiedDay } from '../../helpers/date-cache';
+import { useQuery } from '../../helpers/query-hook';
+import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
+import dayjs from 'dayjs';
 
-export function fillRequestWithDefaults({
-  locationSelector,
-  dateRangeSelector,
-  variantSelector,
-  samplingStrategy,
-}: {
-  locationSelector: LocationSelector;
-  dateRangeSelector?: DateRangeSelector;
-  variantSelector: VariantSelector;
-  samplingStrategy: SamplingStrategy;
-}): Chen2021FitnessRequest {
-  return {
-    location: locationSelector,
-    variant: variantSelector,
-    samplingStrategy,
-    alpha: 0.95,
-    generationTime: 4.8,
-    reproductionNumberWildtype: 1,
-    plotStartDate:
-      dateRangeSelector?.getDateRange()?.dateFrom?.dayjs.toDate() ??
-      new Date(Date.now() - 90 * 24 * 60 * 60 * 1000),
-    plotEndDate: dateRangeSelector?.getDateRange()?.dateTo?.dayjs.toDate() ?? new Date(),
-    initialWildtypeCases: 1000,
-    initialVariantCases: 100,
+const endpoint = 'https://cov-spectrum.org/api-chen2021fitness';
+
+export const transformToRequestData = (
+  variantDateCounts: DateCountSampleDataset,
+  wholeDateCounts: DateCountSampleDataset
+): { request: Chen2021FitnessRequestData; t0: UnifiedDay } => {
+  // Make sure that there is at least one data point
+  if (wholeDateCounts.payload.filter(d => d.date).length === 0) {
+    return {
+      request: {
+        t: [],
+        n: [],
+        k: [],
+      },
+      t0: globalDateCache.getDayUsingDayjs(dayjs(new Date())), // It does not really matter what we set here
+    };
+  }
+  // Find out the date that will be mapped to t=0
+  const dateRangeInData = globalDateCache.rangeFromDays(
+    wholeDateCounts.payload.filter(d => d.date).map(d => d.date!)
+  );
+  const t0 = wholeDateCounts.selector.dateRange!.getDateRange().dateFrom ?? dateRangeInData!.min;
+  // Transform dates to integers and create data object for the request
+  const variantDateCountMap = new Map<UnifiedDay, number>();
+  for (let { date, count } of variantDateCounts.payload) {
+    if (date) {
+      variantDateCountMap.set(date, count);
+    }
+  }
+  const data: Chen2021FitnessRequestData = {
+    t: [],
+    n: [],
+    k: [],
   };
-}
+  for (let { date, count: wholeCount } of wholeDateCounts.payload) {
+    if (date) {
+      const variantCount = variantDateCountMap.get(date) ?? 0;
+      const t = date.dayjs.diff(t0.dayjs, 'day');
+      data.t.push(t);
+      data.n.push(wholeCount);
+      data.k.push(variantCount);
+    }
+  }
+  return { request: data, t0 };
+};
 
-const getData = async (
-  params: Chen2021FitnessRequest,
-  signal: AbortSignal
-): Promise<Chen2021FitnessResponse | undefined> => {
-  const urlSearchParams = new URLSearchParams({
-    alpha: params.alpha.toString(),
-    generationTime: params.generationTime.toString(),
-    reproductionNumberWildtype: params.reproductionNumberWildtype.toString(),
-    plotStartDate: dateToString(params.plotStartDate),
-    plotEndDate: dateToString(params.plotEndDate),
-    initialWildtypeCases: params.initialWildtypeCases.toString(),
-    initialVariantCases: params.initialVariantCases.toString(),
-  });
-  if (params.location.country) {
-    params = {
-      ...params,
-      location: {
-        ...params.location,
-        country: await LocationService.getGisaidName(params.location.country),
+export const fillRequestWithDefaults = (
+  data: Chen2021FitnessRequestData,
+  config?: Chen2021FitnessRequestConfig
+): Chen2021FitnessRequest => {
+  if (data.t.length === 0) {
+    return {
+      data,
+      config: {
+        alpha: 0.95,
+        generationTime: 4.8,
+        tStart: 0,
+        tEnd: 1,
+        reproductionNumberWildtype: 1,
+        initialCasesWildtype: 1000,
+        initialCasesVariant: 10,
+        ...config,
       },
     };
   }
-  addLocationSelectorToUrlSearchParams(params.location, urlSearchParams);
-  addVariantSelectorToUrlSearchParams(params.variant, urlSearchParams);
-  addSamplingStrategyToUrlSearchParams(params.samplingStrategy, urlSearchParams);
-  if (params.changePoints && params.changePoints.length) {
-    const changePointsEncoded = params.changePoints
-      .map(
-        ({ date, reproductionNumberWildtype }) =>
-          date.toISOString().substring(0, 10) + ':' + reproductionNumberWildtype
-      )
-      .join(',');
-    urlSearchParams.set('changePoints', changePointsEncoded);
+  // Find the min and max t and their corresponding n and k.
+  let minT = { t: data.t[0], n: data.n[0], k: data.k[0] };
+  let maxT = { t: data.t[0], n: data.n[0], k: data.k[0] };
+  for (let i = 0; i < data.t.length; i++) {
+    const t = data.t[i];
+    if (t < minT.t) {
+      minT = { t, n: data.n[i], k: data.k[i] };
+    } else if (t > maxT.t) {
+      maxT = { t, n: data.n[i], k: data.k[i] };
+    }
   }
-  const url = `/computed/model/chen2021Fitness?` + urlSearchParams.toString();
-  const response = await get(url, signal);
+  // Create request object
+  return {
+    data,
+    config: {
+      alpha: 0.95,
+      generationTime: 4.8,
+      tStart: minT.t,
+      tEnd: maxT.t + 14,
+      reproductionNumberWildtype: 1,
+      initialCasesWildtype: minT.n - minT.k,
+      initialCasesVariant: minT.k,
+      ...config,
+    },
+  };
+};
+
+export const getData = async (
+  request: Chen2021FitnessRequest,
+  t0: UnifiedDay,
+  signal?: AbortSignal
+): Promise<Chen2021FitnessResponse | undefined> => {
+  if (request.data.t.length === 0) {
+    return undefined;
+  }
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    mode: 'cors',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(request),
+    signal,
+  });
   if (response.status !== 200) {
     // The computation might fail, for example, if some values go out-of-bound. The issue shall be addressed with the
     // introduction of a better error handling and reporting on the server side.
@@ -84,42 +129,63 @@ const getData = async (
   if (!data) {
     return undefined;
   }
-  return Chen2021FitnessResponseSchema.parse(data);
+  const d = Chen2021FitnessResponseRawSchema.parse(data);
+  // Map the date integers to UnifiedDates
+  if (!d || !t0) {
+    return undefined;
+  }
+  return {
+    ...d,
+    estimatedAbsoluteNumbers: {
+      ...d.estimatedAbsoluteNumbers,
+      t: d.estimatedAbsoluteNumbers.t.map(t => globalDateCache.getDayUsingDayjs(t0.dayjs.add(t, 'day'))),
+    },
+    estimatedProportions: {
+      ...d.estimatedProportions,
+      t: d.estimatedProportions.t.map(t => globalDateCache.getDayUsingDayjs(t0.dayjs.add(t, 'day'))),
+    },
+  };
 };
 
-interface ModelDataResult {
-  modelData?: Chen2021FitnessResponse;
-  loading: boolean;
-}
-
-export function useModelData(request: Chen2021FitnessRequest): ModelDataResult {
-  const [result, setResult] = useState<ModelDataResult>({ loading: true });
-
-  useEffect(() => {
-    let isSubscribed = true;
-    const controller = new AbortController();
-    const signal = controller.signal;
-
-    setResult({ loading: true });
-
-    getData(request, signal)
-      .then(modelData => {
-        if (isSubscribed) {
-          setResult({ modelData, loading: false });
-        }
-      })
-      .catch(e => {
-        console.log('Called fetch data error', e);
-        if (isSubscribed) {
-          setResult({ loading: false });
-        }
-      });
-
-    return () => {
-      isSubscribed = false;
-      controller.abort();
-    };
-  }, [request]);
-
-  return result;
-}
+type ModelDataResponse = {
+  isLoading: boolean;
+  data:
+    | {
+        response: Chen2021FitnessResponse;
+        request: Chen2021FitnessRequest;
+        t0: UnifiedDay;
+      }
+    | undefined;
+};
+export const useModelData = (
+  variantDateCounts: DateCountSampleDataset,
+  wholeDateCounts: DateCountSampleDataset,
+  config?: Chen2021FitnessRequestConfig
+): ModelDataResponse => {
+  // Create request
+  const { request, t0 } =
+    useMemo(() => {
+      const data = transformToRequestData(variantDateCounts, wholeDateCounts);
+      if (!data) {
+        return undefined;
+      }
+      // Fill in defaults
+      return { request: fillRequestWithDefaults(data.request, config), t0: data.t0 };
+    }, [variantDateCounts, wholeDateCounts, config]) ?? {};
+  // Fetch data
+  const modelData = useQuery(
+    signal => (request && t0 ? getData(request, t0, signal) : Promise.resolve(undefined)),
+    [request]
+  );
+  return {
+    isLoading: modelData.isLoading,
+    data:
+      request && !modelData.isLoading && modelData.data && t0
+        ? {
+            request,
+            response: modelData.data,
+            t0,
+          }
+        : undefined,
+  };
+};
