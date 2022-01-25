@@ -1,7 +1,7 @@
 import React from 'react';
 import Loader from '../../components/Loader';
 import { Chen2021AbsolutePlot } from './Chen2021AbsolutePlot';
-import { Chen2021FitnessRequest } from './chen2021Fitness-types';
+import { ChangePoint, ChangePointWithFc, Chen2021FitnessRequest } from './chen2021Fitness-types';
 import { Chen2021ProportionPlot } from './Chen2021ProportionPlot';
 import { formatValueWithCI } from './format-value';
 import { getData } from './loading';
@@ -16,6 +16,7 @@ type ResultsProps = {
   t0: UnifiedDay;
   variantDateCounts: DateCountSampleDataset;
   wholeDateCounts: DateCountSampleDataset;
+  changePoints: ChangePoint[];
 };
 
 const Info = ({ title, children }: { title: string; children: React.ReactNode }) => {
@@ -27,33 +28,71 @@ const Info = ({ title, children }: { title: string; children: React.ReactNode })
   );
 };
 
-export const Chen2021FitnessResults = ({ request, t0, variantDateCounts, wholeDateCounts }: ResultsProps) => {
-  const { data, isLoading } = useQuery(signal => getData(request, t0, signal), [request]);
+export const Chen2021FitnessResults = ({
+  request,
+  t0,
+  variantDateCounts,
+  wholeDateCounts,
+  changePoints,
+}: ResultsProps) => {
+  const { data: mainData, isLoading: mainIsLoading } = useQuery(signal => getData(request, t0, signal), [
+    request,
+  ]);
 
-  if (isLoading) {
+  // Calculate fitness advantage values for change points
+  const { data: changePointsData, isLoading: changePointsIsLoading } = useQuery(
+    signal => {
+      const _changePoints = changePoints;
+      const _requests: Chen2021FitnessRequest[] = _changePoints.map(cp => ({
+        data: request.data,
+        config: {
+          ...request.config,
+          reproductionNumberWildtype: cp.reproductionNumberWildtype,
+        },
+      }));
+      return Promise.all(_requests.map(req => getData(req, t0, signal))).then(_responses => {
+        const _changePointsResults: ChangePointWithFc[] = [];
+        for (let i = 0; i < _responses.length; i++) {
+          const _response = _responses[i];
+          if (_response === undefined) {
+            return undefined;
+          }
+          _changePointsResults.push({
+            ..._changePoints[i],
+            fc: _response.params.fc,
+          });
+        }
+        return _changePointsResults;
+      });
+    },
+    [changePoints, request, t0]
+  );
+
+  if (mainIsLoading || changePointsIsLoading) {
     return <Loader />;
   }
 
-  if (!data) {
+  if (!mainData || !changePointsData) {
     return <>A relative growth advantage cannot be estimated for this variant.</>;
   }
 
   return (
     <>
       <Info title=''>
-        <div>Logistic growth rate a: {formatValueWithCI(data.params.a)}</div>
+        <div>Logistic growth rate a: {formatValueWithCI(mainData.params.a)}</div>
         {/*TODO t_0 is currently difficult (or impossible?) to interpret.*/}
         {/*<div>Sigmoid's midpoint t_0: {modelData && formatValueWithCI(modelData.params.t0, 0)}</div>*/}
         <div>
-          Relative growth advantage f<sub>c</sub>: {formatValueWithCI(data.params.fc)}
+          Relative growth advantage f<sub>c</sub>: {formatValueWithCI(mainData.params.fc)}
         </div>
-        {/*{modelData.changePoints?.map(({ t, fc }) => (*/}
-        {/*  <>*/}
-        {/*    Relative growth advantage f<sub>c</sub> after {t}: {formatValueWithCI(fc)}*/}
-        {/*  </>*/}
-        {/*))}*/}
+        {changePointsData.map(({ date, fc }) => (
+          <>
+            Relative growth advantage f<sub>c</sub> after {date.toISOString().substring(0, 10)}:{' '}
+            {formatValueWithCI(fc)}
+          </>
+        ))}
         <div>
-          Relative growth advantage f<sub>d</sub>: {formatValueWithCI(data.params.fd)}
+          Relative growth advantage f<sub>d</sub>: {formatValueWithCI(mainData.params.fd)}
         </div>
       </Info>
 
@@ -62,11 +101,9 @@ export const Chen2021FitnessResults = ({ request, t0, variantDateCounts, wholeDa
           <NamedCard title='Proportion'>
             <div style={{ height: 500 }}>
               <Chen2021ProportionPlot
-                modelData={data}
+                modelData={mainData}
                 variantDateCounts={variantDateCounts}
                 wholeDateCounts={wholeDateCounts}
-                plotStartDate={t0.dayjs.add(request.config.tStart, 'day').toDate()}
-                plotEndDate={t0.dayjs.add(request.config.tEnd, 'day').toDate()}
               />
             </div>
           </NamedCard>
@@ -74,7 +111,12 @@ export const Chen2021FitnessResults = ({ request, t0, variantDateCounts, wholeDa
         <GridCell minWidth={600}>
           <NamedCard title='Absolute'>
             <div style={{ height: 500 }}>
-              <Chen2021AbsolutePlot modelData={data} request={request} t0={t0} />
+              <Chen2021AbsolutePlot
+                modelData={mainData}
+                request={request}
+                t0={t0}
+                changePoints={changePointsData}
+              />
             </div>
           </NamedCard>
         </GridCell>

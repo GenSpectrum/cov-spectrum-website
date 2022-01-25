@@ -24,7 +24,7 @@ export const Chen2021FitnessPreview = ({ variantDateCounts, wholeDateCounts }: P
     return <Loader />;
   }
 
-  const { request, t0, response } = data;
+  const { response } = data;
 
   if (!showPlotAnyways && response.params.fd.ciUpper - response.params.fd.ciLower > 1) {
     return (
@@ -49,8 +49,6 @@ export const Chen2021FitnessPreview = ({ variantDateCounts, wholeDateCounts }: P
             modelData={response}
             variantDateCounts={variantDateCounts}
             wholeDateCounts={wholeDateCounts}
-            plotStartDate={t0.dayjs.add(request.config.tStart, 'day').toDate()}
-            plotEndDate={t0.dayjs.add(request.config.tEnd, 'day').toDate()}
             showLegend={false}
           />
         </ChartWrapper>

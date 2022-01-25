@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Chen2021FitnessRequest } from './chen2021Fitness-types';
+import { ChangePoint, Chen2021FitnessRequest } from './chen2021Fitness-types';
 import { Button, Col, Form } from 'react-bootstrap';
 import styled from 'styled-components';
 import { Chen2021FitnessResults } from './Chen2021FitnessResults';
@@ -50,6 +50,15 @@ export const Chen2021FitnessContainer = ({ variantDateCounts, wholeDateCounts }:
   );
   const [changePoints, setChangePoints] = useState<ChangePointFormEntry[]>([]);
 
+  const changePointsTransformed: ChangePoint[] = useMemo(
+    () =>
+      changePoints.map(cp => ({
+        reproductionNumberWildtype: Number.parseFloat(cp.reproductionNumberString),
+        date: new Date(cp.dateString),
+      })),
+    [changePoints]
+  );
+
   useEffect(() => setParamData(p => fillRequestWithDefaults(requestData, p.config)), [requestData]);
 
   const compute = () => {
@@ -63,10 +72,6 @@ export const Chen2021FitnessContainer = ({ variantDateCounts, wholeDateCounts }:
         initialCasesWildtype: parseInt(formInitialWildtypeCases),
         tStart: globalDateCache.getDay(formPlotStartDate).dayjs.diff(t0.dayjs, 'day'),
         tEnd: globalDateCache.getDay(formPlotEndDate).dayjs.diff(t0.dayjs, 'day'),
-        // changePoints: changePoints.map(x => ({
-        //   reproductionNumberWildtype: parseFloat(x.reproductionNumberString),
-        //   date: new Date(x.dateString),
-        // })),
       },
     });
   };
@@ -221,6 +226,7 @@ export const Chen2021FitnessContainer = ({ variantDateCounts, wholeDateCounts }:
         t0={t0}
         variantDateCounts={variantDateCounts}
         wholeDateCounts={wholeDateCounts}
+        changePoints={changePointsTransformed}
       />
       <div className='ml-6'>
         <h1>References</h1>

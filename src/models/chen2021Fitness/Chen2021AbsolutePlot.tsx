@@ -14,6 +14,7 @@ interface Props {
   modelData: Chen2021FitnessResponse;
   request: Chen2021FitnessRequest;
   t0: UnifiedDay;
+  changePoints?: ChangePointWithFc[];
 }
 
 function daysBetween(date1: Date, date2: Date): number {
@@ -99,7 +100,7 @@ function transformChangePoints(
   }));
 }
 
-export const Chen2021AbsolutePlot = ({ modelData, request, t0 }: Props) => {
+export const Chen2021AbsolutePlot = ({ modelData, request, t0, changePoints }: Props) => {
   const caseNumbers = useMemo(() => {
     // Prepare and transform the change points of the reproduction number
     const changePointsWildtype = [
@@ -109,25 +110,9 @@ export const Chen2021AbsolutePlot = ({ modelData, request, t0 }: Props) => {
         fc: modelData.params.fc,
       },
     ];
-    // if (request.changePoints) {
-    //   const fcChangePointMap = new Map<string, ValueWithCI>(); // date string -> fc
-    //   modelData.changePoints?.forEach(({ t, fc }) => {
-    //     fcChangePointMap.set(t, fc);
-    //   });
-    //   for (let { date } of request.changePoints) {
-    //     const fc = fcChangePointMap.get(date.toISOString().substring(0, 10));
-    //     if (!fc) {
-    //       return undefined;
-    //     }
-    //   }
-    //   changePointsWildtype.push(
-    //     ...request.changePoints.map(({ date, reproductionNumberWildtype }) => ({
-    //       date,
-    //       reproductionNumberWildtype,
-    //       fc: fcChangePointMap.get(date.toISOString().substring(0, 10))!,
-    //     }))
-    //   );
-    // }
+    if (changePoints) {
+      changePointsWildtype.push(...changePoints);
+    }
     const changePointsVariant = {
       value: transformChangePoints(changePointsWildtype, 'value'),
       ciLower: transformChangePoints(changePointsWildtype, 'ciLower'),
@@ -166,7 +151,7 @@ export const Chen2021AbsolutePlot = ({ modelData, request, t0 }: Props) => {
     );
 
     return { variantCases, variantCasesLower, variantCasesUpper, wildtypeCases };
-  }, [modelData, request, t0]);
+  }, [modelData, request, t0, changePoints]);
 
   if (!caseNumbers) {
     return <></>;

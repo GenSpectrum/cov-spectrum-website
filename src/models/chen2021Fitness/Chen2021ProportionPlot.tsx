@@ -11,8 +11,6 @@ interface Props {
   modelData: Chen2021FitnessResponse;
   variantDateCounts: DateCountSampleDataset;
   wholeDateCounts: DateCountSampleDataset;
-  plotStartDate: Date;
-  plotEndDate: Date;
   showLegend?: boolean;
 }
 
