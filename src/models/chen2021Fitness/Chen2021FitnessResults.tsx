@@ -9,10 +9,13 @@ import { GridCell, PackedGrid } from '../../components/PackedGrid';
 import { NamedCard } from '../../components/NamedCard';
 import { useQuery } from '../../helpers/query-hook';
 import { UnifiedDay } from '../../helpers/date-cache';
+import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
 
 type ResultsProps = {
   request: Chen2021FitnessRequest;
   t0: UnifiedDay;
+  variantDateCounts: DateCountSampleDataset;
+  wholeDateCounts: DateCountSampleDataset;
 };
 
 const Info = ({ title, children }: { title: string; children: React.ReactNode }) => {
@@ -24,7 +27,7 @@ const Info = ({ title, children }: { title: string; children: React.ReactNode })
   );
 };
 
-export const Chen2021FitnessResults = ({ request, t0 }: ResultsProps) => {
+export const Chen2021FitnessResults = ({ request, t0, variantDateCounts, wholeDateCounts }: ResultsProps) => {
   const { data, isLoading } = useQuery(signal => getData(request, t0, signal), [request]);
 
   if (isLoading) {
@@ -60,6 +63,8 @@ export const Chen2021FitnessResults = ({ request, t0 }: ResultsProps) => {
             <div style={{ height: 500 }}>
               <Chen2021ProportionPlot
                 modelData={data}
+                variantDateCounts={variantDateCounts}
+                wholeDateCounts={wholeDateCounts}
                 plotStartDate={t0.dayjs.add(request.config.tStart, 'day').toDate()}
                 plotEndDate={t0.dayjs.add(request.config.tEnd, 'day').toDate()}
               />

@@ -216,7 +216,12 @@ export const Chen2021FitnessContainer = ({ variantDateCounts, wholeDateCounts }:
         </Button>
       </div>
       <h1 className='ml-6 mt-8'>Results</h1>
-      <Chen2021FitnessResults request={paramData} t0={t0} />
+      <Chen2021FitnessResults
+        request={paramData}
+        t0={t0}
+        variantDateCounts={variantDateCounts}
+        wholeDateCounts={wholeDateCounts}
+      />
       <div className='ml-6'>
         <h1>References</h1>
         <ul className='list-disc'>

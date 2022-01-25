@@ -3,15 +3,25 @@ import { TitleWrapper } from '../../widgets/common';
 import { Plot } from '../../components/Plot';
 import { Chen2021FitnessResponse } from './chen2021Fitness-types';
 import { formatValueWithCI } from './format-value';
+import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
+import { UnifiedDay } from '../../helpers/date-cache';
+import { calculateWilsonInterval } from '../../helpers/wilson-interval';
 
 interface Props {
   modelData: Chen2021FitnessResponse;
+  variantDateCounts: DateCountSampleDataset;
+  wholeDateCounts: DateCountSampleDataset;
   plotStartDate: Date;
   plotEndDate: Date;
   showLegend?: boolean;
 }
 
-export const Chen2021ProportionPlot = ({ modelData, showLegend = true }: Props) => {
+export const Chen2021ProportionPlot = ({
+  modelData,
+  showLegend = true,
+  variantDateCounts,
+  wholeDateCounts,
+}: Props) => {
   const plotProportionText = [];
   const plotProportion = modelData.estimatedProportions;
   for (let i = 0; i < plotProportion.t.length; i++) {
@@ -28,6 +38,40 @@ export const Chen2021ProportionPlot = ({ modelData, showLegend = true }: Props) 
     );
   }
 
+  const datesAsUnifiedDay = modelData.estimatedProportions.t;
+  const dates = datesAsUnifiedDay.map(date => date.dayjs.toDate());
+
+  // Calculate daily proportions
+  const dailyMap = new Map<UnifiedDay, { variant: number; whole: number }>();
+  for (let date of datesAsUnifiedDay) {
+    dailyMap.set(date, { variant: 0, whole: 0 });
+  }
+  for (let { date, count } of variantDateCounts.payload) {
+    if (date && dailyMap.has(date)) {
+      dailyMap.get(date)!.variant = count;
+    }
+  }
+  for (let { date, count } of wholeDateCounts.payload) {
+    if (date && dailyMap.has(date)) {
+      dailyMap.get(date)!.whole = count;
+    }
+  }
+  const dailyProportions: number[] = [];
+  const dailyProportionsText: string[] = [];
+  for (let date of datesAsUnifiedDay) {
+    const { variant, whole } = dailyMap.get(date)!;
+    const proportion = variant / whole;
+    dailyProportions.push(proportion);
+    let text = '';
+    if (whole > 0) {
+      const [ciLower, ciUpper] = calculateWilsonInterval(variant, whole);
+      text = `${(proportion * 100).toFixed(2)}% [${(ciLower * 100).toFixed(2)}%, ${(ciUpper * 100).toFixed(
+        2
+      )}%]`;
+    }
+    dailyProportionsText.push(text);
+  }
+
   return (
     <>
       <TitleWrapper id='graph_title'>Estimated proportion through time</TitleWrapper>
@@ -40,7 +84,7 @@ export const Chen2021ProportionPlot = ({ modelData, showLegend = true }: Props) 
             line: { color: 'transparent' },
             type: 'scatter',
             mode: 'lines',
-            x: modelData.estimatedProportions.t.map(date => date.dayjs.toDate()),
+            x: dates,
             y: modelData.estimatedProportions.ciUpper,
             hoverinfo: 'x',
           },
@@ -51,7 +95,7 @@ export const Chen2021ProportionPlot = ({ modelData, showLegend = true }: Props) 
             line: { color: 'transparent' },
             type: 'scatter',
             mode: 'lines',
-            x: modelData.estimatedProportions.t.map(date => date.dayjs.toDate()),
+            x: dates,
             y: modelData.estimatedProportions.ciLower,
             hoverinfo: 'x',
           },
@@ -59,23 +103,23 @@ export const Chen2021ProportionPlot = ({ modelData, showLegend = true }: Props) 
             name: 'Logistic fit',
             type: 'scatter',
             mode: 'lines',
-            x: modelData.estimatedProportions.t.map(date => date.dayjs.toDate()),
+            x: dates,
             y: modelData.estimatedProportions.proportion,
             text: plotProportionText,
             hovertemplate: '%{text}',
           },
-          // {
-          //   name: 'Estimated daily proportion',
-          //   type: 'scatter',
-          //   mode: 'markers',
-          //   marker: {
-          //     size: 4,
-          //   },
-          //   text: filteredDailyText,
-          //   hovertemplate: '%{text}',
-          //   x: filteredDaily.t.map(dateString => new Date(dateString)),
-          //   y: filteredDaily.proportion,
-          // },
+          {
+            name: 'Estimated daily proportion',
+            type: 'scatter',
+            mode: 'markers',
+            marker: {
+              size: 4,
+            },
+            text: dailyProportionsText,
+            hovertemplate: '%{text}',
+            x: dates,
+            y: dailyProportions,
+          },
         ]}
         layout={{
           xaxis: {
