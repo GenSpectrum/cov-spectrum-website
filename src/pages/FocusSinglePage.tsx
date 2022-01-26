@@ -221,18 +221,6 @@ export const FocusSinglePage = () => {
     ldvsSelector,
     ldsSelector,
   ]);
-  const splitChen2021Fitness = useDeepCompareMemo(() => {
-    return {
-      // Note: The typings are not entirely correct. The data entries only contain the splitField and count.
-      getData: (signal: AbortSignal) => _fetchAggSamples(ldvsSelector, [splitField], signal),
-      splitData: (data: FullSampleAggEntry[]) => {
-        return [...Utils.groupBy(data, d => d[splitField]).entries()]
-          .filter(([division]) => division)
-          .sort((a, b) => a[0]!.localeCompare(b[0]!))
-          .map(([division, _]) => ({ division: division!, data: null }));
-      },
-    };
-  }, [ldvsSelector, splitField]);
 
   // --- Rendering ---
 
@@ -390,10 +378,8 @@ export const FocusSinglePage = () => {
                 >
                   <div style={{ height: 400 }}>
                     <Chen2021FitnessPreview
-                      locationSelector={variantDateCount.data.selector.location}
-                      dateRangeSelector={variantDateCount.data.selector.dateRange!}
-                      variantSelector={variantDateCount.data.selector.variant!}
-                      samplingStrategy={variantDateCount.data.selector.samplingStrategy}
+                      variantDateCounts={variantDateCount.data}
+                      wholeDateCounts={wholeDateCountWithDateFilter.data}
                     />
                   </div>
                 </NamedCard>
@@ -401,10 +387,8 @@ export const FocusSinglePage = () => {
               <GridCell minWidth={700}>
                 <Althaus2021GrowthWidget.ShareableComponent
                   title='Relative growth advantage'
-                  locationSelector={variantDateCount.data.selector.location}
-                  dateRangeSelector={variantDateCount.data.selector.dateRange!}
-                  variantSelector={variantDateCount.data.selector.variant!}
-                  samplingStrategy={variantDateCount.data.selector.samplingStrategy}
+                  variantDateCounts={variantDateCount.data}
+                  wholeDateCounts={wholeDateCountWithDateFilter.data}
                 />
               </GridCell>
               <GridCell minWidth={600}>
@@ -518,9 +502,9 @@ export const FocusSinglePage = () => {
           )}
           {showChen2021FitnessDivGrid && (
             <DivisionModal
-              getData={splitChen2021Fitness.getData}
-              splitData={splitChen2021Fitness.splitData}
-              generate={(division, _) => (
+              getData={splitSequencesOverTime.getData}
+              splitData={splitSequencesOverTime.splitData}
+              generate={(division, d) => (
                 <NamedCard
                   title={division}
                   toolbar={deepFocusButtons.chen2021Fitness}
@@ -535,15 +519,7 @@ export const FocusSinglePage = () => {
            advantages.`}
                 >
                   <div style={{ height: 350 }}>
-                    <Chen2021FitnessPreview
-                      locationSelector={{
-                        ...exploreUrl?.location!,
-                        [splitField]: division,
-                      }}
-                      dateRangeSelector={exploreUrl?.dateRange!}
-                      variantSelector={exploreUrl?.variant!}
-                      samplingStrategy={exploreUrl?.samplingStrategy}
-                    />
+                    <Chen2021FitnessPreview variantDateCounts={d.variant} wholeDateCounts={d.whole} />
                   </div>
                 </NamedCard>
               )}

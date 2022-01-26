@@ -4,11 +4,20 @@ import { VariantHeader } from '../components/VariantHeader';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import React from 'react';
-import { MinimalWidgetLayout } from '../components/MinimalWidgetLayout';
 import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
+import { useQuery } from '../helpers/query-hook';
+import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
+import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
+import Loader from '../components/Loader';
 
 export const DeepChen2021FitnessPage = () => {
   const exploreUrl = useExploreUrl();
+
+  const { ldvsSelector, ldsSelector } = useSingleSelectorsFromExploreUrl(exploreUrl!);
+  const variantDateCount = useQuery(signal => DateCountSampleData.fromApi(ldvsSelector, signal), [
+    ldvsSelector,
+  ]);
+  const wholeDateCount = useQuery(signal => DateCountSampleData.fromApi(ldsSelector, signal), [ldsSelector]);
 
   if (!exploreUrl) {
     return null;
@@ -25,12 +34,10 @@ export const DeepChen2021FitnessPage = () => {
       }
       titleSuffix='Relative growth advantage'
     />,
-    <Chen2021FitnessWidget.ShareableComponent
-      locationSelector={exploreUrl.location}
-      variantSelector={exploreUrl.variant!}
-      samplingStrategy={exploreUrl.samplingStrategy}
-      widgetLayout={MinimalWidgetLayout}
-      title='Relative growth advantage'
-    />
+    variantDateCount.data && wholeDateCount.data ? (
+      <Chen2021FitnessWidget.ShareableComponent title='Relative growth advantage' selector={ldvsSelector} />
+    ) : (
+      <Loader />
+    )
   );
 };

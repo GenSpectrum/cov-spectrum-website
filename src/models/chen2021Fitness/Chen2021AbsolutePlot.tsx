@@ -6,13 +6,15 @@ import {
   ChangePointWithFc,
   Chen2021FitnessRequest,
   Chen2021FitnessResponse,
-  ValueWithCI,
 } from './chen2021Fitness-types';
 import { parse } from 'json2csv';
+import { UnifiedDay } from '../../helpers/date-cache';
 
 interface Props {
   modelData: Chen2021FitnessResponse;
   request: Chen2021FitnessRequest;
+  t0: UnifiedDay;
+  changePoints?: ChangePointWithFc[];
 }
 
 function daysBetween(date1: Date, date2: Date): number {
@@ -98,34 +100,18 @@ function transformChangePoints(
   }));
 }
 
-export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
+export const Chen2021AbsolutePlot = ({ modelData, request, t0, changePoints }: Props) => {
   const caseNumbers = useMemo(() => {
     // Prepare and transform the change points of the reproduction number
     const changePointsWildtype = [
       {
-        date: request.plotStartDate,
-        reproductionNumberWildtype: request.reproductionNumberWildtype,
+        date: t0.dayjs.add(request.config.tStart, 'day').toDate(),
+        reproductionNumberWildtype: request.config.reproductionNumberWildtype,
         fc: modelData.params.fc,
       },
     ];
-    if (request.changePoints) {
-      const fcChangePointMap = new Map<string, ValueWithCI>(); // date string -> fc
-      modelData.changePoints?.forEach(({ t, fc }) => {
-        fcChangePointMap.set(t, fc);
-      });
-      for (let { date } of request.changePoints) {
-        const fc = fcChangePointMap.get(date.toISOString().substring(0, 10));
-        if (!fc) {
-          return undefined;
-        }
-      }
-      changePointsWildtype.push(
-        ...request.changePoints.map(({ date, reproductionNumberWildtype }) => ({
-          date,
-          reproductionNumberWildtype,
-          fc: fcChangePointMap.get(date.toISOString().substring(0, 10))!,
-        }))
-      );
+    if (changePoints) {
+      changePointsWildtype.push(...changePoints);
     }
     const changePointsVariant = {
       value: transformChangePoints(changePointsWildtype, 'value'),
@@ -134,38 +120,38 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
     };
 
     // Calculate case numbers
-    const dates = modelData.plotAbsoluteNumbers.t.map(dateString => new Date(dateString));
+    const dates = modelData.estimatedAbsoluteNumbers.t.map(date => date.dayjs.toDate());
     const wildtypeCases = calculateCases(
-      request.plotStartDate,
+      t0.dayjs.add(request.config.tStart, 'day').toDate(),
       dates,
       changePointsWildtype,
-      request.initialWildtypeCases,
-      request.generationTime
+      request.config.initialCasesWildtype,
+      request.config.generationTime
     );
     const variantCases = calculateCases(
-      request.plotStartDate,
+      t0.dayjs.add(request.config.tStart, 'day').toDate(),
       dates,
       changePointsVariant.value,
-      request.initialVariantCases,
-      request.generationTime
+      request.config.initialCasesVariant,
+      request.config.generationTime
     );
     const variantCasesLower = calculateCases(
-      request.plotStartDate,
+      t0.dayjs.add(request.config.tStart, 'day').toDate(),
       dates,
       changePointsVariant.ciLower,
-      request.initialVariantCases,
-      request.generationTime
+      request.config.initialCasesVariant,
+      request.config.generationTime
     );
     const variantCasesUpper = calculateCases(
-      request.plotStartDate,
+      t0.dayjs.add(request.config.tStart, 'day').toDate(),
       dates,
       changePointsVariant.ciUpper,
-      request.initialVariantCases,
-      request.generationTime
+      request.config.initialCasesVariant,
+      request.config.generationTime
     );
 
     return { variantCases, variantCasesLower, variantCasesUpper, wildtypeCases };
-  }, [modelData, request]);
+  }, [modelData, request, t0, changePoints]);
 
   if (!caseNumbers) {
     return <></>;
@@ -173,9 +159,9 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
 
   const downloadData = () => {
     const data = [];
-    for (let i = 0; i < modelData.plotAbsoluteNumbers.t.length; i++) {
+    for (let i = 0; i < modelData.estimatedAbsoluteNumbers.t.length; i++) {
       data.push({
-        date: modelData.plotAbsoluteNumbers.t[i],
+        date: modelData.estimatedAbsoluteNumbers.t[i].string,
         wildtype: caseNumbers.wildtypeCases[i],
         variant: caseNumbers.variantCases[i],
         variantUpper: caseNumbers.variantCasesUpper[i],
@@ -206,7 +192,7 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
             name: 'Wildtype',
             type: 'scatter',
             mode: 'lines',
-            x: modelData.plotAbsoluteNumbers.t.map(dateString => new Date(dateString)),
+            x: modelData.estimatedAbsoluteNumbers.t.map(date => date.dayjs.toDate()),
             y: caseNumbers.wildtypeCases,
             stackgroup: 'one',
             line: {
@@ -219,7 +205,7 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
             name: 'Variant',
             type: 'scatter',
             mode: 'lines',
-            x: modelData.plotAbsoluteNumbers.t.map(dateString => new Date(dateString)),
+            x: modelData.estimatedAbsoluteNumbers.t.map(date => date.dayjs.toDate()),
             y: caseNumbers.variantCases,
             stackgroup: 'one',
             line: {
@@ -237,7 +223,7 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
               width: 4,
               color: '#ff7f0f',
             },
-            x: modelData.plotAbsoluteNumbers.t.map(dateString => new Date(dateString)),
+            x: modelData.estimatedAbsoluteNumbers.t.map(date => date.dayjs.toDate()),
             y: arrAdd(caseNumbers.variantCasesUpper, caseNumbers.wildtypeCases),
             text: caseNumbers.variantCasesUpper.map(n => n.toString()),
             hovertemplate: '%{text}',
@@ -251,7 +237,7 @@ export const Chen2021AbsolutePlot = ({ modelData, request }: Props) => {
               width: 4,
               color: '#ff7f0f',
             },
-            x: modelData.plotAbsoluteNumbers.t.map(dateString => new Date(dateString)),
+            x: modelData.estimatedAbsoluteNumbers.t.map(date => date.dayjs.toDate()),
             y: arrAdd(caseNumbers.variantCasesLower, caseNumbers.wildtypeCases),
             text: caseNumbers.variantCasesLower.map(n => n.toString()),
             hovertemplate: '%{text}',

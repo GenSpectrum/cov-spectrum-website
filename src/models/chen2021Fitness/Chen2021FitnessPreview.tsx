@@ -1,44 +1,32 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import Loader from '../../components/Loader';
 import { Chen2021ProportionPlot } from './Chen2021ProportionPlot';
-import { fillRequestWithDefaults, useModelData } from './loading';
+import { useModelData } from './loading';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, Wrapper } from '../../widgets/common';
 import Metric, { MetricsWrapper } from '../../widgets/Metrics';
-import { LocationSelector } from '../../data/LocationSelector';
-import { VariantSelector } from '../../data/VariantSelector';
-import { SamplingStrategy } from '../../data/SamplingStrategy';
-import { DateRangeSelector } from '../../data/DateRangeSelector';
 import { ExternalLink } from '../../components/ExternalLink';
+import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
 
 type Props = {
-  locationSelector: LocationSelector;
-  dateRangeSelector: DateRangeSelector;
-  variantSelector: VariantSelector;
-  samplingStrategy: SamplingStrategy;
+  variantDateCounts: DateCountSampleDataset;
+  wholeDateCounts: DateCountSampleDataset;
 };
 
-export const Chen2021FitnessPreview = ({
-  locationSelector,
-  dateRangeSelector,
-  variantSelector,
-  samplingStrategy,
-}: Props) => {
-  const request = useMemo(
-    () => fillRequestWithDefaults({ locationSelector, dateRangeSelector, variantSelector, samplingStrategy }),
-    [locationSelector, dateRangeSelector, variantSelector, samplingStrategy]
-  );
-  const { modelData, loading } = useModelData(request);
+export const Chen2021FitnessPreview = ({ variantDateCounts, wholeDateCounts }: Props) => {
+  const { isLoading, data } = useModelData(variantDateCounts, wholeDateCounts);
   const [showPlotAnyways, setShowPlotAnyways] = useState(false);
 
-  if (loading) {
-    return <Loader />;
-  }
-
-  if (!modelData) {
+  if (!isLoading && !data) {
     return <>It was not possible to estimate the relative growth advantage.</>;
   }
 
-  if (!showPlotAnyways && modelData.params.fd.ciUpper - modelData.params.fd.ciLower > 1) {
+  if (isLoading || !data) {
+    return <Loader />;
+  }
+
+  const { response } = data;
+
+  if (!showPlotAnyways && response.params.fd.ciUpper - response.params.fd.ciLower > 1) {
     return (
       <>
         <p>
@@ -58,15 +46,15 @@ export const Chen2021FitnessPreview = ({
       <ChartAndMetricsWrapper>
         <ChartWrapper>
           <Chen2021ProportionPlot
-            modelData={modelData}
-            plotStartDate={request.plotStartDate}
-            plotEndDate={request.plotEndDate}
+            modelData={response}
+            variantDateCounts={variantDateCounts}
+            wholeDateCounts={wholeDateCounts}
             showLegend={false}
           />
         </ChartWrapper>
         <MetricsWrapper>
           <Metric
-            value={(modelData.params.fd.value * 100).toFixed(0)}
+            value={(response.params.fd.value * 100).toFixed(0)}
             title={'Current adv.'}
             helpText={
               'The estimated relative growth advantage under a discrete model assuming a generation time of 4.8 days ' +
@@ -77,9 +65,9 @@ export const Chen2021FitnessPreview = ({
           />
           <Metric
             value={
-              Math.round(modelData.params.fd.ciLower * 100) +
+              Math.round(response.params.fd.ciLower * 100) +
               '-' +
-              Math.round(modelData.params.fd.ciUpper * 100) +
+              Math.round(response.params.fd.ciUpper * 100) +
               '%'
             }
             title={'Confidence int.'}

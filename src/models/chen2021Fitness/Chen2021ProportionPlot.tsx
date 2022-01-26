@@ -1,54 +1,27 @@
 import React from 'react';
-import * as zod from 'zod';
 import { TitleWrapper } from '../../widgets/common';
 import { Plot } from '../../components/Plot';
-import { Chen2021FitnessResponse, Chen2021FitnessResponseSchema } from './chen2021Fitness-types';
+import { Chen2021FitnessResponse } from './chen2021Fitness-types';
 import { formatValueWithCI } from './format-value';
+import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
+import { UnifiedDay } from '../../helpers/date-cache';
+import { calculateWilsonInterval } from '../../helpers/wilson-interval';
 
 interface Props {
   modelData: Chen2021FitnessResponse;
-  plotStartDate: Date;
-  plotEndDate: Date;
+  variantDateCounts: DateCountSampleDataset;
+  wholeDateCounts: DateCountSampleDataset;
   showLegend?: boolean;
 }
 
 export const Chen2021ProportionPlot = ({
   modelData,
-  plotStartDate,
-  plotEndDate,
   showLegend = true,
+  variantDateCounts,
+  wholeDateCounts,
 }: Props) => {
-  const filteredDaily: zod.infer<typeof Chen2021FitnessResponseSchema.shape.daily> = {
-    t: [],
-    proportion: [],
-    ciLower: [],
-    ciUpper: [],
-  };
-  const filteredDailyText = [];
-  const daily = modelData.daily;
-  for (let i = 0; i < daily.t.length; i++) {
-    const d = new Date(daily.t[i]);
-    if (d >= plotStartDate && d <= plotEndDate) {
-      filteredDaily.t.push(daily.t[i]);
-      filteredDaily.proportion.push(daily.proportion[i]);
-      filteredDaily.ciLower.push(daily.ciLower[i]);
-      filteredDaily.ciUpper.push(daily.ciUpper[i]);
-      filteredDailyText.push(
-        formatValueWithCI(
-          {
-            value: daily.proportion[i],
-            ciLower: daily.ciLower[i],
-            ciUpper: daily.ciUpper[i],
-          },
-          2,
-          true
-        )
-      );
-    }
-  }
-
   const plotProportionText = [];
-  const plotProportion = modelData.plotProportion;
+  const plotProportion = modelData.estimatedProportions;
   for (let i = 0; i < plotProportion.t.length; i++) {
     plotProportionText.push(
       formatValueWithCI(
@@ -63,6 +36,40 @@ export const Chen2021ProportionPlot = ({
     );
   }
 
+  const datesAsUnifiedDay = modelData.estimatedProportions.t;
+  const dates = datesAsUnifiedDay.map(date => date.dayjs.toDate());
+
+  // Calculate daily proportions
+  const dailyMap = new Map<UnifiedDay, { variant: number; whole: number }>();
+  for (let date of datesAsUnifiedDay) {
+    dailyMap.set(date, { variant: 0, whole: 0 });
+  }
+  for (let { date, count } of variantDateCounts.payload) {
+    if (date && dailyMap.has(date)) {
+      dailyMap.get(date)!.variant = count;
+    }
+  }
+  for (let { date, count } of wholeDateCounts.payload) {
+    if (date && dailyMap.has(date)) {
+      dailyMap.get(date)!.whole = count;
+    }
+  }
+  const dailyProportions: number[] = [];
+  const dailyProportionsText: string[] = [];
+  for (let date of datesAsUnifiedDay) {
+    const { variant, whole } = dailyMap.get(date)!;
+    const proportion = variant / whole;
+    dailyProportions.push(proportion);
+    let text = '';
+    if (whole > 0) {
+      const [ciLower, ciUpper] = calculateWilsonInterval(variant, whole);
+      text = `${(proportion * 100).toFixed(2)}% [${(ciLower * 100).toFixed(2)}%, ${(ciUpper * 100).toFixed(
+        2
+      )}%]`;
+    }
+    dailyProportionsText.push(text);
+  }
+
   return (
     <>
       <TitleWrapper id='graph_title'>Estimated proportion through time</TitleWrapper>
@@ -75,8 +82,8 @@ export const Chen2021ProportionPlot = ({
             line: { color: 'transparent' },
             type: 'scatter',
             mode: 'lines',
-            x: modelData.plotProportion.t.map(dateString => new Date(dateString)),
-            y: modelData.plotProportion.ciUpper,
+            x: dates,
+            y: modelData.estimatedProportions.ciUpper,
             hoverinfo: 'x',
           },
           {
@@ -86,16 +93,16 @@ export const Chen2021ProportionPlot = ({
             line: { color: 'transparent' },
             type: 'scatter',
             mode: 'lines',
-            x: modelData.plotProportion.t.map(dateString => new Date(dateString)),
-            y: modelData.plotProportion.ciLower,
+            x: dates,
+            y: modelData.estimatedProportions.ciLower,
             hoverinfo: 'x',
           },
           {
             name: 'Logistic fit',
             type: 'scatter',
             mode: 'lines',
-            x: modelData.plotProportion.t.map(dateString => new Date(dateString)),
-            y: modelData.plotProportion.proportion,
+            x: dates,
+            y: modelData.estimatedProportions.proportion,
             text: plotProportionText,
             hovertemplate: '%{text}',
           },
@@ -106,10 +113,10 @@ export const Chen2021ProportionPlot = ({
             marker: {
               size: 4,
             },
-            text: filteredDailyText,
+            text: dailyProportionsText,
             hovertemplate: '%{text}',
-            x: filteredDaily.t.map(dateString => new Date(dateString)),
-            y: filteredDaily.proportion,
+            x: dates,
+            y: dailyProportions,
           },
         ]}
         layout={{

@@ -145,3 +145,14 @@ export function formatVariantDisplayName(
   }
   return components.join(dense ? '+' : ' + ');
 }
+
+export function transformToVariantQuery(selector: Omit<VariantSelector, 'variantQuery'>): string {
+  const components = [
+    selector.pangoLineage,
+    selector.nextstrainClade ? `nextstrain:${selector.nextstrainClade}` : undefined,
+    selector.gisaidClade ? `gisaid:${selector.gisaidClade}` : undefined,
+    ...(selector.aaMutations ?? []),
+    ...(selector.nucMutations ?? []),
+  ].filter(c => !!c) as string[];
+  return components.join(' & ');
+}
