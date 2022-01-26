@@ -1,18 +1,15 @@
 import { useExploreUrl } from '../helpers/explore-url';
 import { useMultipleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 import React from 'react';
-import { formatVariantDisplayName } from '../data/VariantSelector';
+import { formatVariantDisplayName, transformToVariantQuery } from '../data/VariantSelector';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import { useQuery } from '../helpers/query-hook';
-import { DateCountSampleData, DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
+import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { MultiVariantTimeDistributionLineChart } from '../widgets/MultiVariantTimeDistributionLineChart';
 import { NamedCard } from '../components/NamedCard';
 import { AnalysisMode } from '../data/AnalysisMode';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
-import { SamplingStrategy } from '../data/SamplingStrategy';
-import { UnifiedDay } from '../helpers/date-cache';
-import { DateCountSampleEntry } from '../data/sample/DateCountSampleEntry';
 import { Althaus2021GrowthWidget } from '../models/althaus2021Growth/Althaus2021GrowthWidget';
 
 export const FocusCompareToBaselinePage = () => {
@@ -25,6 +22,28 @@ export const FocusCompareToBaselinePage = () => {
   const variantDateCounts = useQuery(
     signal =>
       Promise.all(ldvsSelectors.map(ldvsSelector => DateCountSampleData.fromApi(ldvsSelector, signal))),
+    [ldvsSelectors]
+  );
+
+  // Fetch the whole sample set which, in this case, means the union of all selected variant.
+  // We only need it for the relative growth advantage widgets, i.e., if exactly two variants are selected.
+  const wholeDateCount = useQuery(
+    signal => {
+      if (ldvsSelectors.length !== 2) {
+        return Promise.resolve(undefined);
+      }
+      const wholeSelector: LocationDateVariantSelector = {
+        location: ldvsSelectors[0].location,
+        dateRange: ldvsSelectors[0].dateRange,
+        samplingStrategy: ldvsSelectors[0].samplingStrategy,
+        variant: {
+          variantQuery:
+            `(${transformToVariantQuery(ldvsSelectors[0].variant!)}) | ` +
+            `(${transformToVariantQuery(ldvsSelectors[1].variant!)})`,
+        },
+      };
+      return DateCountSampleData.fromApi(wholeSelector, signal);
+    },
     [ldvsSelectors]
   );
 
@@ -63,7 +82,7 @@ export const FocusCompareToBaselinePage = () => {
               </NamedCard>
             </GridCell>
           )}
-          {variantDateCounts.data?.length === 2 && (
+          {variantDateCounts.data && wholeDateCount.data && (
             <GridCell minWidth={600}>
               <NamedCard
                 title='Relative growth advantage'
@@ -79,18 +98,18 @@ export const FocusCompareToBaselinePage = () => {
                 <div style={{ height: 400 }}>
                   <Chen2021FitnessPreview
                     variantDateCounts={variantDateCounts.data[1]}
-                    wholeDateCounts={addDateCounts(variantDateCounts.data[0], variantDateCounts.data[1])}
+                    wholeDateCounts={wholeDateCount.data}
                   />
                 </div>
               </NamedCard>
             </GridCell>
           )}
-          {variantDateCounts.data?.length === 2 && (
+          {variantDateCounts.data && wholeDateCount.data && (
             <GridCell minWidth={700}>
               <Althaus2021GrowthWidget.ShareableComponent
                 title='Relative growth advantage'
                 variantDateCounts={variantDateCounts.data[1]}
-                wholeDateCounts={addDateCounts(variantDateCounts.data[0], variantDateCounts.data[1])}
+                wholeDateCounts={wholeDateCount.data}
               />
             </GridCell>
           )}
@@ -99,38 +118,3 @@ export const FocusCompareToBaselinePage = () => {
     </>
   );
 };
-
-/**
- * TODO: The selector of the returned dataset is wrong.
- * To fix it, the variant selector of both datasets should be transformed to complex queries (i.e., to "variantQuery").
- * The two queries can then be joined with a OR-condition.
- * TODO: It should only be allowed to add datasets with the same location-, samplingStrategy-, and dateRange-filter
- */
-function addDateCounts(
-  dataset1: DateCountSampleDataset,
-  dataset2: DateCountSampleDataset
-): DateCountSampleDataset {
-  const selector: LocationDateVariantSelector = {
-    location: { country: 'placeholder' },
-    variant: { pangoLineage: 'placeholder' },
-    samplingStrategy: SamplingStrategy.AllSamples,
-    dateRange: dataset1.selector.dateRange,
-  };
-  let nullCount = 0;
-  const dateMap = new Map<UnifiedDay, number>();
-  for (let { date, count } of [...dataset1.payload, ...dataset2.payload]) {
-    if (date === null) {
-      nullCount += count;
-    } else {
-      dateMap.set(date, (dateMap.get(date) ?? 0) + count);
-    }
-  }
-  const payload: DateCountSampleEntry[] = [];
-  for (let [date, count] of dateMap.entries()) {
-    payload.push({ date, count });
-  }
-  if (nullCount > 0) {
-    payload.push({ date: null, count: nullCount });
-  }
-  return { selector, payload };
-}
