@@ -29,3 +29,6 @@ yarn-error.log*
 *.iml
 
 .vscode/
+
+# support folder containing personal notes
+.0
