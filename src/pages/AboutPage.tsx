@@ -136,7 +136,7 @@ export const AboutPage = () => {
           <ul className='list-disc'>
             <li>&lt;reference base&gt; - this is optional and will be ignored</li>
             <li>
-              &lt;position&gt; - an integer specifying the position on the necleotide sequence of the
+              &lt;position&gt; - an integer specifying the position on the nucleotide sequence of the
               respective gene, it starts with 1.
             </li>
             <li>
