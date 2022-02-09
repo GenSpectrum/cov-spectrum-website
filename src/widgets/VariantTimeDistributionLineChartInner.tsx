@@ -8,6 +8,7 @@ import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import dayjs from 'dayjs';
 import DownloadWrapper from './DownloadWrapper';
 import { Alert, AlertVariant } from '../helpers/ui';
+import { Button, ButtonVariant } from '../helpers/ui';
 
 export type VariantTimeDistributionLineChartEntry = {
   date: UnifiedDay;
@@ -138,6 +139,16 @@ export const VariantTimeDistributionLineChartInner = React.memo(
     return (
       <DownloadWrapper name='EstimatedCasesPlot' csvData={csvData}>
         <Wrapper>
+          <div role="toolbar" className='mb-2'>
+            <Button
+              className='w-min inline-block mr-2'
+              variant={ButtonVariant.SECONDARY}
+            >Proportions</Button>
+            <Button
+              className='w-max inline-block'
+              variant={ButtonVariant.SECONDARY}
+            >Absolute numbers</Button>
+          </div>
           <TitleWrapper>
             Proportion of all samples
             {active !== undefined && (
