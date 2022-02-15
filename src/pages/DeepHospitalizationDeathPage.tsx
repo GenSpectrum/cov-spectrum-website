@@ -14,12 +14,14 @@ export const DeepHospitalizationDeathPage = () => {
   const exploreUrl = useExploreUrl();
 
   const { ldvsSelector, ldsSelector } = useSingleSelectorsFromExploreUrl(exploreUrl!);
-  const variantHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal), [
-    ldvsSelector,
-  ]);
-  const wholeHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldsSelector, signal), [
-    ldsSelector,
-  ]);
+  const variantHospDeathAgeCount = useQuery(
+    signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal),
+    [ldvsSelector]
+  );
+  const wholeHospDeathAgeCount = useQuery(
+    signal => HospDiedAgeSampleData.fromApi(ldsSelector, signal),
+    [ldsSelector]
+  );
 
   if (!exploreUrl) {
     return null;

@@ -20,9 +20,10 @@ export const DeepSequencingCoveragePage = () => {
     signal => DatelessCountrylessCountSampleData.fromApi(lsSelector, signal),
     [lsSelector]
   );
-  const wholeDateCountDataset = useQuery(signal => DateCountSampleData.fromApi(lsSelector, signal), [
-    lsSelector,
-  ]);
+  const wholeDateCountDataset = useQuery(
+    signal => DateCountSampleData.fromApi(lsSelector, signal),
+    [lsSelector]
+  );
   const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(lSelector, ({ selector }, { signal }) =>
     CaseCountData.fromApi(selector, signal)
   );

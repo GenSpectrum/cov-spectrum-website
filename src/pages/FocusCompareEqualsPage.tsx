@@ -23,9 +23,10 @@ export const FocusCompareEqualsPage = () => {
       Promise.all(ldvsSelectors.map(ldvsSelector => DateCountSampleData.fromApi(ldvsSelector, signal))),
     [ldvsSelectors]
   );
-  const wholeDateCountWithDateFilter = useQuery(signal => DateCountSampleData.fromApi(ldsSelector, signal), [
-    ldsSelector,
-  ]);
+  const wholeDateCountWithDateFilter = useQuery(
+    signal => DateCountSampleData.fromApi(ldsSelector, signal),
+    [ldsSelector]
+  );
 
   return (
     <>

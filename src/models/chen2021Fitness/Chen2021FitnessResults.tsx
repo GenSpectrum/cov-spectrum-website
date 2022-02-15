@@ -35,9 +35,10 @@ export const Chen2021FitnessResults = ({
   wholeDateCounts,
   changePoints,
 }: ResultsProps) => {
-  const { data: mainData, isLoading: mainIsLoading } = useQuery(signal => getData(request, t0, signal), [
-    request,
-  ]);
+  const { data: mainData, isLoading: mainIsLoading } = useQuery(
+    signal => getData(request, t0, signal),
+    [request]
+  );
 
   // Calculate fitness advantage values for change points
   const { data: changePointsData, isLoading: changePointsIsLoading } = useQuery(
