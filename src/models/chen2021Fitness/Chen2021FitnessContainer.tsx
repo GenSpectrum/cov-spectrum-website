@@ -86,9 +86,10 @@ export const Chen2021FitnessContainer = ({ selector }: ContainerProps) => {
       return transformToRequestData(variantDateCounts, wholeDateCounts);
     }, [variantDateCounts, wholeDateCounts]) ?? {};
 
-  useEffect(() => requestData && setParamData(p => fillRequestWithDefaults(requestData, p?.config)), [
-    requestData,
-  ]);
+  useEffect(
+    () => requestData && setParamData(p => fillRequestWithDefaults(requestData, p?.config)),
+    [requestData]
+  );
 
   if (!requestData || !t0 || !variantDateCounts || !wholeDateCounts || !paramData) {
     return <Loader />;

@@ -45,12 +45,15 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
 
   useEffect(() => {
     // Include the variant name and location of interest in the page title
-    let variantObj = typeof exploreUrl.variants == 'object' ? exploreUrl.variants[0] : {}
-    let variant = 'pangoLineage' in variantObj? variantObj['pangoLineage'] : 'Variant'
-    let locationObj: any = exploreUrl?.location!
-    let place: String = 'country' in locationObj
-      ? locationObj['country'] 
-      : ('region' in locationObj? locationObj['region'] : 'World')
+    let variantObj = typeof exploreUrl.variants == 'object' ? exploreUrl.variants[0] : {};
+    let variant = 'pangoLineage' in variantObj ? variantObj['pangoLineage'] : 'Variant';
+    let locationObj: any = exploreUrl?.location!;
+    let place: String =
+      'country' in locationObj
+        ? locationObj['country']
+        : 'region' in locationObj
+        ? locationObj['region']
+        : 'World';
     document.title = `${variant} - ${place} - covSPECTRUM`;
   });
 

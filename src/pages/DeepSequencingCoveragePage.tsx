@@ -20,19 +20,23 @@ export const DeepSequencingCoveragePage = () => {
     signal => DatelessCountrylessCountSampleData.fromApi(lsSelector, signal),
     [lsSelector]
   );
-  const wholeDateCountDataset = useQuery(signal => DateCountSampleData.fromApi(lsSelector, signal), [
-    lsSelector,
-  ]);
+  const wholeDateCountDataset = useQuery(
+    signal => DateCountSampleData.fromApi(lsSelector, signal),
+    [lsSelector]
+  );
   const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(lSelector, ({ selector }, { signal }) =>
     CaseCountData.fromApi(selector, signal)
   );
 
   useEffect(() => {
     // Include the location of interest in the page title
-    let locationObj: any = exploreUrl?.location!
-    let place: String = 'country' in locationObj
-      ? locationObj['country'] 
-      : ('region' in locationObj? locationObj['region'] : 'World')
+    let locationObj: any = exploreUrl?.location!;
+    let place: String =
+      'country' in locationObj
+        ? locationObj['country']
+        : 'region' in locationObj
+        ? locationObj['region']
+        : 'World';
     document.title = `Sequencing coverage - ${place} - covSPECTRUM`;
   });
 

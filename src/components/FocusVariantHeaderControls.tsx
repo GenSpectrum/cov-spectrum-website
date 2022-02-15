@@ -27,53 +27,51 @@ const integrations: Integration[] = [
   new TaxoniumIntegration(),
 ];
 
-export const FocusVariantHeaderControls = React.memo(
-  ({ selector }: Props): JSX.Element => {
-    const [showDropdown, setShowDropdown] = useState(false);
-    const showDropdownFunc = (_: any) => {
-      setShowDropdown(!showDropdown);
-    };
-    const hideDropdownFunc = (_: any) => {
-      setShowDropdown(false);
-    };
+export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.Element => {
+  const [showDropdown, setShowDropdown] = useState(false);
+  const showDropdownFunc = (_: any) => {
+    setShowDropdown(!showDropdown);
+  };
+  const hideDropdownFunc = (_: any) => {
+    setShowDropdown(false);
+  };
 
-    const downloadSequenceList = async () => {
-      let link;
-      // If the open version is used, all the metadata will be downloaded. If GISAID is used, only the contributors
-      // will be downloaded.
-      if (sequenceDataSource === 'open') {
-        link = await getCsvLinkToDetails(selector);
-      } else {
-        link = await getCsvLinkToContributors(selector);
-      }
-      window.open(link, '_blank');
-    };
+  const downloadSequenceList = async () => {
+    let link;
+    // If the open version is used, all the metadata will be downloaded. If GISAID is used, only the contributors
+    // will be downloaded.
+    if (sequenceDataSource === 'open') {
+      link = await getCsvLinkToDetails(selector);
+    } else {
+      link = await getCsvLinkToContributors(selector);
+    }
+    window.open(link, '_blank');
+  };
 
-    return (
-      <>
-        <Button className='mr-2 mt-3' size='sm' variant='secondary' onClick={downloadSequenceList}>
-          Sequence list <FaDownload className='inline-block ml-1' />
-        </Button>
-        <DropdownButton
-          as={ButtonGroup}
-          title='Other websites'
-          variant='secondary'
-          size='sm'
-          className='mr-2 mt-3'
-          onMouseEnter={showDropdownFunc}
-          onMouseLeave={hideDropdownFunc}
-          show={showDropdown}
-        >
-          {integrations.map(
-            integration =>
-              integration.isAvailable(selector) && (
-                <Dropdown.Item key={integration.name} onClick={() => integration.open(selector)}>
-                  {integration.name}
-                </Dropdown.Item>
-              )
-          )}
-        </DropdownButton>
-      </>
-    );
-  }
-);
+  return (
+    <>
+      <Button className='mr-2 mt-3' size='sm' variant='secondary' onClick={downloadSequenceList}>
+        Sequence list <FaDownload className='inline-block ml-1' />
+      </Button>
+      <DropdownButton
+        as={ButtonGroup}
+        title='Other websites'
+        variant='secondary'
+        size='sm'
+        className='mr-2 mt-3'
+        onMouseEnter={showDropdownFunc}
+        onMouseLeave={hideDropdownFunc}
+        show={showDropdown}
+      >
+        {integrations.map(
+          integration =>
+            integration.isAvailable(selector) && (
+              <Dropdown.Item key={integration.name} onClick={() => integration.open(selector)}>
+                {integration.name}
+              </Dropdown.Item>
+            )
+        )}
+      </DropdownButton>
+    </>
+  );
+});

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import { ExternalLink } from '../components/ExternalLink';
 
 const StoryPreviewWrapper = ({
@@ -10,7 +10,6 @@ const StoryPreviewWrapper = ({
   id: string;
   children: React.ReactNode;
 }) => {
-
   useEffect(() => {
     document.title = `Stories - covSPECTRUM`;
   });

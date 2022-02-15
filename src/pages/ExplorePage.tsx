@@ -44,10 +44,13 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
 
   useEffect(() => {
     // Include the location of interest in the page title
-    let locationObj: any = exploreUrl?.location!
-    let place: String = 'country' in locationObj
-      ? locationObj['country'] 
-      : ('region' in locationObj? locationObj['region'] : 'World')
+    let locationObj: any = exploreUrl?.location!;
+    let place: String =
+      'country' in locationObj
+        ? locationObj['country']
+        : 'region' in locationObj
+        ? locationObj['region']
+        : 'World';
     document.title = `${place} - covSPECTRUM`;
   });
 
