@@ -376,7 +376,7 @@ export const FocusSinglePage = () => {
           demographic group. In this case, the estimate does not provide information on any intrinsic fitness 
           advantages.`}
                 >
-                  <div style={{ height: 400 }}>
+                  <div style={{ height: window.innerWidth < 640 ? 600 : 400 }}>
                     <Chen2021FitnessPreview
                       variantDateCounts={variantDateCount.data}
                       wholeDateCounts={wholeDateCountWithDateFilter.data}
