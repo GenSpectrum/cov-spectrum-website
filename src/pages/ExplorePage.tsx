@@ -12,6 +12,7 @@ import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import Loader from '../components/Loader';
 import { VariantSearch } from '../components/VariantSearch';
 import { AnalysisMode } from '../data/AnalysisMode';
+import { getLocation } from '../helpers/get-location';
 
 type Props = {
   isSmallScreen: boolean;
@@ -44,13 +45,7 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
 
   useEffect(() => {
     // Include the location of interest in the page title
-    let locationObj: any = exploreUrl?.location!;
-    let place: String =
-      'country' in locationObj
-        ? locationObj['country']
-        : 'region' in locationObj
-        ? locationObj['region']
-        : 'World';
+    let place: string = getLocation(exploreUrl)
     document.title = `${place} - covSPECTRUM`;
   });
 

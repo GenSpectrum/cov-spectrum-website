@@ -10,6 +10,7 @@ import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
 import { useAsyncDataset } from '../helpers/use-async-dataset';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
+import { getLocation } from '../helpers/get-location';
 
 export const DeepSequencingCoveragePage = () => {
   const exploreUrl = useExploreUrl();
@@ -30,13 +31,7 @@ export const DeepSequencingCoveragePage = () => {
 
   useEffect(() => {
     // Include the location of interest in the page title
-    let locationObj: any = exploreUrl?.location!;
-    let place: String =
-      'country' in locationObj
-        ? locationObj['country']
-        : 'region' in locationObj
-        ? locationObj['region']
-        : 'World';
+    let place: string = getLocation(exploreUrl)
     document.title = `Sequencing coverage - ${place} - covSPECTRUM`;
   });
 
