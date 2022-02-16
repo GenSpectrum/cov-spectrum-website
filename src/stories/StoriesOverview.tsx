@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ExternalLink } from '../components/ExternalLink';
 
 const StoryPreviewWrapper = ({
@@ -10,6 +10,10 @@ const StoryPreviewWrapper = ({
   id: string;
   children: React.ReactNode;
 }) => {
+  useEffect(() => {
+    document.title = `Stories - covSPECTRUM`;
+  });
+
   return (
     <div className='w-full bg-blue-50 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-800'>
       <a href={`/stories/${id}`}>

@@ -4,7 +4,7 @@ import { FocusSinglePage } from './FocusSinglePage';
 import { SplitExploreWrapper, SplitFocusWrapper, SplitParentWrapper } from '../helpers/app-layout';
 import { KnownVariantsList } from '../components/KnownVariantsList/KnownVariantsList';
 import Loader from '../components/Loader';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useQuery } from '../helpers/query-hook';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
@@ -13,6 +13,7 @@ import { DateRangePicker } from '../components/DateRangePicker';
 import { VariantSearch } from '../components/VariantSearch';
 import { FocusCompareEqualsPage } from './FocusCompareEqualsPage';
 import { FocusCompareToBaselinePage } from './FocusCompareToBaselinePage';
+import { getLocation } from '../helpers/get-location';
 
 type Props = {
   isSmallScreen: boolean;
@@ -42,6 +43,15 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
     default:
       throw new Error('Unexpected or undefined analysis mode: ' + exploreUrl.analysisMode);
   }
+
+  useEffect(() => {
+    // Include the variant name and location of interest in the page title
+    let variantObj = typeof exploreUrl.variants == 'object' ? exploreUrl.variants[0] : {};
+    let variant = 'pangoLineage' in variantObj ? variantObj['pangoLineage'] : 'Variant';
+    let place: string = getLocation(exploreUrl);
+    document.title = `${variant} - ${place} - covSPECTRUM`;
+  });
+
   return (
     <>
       <SplitParentWrapper>
