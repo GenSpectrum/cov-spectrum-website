@@ -77,93 +77,98 @@ function transformDataToTableFormat(data: WasteWaterMutationOccurrencesDataset):
   return table;
 }
 
-export const WasteWaterHeatMapChart = React.memo(({ data }: TimeHeatMapChartProps): JSX.Element => {
-  const [active, setActive] = useState<WasteWaterHeatMapEntry | undefined>(undefined);
+export const WasteWaterHeatMapChart = React.memo(
+  ({ data }: TimeHeatMapChartProps): JSX.Element => {
+    const [active, setActive] = useState<WasteWaterHeatMapEntry | undefined>(undefined);
 
-  function handleMouseEnter(cell: WasteWaterHeatMapEntry) {
-    setActive(cell);
-  }
+    function handleMouseEnter(cell: WasteWaterHeatMapEntry) {
+      setActive(cell);
+    }
 
-  const { nucMutationsLabelTableRows, heatMapTableRows } = useMemo(() => {
-    const processedData: WasteWaterHeatMapEntry[][] = transformDataToTableFormat(data);
-    const colorScale = scaleLinear<string>().range(['white', colors.active]).domain([0, 1]);
-    const nucMutationsLabelTableRows = [];
-    const heatMapTableRows = [];
-    for (let row of processedData) {
-      const nucMutation = row[0].nucMutation;
+    const { nucMutationsLabelTableRows, heatMapTableRows } = useMemo(() => {
+      const processedData: WasteWaterHeatMapEntry[][] = transformDataToTableFormat(data);
+      const colorScale = scaleLinear<string>().range(['white', colors.active]).domain([0, 1]);
+      const nucMutationsLabelTableRows = [];
+      const heatMapTableRows = [];
+      for (let row of processedData) {
+        const nucMutation = row[0].nucMutation;
+        nucMutationsLabelTableRows.push(
+          <tr key={nucMutation}>
+            <Cell>{nucMutation}</Cell>
+          </tr>
+        );
+        heatMapTableRows.push(
+          <tr key={nucMutation}>
+            {row.map(col => (
+              <MainContentCell
+                key={nucMutation + col.date.string}
+                backgroundColor={col.proportion !== undefined ? colorScale(col.proportion) : 'lightgray'}
+                onMouseEnter={() => handleMouseEnter(col)}
+              />
+            ))}
+          </tr>
+        );
+      }
       nucMutationsLabelTableRows.push(
-        <tr key={nucMutation}>
-          <Cell>{nucMutation}</Cell>
+        <tr key={'lastrow'}>
+          <Cell />
         </tr>
       );
       heatMapTableRows.push(
-        <tr key={nucMutation}>
-          {row.map(col => (
-            <MainContentCell
-              key={nucMutation + col.date.string}
-              backgroundColor={col.proportion !== undefined ? colorScale(col.proportion) : 'lightgray'}
-              onMouseEnter={() => handleMouseEnter(col)}
-            />
+        <tr key={'lastrow'}>
+          {processedData[0].map(col => (
+            <XAxisTicksCell key={col.date.string}>{formatDate(col.date)}</XAxisTicksCell>
           ))}
         </tr>
       );
-    }
-    nucMutationsLabelTableRows.push(
-      <tr key={'lastrow'}>
-        <Cell />
-      </tr>
-    );
-    heatMapTableRows.push(
-      <tr key={'lastrow'}>
-        {processedData[0].map(col => (
-          <XAxisTicksCell key={col.date.string}>{formatDate(col.date)}</XAxisTicksCell>
-        ))}
-      </tr>
-    );
-    return { nucMutationsLabelTableRows, heatMapTableRows };
-  }, [data]);
+      return { nucMutationsLabelTableRows, heatMapTableRows };
+    }, [data]);
 
-  return (
-    <Wrapper>
-      <TitleWrapper>
-        {active !== undefined ? (
-          <>
-            Occurrence of <b>{active.nucMutation}</b> in wastewater samples on{' '}
-            <b>{formatDate(active.date)}</b>
-          </>
-        ) : (
-          'Occurrence of signature mutations in wastewater samples through time'
-        )}
-      </TitleWrapper>
-      <ChartAndMetricsWrapper2>
-        <div id='heatmap-inner-wrapper' className='flex mr-10 w-full overflow-x-scroll md:overflow-x-hidden'>
-          <div style={{ width: '70px', height: '100%', display: 'block' }} className='md:overflow-x-scroll'>
-            <table style={{ tableLayout: 'fixed', width: '100px', height: '100%' }}>
-              <tbody>{nucMutationsLabelTableRows}</tbody>
-            </table>
-          </div>
+    return (
+      <Wrapper>
+        <TitleWrapper>
+          {active !== undefined ? (
+            <>
+              Occurrence of <b>{active.nucMutation}</b> in wastewater samples on{' '}
+              <b>{formatDate(active.date)}</b>
+            </>
+          ) : (
+            'Occurrence of signature mutations in wastewater samples through time'
+          )}
+        </TitleWrapper>
+        <ChartAndMetricsWrapper2>
           <div
-            className='md:overflow-x-scroll'
-            style={{ width: 'calc(100% - 70px)', height: '100%', display: 'block' }}
+            id='heatmap-inner-wrapper'
+            className='flex mr-10 w-full overflow-x-scroll md:overflow-x-hidden'
           >
-            <div style={{ height: '100%' }}>
-              <table style={{ tableLayout: 'fixed', width: '100%', height: '100%' }}>
-                <tbody>{heatMapTableRows}</tbody>
+            <div style={{ width: '70px', height: '100%', display: 'block' }} className='md:overflow-x-scroll'>
+              <table style={{ tableLayout: 'fixed', width: '100px', height: '100%' }}>
+                <tbody>{nucMutationsLabelTableRows}</tbody>
               </table>
             </div>
+            <div
+              className='md:overflow-x-scroll'
+              style={{ width: 'calc(100% - 70px)', height: '100%', display: 'block' }}
+            >
+              <div style={{ height: '100%' }}>
+                <table style={{ tableLayout: 'fixed', width: '100%', height: '100%' }}>
+                  <tbody>{heatMapTableRows}</tbody>
+                </table>
+              </div>
+            </div>
           </div>
-        </div>
-        <MetricsWrapper>
-          <Metric
-            value={active?.proportion !== undefined ? (active.proportion * 100).toFixed(2) + '%' : 'NA'}
-            title='Proportion'
-            color={colors.active}
-            helpText='Proportion of wastewater samples containing the mutation.'
-          />
-        </MetricsWrapper>
-      </ChartAndMetricsWrapper2>
-    </Wrapper>
-  );
-});
+          <MetricsWrapper>
+            <Metric
+              value={active?.proportion !== undefined ? (active.proportion * 100).toFixed(2) + '%' : 'NA'}
+              title='Proportion'
+              color={colors.active}
+              helpText='Proportion of wastewater samples containing the mutation.'
+            />
+          </MetricsWrapper>
+        </ChartAndMetricsWrapper2>
+      </Wrapper>
+    );
+  }
+);
 
 export default WasteWaterHeatMapChart;
