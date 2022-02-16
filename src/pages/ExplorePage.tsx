@@ -45,7 +45,7 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
 
   useEffect(() => {
     // Include the location of interest in the page title
-    let place: string = getLocation(exploreUrl)
+    let place: string = getLocation(exploreUrl);
     document.title = `${place} - covSPECTRUM`;
   });
 

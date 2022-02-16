@@ -126,7 +126,6 @@
     "jest-canvas-mock": "^2.3.1",
     "jest-puppeteer": "^6.0.0",
     "postcss": "^8.3.0",
-    "prettier": "^2.2.1",
     "puppeteer": "^10.4.0",
     "resize-observer-polyfill": "^1.5.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.1.2"

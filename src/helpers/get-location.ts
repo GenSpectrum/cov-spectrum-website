@@ -9,5 +9,5 @@ export function getLocation(exploreUrl?: ExploreUrl): string {
       : 'region' in locationObj
       ? locationObj['region']
       : 'World';
-  return place
+  return place;
 }

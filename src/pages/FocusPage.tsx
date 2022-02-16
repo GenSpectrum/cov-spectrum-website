@@ -48,7 +48,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
     // Include the variant name and location of interest in the page title
     let variantObj = typeof exploreUrl.variants == 'object' ? exploreUrl.variants[0] : {};
     let variant = 'pangoLineage' in variantObj ? variantObj['pangoLineage'] : 'Variant';
-    let place: string = getLocation(exploreUrl)
+    let place: string = getLocation(exploreUrl);
     document.title = `${variant} - ${place} - covSPECTRUM`;
   });
 

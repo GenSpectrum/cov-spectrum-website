@@ -31,7 +31,7 @@ export const DeepSequencingCoveragePage = () => {
 
   useEffect(() => {
     // Include the location of interest in the page title
-    let place: string = getLocation(exploreUrl)
+    let place: string = getLocation(exploreUrl);
     document.title = `Sequencing coverage - ${place} - covSPECTRUM`;
   });
 
