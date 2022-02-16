@@ -376,7 +376,7 @@ export const FocusSinglePage = () => {
           demographic group. In this case, the estimate does not provide information on any intrinsic fitness 
           advantages.`}
                 >
-                  <div style={{ height: window.innerWidth < 640 ? 600 : 400 }}>
+                  <div style={{ height: 400 }}>
                     <Chen2021FitnessPreview
                       variantDateCounts={variantDateCount.data}
                       wholeDateCounts={wholeDateCountWithDateFilter.data}
@@ -539,7 +539,7 @@ export const FocusSinglePage = () => {
 const createDivisionBreakdownButton = (key: string, setter: (show: boolean) => void) => (
   <Button
     key={key}
-    className='mt-1 ml-2 w-max'
+    className='mt-1 ml-2'
     variant={ButtonVariant.PRIMARY}
     onClick={() => {
       setter(true);
