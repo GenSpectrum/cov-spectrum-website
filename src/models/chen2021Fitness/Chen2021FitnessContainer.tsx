@@ -6,7 +6,7 @@ import { Chen2021FitnessResults } from './Chen2021FitnessResults';
 import { fillRequestWithDefaults, transformToRequestData } from './loading';
 import { ExternalLink } from '../../components/ExternalLink';
 import { DateCountSampleData } from '../../data/sample/DateCountSampleDataset';
-import { globalDateCache } from '../../helpers/date-cache';
+import { globalDateCache, UnifiedDay } from '../../helpers/date-cache';
 import { LocationDateVariantSelector } from '../../data/LocationDateVariantSelector';
 import dayjs from 'dayjs';
 import { useQuery } from '../../helpers/query-hook';
@@ -15,6 +15,11 @@ import Loader from '../../components/Loader';
 
 export type ContainerProps = {
   selector: LocationDateVariantSelector;
+  defaults?: {
+    startDate: UnifiedDay;
+    initialWildtypeCases: number;
+    initialVariantCases: number;
+  };
 };
 
 type ChangePointFormEntry = {
@@ -26,14 +31,18 @@ const SectionHeader = styled.h5`
   margin-top: 20px;
 `;
 
-export const Chen2021FitnessContainer = ({ selector }: ContainerProps) => {
+export const Chen2021FitnessContainer = ({ selector, defaults }: ContainerProps) => {
   // Form/param data
   const [formGenerationTime, setFormGenerationTime] = useState('4.8');
   const [formReproductionNumberWildtype, setFormReproductionNumberWildtype] = useState('1');
-  const [formInitialVariantCases, setFormInitialVariantCases] = useState('10');
-  const [formInitialWildtypeCases, setFormInitialWildtypeCases] = useState('1000');
+  const [formInitialVariantCases, setFormInitialVariantCases] = useState(
+    defaults?.initialVariantCases.toString() ?? '10'
+  );
+  const [formInitialWildtypeCases, setFormInitialWildtypeCases] = useState(
+    defaults?.initialWildtypeCases.toString() ?? '1000'
+  );
   const [formPlotStartDate, setFormPlotStartDate] = useState(
-    dayjs().subtract(90, 'day').format('YYYY-MM-DD')
+    (defaults?.startDate.dayjs ?? dayjs().subtract(90, 'day')).format('YYYY-MM-DD')
   );
   const [formPlotEndDate, setFormPlotEndDate] = useState(dayjs().add(14, 'day').format('YYYY-MM-DD'));
   const [changePoints, setChangePoints] = useState<ChangePointFormEntry[]>([]);
@@ -86,9 +95,23 @@ export const Chen2021FitnessContainer = ({ selector }: ContainerProps) => {
       return transformToRequestData(variantDateCounts, wholeDateCounts);
     }, [variantDateCounts, wholeDateCounts]) ?? {};
 
-  useEffect(() => requestData && setParamData(p => fillRequestWithDefaults(requestData, p?.config)), [
-    requestData,
-  ]);
+  useEffect(
+    () =>
+      requestData &&
+      setParamData(p =>
+        fillRequestWithDefaults(
+          requestData,
+          p
+            ? {
+                ...p.config,
+                initialCasesVariant: defaults?.initialVariantCases ?? p.config.initialCasesVariant,
+                initialCasesWildtype: defaults?.initialWildtypeCases ?? p.config.initialCasesWildtype,
+              }
+            : undefined
+        )
+      ),
+    [defaults, requestData]
+  );
 
   if (!requestData || !t0 || !variantDateCounts || !wholeDateCounts || !paramData) {
     return <Loader />;
