@@ -79,8 +79,9 @@ const mathFunctions = new Map([
 ] as [Althaus2021GrowthParametersAttribute, (vars: MathVariables) => number][]);
 
 export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: Props) => {
-  const [estimateAttribute, setEstimateAttribute] =
-    useState<Althaus2021GrowthParametersAttribute>('transmissibilityIncrease');
+  const [estimateAttribute, setEstimateAttribute] = useState<Althaus2021GrowthParametersAttribute>(
+    'transmissibilityIncrease'
+  );
   const [currentParams, setCurrentParams] = useState({
     ...defaultParams,
     [estimateAttribute]: calc(estimateAttribute, defaultParams),

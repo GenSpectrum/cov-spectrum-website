@@ -13,8 +13,7 @@ export interface AsyncQueryEncoder<T> {
 }
 
 export class ZodQueryEncoder<S extends zod.ZodSchema<any>, T extends zod.input<S> & zod.output<S>>
-  implements QueryEncoder<T>
-{
+  implements QueryEncoder<T> {
   _decodedType!: T;
 
   constructor(private schema: S, private searchParamsKey: string = 'json') {}
@@ -39,8 +38,7 @@ export class AsyncZodQueryEncoder<
   ExternalType,
   Schema extends zod.ZodSchema<any>,
   InternalType extends zod.infer<Schema>
-> implements AsyncQueryEncoder<ExternalType>
-{
+> implements AsyncQueryEncoder<ExternalType> {
   _decodedType!: ExternalType;
   private zodQueryEncoder: ZodQueryEncoder<Schema, InternalType>;
 
