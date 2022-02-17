@@ -113,8 +113,7 @@ export const Chen2021AbsolutePlot = ({
   estimatedCasesPlotData,
 }: Props) => {
   const [showNumberTotalCases, setShowNumberTotalCases] = useState(false);
-  const [showNumberVariantCases, setShowNumberVariantCases] = useState(false);
-  const [showNumberWildtypeCases, setShowNumberWildtypeCases] = useState(false);
+  const [showNumberVariantWildtypeCases, setShowNumberVariantWildtypeCases] = useState(false);
 
   const caseNumbers = useMemo(() => {
     // Prepare and transform the change points of the reproduction number
@@ -301,33 +300,33 @@ export const Chen2021AbsolutePlot = ({
       hovertemplate: '%{text}',
     });
   }
-  if (showNumberWildtypeCases) {
-    plotLayers.push({
-      name: 'Estimated wildtype cases (data)',
-      type: 'scatter',
-      mode: 'lines',
-      x: caseNumbers.dates,
-      y: caseNumbers.estimatedConfirmedWildtypeCases,
-      line: {
-        color: '#1b3ab5',
+  if (showNumberVariantWildtypeCases) {
+    plotLayers.push(
+      {
+        name: 'Estimated wildtype cases (data)',
+        type: 'scatter',
+        mode: 'lines',
+        x: caseNumbers.dates,
+        y: caseNumbers.estimatedConfirmedWildtypeCases,
+        line: {
+          color: '#1b3ab5',
+        },
+        text: caseNumbers.estimatedConfirmedWildtypeCases.map(n => n.toString()),
+        hovertemplate: '%{text}',
       },
-      text: caseNumbers.estimatedConfirmedWildtypeCases.map(n => n.toString()),
-      hovertemplate: '%{text}',
-    });
-  }
-  if (showNumberVariantCases) {
-    plotLayers.push({
-      name: 'Estimated variant cases (data)',
-      type: 'scatter',
-      mode: 'lines',
-      x: caseNumbers.dates,
-      y: caseNumbers.estimatedConfirmedVariantCases,
-      line: {
-        color: '#ff960d',
-      },
-      text: caseNumbers.estimatedConfirmedVariantCases.map(n => n.toString()),
-      hovertemplate: '%{text}',
-    });
+      {
+        name: 'Estimated variant cases (data)',
+        type: 'scatter',
+        mode: 'lines',
+        x: caseNumbers.dates,
+        y: arrAdd(caseNumbers.estimatedConfirmedVariantCases, caseNumbers.estimatedConfirmedWildtypeCases),
+        line: {
+          color: '#ff960d',
+        },
+        text: caseNumbers.estimatedConfirmedVariantCases.map(n => n.toString()),
+        hovertemplate: '%{text}',
+      }
+    );
   }
 
   return (
@@ -373,15 +372,9 @@ export const Chen2021AbsolutePlot = ({
         />
         <Form.Check
           type='checkbox'
-          label='Show number of estimated variant cases from data'
-          checked={showNumberVariantCases}
-          onChange={() => setShowNumberVariantCases(!showNumberVariantCases)}
-        />
-        <Form.Check
-          type='checkbox'
-          label='Show number of estimated wildtype cases from data'
-          checked={showNumberWildtypeCases}
-          onChange={() => setShowNumberWildtypeCases(!showNumberWildtypeCases)}
+          label='Show number of estimated variant and wildtype cases from data (stacked on top of each other)'
+          checked={showNumberVariantWildtypeCases}
+          onChange={() => setShowNumberVariantWildtypeCases(!showNumberVariantWildtypeCases)}
         />
       </div>
     </>
