@@ -232,7 +232,7 @@ export const Chen2021AbsolutePlot = ({
 
   const plotLayers: Data[] = [
     {
-      name: 'Wildtype',
+      name: 'Wildtype (model)',
       type: 'scatter',
       mode: 'lines',
       x: caseNumbers.dates,
