@@ -57,7 +57,7 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
                 country={country}
                 location={location}
                 title='Estimated proportion'
-                height={500}
+                height={600}
               />
             </GridCell>
             {entry[0].data.mutationOccurrences && (
@@ -68,7 +68,7 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
                   country={country}
                   location={location}
                   title='Occurrences of individual mutations'
-                  height={500}
+                  height={600}
                 />
               </GridCell>
             )}
