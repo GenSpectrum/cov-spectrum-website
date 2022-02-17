@@ -6,6 +6,7 @@ import { LocationDateSelector } from '../data/LocationDateSelector';
 export type SingleSelectorsFromExploreUrlHook = {
   ldvsSelector: LocationDateVariantSelector;
   ldsSelector: LocationDateVariantSelector;
+  lvsSelector: LocationDateVariantSelector;
   lsSelector: LocationDateVariantSelector;
   dvsSelector: LocationDateVariantSelector;
   dsSelector: LocationDateVariantSelector;
@@ -38,6 +39,14 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         samplingStrategy: exploreUrl.samplingStrategy!,
       }),
       [exploreUrl.dateRange, exploreUrl.location, exploreUrl.samplingStrategy]
+    ),
+    lvsSelector: useDeepCompareMemo(
+      () => ({
+        location: exploreUrl.location!,
+        samplingStrategy: exploreUrl.samplingStrategy!,
+        variant: firstVariant,
+      }),
+      [exploreUrl.dateRange, exploreUrl.location, exploreUrl.samplingStrategy, firstVariant]
     ),
     lsSelector: useDeepCompareMemo(
       () => ({
