@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { useQuery } from '../../helpers/query-hook';
 import { FixedDateRangeSelector } from '../../data/DateRangeSelector';
 import Loader from '../../components/Loader';
+import { CaseCountData } from '../../data/CaseCountDataset';
 
 export type ContainerProps = {
   selector: LocationDateVariantSelector;
@@ -87,6 +88,10 @@ export const Chen2021FitnessContainer = ({ selector, defaults }: ContainerProps)
       ),
     [selector, paramData]
   );
+  const { data: caseCounts } = useQuery(
+    signal => CaseCountData.fromApi({ location: selector.location }, signal),
+    [selector]
+  );
   const { request: requestData, t0 } =
     useMemo(() => {
       if (!variantDateCounts || !wholeDateCounts) {
@@ -113,7 +118,7 @@ export const Chen2021FitnessContainer = ({ selector, defaults }: ContainerProps)
     [defaults, requestData]
   );
 
-  if (!requestData || !t0 || !variantDateCounts || !wholeDateCounts || !paramData) {
+  if (!requestData || !t0 || !variantDateCounts || !wholeDateCounts || !caseCounts || !paramData) {
     return <Loader />;
   }
 
@@ -282,6 +287,7 @@ export const Chen2021FitnessContainer = ({ selector, defaults }: ContainerProps)
         t0={t0}
         variantDateCounts={variantDateCounts}
         wholeDateCounts={wholeDateCounts}
+        caseCounts={caseCounts}
         changePoints={changePointsTransformed}
       />
       <div className='ml-6'>
