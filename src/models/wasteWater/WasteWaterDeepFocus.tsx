@@ -20,9 +20,8 @@ export const WASTE_WATER_AVAILABLE_LINEAGES = [
   'P.1',
   'B.1.617.2',
   'B.1.617.1',
-  'B.1.617.3',
-  'C.36.3',
-  'B.1.1.529',
+  'BA.1',
+  'BA.2',
 ];
 
 export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
