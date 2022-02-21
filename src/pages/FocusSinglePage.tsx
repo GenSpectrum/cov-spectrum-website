@@ -536,7 +536,7 @@ export const FocusSinglePage = () => {
   );
 };
 
-const createDivisionBreakdownButton = (key: string, setter: (show: boolean) => void) => (
+export const createDivisionBreakdownButton = (key: string, setter: (show: boolean) => void) => (
   <Button
     key={key}
     className='mt-1 ml-2'
