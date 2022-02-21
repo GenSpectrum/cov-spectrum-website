@@ -146,7 +146,10 @@ export function formatVariantDisplayName(
   return components.join(dense ? '+' : ' + ');
 }
 
-export function transformToVariantQuery(selector: Omit<VariantSelector, 'variantQuery'>): string {
+export function transformToVariantQuery(selector: VariantSelector): string {
+  if (selector.variantQuery) {
+    return selector.variantQuery;
+  }
   const components = [
     selector.pangoLineage,
     selector.nextstrainClade ? `nextstrain:${selector.nextstrainClade}` : undefined,
