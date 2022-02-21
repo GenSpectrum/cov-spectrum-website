@@ -19,7 +19,7 @@ export const MetricsWrapper = ({
   return (
     <div
       id={id}
-      className={`pl-2 pt-3 flex flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8 ${
+      className={`metrics-box pl-2 pt-3 w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8 ${
         className ? className : ''
       } md:mt-auto`}
     >
@@ -60,7 +60,7 @@ export const ValueWrapper = ({
 
 export const MetricWrapper = ({ id, children }: { id: string; children: React.ReactNode }) => {
   return (
-    <div id={id} className='flex flex-col justify-end w-full pr-1 mb-2 overflow-hidden h-full md:w-40'>
+    <div id={id} className='flex flex-col justify-end pr-1 mb-2 overflow-hidden h-full w-auto'>
       {children}
     </div>
   );
@@ -90,16 +90,27 @@ interface ChartAndMetricsProps {
   metrics: MetricProps[];
   title: string;
   metricsTitle?: string | undefined;
+  notFullWidth?: boolean | undefined;
 }
 
-export const ChartAndMetrics = ({ children, metrics, title, metricsTitle }: ChartAndMetricsProps) => {
+export const ChartAndMetrics = ({ children, metrics, title, metricsTitle, notFullWidth }: ChartAndMetricsProps) => {
+
+  let childrenParentClass: string = 'flex flex-col lg:flex-row h-full'
+  let childrenClass: string = 'h-full w-full'
+  if (typeof notFullWidth === 'boolean') {
+    if (notFullWidth) {
+      childrenParentClass = childrenParentClass.replace('h-full w-full', '')
+      childrenClass = ''
+    }
+  }
+
   return (
     <div id={`chart-and-metrics-${title}`} className='flex flex-col h-full w-full'>
       <h3 id={`chart-title-${title}`} className='my-0 pb-4 pr-10 pt-0 text-gray-500'>
         {title}
       </h3>
-      <div className='flex flex-col lg:flex-row h-full'>
-        <div className='w-full h-full'>{children}</div>
+      <div className={childrenParentClass}>
+        <div className={childrenClass}>{children}</div>
         <MetricsWrapper>
           {metricsTitle && <h3>{metricsTitle}</h3>}
           {metrics.map((mProps, index) => (

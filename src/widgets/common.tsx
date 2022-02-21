@@ -47,8 +47,8 @@ export const ChartAndMetricsWrapper = styled.div`
 `;
 
 export const ChartWrapper = styled.div`
-  flex-grow: 1;
-  width: 100%;
+  //flex-grow: 1;
+  width: 70%;
 `;
 
 export type TimeTickProps = {

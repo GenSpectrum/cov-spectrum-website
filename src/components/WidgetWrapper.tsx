@@ -80,13 +80,15 @@ export function WidgetWrapper({
   const [shownEmbeddingCode, setShownEmbeddingCode] = useState<string>();
 
   useEffect(() => {
-    // resize chart box to avoid overflow of its text
-    let chartBoxes = Array.from(
-      document.getElementsByClassName('chart-box') as HTMLCollectionOf<HTMLElement>
-    );
-    for (var i = 0; i < chartBoxes.length; i++) {
-      chartBoxes[i].style.height = 'auto';
-    }
+    //console.log('chartbox is resized')
+
+    //// resize chart box to avoid overflow of its text
+    //let chartBoxes = Array.from(
+    //  document.getElementsByClassName('chart-box') as HTMLCollectionOf<HTMLElement>
+    //);
+    //for (var i = 0; i < chartBoxes.length; i++) {
+    //  chartBoxes[i].style.height = 'auto';
+    //}
 
     const handle = exportManagerRef.current.register('Embed widget', async () => {
       const embeddingCode = `<iframe src="${host}/embed/${await getShareUrl()}" width="800" height="500" frameborder="0"></iframe>`;
@@ -99,6 +101,14 @@ export function WidgetWrapper({
   return (
     <>
       <ExportManagerContext.Provider value={exportManagerRef.current}>
+
+
+      <div className='test-container'>
+        This is a header
+        <div>Special content</div>
+      </div>
+
+
         <WidgetLayout
           title={title}
           toolbar={
