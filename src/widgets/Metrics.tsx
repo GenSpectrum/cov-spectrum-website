@@ -99,8 +99,8 @@ export const ChartAndMetrics = ({ children, metrics, title, metricsTitle, notFul
   let childrenClass: string = 'h-full w-full'
   if (typeof notFullWidth === 'boolean') {
     if (notFullWidth) {
-      childrenParentClass = childrenParentClass.replace('h-full w-full', '')
-      childrenClass = ''
+      childrenParentClass = childrenParentClass.replace('h-full', '')
+      childrenClass = 'w-full lg:w-2/3'
     }
   }
 
