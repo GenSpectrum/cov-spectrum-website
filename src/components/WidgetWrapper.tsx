@@ -100,14 +100,6 @@ export function WidgetWrapper({
   return (
     <>
       <ExportManagerContext.Provider value={exportManagerRef.current}>
-
-
-      <div className='test-container'>
-        This is a header
-        <div>Special content</div>
-      </div>
-
-
         <WidgetLayout
           title={title}
           toolbar={

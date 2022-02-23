@@ -19,7 +19,7 @@ export const MetricsWrapper = ({
   return (
     <div
       id={id}
-      className={`metrics-box pl-2 pt-3 w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8 ${
+      className={`pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8 ${
         className ? className : ''
       } md:mt-auto`}
     >

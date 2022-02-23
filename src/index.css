@@ -82,18 +82,3 @@ code {
 .custom-date-filter-input:hover {
   cursor: pointer;
 }
-
-h1::first-line {
-  color: blue;
-}
-h1 {
-  color: red;
-}
-
-.metrics-box::first-line {
-  font-style: italic;
-}
-
-.test-container::first-line {
-  font-style: italic;
-}
