@@ -93,14 +93,19 @@ interface ChartAndMetricsProps {
   notFullWidth?: boolean | undefined;
 }
 
-export const ChartAndMetrics = ({ children, metrics, title, metricsTitle, notFullWidth }: ChartAndMetricsProps) => {
-
-  let childrenParentClass: string = 'flex flex-col lg:flex-row h-full'
-  let childrenClass: string = 'h-full w-full'
+export const ChartAndMetrics = ({
+  children,
+  metrics,
+  title,
+  metricsTitle,
+  notFullWidth,
+}: ChartAndMetricsProps) => {
+  let childrenParentClass: string = 'flex flex-col lg:flex-row h-full';
+  let childrenClass: string = 'h-full w-full';
   if (typeof notFullWidth === 'boolean') {
     if (notFullWidth) {
-      childrenParentClass = childrenParentClass.replace('h-full', '')
-      childrenClass = 'w-full lg:w-2/3'
+      childrenParentClass = childrenParentClass.replace('h-full', '');
+      childrenClass = 'w-full lg:w-2/3';
     }
   }
 

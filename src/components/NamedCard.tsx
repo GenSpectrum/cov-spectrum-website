@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { ExpandableTextBox } from './ExpandableTextBox';
@@ -72,7 +72,7 @@ export const TabbedCard = ({
             }
           `}
           onClick={_ => {
-            tabConfig.onNewTabSelect(index)
+            tabConfig.onNewTabSelect(index);
 
             //let graphs = Array.from(
             //  document.getElementsByClassName('recharts-responsive-container') as HTMLCollectionOf<HTMLElement>
@@ -91,7 +91,6 @@ export const TabbedCard = ({
             //for (let i = 0; i < chartBoxes.length; i++) {
             //  chartBoxes[i].style.height = 'initial';
             //}
-
           }}
         >
           {label}
@@ -134,20 +133,18 @@ export const NamedCard = ({
   const SelectedCard = tabs ? TabbedCard : Card;
 
   useEffect(() => {
-
-    // Fixture for bug of graphs not displayed (age demographics graph as well as line-chart/bar-chart once label button is clicked)
+    // Fixture for graphs not displayed (age demographics graph as well as line-chart/bar-chart once label button is clicked)
     let graphs = Array.from(
       document.getElementsByClassName('recharts-responsive-container') as HTMLCollectionOf<HTMLElement>
     );
     for (let i = 0; i < graphs.length; i++) {
-      let graph = graphs[i]
+      let graph = graphs[i];
       if (graph.offsetHeight === 0) {
-        let minHeight = Math.min(200, graph.offsetWidth*2/3)
+        let minHeight = Math.min(200, (graph.offsetWidth * 2) / 3);
         graphs[i].style.height = `${minHeight.toString()}px`;
       }
     }
-
-  })
+  });
 
   return (
     <SelectedCard namedCardStyle={style} tabConfig={tabs!}>

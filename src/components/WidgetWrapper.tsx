@@ -80,7 +80,6 @@ export function WidgetWrapper({
   const [shownEmbeddingCode, setShownEmbeddingCode] = useState<string>();
 
   useEffect(() => {
-
     // resize chart box to avoid overflow of its text
     let chartBoxes = Array.from(
       document.getElementsByClassName('chart-box') as HTMLCollectionOf<HTMLElement>
