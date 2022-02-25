@@ -85,7 +85,7 @@ export function WidgetWrapper({
     let chartBoxes = Array.from(
       document.getElementsByClassName('chart-box') as HTMLCollectionOf<HTMLElement>
     );
-    for (var i = 0; i < chartBoxes.length; i++) {
+    for (let i = 0; i < chartBoxes.length; i++) {
       chartBoxes[i].style.height = 'auto';
     }
 
