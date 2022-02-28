@@ -471,10 +471,14 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
           />
           <div
 <<<<<<< HEAD
+<<<<<<< HEAD
             className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
 =======
             className="pl-2 pt-1 flex flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
 >>>>>>> develop
+=======
+            className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
+>>>>>>> 61aac472589e7f1749bedf74538eefcc63b7c1a7
           >
             <div>
               <div
