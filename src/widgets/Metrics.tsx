@@ -19,7 +19,7 @@ export const MetricsWrapper = ({
   return (
     <div
       id={id}
-      className={`pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8 ${
+      className={`pl-2 pt-1 flex flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8 ${
         className ? className : ''
       } md:mt-auto`}
     >
@@ -52,7 +52,7 @@ export const ValueWrapper = ({
   children: React.ReactNode;
 }) => {
   return (
-    <div className='w-auto grow-0 text-xl sm:text-3xl md:text-5xl' style={{ color: color }}>
+    <div className='w-auto grow-0 text-3xl md:text-5xl' style={{ color: color }}>
       {children}
     </div>
   );

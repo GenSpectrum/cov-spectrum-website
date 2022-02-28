@@ -3,7 +3,7 @@ import {
   useMultipleSelectorsFromExploreUrl,
   useSingleSelectorsFromExploreUrl,
 } from '../helpers/selectors-from-explore-url-hook';
-import React from 'react';
+import React, { useState } from 'react';
 import { formatVariantDisplayName } from '../data/VariantSelector';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import { useQuery } from '../helpers/query-hook';
@@ -12,9 +12,16 @@ import { MultiVariantTimeDistributionLineChart } from '../widgets/MultiVariantTi
 import { NamedCard } from '../components/NamedCard';
 import { AnalysisMode } from '../data/AnalysisMode';
 import { VariantMutationComparison } from '../components/VariantMutationComparison';
+import { FullSampleAggEntry, FullSampleAggEntryField } from '../data/sample/FullSampleAggEntry';
+import { _fetchAggSamples } from '../data/api-lapis';
+import { Utils } from '../services/Utils';
+import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
+import { DivisionModal } from '../components/DivisionModal';
+import { createDivisionBreakdownButton } from './FocusSinglePage';
 
 export const FocusCompareEqualsPage = () => {
   const exploreUrl = useExploreUrl()!;
+  const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
 
   const { ldvsSelectors } = useMultipleSelectorsFromExploreUrl(exploreUrl);
   const { ldsSelector } = useSingleSelectorsFromExploreUrl(exploreUrl);
@@ -26,6 +33,76 @@ export const FocusCompareEqualsPage = () => {
   const wholeDateCountWithDateFilter = useQuery(signal => DateCountSampleData.fromApi(ldsSelector, signal), [
     ldsSelector,
   ]);
+
+  // --- Prepare data for sub-division plots ---
+  const splitField = !exploreUrl?.location.country ? 'country' : 'division';
+  const generateSplitData = (splitField: 'division' | 'country', plotField: FullSampleAggEntryField) => {
+    return {
+      // Note: The typings are not entirely correct. The data entries only contain splitField, plotField and count.
+      getData: (signal: AbortSignal) =>
+        Promise.all([
+          _fetchAggSamples(ldsSelector, [splitField, plotField], signal), // whole
+          ...ldvsSelectors.map(ldvsSelector =>
+            _fetchAggSamples(ldvsSelector, [splitField, plotField], signal)
+          ), // variant
+        ]),
+      splitData: (data: FullSampleAggEntry[][]) => {
+        const [wholeData, ...variantDatasets] = data;
+        const variantDivisionMaps: Map<string, any[]>[] = [];
+        variantDatasets.forEach(variantData => {
+          const variantDivisionMap = new Map<string, any[]>();
+          variantDivisionMaps.push(variantDivisionMap);
+          [...Utils.groupBy(variantData, d => d[splitField]).entries()].forEach(([division, data]) => {
+            variantDivisionMap.set(
+              division ?? 'Unknown',
+              data.map(d => ({
+                [plotField]: d[plotField],
+                count: d.count,
+              }))
+            );
+          });
+        });
+        return [...Utils.groupBy(wholeData, d => d[splitField]).entries()]
+          .sort((a, b) => (a[0] ?? 'zzz').localeCompare(b[0] ?? 'zzz'))
+          .map(([division, data]) => ({
+            division: division ?? 'Unknown',
+            data: {
+              variant: variantDivisionMaps.map((variantDivisionMap, i) => ({
+                selector: {
+                  ...ldvsSelectors[i],
+                  location: {
+                    ...ldvsSelectors[i].location,
+                    [splitField]: division,
+                  },
+                },
+                payload: variantDivisionMap.get(division ?? 'Unknown') ?? [],
+              })),
+              whole: {
+                selector: {
+                  ...ldsSelector,
+                  location: {
+                    ...ldsSelector.location,
+                    [splitField]: division,
+                  },
+                },
+                payload: data.map(d => ({
+                  [plotField]: d[plotField],
+                  count: d.count,
+                })) as FullSampleAggEntry[],
+              },
+            },
+          }));
+      },
+    };
+  };
+
+  const splitSequencesOverTime = useDeepCompareMemo(() => generateSplitData(splitField, 'date'), [
+    splitField,
+    ldvsSelectors,
+    ldsSelector,
+  ]);
+
+  // --- Rendering ---
 
   return (
     <>
@@ -44,7 +121,12 @@ export const FocusCompareEqualsPage = () => {
         <PackedGrid maxColumns={2}>
           {variantDateCounts.data && wholeDateCountWithDateFilter.data && (
             <GridCell minWidth={600}>
-              <NamedCard title='Sequences over time'>
+              <NamedCard
+                title='Sequences over time'
+                toolbar={[
+                  createDivisionBreakdownButton('SequencesOverTime', setShowVariantTimeDistributionDivGrid),
+                ]}
+              >
                 <div style={{ height: '300px' }}>
                   <MultiVariantTimeDistributionLineChart
                     variantSampleSets={variantDateCounts.data}
@@ -64,6 +146,28 @@ export const FocusCompareEqualsPage = () => {
           )}
         </PackedGrid>
       </div>
+
+      {/* The division breakdown plots */}
+      {showVariantTimeDistributionDivGrid && (
+        <DivisionModal
+          getData={splitSequencesOverTime.getData}
+          splitData={splitSequencesOverTime.splitData}
+          generate={(division, d) => (
+            <NamedCard title={division}>
+              <div style={{ height: '300px' }}>
+                <MultiVariantTimeDistributionLineChart
+                  variantSampleSets={d.variant}
+                  wholeSampleSet={d.whole}
+                  analysisMode={AnalysisMode.CompareEquals}
+                />
+              </div>
+            </NamedCard>
+          )}
+          show={showVariantTimeDistributionDivGrid}
+          handleClose={() => setShowVariantTimeDistributionDivGrid(false)}
+          header='Sequences over time'
+        />
+      )}
     </>
   );
 };

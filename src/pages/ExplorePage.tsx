@@ -3,7 +3,7 @@ import { SequencingIntensityChartWidget } from '../widgets/SequencingIntensityCh
 import { ShowMoreButton } from '../helpers/ui';
 import { MetadataAvailabilityChartWidget } from '../widgets/MetadataAvailabilityChartWidget';
 import { DatelessCountrylessCountSampleData } from '../data/sample/DatelessCountrylessCountSampleDataset';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useExploreUrl } from '../helpers/explore-url';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
 import { useAsyncDataset } from '../helpers/use-async-dataset';
@@ -12,6 +12,7 @@ import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import Loader from '../components/Loader';
 import { VariantSearch } from '../components/VariantSearch';
 import { AnalysisMode } from '../data/AnalysisMode';
+import { getLocation } from '../helpers/get-location';
 
 type Props = {
   isSmallScreen: boolean;
@@ -41,6 +42,12 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
     { location: exploreUrl?.location! },
     ({ selector }, { signal }) => CaseCountData.fromApi(selector, signal)
   );
+
+  useEffect(() => {
+    // Include the location of interest in the page title
+    let place: string = getLocation(exploreUrl);
+    document.title = `${place} - covSPECTRUM`;
+  });
 
   if (!exploreUrl) {
     return null;

@@ -4,6 +4,7 @@ import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
 import { fillAndFilterFromDailyMap } from '../helpers/fill-missing';
 import Loader from '../components/Loader';
 import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
+import { useMemo } from 'react';
 
 export type EstimatedCasesChartProps = {
   wholeDateCounts: DateCountSampleDataset;
@@ -16,8 +17,24 @@ export const EstimatedCasesChart = ({
   variantDateCounts,
   caseCounts,
 }: EstimatedCasesChartProps) => {
-  if (!caseCounts.payload) {
+  const data = useMemo(() => prepareData(variantDateCounts, wholeDateCounts, caseCounts), [
+    caseCounts,
+    variantDateCounts,
+    wholeDateCounts,
+  ]);
+  if (!data) {
     return <Loader />;
+  }
+  return <EstimatedCasesChartInner data={new Array(...data.values())} />;
+};
+
+export function prepareData(
+  variantDateCounts: DateCountSampleDataset,
+  wholeDateCounts: DateCountSampleDataset,
+  caseCounts: CaseCountAsyncDataset
+) {
+  if (!caseCounts.payload) {
+    return undefined;
   }
   const data: Map<UnifiedDay, EstimatedCasesTimeEntry> = new Map();
   fillAndFilterFromDailyMap(
@@ -47,5 +64,5 @@ export const EstimatedCasesChart = ({
     }
     data.get(date)!.cases += newCases;
   }
-  return <EstimatedCasesChartInner data={new Array(...data.values())} />;
-};
+  return data;
+}

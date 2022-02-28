@@ -171,7 +171,7 @@ export const NamedCard = ({
             <ExpandableTextBox text={description} maxChars={60} />
           </div>
         )}
-        <ToolbarWrapper className='static lg:absolute'>{toolbar}</ToolbarWrapper>
+        <ToolbarWrapper>{toolbar}</ToolbarWrapper>
         <ContentWrapper>{children}</ContentWrapper>
       </Sentry.ErrorBoundary>
     </SelectedCard>
