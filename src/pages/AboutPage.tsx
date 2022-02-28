@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ExternalLink } from '../components/ExternalLink';
 import { EmailLink } from '../components/EmailLink';
 
@@ -32,6 +32,9 @@ const Disclaimer = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const AboutPage = () => {
+  useEffect(() => {
+    document.title = `About - covSPECTRUM`;
+  });
   return (
     <div className='max-w-4xl mx-auto px-4 md:px-8'>
       <h1>CoV-Spectrum</h1>

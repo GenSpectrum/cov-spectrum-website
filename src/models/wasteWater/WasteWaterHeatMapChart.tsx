@@ -141,14 +141,17 @@ export const WasteWaterHeatMapChart = React.memo(
             id='heatmap-inner-wrapper'
             className='flex mr-10 w-full overflow-x-scroll md:overflow-x-hidden'
           >
-            <div style={{ width: '70px', height: '100%', display: 'block' }} className='md:overflow-x-scroll'>
-              <table style={{ tableLayout: 'fixed', width: '100px', height: '100%' }}>
+            <div
+              style={{ width: '120px', height: '100%', display: 'block' }}
+              className='md:overflow-x-scroll'
+            >
+              <table style={{ tableLayout: 'fixed', width: '110px', height: '100%' }}>
                 <tbody>{nucMutationsLabelTableRows}</tbody>
               </table>
             </div>
             <div
               className='md:overflow-x-scroll'
-              style={{ width: 'calc(100% - 70px)', height: '100%', display: 'block' }}
+              style={{ width: 'calc(100% - 120px)', height: '100%', display: 'block' }}
             >
               <div style={{ height: '100%' }}>
                 <table style={{ tableLayout: 'fixed', width: '100%', height: '100%' }}>

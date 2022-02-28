@@ -1,6 +1,6 @@
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useExploreUrl } from '../helpers/explore-url';
 import { makeLayout } from '../helpers/deep-page';
 import { SequencingCoverageDeepExplore } from '../components/SequencingCoverageDeepExplore';
@@ -10,6 +10,7 @@ import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
 import { useAsyncDataset } from '../helpers/use-async-dataset';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
+import { getLocation } from '../helpers/get-location';
 
 export const DeepSequencingCoveragePage = () => {
   const exploreUrl = useExploreUrl();
@@ -26,6 +27,12 @@ export const DeepSequencingCoveragePage = () => {
   const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(lSelector, ({ selector }, { signal }) =>
     CaseCountData.fromApi(selector, signal)
   );
+
+  useEffect(() => {
+    // Include the location of interest in the page title
+    let place: string = getLocation(exploreUrl);
+    document.title = `Sequencing coverage - ${place} - covSPECTRUM`;
+  });
 
   if (!exploreUrl) {
     return null;

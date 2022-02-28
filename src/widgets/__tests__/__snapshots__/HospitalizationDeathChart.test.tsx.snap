@@ -144,7 +144,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   className="flex w-full"
                 >
                   <div
-                    className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                    className="w-auto grow-0 text-3xl md:text-5xl"
                     style={
                       Object {
                         "color": "#1F407A",
@@ -294,7 +294,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   className="flex w-full"
                 >
                   <div
-                    className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                    className="w-auto grow-0 text-3xl md:text-5xl"
                     style={
                       Object {
                         "color": "#1F407A",
@@ -470,7 +470,11 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
             className="sc-dlfnbm dtVAyQ"
           />
           <div
+<<<<<<< HEAD
             className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
+=======
+            className="pl-2 pt-1 flex flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
+>>>>>>> develop
           >
             <div>
               <div
@@ -584,7 +588,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   className="flex w-full"
                 >
                   <div
-                    className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                    className="w-auto grow-0 text-3xl md:text-5xl"
                     style={
                       Object {
                         "color": "#1F407A",
@@ -734,7 +738,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   className="flex w-full"
                 >
                   <div
-                    className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                    className="w-auto grow-0 text-3xl md:text-5xl"
                     style={
                       Object {
                         "color": "#1F407A",

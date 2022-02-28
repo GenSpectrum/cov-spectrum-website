@@ -112,7 +112,7 @@ export const ShowMoreButton = ({ to }: { to: string }) => {
   const history = useHistory();
   return (
     <Button
-      className='mt-1 ml-2 w-max'
+      className='mt-1 ml-2'
       variant={ButtonVariant.PRIMARY}
       onClick={() => {
         history.push(to);

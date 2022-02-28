@@ -43,7 +43,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
               className="flex w-full"
             >
               <div
-                className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                className="w-auto grow-0 text-3xl md:text-5xl"
                 style={
                   Object {
                     "color": "#1F407A",
@@ -193,7 +193,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
               className="flex w-full"
             >
               <div
-                className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                className="w-auto grow-0 text-3xl md:text-5xl"
                 style={
                   Object {
                     "color": "#7f8c8d",

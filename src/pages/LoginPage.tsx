@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
 import { useLocation } from 'react-router-dom';
@@ -20,6 +20,10 @@ export const LoginPage = () => {
   if (AccountService.isLoggedIn()) {
     window.location.href = '/';
   }
+
+  useEffect(() => {
+    document.title = `Login - covSPECTRUM`;
+  });
 
   const handleSubmit = async () => {
     if (!username || !password) {
