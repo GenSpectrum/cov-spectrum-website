@@ -88,6 +88,15 @@
       "contributions": [
         "data"
       ]
+    },
+    {
+      "login": "gautier-collab",
+      "name": "gautier-collab",
+      "avatar_url": "https://avatars.githubusercontent.com/u/55604970?v=4",
+      "profile": "https://github.com/gautier-collab",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7

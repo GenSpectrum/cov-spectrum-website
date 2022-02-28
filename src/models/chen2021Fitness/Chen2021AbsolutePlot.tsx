@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { TitleWrapper } from '../../widgets/common';
 import { Plot } from '../../components/Plot';
 import {
@@ -8,13 +8,18 @@ import {
   Chen2021FitnessResponse,
 } from './chen2021Fitness-types';
 import { parse } from 'json2csv';
-import { UnifiedDay } from '../../helpers/date-cache';
+import { globalDateCache, UnifiedDay } from '../../helpers/date-cache';
+import Form from 'react-bootstrap/Form';
+import { EstimatedCasesPlotEntry } from '../../widgets/EstimatedCasesChartInner';
+import { Data } from 'plotly.js';
+import dayjs from 'dayjs';
 
 interface Props {
   modelData: Chen2021FitnessResponse;
   request: Chen2021FitnessRequest;
   t0: UnifiedDay;
   changePoints?: ChangePointWithFc[];
+  estimatedCasesPlotData: EstimatedCasesPlotEntry[];
 }
 
 function daysBetween(date1: Date, date2: Date): number {
@@ -100,7 +105,16 @@ function transformChangePoints(
   }));
 }
 
-export const Chen2021AbsolutePlot = ({ modelData, request, t0, changePoints }: Props) => {
+export const Chen2021AbsolutePlot = ({
+  modelData,
+  request,
+  t0,
+  changePoints,
+  estimatedCasesPlotData,
+}: Props) => {
+  const [showNumberTotalCases, setShowNumberTotalCases] = useState(false);
+  const [showNumberVariantWildtypeCases, setShowNumberVariantWildtypeCases] = useState(false);
+
   const caseNumbers = useMemo(() => {
     // Prepare and transform the change points of the reproduction number
     const changePointsWildtype = [
@@ -119,7 +133,7 @@ export const Chen2021AbsolutePlot = ({ modelData, request, t0, changePoints }: P
       ciUpper: transformChangePoints(changePointsWildtype, 'ciUpper'),
     };
 
-    // Calculate case numbers
+    // Calculate the model case numbers
     const dates = modelData.estimatedAbsoluteNumbers.t.map(date => date.dayjs.toDate());
     const wildtypeCases = calculateCases(
       t0.dayjs.add(request.config.tStart, 'day').toDate(),
@@ -150,8 +164,44 @@ export const Chen2021AbsolutePlot = ({ modelData, request, t0, changePoints }: P
       request.config.generationTime
     );
 
-    return { variantCases, variantCasesLower, variantCasesUpper, wildtypeCases };
-  }, [modelData, request, t0, changePoints]);
+    // Get the confirmed case numbers and those based on existing sequence data
+    const confirmedCasesMap = new Map<
+      UnifiedDay,
+      {
+        variant: number;
+        wildtype: number;
+      }
+    >();
+    for (let { estimatedCases: variant, estimatedWildtypeCases: wildtype, date } of estimatedCasesPlotData) {
+      confirmedCasesMap.set(globalDateCache.getDayUsingDayjs(dayjs(date)), { variant, wildtype });
+    }
+    const confirmedTotalCases = [];
+    const estimatedConfirmedVariantCases = [];
+    const estimatedConfirmedWildtypeCases = [];
+    for (let date of modelData.estimatedAbsoluteNumbers.t) {
+      let { variant, wildtype } = confirmedCasesMap.get(date) ?? { variant: NaN, wildtype: NaN };
+      if (variant + wildtype === 0) {
+        variant = NaN;
+        wildtype = NaN;
+      }
+      confirmedTotalCases.push(variant + wildtype);
+      estimatedConfirmedVariantCases.push(variant);
+      estimatedConfirmedWildtypeCases.push(wildtype);
+    }
+
+    return {
+      variantCases,
+      variantCasesLower,
+      variantCasesUpper,
+      wildtypeCases,
+      dates,
+      confirmedTotalCases,
+      estimatedConfirmedVariantCases,
+      estimatedConfirmedWildtypeCases,
+    };
+  }, [modelData, request, t0, changePoints, estimatedCasesPlotData]);
+
+  console.log(caseNumbers);
 
   if (!caseNumbers) {
     return <></>;
@@ -179,6 +229,106 @@ export const Chen2021AbsolutePlot = ({ modelData, request, t0, changePoints }: P
     document.body.removeChild(element);
   };
 
+  const plotLayers: Data[] = [
+    {
+      name: 'Wildtype (model)',
+      type: 'scatter',
+      mode: 'lines',
+      x: caseNumbers.dates,
+      y: caseNumbers.wildtypeCases,
+      stackgroup: 'one',
+      line: {
+        color: '#1f77b4',
+      },
+      text: caseNumbers.wildtypeCases.map(n => n.toString()),
+      hovertemplate: '%{text}',
+    },
+    {
+      name: 'Variant (model)',
+      type: 'scatter',
+      mode: 'lines',
+      x: caseNumbers.dates,
+      y: caseNumbers.variantCases,
+      stackgroup: 'one',
+      line: {
+        color: '#ff7f0f',
+      },
+      text: caseNumbers.variantCases.map(n => n.toString()),
+      hovertemplate: '%{text}',
+    },
+    {
+      name: 'Variant (model, upper bound)',
+      type: 'scatter',
+      mode: 'lines',
+      line: {
+        dash: 'dot',
+        width: 4,
+        color: '#ff7f0f',
+      },
+      x: caseNumbers.dates,
+      y: arrAdd(caseNumbers.variantCasesUpper, caseNumbers.wildtypeCases),
+      text: caseNumbers.variantCasesUpper.map(n => n.toString()),
+      hovertemplate: '%{text}',
+    },
+    {
+      name: 'Variant (model, lower bound)',
+      type: 'scatter',
+      mode: 'lines',
+      line: {
+        dash: 'dot',
+        width: 4,
+        color: '#ff7f0f',
+      },
+      x: caseNumbers.dates,
+      y: arrAdd(caseNumbers.variantCasesLower, caseNumbers.wildtypeCases),
+      text: caseNumbers.variantCasesLower.map(n => n.toString()),
+      hovertemplate: '%{text}',
+    },
+  ];
+
+  if (showNumberTotalCases) {
+    plotLayers.push({
+      name: 'Total confirmed cases (data)',
+      type: 'scatter',
+      mode: 'lines',
+      x: caseNumbers.dates,
+      y: caseNumbers.confirmedTotalCases,
+      line: {
+        color: '#000000',
+      },
+      text: caseNumbers.confirmedTotalCases.map(n => n.toString()),
+      hovertemplate: '%{text}',
+    });
+  }
+  if (showNumberVariantWildtypeCases) {
+    plotLayers.push(
+      {
+        name: 'Estimated wildtype cases (data)',
+        type: 'scatter',
+        mode: 'lines',
+        x: caseNumbers.dates,
+        y: caseNumbers.estimatedConfirmedWildtypeCases,
+        line: {
+          color: '#1b3ab5',
+        },
+        text: caseNumbers.estimatedConfirmedWildtypeCases.map(n => n.toString()),
+        hovertemplate: '%{text}',
+      },
+      {
+        name: 'Estimated variant cases (data)',
+        type: 'scatter',
+        mode: 'lines',
+        x: caseNumbers.dates,
+        y: arrAdd(caseNumbers.estimatedConfirmedVariantCases, caseNumbers.estimatedConfirmedWildtypeCases),
+        line: {
+          color: '#ff960d',
+        },
+        text: caseNumbers.estimatedConfirmedVariantCases.map(n => n.toString()),
+        hovertemplate: '%{text}',
+      }
+    );
+  }
+
   return (
     <>
       <button onClick={downloadData} className='hover:underline outline-none'>
@@ -186,63 +336,8 @@ export const Chen2021AbsolutePlot = ({ modelData, request, t0, changePoints }: P
       </button>
       <TitleWrapper id='graph_title'>Changes in absolute case numbers through time**</TitleWrapper>
       <Plot
-        style={{ width: '100%', height: '75%' }}
-        data={[
-          {
-            name: 'Wildtype',
-            type: 'scatter',
-            mode: 'lines',
-            x: modelData.estimatedAbsoluteNumbers.t.map(date => date.dayjs.toDate()),
-            y: caseNumbers.wildtypeCases,
-            stackgroup: 'one',
-            line: {
-              color: '#1f77b4',
-            },
-            text: caseNumbers.wildtypeCases.map(n => n.toString()),
-            hovertemplate: '%{text}',
-          },
-          {
-            name: 'Variant',
-            type: 'scatter',
-            mode: 'lines',
-            x: modelData.estimatedAbsoluteNumbers.t.map(date => date.dayjs.toDate()),
-            y: caseNumbers.variantCases,
-            stackgroup: 'one',
-            line: {
-              color: '#ff7f0f',
-            },
-            text: caseNumbers.variantCases.map(n => n.toString()),
-            hovertemplate: '%{text}',
-          },
-          {
-            name: 'Variant (upper bound)',
-            type: 'scatter',
-            mode: 'lines',
-            line: {
-              dash: 'dot',
-              width: 4,
-              color: '#ff7f0f',
-            },
-            x: modelData.estimatedAbsoluteNumbers.t.map(date => date.dayjs.toDate()),
-            y: arrAdd(caseNumbers.variantCasesUpper, caseNumbers.wildtypeCases),
-            text: caseNumbers.variantCasesUpper.map(n => n.toString()),
-            hovertemplate: '%{text}',
-          },
-          {
-            name: 'Variant (lower bound)',
-            type: 'scatter',
-            mode: 'lines',
-            line: {
-              dash: 'dot',
-              width: 4,
-              color: '#ff7f0f',
-            },
-            x: modelData.estimatedAbsoluteNumbers.t.map(date => date.dayjs.toDate()),
-            y: arrAdd(caseNumbers.variantCasesLower, caseNumbers.wildtypeCases),
-            text: caseNumbers.variantCasesLower.map(n => n.toString()),
-            hovertemplate: '%{text}',
-          },
-        ]}
+        style={{ width: '100%', height: '60%' }}
+        data={plotLayers}
         layout={{
           xaxis: {
             hoverformat: '%d.%m.%Y',
@@ -267,6 +362,21 @@ export const Chen2021AbsolutePlot = ({ modelData, request, t0, changePoints }: P
         However, the above-mentioned variables change and thus the plot must be taken as a null model scenario
         rather than a projection of what will happen.
       </p>
+      <div>
+        <h3>Settings</h3>
+        <Form.Check
+          type='checkbox'
+          label='Show total number of confirmed cases from data'
+          checked={showNumberTotalCases}
+          onChange={() => setShowNumberTotalCases(!showNumberTotalCases)}
+        />
+        <Form.Check
+          type='checkbox'
+          label='Show number of estimated variant and wildtype cases from data (stacked on top of each other)'
+          checked={showNumberVariantWildtypeCases}
+          onChange={() => setShowNumberVariantWildtypeCases(!showNumberVariantWildtypeCases)}
+        />
+      </div>
     </>
   );
 };

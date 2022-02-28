@@ -49,6 +49,10 @@ export const WasteWaterStoryPage = () => {
     });
   }, [wasteWaterData]);
 
+  useEffect(() => {
+    document.title = `Wastewater in Switzerland - Stories - covSPECTRUM`;
+  });
+
   if (!locationData) {
     return <Loader />;
   }

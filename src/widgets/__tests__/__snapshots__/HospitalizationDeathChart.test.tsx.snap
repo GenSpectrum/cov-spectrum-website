@@ -144,7 +144,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   className="flex w-full"
                 >
                   <div
-                    className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                    className="w-auto grow-0 text-3xl md:text-5xl"
                     style={
                       Object {
                         "color": "#1F407A",
@@ -294,7 +294,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   className="flex w-full"
                 >
                   <div
-                    className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                    className="w-auto grow-0 text-3xl md:text-5xl"
                     style={
                       Object {
                         "color": "#1F407A",
@@ -584,7 +584,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   className="flex w-full"
                 >
                   <div
-                    className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                    className="w-auto grow-0 text-3xl md:text-5xl"
                     style={
                       Object {
                         "color": "#1F407A",
@@ -734,7 +734,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   className="flex w-full"
                 >
                   <div
-                    className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                    className="w-auto grow-0 text-3xl md:text-5xl"
                     style={
                       Object {
                         "color": "#1F407A",

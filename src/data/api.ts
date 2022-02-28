@@ -51,11 +51,12 @@ export async function fetchCurrentUserCountry(signal?: AbortSignal): Promise<Use
 
 export async function fetchCaseCounts(
   selector: LocationDateSelector,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  fields?: string[]
 ): Promise<CaseCountEntry[]> {
   const params = new URLSearchParams();
   // We are not fetching age, sex, hospitalized and died because they are currently not useful
-  params.set('fields', ['region', 'country', 'division', 'date'].join(','));
+  params.set('fields', (fields ?? ['region', 'country', 'division', 'date']).join(','));
   addLocationSelectorToUrlSearchParams(selector.location, params);
   if (selector.dateRange) {
     addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);

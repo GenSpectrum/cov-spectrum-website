@@ -87,7 +87,6 @@ export function WidgetWrapper({
     for (let i = 0; i < chartBoxes.length; i++) {
       chartBoxes[i].style.height = 'auto';
     }
-
     const handle = exportManagerRef.current.register('Embed widget', async () => {
       const embeddingCode = `<iframe src="${host}/embed/${await getShareUrl()}" width="800" height="500" frameborder="0"></iframe>`;
       setShownEmbeddingCode(embeddingCode);
@@ -109,11 +108,7 @@ export function WidgetWrapper({
           }
           tabs={tabs}
         >
-          {
-            <div className='chart-box' style={height ? { height } : undefined}>
-              {childrenAsArray[activeTabIndex]}
-            </div>
-          }
+          <div style={height ? { height } : undefined}>{childrenAsArray[activeTabIndex]}</div>
         </WidgetLayout>
       </ExportManagerContext.Provider>
 
