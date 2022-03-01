@@ -8,6 +8,7 @@ import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import dayjs from 'dayjs';
 import DownloadWrapper from './DownloadWrapper';
 import { Alert, AlertVariant } from '../helpers/ui';
+import { maxYAxis } from '../helpers/max-y-axis';
 
 export type EstimatedCasesTimeEntry = {
   date: UnifiedDay;
@@ -99,7 +100,7 @@ export const EstimatedCasesChartInner = React.memo(
                     domain={[(dataMin: any) => dataMin, () => plotData[plotData.length - 1].date.getTime()]}
                     ticks={ticks}
                   />
-                  <YAxis domain={[0, yMax]} allowDataOverflow={true} scale='linear' />
+                  <YAxis domain={[0, maxYAxis(yMax, yMax, 5)]} allowDataOverflow={true} scale='linear' />
                   <Tooltip
                     active={false}
                     content={e => {
