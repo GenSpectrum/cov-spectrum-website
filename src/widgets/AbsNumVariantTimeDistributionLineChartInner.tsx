@@ -32,9 +32,11 @@ export function formatDate(date: number) {
 
 const CHART_MARGIN_RIGHT = 15;
 
-export const VariantTimeDistributionLineChartInner = React.memo(
+export const AbsNumVariantTimeDistributionLineChartInner = React.memo(
   ({ data }: VariantTimeDistributionLineChartProps): JSX.Element => {
     const [active, setActive] = useState<PlotEntry | undefined>(undefined);
+
+    console.log(active)
 
     const {
       plotData,
@@ -205,7 +207,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             <MetricsWrapper>
               <Metric
                 value={active !== undefined ? (active.proportion * 100).toFixed(1) + '%' : 'NA'}
-                title='Proportion'
+                title='Number'
                 color={colors.active}
                 helpText='Proportion relative to all samples collected (smoothed with a 7-days sliding window)'
                 percent={false}

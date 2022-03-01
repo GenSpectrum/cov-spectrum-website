@@ -4,6 +4,7 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { ExpandableTextBox } from './ExpandableTextBox';
 import * as Sentry from '@sentry/react';
 import { ErrorBoundaryFallback } from './ErrorBoundaryFallback';
+import { Button, ButtonVariant } from '../helpers/ui';
 
 export enum NamedCardStyle {
   NORMAL,
@@ -128,6 +129,16 @@ export const NamedCard = ({
           </OverlayTrigger>
         )}
       </Title>
+      <div role="toolbar" className='mb-2'>
+        <Button
+          className='w-min inline-block mr-2'
+          variant={ButtonVariant.SECONDARY}
+        >Proportions</Button>
+        <Button
+          className='w-max inline-block'
+          variant={ButtonVariant.SECONDARY}
+        >Absolute numbers</Button>
+      </div>
       {/* We define the error boundary here because the NamedCard is currently the component that wraps most
        of the charts.*/}
       <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
