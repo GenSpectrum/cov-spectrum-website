@@ -8,6 +8,7 @@ import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import dayjs from 'dayjs';
 import DownloadWrapper from './DownloadWrapper';
 import { Alert, AlertVariant } from '../helpers/ui';
+import { maxYAxis } from '../helpers/max-y-axis';
 
 export type VariantTimeDistributionLineChartEntry = {
   date: UnifiedDay;
@@ -168,7 +169,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     allowDecimals={true}
                     hide={false}
                     width={50}
-                    domain={[0, yMax]}
+                    domain={[0, maxYAxis(yMax)]}
                     allowDataOverflow={true}
                     scale='linear'
                   />

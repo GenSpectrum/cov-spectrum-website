@@ -6,6 +6,7 @@ import { AgeCountSampleData, AgeCountSampleDataset } from '../data/sample/AgeCou
 import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { useResizeDetector } from 'react-resize-detector';
 import DownloadWrapper from './DownloadWrapper';
+import { maxYAxis } from '../helpers/max-y-axis';
 
 const CHART_MARGIN_RIGHT = 15;
 
@@ -169,7 +170,7 @@ export const VariantAgeDistributionChart = React.memo(
                   allowDecimals={true}
                   hide={false}
                   width={50}
-                  domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
+                  domain={[0, (dataMax: number) => maxYAxis(dataMax, Math.ceil(dataMax))]}
                 />
                 <CartesianGrid vertical={false} />
                 {bars}
