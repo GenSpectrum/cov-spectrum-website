@@ -108,9 +108,9 @@ export function WidgetWrapper({
           }
           tabs={tabs}
         >
-        <div className='chart-box' style={height ? { height } : undefined}>
-          {childrenAsArray[activeTabIndex]}
-        </div>
+          <div className='chart-box' style={height ? { height } : undefined}>
+            {childrenAsArray[activeTabIndex]}
+          </div>
         </WidgetLayout>
       </ExportManagerContext.Provider>
 
