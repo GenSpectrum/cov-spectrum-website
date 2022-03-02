@@ -71,27 +71,7 @@ export const TabbedCard = ({
                 : 'bg-gray-100 text-gray-500'
             }
           `}
-          onClick={_ => {
-            tabConfig.onNewTabSelect(index);
-
-            //let graphs = Array.from(
-            //  document.getElementsByClassName('recharts-responsive-container') as HTMLCollectionOf<HTMLElement>
-            //);
-            //for (let i = 0; i < graphs.length; i++) {
-            //  let graph = graphs[i]
-            //  if (graph.offsetHeight === 0) {
-            //    let minHeight = Math.min(400, graph.offsetWidth*2/3)
-            //    graphs[i].style.height = `${minHeight.toString()}px`;
-            //  }
-            //}
-
-            //let chartBoxes = Array.from(
-            //  document.getElementsByClassName('chart-box') as HTMLCollectionOf<HTMLElement>
-            //);
-            //for (let i = 0; i < chartBoxes.length; i++) {
-            //  chartBoxes[i].style.height = 'initial';
-            //}
-          }}
+          onClick={_ => tabConfig.onNewTabSelect(index)}
         >
           {label}
         </button>
