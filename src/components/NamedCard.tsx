@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { ExpandableTextBox } from './ExpandableTextBox';
@@ -111,6 +111,21 @@ export const NamedCard = ({
   tabs,
 }: Props) => {
   const SelectedCard = tabs ? TabbedCard : Card;
+
+  useEffect(() => {
+    // Fixture for graphs not displayed (age demographics graph as well as line-chart/bar-chart once label button is clicked)
+    let graphs = Array.from(
+      document.getElementsByClassName('recharts-responsive-container') as HTMLCollectionOf<HTMLElement>
+    );
+    for (let i = 0; i < graphs.length; i++) {
+      let graph = graphs[i];
+      if (graph.offsetHeight === 0) {
+        let minHeight = Math.min(200, (graph.offsetWidth * 2) / 3);
+        graphs[i].style.height = `${minHeight.toString()}px`;
+      }
+    }
+  });
+
   return (
     <SelectedCard namedCardStyle={style} tabConfig={tabs!}>
       <Title>
@@ -136,7 +151,7 @@ export const NamedCard = ({
             <ExpandableTextBox text={description} maxChars={60} />
           </div>
         )}
-        <ToolbarWrapper>{toolbar}</ToolbarWrapper>
+        <ToolbarWrapper className='static lg:absolute'>{toolbar}</ToolbarWrapper>
         <ContentWrapper>{children}</ContentWrapper>
       </Sentry.ErrorBoundary>
     </SelectedCard>

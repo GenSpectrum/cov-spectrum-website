@@ -2,7 +2,7 @@
 
 exports[`<Metric> renders correctly 1`] = `
 <div
-  className="flex flex-col justify-end w-full pr-1 mb-2 overflow-hidden h-full md:w-40"
+  className="flex flex-col justify-end pr-1 mb-2 overflow-hidden h-full w-auto"
   id="metric-with-tooltip"
 >
   <div
@@ -13,7 +13,7 @@ exports[`<Metric> renders correctly 1`] = `
       className="flex w-full"
     >
       <div
-        className="w-auto grow-0 text-3xl md:text-5xl"
+        className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
         style={
           Object {
             "color": undefined,

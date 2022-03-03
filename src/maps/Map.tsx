@@ -209,6 +209,7 @@ const Map = ({ data: inputData, country }: Props) => {
       metrics={metrics}
       title={`Average proportion during selected timeframe`}
       metricsTitle={focusData && focusData.division !== null ? focusData.division : undefined}
+      notFullWidth={true}
     >
       <Wrapper data={data} focusDivision={focusData ? focusData.division : null} className='pd-1 md:m-2'>
         {country === 'Brazil' && <VectorMap {...brazil} layerProps={layerProps} />}
