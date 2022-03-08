@@ -6,13 +6,13 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
 >
   <div
     className="flex flex-col h-full w-full"
-    id="chart-and-metrics-Proportion of all samples sequenced on week 01, 2022 "
+    id="chart-and-metrics-Proportion of all samples sequenced on week 52, 2021 "
   >
     <h3
       className="my-0 pb-4 pr-10 pt-0 text-gray-500"
-      id="chart-title-Proportion of all samples sequenced on week 01, 2022 "
+      id="chart-title-Proportion of all samples sequenced on week 52, 2021 "
     >
-      Proportion of all samples sequenced on week 01, 2022 
+      Proportion of all samples sequenced on week 52, 2021 
     </h3>
     <div
       className="flex flex-col lg:flex-row h-full"
