@@ -19,9 +19,9 @@ export class FixedDateRangeSelector implements DateRangeSelector {
   }
 }
 
-export type SpecialDateRange = 'AllTimes' | 'Y2020' | 'Y2021' | 'Past3M' | 'Past6M';
+export type SpecialDateRange = 'AllTimes' | 'Y2020' | 'Y2021' | 'Y2022' | 'Past3M' | 'Past6M';
 export function isSpecialDateRange(s: unknown): s is SpecialDateRange {
-  return typeof s === 'string' && ['AllTimes', 'Y2020', 'Y2021', 'Past3M', 'Past6M'].includes(s);
+  return typeof s === 'string' && ['AllTimes', 'Y2020', 'Y2021', 'Y2022', 'Past3M', 'Past6M'].includes(s);
 }
 
 export class SpecialDateRangeSelector implements DateRangeSelector {
@@ -41,7 +41,12 @@ export class SpecialDateRangeSelector implements DateRangeSelector {
       case 'Y2021':
         return {
           dateFrom: globalDateCache.getDay('2021-01-04'),
-          dateTo: globalDateCache.getDay('2022-01-03'),
+          dateTo: globalDateCache.getDay('2022-01-02'),
+        };
+      case 'Y2022':
+        return {
+          dateFrom: globalDateCache.getDay('2022-01-03'),
+          dateTo: globalDateCache.getDay('2023-01-01'),
         };
       case 'Past3M':
         return { dateFrom: monthsAgo(3) };
@@ -113,5 +118,7 @@ export function specialDateRangeToString(dateRange: SpecialDateRange): string {
       return '2020';
     case 'Y2021':
       return '2021';
+    case 'Y2022':
+      return '2022';
   }
 }
