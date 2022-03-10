@@ -116,21 +116,8 @@ export async function fetchMutationProportions(
   sequenceType: SequenceType,
   signal?: AbortSignal
 ): Promise<MutationProportionEntry[]> {
-  const params = new URLSearchParams();
-  _addDefaultsToSearchParams(params);
-  selector = await _mapCountryName(selector);
-  addLocationSelectorToUrlSearchParams(selector.location, params);
-  if (selector.dateRange) {
-    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
-  }
-  if (selector.variant) {
-    addVariantSelectorToUrlSearchParams(selector.variant, params);
-  }
-  if (selector.samplingStrategy) {
-    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
-  }
-
-  const res = await get(`/sample/${sequenceType}-mutations?${params.toString()}`, signal);
+  const url = await getLinkTo(`${sequenceType}-mutations`, selector, undefined, undefined, undefined, true);
+  const res = await get(url, signal);
   if (!res.ok) {
     throw new Error('Error fetching new samples data');
   }
@@ -142,26 +129,39 @@ export async function getLinkToStrainNames(
   selector: LocationDateVariantSelector,
   orderAndLimit?: OrderAndLimitConfig
 ): Promise<string> {
-  const params = new URLSearchParams();
-  _addDefaultsToSearchParams(params);
-  _addOrderAndLimitToSearchParams(params, orderAndLimit);
-  selector = await _mapCountryName(selector);
-  addLocationSelectorToUrlSearchParams(selector.location, params);
-  if (selector.dateRange) {
-    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
-  }
-  if (selector.variant) {
-    addVariantSelectorToUrlSearchParams(selector.variant, params);
-  }
-  if (selector.samplingStrategy) {
-    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
-  }
-  return `${HOST}/sample/strain-names?${params.toString()}`;
+  return getLinkTo('strain-names', selector, orderAndLimit);
 }
 
 export async function getLinkToGisaidEpiIsl(
   selector: LocationDateVariantSelector,
   orderAndLimit?: OrderAndLimitConfig
+): Promise<string> {
+  return getLinkTo('gisaid-epi-isl', selector, orderAndLimit);
+}
+
+export async function getCsvLinkToContributors(selector: LocationDateVariantSelector): Promise<string> {
+  return getLinkTo('contributors', selector, undefined, true, 'csv');
+}
+
+export async function getCsvLinkToDetails(selector: LocationDateVariantSelector): Promise<string> {
+  return getLinkTo('details', selector, undefined, true, 'csv');
+}
+
+export async function getLinkToFasta(
+  aligned: boolean,
+  selector: LocationDateVariantSelector,
+  orderAndLimit?: OrderAndLimitConfig
+): Promise<string> {
+  return getLinkTo(aligned ? 'fasta-aligned' : 'fasta', selector, orderAndLimit, true);
+}
+
+export async function getLinkTo(
+  endpoint: string,
+  selector: LocationDateVariantSelector,
+  orderAndLimit?: OrderAndLimitConfig,
+  downloadAsFile?: boolean,
+  dataFormat?: string,
+  omitHost = false
 ): Promise<string> {
   const params = new URLSearchParams();
   _addDefaultsToSearchParams(params);
@@ -177,45 +177,17 @@ export async function getLinkToGisaidEpiIsl(
   if (selector.samplingStrategy) {
     addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
   }
-  return `${HOST}/sample/gisaid-epi-isl?${params.toString()}`;
-}
-
-export async function getCsvLinkToContributors(selector: LocationDateVariantSelector): Promise<string> {
-  const params = new URLSearchParams();
-  _addDefaultsToSearchParams(params);
-  selector = await _mapCountryName(selector);
-  addLocationSelectorToUrlSearchParams(selector.location, params);
-  if (selector.dateRange) {
-    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
+  if (downloadAsFile) {
+    params.set('downloadAsFile', 'true');
   }
-  if (selector.variant) {
-    addVariantSelectorToUrlSearchParams(selector.variant, params);
+  if (dataFormat) {
+    params.set('dataFormat', 'csv');
   }
-  if (selector.samplingStrategy) {
-    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
+  if (omitHost) {
+    return `/sample/${endpoint}?${params.toString()}`;
+  } else {
+    return `${HOST}/sample/${endpoint}?${params.toString()}`;
   }
-  params.set('forDownload', 'true');
-  params.set('dataFormat', 'csv');
-  return `${HOST}/sample/contributors?${params.toString()}`;
-}
-
-export async function getCsvLinkToDetails(selector: LocationDateVariantSelector): Promise<string> {
-  const params = new URLSearchParams();
-  _addDefaultsToSearchParams(params);
-  selector = await _mapCountryName(selector);
-  addLocationSelectorToUrlSearchParams(selector.location, params);
-  if (selector.dateRange) {
-    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
-  }
-  if (selector.variant) {
-    addVariantSelectorToUrlSearchParams(selector.variant, params);
-  }
-  if (selector.samplingStrategy) {
-    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
-  }
-  params.set('forDownload', 'true');
-  params.set('dataFormat', 'csv');
-  return `${HOST}/sample/details?${params.toString()}`;
 }
 
 export async function _fetchAggSamples(
