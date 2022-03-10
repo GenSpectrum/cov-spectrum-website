@@ -81,8 +81,8 @@ export const AboutPage = () => {
           <b>the search is case-insensitive</b>.
         </p>
         <p>
-          <b>Pango lineages:</b> You can search for a single pango lineage (e.g., B.1.617) or include the
-          sub-lineages by adding a "*" at the end (e.g., B.1.617*). The search is aware of pango lineage
+          <b>Pango lineages:</b> You can search for a single Pango lineage (e.g., B.1.617) or include the
+          sub-lineages by adding a "*" at the end (e.g., B.1.617*). The search is aware of Pango lineage
           aliases (i.e., B.1.617* includes B.1.617, B.1.617.1, B.1.617.2, but also AY.1, AY.2, ...). It is
           possible to enter the "full name" instead of an alias (e.g., B.1.617.2.1 instead of AY.1).
         </p>
