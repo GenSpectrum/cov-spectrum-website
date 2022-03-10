@@ -62,13 +62,13 @@ export const AboutPage = () => {
       <Question title='What is a variant?' id='faq-variant'>
         We distinguish between two ways to specify a variant. A variant can be defined as a clade on the
         phylogenetic tree. This approach is followed by the{' '}
-        <ExternalLink url='https://cov-lineages.org/'>pangolin lineages</ExternalLink>. Additionally, a
-        variant can be defined as a set of amino acid mutations. On{' '}
+        <ExternalLink url='https://cov-lineages.org/'>Pango lineages</ExternalLink>. Additionally, a variant
+        can be defined as a set of amino acid mutations. On{' '}
         <ExternalLink url='https://covariants.org/'>CoVariants</ExternalLink> and{' '}
-        <ExternalLink url='https://cov-lineages.org/global_report.html'>PANGO lineages</ExternalLink> , you
-        can find detailed information about variants that are currently of particular interest. Different to
-        these websites, CoV-Spectrum does not only show pre-defined variants but provides tools to discover
-        and analyze new variants.
+        <ExternalLink url='https://cov-lineages.org/global_report.html'>Cov-Lineages</ExternalLink> , you can
+        find detailed information about variants that are currently of particular interest. Different to these
+        websites, CoV-Spectrum does not only show pre-defined variants but provides tools to discover and
+        analyze new variants.
       </Question>
       <Question title='Which data do you use?' id='faq-data-sources'>
         We use genomic data from GISAID and unreleased/not yet released sequences from the Swiss SARS-CoV-2
@@ -198,10 +198,10 @@ export const AboutPage = () => {
           />
         </p>
         <p>
-          The known variants are variants defined by the pangolin lineages. With the search (1), it is
-          possible to search for a pangolin lineage. To include the sub-lineages of a pangolin lineage, write
-          a "*" at the end. For example, "B.1.*" and "B.1*" will use all samples that were classified as "B.1"
-          or as a pangolin lineage that starts with "B.1.".
+          The known variants are variants defined by the Pango lineages. With the search (1), it is possible
+          to search for a Pango lineage. To include the sub-lineages of a Pango lineage, write a "*" at the
+          end. For example, "B.1.*" and "B.1*" will use all samples that were classified as "B.1" or as a
+          Pango lineage that starts with "B.1.".
         </p>
         <p>
           In (2), we show a preview of 12 known variants for the past three months with sequencing data.

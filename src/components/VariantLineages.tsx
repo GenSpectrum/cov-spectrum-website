@@ -36,7 +36,7 @@ export const VariantLineages = ({ selector, onVariantSelect }: Props) => {
 
   return (
     <>
-      <div>Sequences of this variant belong to the following pangolin lineages:</div>
+      <div>Sequences of this variant belong to the following Pango lineages:</div>
 
       {!data ? (
         <div className='h-20 w-full flex items-center'>
