@@ -12,7 +12,11 @@ import { FaDownload } from 'react-icons/fa';
 import { UsherIntegration } from '../services/external-integrations/UsherIntegration';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { TaxoniumIntegration } from '../services/external-integrations/TaxoniumIntegration';
-import { getCsvLinkToContributors, getCsvLinkToDetails } from '../data/api-lapis';
+import { getCsvLinkToContributors, getCsvLinkToDetails, getLinkToFasta } from '../data/api-lapis';
+import { ExternalLink } from './ExternalLink';
+import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
+import { useAsync } from 'react-async';
+import { OrderAndLimitConfig } from '../data/OrderAndLimitConfig';
 
 export interface Props {
   selector: LocationDateVariantSelector;
@@ -37,23 +41,51 @@ export const FocusVariantHeaderControls = React.memo(
       setShowDropdown(false);
     };
 
-    const downloadSequenceList = async () => {
-      let link;
-      // If the open version is used, all the metadata will be downloaded. If GISAID is used, only the contributors
-      // will be downloaded.
-      if (sequenceDataSource === 'open') {
-        link = await getCsvLinkToDetails(selector);
-      } else {
-        link = await getCsvLinkToContributors(selector);
-      }
-      window.open(link, '_blank');
+    // Sequence list download
+    // If the open version is used, all the metadata will be downloaded. If GISAID is used, only the contributors
+    // will be downloaded.
+    const getLinkFunc = sequenceDataSource === 'open' ? getCsvLinkToDetails : getCsvLinkToContributors;
+    const linkToListPromise = useDeepCompareMemo(() => getLinkFunc(selector), [selector]);
+    const { data: listLink } = useAsync({ promise: linkToListPromise });
+
+    // FASTA download
+    const orderAndLimit: OrderAndLimitConfig = {
+      orderBy: 'random',
+      limit: 10000,
     };
+    const linkToFastaPromise = useDeepCompareMemo(() => getLinkToFasta(false, selector, orderAndLimit), [
+      selector,
+    ]);
+    const { data: fastaLink } = useAsync({ promise: linkToFastaPromise });
+    const linkToAlignedFastaPromise = useDeepCompareMemo(
+      () => getLinkToFasta(true, selector, orderAndLimit),
+      [selector]
+    );
+    const { data: alignedFastaLink } = useAsync({ promise: linkToAlignedFastaPromise });
 
     return (
       <>
-        <Button className='mr-2 mt-3' size='sm' variant='secondary' onClick={downloadSequenceList}>
-          Sequence list <FaDownload className='inline-block ml-1' />
-        </Button>
+        <Dropdown as={ButtonGroup} className='mr-2 mt-3' size='sm'>
+          <ExternalLink url={listLink ?? ''}>
+            <Button variant='secondary' size='sm'>
+              Sequence list <FaDownload className='inline-block ml-1' />
+            </Button>
+          </ExternalLink>
+          {sequenceDataSource === 'open' && (
+            <>
+              <Dropdown.Toggle split variant='secondary' />
+              <Dropdown.Menu>
+                <ExternalLink url={fastaLink ?? ''}>
+                  <Dropdown.Item as={Button}>FASTA</Dropdown.Item>
+                </ExternalLink>
+                <ExternalLink url={alignedFastaLink ?? ''}>
+                  <Dropdown.Item as={Button}>FASTA (aligned)</Dropdown.Item>
+                </ExternalLink>
+              </Dropdown.Menu>
+            </>
+          )}
+        </Dropdown>
+
         <DropdownButton
           as={ButtonGroup}
           title='Other websites'
