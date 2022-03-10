@@ -93,7 +93,7 @@ export const AbsNumVariantTimeDistributionLineChartInner = React.memo(
         // Math.max(..., 0) compensates for numerical inaccuracies which can lead to negative values.
         plotData.push({
           date: date.dayjs.toDate(),
-          proportion: Math.max(variantCount / sequenced, 0),
+          proportion: variantCount,
           proportionCI: [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)],
         });
       }
@@ -105,10 +105,7 @@ export const AbsNumVariantTimeDistributionLineChartInner = React.memo(
       );
 
       // To avoid that big confidence intervals render the plot unreadable
-      const yMax = Math.min(
-        Math.max(...plotData.filter(d => !isNaN(d.proportion)).map(d => d.proportion * 1.5)),
-        Math.max(...plotData.filter(d => !isNaN(d.proportionCI[1])).map(d => d.proportionCI[1]))
-      );
+      const yMax = Math.max(...plotData.map(d => d.proportion))
 
       return { plotData, ticks, yMax };
     }, [data]);
@@ -166,7 +163,7 @@ export const AbsNumVariantTimeDistributionLineChartInner = React.memo(
                     ticks={ticks}
                   />
                   <YAxis
-                    tickFormatter={tick => `${tick * 100}%`}
+                    tickFormatter={tick => `${tick}`}
                     allowDecimals={true}
                     hide={false}
                     width={50}
@@ -206,13 +203,13 @@ export const AbsNumVariantTimeDistributionLineChartInner = React.memo(
             </ChartWrapper>
             <MetricsWrapper>
               <Metric
-                value={active !== undefined ? (active.proportion * 100).toFixed(1) + '%' : 'NA'}
+                value={active !== undefined ? (active.proportion).toFixed(1) : 'NA'}
                 title='Number'
                 color={colors.active}
-                helpText='Proportion relative to all samples collected (smoothed with a 7-days sliding window)'
+                helpText='Number of samples collected (smoothed with a 7-days sliding window)'
                 percent={false}
               />
-              <Metric
+              {/*<Metric
                 value={
                   active !== undefined
                     ? (active.proportionCI[0] * 100).toFixed(1) +
@@ -225,7 +222,7 @@ export const AbsNumVariantTimeDistributionLineChartInner = React.memo(
                 color={colors.secondary}
                 helpText='The 95% confidence interval'
                 percent={false}
-              />
+              />*/}
             </MetricsWrapper>
           </ChartAndMetricsWrapper>
         </Wrapper>
