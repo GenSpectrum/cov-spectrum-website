@@ -27,6 +27,7 @@ export interface ExternalProps {
   toolbarChildren?: React.ReactChild | React.ReactChild[];
   showExport?: boolean;
   height?: number;
+  absNumView?: boolean;
   widgetLayout?: React.ComponentType<LayoutProps>;
 }
 // IMPORTANT externalPropsKeys must be kept in sync with ExternalProps
@@ -36,6 +37,7 @@ const externalPropsKeys: (keyof ExternalProps)[] = [
   'showExport',
   'height',
   'widgetLayout',
+  'absNumView'
 ];
 
 export function pickExternalProps<T extends { [K in keyof ExternalProps]?: never }>(
@@ -67,6 +69,7 @@ export function WidgetWrapper({
 }: Props) {
   const exportManagerRef = useRef(new ExportManager());
   const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const [absNumView, setAbsNumView] = useState(false);
 
   const childrenAsArray: (React.ReactChild | {})[] = React.Children.toArray(children);
   const tabs: TabConfig | undefined = componentLabels
@@ -74,6 +77,8 @@ export function WidgetWrapper({
         activeTabIndex,
         labels: componentLabels,
         onNewTabSelect: setActiveTabIndex,
+        absNumView,
+        showAbsNum: setAbsNumView
       }
     : undefined;
 

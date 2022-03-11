@@ -5,12 +5,12 @@ import { UnifiedDay } from '../helpers/date-cache';
 import { VariantTimeDistributionChartProps } from './VariantTimeDistributionChartWidget';
 import {
   VariantTimeDistributionLineChartEntry,
-  //VariantTimeDistributionLineChartInner,
+  VariantTimeDistributionLineChartInner,
 } from './VariantTimeDistributionLineChartInner';
 import {AbsNumVariantTimeDistributionLineChartInner} from './AbsNumVariantTimeDistributionLineChartInner';
 
 export const VariantTimeDistributionLineChart = React.memo(
-  ({ wholeSampleSet, variantSampleSet }: VariantTimeDistributionChartProps): JSX.Element => {
+  ({ wholeSampleSet, variantSampleSet, absNumView }: VariantTimeDistributionChartProps): JSX.Element => {
     const data: Map<UnifiedDay, VariantTimeDistributionLineChartEntry> = new Map();
     fillAndFilterFromDailyMap(
       new Map<UnifiedDay, Omit<VariantTimeDistributionLineChartEntry, 'date'>>(),
@@ -32,8 +32,13 @@ export const VariantTimeDistributionLineChart = React.memo(
       }
       data.get(date)!.variantCount += count;
     }
+
     //return <VariantTimeDistributionLineChartInner data={new Array(...data.values())} />;
-    return <AbsNumVariantTimeDistributionLineChartInner data={new Array(...data.values())} />;
+    //return <AbsNumVariantTimeDistributionLineChartInner data={new Array(...data.values())} />;
+
+    return absNumView?
+    <VariantTimeDistributionLineChartInner data={new Array(...data.values())} />
+    : <AbsNumVariantTimeDistributionLineChartInner data={new Array(...data.values())} />
   }
 );
 

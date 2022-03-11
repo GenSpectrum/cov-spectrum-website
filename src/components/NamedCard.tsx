@@ -15,6 +15,8 @@ export type TabConfig = {
   labels: string[];
   activeTabIndex: number;
   onNewTabSelect: (tabIndex: number) => void;
+  absNumView: boolean
+  showAbsNum: (showAbsNum: boolean) => void
 };
 
 interface Props {
@@ -112,6 +114,18 @@ export const NamedCard = ({
   tabs,
 }: Props) => {
   const SelectedCard = tabs ? TabbedCard : Card;
+
+  //if (Array.isArray(children)) {
+  //  console.log('flag')
+  //}
+
+  //console.log(children)
+
+  if (typeof children === 'object') {
+    //console.log('flag')
+    console.log(children.props)
+  }
+
   return (
     <SelectedCard namedCardStyle={style} tabConfig={tabs!}>
       <Title>
@@ -129,16 +143,22 @@ export const NamedCard = ({
           </OverlayTrigger>
         )}
       </Title>
-      <div role="toolbar" className='mb-2'>
-        <Button
-          className='w-min inline-block mr-2'
-          variant={ButtonVariant.SECONDARY}
-        >Proportions</Button>
-        <Button
-          className='w-max inline-block'
-          variant={ButtonVariant.SECONDARY}
-        >Absolute numbers</Button>
-      </div>
+      {
+        tabs?
+        <div role="toolbar" className='mb-2'>
+          <Button
+            className='w-min inline-block mr-2'
+            variant={ButtonVariant.SECONDARY}
+            onClick={() => tabs.showAbsNum(true)}
+          >Proportions</Button>
+          <Button
+            className='w-max inline-block'
+            variant={ButtonVariant.SECONDARY}
+            onClick={() => tabs.showAbsNum(false)}
+          >Absolute numbers</Button>
+        </div>
+        : ""
+      }
       {/* We define the error boundary here because the NamedCard is currently the component that wraps most
        of the charts.*/}
       <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>

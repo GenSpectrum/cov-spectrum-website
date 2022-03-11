@@ -13,6 +13,7 @@ import { VariantTimeDistributionLineChart } from './VariantTimeDistributionLineC
 export type VariantTimeDistributionChartProps = {
   variantSampleSet: DateCountSampleDataset;
   wholeSampleSet: DateCountSampleDataset;
+  absNumView: boolean
 };
 
 export const VariantTimeDistributionChartWidget = new Widget(
@@ -29,6 +30,7 @@ export const VariantTimeDistributionChartWidget = new Widget(
       return {
         variantSampleSet: await DateCountSampleData.fromApi(variantSelector, signal),
         wholeSampleSet: await DateCountSampleData.fromApi(wholeSelector, signal),
+        absNumView: false
       };
     }
   ),

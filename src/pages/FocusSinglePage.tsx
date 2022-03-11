@@ -316,6 +316,7 @@ export const FocusSinglePage = () => {
                     height={300}
                     variantSampleSet={variantDateCount.data}
                     wholeSampleSet={wholeDateCountWithDateFilter.data}
+                    absNumView={false}
                     toolbarChildren={[
                       createDivisionBreakdownButton(
                         'SequencesOverTime',
@@ -448,6 +449,7 @@ export const FocusSinglePage = () => {
                 <VariantTimeDistributionChartWidget.ShareableComponent
                   variantSampleSet={d.variant}
                   wholeSampleSet={d.whole}
+                  absNumView={false}
                   height={300}
                   title={division}
                 />

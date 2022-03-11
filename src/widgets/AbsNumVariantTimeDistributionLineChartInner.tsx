@@ -36,8 +36,6 @@ export const AbsNumVariantTimeDistributionLineChartInner = React.memo(
   ({ data }: VariantTimeDistributionLineChartProps): JSX.Element => {
     const [active, setActive] = useState<PlotEntry | undefined>(undefined);
 
-    console.log(active)
-
     const {
       plotData,
       ticks,
