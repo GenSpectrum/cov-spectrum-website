@@ -17,6 +17,7 @@ import { ExternalLink } from './ExternalLink';
 import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { useAsync } from 'react-async';
 import { OrderAndLimitConfig } from '../data/OrderAndLimitConfig';
+import { NextcladeIntegration } from '../services/external-integrations/NextcladeIntegration';
 
 export interface Props {
   selector: LocationDateVariantSelector;
@@ -29,6 +30,7 @@ const integrations: Integration[] = [
   new OutbreakInfoIntegration(),
   new UsherIntegration(),
   new TaxoniumIntegration(),
+  new NextcladeIntegration(),
 ];
 
 export const FocusVariantHeaderControls = React.memo(
