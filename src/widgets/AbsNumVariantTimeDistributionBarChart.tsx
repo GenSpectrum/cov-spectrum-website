@@ -99,7 +99,7 @@ export const AbsNumVariantTimeDistributionBarChart = React.memo(
       <DownloadWrapper name='VariantTimeDistributionChart' csvData={csvData}>
         <ChartAndMetrics
           metrics={metrics}
-          title={`Proportion of all samples sequenced on week ${currentData.yearWeek.split('-')[1]}, ${
+          title={`Number of samples sequenced on week ${currentData.yearWeek.split('-')[1]}, ${
             currentData.yearWeek.split('-')[0] + ' '
           }`}
         >
