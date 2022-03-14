@@ -115,16 +115,21 @@ export const NamedCard = ({
 }: Props) => {
   const SelectedCard = tabs ? TabbedCard : Card;
 
-  //if (Array.isArray(children)) {
-  //  console.log('flag')
+
+
+  //if (typeof children === 'object') {
+  //  try {
+  //    if (children['style'] === undefined) {
+  //      console.log('flag')
+  //    } else {
+  //      console.log(children['props'])
+  //    }
+  //  } catch (error) {
+  //    console.error(error);
+  //  }
   //}
 
-  //console.log(children)
 
-  if (typeof children === 'object') {
-    //console.log('flag')
-    console.log(children.props)
-  }
 
   return (
     <SelectedCard namedCardStyle={style} tabConfig={tabs!}>
