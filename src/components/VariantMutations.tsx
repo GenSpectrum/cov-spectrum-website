@@ -12,6 +12,8 @@ import { SequenceType } from '../data/SequenceType';
 import { VariantSelector } from '../data/VariantSelector';
 import { PromiseQueue } from '../helpers/PromiseQueue';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
+import FormControl from 'react-bootstrap/FormControl';
+import InputGroup from 'react-bootstrap/InputGroup';
 
 export interface Props {
   selector: LocationDateVariantSelector;
@@ -63,6 +65,10 @@ export const VariantMutations = ({ selector }: Props) => {
         MutationProportionData.fromApi(selector, 'aa', signal),
         MutationProportionData.fromApi(selector, 'nuc', signal),
       ]).then(async ([variantCount, aaMutationDataset, nucMutationDataset]) => {
+
+        //console.log(aaMutationDataset)
+        console.log(nucMutationDataset)
+
         const aa = aaMutationDataset.payload;
         const nuc = nucMutationDataset.payload;
         const aaMap = new Map<string, MergedAAAndNucEntry[]>();
@@ -137,6 +143,10 @@ export const VariantMutations = ({ selector }: Props) => {
   }
   const data = queryStatus.data;
 
+  //console.log(data.aa)
+  //console.log( data.aa.filter((aa: any) => aa.proportion < 0.05 ) )
+  
+
   return (
     <>
       <div className='ml-4 mb-4'>
@@ -154,9 +164,26 @@ export const VariantMutations = ({ selector }: Props) => {
           Show amino acid and nucleotide mutations together
         </span>
       </div>
+      <div style={{marginBottom: '1rem'}}>
+        Display the mutations that are present in &nbsp;
+        <div className="inline-block">
+          <InputGroup inline-block style={{width: '8rem'}}>
+            <FormControl value="5"/>
+            <InputGroup.Text>%</InputGroup.Text>
+          </InputGroup>
+        </div>
+        &nbsp; to &nbsp;
+        <div className="inline-block">
+          <InputGroup inline-block style={{width: '8rem'}}>
+            <FormControl value="100"/>
+            <InputGroup.Text>%</InputGroup.Text>
+          </InputGroup>
+        </div>
+        &nbsp; of the sequences of this variant.
+      </div>
       {showMergedList ? (
         <>
-          <div>The following mutations are present in at least 5% of the sequences of this variant:</div>
+          {/*<div>The following mutations are present in at least 5% of the sequences of this variant:</div>*/}
           <div className='ml-4'>
             {sortOptions.map((opt, index) => (
               <>
@@ -206,7 +233,7 @@ export const VariantMutations = ({ selector }: Props) => {
       ) : (
         <>
           <div>
-            The following amino acid mutations are present in at least 5% of the sequences of this variant.
+            {/*The following amino acid mutations are present in at least 5% of the sequences of this variant.*/}
             Please note that we currently <b>do not</b> exclude the unknowns when calculating the proportions.
           </div>
           <div className='ml-4'>
@@ -236,8 +263,8 @@ export const VariantMutations = ({ selector }: Props) => {
             )}
           </MutationList>
           <div className='mt-4'>
-            The following nucleotide mutations are present in at least 5% of the sequences of this variant
-            (leading and tailing deletions are excluded). Please note that we currently <b>do not</b> exclude
+            {/*The following nucleotide mutations are present in at least 5% of the sequences of this variant*/}
+            Leading and tailing deletions are excluded. Please note that we currently <b>do not</b> exclude
             the unknowns when calculating the proportions.
           </div>
           <div className='ml-4'>
