@@ -5,7 +5,6 @@ import { MinimalWidgetLayout } from './MinimalWidgetLayout';
 import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
 import { VariantInternationalComparisonChartWidget } from '../widgets/VariantInternationalComparisonChartWidget';
 import { LocationSelector } from '../data/LocationSelector';
-import { useExploreUrl } from '../helpers/explore-url';
 
 interface Props {
   locationSelector: LocationSelector;
@@ -19,7 +18,6 @@ export const InternationalComparison = ({
   locationSelector,
 }: Props) => {
   const [logScale, setLogScale] = useState<boolean>(false);
-  const exploreUrl = useExploreUrl();
   return (
     <>
       <VariantInternationalComparisonChartWidget.ShareableComponent
