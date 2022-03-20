@@ -7,6 +7,8 @@ import { WasteWaterTimeseriesSummaryDataset } from './types';
 import { formatDate } from './WasteWaterTimeChart';
 import { getTicks } from '../../helpers/ticks';
 import { UnifiedDay } from '../../helpers/date-cache';
+import { useExploreUrl } from '../../helpers/explore-url';
+import { getDisplayDateRange } from '../../data/DateRange';
 
 interface Props {
   wasteWaterPlants: {
@@ -41,6 +43,8 @@ export const WasteWaterSummaryTimeChart = React.memo(
   ({ wasteWaterPlants }: Props): JSX.Element => {
     const locations = wasteWaterPlants.map(d => escapeValueName(d.location));
     const dateMap: Map<UnifiedDay, { date: number; values: LocationMap; cis: CIMap }> = new Map();
+    const exploreUrl = useExploreUrl();
+    const displayDateString = getDisplayDateRange(exploreUrl?.dateRange.getDateRange());
 
     for (let { location, data } of wasteWaterPlants) {
       for (let { date, proportion, proportionCI } of data) {
@@ -64,7 +68,9 @@ export const WasteWaterSummaryTimeChart = React.memo(
     const colorScale = scaleOrdinal(schemeCategory10);
     return (
       <Wrapper>
-        <TitleWrapper>Estimated prevalence in wastewater samples</TitleWrapper>
+        <TitleWrapper>
+          Estimated prevalence in wastewater samples {' ' + (displayDateString ?? '')}
+        </TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
             <ResponsiveContainer>

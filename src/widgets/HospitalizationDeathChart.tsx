@@ -18,6 +18,8 @@ import DownloadWrapper from './DownloadWrapper';
 import { Utils } from '../services/Utils';
 import { AgeCountSampleData } from '../data/sample/AgeCountSampleDataset';
 import { HospDiedAgeSampleDataset } from '../data/sample/HospDiedAgeSampleDataset';
+import { getDisplayDateRange } from '../data/DateRange';
+import { useExploreUrl } from '../helpers/explore-url';
 
 export type HospitalizationDeathChartProps = {
   variantSampleSet: HospDiedAgeSampleDataset;
@@ -54,19 +56,22 @@ const makeDeceasedTexts = (variant: string): SubgroupTexts => ({
 
 const makeTexts = (
   variantName: string,
-  relativeToOtherVariants: boolean
+  relativeToOtherVariants: boolean,
+  displayDateString?: string
 ): { hospitalized: TopLevelTexts; died: TopLevelTexts } => ({
   hospitalized: {
     title:
       'Estimated probability of hospitalization by age group' +
-      (relativeToOtherVariants ? ', relative to other variants' : ''),
+      (relativeToOtherVariants ? ', relative to other variants' : '') +
+      (displayDateString ? ' ' + displayDateString : ''),
     subject: makeHospitalizedTexts(variantName),
     reference: makeHospitalizedTexts('other variants'),
   },
   died: {
     title:
       'Estimated probability of death by age group' +
-      (relativeToOtherVariants ? ', relative to other variants' : ''),
+      (relativeToOtherVariants ? ', relative to other variants' : '') +
+      (displayDateString ? ' ' + displayDateString : ''),
     subject: makeDeceasedTexts(variantName),
     reference: makeDeceasedTexts('other variants'),
   },
@@ -214,7 +219,10 @@ export const HospitalizationDeathChart = ({
     [processedData]
   );
 
-  const texts = makeTexts(variantName, relativeToOtherVariants)[field];
+  const exploreUrl = useExploreUrl();
+  const displayDateString = getDisplayDateRange(exploreUrl?.dateRange.getDateRange());
+
+  const texts = makeTexts(variantName, relativeToOtherVariants, displayDateString)[field];
 
   return (
     <DownloadWrapper name='HospitalizationDeathPlot' csvData={csvData}>

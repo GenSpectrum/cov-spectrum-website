@@ -9,6 +9,8 @@ import { Utils } from '../services/Utils';
 import { CountryDateCountSampleEntry } from '../data/sample/CountryDateCountSampleEntry';
 import { fillFromWeeklyMap } from '../helpers/fill-missing';
 import { UnifiedIsoWeek } from '../helpers/date-cache';
+import { useExploreUrl } from '../helpers/explore-url';
+import { getDisplayDateRange } from '../data/DateRange';
 
 const CHART_MARGIN_RIGHT = 15;
 const DEFAULT_SHOW = 5;
@@ -109,6 +111,8 @@ export const VariantInternationalComparisonChart = ({
       isFixed: false,
     }))
   );
+  const exploreUrl = useExploreUrl();
+  const displayDateString = getDisplayDateRange(exploreUrl?.dateRange.getDateRange());
 
   const variantSamplesByCountry: Map<string, CountryDateCountSampleEntry[]> = useMemo(() => {
     const map = Utils.groupBy(variantInternationalSampleSet.payload, e => e.country);
@@ -214,6 +218,11 @@ export const VariantInternationalComparisonChart = ({
   return (
     <Wrapper>
       <SelectWrapper>
+        {displayDateString && displayDateString.length > 0 && (
+          <h3 id={`chart-title-${'range'}`} className='my-0  text-gray-500'>
+            {displayDateString.charAt(0).toUpperCase() + displayDateString.slice(1)}
+          </h3>
+        )}
         <Select
           closeMenuOnSelect={false}
           placeholder='Select countries...'

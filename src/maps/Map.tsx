@@ -14,6 +14,8 @@ import switzerland from './switzerland.json';
 import usa from './usa.json';
 import southafrica from './southafrica.json';
 import botswana from './botswana.json';
+import { useExploreUrl } from '../helpers/explore-url';
+import { getDisplayDateRange } from '../data/DateRange';
 
 export interface VectorMapLayer {
   /** Unique ID of each layer. */
@@ -139,6 +141,8 @@ interface Props {
 
 const Map = ({ data: inputData, country }: Props) => {
   const [focusData, setFocusData] = useState<Data | undefined>(undefined);
+  const exploreUrl = useExploreUrl();
+  const displayDateString = getDisplayDateRange(exploreUrl?.dateRange.getDateRange());
 
   const data = inputData.map(d => ({ ...d, prevalence: d.prevalence ? d.prevalence * 100 : 0 }));
 
@@ -207,7 +211,7 @@ const Map = ({ data: inputData, country }: Props) => {
   return (
     <ChartAndMetrics
       metrics={metrics}
-      title={`Average proportion during selected timeframe`}
+      title={`Average proportion ${displayDateString ? ' ' + displayDateString : ''}`}
       metricsTitle={focusData && focusData.division !== null ? focusData.division : undefined}
       notFullWidth={true}
     >

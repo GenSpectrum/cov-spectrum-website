@@ -7,6 +7,8 @@ import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { useResizeDetector } from 'react-resize-detector';
 import DownloadWrapper from './DownloadWrapper';
 import { maxYAxis } from '../helpers/max-y-axis';
+import { useExploreUrl } from '../helpers/explore-url';
+import { getDisplayDateRange } from '../data/DateRange';
 
 const CHART_MARGIN_RIGHT = 15;
 
@@ -60,6 +62,8 @@ export const VariantAgeDistributionChart = React.memo(
   ({ variantSampleSet, wholeSampleSet, onClickHandler }: VariantAgeDistributionChartProps): JSX.Element => {
     const { width, ref } = useResizeDetector();
     const widthIsSmall = !!width && width < 700;
+    const exploreUrl = useExploreUrl();
+    const displayDateString = getDisplayDateRange(exploreUrl?.dateRange.getDateRange());
 
     const data = useMemo(() => {
       const proportionByAgeGroup = AgeCountSampleData.proportionByAgeGroup(
@@ -145,7 +149,7 @@ export const VariantAgeDistributionChart = React.memo(
         <DownloadWrapper name='VariantAgeDistributionChart' csvData={csvData}>
           <ChartAndMetrics
             metrics={metrics}
-            title='Proportion of the variant per age group in the selected time frame (estimate)'
+            title={`Proportion of the variant per age group ${displayDateString} (Estimate)`}
           >
             <ResponsiveContainer>
               <BarChart

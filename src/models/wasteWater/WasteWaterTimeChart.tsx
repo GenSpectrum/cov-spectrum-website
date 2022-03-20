@@ -4,6 +4,8 @@ import Metric, { MetricsWrapper } from '../../widgets/Metrics';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { WasteWaterTimeEntry, WasteWaterTimeseriesSummaryDataset } from './types';
 import { getTicks } from '../../helpers/ticks';
+import { useExploreUrl } from '../../helpers/explore-url';
+import { getDisplayDateRange } from '../../data/DateRange';
 
 export function formatDate(date: number) {
   const d = new Date(date);
@@ -21,6 +23,9 @@ export const WasteWaterTimeChart = React.memo(
     const [active, setActive] = useState<(Omit<WasteWaterTimeEntry, 'date'> & { date: number }) | undefined>(
       undefined
     );
+    const exploreUrl = useExploreUrl();
+    const displayDateString = getDisplayDateRange(exploreUrl?.dateRange.getDateRange());
+
     const plotData = [...data]
       .map(d => ({
         ...d,
@@ -40,6 +45,7 @@ export const WasteWaterTimeChart = React.memo(
               on <b>{formatDate(active.date)}</b>
             </>
           )}
+          {' ' + (displayDateString ?? '')}
         </TitleWrapper>
         <ChartAndMetricsWrapper>
           <ChartWrapper>
