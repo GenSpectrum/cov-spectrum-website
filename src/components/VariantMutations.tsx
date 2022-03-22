@@ -57,6 +57,12 @@ export const VariantMutations = ({ selector }: Props) => {
   const [commonNucMutationsSort, setCommonNucMutationsSort] = useState<SortOptions>('position');
   const [aaMutationUniqueness, setAAMutationUniqueness] = useState<MutationUniquenessMap>({});
   const [nucMutationUniqueness, setNucMutationUniqueness] = useState<MutationUniquenessMap>({});
+  const [minProportion, setMinProportion] = useState('5');
+
+  const newMinProportion = (minValue: any) => {
+    let minProportion = minValue.target.value
+    setMinProportion(minProportion)
+  }
 
   const queryStatus = useQuery(
     signal =>
@@ -65,10 +71,6 @@ export const VariantMutations = ({ selector }: Props) => {
         MutationProportionData.fromApi(selector, 'aa', signal),
         MutationProportionData.fromApi(selector, 'nuc', signal),
       ]).then(async ([variantCount, aaMutationDataset, nucMutationDataset]) => {
-
-        //console.log(aaMutationDataset)
-        console.log(nucMutationDataset)
-
         const aa = aaMutationDataset.payload;
         const nuc = nucMutationDataset.payload;
         const aaMap = new Map<string, MergedAAAndNucEntry[]>();
@@ -128,11 +130,13 @@ export const VariantMutations = ({ selector }: Props) => {
     const nucFetchQueue = new PromiseQueue();
     for (let nucElement of nuc) {
       nucFetchQueue.addTask(() =>
-        fetchUniquenessScore(nucElement, selector, variantCount, 'nuc').then(uniqueness =>
+        fetchUniquenessScore(nucElement, selector, variantCount, 'nuc').then(uniqueness => {
+          //console.log('flag 5')
           setNucMutationUniqueness(prev => ({
             ...prev,
             [nucElement.mutation]: uniqueness,
           }))
+        }
         )
       );
     }
@@ -142,10 +146,6 @@ export const VariantMutations = ({ selector }: Props) => {
     return <Loader />;
   }
   const data = queryStatus.data;
-
-  //console.log(data.aa)
-  //console.log( data.aa.filter((aa: any) => aa.proportion < 0.05 ) )
-  
 
   return (
     <>
@@ -165,10 +165,10 @@ export const VariantMutations = ({ selector }: Props) => {
         </span>
       </div>
       <div style={{marginBottom: '1rem'}}>
-        Display the mutations that are present in &nbsp;
+        Display the mutations that are found in &nbsp;
         <div className="inline-block">
           <InputGroup inline-block style={{width: '8rem'}}>
-            <FormControl value="5"/>
+            <FormControl value={minProportion} onChange={newMinProportion}/>
             <InputGroup.Text>%</InputGroup.Text>
           </InputGroup>
         </div>

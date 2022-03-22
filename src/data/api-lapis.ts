@@ -117,7 +117,8 @@ export async function fetchMutationProportions(
   signal?: AbortSignal
 ): Promise<MutationProportionEntry[]> {
   const url = await getLinkTo(`${sequenceType}-mutations`, selector, undefined, undefined, undefined, true);
-  const res = await get(url, signal);
+  const res = await get(url, signal)
+  //const res = await get(`${url}&minProportion=0.00`, signal);
   if (!res.ok) {
     throw new Error('Error fetching new samples data');
   }
@@ -161,7 +162,8 @@ export async function getLinkTo(
   orderAndLimit?: OrderAndLimitConfig,
   downloadAsFile?: boolean,
   dataFormat?: string,
-  omitHost = false
+  omitHost = false,
+  minProportion?: string
 ): Promise<string> {
   const params = new URLSearchParams();
   _addDefaultsToSearchParams(params);
@@ -182,6 +184,9 @@ export async function getLinkTo(
   }
   if (dataFormat) {
     params.set('dataFormat', 'csv');
+  }
+  if (minProportion) {
+    params.set('minProportion', minProportion);
   }
   if (omitHost) {
     return `/sample/${endpoint}?${params.toString()}`;
