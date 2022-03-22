@@ -117,7 +117,6 @@ export const NamedCard = ({
   const SelectedCard = tabs ? TabbedCard : Card;
 
 
-
   //if (typeof children === 'object') {
   //  try {
   //    if (children['style'] === undefined) {
@@ -129,7 +128,6 @@ export const NamedCard = ({
   //    console.error(error);
   //  }
   //}
-
 
 
   return (

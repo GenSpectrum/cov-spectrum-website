@@ -1,7 +1,7 @@
 import { Widget } from './Widget';
 import { AsyncZodQueryEncoder } from '../helpers/query-encoder';
 import * as zod from 'zod';
-//import VariantTimeDistributionBarChart from './VariantTimeDistributionBarChart';
+import VariantTimeDistributionBarChart from './VariantTimeDistributionBarChart';
 import AbsNumVariantTimeDistributionBarChart from './AbsNumVariantTimeDistributionBarChart';
 import {
   decodeLocationDateVariantSelector,
@@ -39,6 +39,7 @@ export const VariantTimeDistributionChartWidget = new Widget(
     { label: 'Line chart', component: VariantTimeDistributionLineChart },
     //{ label: 'Bar chart', component: VariantTimeDistributionBarChart },
     { label: 'Bar chart', component: AbsNumVariantTimeDistributionBarChart },
+    { label: '', component: VariantTimeDistributionBarChart },
   ],
   'VariantTimeDistributionChart'
 );
