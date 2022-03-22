@@ -6,6 +6,9 @@ import * as Sentry from '@sentry/react';
 import { ErrorBoundaryFallback } from './ErrorBoundaryFallback';
 import { Button, ButtonVariant } from '../helpers/ui';
 
+//import VariantTimeDistributionBarChart from '../widgets/VariantTimeDistributionBarChart';
+//import AbsNumVariantTimeDistributionBarChart from '../widgets/AbsNumVariantTimeDistributionBarChart';
+
 export enum NamedCardStyle {
   NORMAL,
   CONFIDENTIAL,
@@ -51,7 +54,7 @@ export const TabbedCard = ({
   namedCardStyle,
   tabConfig,
 }: {
-  children: React.ReactNode;
+  children: any;
   namedCardStyle: NamedCardStyle;
   tabConfig: TabConfig;
 }) => {
@@ -62,7 +65,13 @@ export const TabbedCard = ({
           namedCardStyle === NamedCardStyle.NORMAL ? ' border-gray-100' : 'border-red-500'
         }`}
       >
-        {children}
+        {children? children[1]: 'test'}
+        {/*{
+        tabConfig.absNumView?
+        <AbsNumVariantTimeDistributionBarChart/>
+        :
+        <VariantTimeDistributionBarChart/>
+        }*/}
       </div>
       {tabConfig.labels.map((label, index) => (
         <button
