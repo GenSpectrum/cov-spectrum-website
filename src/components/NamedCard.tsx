@@ -4,7 +4,8 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { ExpandableTextBox } from './ExpandableTextBox';
 import * as Sentry from '@sentry/react';
 import { ErrorBoundaryFallback } from './ErrorBoundaryFallback';
-import { Button, ButtonVariant } from '../helpers/ui';
+//import { Button, ButtonVariant } from '../helpers/ui';
+import { Button } from 'react-bootstrap';
 
 export enum NamedCardStyle {
   NORMAL,
@@ -153,13 +154,14 @@ export const NamedCard = ({
         <div role="toolbar" className='mb-2'>
           <Button
             className='w-min inline-block mr-2'
-            variant={ButtonVariant.SECONDARY}
-            onClick={() => tabs.showAbsNum(true)}
+            variant={tabs.absNumView? "outline-danger" : "danger"}
+            onClick={() => tabs.showAbsNum(false)}
+            
           >Proportions</Button>
           <Button
             className='w-max inline-block'
-            variant={ButtonVariant.SECONDARY}
-            onClick={() => tabs.showAbsNum(false)}
+            variant={tabs.absNumView? "danger" : "outline-danger" }
+            onClick={() => tabs.showAbsNum(true)}
           >Absolute numbers</Button>
         </div>
         : ""
