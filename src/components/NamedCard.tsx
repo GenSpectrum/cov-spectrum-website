@@ -1,13 +1,9 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { ExpandableTextBox } from './ExpandableTextBox';
 import * as Sentry from '@sentry/react';
 import { ErrorBoundaryFallback } from './ErrorBoundaryFallback';
-import { Button, ButtonVariant } from '../helpers/ui';
-
-//import VariantTimeDistributionBarChart from '../widgets/VariantTimeDistributionBarChart';
-//import AbsNumVariantTimeDistributionBarChart from '../widgets/AbsNumVariantTimeDistributionBarChart';
 
 export enum NamedCardStyle {
   NORMAL,
@@ -18,8 +14,6 @@ export type TabConfig = {
   labels: string[];
   activeTabIndex: number;
   onNewTabSelect: (tabIndex: number) => void;
-  absNumView: boolean
-  showAbsNum: (showAbsNum: boolean) => void
 };
 
 interface Props {
@@ -54,7 +48,7 @@ export const TabbedCard = ({
   namedCardStyle,
   tabConfig,
 }: {
-  children: any;
+  children: React.ReactNode;
   namedCardStyle: NamedCardStyle;
   tabConfig: TabConfig;
 }) => {
@@ -65,13 +59,7 @@ export const TabbedCard = ({
           namedCardStyle === NamedCardStyle.NORMAL ? ' border-gray-100' : 'border-red-500'
         }`}
       >
-        {children? children[1]: 'test'}
-        {/*{
-        tabConfig.absNumView?
-        <AbsNumVariantTimeDistributionBarChart/>
-        :
-        <VariantTimeDistributionBarChart/>
-        }*/}
+        {children}
       </div>
       {tabConfig.labels.map((label, index) => (
         <button
@@ -124,21 +112,19 @@ export const NamedCard = ({
 }: Props) => {
   const SelectedCard = tabs ? TabbedCard : Card;
 
-
-
-  //if (typeof children === 'object') {
-  //  try {
-  //    if (children['style'] === undefined) {
-  //      console.log('flag')
-  //    } else {
-  //      console.log(children['props'])
-  //    }
-  //  } catch (error) {
-  //    console.error(error);
-  //  }
-  //}
-
-
+  useEffect(() => {
+    // Fixture for graphs not displayed (age demographics graph as well as line-chart/bar-chart once label button is clicked)
+    let graphs = Array.from(
+      document.getElementsByClassName('recharts-responsive-container') as HTMLCollectionOf<HTMLElement>
+    );
+    for (let i = 0; i < graphs.length; i++) {
+      let graph = graphs[i];
+      if (graph.offsetHeight === 0) {
+        let minHeight = Math.min(200, (graph.offsetWidth * 2) / 3);
+        graphs[i].style.height = `${minHeight.toString()}px`;
+      }
+    }
+  });
 
   return (
     <SelectedCard namedCardStyle={style} tabConfig={tabs!}>
@@ -157,22 +143,6 @@ export const NamedCard = ({
           </OverlayTrigger>
         )}
       </Title>
-      {
-        tabs?
-        <div role="toolbar" className='mb-2'>
-          <Button
-            className='w-min inline-block mr-2'
-            variant={ButtonVariant.SECONDARY}
-            onClick={() => tabs.showAbsNum(true)}
-          >Proportions</Button>
-          <Button
-            className='w-max inline-block'
-            variant={ButtonVariant.SECONDARY}
-            onClick={() => tabs.showAbsNum(false)}
-          >Absolute numbers</Button>
-        </div>
-        : ""
-      }
       {/* We define the error boundary here because the NamedCard is currently the component that wraps most
        of the charts.*/}
       <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
@@ -181,7 +151,7 @@ export const NamedCard = ({
             <ExpandableTextBox text={description} maxChars={60} />
           </div>
         )}
-        <ToolbarWrapper>{toolbar}</ToolbarWrapper>
+        <ToolbarWrapper className='static lg:absolute'>{toolbar}</ToolbarWrapper>
         <ContentWrapper>{children}</ContentWrapper>
       </Sentry.ErrorBoundary>
     </SelectedCard>

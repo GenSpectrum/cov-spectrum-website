@@ -6,6 +6,8 @@ import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { fillAndFilterFromWeeklyMap } from '../helpers/fill-missing';
 import DownloadWrapper from './DownloadWrapper';
 import { VariantTimeDistributionChartProps } from './VariantTimeDistributionChartWidget';
+import { ButtonToolbar } from 'react-bootstrap';
+import { Button, ButtonVariant } from '../helpers/ui';
 
 const CHART_MARGIN_RIGHT = 30;
 const CHART_MARGIN_BOTTOM = 10;
@@ -19,6 +21,8 @@ type TimeEntry = {
 
 export const VariantTimeDistributionBarChart = React.memo(
   ({ variantSampleSet, wholeSampleSet }: VariantTimeDistributionChartProps): JSX.Element => {
+    const [absoluteNumbers, setAbsoluteNumbers] = useState<boolean>(false);
+
     const data = useMemo(() => {
       const proportionByWeek = DateCountSampleData.proportionByWeek(
         variantSampleSet.payload,
@@ -35,7 +39,7 @@ export const VariantTimeDistributionBarChart = React.memo(
         firstDayInWeek: key.firstDay.string,
         yearWeek: key.yearWeekString,
         percent: proportion === undefined ? undefined : 100 * proportion,
-        quantity: count,
+        quantity: count
       }));
     }, [variantSampleSet, wholeSampleSet]);
 
@@ -62,7 +66,7 @@ export const VariantTimeDistributionBarChart = React.memo(
     };
 
     const bars = [
-      <Bar dataKey='percent' key='percent' stackId='a' isAnimationActive={false}>
+      <Bar dataKey={absoluteNumbers ? 'quantity' : 'percent'} key={absoluteNumbers ? 'quantity' : 'percent'} stackId='a' isAnimationActive={false}>
         {data.map((entry: TimeEntry, index: number) => (
           <Cell
             fill={entry.yearWeek === currentData.yearWeek ? colors.active : colors.inactive}
@@ -92,17 +96,51 @@ export const VariantTimeDistributionBarChart = React.memo(
           },
         ]
       : [];
+    
+    const getMetrics = () => { 
+      if (absoluteNumbers) { 
+        let m = metrics.reverse()
+        m[0].color = colors.active
+        m[1].color = colors.secondary
+        return m
+      }
+      return metrics
+    }
 
     const onlyDisplayActive = !(currentData === data[data.length - 1]);
+
+    const chartTitle = absoluteNumbers ? 'Number of samples sequenced on week' : 'Proportion of all samples sequenced on week'
+
+    const buttonToolbar = (
+      <ButtonToolbar className='mb-1'>
+        <Button
+          key="lineChartProportionButton"
+          className='mt-1 ml-2'
+          variant={absoluteNumbers ? ButtonVariant.SECONDARY : ButtonVariant.PRIMARY}
+          onClick={() => {
+            setAbsoluteNumbers(false);
+          }}> Proportion
+        </Button>
+        <Button
+          key="lineChartAbsoluteButton"
+          className='mt-1 ml-2'
+          variant={absoluteNumbers ? ButtonVariant.PRIMARY : ButtonVariant.SECONDARY}
+          onClick={() => {
+            setAbsoluteNumbers(true);
+          }}> Absolute
+        </Button>
+      </ButtonToolbar>
+    )
 
     return currentData ? (
       <DownloadWrapper name='VariantTimeDistributionChart' csvData={csvData}>
         <ChartAndMetrics
-          metrics={metrics}
-          title={`Proportion of all samples sequenced on week ${currentData.yearWeek.split('-')[1]}, ${
-            currentData.yearWeek.split('-')[0] + ' '
-          }`}
+          metrics={getMetrics()}
+          title={`${chartTitle} ${currentData.yearWeek.split('-')[1]}, ${currentData.yearWeek.split('-')[0] + ' '
+            }`}
+          buttons={buttonToolbar}
         >
+          
           <ResponsiveContainer>
             <BarChart
               data={data}
@@ -125,11 +163,11 @@ export const VariantTimeDistributionBarChart = React.memo(
                 }
               />
               <YAxis
-                dataKey='percent'
+                dataKey={absoluteNumbers ? 'quantity' : 'percent'}
                 interval={1}
                 axisLine={false}
                 tickLine={false}
-                tickFormatter={tick => `${tick}%`}
+                tickFormatter={tick => absoluteNumbers ? tick : `${tick}%`}
                 allowDecimals={true}
                 hide={false}
                 width={50}

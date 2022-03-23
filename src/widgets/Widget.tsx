@@ -34,7 +34,7 @@ export class Widget<
 
   constructor(
     public readonly specificPropsEncoder: E,
-    public readonly Component: C | { label: string; component: C }[] | { label: string; component: any }[] | any,
+    public readonly Component: C | { label: string; component: C }[],
     public readonly urlName: string
   ) {
     this.mergedPropsEncoder = new MergedAsyncQueryEncoder({

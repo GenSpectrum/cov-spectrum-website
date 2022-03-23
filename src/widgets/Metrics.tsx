@@ -90,14 +90,16 @@ interface ChartAndMetricsProps {
   metrics: MetricProps[];
   title: string;
   metricsTitle?: string | undefined;
+  buttons?: React.ReactNode;
 }
 
-export const ChartAndMetrics = ({ children, metrics, title, metricsTitle }: ChartAndMetricsProps) => {
+export const ChartAndMetrics = ({ children, metrics, title, metricsTitle, buttons }: ChartAndMetricsProps) => {
   return (
     <div id={`chart-and-metrics-${title}`} className='flex flex-col h-full w-full'>
       <h3 id={`chart-title-${title}`} className='my-0 pb-4 pr-10 pt-0 text-gray-500'>
-        {title}
+        {title} <span style={{float: 'right'}}>{buttons}</span>
       </h3>
+      
       <div className='flex flex-col lg:flex-row h-full'>
         <div className='w-full h-full'>{children}</div>
         <MetricsWrapper>

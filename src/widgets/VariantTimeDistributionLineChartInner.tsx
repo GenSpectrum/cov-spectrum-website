@@ -7,7 +7,8 @@ import { getTicks } from '../helpers/ticks';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import dayjs from 'dayjs';
 import DownloadWrapper from './DownloadWrapper';
-import { Alert, AlertVariant } from '../helpers/ui';
+import { Container, Col, Row, ButtonToolbar, ButtonGroup } from 'react-bootstrap';
+import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 
 export type VariantTimeDistributionLineChartEntry = {
   date: UnifiedDay;
@@ -35,6 +36,7 @@ const CHART_MARGIN_RIGHT = 15;
 export const VariantTimeDistributionLineChartInner = React.memo(
   ({ data }: VariantTimeDistributionLineChartProps): JSX.Element => {
     const [active, setActive] = useState<PlotEntry | undefined>(undefined);
+    const [absoluteNumbers, setAbsoluteNumbers] = useState<boolean>(false);
 
     const {
       plotData,
@@ -91,7 +93,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
         // Math.max(..., 0) compensates for numerical inaccuracies which can lead to negative values.
         plotData.push({
           date: date.dayjs.toDate(),
-          proportion: Math.max(variantCount / sequenced, 0),
+          proportion: absoluteNumbers ? variantCount : Math.max(variantCount / sequenced, 0),
           proportionCI: [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)],
         });
       }
@@ -103,13 +105,17 @@ export const VariantTimeDistributionLineChartInner = React.memo(
       );
 
       // To avoid that big confidence intervals render the plot unreadable
-      const yMax = Math.min(
-        Math.max(...plotData.filter(d => !isNaN(d.proportion)).map(d => d.proportion * 1.5)),
-        Math.max(...plotData.filter(d => !isNaN(d.proportionCI[1])).map(d => d.proportionCI[1]))
-      );
+      const yMax = absoluteNumbers ?
+        Math.max(...plotData.map(d => d.proportion))
+        :
+        Math.min(
+          Math.max(...plotData.filter(d => !isNaN(d.proportion)).map(d => d.proportion * 1.5)),
+          Math.max(...plotData.filter(d => !isNaN(d.proportionCI[1])).map(d => d.proportionCI[1]))
+        );
+        
 
       return { plotData, ticks, yMax };
-    }, [data]);
+    }, [data, absoluteNumbers]);
 
     const setDefaultActive = (plotData: PlotEntry[]) => {
       if (plotData) {
@@ -135,18 +141,53 @@ export const VariantTimeDistributionLineChartInner = React.memo(
       return <Alert variant={AlertVariant.INFO}>We do not have enough data for this plot.</Alert>;
     }
 
+    const titleDetails = () => {
+      let intro = absoluteNumbers ? 'Number of samples' : 'Proportion of all samples'
+      if (active !== undefined) {
+        return (
+          <>
+            {intro}
+            {' '}
+            from <b>{formatDate(active!.date.getTime() - 3 * 24 * 60 * 60 * 1000)}</b> to{' '}
+            <b>{formatDate(active!.date.getTime() + 3 * 24 * 60 * 60 * 1000)}</b>
+          </>
+        )
+      }
+    }
+
     return (
       <DownloadWrapper name='EstimatedCasesPlot' csvData={csvData}>
         <Wrapper>
           <TitleWrapper>
-            Proportion of all samples
-            {active !== undefined && (
-              <>
-                {' '}
-                from <b>{formatDate(active.date.getTime() - 3 * 24 * 60 * 60 * 1000)}</b> to{' '}
-                <b>{formatDate(active.date.getTime() + 3 * 24 * 60 * 60 * 1000)}</b>
-              </>
-            )}
+              <Container fluid>
+                <Row>
+                  <Col style={{ display: 'inline-block', whiteSpace: 'nowrap' }} xs="auto">
+                    {titleDetails()}  
+                  </Col>
+                  <Col style={{textAlign: 'right'}} className="pr-0">
+                    <ButtonToolbar className='mb-1' style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+                      <ButtonGroup>
+                        <Button
+                          key="lineChartProportionButton"
+                          className='mt-1 ml-2'
+                          variant={absoluteNumbers ? ButtonVariant.SECONDARY : ButtonVariant.PRIMARY}
+                          onClick={() => {
+                            setAbsoluteNumbers(false);
+                          }}> Proportion
+                        </Button>
+                        <Button
+                          key="lineChartAbsoluteButton"
+                          className='mt-1 ml-2'
+                          variant={absoluteNumbers ? ButtonVariant.PRIMARY : ButtonVariant.SECONDARY}
+                          onClick={() => {
+                            setAbsoluteNumbers(true);
+                          }}> Absolute
+                        </Button>
+                      </ButtonGroup>
+                    </ButtonToolbar>
+                  </Col>
+                </Row>
+              </Container>
           </TitleWrapper>
           <ChartAndMetricsWrapper>
             <ChartWrapper>
@@ -164,7 +205,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     ticks={ticks}
                   />
                   <YAxis
-                    tickFormatter={tick => `${tick * 100}%`}
+                    tickFormatter={tick => absoluteNumbers ? `${tick}` : `${tick * 100}%`}
                     allowDecimals={true}
                     hide={false}
                     width={50}
@@ -204,26 +245,30 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             </ChartWrapper>
             <MetricsWrapper>
               <Metric
-                value={active !== undefined ? (active.proportion * 100).toFixed(1) + '%' : 'NA'}
-                title='Proportion'
+                value={active !== undefined ? absoluteNumbers ? (active.proportion).toFixed(0) : (active.proportion * 100).toFixed(1) + '%' : 'NA'}
+                title={absoluteNumbers ? 'Samples' : 'Proportion'}
                 color={colors.active}
-                helpText='Proportion relative to all samples collected (smoothed with a 7-days sliding window)'
+                helpText={absoluteNumbers ? 'Number of samples collected (smoothed with a 7-days sliding window)' : 'Proportion relative to all samples collected (smoothed with a 7-days sliding window)'}
                 percent={false}
               />
-              <Metric
-                value={
-                  active !== undefined
-                    ? (active.proportionCI[0] * 100).toFixed(1) +
+              {!absoluteNumbers ?
+                <Metric
+                  value={
+                    active !== undefined
+                      ? (active.proportionCI[0] * 100).toFixed(1) +
                       '-' +
                       (active.proportionCI[1] * 100).toFixed(1) +
                       '%'
-                    : 'NA'
-                }
-                title='Confidence int.'
-                color={colors.secondary}
-                helpText='The 95% confidence interval'
-                percent={false}
-              />
+                      : 'NA'
+                  }
+                  title='Confidence int.'
+                  color={colors.secondary}
+                  helpText='The 95% confidence interval'
+                  percent={false}
+                />
+                :
+                <></>
+              }
             </MetricsWrapper>
           </ChartAndMetricsWrapper>
         </Wrapper>
