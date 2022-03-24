@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ExternalLink } from '../components/ExternalLink';
 import { EmailLink } from '../components/EmailLink';
 
@@ -32,6 +32,9 @@ const Disclaimer = ({ children }: { children: React.ReactNode }) => {
 };
 
 export const AboutPage = () => {
+  useEffect(() => {
+    document.title = `About - covSPECTRUM`;
+  });
   return (
     <div className='max-w-4xl mx-auto px-4 md:px-8'>
       <h1>CoV-Spectrum</h1>
@@ -59,13 +62,13 @@ export const AboutPage = () => {
       <Question title='What is a variant?' id='faq-variant'>
         We distinguish between two ways to specify a variant. A variant can be defined as a clade on the
         phylogenetic tree. This approach is followed by the{' '}
-        <ExternalLink url='https://cov-lineages.org/'>pangolin lineages</ExternalLink>. Additionally, a
-        variant can be defined as a set of amino acid mutations. On{' '}
+        <ExternalLink url='https://cov-lineages.org/'>Pango lineages</ExternalLink>. Additionally, a variant
+        can be defined as a set of amino acid mutations. On{' '}
         <ExternalLink url='https://covariants.org/'>CoVariants</ExternalLink> and{' '}
-        <ExternalLink url='https://cov-lineages.org/global_report.html'>PANGO lineages</ExternalLink> , you
-        can find detailed information about variants that are currently of particular interest. Different to
-        these websites, CoV-Spectrum does not only show pre-defined variants but provides tools to discover
-        and analyze new variants.
+        <ExternalLink url='https://cov-lineages.org/global_report.html'>Cov-Lineages</ExternalLink> , you can
+        find detailed information about variants that are currently of particular interest. Different to these
+        websites, CoV-Spectrum does not only show pre-defined variants but provides tools to discover and
+        analyze new variants.
       </Question>
       <Question title='Which data do you use?' id='faq-data-sources'>
         We use genomic data from GISAID and unreleased/not yet released sequences from the Swiss SARS-CoV-2
@@ -78,8 +81,8 @@ export const AboutPage = () => {
           <b>the search is case-insensitive</b>.
         </p>
         <p>
-          <b>Pango lineages:</b> You can search for a single pango lineage (e.g., B.1.617) or include the
-          sub-lineages by adding a "*" at the end (e.g., B.1.617*). The search is aware of pango lineage
+          <b>Pango lineages:</b> You can search for a single Pango lineage (e.g., B.1.617) or include the
+          sub-lineages by adding a "*" at the end (e.g., B.1.617*). The search is aware of Pango lineage
           aliases (i.e., B.1.617* includes B.1.617, B.1.617.1, B.1.617.2, but also AY.1, AY.2, ...). It is
           possible to enter the "full name" instead of an alias (e.g., B.1.617.2.1 instead of AY.1).
         </p>
@@ -136,7 +139,7 @@ export const AboutPage = () => {
           <ul className='list-disc'>
             <li>&lt;reference base&gt; - this is optional and will be ignored</li>
             <li>
-              &lt;position&gt; - an integer specifying the position on the necleotide sequence of the
+              &lt;position&gt; - an integer specifying the position on the nucleotide sequence of the
               respective gene, it starts with 1.
             </li>
             <li>
@@ -195,10 +198,10 @@ export const AboutPage = () => {
           />
         </p>
         <p>
-          The known variants are variants defined by the pangolin lineages. With the search (1), it is
-          possible to search for a pangolin lineage. To include the sub-lineages of a pangolin lineage, write
-          a "*" at the end. For example, "B.1.*" and "B.1*" will use all samples that were classified as "B.1"
-          or as a pangolin lineage that starts with "B.1.".
+          The known variants are variants defined by the Pango lineages. With the search (1), it is possible
+          to search for a Pango lineage. To include the sub-lineages of a Pango lineage, write a "*" at the
+          end. For example, "B.1.*" and "B.1*" will use all samples that were classified as "B.1" or as a
+          Pango lineage that starts with "B.1.".
         </p>
         <p>
           In (2), we show a preview of 12 known variants for the past three months with sequencing data.

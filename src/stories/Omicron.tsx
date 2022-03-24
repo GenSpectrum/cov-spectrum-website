@@ -96,6 +96,10 @@ const Omicron = () => {
     });
   }, []);
 
+  useEffect(() => {
+    document.title = `Tracking Omicron - Stories - covSPECTRUM`;
+  });
+
   return (
     <div className='mx-auto max-w-5xl px-4 py-2'>
       <h1>Tracking Omicron (B.1.1.529)</h1>

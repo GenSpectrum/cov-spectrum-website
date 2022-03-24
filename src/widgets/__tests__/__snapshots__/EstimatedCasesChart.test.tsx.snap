@@ -14,20 +14,20 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
        
       on 
       <b>
-        2021-12-30
+        2021-12-29
       </b>
     </h3>
     <div
       className="sc-gsTCUz eZVlMF"
     >
       <div
-        className="sc-dlfnbm bcBhUh"
+        className="sc-dlfnbm dfaRDa"
       />
       <div
-        className="pl-2 pt-1 flex flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
+        className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
       >
         <div
-          className="flex flex-col justify-end w-full pr-1 mb-2 overflow-hidden h-full md:w-40"
+          className="flex flex-col justify-end pr-1 mb-2 overflow-hidden h-full w-auto"
           id="metric-with-tooltip"
         >
           <div
@@ -38,7 +38,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
               className="flex w-full"
             >
               <div
-                className="w-auto grow-0 text-3xl md:text-5xl"
+                className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
                 style={
                   Object {
                     "color": "#1F407A",
@@ -177,7 +177,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
           </div>
         </div>
         <div
-          className="flex flex-col justify-end w-full pr-1 mb-2 overflow-hidden h-full md:w-40"
+          className="flex flex-col justify-end pr-1 mb-2 overflow-hidden h-full w-auto"
           id="metric-with-tooltip"
         >
           <div
@@ -188,7 +188,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
               className="flex w-full"
             >
               <div
-                className="w-auto grow-0 text-3xl md:text-5xl"
+                className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
                 style={
                   Object {
                     "color": "#7f8c8d",

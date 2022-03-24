@@ -10,12 +10,16 @@ import { NamedCard } from '../../components/NamedCard';
 import { useQuery } from '../../helpers/query-hook';
 import { UnifiedDay } from '../../helpers/date-cache';
 import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
+import { CaseCountDataset } from '../../data/CaseCountDataset';
+import { prepareData } from '../../widgets/EstimatedCasesChart';
+import { calculatePlotData } from '../../widgets/EstimatedCasesChartInner';
 
 type ResultsProps = {
   request: Chen2021FitnessRequest;
   t0: UnifiedDay;
   variantDateCounts: DateCountSampleDataset;
   wholeDateCounts: DateCountSampleDataset;
+  caseCounts: CaseCountDataset;
   changePoints: ChangePoint[];
 };
 
@@ -33,6 +37,7 @@ export const Chen2021FitnessResults = ({
   t0,
   variantDateCounts,
   wholeDateCounts,
+  caseCounts,
   changePoints,
 }: ResultsProps) => {
   const { data: mainData, isLoading: mainIsLoading } = useQuery(signal => getData(request, t0, signal), [
@@ -68,12 +73,24 @@ export const Chen2021FitnessResults = ({
     [changePoints, request, t0]
   );
 
+  // Calculate the number of (estimated) cases from sequence data
+  const estimatedCasesData = prepareData(variantDateCounts, wholeDateCounts, {
+    ...caseCounts,
+    status: 'fulfilled',
+  });
+  const estimatedCasesPlotData =
+    estimatedCasesData && calculatePlotData(new Array(...estimatedCasesData.values()));
+
   if (mainIsLoading || changePointsIsLoading) {
     return <Loader />;
   }
 
   if (!mainData || !changePointsData) {
     return <>A relative growth advantage cannot be estimated for this variant.</>;
+  }
+
+  if (!estimatedCasesPlotData) {
+    return <Loader />;
   }
 
   return (
@@ -110,12 +127,13 @@ export const Chen2021FitnessResults = ({
         </GridCell>
         <GridCell minWidth={600}>
           <NamedCard title='Absolute'>
-            <div style={{ height: 500 }}>
+            <div style={{ height: 600 }}>
               <Chen2021AbsolutePlot
                 modelData={mainData}
                 request={request}
                 t0={t0}
                 changePoints={changePointsData}
+                estimatedCasesPlotData={estimatedCasesPlotData.plotData}
               />
             </div>
           </NamedCard>

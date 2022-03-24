@@ -6,6 +6,7 @@ import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { fillAndFilterFromWeeklyMap } from '../helpers/fill-missing';
 import DownloadWrapper from './DownloadWrapper';
 import { VariantTimeDistributionChartProps } from './VariantTimeDistributionChartWidget';
+import { maxYAxis } from '../helpers/max-y-axis';
 import { ButtonToolbar } from 'react-bootstrap';
 import { Button, ButtonVariant } from '../helpers/ui';
 
@@ -171,7 +172,7 @@ export const VariantTimeDistributionBarChart = React.memo(
                 allowDecimals={true}
                 hide={false}
                 width={50}
-                domain={[0, (dataMax: number) => Math.ceil(dataMax)]}
+                domain={[0, (dataMax: number) => maxYAxis(dataMax, Math.ceil(dataMax))]}
               />
               <CartesianGrid vertical={false} />
               {bars}

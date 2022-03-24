@@ -7,6 +7,7 @@ import { getTicks } from '../helpers/ticks';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import dayjs from 'dayjs';
 import DownloadWrapper from './DownloadWrapper';
+import { maxYAxis } from '../helpers/max-y-axis';
 import { Container, Col, Row, ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 
@@ -209,7 +210,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     allowDecimals={true}
                     hide={false}
                     width={50}
-                    domain={[0, yMax]}
+                    domain={[0, maxYAxis(yMax)]}
                     allowDataOverflow={true}
                     scale='linear'
                   />

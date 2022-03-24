@@ -181,7 +181,7 @@ const Header = () => {
 
   const buttonToAlternativeSequenceDataSource = alternativeSequenceDataSourceUrl ? (
     <ExternalLink
-      url={alternativeSequenceDataSourceUrl}
+      url={`${alternativeSequenceDataSourceUrl}${window.location.pathname}${window.location.search}`}
       label={sequenceDataSource === 'open' ? 'Use GISAID data' : 'Use open data'}
       newWindow={false}
     >

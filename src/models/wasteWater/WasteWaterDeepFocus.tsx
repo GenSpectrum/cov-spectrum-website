@@ -20,9 +20,8 @@ export const WASTE_WATER_AVAILABLE_LINEAGES = [
   'P.1',
   'B.1.617.2',
   'B.1.617.1',
-  'B.1.617.3',
-  'C.36.3',
-  'B.1.1.529',
+  'BA.1',
+  'BA.2',
 ];
 
 export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
@@ -58,7 +57,7 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
                 country={country}
                 location={location}
                 title='Estimated proportion'
-                height={500}
+                height={600}
               />
             </GridCell>
             {entry[0].data.mutationOccurrences && (
@@ -69,7 +68,7 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
                   country={country}
                   location={location}
                   title='Occurrences of individual mutations'
-                  height={500}
+                  height={600}
                 />
               </GridCell>
             )}
