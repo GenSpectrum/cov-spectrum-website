@@ -14,6 +14,7 @@ import { VariantSearch } from '../components/VariantSearch';
 import { FocusCompareEqualsPage } from './FocusCompareEqualsPage';
 import { FocusCompareToBaselinePage } from './FocusCompareToBaselinePage';
 import { getLocation } from '../helpers/get-location';
+import { formatVariantDisplayName } from '../data/VariantSelector';
 
 type Props = {
   isSmallScreen: boolean;
@@ -46,8 +47,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
 
   useEffect(() => {
     // Include the variant name and location of interest in the page title
-    let variantObj = typeof exploreUrl.variants == 'object' ? exploreUrl.variants[0] : {};
-    let variant = 'pangoLineage' in variantObj ? variantObj['pangoLineage'] : 'Variant';
+    let variant = exploreUrl.variant ? formatVariantDisplayName(exploreUrl.variant) : '';
     let place: string = getLocation(exploreUrl);
     document.title = `${variant} - ${place} - covSPECTRUM`;
   });

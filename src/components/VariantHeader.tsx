@@ -43,14 +43,8 @@ export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
       <div className='flex'>
         <div className='flex-grow flex flex-row flex-wrap items-end'>
           <h1 className='md:mr-2'>
-            {!variant.variantQuery ? (
-              <>
-                {formatVariantDisplayName(variant)}
-                {label && ` (${label})`}
-              </>
-            ) : (
-              <>{variant.variantQuery}</>
-            )}
+            {formatVariantDisplayName(variant)}
+            {label && ` (${label})`}
             {!!titleSuffix && ' - '}
             {titleSuffix}
           </h1>
