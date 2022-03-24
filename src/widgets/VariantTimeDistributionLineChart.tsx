@@ -31,7 +31,6 @@ export const VariantTimeDistributionLineChart = React.memo(
       }
       data.get(date)!.variantCount += count;
     }
-
     return <VariantTimeDistributionLineChartInner data={new Array(...data.values())} />;
   }
 );
