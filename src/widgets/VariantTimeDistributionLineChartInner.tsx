@@ -141,7 +141,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
     }
 
     const titleDetails = () => {
-      let intro = absoluteNumbers ? 'Number of samples' : 'Proportion of all samples';
+      let intro = absoluteNumbers ? 'Average number of samples' : 'Proportion of all samples';
       if (active !== undefined) {
         return (
           <>
