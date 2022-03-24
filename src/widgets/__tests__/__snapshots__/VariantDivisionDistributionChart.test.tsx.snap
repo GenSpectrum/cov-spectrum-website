@@ -13,6 +13,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
       id="chart-title-Average proportion during selected timeframe"
     >
       Average proportion during selected timeframe
+      <div />
     </h3>
     <div
       className="flex flex-col lg:flex-row "

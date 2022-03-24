@@ -13,6 +13,35 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
       id="chart-title-Proportion of all samples sequenced on week 52, 2021 "
     >
       Proportion of all samples sequenced on week 52, 2021 
+      <div>
+        <div
+          className="mb-1 btn-toolbar"
+          role="toolbar"
+        >
+          <div
+            className="mt-1 ml-2"
+          >
+            <button
+              className="undefined bg-active-secondary hover:bg-active focus:ring-blue-500 focus:ring-offset-blue-200 px-2 text-white w-full transition ease-in duration-100 scale-110 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg "
+              onClick={[Function]}
+            >
+               
+              Proportion
+            </button>
+          </div>
+          <div
+            className="mt-1 ml-2"
+          >
+            <button
+              className="undefined bg-gray-400 hover:bg-gray-500 focus:ring-gray-500 focus:ring-offset-gray-200 px-2 text-white w-full transition ease-in duration-100 scale-110 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg "
+              onClick={[Function]}
+            >
+               
+              Absolute
+            </button>
+          </div>
+        </div>
+      </div>
     </h3>
     <div
       className="flex flex-col lg:flex-row h-full"

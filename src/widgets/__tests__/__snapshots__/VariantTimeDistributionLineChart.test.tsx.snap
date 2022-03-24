@@ -10,17 +10,56 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
     <h3
       className="my-0 pb-4 pr-10 pt-0 text-gray-500"
     >
-      Proportion of all samples
-       
-      from 
-      <b>
-        2021-12-26
-      </b>
-       to
-       
-      <b>
-        2022-01-01
-      </b>
+      <div>
+        Proportion of all samples
+         from 
+        <b>
+          2021-12-26
+        </b>
+         to
+         
+        <b>
+          2022-01-01
+        </b>
+      </div>
+      <div
+        className="mb-1 btn-toolbar"
+        role="toolbar"
+        style={
+          Object {
+            "display": "inline-block",
+            "whiteSpace": "nowrap",
+          }
+        }
+      >
+        <div
+          className="btn-group"
+          role="group"
+        >
+          <div
+            className="mt-1 ml-2"
+          >
+            <button
+              className="undefined bg-active-secondary hover:bg-active focus:ring-blue-500 focus:ring-offset-blue-200 px-2 text-white w-full transition ease-in duration-100 scale-110 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg "
+              onClick={[Function]}
+            >
+               
+              Proportion
+            </button>
+          </div>
+          <div
+            className="mt-1 ml-2"
+          >
+            <button
+              className="undefined bg-gray-400 hover:bg-gray-500 focus:ring-gray-500 focus:ring-offset-gray-200 px-2 text-white w-full transition ease-in duration-100 scale-110 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg "
+              onClick={[Function]}
+            >
+               
+              Absolute
+            </button>
+          </div>
+        </div>
+      </div>
     </h3>
     <div
       className="sc-dlfnbm kFNgoS"
