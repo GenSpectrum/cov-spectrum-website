@@ -40,7 +40,7 @@ export const VariantTimeDistributionBarChart = React.memo(
         firstDayInWeek: key.firstDay.string,
         yearWeek: key.yearWeekString,
         percent: proportion === undefined ? undefined : 100 * proportion,
-        quantity: count
+        quantity: count,
       }));
     }, [variantSampleSet, wholeSampleSet]);
 
@@ -67,7 +67,12 @@ export const VariantTimeDistributionBarChart = React.memo(
     };
 
     const bars = [
-      <Bar dataKey={absoluteNumbers ? 'quantity' : 'percent'} key={absoluteNumbers ? 'quantity' : 'percent'} stackId='a' isAnimationActive={false}>
+      <Bar
+        dataKey={absoluteNumbers ? 'quantity' : 'percent'}
+        key={absoluteNumbers ? 'quantity' : 'percent'}
+        stackId='a'
+        isAnimationActive={false}
+      >
         {data.map((entry: TimeEntry, index: number) => (
           <Cell
             fill={entry.yearWeek === currentData.yearWeek ? colors.active : colors.inactive}
@@ -97,51 +102,59 @@ export const VariantTimeDistributionBarChart = React.memo(
           },
         ]
       : [];
-    
-    const getMetrics = () => { 
-      if (absoluteNumbers) { 
-        let m = metrics.reverse()
-        m[0].color = colors.active
-        m[1].color = colors.secondary
-        return m
+
+    const getMetrics = () => {
+      if (absoluteNumbers) {
+        let m = metrics.reverse();
+        m[0].color = colors.active;
+        m[1].color = colors.secondary;
+        return m;
       }
-      return metrics
-    }
+      return metrics;
+    };
 
     const onlyDisplayActive = !(currentData === data[data.length - 1]);
 
-    const chartTitle = absoluteNumbers ? 'Number of samples sequenced on week' : 'Proportion of all samples sequenced on week'
+    const chartTitle = absoluteNumbers
+      ? 'Number of samples sequenced on week'
+      : 'Proportion of all samples sequenced on week';
 
     const buttonToolbar = (
       <ButtonToolbar className='mb-1'>
         <Button
-          key="lineChartProportionButton"
+          key='lineChartProportionButton'
           className='mt-1 ml-2'
           variant={absoluteNumbers ? ButtonVariant.SECONDARY : ButtonVariant.PRIMARY}
           onClick={() => {
             setAbsoluteNumbers(false);
-          }}> Proportion
+          }}
+        >
+          {' '}
+          Proportion
         </Button>
         <Button
-          key="lineChartAbsoluteButton"
+          key='lineChartAbsoluteButton'
           className='mt-1 ml-2'
           variant={absoluteNumbers ? ButtonVariant.PRIMARY : ButtonVariant.SECONDARY}
           onClick={() => {
             setAbsoluteNumbers(true);
-          }}> Absolute
+          }}
+        >
+          {' '}
+          Absolute
         </Button>
       </ButtonToolbar>
-    )
+    );
 
     return currentData ? (
       <DownloadWrapper name='VariantTimeDistributionChart' csvData={csvData}>
         <ChartAndMetrics
           metrics={getMetrics()}
-          title={`${chartTitle} ${currentData.yearWeek.split('-')[1]}, ${currentData.yearWeek.split('-')[0] + ' '
-            }`}
+          title={`${chartTitle} ${currentData.yearWeek.split('-')[1]}, ${
+            currentData.yearWeek.split('-')[0] + ' '
+          }`}
           buttons={buttonToolbar}
         >
-          
           <ResponsiveContainer>
             <BarChart
               data={data}
@@ -168,7 +181,7 @@ export const VariantTimeDistributionBarChart = React.memo(
                 interval={1}
                 axisLine={false}
                 tickLine={false}
-                tickFormatter={tick => absoluteNumbers ? tick : `${tick}%`}
+                tickFormatter={tick => (absoluteNumbers ? tick : `${tick}%`)}
                 allowDecimals={true}
                 hide={false}
                 width={50}

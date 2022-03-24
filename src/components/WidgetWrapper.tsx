@@ -73,7 +73,7 @@ export function WidgetWrapper({
     ? {
         activeTabIndex,
         labels: componentLabels,
-        onNewTabSelect: setActiveTabIndex
+        onNewTabSelect: setActiveTabIndex,
       }
     : undefined;
 

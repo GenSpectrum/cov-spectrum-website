@@ -106,14 +106,12 @@ export const VariantTimeDistributionLineChartInner = React.memo(
       );
 
       // To avoid that big confidence intervals render the plot unreadable
-      const yMax = absoluteNumbers ?
-        Math.max(...plotData.map(d => d.proportion))
-        :
-        Math.min(
-          Math.max(...plotData.filter(d => !isNaN(d.proportion)).map(d => d.proportion * 1.5)),
-          Math.max(...plotData.filter(d => !isNaN(d.proportionCI[1])).map(d => d.proportionCI[1]))
-        );
-        
+      const yMax = absoluteNumbers
+        ? Math.max(...plotData.map(d => d.proportion))
+        : Math.min(
+            Math.max(...plotData.filter(d => !isNaN(d.proportion)).map(d => d.proportion * 1.5)),
+            Math.max(...plotData.filter(d => !isNaN(d.proportionCI[1])).map(d => d.proportionCI[1]))
+          );
 
       return { plotData, ticks, yMax };
     }, [data, absoluteNumbers]);
@@ -143,52 +141,56 @@ export const VariantTimeDistributionLineChartInner = React.memo(
     }
 
     const titleDetails = () => {
-      let intro = absoluteNumbers ? 'Number of samples' : 'Proportion of all samples'
+      let intro = absoluteNumbers ? 'Number of samples' : 'Proportion of all samples';
       if (active !== undefined) {
         return (
           <>
-            {intro}
-            {' '}
-            from <b>{formatDate(active!.date.getTime() - 3 * 24 * 60 * 60 * 1000)}</b> to{' '}
+            {intro} from <b>{formatDate(active!.date.getTime() - 3 * 24 * 60 * 60 * 1000)}</b> to{' '}
             <b>{formatDate(active!.date.getTime() + 3 * 24 * 60 * 60 * 1000)}</b>
           </>
-        )
+        );
       }
-    }
+    };
 
     return (
       <DownloadWrapper name='EstimatedCasesPlot' csvData={csvData}>
         <Wrapper>
           <TitleWrapper>
-              <Container fluid>
-                <Row>
-                  <Col style={{ display: 'inline-block', whiteSpace: 'nowrap' }} xs="auto">
-                    {titleDetails()}  
-                  </Col>
-                  <Col style={{textAlign: 'right'}} className="pr-0">
-                    <ButtonToolbar className='mb-1' style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
-                      <ButtonGroup>
-                        <Button
-                          key="lineChartProportionButton"
-                          className='mt-1 ml-2'
-                          variant={absoluteNumbers ? ButtonVariant.SECONDARY : ButtonVariant.PRIMARY}
-                          onClick={() => {
-                            setAbsoluteNumbers(false);
-                          }}> Proportion
-                        </Button>
-                        <Button
-                          key="lineChartAbsoluteButton"
-                          className='mt-1 ml-2'
-                          variant={absoluteNumbers ? ButtonVariant.PRIMARY : ButtonVariant.SECONDARY}
-                          onClick={() => {
-                            setAbsoluteNumbers(true);
-                          }}> Absolute
-                        </Button>
-                      </ButtonGroup>
-                    </ButtonToolbar>
-                  </Col>
-                </Row>
-              </Container>
+            <Container fluid>
+              <Row>
+                <Col style={{ display: 'inline-block', whiteSpace: 'nowrap' }} xs='auto'>
+                  {titleDetails()}
+                </Col>
+                <Col style={{ textAlign: 'right' }} className='pr-0'>
+                  <ButtonToolbar className='mb-1' style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+                    <ButtonGroup>
+                      <Button
+                        key='lineChartProportionButton'
+                        className='mt-1 ml-2'
+                        variant={absoluteNumbers ? ButtonVariant.SECONDARY : ButtonVariant.PRIMARY}
+                        onClick={() => {
+                          setAbsoluteNumbers(false);
+                        }}
+                      >
+                        {' '}
+                        Proportion
+                      </Button>
+                      <Button
+                        key='lineChartAbsoluteButton'
+                        className='mt-1 ml-2'
+                        variant={absoluteNumbers ? ButtonVariant.PRIMARY : ButtonVariant.SECONDARY}
+                        onClick={() => {
+                          setAbsoluteNumbers(true);
+                        }}
+                      >
+                        {' '}
+                        Absolute
+                      </Button>
+                    </ButtonGroup>
+                  </ButtonToolbar>
+                </Col>
+              </Row>
+            </Container>
           </TitleWrapper>
           <ChartAndMetricsWrapper>
             <ChartWrapper>
@@ -206,7 +208,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     ticks={ticks}
                   />
                   <YAxis
-                    tickFormatter={tick => absoluteNumbers ? `${tick}` : `${tick * 100}%`}
+                    tickFormatter={tick => (absoluteNumbers ? `${tick}` : `${tick * 100}%`)}
                     allowDecimals={true}
                     hide={false}
                     width={50}
@@ -246,20 +248,30 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             </ChartWrapper>
             <MetricsWrapper>
               <Metric
-                value={active !== undefined ? absoluteNumbers ? (active.proportion).toFixed(0) : (active.proportion * 100).toFixed(1) + '%' : 'NA'}
+                value={
+                  active !== undefined
+                    ? absoluteNumbers
+                      ? active.proportion.toFixed(0)
+                      : (active.proportion * 100).toFixed(1) + '%'
+                    : 'NA'
+                }
                 title={absoluteNumbers ? 'Samples' : 'Proportion'}
                 color={colors.active}
-                helpText={absoluteNumbers ? 'Number of samples collected (smoothed with a 7-days sliding window)' : 'Proportion relative to all samples collected (smoothed with a 7-days sliding window)'}
+                helpText={
+                  absoluteNumbers
+                    ? 'Number of samples collected (smoothed with a 7-days sliding window)'
+                    : 'Proportion relative to all samples collected (smoothed with a 7-days sliding window)'
+                }
                 percent={false}
               />
-              {!absoluteNumbers ?
+              {!absoluteNumbers ? (
                 <Metric
                   value={
                     active !== undefined
                       ? (active.proportionCI[0] * 100).toFixed(1) +
-                      '-' +
-                      (active.proportionCI[1] * 100).toFixed(1) +
-                      '%'
+                        '-' +
+                        (active.proportionCI[1] * 100).toFixed(1) +
+                        '%'
                       : 'NA'
                   }
                   title='Confidence int.'
@@ -267,9 +279,9 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                   helpText='The 95% confidence interval'
                   percent={false}
                 />
-                :
+              ) : (
                 <></>
-              }
+              )}
             </MetricsWrapper>
           </ChartAndMetricsWrapper>
         </Wrapper>

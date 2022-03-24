@@ -114,7 +114,7 @@ export const ChartAndMetrics = ({
   return (
     <div id={`chart-and-metrics-${title}`} className='flex flex-col h-full w-full'>
       <h3 id={`chart-title-${title}`} className='my-0 pb-4 pr-10 pt-0 text-gray-500'>
-        {title} <span style={{float: 'right'}}>{buttons}</span>
+        {title} <span style={{ float: 'right' }}>{buttons}</span>
       </h3>
       <div className={childrenParentClass}>
         <div className={childrenClass}>{children}</div>

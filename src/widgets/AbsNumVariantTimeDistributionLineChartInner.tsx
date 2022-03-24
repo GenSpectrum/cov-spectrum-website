@@ -103,7 +103,7 @@ export const AbsNumVariantTimeDistributionLineChartInner = React.memo(
       );
 
       // To avoid that big confidence intervals render the plot unreadable
-      const yMax = Math.max(...plotData.map(d => d.proportion))
+      const yMax = Math.max(...plotData.map(d => d.proportion));
 
       return { plotData, ticks, yMax };
     }, [data]);
@@ -201,7 +201,7 @@ export const AbsNumVariantTimeDistributionLineChartInner = React.memo(
             </ChartWrapper>
             <MetricsWrapper>
               <Metric
-                value={active !== undefined ? (active.proportion).toFixed(1) : 'NA'}
+                value={active !== undefined ? active.proportion.toFixed(1) : 'NA'}
                 title='Number'
                 color={colors.active}
                 helpText='Number of samples collected (smoothed with a 7-days sliding window)'
