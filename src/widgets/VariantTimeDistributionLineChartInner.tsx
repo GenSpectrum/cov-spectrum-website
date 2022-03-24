@@ -8,7 +8,7 @@ import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import dayjs from 'dayjs';
 import DownloadWrapper from './DownloadWrapper';
 import { maxYAxis } from '../helpers/max-y-axis';
-import { Container, Col, Row, ButtonToolbar, ButtonGroup } from 'react-bootstrap';
+import { ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 
 export type VariantTimeDistributionLineChartEntry = {
@@ -141,7 +141,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
     }
 
     const titleDetails = () => {
-      let intro = absoluteNumbers ? 'Average number of samples' : 'Proportion of all samples';
+      let intro = absoluteNumbers ? 'Average daily number of samples' : 'Proportion of all samples';
       if (active !== undefined) {
         return (
           <>
@@ -156,41 +156,33 @@ export const VariantTimeDistributionLineChartInner = React.memo(
       <DownloadWrapper name='EstimatedCasesPlot' csvData={csvData}>
         <Wrapper>
           <TitleWrapper>
-            <Container fluid>
-              <Row>
-                <Col style={{ display: 'inline-block', whiteSpace: 'nowrap' }} xs='auto'>
-                  {titleDetails()}
-                </Col>
-                <Col style={{ textAlign: 'right' }} className='pr-0'>
-                  <ButtonToolbar className='mb-1' style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
-                    <ButtonGroup>
-                      <Button
-                        key='lineChartProportionButton'
-                        className='mt-1 ml-2'
-                        variant={absoluteNumbers ? ButtonVariant.SECONDARY : ButtonVariant.PRIMARY}
-                        onClick={() => {
-                          setAbsoluteNumbers(false);
-                        }}
-                      >
-                        {' '}
-                        Proportion
-                      </Button>
-                      <Button
-                        key='lineChartAbsoluteButton'
-                        className='mt-1 ml-2'
-                        variant={absoluteNumbers ? ButtonVariant.PRIMARY : ButtonVariant.SECONDARY}
-                        onClick={() => {
-                          setAbsoluteNumbers(true);
-                        }}
-                      >
-                        {' '}
-                        Absolute
-                      </Button>
-                    </ButtonGroup>
-                  </ButtonToolbar>
-                </Col>
-              </Row>
-            </Container>
+            <div>{titleDetails()}</div>
+            <ButtonToolbar className='mb-1' style={{ display: 'inline-block', whiteSpace: 'nowrap' }}>
+              <ButtonGroup>
+                <Button
+                  key='lineChartProportionButton'
+                  className='mt-1 ml-2'
+                  variant={absoluteNumbers ? ButtonVariant.SECONDARY : ButtonVariant.PRIMARY}
+                  onClick={() => {
+                    setAbsoluteNumbers(false);
+                  }}
+                >
+                  {' '}
+                  Proportion
+                </Button>
+                <Button
+                  key='lineChartAbsoluteButton'
+                  className='mt-1 ml-2'
+                  variant={absoluteNumbers ? ButtonVariant.PRIMARY : ButtonVariant.SECONDARY}
+                  onClick={() => {
+                    setAbsoluteNumbers(true);
+                  }}
+                >
+                  {' '}
+                  Absolute
+                </Button>
+              </ButtonGroup>
+            </ButtonToolbar>
           </TitleWrapper>
           <ChartAndMetricsWrapper>
             <ChartWrapper>

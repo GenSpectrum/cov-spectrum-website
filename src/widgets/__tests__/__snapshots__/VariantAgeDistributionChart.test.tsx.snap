@@ -20,14 +20,7 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
         id="chart-title-Proportion of the variant per age group in the selected time frame (estimate)"
       >
         Proportion of the variant per age group in the selected time frame (estimate)
-         
-        <span
-          style={
-            Object {
-              "float": "right",
-            }
-          }
-        />
+        <div />
       </h3>
       <div
         className="flex flex-col lg:flex-row h-full"

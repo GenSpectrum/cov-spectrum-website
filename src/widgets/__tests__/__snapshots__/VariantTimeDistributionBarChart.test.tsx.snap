@@ -13,14 +13,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
       id="chart-title-Proportion of all samples sequenced on week 52, 2021 "
     >
       Proportion of all samples sequenced on week 52, 2021 
-       
-      <span
-        style={
-          Object {
-            "float": "right",
-          }
-        }
-      >
+      <div>
         <div
           className="mb-1 btn-toolbar"
           role="toolbar"
@@ -48,7 +41,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
             </button>
           </div>
         </div>
-      </span>
+      </div>
     </h3>
     <div
       className="flex flex-col lg:flex-row h-full"
