@@ -116,9 +116,16 @@ export async function fetchMutationProportions(
   sequenceType: SequenceType,
   signal?: AbortSignal
 ): Promise<MutationProportionEntry[]> {
-  const url = await getLinkTo(`${sequenceType}-mutations`, selector, undefined, undefined, undefined, true);
-  const res = await get(url, signal)
-  //const res = await get(`${url}&minProportion=0.00`, signal);
+  const url = await getLinkTo(
+    `${sequenceType}-mutations`,
+    selector,
+    undefined,
+    undefined,
+    undefined,
+    true,
+    '0.01'
+  );
+  const res = await get(url, signal);
   if (!res.ok) {
     throw new Error('Error fetching new samples data');
   }

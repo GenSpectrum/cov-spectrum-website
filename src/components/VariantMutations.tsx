@@ -12,8 +12,8 @@ import { SequenceType } from '../data/SequenceType';
 import { VariantSelector } from '../data/VariantSelector';
 import { PromiseQueue } from '../helpers/PromiseQueue';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
-import FormControl from 'react-bootstrap/FormControl';
-import InputGroup from 'react-bootstrap/InputGroup';
+import Slider from 'rc-slider';
+import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 
 export interface Props {
   selector: LocationDateVariantSelector;
@@ -57,12 +57,7 @@ export const VariantMutations = ({ selector }: Props) => {
   const [commonNucMutationsSort, setCommonNucMutationsSort] = useState<SortOptions>('position');
   const [aaMutationUniqueness, setAAMutationUniqueness] = useState<MutationUniquenessMap>({});
   const [nucMutationUniqueness, setNucMutationUniqueness] = useState<MutationUniquenessMap>({});
-  const [minProportion, setMinProportion] = useState('5');
-
-  const newMinProportion = (minValue: any) => {
-    let minProportion = minValue.target.value
-    setMinProportion(minProportion)
-  }
+  const [minProportion, setMinProportion] = useState<number>(0.05);
 
   const queryStatus = useQuery(
     signal =>
@@ -135,9 +130,8 @@ export const VariantMutations = ({ selector }: Props) => {
           setNucMutationUniqueness(prev => ({
             ...prev,
             [nucElement.mutation]: uniqueness,
-          }))
-        }
-        )
+          }));
+        })
       );
     }
   }, [queryStatus.data, selector]);
@@ -164,26 +158,39 @@ export const VariantMutations = ({ selector }: Props) => {
           Show amino acid and nucleotide mutations together
         </span>
       </div>
-      <div style={{marginBottom: '1rem'}}>
-        Display the mutations that are found in &nbsp;
-        <div className="inline-block">
-          <InputGroup inline-block style={{width: '8rem'}}>
-            <FormControl value={minProportion} onChange={newMinProportion}/>
-            <InputGroup.Text>%</InputGroup.Text>
-          </InputGroup>
-        </div>
-        &nbsp; to &nbsp;
-        <div className="inline-block">
-          <InputGroup inline-block style={{width: '8rem'}}>
-            <FormControl value="100"/>
-            <InputGroup.Text>%</InputGroup.Text>
-          </InputGroup>
-        </div>
-        &nbsp; of the sequences of this variant.
+      <div>
+        The following amino acid mutations are present in at least{' '}
+        <OverlayTrigger
+          trigger='click'
+          overlay={
+            <Tooltip id='mutationMinProportion'>
+              <div>
+                <Slider
+                  value={Math.round(minProportion * 1000)}
+                  min={1}
+                  max={990}
+                  step={1}
+                  onChange={value => setMinProportion(value / 1000)}
+                  style={{ width: '100px' }}
+                />
+              </div>
+            </Tooltip>
+          }
+          rootClose={true}
+          placement='bottom'
+        >
+          <span className='cursor-pointer px-3 rounded bg-gray-100 hover:bg-gray-300 font-bold'>
+            {(minProportion * 100).toFixed(1)}%
+          </span>
+        </OverlayTrigger>{' '}
+        of the sequences of this variant.
       </div>
+
       {showMergedList ? (
         <>
-          {/*<div>The following mutations are present in at least 5% of the sequences of this variant:</div>*/}
+          <div>
+            Please note that we currently do not exclude the unknowns when calculating the proportions.
+          </div>
           <div className='ml-4'>
             {sortOptions.map((opt, index) => (
               <>
@@ -199,41 +206,42 @@ export const VariantMutations = ({ selector }: Props) => {
             ))}
           </div>
           <MutationList className='list-disc'>
-            {sortMergedEntries(data.mergedEntries, commonAAMutationsSort, aaMutationUniqueness).map(
-              ({ aa, nucs }) => (
+            {sortMergedEntries(data.mergedEntries, commonAAMutationsSort, aaMutationUniqueness)
+              .filter(({ aa }) => aa.proportion >= minProportion)
+              .map(({ aa, nucs }) => (
                 <MutationEntry key={aa.mutation}>
                   <MutationName mutation={aa.mutation} /> (<Proportion value={aa.proportion} />,{' '}
                   <Uniqueness value={aaMutationUniqueness[aa.mutation]} />)
                   <ul className='list-circle'>
-                    {sortNucMutations(nucs, 'position', nucMutationUniqueness).map(nuc => (
-                      <MutationEntry key={nuc.mutation}>
-                        {nuc.mutation} (<Proportion value={nuc.proportion} />,{' '}
-                        <Uniqueness value={nucMutationUniqueness[nuc.mutation]} />)
-                      </MutationEntry>
-                    ))}
+                    {sortNucMutations(nucs, 'position', nucMutationUniqueness)
+                      .filter(nuc => nuc.proportion >= minProportion)
+                      .map(nuc => (
+                        <MutationEntry key={nuc.mutation}>
+                          {nuc.mutation} (<Proportion value={nuc.proportion} />,{' '}
+                          <Uniqueness value={nucMutationUniqueness[nuc.mutation]} />)
+                        </MutationEntry>
+                      ))}
                   </ul>
                 </MutationEntry>
-              )
-            )}
+              ))}
           </MutationList>
           <div className='ml-4 mt-4'>Additional nucleotide mutations:</div>
           <MutationList className='list-circle ml-6'>
-            {sortNucMutations(data.additionalNucs, commonAAMutationsSort, nucMutationUniqueness).map(
-              ({ mutation, proportion }) => {
+            {sortNucMutations(data.additionalNucs, commonAAMutationsSort, nucMutationUniqueness)
+              .filter(({ proportion }) => proportion >= minProportion)
+              .map(({ mutation, proportion }) => {
                 return (
                   <MutationEntry key={mutation}>
                     {mutation} (<Proportion value={proportion} />,{' '}
                     <Uniqueness value={nucMutationUniqueness[mutation]} />)
                   </MutationEntry>
                 );
-              }
-            )}
+              })}
           </MutationList>
         </>
       ) : (
         <>
           <div>
-            {/*The following amino acid mutations are present in at least 5% of the sequences of this variant.*/}
             Please note that we currently <b>do not</b> exclude the unknowns when calculating the proportions.
           </div>
           <div className='ml-4'>
@@ -251,16 +259,16 @@ export const VariantMutations = ({ selector }: Props) => {
             ))}
           </div>
           <MutationList className='list-disc'>
-            {sortAAMutations(data.aa, commonAAMutationsSort, aaMutationUniqueness).map(
-              ({ mutation, proportion }) => {
+            {sortAAMutations(data.aa, commonAAMutationsSort, aaMutationUniqueness)
+              .filter(({ proportion }) => proportion >= minProportion)
+              .map(({ mutation, proportion }) => {
                 return (
                   <MutationEntry key={mutation}>
                     <MutationName mutation={mutation} /> (<Proportion value={proportion} />,{' '}
                     <Uniqueness value={aaMutationUniqueness[mutation]} />)
                   </MutationEntry>
                 );
-              }
-            )}
+              })}
           </MutationList>
           <div className='mt-4'>
             {/*The following nucleotide mutations are present in at least 5% of the sequences of this variant*/}
@@ -282,16 +290,16 @@ export const VariantMutations = ({ selector }: Props) => {
             ))}
           </div>
           <MutationList className='list-disc'>
-            {sortNucMutations(data.nuc, commonNucMutationsSort, nucMutationUniqueness).map(
-              ({ mutation, proportion }) => {
+            {sortNucMutations(data.nuc, commonNucMutationsSort, nucMutationUniqueness)
+              .filter(({ proportion }) => proportion >= minProportion)
+              .map(({ mutation, proportion }) => {
                 return (
                   <MutationEntry key={mutation}>
                     {mutation} (<Proportion value={proportion} />,{' '}
                     <Uniqueness value={nucMutationUniqueness[mutation]} />)
                   </MutationEntry>
                 );
-              }
-            )}
+              })}
           </MutationList>
         </>
       )}
