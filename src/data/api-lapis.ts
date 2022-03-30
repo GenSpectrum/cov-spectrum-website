@@ -123,7 +123,7 @@ export async function fetchMutationProportions(
     undefined,
     undefined,
     true,
-    '0.01'
+    '0.001'
   );
   const res = await get(url, signal);
   if (!res.ok) {
