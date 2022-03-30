@@ -54,6 +54,7 @@
     "react-icons": "^4.2.0",
     "react-modern-calendar-datepicker": "^3.1.6",
     "react-modern-calendar-datepicker-fix": "^3.1.8",
+    "react-numeric-input": "^2.2.3",
     "react-plotly.js": "^2.5.1",
     "react-resize-detector": "^6.6.0",
     "react-reverse-portal": "^2.0.1",
@@ -117,6 +118,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.168",
     "@types/react-bootstrap-typeahead": "^5.1.2",
+    "@types/react-numeric-input": "^2.2.4",
     "@types/react-plotly.js": "^2.2.4",
     "@types/react-router-hash-link": "^2.4.2",
     "all-contributors-cli": "^6.20.0",

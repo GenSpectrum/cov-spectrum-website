@@ -12,8 +12,7 @@ import { SequenceType } from '../data/SequenceType';
 import { VariantSelector } from '../data/VariantSelector';
 import { PromiseQueue } from '../helpers/PromiseQueue';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
-import Slider from 'rc-slider';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
+import NumericInput from 'react-numeric-input';
 
 export interface Props {
   selector: LocationDateVariantSelector;
@@ -40,6 +39,7 @@ const sortOptionLabels = {
   proportion: 'proportion',
   uniqueness: 'Jaccard similarity',
 };
+
 type SortOptions = typeof sortOptions[number];
 
 type MutationUniquenessMap = {
@@ -58,6 +58,7 @@ export const VariantMutations = ({ selector }: Props) => {
   const [aaMutationUniqueness, setAAMutationUniqueness] = useState<MutationUniquenessMap>({});
   const [nucMutationUniqueness, setNucMutationUniqueness] = useState<MutationUniquenessMap>({});
   const [minProportion, setMinProportion] = useState<number>(0.05);
+  const [maxProportion, setMaxProportion] = useState<number>(1);
 
   const queryStatus = useQuery(
     signal =>
@@ -126,7 +127,6 @@ export const VariantMutations = ({ selector }: Props) => {
     for (let nucElement of nuc) {
       nucFetchQueue.addTask(() =>
         fetchUniquenessScore(nucElement, selector, variantCount, 'nuc').then(uniqueness => {
-          //console.log('flag 5')
           setNucMutationUniqueness(prev => ({
             ...prev,
             [nucElement.mutation]: uniqueness,
@@ -159,30 +159,27 @@ export const VariantMutations = ({ selector }: Props) => {
         </span>
       </div>
       <div>
-        The following amino acid mutations are present in at least{' '}
-        <OverlayTrigger
-          trigger='click'
-          overlay={
-            <Tooltip id='mutationMinProportion'>
-              <div>
-                <Slider
-                  value={Math.round(minProportion * 1000)}
-                  min={1}
-                  max={990}
-                  step={1}
-                  onChange={value => setMinProportion(value / 1000)}
-                  style={{ width: '100px' }}
-                />
-              </div>
-            </Tooltip>
-          }
-          rootClose={true}
-          placement='bottom'
-        >
-          <span className='cursor-pointer px-3 rounded bg-gray-100 hover:bg-gray-300 font-bold'>
-            {(minProportion * 100).toFixed(1)}%
-          </span>
-        </OverlayTrigger>{' '}
+        The following amino acid mutations are present in between{' '}
+        <NumericInput
+          precision={1}
+          step={0.1}
+          min={0.1}
+          max={99}
+          style={{ input: { width: '85px', textAlign: 'right' } }}
+          format={value => `${value}%`}
+          value={(minProportion * 100).toFixed(1)}
+          onChange={value => setMinProportion(value! / 100)}
+        />{' '}
+        <NumericInput
+          precision={1}
+          step={0.1}
+          min={0.2}
+          max={100}
+          style={{ input: { width: '85px', textAlign: 'right' } }}
+          format={value => `${value}%`}
+          value={(maxProportion * 100).toFixed(1)}
+          onChange={value => setMaxProportion(value! / 100)}
+        />{' '}
         of the sequences of this variant.
       </div>
 
@@ -207,14 +204,14 @@ export const VariantMutations = ({ selector }: Props) => {
           </div>
           <MutationList className='list-disc'>
             {sortMergedEntries(data.mergedEntries, commonAAMutationsSort, aaMutationUniqueness)
-              .filter(({ aa }) => aa.proportion >= minProportion)
+              .filter(({ aa }) => aa.proportion >= minProportion && aa.proportion <= maxProportion)
               .map(({ aa, nucs }) => (
                 <MutationEntry key={aa.mutation}>
                   <MutationName mutation={aa.mutation} /> (<Proportion value={aa.proportion} />,{' '}
                   <Uniqueness value={aaMutationUniqueness[aa.mutation]} />)
                   <ul className='list-circle'>
                     {sortNucMutations(nucs, 'position', nucMutationUniqueness)
-                      .filter(nuc => nuc.proportion >= minProportion)
+                      .filter(nuc => nuc.proportion >= minProportion && nuc.proportion <= maxProportion)
                       .map(nuc => (
                         <MutationEntry key={nuc.mutation}>
                           {nuc.mutation} (<Proportion value={nuc.proportion} />,{' '}
@@ -228,7 +225,7 @@ export const VariantMutations = ({ selector }: Props) => {
           <div className='ml-4 mt-4'>Additional nucleotide mutations:</div>
           <MutationList className='list-circle ml-6'>
             {sortNucMutations(data.additionalNucs, commonAAMutationsSort, nucMutationUniqueness)
-              .filter(({ proportion }) => proportion >= minProportion)
+              .filter(({ proportion }) => proportion >= minProportion && proportion <= maxProportion)
               .map(({ mutation, proportion }) => {
                 return (
                   <MutationEntry key={mutation}>
@@ -260,7 +257,7 @@ export const VariantMutations = ({ selector }: Props) => {
           </div>
           <MutationList className='list-disc'>
             {sortAAMutations(data.aa, commonAAMutationsSort, aaMutationUniqueness)
-              .filter(({ proportion }) => proportion >= minProportion)
+              .filter(({ proportion }) => proportion >= minProportion && proportion <= maxProportion)
               .map(({ mutation, proportion }) => {
                 return (
                   <MutationEntry key={mutation}>
@@ -291,7 +288,7 @@ export const VariantMutations = ({ selector }: Props) => {
           </div>
           <MutationList className='list-disc'>
             {sortNucMutations(data.nuc, commonNucMutationsSort, nucMutationUniqueness)
-              .filter(({ proportion }) => proportion >= minProportion)
+              .filter(({ proportion }) => proportion >= minProportion && proportion <= maxProportion)
               .map(({ mutation, proportion }) => {
                 return (
                   <MutationEntry key={mutation}>
