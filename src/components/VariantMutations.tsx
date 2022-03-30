@@ -268,7 +268,6 @@ export const VariantMutations = ({ selector }: Props) => {
               })}
           </MutationList>
           <div className='mt-4'>
-            {/*The following nucleotide mutations are present in at least 5% of the sequences of this variant*/}
             Leading and tailing deletions are excluded. Please note that we currently <b>do not</b> exclude
             the unknowns when calculating the proportions.
           </div>

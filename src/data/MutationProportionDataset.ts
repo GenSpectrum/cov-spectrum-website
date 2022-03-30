@@ -12,7 +12,6 @@ export class MutationProportionData {
     sequenceType: SequenceType,
     signal?: AbortSignal
   ): Promise<MutationProportionDataset> {
-    //console.log()
     return {
       selector,
       payload: await fetchMutationProportions(selector, sequenceType, signal),
