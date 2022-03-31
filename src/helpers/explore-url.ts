@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import {
   decodeVariantListFromUrl,
-  variantListUrlFromSelectors,
+  addVariantSelectorsToUrlSearchParams,
   VariantSelector,
 } from '../data/VariantSelector';
 import {
@@ -126,19 +126,21 @@ export function useExploreUrl(): ExploreUrl | undefined {
       if (!routeMatches.locationSamplingDate) {
         return;
       }
-      const _analysisMode =
-        analysisMode ?? decodeAnalysisMode(query.get('analysisMode')) ?? defaultAnalysisMode;
       const prefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
+      const newQueryParam = new URLSearchParams(queryString);
+      addVariantSelectorsToUrlSearchParams(variants, newQueryParam);
+      if (analysisMode) {
+        newQueryParam.delete('analysisMode');
+        if (analysisMode !== defaultAnalysisMode) {
+          newQueryParam.set('analysisMode', analysisMode);
+        }
+      }
       const currentPath = locationState.pathname + locationState.search;
       assert(currentPath.startsWith(prefix));
-      const variantsEncoded = variantListUrlFromSelectors(variants);
-      let path = `${prefix}/variants?${variantsEncoded}`;
-      if (_analysisMode !== AnalysisMode.Single) {
-        path += `&analysisMode=${_analysisMode}`;
-      }
+      const path = `${prefix}/variants?${newQueryParam}`;
       history.push(path);
     },
-    [history, locationState.pathname, locationState.search, query, routeMatches.locationSamplingDate]
+    [history, locationState.pathname, locationState.search, queryString, routeMatches.locationSamplingDate]
   );
   const setAnalysisMode = useCallback(
     (analysisMode: AnalysisMode) => {
