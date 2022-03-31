@@ -41,6 +41,9 @@ import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-expl
 import { ErrorBoundaryFallback } from '../components/ErrorBoundaryFallback';
 import * as Sentry from '@sentry/react';
 
+// Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
+const SWISS_SPECIALTIES_ACTIVATED = false;
+
 export const FocusSinglePage = () => {
   const exploreUrl = useExploreUrl();
   const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
@@ -333,7 +336,7 @@ export const FocusSinglePage = () => {
                   height={300}
                   title='Estimated cases'
                   toolbarChildren={
-                    !country || country === 'Switzerland'
+                    !country || (SWISS_SPECIALTIES_ACTIVATED && country === 'Switzerland')
                       ? [createDivisionBreakdownButton('EstimatedCases', setShowEstimatedCasesDivGrid)]
                       : []
                   }
@@ -402,7 +405,7 @@ export const FocusSinglePage = () => {
                   ]}
                 />
               </GridCell>
-              {country === 'Switzerland' && (
+              {SWISS_SPECIALTIES_ACTIVATED && country === 'Switzerland' && (
                 <GridCell minWidth={600}>
                   <HospitalizationDeathChartWidget.ShareableComponent
                     extendedMetrics={false}
