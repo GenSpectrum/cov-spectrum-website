@@ -41,12 +41,6 @@ export function addVariantSelectorToUrlSearchParams(
   }
 }
 
-export function variantUrlFromSelector(selector: VariantSelector): string {
-  const params = new URLSearchParams();
-  addVariantSelectorToUrlSearchParams(selector, params);
-  return params.toString();
-}
-
 export function variantListUrlFromSelectors(selectors: VariantSelector[]): string {
   const params = new URLSearchParams();
   selectors.forEach(function (selector, index) {

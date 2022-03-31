@@ -7,7 +7,7 @@ import { VariantSelector } from '../data/VariantSelector';
 
 export interface Props {
   selector: LocationDateVariantSelector;
-  onVariantSelect: (selection: VariantSelector) => void;
+  onVariantSelect: (selection: VariantSelector[]) => void;
 }
 
 const LineageEntry = styled.li`
@@ -53,7 +53,7 @@ export const VariantLineages = ({ selector, onVariantSelect }: Props) => {
                   {pangoLineage ? (
                     <button
                       className='underline outline-none'
-                      onClick={() => onVariantSelect({ pangoLineage })}
+                      onClick={() => onVariantSelect([{ pangoLineage }])}
                     >
                       {pangoLineage}
                     </button>

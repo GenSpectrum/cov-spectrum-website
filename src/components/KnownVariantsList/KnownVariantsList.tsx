@@ -12,6 +12,7 @@ import { globalDateCache } from '../../helpers/date-cache';
 import assert from 'assert';
 import dayjs from 'dayjs';
 import { useQuery } from '../../helpers/query-hook';
+import { AnalysisMode } from '../../data/AnalysisMode';
 
 const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
 
@@ -159,7 +160,7 @@ const Grid = ({
 };
 
 interface Props {
-  onVariantSelect: (selection: VariantSelector) => void;
+  onVariantSelect: (selection: VariantSelector[], analysisMode?: AnalysisMode) => void;
   variantSelector: VariantSelector | VariantSelector[] | undefined;
   wholeDateCountSampleDataset: DateCountSampleDataset;
   isHorizontal: boolean;
@@ -272,7 +273,7 @@ export const KnownVariantsList = ({
               chartData={chartData}
               recentProportion={recentProportion}
               onClick={() => {
-                onVariantSelect(selector);
+                onVariantSelect([selector], AnalysisMode.Single);
               }}
               selected={variantSelector && isSelected(selector, variantSelector)}
             />

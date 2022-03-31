@@ -5,7 +5,6 @@ import {
   decodeVariantListFromUrl,
   variantListUrlFromSelectors,
   VariantSelector,
-  variantUrlFromSelector,
 } from '../data/VariantSelector';
 import {
   decodeLocationSelectorFromSingleString,
@@ -34,7 +33,6 @@ export interface ExploreUrl {
 
   setLocation: (location: LocationSelector) => void;
   setDateRange: (dateRange: DateRangeSelector) => void;
-  setVariant: (variant: VariantSelector) => void;
   setVariants: (variants: VariantSelector[], analysisMode?: AnalysisMode) => void;
   setAnalysisMode: (analysisMode: AnalysisMode) => void;
   setSamplingStrategy: (samplingStrategy: SamplingStrategy) => void;
@@ -120,19 +118,6 @@ export function useExploreUrl(): ExploreUrl | undefined {
       history.push(
         `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${dateRangeEncoded}${suffix}`
       );
-    },
-    [history, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
-  );
-  const setVariant = useCallback(
-    (variant: VariantSelector) => {
-      if (!routeMatches.locationSamplingDate) {
-        return;
-      }
-      const prefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
-      const currentPath = locationState.pathname + locationState.search;
-      assert(currentPath.startsWith(prefix));
-      const variantEncoded = variantUrlFromSelector(variant);
-      history.push(`${prefix}/variants?${variantEncoded}`);
     },
     [history, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
   );
@@ -258,7 +243,6 @@ export function useExploreUrl(): ExploreUrl | undefined {
     setLocation,
     setSamplingStrategy,
     setDateRange,
-    setVariant,
     setVariants,
     setAnalysisMode,
     getOverviewPageUrl,

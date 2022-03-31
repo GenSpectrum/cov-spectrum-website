@@ -60,7 +60,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
           {wholeDateCountWithoutDateFilter.data ? (
             <div id='explore-selectors'>
               <KnownVariantsList
-                onVariantSelect={exploreUrl.setVariant}
+                onVariantSelect={exploreUrl.setVariants}
                 wholeDateCountSampleDataset={wholeDateCountWithoutDateFilter.data}
                 variantSelector={exploreUrl.variants}
                 isHorizontal={isSmallScreen}

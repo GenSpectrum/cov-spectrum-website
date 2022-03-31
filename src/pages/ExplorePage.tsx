@@ -67,7 +67,7 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
           <h1 className='mt-4'>Known variants</h1>
           <p>Which variant would you like to explore?</p>
           <KnownVariantsList
-            onVariantSelect={exploreUrl.setVariant}
+            onVariantSelect={exploreUrl.setVariants}
             wholeDateCountSampleDataset={wholeDateCountDataset.data}
             variantSelector={undefined}
             isHorizontal={false}
