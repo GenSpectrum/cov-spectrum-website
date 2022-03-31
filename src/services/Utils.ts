@@ -57,4 +57,14 @@ export class Utils {
   static getRandomColorCode(): string {
     return '#' + Math.floor(Math.random() * (16 ** 6 - 1)).toString(16);
   }
+
+  static safeParseInt(s: string | null | undefined): number | undefined {
+    try {
+      if (s) {
+        return Number.parseInt(s);
+      }
+    } catch (_) {
+      return undefined;
+    }
+  }
 }

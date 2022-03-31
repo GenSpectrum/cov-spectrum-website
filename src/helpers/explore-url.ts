@@ -31,6 +31,7 @@ import {
   QcSelector,
   readQcSelectorFromUrlSearchParams,
 } from '../data/QcSelector';
+import { HostService } from '../services/HostService';
 
 export interface ExploreUrl {
   validUrl: true;
@@ -40,7 +41,7 @@ export interface ExploreUrl {
   variants?: VariantSelector[];
   samplingStrategy: SamplingStrategy;
   analysisMode: AnalysisMode;
-  host: HostSelector | undefined;
+  host: HostSelector;
   qc: QcSelector;
 
   setLocation: (location: LocationSelector) => void;
@@ -65,6 +66,8 @@ export const defaultDateRange: DateRangeUrlEncoded = 'Past6M';
 export const defaultSamplingStrategy: SamplingStrategy = SamplingStrategy.AllSamples;
 
 export const defaultAnalysisMode: AnalysisMode = AnalysisMode.Single;
+
+export const defaultHost: HostSelector = [HostService.human];
 
 export function useExploreUrl(): ExploreUrl | undefined {
   const history = useHistory();
@@ -177,7 +180,11 @@ export function useExploreUrl(): ExploreUrl | undefined {
     (host?: HostSelector, qc?: QcSelector) => {
       const newQueryParam = new URLSearchParams(queryString);
       if (host) {
-        addHostSelectorToUrlSearchParams(host, newQueryParam);
+        if (host.length === 1 && host[0] === HostService.human) {
+          addHostSelectorToUrlSearchParams([], newQueryParam);
+        } else {
+          addHostSelectorToUrlSearchParams(host, newQueryParam);
+        }
       }
       if (qc) {
         addQcSelectorToUrlSearchParams(qc, newQueryParam);

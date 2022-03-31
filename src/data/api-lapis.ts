@@ -55,6 +55,15 @@ export function getCurrentLapisDataVersionDate(): Date | undefined {
   return currentLapisDataVersion !== undefined ? dayjs.unix(currentLapisDataVersion).toDate() : undefined;
 }
 
+export async function fetchAllHosts(): Promise<string[]> {
+  const res = await get('/sample/aggregated?fields=host');
+  if (!res.ok) {
+    throw new Error('Error fetching new samples data');
+  }
+  const body = (await res.json()) as LapisResponse<{ host: string; count: number }[]>;
+  return _extractLapisData(body).map(e => e.host);
+}
+
 export async function fetchDateCountSamples(
   selector: LocationDateVariantSelector,
   signal?: AbortSignal

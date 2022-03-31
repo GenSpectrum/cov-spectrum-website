@@ -1,3 +1,5 @@
+import { defaultHost } from '../helpers/explore-url';
+
 export type HostSelector = string[];
 
 export function addHostSelectorToUrlSearchParams(selector: HostSelector, params: URLSearchParams) {
@@ -9,9 +11,9 @@ export function addHostSelectorToUrlSearchParams(selector: HostSelector, params:
   }
 }
 
-export function readHostSelectorFromUrlSearchParams(params: URLSearchParams): HostSelector | undefined {
+export function readHostSelectorFromUrlSearchParams(params: URLSearchParams): HostSelector {
   if (!params.has('host')) {
-    return undefined;
+    return defaultHost;
   }
   return params.get('host')!.split(',');
 }
