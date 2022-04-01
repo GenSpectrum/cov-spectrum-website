@@ -9,6 +9,7 @@ import { HostSelector } from '../data/HostSelector';
 import { HostService } from '../services/HostService';
 import { useQuery } from '../helpers/query-hook';
 import Loader from './Loader';
+import { HUMAN } from '../data/api-lapis';
 
 type Props = {
   onClose: () => void;
@@ -58,13 +59,13 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
             Select all
           </button>
           {' | '}
-          <button className='underline cursor-pointer ml-2' onClick={() => setHost([HostService.human])}>
+          <button className='underline cursor-pointer ml-2' onClick={() => setHost([HUMAN])}>
             Select human
           </button>
           {' | '}
           <button
             className='underline cursor-pointer ml-2'
-            onClick={() => setHost(allHosts.filter(h => h !== HostService.human))}
+            onClick={() => setHost(allHosts.filter(h => h !== HUMAN))}
           >
             Select non-human
           </button>

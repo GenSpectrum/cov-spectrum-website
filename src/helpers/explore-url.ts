@@ -32,7 +32,7 @@ import {
   QcSelector,
   readQcSelectorFromUrlSearchParams,
 } from '../data/QcSelector';
-import { HostService } from '../services/HostService';
+import { HUMAN } from '../data/api-lapis';
 
 export interface ExploreUrl {
   validUrl: true;
@@ -68,7 +68,7 @@ export const defaultSamplingStrategy: SamplingStrategy = SamplingStrategy.AllSam
 
 export const defaultAnalysisMode: AnalysisMode = AnalysisMode.Single;
 
-export const defaultHost: HostSelector = [HostService.human];
+export const defaultHost: HostSelector = [HUMAN];
 
 export function useExploreUrl(): ExploreUrl | undefined {
   const history = useHistory();

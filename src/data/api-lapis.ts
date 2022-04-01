@@ -24,8 +24,11 @@ import { LapisSelector } from './LapisSelector';
 import { addHostSelectorToUrlSearchParams } from './HostSelector';
 import { addQcSelectorToUrlSearchParams } from './QcSelector';
 import { HostCountSampleEntry } from './sample/HostCountSampleEntry';
+import { sequenceDataSource } from '../helpers/sequence-data-source';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
+
+export const HUMAN = sequenceDataSource === 'gisaid' ? 'Human' : 'Homo sapiens';
 
 let currentLapisDataVersion: number | undefined = undefined;
 

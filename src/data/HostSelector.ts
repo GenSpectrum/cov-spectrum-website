@@ -1,5 +1,4 @@
-import { defaultHost } from '../helpers/explore-url';
-import { HostService } from '../services/HostService';
+import { HUMAN } from './api-lapis';
 
 export type HostSelector = string[];
 
@@ -14,11 +13,11 @@ export function addHostSelectorToUrlSearchParams(selector: HostSelector, params:
 
 export function readHostSelectorFromUrlSearchParams(params: URLSearchParams): HostSelector {
   if (!params.has('host')) {
-    return defaultHost;
+    return [HUMAN];
   }
   return params.get('host')!.split(',');
 }
 
 export function isDefaultHostSelector(selector: HostSelector): boolean {
-  return selector.length === 1 && selector[0] === HostService.human;
+  return selector.length === 1 && selector[0] === HUMAN;
 }

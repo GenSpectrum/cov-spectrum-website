@@ -64,8 +64,11 @@ export const App = () => {
         {host && qc && setHostAndQc && (!isDefaultHostSelector(host) || !isDefaultQcSelector(qc)) && (
           <Alert variant={AlertVariant.WARNING}>
             <div className='flex flex-row'>
-              <FaFilter className='w-10 h-10 m-1' />
-              <div className='ml-4'>
+              <FaFilter
+                className='m-1'
+                style={{ width: '30px', minWidth: '30px', height: '30px', minHeight: '30px' }}
+              />
+              <div className='ml-4 flex-grow-1'>
                 <div className='font-weight-bold'>Advanced filters are active</div>
                 {!isDefaultHostSelector(host) && <div>Selected hosts: {host.join(', ')}</div>}
                 {!isDefaultQcSelector(qc) && <div>Sequence quality: {formatQcSelectorAsString(qc)}</div>}

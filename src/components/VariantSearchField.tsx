@@ -8,7 +8,7 @@ import { isValidPangoLineageQuery, VariantSelector } from '../data/VariantSelect
 import { isValidNucMutation } from '../helpers/nuc-mutation';
 import { useQuery } from '../helpers/query-hook';
 import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
-import Form from 'react-bootstrap/esm/Form';
+import Form from 'react-bootstrap/Form';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 
 type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
