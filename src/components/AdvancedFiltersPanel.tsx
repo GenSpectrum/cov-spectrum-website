@@ -94,14 +94,17 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
         <>
           <button className='underline cursor-pointer mr-2' onClick={() => setHost(allHosts)}>
             Select all
-          </button>{' '}
-          |{' '}
+          </button>
+          {' | '}
           <button className='underline cursor-pointer ml-2' onClick={() => setHost([HostService.human])}>
-            Select default
-          </button>{' '}
-          |{' '}
-          <button className='underline cursor-pointer ml-2' onClick={() => setHost([])}>
-            Select none
+            Select human
+          </button>
+          {' | '}
+          <button
+            className='underline cursor-pointer ml-2'
+            onClick={() => setHost(allHosts.filter(h => h !== HostService.human))}
+          >
+            Select non-human
           </button>
           <Select
             isMulti
@@ -128,6 +131,32 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
         Nextclade's documentation
       </ExternalLink>
       .
+      <div>
+        <button className='underline cursor-pointer mr-2' onClick={() => setQc({})}>
+          Select all
+        </button>
+        {' | '}
+        <button
+          className='underline cursor-pointer mr-2'
+          onClick={() => setQc({ nextcladeQcOverallScoreTo: 29 })}
+        >
+          Select good
+        </button>
+        {' | '}
+        <button
+          className='underline cursor-pointer mr-2'
+          onClick={() => setQc({ nextcladeQcOverallScoreTo: 99 })}
+        >
+          Select good and mediocre
+        </button>
+        {' | '}
+        <button
+          className='underline cursor-pointer mr-2'
+          onClick={() => setQc({ nextcladeQcOverallScoreFrom: 100 })}
+        >
+          Select only bad
+        </button>
+      </div>
       {fields.map(({ label, fromField, toField }) => (
         <div className='py-2' key={label}>
           {label}:{' '}
