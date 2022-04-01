@@ -1,4 +1,5 @@
 import { defaultHost } from '../helpers/explore-url';
+import { HostService } from '../services/HostService';
 
 export type HostSelector = string[];
 
@@ -16,4 +17,8 @@ export function readHostSelectorFromUrlSearchParams(params: URLSearchParams): Ho
     return defaultHost;
   }
   return params.get('host')!.split(',');
+}
+
+export function isDefaultHostSelector(selector: HostSelector): boolean {
+  return selector.length === 1 && selector[0] === HostService.human;
 }

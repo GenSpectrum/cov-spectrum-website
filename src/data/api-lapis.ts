@@ -23,6 +23,7 @@ import { HospDiedAgeSampleEntry } from './sample/HospDiedAgeSampleEntry';
 import { LapisSelector } from './LapisSelector';
 import { addHostSelectorToUrlSearchParams } from './HostSelector';
 import { addQcSelectorToUrlSearchParams } from './QcSelector';
+import { HostCountSampleEntry } from './sample/HostCountSampleEntry';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 
@@ -116,6 +117,13 @@ export async function fetchPangoLineageCountSamples(
   signal?: AbortSignal
 ): Promise<PangoCountSampleEntry[]> {
   return _fetchAggSamples(selector, ['pangoLineage'], signal);
+}
+
+export async function fetchHostCountSamples(
+  selector: LapisSelector,
+  signal?: AbortSignal
+): Promise<HostCountSampleEntry[]> {
+  return _fetchAggSamples(selector, ['host'], signal);
 }
 
 export async function fetchMutationProportions(

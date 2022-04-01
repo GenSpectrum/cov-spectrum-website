@@ -24,6 +24,7 @@ import { AnalysisMode, decodeAnalysisMode } from '../data/AnalysisMode';
 import {
   addHostSelectorToUrlSearchParams,
   HostSelector,
+  isDefaultHostSelector,
   readHostSelectorFromUrlSearchParams,
 } from '../data/HostSelector';
 import {
@@ -180,7 +181,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     (host?: HostSelector, qc?: QcSelector) => {
       const newQueryParam = new URLSearchParams(queryString);
       if (host) {
-        if (host.length === 1 && host[0] === HostService.human) {
+        if (isDefaultHostSelector(host)) {
           addHostSelectorToUrlSearchParams([], newQueryParam);
         } else {
           addHostSelectorToUrlSearchParams(host, newQueryParam);
