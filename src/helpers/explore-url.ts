@@ -177,7 +177,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     },
     [history, locationState.pathname, locationState.search, queryString, routeMatches.locationSamplingDate]
   );
-  const setQcAndHost = useCallback(
+  const setHostAndQc = useCallback(
     (host?: HostSelector, qc?: QcSelector) => {
       const newQueryParam = new URLSearchParams(queryString);
       if (host) {
@@ -295,7 +295,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     setDateRange,
     setVariants,
     setAnalysisMode,
-    setHostAndQc: setQcAndHost,
+    setHostAndQc,
     getOverviewPageUrl,
     getExplorePageUrl,
     getDeepExplorePageUrl,

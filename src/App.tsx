@@ -12,7 +12,7 @@ import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLoca
 import { baseLocation } from './index';
 import StoriesOverview from './stories/StoriesOverview';
 import StoryRouter from './stories/StoryRouter';
-import { defaultDateRange, defaultSamplingStrategy } from './helpers/explore-url';
+import { defaultDateRange, defaultHost, defaultSamplingStrategy, useExploreUrl } from './helpers/explore-url';
 import dayjs from 'dayjs';
 import { getCurrentLapisDataVersionDate } from './data/api-lapis';
 import { sequenceDataSource } from './helpers/sequence-data-source';
@@ -25,6 +25,9 @@ import { DeepHospitalizationDeathPage } from './pages/DeepHospitalizationDeathPa
 import { DeepWastewaterPage } from './pages/DeepWastewaterPage';
 import { DeepSequencingCoveragePage } from './pages/DeepSequencingCoveragePage';
 import { FocusPage } from './pages/FocusPage';
+import { formatQcSelectorAsString, isDefaultQcSelector } from './data/QcSelector';
+import { isDefaultHostSelector } from './data/HostSelector';
+import { FaFilter } from 'react-icons/fa';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -39,12 +42,16 @@ export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
+  const { host, qc, setHostAndQc } = useExploreUrl() ?? {};
+
   return (
     <div className='w-full'>
+      {/* Header */}
       <div className='h-32 md:h-20'>
         <Header />
       </div>
       <div ref={ref} className='w-full'>
+        {/* Preview warning */}
         {isPreview && (
           <Alert variant={AlertVariant.WARNING}>
             <div className='text-center font-bold'>
@@ -53,6 +60,25 @@ export const App = () => {
             </div>
           </Alert>
         )}
+        {/* Warning - if advanced filters are active */}
+        {host && qc && setHostAndQc && (!isDefaultHostSelector(host) || !isDefaultQcSelector(qc)) && (
+          <Alert variant={AlertVariant.WARNING}>
+            <div className='flex flex-row'>
+              <FaFilter className='w-10 h-10 m-1' />
+              <div className='ml-4'>
+                <div className='font-weight-bold'>Advanced filters are active</div>
+                {!isDefaultHostSelector(host) && <div>Selected hosts: {host.join(', ')}</div>}
+                {!isDefaultQcSelector(qc) && <div>Sequence quality: {formatQcSelectorAsString(qc)}</div>}
+                <div className='mt-4'>
+                  <button className='underline cursor-pointer' onClick={() => setHostAndQc(defaultHost, {})}>
+                    Remove filters
+                  </button>
+                </div>
+              </div>
+            </div>
+          </Alert>
+        )}
+        {/*Main content*/}
         <Switch>
           <Route exact path='/'>
             <Redirect to={`/explore/${baseLocation}/${defaultSamplingStrategy}/${defaultDateRange}`} />

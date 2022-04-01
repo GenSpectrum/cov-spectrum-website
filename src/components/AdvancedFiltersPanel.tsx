@@ -1,6 +1,6 @@
 import { ExternalLink } from './ExternalLink';
 import { useCallback, useState } from 'react';
-import { QcSelector } from '../data/QcSelector';
+import { qcFieldsAndLabels, QcSelector } from '../data/QcSelector';
 import { Utils } from '../services/Utils';
 import { Button, ButtonVariant } from '../helpers/ui';
 import { useExploreUrl } from '../helpers/explore-url';
@@ -13,44 +13,6 @@ import Loader from './Loader';
 type Props = {
   onClose: () => void;
 };
-
-const fields = [
-  {
-    label: 'Overall score',
-    fromField: 'nextcladeQcOverallScoreFrom' as const,
-    toField: 'nextcladeQcOverallScoreTo' as const,
-  },
-  {
-    label: 'Missing data score',
-    fromField: 'nextcladeQcMissingDataScoreFrom' as const,
-    toField: 'nextcladeQcMissingDataScoreTo' as const,
-  },
-  {
-    label: 'Mixed sites score',
-    fromField: 'nextcladeQcMixedSitesScoreFrom' as const,
-    toField: 'nextcladeQcMixedSitesScoreTo' as const,
-  },
-  {
-    label: 'Private mutations score',
-    fromField: 'nextcladeQcPrivateMutationsScoreFrom' as const,
-    toField: 'nextcladeQcPrivateMutationsScoreTo' as const,
-  },
-  {
-    label: 'SNP clusters score',
-    fromField: 'nextcladeQcSnpClustersScoreFrom' as const,
-    toField: 'nextcladeQcSnpClustersScoreTo' as const,
-  },
-  {
-    label: 'Frame shifts score',
-    fromField: 'nextcladeQcFrameShiftsScoreFrom' as const,
-    toField: 'nextcladeQcFrameShiftsScoreTo' as const,
-  },
-  {
-    label: 'Stop codons score',
-    fromField: 'nextcladeQcStopCodonsScoreFrom' as const,
-    toField: 'nextcladeQcStopCodonsScoreTo' as const,
-  },
-];
 
 const toSelectOption = (s: string) => ({ label: s, value: s });
 
@@ -157,7 +119,7 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
           Select only bad
         </button>
       </div>
-      {fields.map(({ label, fromField, toField }) => (
+      {qcFieldsAndLabels.map(({ label, fromField, toField }) => (
         <div className='py-2' key={label}>
           {label}:{' '}
           <input
