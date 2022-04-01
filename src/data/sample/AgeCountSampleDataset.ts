@@ -2,14 +2,12 @@ import { Dataset } from '../Dataset';
 import { LocationDateVariantSelector } from '../LocationDateVariantSelector';
 import { AgeCountSampleEntry } from './AgeCountSampleEntry';
 import { fetchAgeCountSamples } from '../api-lapis';
+import { LapisSelector } from '../LapisSelector';
 
 export type AgeCountSampleDataset = Dataset<LocationDateVariantSelector, AgeCountSampleEntry[]>;
 
 export class AgeCountSampleData {
-  static async fromApi(
-    selector: LocationDateVariantSelector,
-    signal?: AbortSignal
-  ): Promise<AgeCountSampleDataset> {
+  static async fromApi(selector: LapisSelector, signal?: AbortSignal): Promise<AgeCountSampleDataset> {
     return {
       selector,
       payload: await fetchAgeCountSamples(selector, signal),

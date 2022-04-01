@@ -11,6 +11,7 @@ import {
   VariantDivisionDistributionChartProps,
 } from './VariantDivisionDistributionChart';
 import { DivisionCountSampleData } from '../data/sample/DivisionCountSampleDataset';
+import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 
 export const VariantDivisionDistributionChartWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -24,8 +25,8 @@ export const VariantDivisionDistributionChartWidget = new Widget(
         variant: undefined,
       };
       return {
-        variantSampleSet: await DivisionCountSampleData.fromApi(variantSelector, signal),
-        wholeSampleSet: await DivisionCountSampleData.fromApi(wholeSelector, signal),
+        variantSampleSet: await DivisionCountSampleData.fromApi(addDefaultHostAndQc(variantSelector), signal),
+        wholeSampleSet: await DivisionCountSampleData.fromApi(addDefaultHostAndQc(wholeSelector), signal),
       };
     }
   ),

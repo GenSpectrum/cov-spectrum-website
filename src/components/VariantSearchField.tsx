@@ -76,7 +76,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const pangoLineages = useQuery(
     signal =>
       PangoCountSampleData.fromApi(
-        { location: {}, samplingStrategy: SamplingStrategy.AllSamples },
+        { location: {}, samplingStrategy: SamplingStrategy.AllSamples, host: undefined, qc: {} },
         signal
       ).then(dataset => dataset.payload.filter(e => e.pangoLineage).map(e => e.pangoLineage!)),
     []

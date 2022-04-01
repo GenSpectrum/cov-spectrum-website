@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { LoaderSmall } from './Loader';
-import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
 import { VariantSelector } from '../data/VariantSelector';
+import { LapisSelector } from '../data/LapisSelector';
 
 export interface Props {
-  selector: LocationDateVariantSelector;
+  selector: LapisSelector;
   onVariantSelect: (selection: VariantSelector[]) => void;
 }
 

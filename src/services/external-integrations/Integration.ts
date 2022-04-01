@@ -1,10 +1,11 @@
 import { LocationDateVariantSelector } from '../../data/LocationDateVariantSelector';
 import { variantIsOnlyDefinedBy } from '../../data/VariantSelector';
+import { LapisSelector } from '../../data/LapisSelector';
 
 export interface Integration {
   name: string;
-  isAvailable(selector: LocationDateVariantSelector): boolean;
-  open(selector: LocationDateVariantSelector): void;
+  isAvailable(selector: LapisSelector): boolean;
+  open(selector: LapisSelector): void;
 }
 
 /**

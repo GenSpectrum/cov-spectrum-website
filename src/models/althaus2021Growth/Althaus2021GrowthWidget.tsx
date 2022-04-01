@@ -7,6 +7,7 @@ import {
   LocationDateVariantSelectorEncodedSchema,
 } from '../../data/LocationDateVariantSelector';
 import { DateCountSampleData } from '../../data/sample/DateCountSampleDataset';
+import { addDefaultHostAndQc } from '../../data/HostAndQcSelector';
 
 export const Althaus2021GrowthWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -19,8 +20,8 @@ export const Althaus2021GrowthWidget = new Widget(
         variant: undefined,
       };
       return {
-        variantDateCounts: await DateCountSampleData.fromApi(variantSelector, signal),
-        wholeDateCounts: await DateCountSampleData.fromApi(wholeSelector, signal),
+        variantDateCounts: await DateCountSampleData.fromApi(addDefaultHostAndQc(variantSelector), signal),
+        wholeDateCounts: await DateCountSampleData.fromApi(addDefaultHostAndQc(wholeSelector), signal),
       };
     }
   ),

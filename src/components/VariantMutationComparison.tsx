@@ -1,4 +1,3 @@
-import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { useQuery } from '../helpers/query-hook';
 import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
@@ -11,9 +10,10 @@ import ReactTooltip from 'react-tooltip';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import { sortAAMutationList } from '../helpers/aa-mutation';
+import { LapisSelector } from '../data/LapisSelector';
 
 export interface Props {
-  selectors: LocationDateVariantSelector[];
+  selectors: LapisSelector[];
 }
 
 export const VariantMutationComparison = ({ selectors }: Props) => {

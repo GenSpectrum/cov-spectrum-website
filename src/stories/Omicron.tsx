@@ -9,6 +9,7 @@ import { VariantInternationalComparisonMap } from '../widgets/VariantInternation
 import { ExternalLink } from '../components/ExternalLink';
 import { VariantInternationalComparisonChart } from '../widgets/VariantInternationalComparisonChart';
 import { SamplingStrategy } from '../data/SamplingStrategy';
+import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 
 const UpdateBox = ({
   title,
@@ -71,27 +72,31 @@ const Omicron = () => {
   const FROM_DATE = '2021-10-24';
 
   useEffect(() => {
-    CountryDateCountSampleData.fromApi({
-      location: {},
-      variant: {
-        pangoLineage: 'B.1.1.529*',
-      },
-      dateRange: new FixedDateRangeSelector({
-        dateFrom: globalDateCache.getDay(FROM_DATE),
-        dateTo: globalDateCache.today(),
-      }),
-      samplingStrategy: SamplingStrategy.AllSamples,
-    }).then(r => {
+    CountryDateCountSampleData.fromApi(
+      addDefaultHostAndQc({
+        location: {},
+        variant: {
+          pangoLineage: 'B.1.1.529*',
+        },
+        dateRange: new FixedDateRangeSelector({
+          dateFrom: globalDateCache.getDay(FROM_DATE),
+          dateTo: globalDateCache.today(),
+        }),
+        samplingStrategy: SamplingStrategy.AllSamples,
+      })
+    ).then(r => {
       setVariantSampleSet(r);
     });
-    CountryDateCountSampleData.fromApi({
-      location: {},
-      dateRange: new FixedDateRangeSelector({
-        dateFrom: globalDateCache.getDay(FROM_DATE),
-        dateTo: globalDateCache.today(),
-      }),
-      samplingStrategy: SamplingStrategy.AllSamples,
-    }).then(r => {
+    CountryDateCountSampleData.fromApi(
+      addDefaultHostAndQc({
+        location: {},
+        dateRange: new FixedDateRangeSelector({
+          dateFrom: globalDateCache.getDay(FROM_DATE),
+          dateTo: globalDateCache.today(),
+        }),
+        samplingStrategy: SamplingStrategy.AllSamples,
+      })
+    ).then(r => {
       setWholeSampleSet(r);
     });
   }, []);

@@ -276,16 +276,7 @@ export const FocusSinglePage = () => {
       <VariantHeader
         dateRange={exploreUrl.dateRange}
         variant={exploreUrl.variant}
-        controls={
-          <FocusVariantHeaderControls
-            selector={{
-              location: exploreUrl.location,
-              dateRange: exploreUrl.dateRange,
-              variant: exploreUrl.variant,
-              samplingStrategy: exploreUrl.samplingStrategy,
-            }}
-          />
-        }
+        controls={<FocusVariantHeaderControls selector={ldvsSelector} />}
       />
       {variantDateCount.data &&
       wholeDateCountWithDateFilter.data &&
@@ -305,10 +296,7 @@ export const FocusSinglePage = () => {
             />
             {(!pangoLineage || pangoLineage.endsWith('*')) && (
               <div className='mx-0.5 mt-1 mb-5 md:mx-3 shadow-lg rounded-lg bg-white p-2 pl-4'>
-                <VariantLineages
-                  onVariantSelect={exploreUrl.setVariants}
-                  selector={variantDateCount.data.selector}
-                />{' '}
+                <VariantLineages onVariantSelect={exploreUrl.setVariants} selector={ldvsSelector} />{' '}
               </div>
             )}
             <PackedGrid maxColumns={2}>
@@ -437,7 +425,7 @@ export const FocusSinglePage = () => {
 
             <div className='m-4'>
               <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
-                <VariantMutations selector={variantDateCount.data.selector} />
+                <VariantMutations selector={ldvsSelector} />
               </Sentry.ErrorBoundary>
             </div>
           </div>

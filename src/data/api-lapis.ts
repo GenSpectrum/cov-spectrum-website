@@ -1,4 +1,3 @@
-import { LocationDateVariantSelector } from './LocationDateVariantSelector';
 import { LapisInformation, LapisResponse } from './LapisResponse';
 import { DateCountSampleEntry } from './sample/DateCountSampleEntry';
 import { AgeCountSampleEntry } from './sample/AgeCountSampleEntry';
@@ -17,11 +16,13 @@ import { SequenceType } from './SequenceType';
 import { MutationProportionEntry } from './MutationProportionEntry';
 import dayjs from 'dayjs';
 import { LocationService } from '../services/LocationService';
-import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { OrderAndLimitConfig } from './OrderAndLimitConfig';
 import { addSamplingStrategyToUrlSearchParams } from './SamplingStrategy';
 import { DatelessCountrylessCountSampleEntry } from './sample/DatelessCountrylessCountSampleEntry';
 import { HospDiedAgeSampleEntry } from './sample/HospDiedAgeSampleEntry';
+import { LapisSelector } from './LapisSelector';
+import { addHostSelectorToUrlSearchParams } from './HostSelector';
+import { addQcSelectorToUrlSearchParams } from './QcSelector';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 
@@ -65,63 +66,60 @@ export async function fetchAllHosts(): Promise<string[]> {
 }
 
 export async function fetchDateCountSamples(
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   signal?: AbortSignal
 ): Promise<DateCountSampleEntry[]> {
   return _fetchAggSamples(selector, ['date'], signal);
 }
 
 export async function fetchAgeCountSamples(
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   signal?: AbortSignal
 ): Promise<AgeCountSampleEntry[]> {
   return _fetchAggSamples(selector, ['age'], signal);
 }
 
 export async function fetchDivisionCountSamples(
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   signal?: AbortSignal
 ): Promise<DivisionCountSampleEntry[]> {
   return _fetchAggSamples(selector, ['division'], signal);
 }
 
 export async function fetchCountryDateCountSamples(
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   signal?: AbortSignal
 ): Promise<CountryDateCountSampleEntry[]> {
   return _fetchAggSamples(selector, ['date', 'country'], signal);
 }
 
 export async function fetchDatelessCountrylessCountSamples(
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   signal?: AbortSignal
 ): Promise<DatelessCountrylessCountSampleEntry[]> {
   return _fetchAggSamples(selector, ['division', 'age', 'sex', 'hospitalized', 'died'], signal);
 }
 
 export async function fetchHospDiedAgeSamples(
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   signal?: AbortSignal
 ): Promise<HospDiedAgeSampleEntry[]> {
   return _fetchAggSamples(selector, ['age', 'hospitalized', 'died'], signal);
 }
 
-export async function fetchSamplesCount(
-  selector: LocationDateVariantSelector,
-  signal?: AbortSignal
-): Promise<number> {
+export async function fetchSamplesCount(selector: LapisSelector, signal?: AbortSignal): Promise<number> {
   return _fetchAggSamples(selector, [], signal).then(entries => entries[0].count);
 }
 
 export async function fetchPangoLineageCountSamples(
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   signal?: AbortSignal
 ): Promise<PangoCountSampleEntry[]> {
   return _fetchAggSamples(selector, ['pangoLineage'], signal);
 }
 
 export async function fetchMutationProportions(
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   sequenceType: SequenceType,
   signal?: AbortSignal
 ): Promise<MutationProportionEntry[]> {
@@ -143,30 +141,30 @@ export async function fetchMutationProportions(
 }
 
 export async function getLinkToStrainNames(
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   orderAndLimit?: OrderAndLimitConfig
 ): Promise<string> {
   return getLinkTo('strain-names', selector, orderAndLimit);
 }
 
 export async function getLinkToGisaidEpiIsl(
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   orderAndLimit?: OrderAndLimitConfig
 ): Promise<string> {
   return getLinkTo('gisaid-epi-isl', selector, orderAndLimit);
 }
 
-export async function getCsvLinkToContributors(selector: LocationDateVariantSelector): Promise<string> {
+export async function getCsvLinkToContributors(selector: LapisSelector): Promise<string> {
   return getLinkTo('contributors', selector, undefined, true, 'csv');
 }
 
-export async function getCsvLinkToDetails(selector: LocationDateVariantSelector): Promise<string> {
+export async function getCsvLinkToDetails(selector: LapisSelector): Promise<string> {
   return getLinkTo('details', selector, undefined, true, 'csv');
 }
 
 export async function getLinkToFasta(
   aligned: boolean,
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   orderAndLimit?: OrderAndLimitConfig
 ): Promise<string> {
   return getLinkTo(aligned ? 'fasta-aligned' : 'fasta', selector, orderAndLimit, true);
@@ -174,7 +172,7 @@ export async function getLinkToFasta(
 
 export async function getLinkTo(
   endpoint: string,
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   orderAndLimit?: OrderAndLimitConfig,
   downloadAsFile?: boolean,
   dataFormat?: string,
@@ -182,7 +180,6 @@ export async function getLinkTo(
   minProportion?: string
 ): Promise<string> {
   const params = new URLSearchParams();
-  _addDefaultsToSearchParams(params);
   _addOrderAndLimitToSearchParams(params, orderAndLimit);
   selector = await _mapCountryName(selector);
   addLocationSelectorToUrlSearchParams(selector.location, params);
@@ -195,6 +192,10 @@ export async function getLinkTo(
   if (selector.samplingStrategy) {
     addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
   }
+  if (selector.host) {
+    addHostSelectorToUrlSearchParams(selector.host, params);
+  }
+  addQcSelectorToUrlSearchParams(selector.qc, params);
   if (downloadAsFile) {
     params.set('downloadAsFile', 'true');
   }
@@ -212,26 +213,14 @@ export async function getLinkTo(
 }
 
 export async function _fetchAggSamples(
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   fields: string[],
   signal?: AbortSignal
 ): Promise<FullSampleAggEntry[]> {
-  const params = new URLSearchParams();
-  params.set('fields', fields.join(','));
-  _addDefaultsToSearchParams(params);
-  selector = await _mapCountryName(selector);
-  addLocationSelectorToUrlSearchParams(selector.location, params);
-  if (selector.dateRange) {
-    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
-  }
-  if (selector.variant) {
-    addVariantSelectorToUrlSearchParams(selector.variant, params);
-  }
-  if (selector.samplingStrategy) {
-    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
-  }
-
-  const res = await get(`/sample/aggregated?${params.toString()}`, signal);
+  const linkPrefix = await getLinkTo('aggregated', selector, undefined, undefined, undefined, true);
+  const additionalParams = new URLSearchParams();
+  additionalParams.set('fields', fields.join(','));
+  const res = await get(`${linkPrefix}&${additionalParams}`, signal);
   if (!res.ok) {
     throw new Error('Error fetching new samples data');
   }
@@ -245,10 +234,6 @@ export async function _fetchAggSamples(
     }));
   }
   return parsed;
-}
-
-function _addDefaultsToSearchParams(params: URLSearchParams) {
-  params.set('host', sequenceDataSource === 'gisaid' ? 'Human' : 'Homo sapiens');
 }
 
 function _addOrderAndLimitToSearchParams(params: URLSearchParams, orderAndLimitConfig?: OrderAndLimitConfig) {

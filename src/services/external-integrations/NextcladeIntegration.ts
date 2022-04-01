@@ -1,17 +1,17 @@
 import { Integration } from './Integration';
-import { LocationDateVariantSelector } from '../../data/LocationDateVariantSelector';
 import { sequenceDataSource } from '../../helpers/sequence-data-source';
 import { OrderAndLimitConfig } from '../../data/OrderAndLimitConfig';
 import { getLinkToFasta } from '../../data/api-lapis';
+import { LapisSelector } from '../../data/LapisSelector';
 
 export class NextcladeIntegration implements Integration {
   name = 'Nextclade';
 
-  isAvailable(_: LocationDateVariantSelector): boolean {
+  isAvailable(_: LapisSelector): boolean {
     return sequenceDataSource === 'open';
   }
 
-  async open(selector: LocationDateVariantSelector) {
+  async open(selector: LapisSelector) {
     const orderAndLimit: OrderAndLimitConfig = {
       orderBy: 'random',
       limit: 200,
