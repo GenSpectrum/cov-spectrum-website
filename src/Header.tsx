@@ -138,6 +138,9 @@ const Header = () => {
                     Done
                   </Button>
                 </div>
+                <button onClick={() => setShowAdvancedFilteringModal(true)}>
+                  Advanced <FaFilter className='inline' />
+                </button>
                 <a className={getDropdownButtonClasses('/stories')} href='/stories'>
                   Stories
                 </a>
@@ -237,6 +240,7 @@ const Header = () => {
                   <Button
                     variant={ButtonVariant.SECONDARY}
                     onClick={() => setShowAdvancedFilteringModal(true)}
+                    className='hidden lg:block'
                   >
                     Advanced <FaFilter className='inline' />
                   </Button>
