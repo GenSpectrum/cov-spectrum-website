@@ -13,6 +13,7 @@ import Loader from '../components/Loader';
 import { VariantSearch } from '../components/VariantSearch';
 import { AnalysisMode } from '../data/AnalysisMode';
 import { getLocation } from '../helpers/get-location';
+import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 
 type Props = {
   isSmallScreen: boolean;
@@ -20,27 +21,18 @@ type Props = {
 
 export const ExplorePage = ({ isSmallScreen }: Props) => {
   const exploreUrl = useExploreUrl();
+  const { lsSelector, lSelector, hostAndQc } = useSingleSelectorsFromExploreUrl(exploreUrl!);
 
   // Fetch data
   const wholeDatelessDataset = useQuery(
-    signal =>
-      DatelessCountrylessCountSampleData.fromApi(
-        { location: exploreUrl?.location!, samplingStrategy: exploreUrl?.samplingStrategy! },
-        signal
-      ),
-    [exploreUrl?.location, exploreUrl?.samplingStrategy]
+    signal => DatelessCountrylessCountSampleData.fromApi(lsSelector, signal),
+    [lsSelector]
   );
-  const wholeDateCountDataset = useQuery(
-    signal =>
-      DateCountSampleData.fromApi(
-        { location: exploreUrl?.location!, samplingStrategy: exploreUrl?.samplingStrategy! },
-        signal
-      ),
-    [exploreUrl?.location, exploreUrl?.samplingStrategy]
-  );
-  const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(
-    { location: exploreUrl?.location! },
-    ({ selector }, { signal }) => CaseCountData.fromApi(selector, signal)
+  const wholeDateCountDataset = useQuery(signal => DateCountSampleData.fromApi(lsSelector, signal), [
+    lsSelector,
+  ]);
+  const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(lSelector, ({ selector }, { signal }) =>
+    CaseCountData.fromApi(selector, signal)
   );
 
   useEffect(() => {
@@ -67,9 +59,10 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
           <h1 className='mt-4'>Known variants</h1>
           <p>Which variant would you like to explore?</p>
           <KnownVariantsList
-            onVariantSelect={exploreUrl.setVariant}
+            onVariantSelect={exploreUrl.setVariants}
             wholeDateCountSampleDataset={wholeDateCountDataset.data}
             variantSelector={undefined}
+            hostAndQc={hostAndQc}
             isHorizontal={false}
             isLandingPage={true}
           />

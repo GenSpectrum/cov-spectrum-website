@@ -11,6 +11,7 @@ import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
 import { AsyncStatusTypes } from '../data/AsyncDataset';
 import { LocationDateSelector } from '../data/LocationDateSelector';
+import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 
 export const EstimatedCasesChartWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -28,8 +29,8 @@ export const EstimatedCasesChartWidget = new Widget(
         dateRange: variantSelector.dateRange,
       };
       return {
-        variantDateCounts: await DateCountSampleData.fromApi(variantSelector, signal),
-        wholeDateCounts: await DateCountSampleData.fromApi(wholeSelector, signal),
+        variantDateCounts: await DateCountSampleData.fromApi(addDefaultHostAndQc(variantSelector), signal),
+        wholeDateCounts: await DateCountSampleData.fromApi(addDefaultHostAndQc(wholeSelector), signal),
         caseCounts: {
           selector: caseSelector,
           payload: (await CaseCountData.fromApi(caseSelector, signal)).payload,

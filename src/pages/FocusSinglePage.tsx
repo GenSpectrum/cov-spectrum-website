@@ -40,6 +40,8 @@ import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeath
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 import { ErrorBoundaryFallback } from '../components/ErrorBoundaryFallback';
 import * as Sentry from '@sentry/react';
+import { isDefaultHostSelector } from '../data/HostSelector';
+import { VariantHosts } from '../components/VariantHosts';
 
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
@@ -232,6 +234,7 @@ export const FocusSinglePage = () => {
   }
   const { pangoLineage } = exploreUrl.variant;
   const { country } = exploreUrl.location;
+  const host = exploreUrl.host;
 
   // Wastewater plot
   let wasteWaterSummaryPlot = undefined;
@@ -276,16 +279,7 @@ export const FocusSinglePage = () => {
       <VariantHeader
         dateRange={exploreUrl.dateRange}
         variant={exploreUrl.variant}
-        controls={
-          <FocusVariantHeaderControls
-            selector={{
-              location: exploreUrl.location,
-              dateRange: exploreUrl.dateRange,
-              variant: exploreUrl.variant,
-              samplingStrategy: exploreUrl.samplingStrategy,
-            }}
-          />
-        }
+        controls={<FocusVariantHeaderControls selector={ldvsSelector} />}
       />
       {variantDateCount.data &&
       wholeDateCountWithDateFilter.data &&
@@ -303,12 +297,14 @@ export const FocusSinglePage = () => {
               variantSampleSet={variantDateCount.data}
               wholeSampleSet={wholeDateCountWithDateFilter.data}
             />
+            {!isDefaultHostSelector(host) && (
+              <div className='mx-0.5 mt-1 mb-5 md:mx-3 shadow-lg rounded-lg bg-white p-2 pl-4'>
+                <VariantHosts selector={ldvsSelector} />
+              </div>
+            )}
             {(!pangoLineage || pangoLineage.endsWith('*')) && (
               <div className='mx-0.5 mt-1 mb-5 md:mx-3 shadow-lg rounded-lg bg-white p-2 pl-4'>
-                <VariantLineages
-                  onVariantSelect={exploreUrl.setVariant}
-                  selector={variantDateCount.data.selector}
-                />{' '}
+                <VariantLineages onVariantSelect={exploreUrl.setVariants} selector={ldvsSelector} />
               </div>
             )}
             <PackedGrid maxColumns={2}>
@@ -328,20 +324,22 @@ export const FocusSinglePage = () => {
                   />
                 }
               </GridCell>
-              <GridCell minWidth={600}>
-                <EstimatedCasesChartWidget.ShareableComponent
-                  caseCounts={caseCountDataset}
-                  variantDateCounts={variantDateCount.data}
-                  wholeDateCounts={wholeDateCountWithDateFilter.data}
-                  height={300}
-                  title='Estimated cases'
-                  toolbarChildren={
-                    !country || (SWISS_SPECIALTIES_ACTIVATED && country === 'Switzerland')
-                      ? [createDivisionBreakdownButton('EstimatedCases', setShowEstimatedCasesDivGrid)]
-                      : []
-                  }
-                />
-              </GridCell>
+              {isDefaultHostSelector(host) && (
+                <GridCell minWidth={600}>
+                  <EstimatedCasesChartWidget.ShareableComponent
+                    caseCounts={caseCountDataset}
+                    variantDateCounts={variantDateCount.data}
+                    wholeDateCounts={wholeDateCountWithDateFilter.data}
+                    height={300}
+                    title='Estimated cases'
+                    toolbarChildren={
+                      !country || (SWISS_SPECIALTIES_ACTIVATED && country === 'Switzerland')
+                        ? [createDivisionBreakdownButton('EstimatedCases', setShowEstimatedCasesDivGrid)]
+                        : []
+                    }
+                  />
+                </GridCell>
+              )}
               <GridCell minWidth={600}>
                 <VariantInternationalComparisonChartWidget.ShareableComponent
                   preSelectedCountries={country ? [country] : []}
@@ -394,18 +392,20 @@ export const FocusSinglePage = () => {
                   wholeDateCounts={wholeDateCountWithDateFilter.data}
                 />
               </GridCell>
-              <GridCell minWidth={600}>
-                <VariantAgeDistributionChartWidget.ShareableComponent
-                  title='Age demographics'
-                  height={300}
-                  variantSampleSet={variantAgeCount.data}
-                  wholeSampleSet={wholeAgeCount.data}
-                  toolbarChildren={[
-                    createDivisionBreakdownButton('AgeDemographics', setShowVariantAgeDistributionDivGrid),
-                  ]}
-                />
-              </GridCell>
-              {SWISS_SPECIALTIES_ACTIVATED && country === 'Switzerland' && (
+              {isDefaultHostSelector(host) && (
+                <GridCell minWidth={600}>
+                  <VariantAgeDistributionChartWidget.ShareableComponent
+                    title='Age demographics'
+                    height={300}
+                    variantSampleSet={variantAgeCount.data}
+                    wholeSampleSet={wholeAgeCount.data}
+                    toolbarChildren={[
+                      createDivisionBreakdownButton('AgeDemographics', setShowVariantAgeDistributionDivGrid),
+                    ]}
+                  />
+                </GridCell>
+              )}
+              {SWISS_SPECIALTIES_ACTIVATED && country === 'Switzerland' && isDefaultHostSelector(host) && (
                 <GridCell minWidth={600}>
                   <HospitalizationDeathChartWidget.ShareableComponent
                     extendedMetrics={false}
@@ -420,7 +420,7 @@ export const FocusSinglePage = () => {
                   />
                 </GridCell>
               )}
-              {wasteWaterSummaryPlot}
+              {isDefaultHostSelector(host) && wasteWaterSummaryPlot}
               {exploreUrl?.variant?.pangoLineage && ( // TODO Check that nothing else is set
                 <GridCell minWidth={800}>
                   {articleDataset.data && articleDataset.isSuccess ? (
@@ -437,7 +437,7 @@ export const FocusSinglePage = () => {
 
             <div className='m-4'>
               <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
-                <VariantMutations selector={variantDateCount.data.selector} />
+                <VariantMutations selector={ldvsSelector} />
               </Sentry.ErrorBoundary>
             </div>
           </div>

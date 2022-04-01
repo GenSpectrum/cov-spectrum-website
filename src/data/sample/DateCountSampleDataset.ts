@@ -3,14 +3,12 @@ import { LocationDateVariantSelector } from '../LocationDateVariantSelector';
 import { DateCountSampleEntry } from './DateCountSampleEntry';
 import { fetchDateCountSamples } from '../api-lapis';
 import { UnifiedDay, UnifiedIsoWeek } from '../../helpers/date-cache';
+import { LapisSelector } from '../LapisSelector';
 
 export type DateCountSampleDataset = Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>;
 
 export class DateCountSampleData {
-  static async fromApi(
-    selector: LocationDateVariantSelector,
-    signal?: AbortSignal
-  ): Promise<DateCountSampleDataset> {
+  static async fromApi(selector: LapisSelector, signal?: AbortSignal): Promise<DateCountSampleDataset> {
     return {
       selector: selector,
       payload: await fetchDateCountSamples(selector, signal),

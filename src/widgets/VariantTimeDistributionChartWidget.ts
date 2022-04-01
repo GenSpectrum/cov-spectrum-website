@@ -9,6 +9,7 @@ import {
 } from '../data/LocationDateVariantSelector';
 import { DateCountSampleData, DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
 import { VariantTimeDistributionLineChart } from './VariantTimeDistributionLineChart';
+import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 
 export type VariantTimeDistributionChartProps = {
   variantSampleSet: DateCountSampleDataset;
@@ -27,8 +28,8 @@ export const VariantTimeDistributionChartWidget = new Widget(
         variant: undefined,
       };
       return {
-        variantSampleSet: await DateCountSampleData.fromApi(variantSelector, signal),
-        wholeSampleSet: await DateCountSampleData.fromApi(wholeSelector, signal),
+        variantSampleSet: await DateCountSampleData.fromApi(addDefaultHostAndQc(variantSelector), signal),
+        wholeSampleSet: await DateCountSampleData.fromApi(addDefaultHostAndQc(wholeSelector), signal),
       };
     }
   ),

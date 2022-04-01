@@ -7,15 +7,15 @@ import { fillRequestWithDefaults, transformToRequestData } from './loading';
 import { ExternalLink } from '../../components/ExternalLink';
 import { DateCountSampleData } from '../../data/sample/DateCountSampleDataset';
 import { globalDateCache, UnifiedDay } from '../../helpers/date-cache';
-import { LocationDateVariantSelector } from '../../data/LocationDateVariantSelector';
 import dayjs from 'dayjs';
 import { useQuery } from '../../helpers/query-hook';
 import { FixedDateRangeSelector } from '../../data/DateRangeSelector';
 import Loader from '../../components/Loader';
 import { CaseCountData } from '../../data/CaseCountDataset';
+import { LapisSelector } from '../../data/LapisSelector';
 
 export type ContainerProps = {
-  selector: LocationDateVariantSelector;
+  selector: LapisSelector;
   defaults?: {
     startDate: UnifiedDay;
     initialWildtypeCases: number;

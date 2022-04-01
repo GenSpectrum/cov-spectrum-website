@@ -6,13 +6,14 @@ import {
   encodeLocationDateVariantSelector,
   LocationDateVariantSelectorEncodedSchema,
 } from '../../data/LocationDateVariantSelector';
+import { addDefaultHostAndQc } from '../../data/HostAndQcSelector';
 
 export const Chen2021FitnessWidget = new Widget(
   new AsyncZodQueryEncoder(
     LocationDateVariantSelectorEncodedSchema,
     async (v: ContainerProps) => encodeLocationDateVariantSelector(v.selector),
     async encoded => {
-      return { selector: decodeLocationDateVariantSelector(encoded) };
+      return { selector: addDefaultHostAndQc(decodeLocationDateVariantSelector(encoded)) };
     }
   ),
   Chen2021FitnessContainer,

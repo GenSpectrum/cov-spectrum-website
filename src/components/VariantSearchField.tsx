@@ -8,7 +8,7 @@ import { isValidPangoLineageQuery, VariantSelector } from '../data/VariantSelect
 import { isValidNucMutation } from '../helpers/nuc-mutation';
 import { useQuery } from '../helpers/query-hook';
 import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
-import Form from 'react-bootstrap/esm/Form';
+import Form from 'react-bootstrap/Form';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 
 type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
@@ -76,7 +76,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const pangoLineages = useQuery(
     signal =>
       PangoCountSampleData.fromApi(
-        { location: {}, samplingStrategy: SamplingStrategy.AllSamples },
+        { location: {}, samplingStrategy: SamplingStrategy.AllSamples, host: undefined, qc: {} },
         signal
       ).then(dataset => dataset.payload.filter(e => e.pangoLineage).map(e => e.pangoLineage!)),
     []

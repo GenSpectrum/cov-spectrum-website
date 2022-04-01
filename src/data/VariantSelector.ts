@@ -41,18 +41,26 @@ export function addVariantSelectorToUrlSearchParams(
   }
 }
 
-export function variantUrlFromSelector(selector: VariantSelector): string {
-  const params = new URLSearchParams();
-  addVariantSelectorToUrlSearchParams(selector, params);
-  return params.toString();
-}
-
-export function variantListUrlFromSelectors(selectors: VariantSelector[]): string {
-  const params = new URLSearchParams();
+export function addVariantSelectorsToUrlSearchParams(selectors: VariantSelector[], params: URLSearchParams) {
+  removeVariantSelectorsFromUrlSearchParams(params);
   selectors.forEach(function (selector, index) {
     addVariantSelectorToUrlSearchParams(selector, params, index);
   });
-  return params.toString();
+}
+
+function removeVariantSelectorsFromUrlSearchParams(params: URLSearchParams) {
+  for (const key of [...params.keys()]) {
+    if (
+      key.startsWith('aaMutations') ||
+      key.startsWith('nucMutations') ||
+      key.startsWith('pangoLineage') ||
+      key.startsWith('gisaidClade') ||
+      key.startsWith('nextstrainClade') ||
+      key.startsWith('variantQuery')
+    ) {
+      params.delete(key);
+    }
+  }
 }
 
 export function decodeVariantListFromUrl(query: string): VariantSelector[] {

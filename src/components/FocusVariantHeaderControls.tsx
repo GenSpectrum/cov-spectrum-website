@@ -7,7 +7,6 @@ import { OutbreakInfoIntegration } from '../services/external-integrations/Outbr
 import { WikipediaIntegration } from '../services/external-integrations/WikipediaIntegration';
 import { CoVariantsIntegration } from '../services/external-integrations/CoVariantsIntegration';
 import { useState } from 'react';
-import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { FaDownload } from 'react-icons/fa';
 import { UsherIntegration } from '../services/external-integrations/UsherIntegration';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
@@ -18,9 +17,10 @@ import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { useAsync } from 'react-async';
 import { OrderAndLimitConfig } from '../data/OrderAndLimitConfig';
 import { NextcladeIntegration } from '../services/external-integrations/NextcladeIntegration';
+import { LapisSelector } from '../data/LapisSelector';
 
 export interface Props {
-  selector: LocationDateVariantSelector;
+  selector: LapisSelector;
 }
 
 const integrations: Integration[] = [

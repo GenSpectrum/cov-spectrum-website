@@ -7,11 +7,13 @@ import { PangoCountSampleData } from '../../data/sample/PangoCountSampleDataset'
 import { SpecialDateRangeSelector } from '../../data/DateRangeSelector';
 import { PangoCountSampleEntry } from '../../data/sample/PangoCountSampleEntry';
 import { formatVariantDisplayName, VariantSelector } from '../../data/VariantSelector';
-import { LocationDateVariantSelector } from '../../data/LocationDateVariantSelector';
 import { globalDateCache } from '../../helpers/date-cache';
 import assert from 'assert';
 import dayjs from 'dayjs';
 import { useQuery } from '../../helpers/query-hook';
+import { AnalysisMode } from '../../data/AnalysisMode';
+import { HostAndQcSelector } from '../../data/HostAndQcSelector';
+import { LapisSelector } from '../../data/LapisSelector';
 
 const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
 
@@ -159,9 +161,10 @@ const Grid = ({
 };
 
 interface Props {
-  onVariantSelect: (selection: VariantSelector) => void;
+  onVariantSelect: (selection: VariantSelector[], analysisMode?: AnalysisMode) => void;
   variantSelector: VariantSelector | VariantSelector[] | undefined;
   wholeDateCountSampleDataset: DateCountSampleDataset;
+  hostAndQc: HostAndQcSelector;
   isHorizontal: boolean;
   isLandingPage: boolean;
 }
@@ -176,6 +179,7 @@ interface Props {
 export const KnownVariantsList = ({
   onVariantSelect,
   variantSelector,
+  hostAndQc,
   wholeDateCountSampleDataset,
   isHorizontal = false,
   isLandingPage,
@@ -199,6 +203,7 @@ export const KnownVariantsList = ({
           location: wholeDateCountSampleDataset.selector.location,
           dateRange: new SpecialDateRangeSelector('Past3M'),
           samplingStrategy: wholeDateCountSampleDataset.selector.samplingStrategy,
+          ...hostAndQc,
         },
         signal
       ),
@@ -222,19 +227,23 @@ export const KnownVariantsList = ({
       return;
     }
 
-    const createSelector = (variantSelector: VariantSelector): LocationDateVariantSelector => {
+    const createSelector = (
+      variantSelector: VariantSelector,
+      hostAndQc: HostAndQcSelector
+    ): LapisSelector => {
       return {
         location: wholeDateCountSampleDataset.selector.location,
         dateRange: new SpecialDateRangeSelector('Past3M'),
         variant: variantSelector,
         samplingStrategy: wholeDateCountSampleDataset.selector.samplingStrategy,
+        ...hostAndQc,
       };
     };
 
     async function fetchAll(knownVariantSelectors: VariantSelector[]) {
       return await Promise.all(
         knownVariantSelectors.map(vs => {
-          const selector = createSelector(vs);
+          const selector = createSelector(vs, hostAndQc);
           return DateCountSampleData.fromApi(selector);
         })
       );
@@ -246,7 +255,7 @@ export const KnownVariantsList = ({
       });
       setChartData(_chartData);
     });
-  }, [knownVariantSelectors, wholeDateCountSampleDataset]);
+  }, [knownVariantSelectors, wholeDateCountSampleDataset, hostAndQc]);
 
   if (!chartData) {
     return (
@@ -272,7 +281,7 @@ export const KnownVariantsList = ({
               chartData={chartData}
               recentProportion={recentProportion}
               onClick={() => {
-                onVariantSelect(selector);
+                onVariantSelect([selector], AnalysisMode.Single);
               }}
               selected={variantSelector && isSelected(selector, variantSelector)}
             />

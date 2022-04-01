@@ -11,6 +11,7 @@ export type FullSampleAggEntry = {
   died: boolean | null;
   fullyVaccinated: boolean | null;
   pangoLineage: string | null;
+  host: string | null;
   // TODO Add missing fields
   count: number;
 };

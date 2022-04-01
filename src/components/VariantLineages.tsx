@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { LoaderSmall } from './Loader';
-import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
 import { VariantSelector } from '../data/VariantSelector';
+import { LapisSelector } from '../data/LapisSelector';
 
 export interface Props {
-  selector: LocationDateVariantSelector;
-  onVariantSelect: (selection: VariantSelector) => void;
+  selector: LapisSelector;
+  onVariantSelect: (selection: VariantSelector[]) => void;
 }
 
 const LineageEntry = styled.li`
@@ -53,7 +53,7 @@ export const VariantLineages = ({ selector, onVariantSelect }: Props) => {
                   {pangoLineage ? (
                     <button
                       className='underline outline-none'
-                      onClick={() => onVariantSelect({ pangoLineage })}
+                      onClick={() => onVariantSelect([{ pangoLineage }])}
                     >
                       {pangoLineage}
                     </button>

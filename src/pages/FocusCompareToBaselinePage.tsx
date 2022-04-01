@@ -9,7 +9,6 @@ import { MultiVariantTimeDistributionLineChart } from '../widgets/MultiVariantTi
 import { NamedCard } from '../components/NamedCard';
 import { AnalysisMode } from '../data/AnalysisMode';
 import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
-import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { Althaus2021GrowthWidget } from '../models/althaus2021Growth/Althaus2021GrowthWidget';
 import { FullSampleAggEntry, FullSampleAggEntryField } from '../data/sample/FullSampleAggEntry';
 import { _fetchAggSamples } from '../data/api-lapis';
@@ -17,6 +16,7 @@ import { Utils } from '../services/Utils';
 import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { DivisionModal } from '../components/DivisionModal';
 import { createDivisionBreakdownButton } from './FocusSinglePage';
+import { LapisSelector } from '../data/LapisSelector';
 
 export const FocusCompareToBaselinePage = () => {
   const exploreUrl = useExploreUrl()!;
@@ -34,11 +34,9 @@ export const FocusCompareToBaselinePage = () => {
   );
 
   // Fetch the whole sample set which, in this case, means the union of all selected variant.
-  const wholeSelector: LocationDateVariantSelector = useMemo(
+  const wholeSelector: LapisSelector = useMemo(
     () => ({
-      location: ldvsSelectors[0].location,
-      dateRange: ldvsSelectors[0].dateRange,
-      samplingStrategy: ldvsSelectors[0].samplingStrategy,
+      ...ldvsSelectors[0],
       variant: {
         variantQuery: ldvsSelectors
           .map(ldvsSelector => `(${transformToVariantQuery(ldvsSelector.variant!)})`)

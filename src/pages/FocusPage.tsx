@@ -24,7 +24,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
   const exploreUrl = useExploreUrl()!;
 
   // fetch data
-  const { lsSelector } = useSingleSelectorsFromExploreUrl(exploreUrl);
+  const { lsSelector, hostAndQc } = useSingleSelectorsFromExploreUrl(exploreUrl);
   const wholeDateCountWithoutDateFilter = useQuery(
     signal => DateCountSampleData.fromApi(lsSelector, signal),
     [lsSelector]
@@ -60,9 +60,10 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
           {wholeDateCountWithoutDateFilter.data ? (
             <div id='explore-selectors'>
               <KnownVariantsList
-                onVariantSelect={exploreUrl.setVariant}
+                onVariantSelect={exploreUrl.setVariants}
                 wholeDateCountSampleDataset={wholeDateCountWithoutDateFilter.data}
                 variantSelector={exploreUrl.variants}
+                hostAndQc={hostAndQc}
                 isHorizontal={isSmallScreen}
                 isLandingPage={false}
               />

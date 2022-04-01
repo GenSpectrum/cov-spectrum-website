@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { MutationName } from './MutationName';
 import { decodeAAMutation, sortListByAAMutation } from '../helpers/aa-mutation';
-import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
 import { useQuery } from '../helpers/query-hook';
@@ -13,9 +12,10 @@ import { VariantSelector } from '../data/VariantSelector';
 import { PromiseQueue } from '../helpers/PromiseQueue';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import NumericInput from 'react-numeric-input';
+import { LapisSelector } from '../data/LapisSelector';
 
 export interface Props {
-  selector: LocationDateVariantSelector;
+  selector: LapisSelector;
 }
 
 const MutationList = styled.ul`
@@ -397,7 +397,7 @@ const Uniqueness = ({ value }: { value: number | undefined }) => {
 
 const fetchUniquenessScore = (
   proportionEntry: MutationProportionEntry,
-  selector: LocationDateVariantSelector,
+  selector: LapisSelector,
   variantCount: number,
   type: SequenceType
 ): Promise<number> => {

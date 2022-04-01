@@ -8,6 +8,7 @@ import {
   LocationDateVariantSelectorEncodedSchema,
 } from '../data/LocationDateVariantSelector';
 import { AgeCountSampleData } from '../data/sample/AgeCountSampleDataset';
+import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 
 export const VariantAgeDistributionChartWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -21,8 +22,8 @@ export const VariantAgeDistributionChartWidget = new Widget(
         variant: undefined,
       };
       return {
-        variantSampleSet: await AgeCountSampleData.fromApi(variantSelector, signal),
-        wholeSampleSet: await AgeCountSampleData.fromApi(wholeSelector, signal),
+        variantSampleSet: await AgeCountSampleData.fromApi(addDefaultHostAndQc(variantSelector), signal),
+        wholeSampleSet: await AgeCountSampleData.fromApi(addDefaultHostAndQc(wholeSelector), signal),
       };
     }
   ),

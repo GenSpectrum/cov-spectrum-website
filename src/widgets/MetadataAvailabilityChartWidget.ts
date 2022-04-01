@@ -8,6 +8,7 @@ import {
 import { MetadataAvailabilityChart, MetadataAvailabilityChartProps } from './MetadataAvailabilityChart';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 import { DatelessCountrylessCountSampleData } from '../data/sample/DatelessCountrylessCountSampleDataset';
+import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 
 export const MetadataAvailabilityChartWidget = new Widget(
   new AsyncZodQueryEncoder(
@@ -15,11 +16,11 @@ export const MetadataAvailabilityChartWidget = new Widget(
     async (decoded: MetadataAvailabilityChartProps) => encodeLocationDateSelector(decoded.sampleSet.selector),
     async (encoded, signal) => ({
       sampleSet: await DatelessCountrylessCountSampleData.fromApi(
-        {
+        addDefaultHostAndQc({
           ...decodeLocationDateSelector(encoded),
           // TODO This is actually a bug. The sampling strategy filter should be applied
           samplingStrategy: SamplingStrategy.AllSamples,
-        },
+        }),
         signal
       ),
     })

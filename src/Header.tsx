@@ -4,7 +4,7 @@ import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { AccountService } from './services/AccountService';
 import { ExternalLink } from './components/ExternalLink';
 import { AiOutlineGithub, AiOutlineTwitter } from 'react-icons/ai';
-import { FaExchangeAlt } from 'react-icons/fa';
+import { FaExchangeAlt, FaFilter } from 'react-icons/fa';
 import { BsFillInfoCircleFill } from 'react-icons/bs';
 import { RiDeleteBack2Fill } from 'react-icons/ri';
 import { Button, ButtonVariant } from './helpers/ui';
@@ -13,6 +13,8 @@ import { useHistory } from 'react-router';
 import { alternativeSequenceDataSourceUrl, sequenceDataSource } from './helpers/sequence-data-source';
 import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrategySelect';
 import { encodeLocationSelectorToSingleString } from './data/LocationSelector';
+import { AlmostFullscreenModal } from './components/AlmostFullscreenModal';
+import { AdvancedFiltersPanel } from './components/AdvancedFiltersPanel';
 
 const letters = [
   { color: 'darkgray', text: 'cov' },
@@ -69,6 +71,8 @@ const BackToExplore = () => {
 };
 
 const Header = () => {
+  const [showAdvancedFilteringModal, setShowAdvancedFilteringModal] = useState(false);
+
   const loggedIn = AccountService.isLoggedIn();
   let username: string | null | undefined = null;
   if (loggedIn) {
@@ -134,6 +138,9 @@ const Header = () => {
                     Done
                   </Button>
                 </div>
+                <button onClick={() => setShowAdvancedFilteringModal(true)}>
+                  Advanced <FaFilter className='inline' />
+                </button>
                 <a className={getDropdownButtonClasses('/stories')} href='/stories'>
                   Stories
                 </a>
@@ -230,6 +237,13 @@ const Header = () => {
                 <div className='flex items-center z-20 mt-2 md:mt-0'>
                   <HeaderCountrySelect />
                   <HeaderSamplingStrategySelect />
+                  <Button
+                    variant={ButtonVariant.SECONDARY}
+                    onClick={() => setShowAdvancedFilteringModal(true)}
+                    className='hidden lg:block'
+                  >
+                    Advanced <FaFilter className='inline' />
+                  </Button>
                   <FilterDropdown />
                 </div>
               </div>
@@ -275,6 +289,15 @@ const Header = () => {
           </div>
         </div>
       </nav>
+
+      {/* Advanced filtering modal */}
+      <AlmostFullscreenModal
+        header='Advanced filters'
+        show={showAdvancedFilteringModal}
+        handleClose={() => setShowAdvancedFilteringModal(false)}
+      >
+        <AdvancedFiltersPanel onClose={() => setShowAdvancedFilteringModal(false)} />
+      </AlmostFullscreenModal>
     </>
   );
 };
