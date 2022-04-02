@@ -154,7 +154,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
       }
       const currentPath = locationState.pathname + locationState.search;
       assert(currentPath.startsWith(prefix));
-      const path = `${prefix}/variants?${newQueryParam}`;
+      const path = `${prefix}/variants?${newQueryParam}&`;
       history.push(path);
     },
     [history, locationState.pathname, locationState.search, queryString, routeMatches.locationSamplingDate]
@@ -172,7 +172,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
       }
       const currentPath = locationState.pathname + locationState.search;
       assert(currentPath.startsWith(prefix));
-      let path = `${prefix}/variants?${newQueryParam}`;
+      let path = `${prefix}/variants?${newQueryParam}&`;
       history.push(path);
     },
     [history, locationState.pathname, locationState.search, queryString, routeMatches.locationSamplingDate]
@@ -190,7 +190,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
       if (qc) {
         addQcSelectorToUrlSearchParams(qc, newQueryParam);
       }
-      const path = `${locationState.pathname}?${newQueryParam}`;
+      const path = `${locationState.pathname}?${newQueryParam}&`;
       history.push(path);
     },
     [history, locationState.pathname, queryString]
