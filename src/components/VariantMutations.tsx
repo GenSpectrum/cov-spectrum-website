@@ -261,10 +261,7 @@ export const VariantMutations = ({ selector }: Props) => {
                 );
               })}
           </MutationList>
-          <div className='mt-4'>
-            Leading and tailing deletions are excluded. Please note that we currently <b>do not</b> exclude
-            the unknowns when calculating the proportions.
-          </div>
+          <div className='mt-4'>Leading and tailing deletions are excluded.</div>
           <div className='ml-4'>
             {sortOptions.map((opt, index) => (
               <>
