@@ -185,9 +185,6 @@ export const VariantMutations = ({ selector }: Props) => {
 
       {showMergedList ? (
         <>
-          <div>
-            Please note that we currently do not exclude the unknowns when calculating the proportions.
-          </div>
           <div className='ml-4'>
             {sortOptions.map((opt, index) => (
               <>
@@ -238,9 +235,6 @@ export const VariantMutations = ({ selector }: Props) => {
         </>
       ) : (
         <>
-          <div>
-            Please note that we currently <b>do not</b> exclude the unknowns when calculating the proportions.
-          </div>
           <div className='ml-4'>
             {sortOptions.map((opt, index) => (
               <>

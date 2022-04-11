@@ -107,8 +107,7 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
             {(minProportion * 100).toFixed(0)}%
           </span>
         </OverlayTrigger>{' '}
-        of the samples of the variant have the mutation. Please note that we currently <b>do not</b> exclude
-        the unknowns when calculating the proportions.
+        of the samples of the variant have the mutation.
       </div>
       <div>
         <Table striped bordered hover>
