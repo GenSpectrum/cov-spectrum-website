@@ -195,9 +195,7 @@ export const VariantMutations = ({ selector }: Props) => {
 
       {showMergedList ? (
         <>
-
           <div className='ml-9'>
-
             {sortOptions.map((opt, index) => (
               <>
                 {index > 0 && <> | </>}
@@ -250,7 +248,6 @@ export const VariantMutations = ({ selector }: Props) => {
       ) : (
         <>
           <div className='ml-9'>
-
             {sortOptions.map((opt, index) => (
               <>
                 {index > 0 && <> | </>}
@@ -279,9 +276,8 @@ export const VariantMutations = ({ selector }: Props) => {
               })}
           </MutationList>
 
-
           <div className='ml-9 mt-9'>
-          <div className='mt-4'>Leading and tailing deletions are excluded.</div>
+            <div className='mt-9'>Leading and tailing deletions are excluded.</div>
 
             {sortOptions.map((opt, index) => (
               <>
