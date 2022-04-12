@@ -209,9 +209,6 @@ export const VariantMutations = ({ selector }: Props) => {
               </>
             ))}
           </div>
-          <div className='ml-9 mb-5'>
-            *Please note that we currently do not exclude the unknowns when calculating the proportions.
-          </div>
 
           <MutationList className='list-disc' width={width ? width : 1}>
             {sortMergedEntries(data.mergedEntries, commonAAMutationsSort, aaMutationUniqueness)
@@ -264,10 +261,7 @@ export const VariantMutations = ({ selector }: Props) => {
               </>
             ))}
           </div>
-          <div className='ml-9'>
-            *Please note that we currently <b>do not</b> exclude the unknowns when calculating the
-            proportions.
-          </div>
+
           <MutationList className='list-disc' width={width ? width : 1}>
             {sortAAMutations(data.aa, commonAAMutationsSort, aaMutationUniqueness)
               .filter(({ proportion }) => proportion >= minProportion && proportion <= maxProportion)
@@ -298,8 +292,6 @@ export const VariantMutations = ({ selector }: Props) => {
           </div>
           <div className='ml-9'>
             *Leading and tailing deletions are excluded. <br />
-            *Please note that we currently <b>do not</b> exclude the unknowns when calculating the
-            proportions.
           </div>
           <MutationList className='list-disc' width={width ? width : 1}>
             {sortNucMutations(data.nuc, commonNucMutationsSort, nucMutationUniqueness)

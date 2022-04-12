@@ -114,8 +114,6 @@ export const MultiVariantTimeDistributionLineChart = ({
     return { plotData, ticks };
   }, [variantSampleSets, wholeSampleSet.payload, wholeSampleSet.selector.dateRange]);
 
-  // tickFormatter={tick => `${tick * 100}%`}
-
   function getYMax(pd: typeof plotData): number {
     let max = 0;
     for (let i = 0; i < variantSampleSets.length; i++) {
@@ -130,8 +128,6 @@ export const MultiVariantTimeDistributionLineChart = ({
 
   const yMax: number = getYMax(plotData) <= 0.0005 && getYMax(plotData) > 0 ? 0.0005 : getYMax(plotData);
 
-  // rendering
-  // domain={[0, 'auto']}
   return (
     <Wrapper>
       <ChartAndMetricsWrapper>
