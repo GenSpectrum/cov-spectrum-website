@@ -109,10 +109,9 @@ const ORF1abProteins = [
 
 const Mut = styled.span`
   border-radius: 5px;
+  cursor: pointer;
   padding: 3px 5px;
   margin-right: -5px;
-  cursor: pointer;
-
   &:hover {
     background: #eaeaea;
   }
