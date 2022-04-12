@@ -13,6 +13,12 @@
         "pangoLineage": "BA.2*"
       },
       {
+        "variantQuery": "BA.4* | (BA.2* & 12160A & 9866C & 27788T)"
+      },
+      {
+        "variantQuery": "BA.5* | (BA.2* & 12160A & 9866C & 27259A)"
+      },
+      {
         "pangoLineage": "B.1.617.2*",
         "aaMutations": []
       },
