@@ -13,19 +13,25 @@ import { PromiseQueue } from '../helpers/PromiseQueue';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import NumericInput from 'react-numeric-input';
 import { LapisSelector } from '../data/LapisSelector';
+import { useResizeDetector } from 'react-resize-detector';
 
 export interface Props {
   selector: LapisSelector;
 }
 
-const MutationList = styled.ul`
-  display: flex;
-  flex-wrap: wrap;
+interface MutationListProps {
+  width: number;
+}
+
+const MutationList = styled.ul<MutationListProps>`
+  list-style-type: disc;
   margin-top: 10px;
+  column-count: ${props => (Math.floor(props.width / 280) >= 1 ? Math.floor(props.width / 300) : 1)};
 `;
 
 const MutationEntry = styled.li`
-  width: 250px;
+  width: 260px;
+  display: inline-block;
 `;
 
 const sortOptions = ['position', 'proportion', 'uniqueness'] as const;
@@ -59,6 +65,8 @@ export const VariantMutations = ({ selector }: Props) => {
   const [nucMutationUniqueness, setNucMutationUniqueness] = useState<MutationUniquenessMap>({});
   const [minProportion, setMinProportion] = useState<number>(0.05);
   const [maxProportion, setMaxProportion] = useState<number>(1);
+
+  const { width, ref } = useResizeDetector<HTMLDivElement>();
 
   const queryStatus = useQuery(
     signal =>
@@ -142,53 +150,52 @@ export const VariantMutations = ({ selector }: Props) => {
   const data = queryStatus.data;
 
   return (
-    <>
-      <div className='ml-4 mb-4'>
-        <span
-          className={!showMergedList ? 'font-bold' : 'underline cursor-pointer'}
-          onClick={() => setShowMergedList(false)}
-        >
-          Show amino acid and nucleotide mutations separated
-        </span>
-        {' | '}
-        <span
-          className={showMergedList ? 'font-bold' : 'underline cursor-pointer'}
-          onClick={() => setShowMergedList(true)}
-        >
-          Show amino acid and nucleotide mutations together
-        </span>
-      </div>
-      <div>
-        The following amino acid mutations are present in between{' '}
-        <NumericInput
-          precision={1}
-          step={0.1}
-          min={0.1}
-          max={99}
-          style={{ input: { width: '85px', textAlign: 'right' } }}
-          format={value => `${value}%`}
-          value={(minProportion * 100).toFixed(1)}
-          onChange={value => setMinProportion(value! / 100)}
-        />{' '}
-        <NumericInput
-          precision={1}
-          step={0.1}
-          min={0.2}
-          max={100}
-          style={{ input: { width: '85px', textAlign: 'right' } }}
-          format={value => `${value}%`}
-          value={(maxProportion * 100).toFixed(1)}
-          onChange={value => setMaxProportion(value! / 100)}
-        />{' '}
-        of the sequences of this variant.
+    <div className='bg-coolGray-50 group-hover:bg-coolGray-100 rounded-md shadow-md transition duration-200 p-10'>
+      <div className='mb-8'>
+        <div className='ml-9' ref={ref}>
+          <span
+            className={!showMergedList ? 'font-bold' : 'underline cursor-pointer'}
+            onClick={() => setShowMergedList(false)}
+          >
+            Show amino acid and nucleotide mutations separated
+          </span>
+          {' | '}
+          <span
+            className={showMergedList ? 'font-bold' : 'underline cursor-pointer'}
+            onClick={() => setShowMergedList(true)}
+          >
+            Show amino acid and nucleotide mutations together
+          </span>
+        </div>
+        <div className='ml-9'>
+          The following amino acid mutations are present in between{' '}
+          <NumericInput
+            precision={1}
+            step={0.1}
+            min={0.1}
+            max={99}
+            style={{ input: { width: '85px', textAlign: 'right' } }}
+            format={value => `${value}%`}
+            value={(minProportion * 100).toFixed(1)}
+            onChange={value => setMinProportion(value! / 100)}
+          />{' '}
+          <NumericInput
+            precision={1}
+            step={0.1}
+            min={0.2}
+            max={100}
+            style={{ input: { width: '85px', textAlign: 'right' } }}
+            format={value => `${value}%`}
+            value={(maxProportion * 100).toFixed(1)}
+            onChange={value => setMaxProportion(value! / 100)}
+          />{' '}
+          of the sequences of this variant.
+        </div>
       </div>
 
       {showMergedList ? (
         <>
-          <div>
-            Please note that we currently do not exclude the unknowns when calculating the proportions.
-          </div>
-          <div className='ml-4'>
+          <div className='ml-9'>
             {sortOptions.map((opt, index) => (
               <>
                 {index > 0 && <> | </>}
@@ -202,18 +209,23 @@ export const VariantMutations = ({ selector }: Props) => {
               </>
             ))}
           </div>
-          <MutationList className='list-disc'>
+          <div className='ml-9 mb-5'>
+            *Please note that we currently do not exclude the unknowns when calculating the proportions.
+          </div>
+
+          <MutationList className='list-disc' width={width ? width : 1}>
             {sortMergedEntries(data.mergedEntries, commonAAMutationsSort, aaMutationUniqueness)
               .filter(({ aa }) => aa.proportion >= minProportion && aa.proportion <= maxProportion)
               .map(({ aa, nucs }) => (
                 <MutationEntry key={aa.mutation}>
+                  &#8226;
                   <MutationName mutation={aa.mutation} /> (<Proportion value={aa.proportion} />,{' '}
                   <Uniqueness value={aaMutationUniqueness[aa.mutation]} />)
                   <ul className='list-circle'>
                     {sortNucMutations(nucs, 'position', nucMutationUniqueness)
                       .filter(nuc => nuc.proportion >= minProportion && nuc.proportion <= maxProportion)
                       .map(nuc => (
-                        <MutationEntry key={nuc.mutation}>
+                        <MutationEntry key={nuc.mutation} style={{ display: 'inline-block' }}>
                           {nuc.mutation} (<Proportion value={nuc.proportion} />,{' '}
                           <Uniqueness value={nucMutationUniqueness[nuc.mutation]} />)
                         </MutationEntry>
@@ -222,14 +234,14 @@ export const VariantMutations = ({ selector }: Props) => {
                 </MutationEntry>
               ))}
           </MutationList>
-          <div className='ml-4 mt-4'>Additional nucleotide mutations:</div>
-          <MutationList className='list-circle ml-6'>
+          <div className='ml-9 mt-4'>Additional nucleotide mutations:</div>
+          <MutationList className='list-circle ml-6' width={width ? width : 1}>
             {sortNucMutations(data.additionalNucs, commonAAMutationsSort, nucMutationUniqueness)
               .filter(({ proportion }) => proportion >= minProportion && proportion <= maxProportion)
               .map(({ mutation, proportion }) => {
                 return (
-                  <MutationEntry key={mutation}>
-                    {mutation} (<Proportion value={proportion} />,{' '}
+                  <MutationEntry key={mutation} style={{ display: 'inline-block' }}>
+                    &#8226; {mutation} (<Proportion value={proportion} />,{' '}
                     <Uniqueness value={nucMutationUniqueness[mutation]} />)
                   </MutationEntry>
                 );
@@ -238,10 +250,7 @@ export const VariantMutations = ({ selector }: Props) => {
         </>
       ) : (
         <>
-          <div>
-            Please note that we currently <b>do not</b> exclude the unknowns when calculating the proportions.
-          </div>
-          <div className='ml-4'>
+          <div className='ml-9'>
             {sortOptions.map((opt, index) => (
               <>
                 {index > 0 && <> | </>}
@@ -255,23 +264,25 @@ export const VariantMutations = ({ selector }: Props) => {
               </>
             ))}
           </div>
-          <MutationList className='list-disc'>
+          <div className='ml-9'>
+            *Please note that we currently <b>do not</b> exclude the unknowns when calculating the
+            proportions.
+          </div>
+          <MutationList className='list-disc' width={width ? width : 1}>
             {sortAAMutations(data.aa, commonAAMutationsSort, aaMutationUniqueness)
               .filter(({ proportion }) => proportion >= minProportion && proportion <= maxProportion)
               .map(({ mutation, proportion }) => {
                 return (
-                  <MutationEntry key={mutation}>
+                  <MutationEntry key={mutation} style={{ display: 'inline-block' }}>
+                    &#8226;
                     <MutationName mutation={mutation} /> (<Proportion value={proportion} />,{' '}
                     <Uniqueness value={aaMutationUniqueness[mutation]} />)
                   </MutationEntry>
                 );
               })}
           </MutationList>
-          <div className='mt-4'>
-            Leading and tailing deletions are excluded. Please note that we currently <b>do not</b> exclude
-            the unknowns when calculating the proportions.
-          </div>
-          <div className='ml-4'>
+
+          <div className='ml-9 mt-9'>
             {sortOptions.map((opt, index) => (
               <>
                 {index > 0 && <> | </>}
@@ -285,13 +296,18 @@ export const VariantMutations = ({ selector }: Props) => {
               </>
             ))}
           </div>
-          <MutationList className='list-disc'>
+          <div className='ml-9'>
+            *Leading and tailing deletions are excluded. <br />
+            *Please note that we currently <b>do not</b> exclude the unknowns when calculating the
+            proportions.
+          </div>
+          <MutationList className='list-disc' width={width ? width : 1}>
             {sortNucMutations(data.nuc, commonNucMutationsSort, nucMutationUniqueness)
               .filter(({ proportion }) => proportion >= minProportion && proportion <= maxProportion)
               .map(({ mutation, proportion }) => {
                 return (
-                  <MutationEntry key={mutation}>
-                    {mutation} (<Proportion value={proportion} />,{' '}
+                  <MutationEntry key={mutation} style={{ display: 'inline-block' }}>
+                    &#8226; {mutation} (<Proportion value={proportion} />,{' '}
                     <Uniqueness value={nucMutationUniqueness[mutation]} />)
                   </MutationEntry>
                 );
@@ -299,7 +315,7 @@ export const VariantMutations = ({ selector }: Props) => {
           </MutationList>
         </>
       )}
-    </>
+    </div>
   );
 };
 

@@ -200,7 +200,9 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     ticks={ticks}
                   />
                   <YAxis
-                    tickFormatter={tick => (absoluteNumbers ? `${tick}` : `${tick * 100}%`)}
+                    tickFormatter={tick =>
+                      absoluteNumbers ? `${tick}` : `${Math.round(tick * 100 * 100) / 100}%`
+                    }
                     allowDecimals={true}
                     hide={false}
                     width={50}

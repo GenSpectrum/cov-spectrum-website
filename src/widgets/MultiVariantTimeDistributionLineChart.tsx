@@ -91,6 +91,7 @@ export const MultiVariantTimeDistributionLineChart = ({
         ...d,
         date: d.date.dayjs.toDate(),
       };
+
       for (let i = 0; i < numberOfVariants; i++) {
         const variantCount = d[`variantCount${i}`];
         let proportion = variantCount / d.sequenced;
@@ -103,6 +104,7 @@ export const MultiVariantTimeDistributionLineChart = ({
         pd[`variantProportionCIUpper${i}`] = Math.max(wilsonInterval[1], 0);
         pd[`variantName${i}`] = formatVariantDisplayName(variantSampleSets[i].selector.variant!);
       }
+
       return pd;
     });
 
@@ -112,7 +114,24 @@ export const MultiVariantTimeDistributionLineChart = ({
     return { plotData, ticks };
   }, [variantSampleSets, wholeSampleSet.payload, wholeSampleSet.selector.dateRange]);
 
+  // tickFormatter={tick => `${tick * 100}%`}
+
+  function getYMax(pd: typeof plotData): number {
+    let max = 0;
+    for (let i = 0; i < variantSampleSets.length; i++) {
+      for (let item of pd) {
+        if (item[`variantProportion${i}`] > max) {
+          max = item[`variantProportion${i}`];
+        }
+      }
+    }
+    return max === 0 ? 1 : max;
+  }
+
+  const yMax: number = getYMax(plotData) <= 0.0005 && getYMax(plotData) > 0 ? 0.0005 : getYMax(plotData);
+
   // rendering
+  // domain={[0, 'auto']}
   return (
     <Wrapper>
       <ChartAndMetricsWrapper>
@@ -129,10 +148,10 @@ export const MultiVariantTimeDistributionLineChart = ({
                 xAxisId='date'
               />
               <YAxis
-                tickFormatter={tick => `${tick * 100}%`}
+                tickFormatter={tick => `${Math.round(tick * 100 * 100) / 100}%`}
                 yAxisId='variant-proportion'
                 scale='auto'
-                domain={[0, 'auto']}
+                domain={[0, yMax]}
               />
               <Tooltip
                 formatter={(value: number, name: string, props: any) => {
