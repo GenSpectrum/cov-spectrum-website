@@ -22,6 +22,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
   <tr>
     <td align="center"><a href="https://github.com/DrYak"><img src="https://avatars.githubusercontent.com/u/11413679?v=4?s=100" width="100px;" alt=""/><br /><sub><b>DrYak</b></sub></a><br /><a href="#data-DrYak" title="Data">🔣</a></td>
     <td align="center"><a href="https://github.com/gautier-collab"><img src="https://avatars.githubusercontent.com/u/55604970?v=4?s=100" width="100px;" alt=""/><br /><sub><b>gautier-collab</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=gautier-collab" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/dameyerdave"><img src="https://avatars.githubusercontent.com/u/5663605?v=4?s=100" width="100px;" alt=""/><br /><sub><b>David Meyer</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=dameyerdave" title="Code">💻</a></td>
   </tr>
 </table>
 
