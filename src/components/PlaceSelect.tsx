@@ -20,7 +20,7 @@ export const PlaceSelect = ({ id, selected, onSelect, onMenuToggle }: Props) => 
   const world: string[] = ['World'];
   const regions: string[] = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
 
-  let filteredPlaces: string[] = [];
+  let filteredPlaces: string[] = places.filter(place => !world.includes(place) && !regions.includes(place));
 
   function handleGeoOptionChange(e: React.MouseEvent<HTMLElement>, option: string) {
     e.preventDefault();
