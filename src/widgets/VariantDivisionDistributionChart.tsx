@@ -198,16 +198,17 @@ export const VariantDivisionDistributionChart = ({
 
   return (
     <DownloadWrapper name='VariantDivisionDistributionChart' csvData={csvData}>
-      {variantSampleSet.selector.location.country ? (
+      {variantSampleSet.selector.location.country && country && !countriesWithMaps.includes(country) ? (
         <DropdownButton id='dropdown-basic-button' title={geoOption}>
           {granualityCountryOptions}
         </DropdownButton>
-      ) : (
+      ) : !country ? (
         <DropdownButton id='dropdown-basic-button' title={geoOption}>
           {granualityWorldOptions}
         </DropdownButton>
-      )}
+      ) : null}
       <br />
+
       {country && countriesWithMaps.includes(country) ? (
         <Map data={processedData} country={country} />
       ) : (
