@@ -1,8 +1,8 @@
-import React from 'react';
-import { Typeahead } from 'react-bootstrap-typeahead';
+import React, { Fragment } from 'react';
 import ReactCountryFlag from 'react-country-flag';
 import { LocationService } from '../services/LocationService';
 import { useQuery } from '../helpers/query-hook';
+import { FormControl, ListSubheader, MenuItem, Select } from '@mui/material';
 
 export interface Props {
   id?: string;
@@ -11,23 +11,48 @@ export interface Props {
   onMenuToggle: (show: boolean) => void;
 }
 
-export const PlaceSelect = ({ id, selected, onSelect, onMenuToggle }: Props) => {
+export const PlaceSelect = ({ onSelect }: Props) => {
   const places: string[] = useQuery(() => LocationService.getAllLocationNames(), []).data ?? [];
+
+  const world: string[] = ['World'];
+  const regions: string[] = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
+  let countries: string[] = ['Switzerland'];
+
+  for (const place of places) {
+    if (!world.includes(place) && !regions.includes(place) && place !== 'Switzerland') {
+      countries.push(place);
+    }
+  }
+  countries = countries.sort();
 
   return (
     <>
-      <Typeahead
-        id={id ? id : 'typeahead'}
-        selected={selected ? [selected] : []}
-        placeholder='Select country/region'
-        onChange={selected => onSelect(selected.length === 1 ? selected[0] : undefined)}
-        onMenuToggle={onMenuToggle}
-        options={places}
-        maxResults={places.length + 100} // +100 is just to be safe...
-        paginate={false}
-      >
-        {getFlag(selected)}
-      </Typeahead>
+      <FormControl sx={{ m: 1, minWidth: 230 }}>
+        <Select
+          displayEmpty
+          inputProps={{ 'aria-label': 'Without label' }}
+          defaultValue='Switzerland'
+          id='grouped-select'
+          onChange={e => onSelect(e.target.value)}
+          style={{ height: '35px' }}
+        >
+          <MenuItem value={'World'}>World</MenuItem>
+          <ListSubheader>Regions</ListSubheader>
+          {regions.map((region, index) => (
+            <MenuItem value={region} key={index}>
+              {region}
+            </MenuItem>
+          ))}
+          <ListSubheader>Countries</ListSubheader>
+          {countries.map((country, index) => (
+            <MenuItem value={country} key={index + regions.length}>
+              {getFlag(country)}
+              {'  '}
+              {country}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     </>
   );
 };
@@ -36,7 +61,7 @@ const getFlag = (countryName: string | undefined) => {
   if (countryName) {
     const code = LocationService.getIsoAlpha2Code(countryName);
     if (code) {
-      return <ReactCountryFlag className='rbt-aux h-full w-10 pr-3' countryCode={code} svg />;
+      return <ReactCountryFlag className='rbt-aux h-full w-10 pr-3 mr-5' countryCode={code} svg />;
     }
   }
 };
