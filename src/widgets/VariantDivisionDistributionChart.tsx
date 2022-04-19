@@ -35,10 +35,53 @@ const countriesWithMaps = [
   'Botswana',
 ];
 
+const TableHeader = styled.th`
+  font-weight: bolder;
+  margin-top: 10px;
+  &:hover,
+  &:focus {
+    color: #0276fd;
+    cursor: pointer;
+  }
+`;
+
+const sortOptions = ['division', 'count', 'prevalence'] as const;
+type SortOptions = typeof sortOptions[number];
+
+interface GeoSummary {
+  division: string;
+  count: number;
+  prevalence: number;
+}
+
+const sortGeoTable = (entries: GeoSummary[], sortOption: SortOptions, ifAscendic: boolean): GeoSummary[] => {
+  switch (sortOption) {
+    case 'count':
+      return ifAscendic
+        ? entries.sort((a, b) => a.count - b.count)
+        : entries.sort((a, b) => b.count - a.count);
+    case 'prevalence':
+      return ifAscendic
+        ? entries.sort((a, b) => a.prevalence - b.prevalence)
+        : entries.sort((a, b) => b.prevalence - a.prevalence);
+    case 'division':
+      return ifAscendic
+        ? entries.sort((a, b) => (a.division > b.division ? 1 : b.division > a.division ? -1 : 0))
+        : entries.sort((a, b) => (b.division > a.division ? 1 : a.division > b.division ? -1 : 0));
+  }
+};
+
 export const VariantDivisionDistributionChart = ({
   variantSampleSet,
   wholeSampleSet,
 }: VariantDivisionDistributionChartProps) => {
+  const [geoOption, setGeoOption] = useState<string>('Countries');
+  const [sortOption, setSortOption] = useState<SortOptions>('division');
+  const [ifAscending, setIfAscending] = useState<boolean>(true);
+  const [ifAscCount, setIfAscCount] = useState<boolean>(true);
+  const [ifAscPrevalence, setIfAscPrevalence] = useState<boolean>(true);
+  const [ifAscLocation, setIfAscLocation] = useState<boolean>(false);
+
   const country = wholeSampleSet.selector.location.country;
 
   const processedData = useMemo(() => {
@@ -92,7 +135,6 @@ export const VariantDivisionDistributionChart = ({
     proportionWithinDivision: prevalence?.toFixed(6),
   }));
 
-  const [geoOption, setGeoOption] = useState<string>('Regions');
   function handleGeoOptionChange(e: React.MouseEvent<HTMLElement>, option: string) {
     e.preventDefault();
     setGeoOption(option);
@@ -103,6 +145,30 @@ export const VariantDivisionDistributionChart = ({
   for (const [key, value] of aggregateGeo(geoOption, processedData).entries()) {
     let item = { division: key, count: value.count, prevalence: value.prevalence };
     aggDataArray.push(item);
+  }
+
+  let sortedAggData = sortGeoTable(aggDataArray, sortOption, ifAscending);
+
+  function handleClick(target: string): void {
+    switch (target) {
+      case 'division':
+        setSortOption('division');
+        setIfAscLocation(!ifAscLocation);
+        setIfAscending(ifAscLocation);
+        sortedAggData = sortGeoTable(sortedAggData, 'division', ifAscending);
+        break;
+      case 'count':
+        setSortOption('count');
+        setIfAscCount(!ifAscCount);
+        setIfAscending(ifAscCount);
+        sortedAggData = sortGeoTable(sortedAggData, 'count', ifAscending);
+        break;
+      case 'prevalence':
+        setSortOption('prevalence');
+        setIfAscPrevalence(!ifAscPrevalence);
+        setIfAscending(ifAscPrevalence);
+        sortedAggData = sortGeoTable(sortedAggData, 'prevalence', ifAscending);
+    }
   }
 
   const granualityWorldOptions: JSX.Element = (
@@ -119,7 +185,7 @@ export const VariantDivisionDistributionChart = ({
     </>
   );
 
-  const granualityRegionOptions: JSX.Element = (
+  const granualityCountryOptions: JSX.Element = (
     <>
       <Dropdown.Item onClick={(e: React.MouseEvent<HTMLElement>) => handleGeoOptionChange(e, 'Countries')}>
         Countries
@@ -132,9 +198,13 @@ export const VariantDivisionDistributionChart = ({
 
   return (
     <DownloadWrapper name='VariantDivisionDistributionChart' csvData={csvData}>
-      {variantSampleSet.selector.location.country ? null : (
-        <DropdownButton id='dropdown-basic-button' title='Granuality'>
-          {variantSampleSet.selector.location.region ? granualityRegionOptions : granualityWorldOptions}
+      {variantSampleSet.selector.location.country ? (
+        <DropdownButton id='dropdown-basic-button' title={geoOption}>
+          {granualityCountryOptions}
+        </DropdownButton>
+      ) : (
+        <DropdownButton id='dropdown-basic-button' title={geoOption}>
+          {granualityWorldOptions}
         </DropdownButton>
       )}
       <br />
@@ -145,27 +215,37 @@ export const VariantDivisionDistributionChart = ({
           <Table striped bordered hover>
             <thead>
               <tr>
-                <th>Location</th>
-                <th>Number of sequences</th>
-                <th>Prevalence</th>
+                <TableHeader
+                  onClick={() => {
+                    handleClick('division');
+                  }}
+                >
+                  Location
+                </TableHeader>
+                <TableHeader
+                  onClick={() => {
+                    handleClick('count');
+                  }}
+                >
+                  Number of sequences
+                </TableHeader>
+                <TableHeader
+                  onClick={() => {
+                    handleClick('prevalence');
+                  }}
+                >
+                  Prevalence
+                </TableHeader>
               </tr>
             </thead>
             <tbody>
-              {geoOption === 'Divisions' || country
-                ? processedData.map(({ division, count, prevalence }) => (
-                    <tr key={division}>
-                      <td>{division ?? 'Unknown'}</td>
-                      <td>{count}</td>
-                      <td>{prevalence ? Math.ceil(prevalence * 100 * 1000) / 1000 + '%' : '-'}</td>
-                    </tr>
-                  ))
-                : aggDataArray.map(({ division, count, prevalence }) => (
-                    <tr key={division}>
-                      <td>{division ?? 'Unknown'}</td>
-                      <td>{count}</td>
-                      <td>{prevalence ? Math.ceil(prevalence * 100 * 1000) / 1000 + '%' : '-'}</td>
-                    </tr>
-                  ))}
+              {sortedAggData.map(({ division, count, prevalence }) => (
+                <tr key={division}>
+                  <td>{division ?? 'Unknown'}</td>
+                  <td>{count}</td>
+                  <td>{prevalence ? Math.ceil(prevalence * 100 * 1000) / 1000 + '%' : '-'}</td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </Wrapper>

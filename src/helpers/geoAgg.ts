@@ -43,6 +43,14 @@ export function aggregateGeo(
         }
       }
       break;
+
+    case 'Divisions':
+      for (const item of data) {
+        if (item.division) {
+          output.set(item.division, { count: item.count, prevalence: item.prevalence ? item.prevalence : 0 });
+        }
+      }
+      return output;
   }
 
   for (const [key, value] of calc.entries()) {
