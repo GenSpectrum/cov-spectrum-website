@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 
 import { LocationService } from '../services/LocationService';
 import { useQuery } from '../helpers/query-hook';
@@ -12,6 +12,8 @@ export interface Props {
 }
 
 export const PlaceSelect = ({ onSelect }: Props) => {
+  const [, setValue] = useState<string>('Switzerland');
+
   const places: string[] = useQuery(() => LocationService.getAllLocationNames(), []).data ?? [];
   const regions: string[] = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
   let countries: string[] = places
@@ -44,10 +46,17 @@ export const PlaceSelect = ({ onSelect }: Props) => {
         groupBy={option => option.group}
         getOptionLabel={option => option.place}
         defaultValue={geoOptions[7]}
+        onInputChange={(event, newInputValue) => {
+          setValue(newInputValue);
+          onSelect(newInputValue);
+        }}
         renderInput={params => (
           <TextField
             {...params}
-            onBlur={e => onSelect(e.target.value)}
+            onBlur={e => {
+              setValue(e.target.value);
+              onSelect(e.target.value);
+            }}
             inputProps={{
               ...params.inputProps,
             }}
