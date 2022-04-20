@@ -2,7 +2,7 @@ import React, { Fragment } from 'react';
 import ReactCountryFlag from 'react-country-flag';
 import { LocationService } from '../services/LocationService';
 import { useQuery } from '../helpers/query-hook';
-import { FormControl, ListSubheader, MenuItem, Select } from '@mui/material';
+import { FormControl, InputLabel, ListSubheader, MenuItem, Select } from '@mui/material';
 
 export interface Props {
   id?: string;
@@ -28,13 +28,14 @@ export const PlaceSelect = ({ onSelect }: Props) => {
   return (
     <>
       <FormControl sx={{ m: 1, minWidth: 230 }}>
+        <InputLabel id='simple-select-label'>Location</InputLabel>
         <Select
-          displayEmpty
-          inputProps={{ 'aria-label': 'Without label' }}
+          labelId='simple-select-label'
           defaultValue='Switzerland'
           id='grouped-select'
           onChange={e => onSelect(e.target.value)}
           style={{ height: '35px' }}
+          label='Location'
         >
           <MenuItem value={'World'}>World</MenuItem>
           <ListSubheader>Regions</ListSubheader>
