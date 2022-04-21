@@ -87,7 +87,7 @@ export async function fetchDivisionCountSamples(
   selector: LapisSelector,
   signal?: AbortSignal
 ): Promise<DivisionCountSampleEntry[]> {
-  return _fetchAggSamples(selector, ['division'], signal);
+  return _fetchAggSamples(selector, ['division', 'country', 'region'], signal);
 }
 
 export async function fetchCountryDateCountSamples(
@@ -233,9 +233,10 @@ export async function _fetchAggSamples(
   additionalParams.set('fields', fields.join(','));
   const res = await get(`${linkPrefix}&${additionalParams}`, signal);
   if (!res.ok) {
-    throw new Error('Error fetching new samples data');
+    throw new Error('Error fetching new samples data!!');
   }
   const body = (await res.json()) as LapisResponse<FullSampleAggEntryRaw[]>;
+
   const parsed = _extractLapisData(body).map(raw => parseFullSampleAggEntry(raw));
   if (fields.includes('country')) {
     const gisaidToCovSpectrumNameMap = await LocationService.getGisaidToCovSpectrumNameMap();
@@ -244,6 +245,7 @@ export async function _fetchAggSamples(
       country: e.country ? gisaidToCovSpectrumNameMap.get(e.country) ?? null : null,
     }));
   }
+
   return parsed;
 }
 
