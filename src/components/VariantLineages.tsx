@@ -12,6 +12,7 @@ export interface Props {
 
 const LineageEntry = styled.li`
   width: 250px;
+  margin-left: 8px;
 `;
 
 export const VariantLineages = ({ selector, onVariantSelect }: Props) => {
@@ -37,6 +38,7 @@ export const VariantLineages = ({ selector, onVariantSelect }: Props) => {
   return (
     <>
       <div>Sequences of this variant belong to the following Pango lineages:</div>
+      <br />
 
       {!data ? (
         <div className='h-20 w-full flex items-center'>
