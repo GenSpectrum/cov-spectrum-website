@@ -38,9 +38,10 @@ export const PlaceSelect = ({ onSelect }: Props) => {
   return (
     <>
       <Autocomplete
+        autoHighlight
         isOptionEqualToValue={(option, value) => option.place === value.place}
         size='small'
-        sx={{ mr: 1, minWidth: 230 }}
+        sx={{ mr: 1, minWidth: 250 }}
         id='grouped-demo'
         options={[...new Set(geoOptions)]}
         groupBy={option => option.group}
@@ -64,20 +65,26 @@ export const PlaceSelect = ({ onSelect }: Props) => {
           />
         )}
         renderOption={(props, option) => (
-          <Box component='li' {...props} sx={{ ml: 0, mr: 5 }} style={{ width: '100%' }}>
-            {option.code ? (
-              <img
-                loading='lazy'
-                width='20'
-                src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
-                srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
-                alt=''
-                className='mr-5 pl-0 ml-0'
-              />
+          <Box component='li' {...props} sx={{ '& > img': { flexShrink: 0 } }}>
+            {option.code && option.group === 'Countries' ? (
+              <>
+                <img
+                  loading='lazy'
+                  width='20'
+                  src={`https://flagcdn.com/w20/${option.code.toLowerCase()}.png`}
+                  srcSet={`https://flagcdn.com/w40/${option.code.toLowerCase()}.png 2x`}
+                  alt=''
+                  className='mr-3 pl-0 ml-0'
+                />{' '}
+                <span>{option.place}</span>
+              </>
+            ) : !option.code && option.group === 'Countries' ? (
+              <p style={{ marginLeft: '20px' }}>
+                <span>{option.place}</span>
+              </p>
             ) : (
-              '   '
+              <span>{option.place}</span>
             )}
-            {option.place}
           </Box>
         )}
       />

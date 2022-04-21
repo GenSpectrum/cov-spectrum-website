@@ -31,9 +31,7 @@ code {
   p {
     @apply text-sm md:text-base my-1 text-gray-800;
   }
-  li {
-    @apply ml-8;
-  }
+
   table {
     @apply table p-4 bg-white shadow rounded-lg;
   }

@@ -152,7 +152,7 @@ export const VariantMutations = ({ selector }: Props) => {
   return (
     <div className='bg-coolGray-50 group-hover:bg-coolGray-100 rounded-md shadow-md transition duration-200 p-10'>
       <div className='mb-8'>
-        <div className='ml-9' ref={ref}>
+        <div className='ml-0' ref={ref}>
           <span
             className={!showMergedList ? 'font-bold' : 'underline cursor-pointer'}
             onClick={() => setShowMergedList(false)}
@@ -167,7 +167,7 @@ export const VariantMutations = ({ selector }: Props) => {
             Show amino acid and nucleotide mutations together
           </span>
         </div>
-        <div className='ml-9'>
+        <div className='ml-0'>
           The following amino acid mutations are present in between{' '}
           <NumericInput
             precision={1}
@@ -195,7 +195,7 @@ export const VariantMutations = ({ selector }: Props) => {
 
       {showMergedList ? (
         <>
-          <div className='ml-9'>
+          <div className='ml-0'>
             {sortOptions.map((opt, index) => (
               <>
                 {index > 0 && <> | </>}
@@ -231,7 +231,7 @@ export const VariantMutations = ({ selector }: Props) => {
                 </MutationEntry>
               ))}
           </MutationList>
-          <div className='ml-9 mt-4'>Additional nucleotide mutations:</div>
+          <div className='ml-0 mt-4'>Additional nucleotide mutations:</div>
           <MutationList className='list-circle ml-6' width={width ? width : 1}>
             {sortNucMutations(data.additionalNucs, commonAAMutationsSort, nucMutationUniqueness)
               .filter(({ proportion }) => proportion >= minProportion && proportion <= maxProportion)
@@ -247,7 +247,7 @@ export const VariantMutations = ({ selector }: Props) => {
         </>
       ) : (
         <>
-          <div className='ml-9'>
+          <div className='ml-0'>
             {sortOptions.map((opt, index) => (
               <>
                 {index > 0 && <> | </>}
@@ -276,7 +276,7 @@ export const VariantMutations = ({ selector }: Props) => {
               })}
           </MutationList>
 
-          <div className='ml-9 mt-9'>
+          <div className='ml-0 mt-9'>
             <div className='mt-9'>Leading and tailing deletions are excluded.</div>
 
             {sortOptions.map((opt, index) => (
@@ -292,7 +292,7 @@ export const VariantMutations = ({ selector }: Props) => {
               </>
             ))}
           </div>
-          <div className='ml-9'>
+          <div className='ml-0'>
             *Leading and tailing deletions are excluded. <br />
           </div>
           <MutationList className='list-disc' width={width ? width : 1}>
