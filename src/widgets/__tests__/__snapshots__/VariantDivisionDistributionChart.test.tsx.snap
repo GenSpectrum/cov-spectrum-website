@@ -4,6 +4,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
 <div
   className="relative h-full"
 >
+  <br />
   <div
     className="flex flex-col h-full w-full"
     id="chart-and-metrics-Average proportion during selected timeframe"
@@ -22,78 +23,106 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
         className="w-full lg:w-2/3"
       >
         <div
-          className="sc-eCssSg enfXCs pd-1 md:m-2"
+          className="***masked*** pd-1 md:m-2"
           data={
             Array [
               Object {
-                "count": 24,
-                "division": "Baden-Wuerttemberg",
-                "prevalence": 0.07543374402816193,
-              },
-              Object {
-                "count": 59,
-                "division": "Bavaria",
-                "prevalence": 0.2789730010875219,
+                "count": 4,
+                "country": "Germany",
+                "division": "Brandenburg",
+                "prevalence": 0.20931449502878074,
+                "region": "Europe",
               },
               Object {
                 "count": 23,
+                "country": "Germany",
                 "division": "Berlin",
                 "prevalence": 0.2656809518308883,
+                "region": "Europe",
               },
               Object {
-                "count": 4,
-                "division": "Brandenburg",
-                "prevalence": 0.20931449502878074,
+                "count": 59,
+                "country": "Germany",
+                "division": "Bavaria",
+                "prevalence": 0.2789730010875219,
+                "region": "Europe",
+              },
+              Object {
+                "count": 24,
+                "country": "Germany",
+                "division": "Baden-Wuerttemberg",
+                "prevalence": 0.07543374402816193,
+                "region": "Europe",
               },
               Object {
                 "count": 12,
+                "country": "Germany",
                 "division": "Hamburg",
                 "prevalence": 0.1754642491592338,
+                "region": "Europe",
               },
               Object {
                 "count": 34,
+                "country": "Germany",
                 "division": "Hesse",
                 "prevalence": 0.4649254751811842,
+                "region": "Europe",
               },
               Object {
                 "count": 13,
+                "country": "Germany",
                 "division": "Niedersachsen",
                 "prevalence": 0.2896613190730838,
+                "region": "Europe",
               },
               Object {
                 "count": 78,
+                "country": "Germany",
                 "division": "North Rhine Westphalia",
                 "prevalence": 0.16844469399213924,
+                "region": "Europe",
               },
               Object {
                 "count": 12,
+                "country": "Germany",
                 "division": "Rheinland-Pfalz",
                 "prevalence": 0.22927015666794037,
-              },
-              Object {
-                "count": 2,
-                "division": "Saarland",
-                "prevalence": 0.09229349330872173,
-              },
-              Object {
-                "count": 7,
-                "division": "Saxony",
-                "prevalence": 0.05544993662864385,
+                "region": "Europe",
               },
               Object {
                 "count": 1,
+                "country": "Germany",
                 "division": "Saxony-Anhalt",
                 "prevalence": 0.03263707571801567,
+                "region": "Europe",
               },
               Object {
                 "count": 30,
+                "country": "Germany",
                 "division": "Schleswig-Holstein",
                 "prevalence": 0.2996703626011388,
+                "region": "Europe",
+              },
+              Object {
+                "count": 2,
+                "country": "Germany",
+                "division": "Saarland",
+                "prevalence": 0.09229349330872173,
+                "region": "Europe",
+              },
+              Object {
+                "count": 7,
+                "country": "Germany",
+                "division": "Saxony",
+                "prevalence": 0.05544993662864385,
+                "region": "Europe",
               },
               Object {
                 "count": 1,
+                "country": "Germany",
                 "division": "Thuringia",
                 "prevalence": 0.03367003367003367,
+                "region": "Europe",
               },
             ]
           }
@@ -276,7 +305,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
                 %
               </div>
               <div
-                className="sc-bdfBwQ kGXcMt self-end"
+                className="***masked*** self-end"
               />
             </div>
             <div
@@ -426,7 +455,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
                 16
               </div>
               <div
-                className="sc-bdfBwQ kGXcMt self-end"
+                className="***masked*** self-end"
               />
             </div>
             <div
