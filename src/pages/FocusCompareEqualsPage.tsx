@@ -118,7 +118,7 @@ export const FocusCompareEqualsPage = () => {
       </div>
       {/* Main content */}
       <div>
-        <PackedGrid maxColumns={2}>
+        <PackedGrid maxColumns={3}>
           {variantDateCounts.data && wholeDateCountWithDateFilter.data && (
             <GridCell minWidth={600}>
               <NamedCard

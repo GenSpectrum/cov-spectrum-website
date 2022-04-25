@@ -11,6 +11,7 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import { sortAAMutationList } from '../helpers/aa-mutation';
 import { LapisSelector } from '../data/LapisSelector';
+import { SvgVariantComparison2 } from '../components/SvgVariantComparison2';
 
 export interface Props {
   selectors: LapisSelector[];
@@ -28,6 +29,7 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
     if (!res.data || res.data.length !== 2) {
       return undefined;
     }
+
     // Find shared and non-shared mutations
     const [variant1, variant2] = res.data;
     const variant1Mutations = variant1.payload
@@ -136,6 +138,8 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
             ))}
           </tbody>
         </Table>
+        <SvgVariantComparison2 data={data} />
+
         {data.map(({ gene, onlyVariant1, onlyVariant2, shared }) => (
           <>
             <ReactTooltip id={`${gene}-variant1`} key={`${gene}-variant1`}>
