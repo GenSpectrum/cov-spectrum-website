@@ -11,7 +11,6 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import { sortAAMutationList } from '../helpers/aa-mutation';
 import { LapisSelector } from '../data/LapisSelector';
-import { SvgVariantComparison2 } from '../components/SvgVariantComparison2';
 
 export interface Props {
   selectors: LapisSelector[];
@@ -19,6 +18,7 @@ export interface Props {
 
 export const VariantMutationComparison = ({ selectors }: Props) => {
   const [minProportion, setMinProportion] = useState(0.5);
+
   const res = useQuery(
     signal => Promise.all(selectors.map(selector => MutationProportionData.fromApi(selector, 'aa', signal))),
     [selectors],
@@ -29,7 +29,6 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
     if (!res.data || res.data.length !== 2) {
       return undefined;
     }
-
     // Find shared and non-shared mutations
     const [variant1, variant2] = res.data;
     const variant1Mutations = variant1.payload
@@ -111,6 +110,7 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
         </OverlayTrigger>{' '}
         of the samples of the variant have the mutation.
       </div>
+
       <div>
         <Table striped bordered hover>
           <thead>
@@ -138,7 +138,6 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
             ))}
           </tbody>
         </Table>
-        <SvgVariantComparison2 data={data} />
 
         {data.map(({ gene, onlyVariant1, onlyVariant2, shared }) => (
           <>

@@ -100,6 +100,12 @@ code {
   margin: auto;
 }
 
+.svgPlot3 {
+  enable-background: new 0 0 910 577;
+  margin: auto;
+  padding: 100px;
+}
+
 .svgPlotNumber {
   white-space: pre;
   cursor: pointer;
