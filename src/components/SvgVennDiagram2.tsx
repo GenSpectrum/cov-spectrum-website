@@ -285,22 +285,22 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
             {variants ? variants[1].pangoLineage : null}
           </text>
         </svg>
+        <>
+          <ReactTooltip id='variant1' key='variant1'>
+            {allMutations.variant1Mutations.length
+              ? MutationListFormat(allMutations.variant1Mutations)
+              : `no mutations in ${variants ? variants[0].pangoLineage : null}`}
+          </ReactTooltip>
+          <ReactTooltip id='shared' key='shared'>
+            {allMutations.shared.length ? MutationListFormat(allMutations.shared) : 'no shared mutations'}
+          </ReactTooltip>
+          <ReactTooltip id='variant2' key='variant2'>
+            {allMutations.variant2Mutations.length
+              ? MutationListFormat(allMutations.variant2Mutations)
+              : `no mutations in ${variants ? variants[1].pangoLineage : null}`}
+          </ReactTooltip>
+        </>
       </PlotContainer>
-      <>
-        <ReactTooltip id='variant1' key='variant1'>
-          {allMutations.variant1Mutations.length
-            ? MutationListFormat(allMutations.variant1Mutations)
-            : `no mutations in ${variants ? variants[0].pangoLineage : null}`}
-        </ReactTooltip>
-        <ReactTooltip id='shared' key='shared'>
-          {allMutations.shared.length ? MutationListFormat(allMutations.shared) : 'no shared mutations'}
-        </ReactTooltip>
-        <ReactTooltip id='variant2' key='variant2'>
-          {allMutations.variant2Mutations.length
-            ? MutationListFormat(allMutations.variant2Mutations)
-            : `no mutations in ${variants ? variants[1].pangoLineage : null}`}
-        </ReactTooltip>
-      </>
     </>
   );
 };

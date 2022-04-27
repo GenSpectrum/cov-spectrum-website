@@ -359,49 +359,48 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
                 {variants ? variants[2].pangoLineage : null}
               </text>
             </svg>
+            <>
+              <ReactTooltip id='variant1' key='variant1'>
+                {allMutations.variant1Mutations.length
+                  ? MutationListFormat(allMutations.variant1Mutations)
+                  : `no mutations in ${variants ? variants[0].pangoLineage : null}`}
+              </ReactTooltip>
+              <ReactTooltip id='shared' key='shared'>
+                {allMutations.shared.length ? MutationListFormat(allMutations.shared) : 'no shared mutations'}
+              </ReactTooltip>
+              <ReactTooltip id='variant2' key='variant2'>
+                {allMutations.variant2Mutations.length
+                  ? MutationListFormat(allMutations.variant2Mutations)
+                  : `no mutations in ${variants ? variants[1].pangoLineage : null}`}
+              </ReactTooltip>
+              <ReactTooltip id='variant3' key='variant3'>
+                {allMutations.variant3Mutations.length
+                  ? MutationListFormat(allMutations.variant3Mutations)
+                  : `no mutations in ${variants ? variants[2].pangoLineage : null}`}
+              </ReactTooltip>
+              <ReactTooltip id='shared1and2' key='shared1and2'>
+                {allMutations.shared1and2.length
+                  ? MutationListFormat(allMutations.shared1and2)
+                  : `no shared mutations in ${variants ? variants[0].pangoLineage : null} and ${
+                      variants ? variants[1].pangoLineage : null
+                    }`}
+              </ReactTooltip>
+              <ReactTooltip id='shared1and3' key='shared1and3'>
+                {allMutations.shared1and3.length
+                  ? MutationListFormat(allMutations.shared1and3)
+                  : `no shared mutations in ${variants ? variants[0].pangoLineage : null} and ${
+                      variants ? variants[2].pangoLineage : null
+                    }`}
+              </ReactTooltip>
+              <ReactTooltip id='shared2and3' key='shared2and3'>
+                {allMutations.shared2and3.length
+                  ? MutationListFormat(allMutations.shared2and3)
+                  : `no shared mutations in ${variants ? variants[1].pangoLineage : null} and ${
+                      variants ? variants[2].pangoLineage : null
+                    }`}
+              </ReactTooltip>
+            </>
           </PlotContainer>
-
-          <>
-            <ReactTooltip id='variant1' key='variant1'>
-              {allMutations.variant1Mutations.length
-                ? MutationListFormat(allMutations.variant1Mutations)
-                : `no mutations in ${variants ? variants[0].pangoLineage : null}`}
-            </ReactTooltip>
-            <ReactTooltip id='shared' key='shared'>
-              {allMutations.shared.length ? MutationListFormat(allMutations.shared) : 'no shared mutations'}
-            </ReactTooltip>
-            <ReactTooltip id='variant2' key='variant2'>
-              {allMutations.variant2Mutations.length
-                ? MutationListFormat(allMutations.variant2Mutations)
-                : `no mutations in ${variants ? variants[1].pangoLineage : null}`}
-            </ReactTooltip>
-            <ReactTooltip id='variant3' key='variant3'>
-              {allMutations.variant3Mutations.length
-                ? MutationListFormat(allMutations.variant3Mutations)
-                : `no mutations in ${variants ? variants[2].pangoLineage : null}`}
-            </ReactTooltip>
-            <ReactTooltip id='shared1and2' key='shared1and2'>
-              {allMutations.shared1and2.length
-                ? MutationListFormat(allMutations.shared1and2)
-                : `no shared mutations in ${variants ? variants[0].pangoLineage : null} and ${
-                    variants ? variants[1].pangoLineage : null
-                  }`}
-            </ReactTooltip>
-            <ReactTooltip id='shared1and3' key='shared1and3'>
-              {allMutations.shared1and3.length
-                ? MutationListFormat(allMutations.shared1and3)
-                : `no shared mutations in ${variants ? variants[0].pangoLineage : null} and ${
-                    variants ? variants[2].pangoLineage : null
-                  }`}
-            </ReactTooltip>
-            <ReactTooltip id='shared2and3' key='shared2and3'>
-              {allMutations.shared2and3.length
-                ? MutationListFormat(allMutations.shared2and3)
-                : `no shared mutations in ${variants ? variants[1].pangoLineage : null} and ${
-                    variants ? variants[2].pangoLineage : null
-                  }`}
-            </ReactTooltip>
-          </>
         </>
       )}
     </>
