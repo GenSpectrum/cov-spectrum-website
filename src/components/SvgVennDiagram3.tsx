@@ -28,7 +28,7 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
   `;
 
   const [minProportion, setMinProportion] = useState(0.5);
-  console.log('selectors', selectors);
+
   const res = useQuery(
     signal => Promise.all(selectors.map(selector => MutationProportionData.fromApi(selector, 'aa', signal))),
     [selectors],
@@ -44,7 +44,6 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
     }
     if (res.data && res.data.length === 3) {
       const [variant1, variant2, variant3] = res.data;
-      console.log('variant1, variant2, variant3');
 
       const variant1Mutations = variant1.payload
         .filter(m => m.proportion >= minProportion)
@@ -56,12 +55,25 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
         .filter(m => m.proportion >= minProportion)
         .map(m => m.mutation);
       const shared = _.intersection(variant1Mutations, variant2Mutations, variant3Mutations);
-      const shared1and2 = _.intersection(variant1Mutations, variant2Mutations);
-      const shared1and3 = _.intersection(variant1Mutations, variant3Mutations);
-      const shared2and3 = _.intersection(variant2Mutations, variant3Mutations);
-      const onlyVariant1 = _.pullAll(variant1Mutations, shared);
-      const onlyVariant2 = _.pullAll(variant2Mutations, shared);
-      const onlyVariant3 = _.pullAll(variant3Mutations, shared);
+
+      let shared1and2 = _.intersection(variant1Mutations, variant2Mutations); // const shared1and2 = _.pullAll(shared1and2, shared)
+      shared1and2 = _.pullAll(shared1and2, shared);
+
+      let shared1and3 = _.intersection(variant1Mutations, variant3Mutations);
+      shared1and3 = _.pullAll(shared1and3, shared);
+
+      let shared2and3 = _.intersection(variant2Mutations, variant3Mutations);
+      shared2and3 = _.pullAll(shared2and3, shared);
+
+      const onlyVariant1 = _.pullAll(variant1Mutations, [
+        ...new Set([shared, shared1and2, shared2and3].flat()),
+      ]);
+      const onlyVariant2 = _.pullAll(variant2Mutations, [
+        ...new Set([shared, shared1and2, shared2and3, shared1and3].flat()),
+      ]);
+      const onlyVariant3 = _.pullAll(variant3Mutations, [
+        ...new Set([shared, shared1and2, shared2and3, shared1and3].flat()),
+      ]);
 
       // Group by genes
       const genes = new Map<
@@ -191,7 +203,7 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
           <p>
             * Clicking to the number of the mutations inside the diagram will copy the mutations to clipboard.{' '}
           </p>
-          <br />
+
           <PlotContainer ref={ref} width={width ? width : 600}>
             <svg
               width='570'

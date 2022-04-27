@@ -212,7 +212,6 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
       <p>
         * Clicking to the number of the mutations inside the diagram will copy the mutations to clipboard.{' '}
       </p>
-      <br />
       <PlotContainer ref={ref} width={width ? width : 600}>
         <svg
           width='370'
