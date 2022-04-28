@@ -12,11 +12,42 @@ import Slider from 'rc-slider';
 import { useResizeDetector } from 'react-resize-detector';
 import styled from 'styled-components';
 
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import ListItemText from '@mui/material/ListItemText';
+import Checkbox from '@mui/material/Checkbox';
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
 export interface Props {
   selectors: LapisSelector[];
 }
 
 export const SvgVennDiagram3 = ({ selectors }: Props) => {
+  const [geneName, setGeneName] = useState<string[]>([]);
+
+  const handleChange = (event: SelectChangeEvent<typeof geneName>) => {
+    const {
+      target: { value },
+    } = event;
+    setGeneName(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value
+    );
+  };
+
   const { width, ref } = useResizeDetector<HTMLDivElement>();
 
   interface PlotContProps {
@@ -141,6 +172,13 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
     return <Loader />;
   }
 
+  let filteredData: typeof data3 = data3;
+
+  if (geneName.length > 0) {
+    filteredData = data3.filter(item => geneName.includes(item.gene));
+    console.log('filteredData', filteredData);
+  }
+
   let allMutations: {
     variant1Mutations: string[];
     variant2Mutations: string[];
@@ -159,7 +197,7 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
     shared2and3: [],
   };
 
-  for (const item of data3) {
+  for (const item of filteredData) {
     allMutations.variant1Mutations.push(...item.onlyVariant1);
     allMutations.variant2Mutations.push(...item.onlyVariant2);
     allMutations.variant3Mutations.push(...item.onlyVariant3);
@@ -203,6 +241,31 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
           <p>
             * Clicking to the number of the mutations inside the diagram will copy the mutations to clipboard.{' '}
           </p>
+
+          <div>
+            <FormControl sx={{ m: 1, width: 300 }}>
+              <InputLabel id='demo-multiple-checkbox-label'>Select genes</InputLabel>
+              <Select
+                labelId='demo-multiple-checkbox-label'
+                id='demo-multiple-checkbox'
+                multiple
+                value={geneName}
+                onChange={handleChange}
+                input={<OutlinedInput label='Select genes' />}
+                renderValue={selected => selected.join(', ')}
+                MenuProps={MenuProps}
+                placeholder='All'
+              >
+                {ReferenceGenomeService.genes.map(gene => (
+                  <MenuItem key={gene} value={gene}>
+                    <Checkbox checked={geneName.indexOf(gene) > -1} />
+                    <ListItemText primary={gene} />
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            <p>* If nothing is chosen, all genes will be shown</p>
+          </div>
 
           <PlotContainer ref={ref} width={width ? width : 600}>
             <svg
@@ -279,6 +342,7 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
               >
                 {allMutations.variant1Mutations.length}
               </text>
+
               <text
                 transform='matrix(1 0 0 1 548.3361 620.9984)'
                 className='st1 st2 svgPlotNumber'
@@ -292,6 +356,7 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
               >
                 {allMutations.shared.length}
               </text>
+
               <text
                 transform='matrix(1 0 0 1 548.3361 935.4288)'
                 className='st1 st2 svgPlotNumber'
@@ -303,8 +368,10 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
                   );
                 }}
               >
+                {' '}
                 {allMutations.shared2and3.length}
               </text>
+
               <text
                 transform='matrix(1 0 0 1 307.7284 511.6313)'
                 className='st1 st2 svgPlotNumber'
@@ -318,6 +385,7 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
               >
                 {allMutations.shared1and2.length}
               </text>
+
               <text
                 transform='matrix(1 0 0 1 808.9943 511.6313)'
                 className='st1 st2 svgPlotNumber'
@@ -331,6 +399,7 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
               >
                 {allMutations.shared1and3.length}
               </text>
+
               <text
                 transform='matrix(1 0 0 1 963.0196 823.3275)'
                 className='st1 st2 svgPlotNumber'
@@ -346,6 +415,7 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
               >
                 {allMutations.variant3Mutations.length}
               </text>
+
               <text
                 transform='matrix(1 0 0 1 182.8677 823.3275)'
                 className='st1 st2 svgPlotNumber'
@@ -361,13 +431,16 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
               >
                 {allMutations.variant2Mutations.length}
               </text>
-              <text className='svgPlotText' x='857.256' y='83.287'>
+              <text transform='matrix(1 0 0 1 897.6821 99.9163)' className='svgPlotText'>
+                {' '}
                 {variants ? variants[0].pangoLineage : null}
               </text>
-              <text className='svgPlotText' x='12.812' y='1069.66'>
+              <text transform='matrix(1 0 0 1 9.3525 1110.3396)' className='svgPlotText'>
+                {' '}
                 {variants ? variants[1].pangoLineage : null}
               </text>
-              <text className='svgPlotText' x='1014.25' y='1067.59'>
+              <text transform='matrix(1 0 0 1 969.281 1110.3396)' className='svgPlotText'>
+                {' '}
                 {variants ? variants[2].pangoLineage : null}
               </text>
             </svg>

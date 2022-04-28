@@ -12,13 +12,43 @@ import Slider from 'rc-slider';
 import { useResizeDetector } from 'react-resize-detector';
 import styled from 'styled-components';
 
+import OutlinedInput from '@mui/material/OutlinedInput';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import FormControl from '@mui/material/FormControl';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
+import ListItemText from '@mui/material/ListItemText';
+import Checkbox from '@mui/material/Checkbox';
+
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
+
 export interface Props {
   selectors: LapisSelector[];
 }
 
 export const SvgVennDiagram2 = ({ selectors }: Props) => {
-  const { width, ref } = useResizeDetector<HTMLDivElement>();
+  const [geneName, setGeneName] = useState<string[]>([]);
 
+  const handleChange = (event: SelectChangeEvent<typeof geneName>) => {
+    const {
+      target: { value },
+    } = event;
+    setGeneName(
+      // On autofill we get a stringified value.
+      typeof value === 'string' ? value.split(',') : value
+    );
+  };
+
+  const { width, ref } = useResizeDetector<HTMLDivElement>();
   interface PlotContProps {
     width: number;
   }
@@ -28,7 +58,7 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
   `;
 
   const [minProportion, setMinProportion] = useState(0.5);
-  console.log('selectors', selectors);
+
   const res = useQuery(
     signal => Promise.all(selectors.map(selector => MutationProportionData.fromApi(selector, 'aa', signal))),
     [selectors],
@@ -40,79 +70,6 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
 
   const data = useMemo(() => {
     if (!res.data || res.data.length !== 2) {
-      if (res.data && res.data.length === 3) {
-        const [variant1, variant2, variant3] = res.data;
-        console.log('variant1, variant2, variant3');
-
-        const variant1Mutations = variant1.payload
-          .filter(m => m.proportion >= minProportion)
-          .map(m => m.mutation);
-        const variant2Mutations = variant2.payload
-          .filter(m => m.proportion >= minProportion)
-          .map(m => m.mutation);
-        const variant3Mutations = variant3.payload
-          .filter(m => m.proportion >= minProportion)
-          .map(m => m.mutation);
-        const shared = _.intersection(variant1Mutations, variant2Mutations, variant3Mutations);
-        const shared1and2 = _.intersection(variant1Mutations, variant2Mutations);
-        const shared1and3 = _.intersection(variant1Mutations, variant3Mutations);
-        const shared2and3 = _.intersection(variant2Mutations, variant3Mutations);
-        const onlyVariant1 = _.pullAll(variant1Mutations, shared);
-        const onlyVariant2 = _.pullAll(variant2Mutations, shared);
-        const onlyVariant3 = _.pullAll(variant3Mutations, shared);
-
-        // Group by genes
-        const genes = new Map<
-          string,
-          {
-            onlyVariant1: string[];
-            onlyVariant2: string[];
-            onlyVariant3: string[];
-            shared: string[];
-            shared1and2: string[];
-            shared1and3: string[];
-            shared2and3: string[];
-          }
-        >();
-        for (let gene of ReferenceGenomeService.genes) {
-          genes.set(gene, {
-            onlyVariant1: [],
-            onlyVariant2: [],
-            onlyVariant3: [],
-            shared: [],
-            shared1and2: [],
-            shared1and3: [],
-            shared2and3: [],
-          });
-        }
-        for (let mutation of shared) {
-          genes.get(mutation.split(':')[0])!.shared.push(mutation);
-        }
-        for (let mutation of shared1and2) {
-          genes.get(mutation.split(':')[0])!.shared1and2.push(mutation);
-        }
-        for (let mutation of shared1and3) {
-          genes.get(mutation.split(':')[0])!.shared1and3.push(mutation);
-        }
-        for (let mutation of shared2and3) {
-          genes.get(mutation.split(':')[0])!.shared2and3.push(mutation);
-        }
-        for (let mutation of onlyVariant1) {
-          genes.get(mutation.split(':')[0])!.onlyVariant1.push(mutation);
-        }
-        for (let mutation of onlyVariant2) {
-          genes.get(mutation.split(':')[0])!.onlyVariant2.push(mutation);
-        }
-        for (let mutation of onlyVariant3) {
-          genes.get(mutation.split(':')[0])!.onlyVariant3.push(mutation);
-        }
-        // Count
-        return [...genes.entries()].map(([gene, muts]) => ({
-          gene,
-          ...muts,
-        }));
-      }
-
       return undefined;
     }
 
@@ -139,6 +96,7 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
     for (let gene of ReferenceGenomeService.genes) {
       genes.set(gene, { onlyVariant1: [], onlyVariant2: [], shared: [] });
     }
+
     for (let mutation of shared) {
       genes.get(mutation.split(':')[0])!.shared.push(mutation);
     }
@@ -168,13 +126,20 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
     return <Loader />;
   }
 
+  let filteredData: typeof data = data;
+
+  if (geneName.length > 0) {
+    filteredData = data.filter(item => geneName.includes(item.gene));
+    console.log('filteredData', filteredData);
+  }
+
   let allMutations: { variant1Mutations: string[]; variant2Mutations: string[]; shared: string[] } = {
     variant1Mutations: [],
     variant2Mutations: [],
     shared: [],
   };
 
-  for (const item of data) {
+  for (const item of filteredData) {
     allMutations.variant1Mutations.push(...item.onlyVariant1);
     allMutations.variant2Mutations.push(...item.onlyVariant2);
     allMutations.shared.push(...item.shared);
@@ -212,6 +177,32 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
       <p>
         * Clicking to the number of the mutations inside the diagram will copy the mutations to clipboard.{' '}
       </p>
+
+      <div>
+        <FormControl sx={{ m: 1, width: 300 }}>
+          <InputLabel id='demo-multiple-checkbox-label'>Select genes</InputLabel>
+          <Select
+            labelId='demo-multiple-checkbox-label'
+            id='demo-multiple-checkbox'
+            multiple
+            value={geneName}
+            onChange={handleChange}
+            input={<OutlinedInput label='Select genes' />}
+            renderValue={selected => selected.join(', ')}
+            MenuProps={MenuProps}
+            placeholder='All'
+          >
+            {ReferenceGenomeService.genes.map(gene => (
+              <MenuItem key={gene} value={gene}>
+                <Checkbox checked={geneName.indexOf(gene) > -1} />
+                <ListItemText primary={gene} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <p>* If nothing is chosen, all genes will be shown</p>
+      </div>
+
       <PlotContainer ref={ref} width={width ? width : 600}>
         <svg
           width='370'
