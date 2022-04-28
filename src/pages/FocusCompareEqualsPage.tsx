@@ -25,6 +25,7 @@ import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import { SvgVennDiagram4 } from '../components/SvgVennDiagram4';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -212,6 +213,12 @@ export const FocusCompareEqualsPage = () => {
             <GridCell minWidth={600}>
               <NamedCard title='Amino acid changes'>
                 <SvgVennDiagram3 selectors={ldvsSelectors} />
+              </NamedCard>
+            </GridCell>
+          ) : ldvsSelectors.length === 4 ? (
+            <GridCell minWidth={600}>
+              <NamedCard title='Amino acid changes'>
+                <SvgVennDiagram4 selectors={ldvsSelectors} />
               </NamedCard>
             </GridCell>
           ) : (
