@@ -11,6 +11,7 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import { useResizeDetector } from 'react-resize-detector';
 import styled from 'styled-components';
+import './style/sggPlots.css';
 
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -269,6 +270,8 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
 
           <PlotContainer ref={ref} width={width ? width : 600}>
             <svg
+              width='370'
+              height='370'
               version='1.1'
               id='Layer_1'
               xmlns='http://www.w3.org/2000/svg'

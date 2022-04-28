@@ -20,6 +20,7 @@ import { DivisionModal } from '../components/DivisionModal';
 import { createDivisionBreakdownButton } from './FocusSinglePage';
 import { SvgVennDiagram2 } from '../components/SvgVennDiagram2';
 import { SvgVennDiagram3 } from '../components/SvgVennDiagram3';
+
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
@@ -163,7 +164,7 @@ export const FocusCompareEqualsPage = () => {
       </div>
       {/* Main content */}
       <div>
-        <PackedGrid maxColumns={3}>
+        <PackedGrid maxColumns={2}>
           {variantDateCounts.data && wholeDateCountWithDateFilter.data && (
             <GridCell minWidth={600}>
               <NamedCard
