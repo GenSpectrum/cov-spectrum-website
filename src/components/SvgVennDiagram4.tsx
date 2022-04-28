@@ -220,7 +220,7 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
           ].flat()
         ),
       ]);
-      shared1and2and4 = _.pullAll(shared1and2and3, [
+      shared1and2and4 = _.pullAll(shared1and2and4, [
         ...new Set(
           [
             shared,
@@ -236,7 +236,7 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
           ].flat()
         ),
       ]);
-      shared2and3and4 = _.pullAll(shared1and2and3, [
+      shared2and3and4 = _.pullAll(shared2and3and4, [
         ...new Set(
           [
             shared,
@@ -252,7 +252,7 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
           ].flat()
         ),
       ]);
-      shared1and4and3 = _.pullAll(shared1and2and3, [
+      shared1and4and3 = _.pullAll(shared1and4and3, [
         ...new Set(
           [
             shared,
@@ -275,10 +275,14 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
             shared,
             shared1and2,
             shared1and3,
-            shared1and2,
-            shared1and4and3,
+            shared1and4,
+            shared2and3,
+            shared2and4,
+            shared3and4,
             shared1and2and3,
             shared1and2and4,
+            shared2and3and4,
+            shared1and4and3,
           ].flat()
         ),
       ]);
@@ -289,9 +293,13 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
             shared2and3,
             shared2and4,
             shared1and2,
+            shared1and3,
+            shared1and4,
+            shared3and4,
             shared1and2and3,
             shared1and2and4,
             shared2and3and4,
+            shared1and4and3,
           ].flat()
         ),
       ]);
@@ -303,9 +311,13 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
             shared1and3,
             shared2and3,
             shared3and4,
+            shared1and4,
+            shared1and2,
+            shared2and4,
             shared1and2and3,
             shared2and3and4,
             shared1and4and3,
+            shared1and2and4,
           ].flat()
         ),
       ]);
