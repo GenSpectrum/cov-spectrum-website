@@ -97,13 +97,13 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
       shared2and3 = _.pullAll(shared2and3, [...new Set([shared, shared1and3, shared1and2].flat())]);
 
       const onlyVariant1 = _.pullAll(variant1Mutations, [
-        ...new Set([shared, shared1and2, shared2and3].flat()),
+        ...new Set([shared, shared1and2, shared1and3].flat()),
       ]);
       const onlyVariant2 = _.pullAll(variant2Mutations, [
-        ...new Set([shared, shared1and2, shared2and3, shared1and3].flat()),
+        ...new Set([shared, shared1and2, shared2and3].flat()),
       ]);
       const onlyVariant3 = _.pullAll(variant3Mutations, [
-        ...new Set([shared, shared1and2, shared2and3, shared1and3].flat()),
+        ...new Set([shared, shared2and3, shared1and3].flat()),
       ]);
 
       // Group by genes
