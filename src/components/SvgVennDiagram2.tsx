@@ -19,7 +19,7 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
-import './style/sggPlots.css';
+import './style/svgPlots.css';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

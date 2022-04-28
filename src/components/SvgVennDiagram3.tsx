@@ -11,7 +11,7 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import { useResizeDetector } from 'react-resize-detector';
 import styled from 'styled-components';
-import './style/sggPlots.css';
+import './style/svgPlots.css';
 
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -88,14 +88,13 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
         .map(m => m.mutation);
       const shared = _.intersection(variant1Mutations, variant2Mutations, variant3Mutations);
 
-      let shared1and2 = _.intersection(variant1Mutations, variant2Mutations); // const shared1and2 = _.pullAll(shared1and2, shared)
-      shared1and2 = _.pullAll(shared1and2, shared);
-
-      let shared1and3 = _.intersection(variant1Mutations, variant3Mutations);
-      shared1and3 = _.pullAll(shared1and3, shared);
-
+      let shared1and2 = _.intersection(variant1Mutations, variant2Mutations); // [ ...new Set([shared, shared1and3, shared2and3].flat())]
+      let shared1and3 = _.intersection(variant1Mutations, variant3Mutations); //
       let shared2and3 = _.intersection(variant2Mutations, variant3Mutations);
-      shared2and3 = _.pullAll(shared2and3, shared);
+
+      shared1and2 = _.pullAll(shared1and2, [...new Set([shared, shared1and3, shared2and3].flat())]);
+      shared1and3 = _.pullAll(shared1and3, [...new Set([shared, shared1and2, shared2and3].flat())]);
+      shared2and3 = _.pullAll(shared2and3, [...new Set([shared, shared1and3, shared1and2].flat())]);
 
       const onlyVariant1 = _.pullAll(variant1Mutations, [
         ...new Set([shared, shared1and2, shared2and3].flat()),
