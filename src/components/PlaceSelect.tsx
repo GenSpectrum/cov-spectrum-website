@@ -1,9 +1,9 @@
-import React, { Fragment, useState } from 'react';
-
+import React, { Fragment, useState, useEffect } from 'react';
+import { getLocation } from '../helpers/get-location';
 import { LocationService } from '../services/LocationService';
 import { useQuery } from '../helpers/query-hook';
 import { Autocomplete, Box, TextField } from '@mui/material';
-
+import { useExploreUrl } from '../helpers/explore-url';
 export interface Props {
   id?: string;
   selected: string | undefined;
@@ -12,9 +12,16 @@ export interface Props {
 }
 
 export const PlaceSelect = ({ onSelect }: Props) => {
-  const [, setValue] = useState<string>('Switzerland');
+  const exploreUrl = useExploreUrl();
+  const [value, setValue] = useState<string | null>('');
+
+  useEffect(() => {
+    let place: string = getLocation(exploreUrl);
+    setValue(place);
+  });
 
   const places: string[] = useQuery(() => LocationService.getAllLocationNames(), []).data ?? [];
+
   const regions: string[] = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
   let countries: string[] = places
     .filter(place => place !== 'Switzerland' && place !== 'World' && !regions.includes(place))
@@ -38,7 +45,15 @@ export const PlaceSelect = ({ onSelect }: Props) => {
   return (
     <>
       <Autocomplete
-        autoHighlight
+        placeholder={
+          [...new Set(geoOptions)].filter(x => x.place === value)[0]
+            ? [...new Set(geoOptions)].filter(x => x.place === value)[0].place
+            : ''
+        }
+        autoComplete
+        includeInputInList
+        value={[...new Set(geoOptions)].filter(x => x.place === value)[0]}
+        defaultValue={[...new Set(geoOptions)].filter(x => x.place === value)[0]}
         isOptionEqualToValue={(option, value) => option.place === value.place}
         size='small'
         sx={{ mr: 1, minWidth: 250 }}
@@ -46,22 +61,24 @@ export const PlaceSelect = ({ onSelect }: Props) => {
         options={[...new Set(geoOptions)]}
         groupBy={option => option.group}
         getOptionLabel={option => option.place}
-        defaultValue={geoOptions[7]}
-        onInputChange={(event, newInputValue) => {
-          setValue(newInputValue);
-          onSelect(newInputValue);
+        onChange={(event: any, newValue: any) => {
+          if (newValue !== null && newValue.place) {
+            setValue(newValue.place);
+            onSelect(newValue.place);
+          }
         }}
         renderInput={params => (
           <TextField
+            placeholder={
+              [...new Set(geoOptions)].filter(x => x.place === value)[0]
+                ? [...new Set(geoOptions)].filter(x => x.place === value)[0].place
+                : ''
+            }
+            variant='standard'
             {...params}
-            onBlur={e => {
-              setValue(e.target.value);
-              onSelect(e.target.value);
-            }}
             inputProps={{
               ...params.inputProps,
             }}
-            label='Location'
           />
         )}
         renderOption={(props, option) => (
