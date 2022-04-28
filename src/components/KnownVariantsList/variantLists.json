@@ -4,12 +4,6 @@
     "fillUpUntil": 12,
     "variants": [
       {
-        "pangoLineage": "B.1.1.529*"
-      },
-      {
-        "pangoLineage": "BA.1*"
-      },
-      {
         "pangoLineage": "BA.2*"
       },
       {
@@ -19,19 +13,30 @@
         "variantQuery": "BA.5* | (BA.2* & 12160A & 9866C & 27259A)"
       },
       {
+        "pangoLineage": "BA.2.12.1*",
+        "aaMutations": []
+      },
+      {
+        "pangoLineage": "BA.2*",
+        "aaMutations": ["S:452Q"]
+      },
+      {
+        "pangoLineage": "BA.2*",
+        "aaMutations": ["S:452R"]
+      },
+      {
+        "pangoLineage": "BA.2*",
+        "aaMutations": ["S:452M"]
+      },
+      {
+        "pangoLineage": "XE*",
+        "aaMutations": []
+      },
+      {
+        "pangoLineage": "BA.1*"
+      },
+      {
         "pangoLineage": "B.1.617.2*",
-        "aaMutations": []
-      },
-      {
-        "pangoLineage": "B.1.1.7*",
-        "aaMutations": []
-      },
-      {
-        "pangoLineage": "B.1.351*",
-        "aaMutations": []
-      },
-      {
-        "pangoLineage": "P.1*",
         "aaMutations": []
       }
     ]
