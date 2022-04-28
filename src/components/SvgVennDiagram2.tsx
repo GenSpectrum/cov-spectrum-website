@@ -192,7 +192,7 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
             MenuProps={MenuProps}
             placeholder='All'
           >
-            {ReferenceGenomeService.genes.map(gene => (
+            {ReferenceGenomeService.genes.sort().map(gene => (
               <MenuItem key={gene} value={gene}>
                 <Checkbox checked={geneName.indexOf(gene) > -1} />
                 <ListItemText primary={gene} />
