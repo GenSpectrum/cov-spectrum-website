@@ -4,13 +4,13 @@ import { LapisSelector } from '../data/LapisSelector';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '../helpers/query-hook';
 import { MutationProportionData } from '../data/MutationProportionDataset';
-import _ from 'lodash';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import Loader from './Loader';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import { useResizeDetector } from 'react-resize-detector';
 import styled from 'styled-components';
+import { intersections2 } from '../helpers/intersections';
 
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -32,6 +32,14 @@ const MenuProps = {
   },
 };
 
+interface PlotContProps {
+  width: number;
+}
+
+const PlotContainer = styled.div<PlotContProps>`
+  overflow: ${props => (props.width < 500 ? 'scroll' : 'auto')};
+`;
+
 export interface Props {
   selectors: LapisSelector[];
 }
@@ -50,31 +58,18 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
   };
 
   const { width, ref } = useResizeDetector<HTMLDivElement>();
-  interface PlotContProps {
-    width: number;
-  }
-
-  const PlotContainer = styled.div<PlotContProps>`
-    overflow: ${props => (props.width < 500 ? 'scroll' : 'auto')};
-  `;
-
   const [minProportion, setMinProportion] = useState(0.5);
-
   const res = useQuery(
     signal => Promise.all(selectors.map(selector => MutationProportionData.fromApi(selector, 'aa', signal))),
     [selectors],
     useEffect
   );
-
   const exploreUrl = useExploreUrl()!;
   const variants = exploreUrl.variants;
-
   const data = useMemo(() => {
     if (!res.data || res.data.length !== 2) {
       return undefined;
     }
-
-    // Find shared and non-shared mutations
     const [variant1, variant2] = res.data;
     const variant1Mutations = variant1.payload
       .filter(m => m.proportion >= minProportion)
@@ -82,36 +77,8 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
     const variant2Mutations = variant2.payload
       .filter(m => m.proportion >= minProportion)
       .map(m => m.mutation);
-    const shared = _.intersection(variant1Mutations, variant2Mutations);
-    const onlyVariant1 = _.pullAll(variant1Mutations, shared);
-    const onlyVariant2 = _.pullAll(variant2Mutations, shared);
-    // Group by genes
-    const genes = new Map<
-      string,
-      {
-        onlyVariant1: string[];
-        onlyVariant2: string[];
-        shared: string[];
-      }
-    >();
-    for (let gene of ReferenceGenomeService.genes) {
-      genes.set(gene, { onlyVariant1: [], onlyVariant2: [], shared: [] });
-    }
 
-    for (let mutation of shared) {
-      genes.get(mutation.split(':')[0])!.shared.push(mutation);
-    }
-    for (let mutation of onlyVariant1) {
-      genes.get(mutation.split(':')[0])!.onlyVariant1.push(mutation);
-    }
-    for (let mutation of onlyVariant2) {
-      genes.get(mutation.split(':')[0])!.onlyVariant2.push(mutation);
-    }
-    // Count
-    return [...genes.entries()].map(([gene, muts]) => ({
-      gene,
-      ...muts,
-    }));
+    return intersections2(variant1Mutations, variant2Mutations);
   }, [res.data, minProportion]);
 
   if (selectors.length !== 2) {
@@ -131,7 +98,6 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
 
   if (geneName.length > 0) {
     filteredData = data.filter(item => geneName.includes(item.gene));
-    console.log('filteredData', filteredData);
   }
 
   let allMutations: { variant1Mutations: string[]; variant2Mutations: string[]; shared: string[] } = {

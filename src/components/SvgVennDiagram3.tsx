@@ -4,7 +4,7 @@ import { LapisSelector } from '../data/LapisSelector';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '../helpers/query-hook';
 import { MutationProportionData } from '../data/MutationProportionDataset';
-import _ from 'lodash';
+//import _ from 'lodash';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import Loader from './Loader';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
@@ -12,6 +12,7 @@ import Slider from 'rc-slider';
 import { useResizeDetector } from 'react-resize-detector';
 import styled from 'styled-components';
 import './style/svgPlots.css';
+import { intersections3 } from '../helpers/intersections';
 
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -32,6 +33,14 @@ const MenuProps = {
   },
 };
 
+interface PlotContProps {
+  width: number;
+}
+
+const PlotContainer = styled.div<PlotContProps>`
+  overflow: ${props => (props.width < 500 ? 'scroll' : 'auto')};
+`;
+
 export interface Props {
   selectors: LapisSelector[];
 }
@@ -50,14 +59,6 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
   };
 
   const { width, ref } = useResizeDetector<HTMLDivElement>();
-
-  interface PlotContProps {
-    width: number;
-  }
-
-  const PlotContainer = styled.div<PlotContProps>`
-    overflow: ${props => (props.width < 500 ? 'scroll' : 'auto')};
-  `;
 
   const [minProportion, setMinProportion] = useState(0.5);
 
@@ -86,76 +87,8 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
       const variant3Mutations = variant3.payload
         .filter(m => m.proportion >= minProportion)
         .map(m => m.mutation);
-      const shared = _.intersection(variant1Mutations, variant2Mutations, variant3Mutations);
 
-      let shared1and2 = _.intersection(variant1Mutations, variant2Mutations); // [ ...new Set([shared, shared1and3, shared2and3].flat())]
-      let shared1and3 = _.intersection(variant1Mutations, variant3Mutations); //
-      let shared2and3 = _.intersection(variant2Mutations, variant3Mutations);
-
-      shared1and2 = _.pullAll(shared1and2, [...new Set([shared, shared1and3, shared2and3].flat())]);
-      shared1and3 = _.pullAll(shared1and3, [...new Set([shared, shared1and2, shared2and3].flat())]);
-      shared2and3 = _.pullAll(shared2and3, [...new Set([shared, shared1and3, shared1and2].flat())]);
-
-      const onlyVariant1 = _.pullAll(variant1Mutations, [
-        ...new Set([shared, shared1and2, shared1and3].flat()),
-      ]);
-      const onlyVariant2 = _.pullAll(variant2Mutations, [
-        ...new Set([shared, shared1and2, shared2and3].flat()),
-      ]);
-      const onlyVariant3 = _.pullAll(variant3Mutations, [
-        ...new Set([shared, shared2and3, shared1and3].flat()),
-      ]);
-
-      // Group by genes
-      const genes = new Map<
-        string,
-        {
-          onlyVariant1: string[];
-          onlyVariant2: string[];
-          onlyVariant3: string[];
-          shared: string[];
-          shared1and2: string[];
-          shared1and3: string[];
-          shared2and3: string[];
-        }
-      >();
-      for (let gene of ReferenceGenomeService.genes) {
-        genes.set(gene, {
-          onlyVariant1: [],
-          onlyVariant2: [],
-          onlyVariant3: [],
-          shared: [],
-          shared1and2: [],
-          shared1and3: [],
-          shared2and3: [],
-        });
-      }
-      for (let mutation of shared) {
-        genes.get(mutation.split(':')[0])!.shared.push(mutation);
-      }
-      for (let mutation of shared1and2) {
-        genes.get(mutation.split(':')[0])!.shared1and2.push(mutation);
-      }
-      for (let mutation of shared1and3) {
-        genes.get(mutation.split(':')[0])!.shared1and3.push(mutation);
-      }
-      for (let mutation of shared2and3) {
-        genes.get(mutation.split(':')[0])!.shared2and3.push(mutation);
-      }
-      for (let mutation of onlyVariant1) {
-        genes.get(mutation.split(':')[0])!.onlyVariant1.push(mutation);
-      }
-      for (let mutation of onlyVariant2) {
-        genes.get(mutation.split(':')[0])!.onlyVariant2.push(mutation);
-      }
-      for (let mutation of onlyVariant3) {
-        genes.get(mutation.split(':')[0])!.onlyVariant3.push(mutation);
-      }
-      // Count
-      return [...genes.entries()].map(([gene, muts]) => ({
-        gene,
-        ...muts,
-      }));
+      return intersections3(variant1Mutations, variant2Mutations, variant3Mutations);
     }
   }, [res.data, minProportion]);
 
