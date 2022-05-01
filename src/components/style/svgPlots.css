@@ -1,0 +1,76 @@
+.st0 {
+  fill: none;
+  stroke: #000000;
+  stroke-miterlimit: 10;
+}
+
+.st1 {
+  font-family: 'MyriadPro-Regular';
+}
+
+.st2 {
+  font-size: 85px;
+}
+
+.st0_4 {
+  display: none;
+}
+
+.st1_4 {
+  display: inline;
+  fill: none;
+  stroke: #000000;
+  stroke-miterlimit: 10;
+}
+.st2_4 {
+  fill: none;
+  stroke: #000000;
+  stroke-miterlimit: 10;
+}
+
+.st3 {
+  font-family: 'MyriadPro-Regular';
+}
+
+.st4 {
+  font-size: 35px;
+}
+.st5 {
+  font-size: 20px;
+}
+
+.svgPlot {
+  enable-background: new 0 0 910 577;
+  margin: auto;
+}
+
+.svgPlot3 {
+  enable-background: new 0 0 1178.62 1127.39;
+  margin: auto;
+}
+
+.svgPlot4 {
+  enable-background: new 0 0 1366 768;
+  margin: auto;
+}
+
+.svgPlot3 {
+  enable-background: new 0 0 910 577;
+  margin: auto;
+}
+
+.svgPlotNumber {
+  white-space: pre;
+  cursor: pointer;
+}
+.svgPlotNumber:hover {
+  fill: royalblue;
+}
+
+.svgPlotText {
+  white-space: pre;
+  fill: darkred;
+  font-family: Arial, sans-serif;
+  font-weight: bolder;
+  font-size: 35px;
+}

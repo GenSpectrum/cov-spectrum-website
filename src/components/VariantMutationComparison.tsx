@@ -18,6 +18,7 @@ export interface Props {
 
 export const VariantMutationComparison = ({ selectors }: Props) => {
   const [minProportion, setMinProportion] = useState(0.5);
+
   const res = useQuery(
     signal => Promise.all(selectors.map(selector => MutationProportionData.fromApi(selector, 'aa', signal))),
     [selectors],
@@ -109,6 +110,7 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
         </OverlayTrigger>{' '}
         of the samples of the variant have the mutation.
       </div>
+
       <div>
         <Table striped bordered hover>
           <thead>
@@ -136,6 +138,7 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
             ))}
           </tbody>
         </Table>
+
         {data.map(({ gene, onlyVariant1, onlyVariant2, shared }) => (
           <>
             <ReactTooltip id={`${gene}-variant1`} key={`${gene}-variant1`}>
