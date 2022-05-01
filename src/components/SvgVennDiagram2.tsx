@@ -10,7 +10,7 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import { useResizeDetector } from 'react-resize-detector';
 import styled from 'styled-components';
-import { intersections2 } from '../helpers/intersections';
+import { vennIntersections } from '../helpers/intersections';
 
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -20,6 +20,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import './style/svgPlots.css';
+import { Utils } from '../services/Utils';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -43,6 +44,12 @@ const PlotContainer = styled.div<PlotContProps>`
 export interface Props {
   selectors: LapisSelector[];
 }
+
+type Venn2Data = {
+  variant1Mutations: string[];
+  variant2Mutations: string[];
+  shared: string[];
+};
 
 export const SvgVennDiagram2 = ({ selectors }: Props) => {
   const [geneName, setGeneName] = useState<string[]>([]);
@@ -78,8 +85,37 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
       .filter(m => m.proportion >= minProportion)
       .map(m => m.mutation);
 
-    return intersections2(variant1Mutations, variant2Mutations);
+    return vennIntersections(variant1Mutations, variant2Mutations);
   }, [res.data, minProportion]);
+
+  // Filter the mutations by gene
+  const filteredData = useMemo(() => {
+    if (!data) {
+      return undefined;
+    }
+    if (geneName.length > 0) {
+      return data.map(old => ({
+        ...old,
+        values: old.values.filter(value => geneName.includes(value.split(':')[0])),
+      }));
+    }
+    return data;
+  }, [data, geneName]);
+
+  // Transform the general VennIntersectionsResult object to Venn2Data.
+  const venn2Data: Venn2Data | undefined = useMemo(() => {
+    if (!filteredData) {
+      return undefined;
+    }
+    const findSet = (variants: number[]): string[] =>
+      filteredData.find(({ indicesOfSets }) => Utils.setEquals(new Set(variants), new Set(indicesOfSets)))
+        ?.values ?? [];
+    return {
+      variant1Mutations: findSet([0]),
+      variant2Mutations: findSet([1]),
+      shared: findSet([0, 1]),
+    };
+  }, [filteredData]);
 
   if (selectors.length !== 2) {
     throw new Error(
@@ -90,26 +126,8 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
   if (res.isError) {
     throw new Error('Data fetching failed: ' + JSON.stringify(res.error));
   }
-  if (res.isLoading || !res.data || !data) {
+  if (res.isLoading || !res.data || !venn2Data) {
     return <Loader />;
-  }
-
-  let filteredData: typeof data = data;
-
-  if (geneName.length > 0) {
-    filteredData = data.filter(item => geneName.includes(item.gene));
-  }
-
-  let allMutations: { variant1Mutations: string[]; variant2Mutations: string[]; shared: string[] } = {
-    variant1Mutations: [],
-    variant2Mutations: [],
-    shared: [],
-  };
-
-  for (const item of filteredData) {
-    allMutations.variant1Mutations.push(...item.onlyVariant1);
-    allMutations.variant2Mutations.push(...item.onlyVariant2);
-    allMutations.shared.push(...item.shared);
   }
 
   return (
@@ -199,7 +217,7 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
           <text
             onClick={() => {
               navigator.clipboard.writeText(
-                `${allMutations.variant1Mutations.length ? allMutations.variant1Mutations.join(', ') : ''}`
+                `${venn2Data.variant1Mutations.length ? venn2Data.variant1Mutations.join(', ') : ''}`
               );
             }}
             transform='matrix(1 0 0 1 154.6328 294.3799)'
@@ -207,25 +225,23 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
             data-for='variant1'
             data-tip
           >
-            {allMutations.variant1Mutations.length}
+            {venn2Data.variant1Mutations.length}
           </text>
           <text
             onClick={() => {
-              navigator.clipboard.writeText(
-                `${allMutations.shared.length ? allMutations.shared.join(', ') : ''}`
-              );
+              navigator.clipboard.writeText(`${venn2Data.shared.length ? venn2Data.shared.join(', ') : ''}`);
             }}
             transform='matrix(1 0 0 1 427.6328 294.3799)'
             className='st1 st2 svgPlotNumber'
             data-for='shared'
             data-tip
           >
-            {allMutations.shared.length}
+            {venn2Data.shared.length}
           </text>
           <text
             onClick={() => {
               navigator.clipboard.writeText(
-                `${allMutations.variant2Mutations.length ? allMutations.variant2Mutations.join(', ') : ''}`
+                `${venn2Data.variant2Mutations.length ? venn2Data.variant2Mutations.join(', ') : ''}`
               );
             }}
             transform='matrix(1 0 0 1 712.6328 294.3799)'
@@ -233,7 +249,7 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
             data-for='variant2'
             data-tip
           >
-            {allMutations.variant2Mutations.length}
+            {venn2Data.variant2Mutations.length}
           </text>
           <text x='8.785' y='37.948' className='svgPlotText'>
             {variants ? variants[0].pangoLineage : null}
@@ -244,16 +260,16 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
         </svg>
         <>
           <ReactTooltip id='variant1' key='variant1'>
-            {allMutations.variant1Mutations.length
-              ? MutationListFormat(allMutations.variant1Mutations)
+            {venn2Data.variant1Mutations.length
+              ? MutationListFormat(venn2Data.variant1Mutations)
               : `no mutations in ${variants ? variants[0].pangoLineage : null}`}
           </ReactTooltip>
           <ReactTooltip id='shared' key='shared'>
-            {allMutations.shared.length ? MutationListFormat(allMutations.shared) : 'no shared mutations'}
+            {venn2Data.shared.length ? MutationListFormat(venn2Data.shared) : 'no shared mutations'}
           </ReactTooltip>
           <ReactTooltip id='variant2' key='variant2'>
-            {allMutations.variant2Mutations.length
-              ? MutationListFormat(allMutations.variant2Mutations)
+            {venn2Data.variant2Mutations.length
+              ? MutationListFormat(venn2Data.variant2Mutations)
               : `no mutations in ${variants ? variants[1].pangoLineage : null}`}
           </ReactTooltip>
         </>

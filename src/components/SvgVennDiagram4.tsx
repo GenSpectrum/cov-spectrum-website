@@ -6,12 +6,11 @@ import { useQuery } from '../helpers/query-hook';
 import { useExploreUrl } from '../helpers/explore-url';
 import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
-// import _ from 'lodash';
 import './style/svgPlots.css';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Slider from 'rc-slider';
-import { intersections4 } from '../helpers/intersections';
+import { vennIntersections } from '../helpers/intersections';
 
 import OutlinedInput from '@mui/material/OutlinedInput';
 import InputLabel from '@mui/material/InputLabel';
@@ -21,6 +20,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import ReactTooltip from 'react-tooltip';
+import { Utils } from '../services/Utils';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -43,6 +43,24 @@ interface PlotContProps {
 const PlotContainer = styled.div<PlotContProps>`
   overflow: ${props => (props.width < 500 ? 'scroll' : 'auto')};
 `;
+
+type Venn4Data = {
+  variant1Mutations: string[];
+  variant2Mutations: string[];
+  variant3Mutations: string[];
+  variant4Mutations: string[];
+  shared: string[];
+  shared1and2: string[];
+  shared1and3: string[];
+  shared1and4: string[];
+  shared2and3: string[];
+  shared2and4: string[];
+  shared3and4: string[];
+  shared1and2and3: string[];
+  shared1and2and4: string[];
+  shared2and3and4: string[];
+  shared1and4and3: string[];
+};
 
 export const SvgVennDiagram4 = ({ selectors }: Props) => {
   const [geneName, setGeneName] = useState<string[]>([]);
@@ -69,7 +87,7 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
   const exploreUrl = useExploreUrl()!;
   const variants = exploreUrl.variants;
 
-  const data4 = useMemo(() => {
+  const data = useMemo(() => {
     if (!res.data || res.data.length !== 4) {
       return undefined;
     }
@@ -90,9 +108,50 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
         .filter(m => m.proportion >= minProportion)
         .map(m => m.mutation);
 
-      return intersections4(variant1Mutations, variant2Mutations, variant3Mutations, variant4Mutations);
+      return vennIntersections(variant1Mutations, variant2Mutations, variant3Mutations, variant4Mutations);
     }
   }, [res.data, minProportion]);
+
+  // Filter the mutations by gene
+  const filteredData = useMemo(() => {
+    if (!data) {
+      return undefined;
+    }
+    if (geneName.length > 0) {
+      return data.map(old => ({
+        ...old,
+        values: old.values.filter(value => geneName.includes(value.split(':')[0])),
+      }));
+    }
+    return data;
+  }, [data, geneName]);
+
+  // Transform the general VennIntersectionsResult object to Venn2Data.
+  const venn4Data: Venn4Data | undefined = useMemo(() => {
+    if (!filteredData) {
+      return undefined;
+    }
+    const findSet = (variants: number[]): string[] =>
+      filteredData.find(({ indicesOfSets }) => Utils.setEquals(new Set(variants), new Set(indicesOfSets)))
+        ?.values ?? [];
+    return {
+      variant1Mutations: findSet([0]),
+      variant2Mutations: findSet([1]),
+      variant3Mutations: findSet([2]),
+      variant4Mutations: findSet([3]),
+      shared: findSet([0, 1, 2, 3]),
+      shared1and2: findSet([0, 1]),
+      shared1and3: findSet([0, 2]),
+      shared1and4: findSet([0, 3]),
+      shared2and3: findSet([1, 2]),
+      shared2and4: findSet([1, 3]),
+      shared3and4: findSet([2, 3]),
+      shared1and2and3: findSet([0, 1, 2]),
+      shared1and2and4: findSet([0, 1, 3]),
+      shared2and3and4: findSet([1, 2, 3]),
+      shared1and4and3: findSet([0, 2, 3]),
+    };
+  }, [filteredData]);
 
   if (selectors.length !== 4) {
     throw new Error(
@@ -104,71 +163,13 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
     throw new Error('Data fetching failed: ' + JSON.stringify(res.error));
   }
 
-  if (res.isLoading || !res.data || !data4) {
+  if (res.isLoading || !res.data || !venn4Data) {
     return <Loader />;
-  }
-
-  let filteredData: typeof data4 = data4;
-
-  if (geneName.length > 0) {
-    filteredData = data4.filter(item => geneName.includes(item.gene));
-  }
-
-  let allMutations: {
-    variant1Mutations: string[];
-    variant2Mutations: string[];
-    variant3Mutations: string[];
-    variant4Mutations: string[];
-    shared: string[];
-    shared1and2: string[];
-    shared1and3: string[];
-    shared1and4: string[];
-    shared2and3: string[];
-    shared2and4: string[];
-    shared3and4: string[];
-    shared1and2and3: string[];
-    shared1and2and4: string[];
-    shared2and3and4: string[];
-    shared1and4and3: string[];
-  } = {
-    variant1Mutations: [],
-    variant2Mutations: [],
-    variant3Mutations: [],
-    variant4Mutations: [],
-    shared: [],
-    shared1and2: [],
-    shared1and3: [],
-    shared1and4: [],
-    shared2and3: [],
-    shared2and4: [],
-    shared3and4: [],
-    shared1and2and3: [],
-    shared1and2and4: [],
-    shared2and3and4: [],
-    shared1and4and3: [],
-  };
-
-  for (const item of filteredData) {
-    allMutations.variant1Mutations.push(...item.onlyVariant1);
-    allMutations.variant2Mutations.push(...item.onlyVariant2);
-    allMutations.variant3Mutations.push(...item.onlyVariant3);
-    allMutations.variant4Mutations.push(...item.onlyVariant4);
-    allMutations.shared.push(...item.shared);
-    allMutations.shared1and2.push(...item.shared1and2);
-    allMutations.shared1and3.push(...item.shared1and3);
-    allMutations.shared1and4.push(...item.shared1and4);
-    allMutations.shared2and3.push(...item.shared2and3);
-    allMutations.shared2and4.push(...item.shared2and4);
-    allMutations.shared3and4.push(...item.shared3and4);
-    allMutations.shared1and2and3.push(...item.shared1and2and3);
-    allMutations.shared1and2and4.push(...item.shared1and2and4);
-    allMutations.shared2and3and4.push(...item.shared2and3and4);
-    allMutations.shared1and4and3.push(...item.shared1and4and3);
   }
 
   return (
     <>
-      {variants && variants.length === 4 && data4 && (
+      {variants && variants.length === 4 && venn4Data && (
         <>
           <div>
             A mutation is considered as belonging to a variant if at least{' '}
@@ -328,13 +329,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${
-                      allMutations.variant1Mutations.length ? allMutations.variant1Mutations.join(', ') : ''
-                    }`
+                    `${venn4Data.variant1Mutations.length ? venn4Data.variant1Mutations.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.variant1Mutations.length}
+                {venn4Data.variant1Mutations.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 676.3496 228.874)'
@@ -343,13 +342,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${
-                      allMutations.variant2Mutations.length ? allMutations.variant2Mutations.join(', ') : ''
-                    }`
+                    `${venn4Data.variant2Mutations.length ? venn4Data.variant2Mutations.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.variant2Mutations.length}
+                {venn4Data.variant2Mutations.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 399.3496 311.874)'
@@ -358,11 +355,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${allMutations.shared1and3.length ? allMutations.shared1and3.join(', ') : ''}`
+                    `${venn4Data.shared1and3.length ? venn4Data.shared1and3.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.shared1and3.length}
+                {venn4Data.shared1and3.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 556.3496 311.874)'
@@ -371,11 +368,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${allMutations.shared1and2.length ? allMutations.shared1and2.join(', ') : ''}`
+                    `${venn4Data.shared1and2.length ? venn4Data.shared1and2.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.shared1and2.length}
+                {venn4Data.shared1and2.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 718.3496 311.874)'
@@ -384,11 +381,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${allMutations.shared2and4.length ? allMutations.shared2and4.join(', ') : ''}`
+                    `${venn4Data.shared2and4.length ? venn4Data.shared2and4.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.shared2and4.length}
+                {venn4Data.shared2and4.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 297.3496 373.874)'
@@ -397,13 +394,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${
-                      allMutations.variant3Mutations.length ? allMutations.variant3Mutations.join(', ') : ''
-                    }`
+                    `${venn4Data.variant3Mutations.length ? venn4Data.variant3Mutations.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.variant3Mutations.length}
+                {venn4Data.variant3Mutations.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 818.3496 378.874)'
@@ -412,13 +407,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${
-                      allMutations.variant4Mutations.length ? allMutations.variant4Mutations.join(', ') : ''
-                    }`
+                    `${venn4Data.variant4Mutations.length ? venn4Data.variant4Mutations.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.variant4Mutations.length}
+                {venn4Data.variant4Mutations.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 483.3496 401.874)'
@@ -427,11 +420,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${allMutations.shared1and2and3.length ? allMutations.shared1and2and3.join(', ') : ''}`
+                    `${venn4Data.shared1and2and3.length ? venn4Data.shared1and2and3.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.shared1and2and3.length}
+                {venn4Data.shared1and2and3.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 643.3496 401.874)'
@@ -440,11 +433,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${allMutations.shared1and2and4.length ? allMutations.shared1and2and4.join(', ') : ''}`
+                    `${venn4Data.shared1and2and4.length ? venn4Data.shared1and2and4.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.shared1and2and4.length}
+                {venn4Data.shared1and2and4.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 428.3496 508.874)'
@@ -453,11 +446,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${allMutations.shared2and3.length ? allMutations.shared2and3.join(', ') : ''}`
+                    `${venn4Data.shared2and3.length ? venn4Data.shared2and3.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.shared2and3.length}
+                {venn4Data.shared2and3.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 683.3496 508.874)'
@@ -466,11 +459,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${allMutations.shared1and4.length ? allMutations.shared1and4.join(', ') : ''}`
+                    `${venn4Data.shared1and4.length ? venn4Data.shared1and4.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.shared1and4.length}
+                {venn4Data.shared1and4.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 554.3496 465.874)'
@@ -479,11 +472,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${allMutations.shared.length ? allMutations.shared.join(', ') : ''}`
+                    `${venn4Data.shared.length ? venn4Data.shared.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.shared.length}
+                {venn4Data.shared.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 505.3496 537.874)'
@@ -492,12 +485,12 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${allMutations.shared1and2and4.length ? allMutations.shared2and3and4.join(', ') : ''}`
+                    `${venn4Data.shared1and2and4.length ? venn4Data.shared2and3and4.join(', ') : ''}`
                   );
                 }}
               >
                 {' '}
-                {allMutations.shared2and3and4.length}
+                {venn4Data.shared2and3and4.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 598.3496 537.874)'
@@ -506,12 +499,12 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${allMutations.shared1and4and3.length ? allMutations.shared1and4and3.join(', ') : ''}`
+                    `${venn4Data.shared1and4and3.length ? venn4Data.shared1and4and3.join(', ') : ''}`
                   );
                 }}
               >
                 {' '}
-                {allMutations.shared2and3and4.length}
+                {venn4Data.shared2and3and4.length}
               </text>
               <text
                 transform='matrix(1 0 0 1 551.3496 591.874)'
@@ -520,11 +513,11 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 data-tip
                 onClick={() => {
                   navigator.clipboard.writeText(
-                    `${allMutations.shared3and4.length ? allMutations.shared3and4.join(', ') : ''}`
+                    `${venn4Data.shared3and4.length ? venn4Data.shared3and4.join(', ') : ''}`
                   );
                 }}
               >
-                {allMutations.shared3and4.length}
+                {venn4Data.shared3and4.length}
               </text>
               <text transform='matrix(1 0 0 1 758.7764 174.9609)' className='st3 st5 svgPlotText'>
                 {variants ? variants[1].pangoLineage : null}
@@ -542,94 +535,94 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
 
             <>
               <ReactTooltip id='variant1' key='variant1'>
-                {allMutations.variant1Mutations.length
-                  ? MutationListFormat(allMutations.variant1Mutations)
+                {venn4Data.variant1Mutations.length
+                  ? MutationListFormat(venn4Data.variant1Mutations)
                   : `no mutations in ${variants ? variants[0].pangoLineage : null}`}
               </ReactTooltip>
               <ReactTooltip id='shared' key='shared'>
-                {allMutations.shared.length ? MutationListFormat(allMutations.shared) : 'no shared mutations'}
+                {venn4Data.shared.length ? MutationListFormat(venn4Data.shared) : 'no shared mutations'}
               </ReactTooltip>
               <ReactTooltip id='variant2' key='variant2'>
-                {allMutations.variant2Mutations.length
-                  ? MutationListFormat(allMutations.variant2Mutations)
+                {venn4Data.variant2Mutations.length
+                  ? MutationListFormat(venn4Data.variant2Mutations)
                   : `no mutations in ${variants ? variants[1].pangoLineage : null}`}
               </ReactTooltip>
               <ReactTooltip id='variant3' key='variant3'>
-                {allMutations.variant3Mutations.length
-                  ? MutationListFormat(allMutations.variant3Mutations)
+                {venn4Data.variant3Mutations.length
+                  ? MutationListFormat(venn4Data.variant3Mutations)
                   : `no mutations in ${variants ? variants[2].pangoLineage : null}`}
               </ReactTooltip>
               <ReactTooltip id='variant4' key='variant4'>
-                {allMutations.variant4Mutations.length
-                  ? MutationListFormat(allMutations.variant4Mutations)
+                {venn4Data.variant4Mutations.length
+                  ? MutationListFormat(venn4Data.variant4Mutations)
                   : `no mutations in ${variants ? variants[3].pangoLineage : null}`}
               </ReactTooltip>
               <ReactTooltip id='shared1and2' key='shared1and2'>
-                {allMutations.shared1and2.length
-                  ? MutationListFormat(allMutations.shared1and2)
+                {venn4Data.shared1and2.length
+                  ? MutationListFormat(venn4Data.shared1and2)
                   : `no shared mutations in ${variants ? variants[0].pangoLineage : null} and ${
                       variants ? variants[1].pangoLineage : null
                     }`}
               </ReactTooltip>
               <ReactTooltip id='shared1and3' key='shared1and3'>
-                {allMutations.shared1and3.length
-                  ? MutationListFormat(allMutations.shared1and3)
+                {venn4Data.shared1and3.length
+                  ? MutationListFormat(venn4Data.shared1and3)
                   : `no shared mutations in ${variants ? variants[0].pangoLineage : null} and ${
                       variants ? variants[2].pangoLineage : null
                     }`}
               </ReactTooltip>
               <ReactTooltip id='shared2and3' key='shared2and3'>
-                {allMutations.shared2and3.length
-                  ? MutationListFormat(allMutations.shared2and3)
+                {venn4Data.shared2and3.length
+                  ? MutationListFormat(venn4Data.shared2and3)
                   : `no shared mutations in ${variants ? variants[1].pangoLineage : null} and ${
                       variants ? variants[2].pangoLineage : null
                     }`}
               </ReactTooltip>
               <ReactTooltip id='shared2and4' key='shared2and4'>
-                {allMutations.shared2and4.length
-                  ? MutationListFormat(allMutations.shared2and4)
+                {venn4Data.shared2and4.length
+                  ? MutationListFormat(venn4Data.shared2and4)
                   : `no shared mutations in ${variants ? variants[1].pangoLineage : null} and ${
                       variants ? variants[3].pangoLineage : null
                     }`}
               </ReactTooltip>
               <ReactTooltip id='shared1and4' key='shared1and4'>
-                {allMutations.shared1and4.length
-                  ? MutationListFormat(allMutations.shared1and4)
+                {venn4Data.shared1and4.length
+                  ? MutationListFormat(venn4Data.shared1and4)
                   : `no shared mutations in ${variants ? variants[0].pangoLineage : null} and ${
                       variants ? variants[3].pangoLineage : null
                     }`}
               </ReactTooltip>
               <ReactTooltip id='shared3and4' key='shared3and4'>
-                {allMutations.shared3and4.length
-                  ? MutationListFormat(allMutations.shared3and4)
+                {venn4Data.shared3and4.length
+                  ? MutationListFormat(venn4Data.shared3and4)
                   : `no shared mutations in ${variants ? variants[2].pangoLineage : null} and ${
                       variants ? variants[3].pangoLineage : null
                     }`}
               </ReactTooltip>
               <ReactTooltip id='shared1and2and3' key='shared1and2and3'>
-                {allMutations.shared1and2and3.length
-                  ? MutationListFormat(allMutations.shared1and2and3)
+                {venn4Data.shared1and2and3.length
+                  ? MutationListFormat(venn4Data.shared1and2and3)
                   : `no shared mutations in ${variants ? variants[0].pangoLineage : null}, ${
                       variants ? variants[1].pangoLineage : null
                     } and ${variants ? variants[2].pangoLineage : null}`}
               </ReactTooltip>
               <ReactTooltip id='shared1and2and4' key='shared1and2and4'>
-                {allMutations.shared1and2and4.length
-                  ? MutationListFormat(allMutations.shared1and2and4)
+                {venn4Data.shared1and2and4.length
+                  ? MutationListFormat(venn4Data.shared1and2and4)
                   : `no shared mutations in ${variants ? variants[0].pangoLineage : null}, ${
                       variants ? variants[1].pangoLineage : null
                     } and ${variants ? variants[3].pangoLineage : null}`}
               </ReactTooltip>
               <ReactTooltip id='shared2and3and4' key='shared2and3and4'>
-                {allMutations.shared2and3and4.length
-                  ? MutationListFormat(allMutations.shared2and3and4)
+                {venn4Data.shared2and3and4.length
+                  ? MutationListFormat(venn4Data.shared2and3and4)
                   : `no shared mutations in ${variants ? variants[1].pangoLineage : null}, ${
                       variants ? variants[2].pangoLineage : null
                     } and ${variants ? variants[3].pangoLineage : null}`}
               </ReactTooltip>
               <ReactTooltip id='shared1and4and3' key='shared1and4and3'>
-                {allMutations.shared1and4and3.length
-                  ? MutationListFormat(allMutations.shared1and4and3)
+                {venn4Data.shared1and4and3.length
+                  ? MutationListFormat(venn4Data.shared1and4and3)
                   : `no shared mutations in ${variants ? variants[0].pangoLineage : null}, ${
                       variants ? variants[2].pangoLineage : null
                     } and ${variants ? variants[3].pangoLineage : null}`}
