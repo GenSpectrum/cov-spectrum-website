@@ -1,15 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import ReactDatePicker from 'react-datepicker';
+import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { HeaderDateRangeSelect } from './HeaderDateRangeSelect';
 import { useExploreUrl } from '../helpers/explore-url';
 import dayjs from 'dayjs';
-import {
-  DateRangeSelector,
-  dateRangeStringRegex,
-  dateStringRegex,
-  FixedDateRangeSelector,
-} from '../data/DateRangeSelector';
+import { DateRangeSelector, FixedDateRangeSelector } from '../data/DateRangeSelector';
 import { globalDateCache } from '../helpers/date-cache';
 
 interface Props {
@@ -56,20 +52,6 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
     }
   };
 
-  const handleDateRangeChangeRaw = (event: React.FocusEvent<HTMLInputElement>) => {
-    if (
-      event &&
-      event.target &&
-      event.target.value &&
-      (dateStringRegex.test(event.target.value) || dateRangeStringRegex.test(event.target.value))
-    ) {
-      const range = event.target.value.split(' - ');
-      const start = range?.length > 0 ? globalDateCache.getDay(range[0]).dayjs.toDate() : null;
-      const end = range?.length > 1 ? globalDateCache.getDay(range[1]).dayjs.toDate() : null;
-      setDateRange([start, end]);
-    }
-  };
-
   const handleDateRangeChange = (update: [Date, Date]) => {
     setDateRange(update);
   };
@@ -78,24 +60,47 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
     <>
       <div className='w-full flex flex-row items-center'>
         <HeaderDateRangeSelect exploreUrl={exploreUrl} />
-        <ReactDatePicker
-          ref={datePickerRef}
-          className='border rounded py-1.5 px-1.5 focus:outline-none focus:ring focus:border-blue-200 rounded-l-none border-left-0'
-          dateFormat='yyyy-MM-dd'
-          selectsRange={true}
-          startDate={startDate}
-          endDate={endDate}
-          minDate={minimumDate}
-          onChangeRaw={handleDateRangeChangeRaw}
-          onChange={handleDateRangeChange}
-          calendarStartDay={1}
-          useWeekdaysShort={true}
-          disabledKeyboardNavigation={true}
-          onBlur={changeDate}
-          onKeyDown={changeDate}
-          shouldCloseOnSelect={false}
-          onClickOutside={changeDate}
-        />
+
+        <>
+          <span className='ml-1'>From:</span>{' '}
+          <DatePicker
+            className='border rounded py-1.5 px-1.5 focus:outline-none focus:ring focus:border-blue-200 mr-2 ml-1'
+            onBlur={changeDate}
+            onKeyDown={changeDate}
+            onClickOutside={changeDate}
+            minDate={minimumDate}
+            calendarStartDay={1}
+            useWeekdaysShort={true}
+            disabledKeyboardNavigation={true}
+            selected={startDate}
+            onChange={(date: Date) => {
+              endDate && handleDateRangeChange([date, endDate]);
+            }}
+            selectsStart
+            startDate={startDate}
+            endDate={endDate}
+            dateFormat='yyyy-MM-dd'
+          />
+          <span>to:</span>
+          <DatePicker
+            className='border rounded py-1.5 px-1.5 focus:outline-none focus:ring focus:border-blue-200 mr-2 ml-1'
+            onBlur={changeDate}
+            onKeyDown={changeDate}
+            onClickOutside={changeDate}
+            selected={endDate}
+            calendarStartDay={1}
+            useWeekdaysShort={true}
+            disabledKeyboardNavigation={true}
+            onChange={(date: Date) => {
+              startDate && handleDateRangeChange([startDate, date]);
+            }}
+            selectsEnd
+            startDate={startDate}
+            endDate={endDate}
+            minDate={minimumDate}
+            dateFormat='yyyy-MM-dd'
+          />
+        </>
       </div>
     </>
   );
