@@ -37,12 +37,12 @@ export interface Props {
   selectors: LapisSelector[];
 }
 
-type VennMutationEntry = {
-  mutations: string[],
-  svgTransform: string,
-}
+export type VennMutationEntry = {
+  mutations: string[];
+  svgTransform: string;
+};
 
-type Venn4Data = VennMutationEntry[];
+export type VennData = VennMutationEntry[];
 
 export const SvgVennDiagram4 = ({ selectors }: Props) => {
   const [geneName, setGeneName] = useState<string[]>([]);
@@ -109,7 +109,7 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
   }, [data, geneName]);
 
   // Transform the general VennIntersectionsResult object to Venn2Data.
-  const venn4Data: Venn4Data | undefined = useMemo(() => {
+  const venn4Data: VennData | undefined = useMemo(() => {
     if (!filteredData) {
       return undefined;
     }
@@ -119,7 +119,7 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
     return [
       {
         mutations: findSet([0]),
-        svgTransform: 'matrix(1 0 0 1 441.3496 234.874)'
+        svgTransform: 'matrix(1 0 0 1 441.3496 234.874)',
       },
       {
         mutations: findSet([1]),
@@ -142,7 +142,7 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
         svgTransform: 'matrix(1 0 0 1 556.3496 311.874)',
       },
       {
-        mutations:  findSet([0, 2]),
+        mutations: findSet([0, 2]),
         svgTransform: 'matrix(1 0 0 1 399.3496 311.874)',
       },
       {
@@ -171,7 +171,7 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
       },
       {
         mutations: findSet([1, 2, 3]),
-        svgTransform: 'matrix(1 0 0 1 505.3496 537.874)'
+        svgTransform: 'matrix(1 0 0 1 505.3496 537.874)',
       },
       {
         mutations: findSet([0, 2, 3]),
@@ -276,7 +276,7 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
             <p>* If nothing is chosen, all genes will be shown</p>
           </div>
 
-          <div ref={ref}>
+          <div ref={ref} style={{ maxWidth: '450px', margin: 'auto' }}>
             <svg
               version='1.1'
               id='Layer_1'
@@ -398,7 +398,7 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
   );
 };
 
-function MutationListFormat(mutations: string[]): JSX.Element {
+export function MutationListFormat(mutations: string[]): JSX.Element {
   // Up to five mutations shall be shown on a line.
   let currentLine: string[] = [];
   const lines: string[][] = [currentLine];
