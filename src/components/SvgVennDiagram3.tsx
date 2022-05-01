@@ -199,14 +199,13 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
                 {(minProportion * 100).toFixed(0)}%
               </span>
             </OverlayTrigger>{' '}
-            of the samples of the variant have the mutation.
+            of the samples of the variant have the mutation.{' '}
+            <b>Click on the number of the mutations inside the diagram to copy the mutations to clipboard.</b>{' '}
+            You can filter the genes: if nothing is selected, all genes are included.
           </div>
-          <p>
-            * Clicking to the number of the mutations inside the diagram will copy the mutations to clipboard.{' '}
-          </p>
 
           <div>
-            <FormControl sx={{ m: 1, width: 300 }}>
+            <FormControl sx={{ m: 1, width: 300 }} size='small'>
               <InputLabel id='demo-multiple-checkbox-label'>Select genes</InputLabel>
               <Select
                 labelId='demo-multiple-checkbox-label'
@@ -227,7 +226,6 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
                 ))}
               </Select>
             </FormControl>
-            <p>* If nothing is chosen, all genes will be shown</p>
           </div>
 
           <div ref={ref} style={{ maxWidth: '300px', margin: 'auto' }}>
