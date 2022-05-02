@@ -81,9 +81,11 @@ export const FocusVariantHeaderControls = React.memo(
 
           <Dropdown.Toggle split variant='secondary' />
           <Dropdown.Menu>
-            <ExternalLink url={listLink2 ?? ''}>
-              <Dropdown.Item as={Button}>GISAID list</Dropdown.Item>
-            </ExternalLink>
+            {sequenceDataSource === 'gisaid' && (
+              <ExternalLink url={listLink2 ?? ''}>
+                <Dropdown.Item as={Button}>GISAID list</Dropdown.Item>
+              </ExternalLink>
+            )}
             {sequenceDataSource === 'open' && (
               <>
                 <ExternalLink url={fastaLink ?? ''}>
@@ -91,7 +93,7 @@ export const FocusVariantHeaderControls = React.memo(
                 </ExternalLink>
                 <ExternalLink url={alignedFastaLink ?? ''}>
                   <Dropdown.Item as={Button}>FASTA (aligned)</Dropdown.Item>
-                </ExternalLink>{' '}
+                </ExternalLink>
               </>
             )}
           </Dropdown.Menu>
