@@ -78,24 +78,23 @@ export const FocusVariantHeaderControls = React.memo(
               Sequence list <FaDownload className='inline-block ml-1' />
             </Button>
           </ExternalLink>
-          <ExternalLink url={listLink2 ?? ''}>
-            <Button variant='secondary' size='sm' className='ml-1'>
-              GISAID list
-            </Button>
-          </ExternalLink>
-          {sequenceDataSource === 'open' && (
-            <>
-              <Dropdown.Toggle split variant='secondary' />
-              <Dropdown.Menu>
+
+          <Dropdown.Toggle split variant='secondary' />
+          <Dropdown.Menu>
+            <ExternalLink url={listLink2 ?? ''}>
+              <Dropdown.Item as={Button}>GISAID list</Dropdown.Item>
+            </ExternalLink>
+            {sequenceDataSource === 'open' && (
+              <>
                 <ExternalLink url={fastaLink ?? ''}>
                   <Dropdown.Item as={Button}>FASTA</Dropdown.Item>
                 </ExternalLink>
                 <ExternalLink url={alignedFastaLink ?? ''}>
                   <Dropdown.Item as={Button}>FASTA (aligned)</Dropdown.Item>
-                </ExternalLink>
-              </Dropdown.Menu>
-            </>
-          )}
+                </ExternalLink>{' '}
+              </>
+            )}
+          </Dropdown.Menu>
         </Dropdown>
 
         <DropdownButton
