@@ -65,6 +65,11 @@ export const FocusVariantHeaderControls = React.memo(
     );
     const { data: alignedFastaLink } = useAsync({ promise: linkToAlignedFastaPromise });
 
+    const listLink2: string | undefined =
+      listLink &&
+      listLink.replace('contributors', 'gisaid-epi-isl').replace('&downloadAsFile=true&dataFormat=csv', '') +
+        '&orderBy=random';
+
     return (
       <>
         <Dropdown as={ButtonGroup} className='mr-2 mt-3' size='sm'>
@@ -73,19 +78,25 @@ export const FocusVariantHeaderControls = React.memo(
               Sequence list <FaDownload className='inline-block ml-1' />
             </Button>
           </ExternalLink>
-          {sequenceDataSource === 'open' && (
-            <>
-              <Dropdown.Toggle split variant='secondary' />
-              <Dropdown.Menu>
+
+          <Dropdown.Toggle split variant='secondary' />
+          <Dropdown.Menu>
+            {sequenceDataSource === 'gisaid' && (
+              <ExternalLink url={listLink2 ?? ''}>
+                <Dropdown.Item as={Button}>GISAID list</Dropdown.Item>
+              </ExternalLink>
+            )}
+            {sequenceDataSource === 'open' && (
+              <>
                 <ExternalLink url={fastaLink ?? ''}>
                   <Dropdown.Item as={Button}>FASTA</Dropdown.Item>
                 </ExternalLink>
                 <ExternalLink url={alignedFastaLink ?? ''}>
                   <Dropdown.Item as={Button}>FASTA (aligned)</Dropdown.Item>
                 </ExternalLink>
-              </Dropdown.Menu>
-            </>
-          )}
+              </>
+            )}
+          </Dropdown.Menu>
         </Dropdown>
 
         <DropdownButton
