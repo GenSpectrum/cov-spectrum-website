@@ -19,9 +19,20 @@ export class FixedDateRangeSelector implements DateRangeSelector {
   }
 }
 
-export type SpecialDateRange = 'AllTimes' | 'Y2020' | 'Y2021' | 'Y2022' | 'Past3M' | 'Past6M';
+export type SpecialDateRange =
+  | 'AllTimes'
+  | 'Y2020'
+  | 'Y2021'
+  | 'Y2022'
+  | 'Past1M'
+  | 'Past2M'
+  | 'Past3M'
+  | 'Past6M';
 export function isSpecialDateRange(s: unknown): s is SpecialDateRange {
-  return typeof s === 'string' && ['AllTimes', 'Y2020', 'Y2021', 'Y2022', 'Past3M', 'Past6M'].includes(s);
+  return (
+    typeof s === 'string' &&
+    ['AllTimes', 'Y2020', 'Y2021', 'Y2022', 'Past1M', 'Past2M', 'Past3M', 'Past6M'].includes(s)
+  );
 }
 
 export class SpecialDateRangeSelector implements DateRangeSelector {
@@ -48,6 +59,10 @@ export class SpecialDateRangeSelector implements DateRangeSelector {
           dateFrom: globalDateCache.getDay('2022-01-03'),
           dateTo: globalDateCache.getDay('2023-01-01'),
         };
+      case 'Past1M':
+        return { dateFrom: monthsAgo(1) };
+      case 'Past2M':
+        return { dateFrom: monthsAgo(2) };
       case 'Past3M':
         return { dateFrom: monthsAgo(3) };
       case 'Past6M':
@@ -64,7 +79,7 @@ export const FixedDateRangeSelectorEncodedSchema = zod.object({
 });
 
 export const SpecialDateRangeSelectorEncodedSchema = zod.object({
-  mode: zod.enum(['AllTimes', 'Y2020', 'Y2021', 'Past3M', 'Past6M']),
+  mode: zod.enum(['AllTimes', 'Y2020', 'Y2021', 'Y2022', 'Past1M', 'Past2M', 'Past3M', 'Past6M']),
 });
 
 export const DateRangeSelectorEncodedSchema = zod.union([
@@ -110,6 +125,10 @@ export function specialDateRangeToString(dateRange: SpecialDateRange): string {
   switch (dateRange) {
     case 'AllTimes':
       return 'All times';
+    case 'Past1M':
+      return 'Past month';
+    case 'Past2M':
+      return 'Past 2 months';
     case 'Past3M':
       return 'Past 3 months';
     case 'Past6M':
