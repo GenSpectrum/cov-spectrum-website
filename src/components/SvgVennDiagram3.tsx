@@ -228,14 +228,14 @@ export const SvgVennDiagram3 = ({ selectors }: Props) => {
             </FormControl>
           </div>
 
-          <div ref={ref} style={{ maxWidth: '300px', margin: 'auto' }}>
+          <div ref={ref} style={{ maxWidth: '500px', margin: 'auto' }}>
             <svg
               version='1.1'
               id='Layer_1'
               xmlns='http://www.w3.org/2000/svg'
               x='0px'
               y='0px'
-              viewBox='0 0 1178.62 1127.39'
+              viewBox='0 0 1500 1127.39'
               className='svgPlot3'
             >
               <g>

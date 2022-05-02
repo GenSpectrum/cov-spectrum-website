@@ -103,11 +103,11 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
         svgTransform: 'matrix(1 0 0 1 154.6328 294.3799)',
       },
       {
-        mutations: findSet([1]),
+        mutations: findSet([0, 1]),
         svgTransform: 'matrix(1 0 0 1 427.6328 294.3799)',
       },
       {
-        mutations: findSet([0, 1]),
+        mutations: findSet([1]),
         svgTransform: 'matrix(1 0 0 1 712.6328 294.3799)',
       },
     ];
@@ -182,13 +182,13 @@ export const SvgVennDiagram2 = ({ selectors }: Props) => {
         </FormControl>
       </div>
 
-      <div ref={ref} style={{ maxWidth: '300px', margin: 'auto' }}>
+      <div ref={ref} style={{ maxWidth: '500px', margin: 'auto' }}>
         <svg
           version='1.1'
           id='Layer_1'
           x='0px'
           y='0px'
-          viewBox='0 0 910 577'
+          viewBox='0 0 1600 577'
           xmlns='http://www.w3.org/2000/svg'
           className='svgPlot'
         >
