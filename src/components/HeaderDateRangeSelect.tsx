@@ -27,7 +27,16 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
   if (exploreUrl.dateRange instanceof SpecialDateRangeSelector) {
     value = exploreUrl.dateRange.mode;
   }
-  const specialDateRanges: SpecialDateRange[] = ['AllTimes', 'Y2020', 'Y2021', 'Y2022', 'Past1M', 'Past2M', 'Past3M', 'Past6M'];
+  const specialDateRanges: SpecialDateRange[] = [
+    'AllTimes',
+    'Y2020',
+    'Y2021',
+    'Y2022',
+    'Past1M',
+    'Past2M',
+    'Past3M',
+    'Past6M',
+  ];
   return (
     <Form inline>
       <Form.Control
