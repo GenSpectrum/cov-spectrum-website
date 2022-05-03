@@ -201,24 +201,34 @@ export const FocusCompareEqualsPage = () => {
                     </Tabs>
                   </Box>
                   <TabPanel value={value} index={0}>
-                    <SvgVennDiagram2 selectors={ldvsSelectors} />
+                    <SvgVennDiagram2 selectors={ldvsSelectors} domain='aa' />
                   </TabPanel>
                   <TabPanel value={value} index={1}>
                     <VariantMutationComparison selectors={ldvsSelectors} />
                   </TabPanel>
                 </Box>
               </NamedCard>
+
+              <NamedCard title='Nucleotide mutations'>
+                <SvgVennDiagram2 selectors={ldvsSelectors} domain='nuc' />
+              </NamedCard>
             </GridCell>
           ) : ldvsSelectors.length === 3 ? (
             <GridCell minWidth={600}>
               <NamedCard title='Amino acid changes'>
-                <SvgVennDiagram3 selectors={ldvsSelectors} />
+                <SvgVennDiagram3 selectors={ldvsSelectors} domain='aa' />
+              </NamedCard>
+              <NamedCard title='Nucleotide mutations'>
+                <SvgVennDiagram3 selectors={ldvsSelectors} domain='nuc' />
               </NamedCard>
             </GridCell>
           ) : ldvsSelectors.length === 4 ? (
             <GridCell minWidth={600}>
               <NamedCard title='Amino acid changes'>
-                <SvgVennDiagram4 selectors={ldvsSelectors} />
+                <SvgVennDiagram4 selectors={ldvsSelectors} domain='aa' />
+              </NamedCard>
+              <NamedCard title='Nucleotide mutations'>
+                <SvgVennDiagram4 selectors={ldvsSelectors} domain='nuc' />
               </NamedCard>
             </GridCell>
           ) : (
