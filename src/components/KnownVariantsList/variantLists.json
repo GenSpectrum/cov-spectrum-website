@@ -22,7 +22,7 @@
       {
         "pangoLineage": "BA.2*",
         "aaMutations": ["S:452R"],
-        "nucMutations": ["9866T","12160G"]
+        "nucMutations": ["9866T", "12160G"]
       },
       {
         "pangoLineage": "BA.2*",
