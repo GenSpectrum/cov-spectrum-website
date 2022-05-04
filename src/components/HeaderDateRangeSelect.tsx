@@ -32,6 +32,7 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
     'Y2020',
     'Y2021',
     'Y2022',
+    'Past2W',
     'Past1M',
     'Past2M',
     'Past3M',
