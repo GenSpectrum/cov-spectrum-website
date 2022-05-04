@@ -18,14 +18,15 @@ import { Utils } from '../services/Utils';
 import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { DivisionModal } from '../components/DivisionModal';
 import { createDivisionBreakdownButton } from './FocusSinglePage';
-import { SvgVennDiagram2 } from '../components/SvgVennDiagram2';
+//import { SvgVennDiagram2 } from '../components/SvgVennDiagram2';
 import { SvgVennDiagram3 } from '../components/SvgVennDiagram3';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import { SvgVennDiagram4 } from '../components/SvgVennDiagram4';
+//import { SvgVennDiagram4 } from '../components/SvgVennDiagram4';
+import { SvgVennDiagram } from '../components/SvgVennDiagram';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -185,15 +186,27 @@ export const FocusCompareEqualsPage = () => {
 
               {ldvsSelectors.length === 2 ? (
                 <NamedCard title='Nucleotide mutations'>
-                  <SvgVennDiagram2 selectors={ldvsSelectors} domain='nuc' />
+                  <SvgVennDiagram
+                    selectors={ldvsSelectors}
+                    domain='nuc'
+                    numberOfvariants={ldvsSelectors.length}
+                  />
                 </NamedCard>
               ) : ldvsSelectors.length === 3 ? (
                 <NamedCard title='Nucleotide mutations'>
-                  <SvgVennDiagram3 selectors={ldvsSelectors} domain='nuc' />
+                  <SvgVennDiagram
+                    selectors={ldvsSelectors}
+                    domain='nuc'
+                    numberOfvariants={ldvsSelectors.length}
+                  />
                 </NamedCard>
               ) : ldvsSelectors.length === 4 ? (
                 <NamedCard title='Nucleotide mutations'>
-                  <SvgVennDiagram4 selectors={ldvsSelectors} domain='nuc' />
+                  <SvgVennDiagram
+                    selectors={ldvsSelectors}
+                    domain='nuc'
+                    numberOfvariants={ldvsSelectors.length}
+                  />
                 </NamedCard>
               ) : (
                 ''
@@ -217,7 +230,11 @@ export const FocusCompareEqualsPage = () => {
                     </Tabs>
                   </Box>
                   <TabPanel value={value} index={0}>
-                    <SvgVennDiagram2 selectors={ldvsSelectors} domain='aa' />
+                    <SvgVennDiagram
+                      selectors={ldvsSelectors}
+                      domain='aa'
+                      numberOfvariants={ldvsSelectors.length}
+                    />
                   </TabPanel>
                   <TabPanel value={value} index={1}>
                     <VariantMutationComparison selectors={ldvsSelectors} />
@@ -234,7 +251,11 @@ export const FocusCompareEqualsPage = () => {
           ) : ldvsSelectors.length === 4 ? (
             <GridCell minWidth={600}>
               <NamedCard title='Amino acid changes'>
-                <SvgVennDiagram4 selectors={ldvsSelectors} domain='aa' />
+                <SvgVennDiagram
+                  selectors={ldvsSelectors}
+                  domain='aa'
+                  numberOfvariants={ldvsSelectors.length}
+                />
               </NamedCard>
             </GridCell>
           ) : (
