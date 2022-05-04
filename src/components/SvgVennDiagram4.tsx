@@ -21,6 +21,7 @@ import Checkbox from '@mui/material/Checkbox';
 import ReactTooltip from 'react-tooltip';
 import { Utils } from '../services/Utils';
 import { formatVariantDisplayName, VariantSelector } from '../data/VariantSelector';
+import { SequenceType } from '../data/SequenceType';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -35,6 +36,7 @@ const MenuProps = {
 
 export interface Props {
   selectors: LapisSelector[];
+  domain: SequenceType;
 }
 
 export type VennMutationEntry = {
@@ -44,7 +46,7 @@ export type VennMutationEntry = {
 
 export type VennData = VennMutationEntry[];
 
-export const SvgVennDiagram4 = ({ selectors }: Props) => {
+export const SvgVennDiagram4 = ({ selectors, domain }: Props) => {
   const [geneName, setGeneName] = useState<string[]>([]);
   const [minProportion, setMinProportion] = useState(0.5);
 
@@ -61,7 +63,8 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
   const { ref } = useResizeDetector<HTMLDivElement>();
 
   const res = useQuery(
-    signal => Promise.all(selectors.map(selector => MutationProportionData.fromApi(selector, 'aa', signal))),
+    signal =>
+      Promise.all(selectors.map(selector => MutationProportionData.fromApi(selector, domain, signal))),
     [selectors],
     useEffect
   );
@@ -247,32 +250,36 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
             </OverlayTrigger>{' '}
             of the samples of the variant have the mutation.{' '}
             <b>Click on the number of the mutations inside the diagram to copy the mutations to clipboard.</b>{' '}
-            You can filter the genes: if nothing is selected, all genes are included.
           </div>
 
-          <div>
-            <FormControl sx={{ m: 1, width: 300 }} size='small'>
-              <InputLabel id='demo-multiple-checkbox-label'>Select genes</InputLabel>
-              <Select
-                labelId='demo-multiple-checkbox-label'
-                id='demo-multiple-checkbox'
-                multiple
-                value={geneName}
-                onChange={handleChange}
-                input={<OutlinedInput label='Select genes' />}
-                renderValue={selected => selected.join(', ')}
-                MenuProps={MenuProps}
-                placeholder='All'
-              >
-                {ReferenceGenomeService.genes.sort().map(gene => (
-                  <MenuItem key={gene} value={gene}>
-                    <Checkbox checked={geneName.indexOf(gene) > -1} />
-                    <ListItemText primary={gene} />
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </div>
+          {domain === 'aa' ? (
+            <div>
+              <p>You can filter the genes: if nothing is selected, all genes are included.</p>
+              <FormControl sx={{ m: 1, width: 300 }} size='small'>
+                <InputLabel id='demo-multiple-checkbox-label'>Select genes</InputLabel>
+                <Select
+                  labelId='demo-multiple-checkbox-label'
+                  id='demo-multiple-checkbox'
+                  multiple
+                  value={geneName}
+                  onChange={handleChange}
+                  input={<OutlinedInput label='Select genes' />}
+                  renderValue={selected => selected.join(', ')}
+                  MenuProps={MenuProps}
+                  placeholder='All'
+                >
+                  {ReferenceGenomeService.genes.sort().map(gene => (
+                    <MenuItem key={gene} value={gene}>
+                      <Checkbox checked={geneName.indexOf(gene) > -1} />
+                      <ListItemText primary={gene} />
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </div>
+          ) : (
+            <br />
+          )}
 
           <div ref={ref} style={{ maxWidth: '600px', margin: 'auto' }}>
             <svg
@@ -371,7 +378,7 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
                 <text
                   transform={svgTransform}
                   className='st3 st4 svgPlotNumber'
-                  data-for={`venn-area-${index}`}
+                  data-for={`venn-area-${index} ${domain}`}
                   data-tip
                   onClick={() => navigator.clipboard.writeText(mutations.join(','))}
                 >
@@ -385,7 +392,7 @@ export const SvgVennDiagram4 = ({ selectors }: Props) => {
               ))}
             </svg>
             {venn4Data.map(({ mutations }, index) => (
-              <ReactTooltip id={`venn-area-${index}`} key={`venn-area-${index}`}>
+              <ReactTooltip id={`venn-area-${index} ${domain}`} key={`venn-area-${index} ${domain}`}>
                 {mutations.length ? MutationListFormat(mutations) : '-'}
               </ReactTooltip>
             ))}

@@ -182,6 +182,22 @@ export const FocusCompareEqualsPage = () => {
                   />
                 </div>
               </NamedCard>
+
+              {ldvsSelectors.length === 2 ? (
+                <NamedCard title='Nucleotide mutations'>
+                  <SvgVennDiagram2 selectors={ldvsSelectors} domain='nuc' />
+                </NamedCard>
+              ) : ldvsSelectors.length === 3 ? (
+                <NamedCard title='Nucleotide mutations'>
+                  <SvgVennDiagram3 selectors={ldvsSelectors} domain='nuc' />
+                </NamedCard>
+              ) : ldvsSelectors.length === 4 ? (
+                <NamedCard title='Nucleotide mutations'>
+                  <SvgVennDiagram4 selectors={ldvsSelectors} domain='nuc' />
+                </NamedCard>
+              ) : (
+                ''
+              )}
             </GridCell>
           )}
           {ldvsSelectors.length === 2 ? (
@@ -201,7 +217,7 @@ export const FocusCompareEqualsPage = () => {
                     </Tabs>
                   </Box>
                   <TabPanel value={value} index={0}>
-                    <SvgVennDiagram2 selectors={ldvsSelectors} />
+                    <SvgVennDiagram2 selectors={ldvsSelectors} domain='aa' />
                   </TabPanel>
                   <TabPanel value={value} index={1}>
                     <VariantMutationComparison selectors={ldvsSelectors} />
@@ -212,13 +228,13 @@ export const FocusCompareEqualsPage = () => {
           ) : ldvsSelectors.length === 3 ? (
             <GridCell minWidth={600}>
               <NamedCard title='Amino acid changes'>
-                <SvgVennDiagram3 selectors={ldvsSelectors} />
+                <SvgVennDiagram3 selectors={ldvsSelectors} domain='aa' />
               </NamedCard>
             </GridCell>
           ) : ldvsSelectors.length === 4 ? (
             <GridCell minWidth={600}>
               <NamedCard title='Amino acid changes'>
-                <SvgVennDiagram4 selectors={ldvsSelectors} />
+                <SvgVennDiagram4 selectors={ldvsSelectors} domain='aa' />
               </NamedCard>
             </GridCell>
           ) : (
