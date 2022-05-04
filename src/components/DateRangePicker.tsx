@@ -57,6 +57,7 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
 
   const handleDateRangeChange = (update: [Date, Date]) => {
     setDateRange(update);
+    changeDate();
   };
 
   return (
@@ -70,8 +71,6 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
             className={`border rounded py-1.5 px-1.5 focus:outline-none focus:ring focus:border-blue-200 mr-2 ${
               width && width > 600 && 'ml-1'
             }`}
-            onBlur={changeDate}
-            onKeyDown={changeDate}
             onClickOutside={changeDate}
             minDate={minimumDate}
             calendarStartDay={1}
@@ -91,8 +90,6 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
             className={`border rounded py-1.5 px-1.5 focus:outline-none focus:ring focus:border-blue-200 mr-2 ${
               width && width > 600 && 'ml-1'
             }`}
-            onBlur={changeDate}
-            onKeyDown={changeDate}
             onClickOutside={changeDate}
             selected={endDate}
             calendarStartDay={1}
