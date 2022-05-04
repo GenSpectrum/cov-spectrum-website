@@ -182,6 +182,22 @@ export const FocusCompareEqualsPage = () => {
                   />
                 </div>
               </NamedCard>
+
+              {ldvsSelectors.length === 2 ? (
+                <NamedCard title='Nucleotide mutations'>
+                  <SvgVennDiagram2 selectors={ldvsSelectors} domain='nuc' />
+                </NamedCard>
+              ) : ldvsSelectors.length === 3 ? (
+                <NamedCard title='Nucleotide mutations'>
+                  <SvgVennDiagram3 selectors={ldvsSelectors} domain='nuc' />
+                </NamedCard>
+              ) : ldvsSelectors.length === 4 ? (
+                <NamedCard title='Nucleotide mutations'>
+                  <SvgVennDiagram4 selectors={ldvsSelectors} domain='nuc' />
+                </NamedCard>
+              ) : (
+                ''
+              )}
             </GridCell>
           )}
           {ldvsSelectors.length === 2 ? (
@@ -208,27 +224,17 @@ export const FocusCompareEqualsPage = () => {
                   </TabPanel>
                 </Box>
               </NamedCard>
-
-              <NamedCard title='Nucleotide mutations'>
-                <SvgVennDiagram2 selectors={ldvsSelectors} domain='nuc' />
-              </NamedCard>
             </GridCell>
           ) : ldvsSelectors.length === 3 ? (
             <GridCell minWidth={600}>
               <NamedCard title='Amino acid changes'>
                 <SvgVennDiagram3 selectors={ldvsSelectors} domain='aa' />
               </NamedCard>
-              <NamedCard title='Nucleotide mutations'>
-                <SvgVennDiagram3 selectors={ldvsSelectors} domain='nuc' />
-              </NamedCard>
             </GridCell>
           ) : ldvsSelectors.length === 4 ? (
             <GridCell minWidth={600}>
               <NamedCard title='Amino acid changes'>
                 <SvgVennDiagram4 selectors={ldvsSelectors} domain='aa' />
-              </NamedCard>
-              <NamedCard title='Nucleotide mutations'>
-                <SvgVennDiagram4 selectors={ldvsSelectors} domain='nuc' />
               </NamedCard>
             </GridCell>
           ) : (
