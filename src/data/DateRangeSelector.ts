@@ -24,6 +24,7 @@ export type SpecialDateRange =
   | 'Y2020'
   | 'Y2021'
   | 'Y2022'
+  | 'Past2W'
   | 'Past1M'
   | 'Past2M'
   | 'Past3M'
@@ -31,7 +32,7 @@ export type SpecialDateRange =
 export function isSpecialDateRange(s: unknown): s is SpecialDateRange {
   return (
     typeof s === 'string' &&
-    ['AllTimes', 'Y2020', 'Y2021', 'Y2022', 'Past1M', 'Past2M', 'Past3M', 'Past6M'].includes(s)
+    ['AllTimes', 'Y2020', 'Y2021', 'Y2022', 'Past2W', 'Past1M', 'Past2M', 'Past3M', 'Past6M'].includes(s)
   );
 }
 
@@ -41,6 +42,7 @@ export class SpecialDateRangeSelector implements DateRangeSelector {
   getDateRange(): DateRange {
     const monthsAgo = (n: number) =>
       globalDateCache.getDayUsingDayjs(dayjs().subtract(n, 'months').weekday(0));
+    const weeksAgo = (n: number) => globalDateCache.getDayUsingDayjs(dayjs().subtract(n, 'weeks'));
     switch (this.mode) {
       case 'AllTimes':
         return { dateFrom: globalDateCache.getDay('2020-01-06') };
@@ -59,6 +61,8 @@ export class SpecialDateRangeSelector implements DateRangeSelector {
           dateFrom: globalDateCache.getDay('2022-01-03'),
           dateTo: globalDateCache.getDay('2023-01-01'),
         };
+      case 'Past2W':
+        return { dateFrom: weeksAgo(2) };
       case 'Past1M':
         return { dateFrom: monthsAgo(1) };
       case 'Past2M':
@@ -79,7 +83,7 @@ export const FixedDateRangeSelectorEncodedSchema = zod.object({
 });
 
 export const SpecialDateRangeSelectorEncodedSchema = zod.object({
-  mode: zod.enum(['AllTimes', 'Y2020', 'Y2021', 'Y2022', 'Past1M', 'Past2M', 'Past3M', 'Past6M']),
+  mode: zod.enum(['AllTimes', 'Y2020', 'Y2021', 'Y2022', 'Past2W', 'Past1M', 'Past2M', 'Past3M', 'Past6M']),
 });
 
 export const DateRangeSelectorEncodedSchema = zod.union([
@@ -125,6 +129,8 @@ export function specialDateRangeToString(dateRange: SpecialDateRange): string {
   switch (dateRange) {
     case 'AllTimes':
       return 'All times';
+    case 'Past2W':
+      return 'Past 2 weeks';
     case 'Past1M':
       return 'Past month';
     case 'Past2M':
