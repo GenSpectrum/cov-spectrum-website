@@ -13,8 +13,7 @@
         "variantQuery": "BA.5* | (BA.2* & 12160A & 9866C & 27259A)"
       },
       {
-        "pangoLineage": "BA.2.12.1*",
-        "aaMutations": []
+        "variantQuery": "BA.4* | BA.5* | (BA.2* & 12160A & 9866C & (27788T | 27259A))"
       },
       {
         "pangoLineage": "BA.2*",
@@ -22,11 +21,20 @@
       },
       {
         "pangoLineage": "BA.2*",
-        "aaMutations": ["S:452R"]
+        "aaMutations": ["S:452R"],
+        "nucMutations": ["9866T","12160G"]
       },
       {
         "pangoLineage": "BA.2*",
         "aaMutations": ["S:452M"]
+      },
+      {
+        "pangoLineage": "BA.2*",
+        "aaMutations": ["S:68T"]
+      },
+      {
+        "pangoLineage": "BA.2*",
+        "aaMutations": ["S:417T"]
       },
       {
         "pangoLineage": "XE*",
