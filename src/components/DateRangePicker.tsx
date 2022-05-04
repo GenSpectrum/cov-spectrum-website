@@ -71,7 +71,6 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
             className={`border rounded py-1.5 px-1.5 focus:outline-none focus:ring focus:border-blue-200 mr-2 ${
               width && width > 600 && 'ml-1'
             }`}
-            onClickOutside={changeDate}
             minDate={minimumDate}
             calendarStartDay={1}
             useWeekdaysShort={true}
@@ -84,13 +83,14 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
             startDate={startDate}
             endDate={endDate}
             dateFormat='yyyy-MM-dd'
+            onKeyDown={changeDate}
           />
           <span>to:</span>
           <DatePicker
             className={`border rounded py-1.5 px-1.5 focus:outline-none focus:ring focus:border-blue-200 mr-2 ${
               width && width > 600 && 'ml-1'
             }`}
-            onClickOutside={changeDate}
+            onKeyDown={changeDate}
             selected={endDate}
             calendarStartDay={1}
             useWeekdaysShort={true}
