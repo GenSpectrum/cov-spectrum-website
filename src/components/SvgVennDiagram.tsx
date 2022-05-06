@@ -16,6 +16,7 @@ import Slider from 'rc-slider';
 import FormControl from '@mui/material/FormControl';
 import ReactTooltip from 'react-tooltip';
 import { formatVariantDisplayName, VariantSelector } from '../data/VariantSelector';
+import './style/svgPlots.css';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;

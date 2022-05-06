@@ -18,14 +18,11 @@ import { Utils } from '../services/Utils';
 import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { DivisionModal } from '../components/DivisionModal';
 import { createDivisionBreakdownButton } from './FocusSinglePage';
-//import { SvgVennDiagram2 } from '../components/SvgVennDiagram2';
-import { SvgVennDiagram3 } from '../components/SvgVennDiagram3';
 
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-//import { SvgVennDiagram4 } from '../components/SvgVennDiagram4';
 import { SvgVennDiagram } from '../components/SvgVennDiagram';
 
 interface TabPanelProps {
@@ -245,7 +242,11 @@ export const FocusCompareEqualsPage = () => {
           ) : ldvsSelectors.length === 3 ? (
             <GridCell minWidth={600}>
               <NamedCard title='Amino acid changes'>
-                <SvgVennDiagram3 selectors={ldvsSelectors} domain='aa' />
+                <SvgVennDiagram
+                  selectors={ldvsSelectors}
+                  domain='aa'
+                  numberOfvariants={ldvsSelectors.length}
+                />
               </NamedCard>
             </GridCell>
           ) : ldvsSelectors.length === 4 ? (
