@@ -4,6 +4,7 @@ import styled from 'styled-components';
 type Props = {
   text: string;
   maxChars: number;
+  keepNewLine?: boolean;
 };
 
 export const ShowMoreOrLessButton = styled.button`
@@ -14,17 +15,19 @@ export const ShowMoreOrLessButton = styled.button`
   margin-left: 5px;
 `;
 
-export const ExpandableTextBox = ({ text, maxChars }: Props): JSX.Element => {
+export const ExpandableTextBox = ({ text, maxChars, keepNewLine = false }: Props): JSX.Element => {
   const [expanded, setExpanded] = useState<boolean>(false);
 
+  const textElement = <div className={keepNewLine ? 'whitespace-pre-wrap' : ''}>{text}</div>;
+
   if (text.length <= maxChars) {
-    return <>{text}</>;
+    return textElement;
   }
 
   if (expanded) {
     return (
       <>
-        {text}
+        {textElement}
         <ShowMoreOrLessButton onClick={() => setExpanded(false)}>(show less)</ShowMoreOrLessButton>
       </>
     );

@@ -8,7 +8,11 @@ import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { MultiVariantTimeDistributionLineChart } from '../widgets/MultiVariantTimeDistributionLineChart';
 import { NamedCard } from '../components/NamedCard';
 import { AnalysisMode } from '../data/AnalysisMode';
-import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
+import {
+  Chen2021FitnessExplanation,
+  Chen2021FitnessPreview,
+  TemporaryFitnessBanner,
+} from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { Althaus2021GrowthWidget } from '../models/althaus2021Growth/Althaus2021GrowthWidget';
 import { FullSampleAggEntry, FullSampleAggEntryField } from '../data/sample/FullSampleAggEntry';
 import { _fetchAggSamples } from '../data/api-lapis';
@@ -167,18 +171,12 @@ export const FocusCompareToBaselinePage = () => {
           )}
           {variantDateCounts.data && wholeDateCount.data && (
             <GridCell minWidth={600}>
+              <TemporaryFitnessBanner />
               <NamedCard
                 title='Relative growth advantage'
                 toolbar={[createDivisionBreakdownButton('Chen2021Fitness', setShowChen2021FitnessDivGrid)]}
-                description={`
-      If variants spread pre-dominantly by local transmission across demographic groups, this estimate reflects 
-      the relative growth advantage of the focal variant. Importantly, the relative growth advantage estimate 
-      reflects the advantage compared to the baseline variant. Many factors can contribute to a growth advantage, 
-      including an intrinsic  transmission advantage and immune evasion. When absolute numbers of a variant are low, 
-      the advantage may merely reflect the current importance of introductions from abroad or the variant spreading 
-      in a particular demographic group. In this case, the estimate does not provide information on any intrinsic 
-      fitness advantages.`}
               >
+                <Chen2021FitnessExplanation />
                 <div style={{ height: 400 }}>
                   <Chen2021FitnessPreview
                     variantDateCounts={variantDateCounts.data[1]}
@@ -191,7 +189,7 @@ export const FocusCompareToBaselinePage = () => {
           {variantDateCounts.data && wholeDateCount.data && (
             <GridCell minWidth={700}>
               <Althaus2021GrowthWidget.ShareableComponent
-                title='Relative growth advantage'
+                title='Relative growth advantage: three mechanisms'
                 variantDateCounts={variantDateCounts.data[1]}
                 wholeDateCounts={wholeDateCount.data}
               />
@@ -226,17 +224,8 @@ export const FocusCompareToBaselinePage = () => {
           getData={splitSequencesOverTime.getData}
           splitData={splitSequencesOverTime.splitData}
           generate={(division, d) => (
-            <NamedCard
-              title={division}
-              description={`
-      If variants spread pre-dominantly by local transmission across demographic groups, this estimate reflects 
-      the relative growth advantage of the focal variant. Importantly, the relative growth advantage estimate 
-      reflects the advantage compared to the baseline variant. Many factors can contribute to a growth advantage, 
-      including an intrinsic  transmission advantage and immune evasion. When absolute numbers of a variant are low, 
-      the advantage may merely reflect the current importance of introductions from abroad or the variant spreading 
-      in a particular demographic group. In this case, the estimate does not provide information on any intrinsic 
-      fitness advantages.`}
-            >
+            <NamedCard title={division}>
+              <Chen2021FitnessExplanation />
               <div style={{ height: 400 }}>
                 <Chen2021FitnessPreview variantDateCounts={d.variant[1]} wholeDateCounts={d.whole} />
               </div>

@@ -357,10 +357,10 @@ export const Chen2021AbsolutePlot = ({
         }}
       />
       <p className='text-gray-500 text-xs'>
-        (**) If the estimated advantage is a transmission advantage and if nothing on measures, behavior,
-        population immunity, seasonality etc. changes, then the number of cases would develop as shown.
-        However, the above-mentioned variables change and thus the plot must be taken as a null model scenario
-        rather than a projection of what will happen.
+        (**) If the estimated advantage is an intrinsic viral advantage due to increased transmission or
+        immune escape and if nothing on measures, behavior, population immunity, seasonality etc. changes,
+        then the number of cases would develop as shown. However, the above-mentioned variables change and
+        thus the plot must be taken as a null model scenario rather than a projection of what will happen.
       </p>
       <div>
         <h3>Settings</h3>

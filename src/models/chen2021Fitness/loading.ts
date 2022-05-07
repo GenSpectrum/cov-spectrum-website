@@ -1,6 +1,6 @@
 import {
   Chen2021FitnessRequest,
-  Chen2021FitnessRequestConfig,
+  Chen2021FitnessRequestConfigPartial,
   Chen2021FitnessRequestData,
   Chen2021FitnessResponse,
   Chen2021FitnessResponseRawSchema,
@@ -59,7 +59,7 @@ export const transformToRequestData = (
 
 export const fillRequestWithDefaults = (
   data: Chen2021FitnessRequestData,
-  config?: Chen2021FitnessRequestConfig
+  config?: Chen2021FitnessRequestConfigPartial
 ): Chen2021FitnessRequest => {
   if (data.t.length === 0) {
     return {
@@ -160,7 +160,7 @@ type ModelDataResponse = {
 export const useModelData = (
   variantDateCounts: DateCountSampleDataset,
   wholeDateCounts: DateCountSampleDataset,
-  config?: Chen2021FitnessRequestConfig
+  config?: Chen2021FitnessRequestConfigPartial
 ): ModelDataResponse => {
   // Create request
   const { request, t0 } =

@@ -59,18 +59,11 @@ export const Althaus2021GrowthContainer = ({ variantDateCounts, wholeDateCounts 
     <>
       <div className='mb-6'>
         <ExpandableTextBox
-          text='
-        Assuming local transmissions and random sampling, there are three main mechanisms to explain the relative growth
-        of a variant: an increase in transmissibility, an increase of infectious duration, and immune evasion. Further,
-        in this model, these values depend on the proportion of population susceptible to the wildtype (the background
-        variant that we compare to), the reproduction number of the wildtype, and the generation time of the wildtype.
-        The following calculator can be used to estimate one parameter given the others. The increase in
-        transmissibility and the increase of infectious duration are given as relative factors: i.e., the variant is
-        (1+τ)x as transmissible as the wildtype and the infection duration is (1+κ)x as long. An immune evasion of 0
-        means complete cross-protection, a value of 1 corresponds to full evasion. The growth rate and generation time
-        are reported in days.
-      '
+          text={`Assuming local transmissions and random sampling, there are three main mechanisms to explain the relative growth of a variant: an increase in transmissibility, an increase of infectious duration, and immune evasion. Further, in this model, these values depend on the proportion of population susceptible to the wildtype (the background variant that we compare to), the reproduction number of the wildtype, and the generation time of the wildtype. The following calculator can be used to estimate one parameter given the others. The increase in transmissibility and the increase of infectious duration are given as relative factors: i.e., the variant is (1+τ)x as transmissible as the wildtype and the infection duration is (1+κ)x as long. An immune evasion of 0 means complete cross-protection, a value of 1 corresponds to full evasion. The growth rate and generation time are reported in days.
+
+This panel, based on (Althaus, 2021), uses a different notation than the "Relative advantage" panel that is based on (Chen, 2021). ρ corresponds to a, τ corresponds to f_c and D corresponds to g.`}
           maxChars={120}
+          keepNewLine={true}
         />
       </div>
       <div className='mb-6'>
