@@ -140,8 +140,8 @@ export const Chen2021ProportionPlot = ({
       />
 
       <p className='text-gray-500 text-xs'>
-        (*) Assumes that the current advantage is due to a transmission advantage. Otherwise, the proportion
-        would develop differently.
+        (*) Assumes that the current advantage is due to an intrinsic viral advantage (a combination of
+        increased transmission, immune escape, and prolonged infectious period).
       </p>
     </>
   );
