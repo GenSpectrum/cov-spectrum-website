@@ -4,15 +4,6 @@
     "fillUpUntil": 12,
     "variants": [
       {
-        "pangoLineage": "BA.2*"
-      },
-      {
-        "variantQuery": "BA.4* | (BA.2* & 12160A & 9866C & 27788T)"
-      },
-      {
-        "variantQuery": "BA.5* | (BA.2* & 12160A & 9866C & 27259A)"
-      },
-      {
         "variantQuery": "BA.4* | BA.5* | (BA.2* & 12160A & 9866C & (27788T | 27259A))"
       },
       {
@@ -37,15 +28,20 @@
         "aaMutations": ["S:417T"]
       },
       {
-        "pangoLineage": "XE*",
-        "aaMutations": []
+        "pangoLineage": "BA.2*",
+        "aaMutations": ["S:64R"]
       },
       {
-        "pangoLineage": "BA.1*"
+        "pangoLineage": "BA.2*",
+        "aaMutations": ["S:248H"]
       },
       {
-        "pangoLineage": "B.1.617.2*",
-        "aaMutations": []
+        "pangoLineage": "BA.2*",
+        "aaMutations": ["S:212S"]
+      },
+      {
+        "pangoLineage": "BA.2*",
+        "aaMutations": ["S:356R"]
       }
     ]
   },
