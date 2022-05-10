@@ -44,6 +44,15 @@ export interface Props {
 
 export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) => {
   const [geneName, setGeneName] = useState<string[]>([]);
+  const [isShownVenn2First, setIsShownVenn2First] = useState<boolean>(false);
+  const [isShownVenn2Second, setIsShownVenn2Second] = useState<boolean>(false);
+  const [isShownVenn3First, setIsShownVenn3First] = useState<boolean>(false);
+  const [isShownVenn3Second, setIsShownVenn3Second] = useState<boolean>(false);
+  const [isShownVenn3Third, setIsShownVenn3Third] = useState<boolean>(false);
+  const [isShownVenn4First, setIsShownVenn4First] = useState<boolean>(false);
+  const [isShownVenn4Second, setIsShownVenn4Second] = useState<boolean>(false);
+  const [isShownVenn4Third, setIsShownVenn4Third] = useState<boolean>(false);
+  const [isShownVenn4Fourth, setIsShownVenn4Fourth] = useState<boolean>(false);
 
   console.log(numberOfvariants);
 
@@ -235,15 +244,15 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
     venn2: (
       <g>
         <path
-          className='st0'
+          className={`st0 ${isShownVenn2Second ? 'hoveredCircle' : ''}`}
           d='M562.05,172.22c15.54,36.74,23.42,75.75,23.42,115.97s-7.88,79.24-23.42,115.97 c-15.01,35.48-36.49,67.34-63.85,94.7c-9.07,9.07-18.64,17.49-28.67,25.25c44.2,28.87,96.96,45.67,153.58,45.67 c155.27,0,281.59-126.32,281.59-281.59S778.39,6.61,623.12,6.61c-56.62,0-109.38,16.8-153.58,45.67 c10.03,7.76,19.6,16.18,28.67,25.25C525.57,104.88,547.05,136.75,562.05,172.22z'
         />
         <path
-          className='st0'
+          className={`st0 ${isShownVenn2First ? 'hoveredCircle' : ''}`}
           d='M348.61,404.17c-15.54-36.74-23.42-75.75-23.42-115.97c0-40.22,7.88-79.23,23.42-115.97 c15.01-35.48,36.49-67.34,63.85-94.7c9.07-9.07,18.64-17.49,28.67-25.25c-44.2-28.87-96.96-45.67-153.58-45.67 C132.27,6.61,5.95,132.93,5.95,288.19s126.32,281.59,281.59,281.59c56.62,0,109.38-16.8,153.58-45.67 c-10.03-7.76-19.6-16.18-28.67-25.25C385.09,471.5,363.61,439.64,348.61,404.17z'
         />
         <path
-          className='st0'
+          className={`st0 ${isShownVenn2First && isShownVenn2Second ? 'hoveredCircle' : ''}`}
           d='M569.13,288.19c0-92.45-44.78-174.63-113.8-226c-69.01,51.37-113.8,133.55-113.8,226s44.78,174.63,113.8,226 C524.34,462.83,569.13,380.64,569.13,288.19z'
         />
       </g>
@@ -251,7 +260,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
     venn3: (
       <g>
         <path
-          className='st0'
+          className={`st0 ${isShownVenn3Third ? 'hoveredCircle' : ''}`}
           d='M918.61,617.78c-14.38,21.28-30.89,41.3-49.08,59.48c-18.19,18.19-38.2,34.7-59.48,49.08
   c-6.31,4.27-12.76,8.35-19.31,12.25c-0.65,52.44-11.26,103.32-31.56,151.32c-10.08,23.82-22.54,46.79-37.06,68.28
   c-14.38,21.28-30.89,41.3-49.08,59.48c-18.19,18.19-38.2,34.7-59.48,49.08c-3.37,2.28-6.78,4.5-10.22,6.67
@@ -259,7 +268,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
   c-1.88,48.64-12.37,95.85-31.28,140.55C945.59,573.32,933.12,596.29,918.61,617.78z'
         />
         <path
-          className='st0'
+          className={`st0 ${isShownVenn3Second ? 'hoveredCircle' : ''}`}
           d='M497.57,1017.67c-18.19-18.19-34.7-38.2-49.08-59.48c-14.52-21.49-26.99-44.46-37.06-68.28
   c-20.3-47.99-30.91-98.87-31.56-151.32c-6.55-3.9-13-7.99-19.31-12.25c-21.28-14.38-41.3-30.89-59.48-49.08
   c-18.19-18.19-34.7-38.2-49.08-59.48c-14.52-21.49-26.99-44.46-37.06-68.28c-18.91-44.7-29.4-91.91-31.28-140.55
@@ -267,32 +276,34 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
   c-3.44-2.17-6.85-4.39-10.22-6.67C535.77,1052.37,515.75,1035.86,497.57,1017.67z'
         />
         <path
-          className='st0'
+          className={`st0 ${isShownVenn3Second && isShownVenn3Third ? 'hoveredCircle' : ''}`}
           d='M772.52,748.82c-10.05,5.3-20.32,10.17-30.76,14.59c-49.56,20.96-102.2,31.59-156.46,31.59
   c-54.26,0-106.9-10.63-156.46-31.59c-10.43-4.41-20.7-9.28-30.76-14.59c5.28,133.57,79.12,249.82,187.22,314.47
   C693.4,998.64,767.24,882.39,772.52,748.82z'
         />
         <path
-          className='st0'
+          className={`st0 ${isShownVenn3First ? 'hoveredCircle' : ''}`}
           d='M388.81,331.49c54.26,0,106.9,10.63,156.46,31.59c13.66,5.78,27.05,12.35,40.03,19.64
   c12.99-7.29,26.37-13.86,40.03-19.64c49.56-20.96,102.2-31.59,156.46-31.59c54.26,0,106.9,10.63,156.46,31.59
   c10.43,4.41,20.7,9.28,30.76,14.59C960.92,173.01,791.9,9.01,585.3,9.01s-375.62,164-383.71,368.65
   c10.05-5.3,20.32-10.17,30.76-14.59C281.9,342.12,334.55,331.49,388.81,331.49z'
         />
         <path
-          className='st0'
+          className={`st0 ${isShownVenn3First && isShownVenn3Third ? 'hoveredCircle' : ''}`}
           d='M603.33,393.47c3.44,2.17,6.85,4.39,10.22,6.67c21.28,14.38,41.3,30.89,59.48,49.08
   c18.19,18.19,34.7,38.2,49.08,59.48c14.52,21.49,26.99,44.46,37.06,68.28c18.91,44.7,29.4,91.91,31.28,140.55
   c106.01-67.26,176.99-185,178.83-319.15c-55.48-31.17-119.45-48.96-187.49-48.96C717.41,349.43,656.68,365.35,603.33,393.47z'
         />
         <path
-          className='st0'
+          className={`st0 ${isShownVenn3First && isShownVenn3Second ? 'hoveredCircle' : ''}`}
           d='M380.15,717.53c1.88-48.64,12.37-95.85,31.28-140.55c10.07-23.82,22.54-46.79,37.06-68.28
   c14.38-21.28,30.89-41.3,49.08-59.48c18.19-18.19,38.2-34.7,59.48-49.08c3.37-2.28,6.78-4.5,10.22-6.67
   c-53.35-28.12-114.08-44.05-178.46-44.05c-68.04,0-132,17.79-187.49,48.96C203.16,532.53,274.13,650.27,380.15,717.53z'
         />
         <path
-          className='st0'
+          className={`st0 ${
+            isShownVenn3First && isShownVenn3Second && isShownVenn3Third ? 'hoveredCircle' : ''
+          }`}
           d='M397.81,728.1c55.48,31.17,119.45,48.96,187.49,48.96c68.04,0,132-17.79,187.49-48.96
   c-1.89-137.77-76.7-258.23-187.49-324.48C474.51,469.86,399.71,590.33,397.81,728.1z'
         />
@@ -302,50 +313,62 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
     venn4: (
       <g>
         <path
-          className='st2_4'
+          className={`st2_4 ${
+            isShownVenn4First && isShownVenn4Second && isShownVenn4Third && isShownVenn4Fourth
+              ? 'hoveredCircle'
+              : ''
+          }`}
           d='M575.14,385.77c-27.32,32.62-47.17,65.94-58.14,96.2c19.01,14.69,38.3,27.24,57.2,37.4
     c19.41-10.29,39.25-23.09,58.8-38.18C621.97,451.13,602.23,418.1,575.14,385.77z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${
+            isShownVenn4First && isShownVenn4Second && isShownVenn4Third ? 'hoveredCircle' : ''
+          }`}
           d='M527.96,341.72c-12.34-12.34-25.03-23.67-37.83-33.91c-26.11,28.2-46.98,57.73-61.7,86.01
     c12.87,17.53,27.81,34.99,44.63,51.81c11.32,11.32,22.94,21.78,34.66,31.34c10.4-30.26,29.22-63.58,55.12-96.2
     C552.34,367.55,540.69,354.45,527.96,341.72z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${
+            isShownVenn4Second && isShownVenn4Third && isShownVenn4Fourth ? 'hoveredCircle' : ''
+          }`}
           d='M503.3,553.92c19.52-4.68,40.79-13.34,62.64-25.56c-17.92-10.16-36.2-22.7-54.22-37.4
     C503.68,514.36,500.66,535.93,503.3,553.92z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${
+            isShownVenn4First && isShownVenn4Fourth && isShownVenn4Second ? 'hoveredCircle' : ''
+          }`}
           d='M716.64,394.64c-14.79-28.12-35.63-57.44-61.62-85.42c-12.62,10.13-25.13,21.32-37.3,33.49
     c-12.73,12.73-24.38,25.83-34.88,39.05c25.68,32.33,44.4,65.36,54.85,95.42c11.82-9.62,23.52-20.15,34.93-31.56
     C689.18,429.07,703.91,411.89,716.64,394.64z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${
+            isShownVenn4First && isShownVenn4Fourth && isShownVenn4Third ? 'hoveredCircle' : ''
+          }`}
           d='M642.23,554.89c2.92-18.38-0.16-40.58-8.55-64.69c-18.53,15.08-37.33,27.89-55.73,38.17
     C600.38,541.08,622.22,550.07,642.23,554.89z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${isShownVenn4First && isShownVenn4Third ? 'hoveredCircle' : ''}`}
           d='M361.78,235.45c-6.08,38.3,13.82,93.13,53.64,147.36c14.73-28.28,35.6-57.81,61.7-86.01
     C437.54,265.14,396.85,243.89,361.78,235.45z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${isShownVenn4Second && isShownVenn4Fourth ? 'hoveredCircle' : ''}`}
           d='M779.04,238.42c-35.25,8.45-76.21,29.87-116.02,61.82c25.99,27.98,46.83,57.29,61.62,85.41
     C764.53,331.59,784.67,276.86,779.04,238.42z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${isShownVenn4First && isShownVenn4Second ? 'hoveredCircle' : ''}`}
           d='M571.84,368.77c10.5-13.22,22.15-26.32,34.88-39.05c12.17-12.17,24.68-23.36,37.3-33.49
     c-3.9-4.2-7.92-8.38-12.05-12.51c-19.71-19.71-40.3-36.84-60.84-51.07c-20.06,14.03-40.15,30.82-59.4,50.07
     c-4.32,4.32-8.51,8.69-12.58,13.09c12.8,10.24,25.49,21.57,37.83,33.91C549.69,342.45,561.34,355.55,571.84,368.77z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${isShownVenn4Third && isShownVenn4Fourth ? 'hoveredCircle' : ''}`}
           d='M509.29,563.92c2,13.67,7.26,25.29,16.05,34.08c10.28,10.28,24.41,15.72,41.18,16.78
     c0.48,0.03,0.97,0.05,1.45,0.07c0.48,0.02,0.96,0.05,1.44,0.06c0.67,0.02,1.33,0.03,1.99,0.04c0.48,0.01,0.96,0.01,1.44,0.01
     c0.48,0,0.96-0.01,1.44-0.01c0.66-0.01,1.32-0.02,1.99-0.04c0.48-0.02,0.96-0.04,1.44-0.06c0.48-0.02,0.96-0.05,1.45-0.07
@@ -353,33 +376,33 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
     C550.09,550.59,528.81,559.24,509.29,563.92z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${isShownVenn4Second && isShownVenn4Third ? 'hoveredCircle' : ''}`}
           d='M501.71,487.27c-11.73-9.8-23.34-20.53-34.66-32.14c-16.82-17.25-31.76-35.15-44.63-53.12
     c-29.15,57.4-34.22,109.77-8.09,136.57c17.31,17.75,45.58,21.46,78.96,13.25C490.66,533.36,493.67,511.25,501.71,487.27z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${isShownVenn4First && isShownVenn4Fourth ? 'hoveredCircle' : ''}`}
           d='M678.62,453.64c-11.41,11.64-23.11,22.38-34.93,32.2c8.39,24.6,11.46,47.24,8.54,65.99
     c33.45,8.21,61.77,4.54,79.11-13.14c26.31-26.84,20.99-79.48-8.7-137.04C709.91,419.23,695.18,436.75,678.62,453.64z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${isShownVenn4Second ? 'hoveredCircle' : ''}`}
           d='M657.93,284.22c39.82-29.78,80.8-49.75,116.07-57.63c-2-12.74-7.25-23.57-16.04-31.77
     c-32.24-30.04-102.43-15.86-172.96,30.12c20.55,13.27,41.15,29.24,60.87,47.61C650,276.42,654.02,280.31,657.93,284.22z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${isShownVenn4First ? 'hoveredCircle' : ''}`}
           d='M500.17,272.38c20.04-18.28,40.95-34.21,61.83-47.54c-72.87-46.06-145.14-60.11-178.46-29.72
     c-8.93,8.15-14.35,18.85-16.54,31.44c36.5,8.01,78.86,28.18,120.07,58.25C491.3,280.63,495.67,276.48,500.17,272.38z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${isShownVenn4Third ? 'hoveredCircle' : ''}`}
           d='M485.21,563.92c-36.35,8.98-67.13,4.93-85.98-14.5c-28.45-29.33-22.93-86.65,8.81-149.47
     c-43.36-60.86-65.03-122.39-58.41-165.37c-36.42-9.03-67.26-4.99-86.14,14.46c-45.07,46.45-4.91,163.16,89.7,260.67
     C418.63,577.16,492.98,617.75,547.52,621c-18.26-1.19-33.65-7.3-44.84-18.83C493.11,592.3,487.39,579.26,485.21,563.92z'
         />
         <path
-          className='st2_4'
+          className={`st2_4 ${isShownVenn4Fourth ? 'hoveredCircle' : ''}`}
           d='M735.74,398.24c32.04,62.62,37.78,119.89,9.39,149.09c-18.71,19.24-49.28,23.23-85.38,14.3
     c-2.27,14.71-7.89,27.22-17.15,36.74c-11.09,11.4-26.35,17.45-44.45,18.62c54.06-3.22,127.75-43.35,192.61-110.04
     c93.78-96.42,133.58-211.83,88.91-257.76c-18.68-19.21-49.19-23.22-85.21-14.34C800.53,277.52,778.8,338.26,735.74,398.24z'
@@ -529,6 +552,130 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
               className={`svgPlotNumber ${numberOfvariants === 4 ? 'st3 st4' : 'st1 st2'}`}
               data-for={`venn-area-${index} ${domain} ${numberOfvariants}`}
               data-tip
+              onMouseEnter={() => {
+                switch (index) {
+                  case 0:
+                    if (numberOfvariants === 2) {
+                      setIsShownVenn2First(true);
+                    } else if (numberOfvariants === 3) {
+                      setIsShownVenn3First(true);
+                    } else if (numberOfvariants === 4) {
+                      setIsShownVenn4First(true);
+                    }
+                    break;
+                  case 1:
+                    if (numberOfvariants === 2) {
+                      setIsShownVenn2First(true);
+                      setIsShownVenn2Second(true);
+                    } else if (numberOfvariants === 3) {
+                      setIsShownVenn3Second(true);
+                    } else if (numberOfvariants === 4) {
+                      setIsShownVenn4Second(true);
+                    }
+                    break;
+                  case 2:
+                    if (numberOfvariants === 2) {
+                      setIsShownVenn2Second(true);
+                    } else if (numberOfvariants === 3) {
+                      setIsShownVenn3Third(true);
+                    } else if (numberOfvariants === 4) {
+                      setIsShownVenn4Third(true);
+                    }
+                    break;
+
+                  case 3:
+                    if (numberOfvariants === 3) {
+                      setIsShownVenn3First(true);
+                      setIsShownVenn3Third(true);
+                      setIsShownVenn3Second(true);
+                    } else if (numberOfvariants === 4) {
+                      setIsShownVenn4Fourth(true);
+                    }
+                    break;
+                  case 4:
+                    if (numberOfvariants === 3) {
+                      setIsShownVenn3First(true);
+                      setIsShownVenn3Second(true);
+                    } else if (numberOfvariants === 4) {
+                      setIsShownVenn4First(true);
+                      setIsShownVenn4Second(true);
+                      setIsShownVenn4Third(true);
+                      setIsShownVenn4Fourth(true);
+                    }
+                    break;
+                  case 5:
+                    if (numberOfvariants === 3) {
+                      setIsShownVenn3First(true);
+                      setIsShownVenn3Third(true);
+                    } else if (numberOfvariants === 4) {
+                      setIsShownVenn4First(true);
+                      setIsShownVenn4Second(true);
+                    }
+                    break;
+                  case 6:
+                    if (numberOfvariants === 3) {
+                      setIsShownVenn3Second(true);
+                      setIsShownVenn3Third(true);
+                    } else if (numberOfvariants === 4) {
+                      setIsShownVenn4First(true);
+                      setIsShownVenn4Third(true);
+                    }
+                    break;
+                  case 7:
+                    setIsShownVenn4First(true);
+                    setIsShownVenn4Fourth(true);
+                    break;
+                  case 8:
+                    setIsShownVenn4Second(true);
+                    setIsShownVenn4Third(true);
+                    break;
+                  case 9:
+                    setIsShownVenn4Second(true);
+                    setIsShownVenn4Fourth(true);
+                    break;
+                  case 10:
+                    setIsShownVenn4Third(true);
+                    setIsShownVenn4Fourth(true);
+                    break;
+                  case 11:
+                    setIsShownVenn4First(true);
+                    setIsShownVenn4Second(true);
+                    setIsShownVenn4Third(true);
+                    break;
+                  case 12:
+                    setIsShownVenn4First(true);
+                    setIsShownVenn4Second(true);
+                    setIsShownVenn4Fourth(true);
+                    break;
+                  case 13:
+                    setIsShownVenn4Second(true);
+                    setIsShownVenn4Third(true);
+                    setIsShownVenn4Fourth(true);
+                    break;
+                  case 14:
+                    setIsShownVenn4First(true);
+                    setIsShownVenn4Third(true);
+                    setIsShownVenn4Fourth(true);
+                    break;
+                  case 15:
+                    setIsShownVenn4First(true);
+                    setIsShownVenn4Second(true);
+                    setIsShownVenn4Third(true);
+                    setIsShownVenn4Fourth(true);
+                    break;
+                }
+              }}
+              onMouseLeave={() => {
+                setIsShownVenn2First(false);
+                setIsShownVenn2Second(false);
+                setIsShownVenn3First(false);
+                setIsShownVenn3Second(false);
+                setIsShownVenn3Third(false);
+                setIsShownVenn4First(false);
+                setIsShownVenn4Second(false);
+                setIsShownVenn4Third(false);
+                setIsShownVenn4Fourth(false);
+              }}
             >
               {mutations.length}
             </text>
@@ -549,10 +696,10 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
           ) : numberOfvariants === 2 ? (
             <>
               {' '}
-              <text x='8.785' y='37.948' className='svgPlotText'>
+              <text x='8.785' y='37.948' className={`svgPlotText ${isShownVenn2First ? 'hovered' : ''}`}>
                 {variants[0] && formatVariantDisplayName(variants[0])}
               </text>
-              <text x='777.125' y='31.79' className='svgPlotText'>
+              <text x='777.125' y='31.79' className={`svgPlotText ${isShownVenn2Second ? 'hovered' : ''}`}>
                 {variants[1] && formatVariantDisplayName(variants[1])}
               </text>
             </>

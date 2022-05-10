@@ -69,8 +69,18 @@
 
 .svgPlotText {
   white-space: pre;
-  fill: darkred;
+  fill: blue;
   font-family: Arial, sans-serif;
   font-weight: bolder;
   font-size: 35px;
+}
+
+.hovered {
+  fill: red;
+  font-weight: bold;
+}
+
+.hoveredCircle {
+  color: red;
+  fill: bisque;
 }
