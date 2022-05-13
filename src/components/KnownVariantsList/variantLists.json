@@ -42,6 +42,12 @@
       {
         "pangoLineage": "BA.2*",
         "aaMutations": ["S:356R"]
+      },
+      {
+        "pangoLineage": "BA.1*"
+      },
+      {
+        "pangoLineage": "BA.2*"
       }
     ]
   },
