@@ -1,42 +1,54 @@
 .st0 {
-  fill: none;
+  fill: whitesmoke;
   stroke: #000000;
   stroke-miterlimit: 10;
 }
 
 .st1 {
   font-family: 'MyriadPro-Regular';
+  fill: whitesmoke;
 }
 
 .st2 {
   font-size: 85px;
+  fill: whitesmoke;
 }
 
 .st0_4 {
   display: none;
+  fill: whitesmoke;
 }
 
 .st1_4 {
+  fill: whitesmoke;
   display: inline;
   fill: none;
   stroke: #000000;
   stroke-miterlimit: 10;
 }
 .st2_4 {
-  fill: none;
+  fill: whitesmoke;
   stroke: #000000;
   stroke-miterlimit: 10;
 }
 
 .st3 {
   font-family: 'MyriadPro-Regular';
+  fill: whitesmoke;
 }
 
 .st4 {
   font-size: 35px;
+  fill: whitesmoke;
 }
+
 .st5 {
   font-size: 20px;
+  fill: whitesmoke;
+}
+
+.st0:hover .st1:hover .st2:hover .st3:hover .st4:hover .st5:hover .st2_4:hover .st1_4:hover .st0_4:hover {
+  fill: rgb(238, 135, 17);
 }
 
 .svgPlot {
@@ -62,6 +74,7 @@
 .svgPlotNumber {
   white-space: pre;
   cursor: pointer;
+  fill: black;
 }
 .svgPlotNumber:hover {
   fill: royalblue;
@@ -76,11 +89,11 @@
 }
 
 .hovered {
-  fill: red;
+  fill: rgb(238, 135, 17);
   font-weight: bold;
 }
 
 .hoveredCircle {
   color: red;
-  fill: bisque;
+  fill: rgb(238, 135, 17);
 }

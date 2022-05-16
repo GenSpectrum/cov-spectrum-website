@@ -14,7 +14,6 @@ import { Utils } from '../services/Utils';
 import MenuItem from '@mui/material/MenuItem';
 import Slider from 'rc-slider';
 import FormControl from '@mui/material/FormControl';
-import ReactTooltip from 'react-tooltip';
 import { formatVariantDisplayName, VariantSelector } from '../data/VariantSelector';
 import './style/svgPlots.css';
 
@@ -46,13 +45,49 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
   const [geneName, setGeneName] = useState<string[]>([]);
   const [isShownVenn2First, setIsShownVenn2First] = useState<boolean>(false);
   const [isShownVenn2Second, setIsShownVenn2Second] = useState<boolean>(false);
+  const [isShownVenn2FirstAndSecond, setIsShownVenn2FirstAndSecond] = useState<boolean>(false);
+
   const [isShownVenn3First, setIsShownVenn3First] = useState<boolean>(false);
   const [isShownVenn3Second, setIsShownVenn3Second] = useState<boolean>(false);
   const [isShownVenn3Third, setIsShownVenn3Third] = useState<boolean>(false);
+  const [isShownVenn3FirstAndSecond, setIsShownVenn3FirstAndSecond] = useState<boolean>(false);
+  const [isShownVenn3FirstAndThird, setIsShownVenn3FirstAndThird] = useState<boolean>(false);
+  const [isShownVenn3SecondAndThird, setIsShownVenn3SecondAndThird] = useState<boolean>(false);
+  const [isShownVenn3FirstAndSecondAndThird, setIsShownVenn3FirstAndSecondAndThird] = useState<boolean>(
+    false
+  );
+
   const [isShownVenn4First, setIsShownVenn4First] = useState<boolean>(false);
   const [isShownVenn4Second, setIsShownVenn4Second] = useState<boolean>(false);
   const [isShownVenn4Third, setIsShownVenn4Third] = useState<boolean>(false);
   const [isShownVenn4Fourth, setIsShownVenn4Fourth] = useState<boolean>(false);
+
+  const [isShownVenn4FirstAndSecond, setIsShownVenn4FirstAndSecond] = useState<boolean>(false);
+  const [isShownVenn4FirstAndThird, setIsShownVenn4FirstAndThird] = useState<boolean>(false);
+  const [isShownVenn4FirstAndFourth, setIsShownVenn4FirstAndFourth] = useState<boolean>(false);
+  const [isShownVenn4SecondAndThird, setIsShownVenn4SecondAndThird] = useState<boolean>(false);
+  const [isShownVenn4SecondAndFourth, setIsShownVenn4SecondAndFourth] = useState<boolean>(false);
+  const [isShownVenn4ThirdAndFourth, setIsShownVenn4ThirdAndFourth] = useState<boolean>(false);
+
+  const [isShownVenn4FirstAndSecondAndThird, setIsShownVenn4FirstAndSecondAndThird] = useState<boolean>(
+    false
+  );
+  const [isShownVenn4FirstAndSecondAndFourth, setIsShownVenn4FirstAndSecondAndFourth] = useState<boolean>(
+    false
+  );
+  const [isShownVenn4FirstAndThirdAndFourth, setIsShownVenn4FirstAndThirdAndFourth] = useState<boolean>(
+    false
+  );
+  const [isShownVenn4SecondAndThirdAndFourth, setIsShownVenn4SecondAndThirdAndFourth] = useState<boolean>(
+    false
+  );
+
+  const [
+    isShownVenn4FirstAndSecondAndThirdAndFourth,
+    setIsShownVenn4FirstAndSecondAndThirdAndFourth,
+  ] = useState<boolean>(false);
+
+  const [variantIndex, setVariantIndex] = useState<number | undefined>(undefined);
 
   console.log(numberOfvariants);
 
@@ -224,8 +259,6 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
       : [];
   }, [filteredData]);
 
-  console.log(vennGeneralData);
-
   if (res.isError) {
     throw new Error('Data fetching failed: ' + JSON.stringify(res.error));
   }
@@ -252,7 +285,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
           d='M348.61,404.17c-15.54-36.74-23.42-75.75-23.42-115.97c0-40.22,7.88-79.23,23.42-115.97 c15.01-35.48,36.49-67.34,63.85-94.7c9.07-9.07,18.64-17.49,28.67-25.25c-44.2-28.87-96.96-45.67-153.58-45.67 C132.27,6.61,5.95,132.93,5.95,288.19s126.32,281.59,281.59,281.59c56.62,0,109.38-16.8,153.58-45.67 c-10.03-7.76-19.6-16.18-28.67-25.25C385.09,471.5,363.61,439.64,348.61,404.17z'
         />
         <path
-          className={`st0 ${isShownVenn2First && isShownVenn2Second ? 'hoveredCircle' : ''}`}
+          className={`st0 ${isShownVenn2FirstAndSecond ? 'hoveredCircle' : ''}`}
           d='M569.13,288.19c0-92.45-44.78-174.63-113.8-226c-69.01,51.37-113.8,133.55-113.8,226s44.78,174.63,113.8,226 C524.34,462.83,569.13,380.64,569.13,288.19z'
         />
       </g>
@@ -276,7 +309,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
   c-3.44-2.17-6.85-4.39-10.22-6.67C535.77,1052.37,515.75,1035.86,497.57,1017.67z'
         />
         <path
-          className={`st0 ${isShownVenn3Second && isShownVenn3Third ? 'hoveredCircle' : ''}`}
+          className={`st0 ${isShownVenn3SecondAndThird ? 'hoveredCircle' : ''}`}
           d='M772.52,748.82c-10.05,5.3-20.32,10.17-30.76,14.59c-49.56,20.96-102.2,31.59-156.46,31.59
   c-54.26,0-106.9-10.63-156.46-31.59c-10.43-4.41-20.7-9.28-30.76-14.59c5.28,133.57,79.12,249.82,187.22,314.47
   C693.4,998.64,767.24,882.39,772.52,748.82z'
@@ -289,21 +322,19 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
   c10.05-5.3,20.32-10.17,30.76-14.59C281.9,342.12,334.55,331.49,388.81,331.49z'
         />
         <path
-          className={`st0 ${isShownVenn3First && isShownVenn3Third ? 'hoveredCircle' : ''}`}
+          className={`st0 ${isShownVenn3FirstAndThird ? 'hoveredCircle' : ''}`}
           d='M603.33,393.47c3.44,2.17,6.85,4.39,10.22,6.67c21.28,14.38,41.3,30.89,59.48,49.08
   c18.19,18.19,34.7,38.2,49.08,59.48c14.52,21.49,26.99,44.46,37.06,68.28c18.91,44.7,29.4,91.91,31.28,140.55
   c106.01-67.26,176.99-185,178.83-319.15c-55.48-31.17-119.45-48.96-187.49-48.96C717.41,349.43,656.68,365.35,603.33,393.47z'
         />
         <path
-          className={`st0 ${isShownVenn3First && isShownVenn3Second ? 'hoveredCircle' : ''}`}
+          className={`st0 ${isShownVenn3FirstAndSecond ? 'hoveredCircle' : ''}`}
           d='M380.15,717.53c1.88-48.64,12.37-95.85,31.28-140.55c10.07-23.82,22.54-46.79,37.06-68.28
   c14.38-21.28,30.89-41.3,49.08-59.48c18.19-18.19,38.2-34.7,59.48-49.08c3.37-2.28,6.78-4.5,10.22-6.67
   c-53.35-28.12-114.08-44.05-178.46-44.05c-68.04,0-132,17.79-187.49,48.96C203.16,532.53,274.13,650.27,380.15,717.53z'
         />
         <path
-          className={`st0 ${
-            isShownVenn3First && isShownVenn3Second && isShownVenn3Third ? 'hoveredCircle' : ''
-          }`}
+          className={`st0 ${isShownVenn3FirstAndSecondAndThird ? 'hoveredCircle' : ''}`}
           d='M397.81,728.1c55.48,31.17,119.45,48.96,187.49,48.96c68.04,0,132-17.79,187.49-48.96
   c-1.89-137.77-76.7-258.23-187.49-324.48C474.51,469.86,399.71,590.33,397.81,728.1z'
         />
@@ -313,62 +344,50 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
     venn4: (
       <g>
         <path
-          className={`st2_4 ${
-            isShownVenn4First && isShownVenn4Second && isShownVenn4Third && isShownVenn4Fourth
-              ? 'hoveredCircle'
-              : ''
-          }`}
+          className={`st2_4 ${isShownVenn4FirstAndSecondAndThirdAndFourth ? 'hoveredCircle' : ''}`}
           d='M575.14,385.77c-27.32,32.62-47.17,65.94-58.14,96.2c19.01,14.69,38.3,27.24,57.2,37.4
     c19.41-10.29,39.25-23.09,58.8-38.18C621.97,451.13,602.23,418.1,575.14,385.77z'
         />
         <path
-          className={`st2_4 ${
-            isShownVenn4First && isShownVenn4Second && isShownVenn4Third ? 'hoveredCircle' : ''
-          }`}
+          className={`st2_4 ${isShownVenn4FirstAndSecondAndThird ? 'hoveredCircle' : ''}`}
           d='M527.96,341.72c-12.34-12.34-25.03-23.67-37.83-33.91c-26.11,28.2-46.98,57.73-61.7,86.01
     c12.87,17.53,27.81,34.99,44.63,51.81c11.32,11.32,22.94,21.78,34.66,31.34c10.4-30.26,29.22-63.58,55.12-96.2
     C552.34,367.55,540.69,354.45,527.96,341.72z'
         />
         <path
-          className={`st2_4 ${
-            isShownVenn4Second && isShownVenn4Third && isShownVenn4Fourth ? 'hoveredCircle' : ''
-          }`}
+          className={`st2_4 ${isShownVenn4SecondAndThirdAndFourth ? 'hoveredCircle' : ''}`}
           d='M503.3,553.92c19.52-4.68,40.79-13.34,62.64-25.56c-17.92-10.16-36.2-22.7-54.22-37.4
     C503.68,514.36,500.66,535.93,503.3,553.92z'
         />
         <path
-          className={`st2_4 ${
-            isShownVenn4First && isShownVenn4Fourth && isShownVenn4Second ? 'hoveredCircle' : ''
-          }`}
+          className={`st2_4 ${isShownVenn4FirstAndSecondAndFourth ? 'hoveredCircle' : ''}`}
           d='M716.64,394.64c-14.79-28.12-35.63-57.44-61.62-85.42c-12.62,10.13-25.13,21.32-37.3,33.49
     c-12.73,12.73-24.38,25.83-34.88,39.05c25.68,32.33,44.4,65.36,54.85,95.42c11.82-9.62,23.52-20.15,34.93-31.56
     C689.18,429.07,703.91,411.89,716.64,394.64z'
         />
         <path
-          className={`st2_4 ${
-            isShownVenn4First && isShownVenn4Fourth && isShownVenn4Third ? 'hoveredCircle' : ''
-          }`}
+          className={`st2_4 ${isShownVenn4FirstAndThirdAndFourth ? 'hoveredCircle' : ''}`}
           d='M642.23,554.89c2.92-18.38-0.16-40.58-8.55-64.69c-18.53,15.08-37.33,27.89-55.73,38.17
     C600.38,541.08,622.22,550.07,642.23,554.89z'
         />
         <path
-          className={`st2_4 ${isShownVenn4First && isShownVenn4Third ? 'hoveredCircle' : ''}`}
+          className={`st2_4 ${isShownVenn4FirstAndThird ? 'hoveredCircle' : ''}`}
           d='M361.78,235.45c-6.08,38.3,13.82,93.13,53.64,147.36c14.73-28.28,35.6-57.81,61.7-86.01
     C437.54,265.14,396.85,243.89,361.78,235.45z'
         />
         <path
-          className={`st2_4 ${isShownVenn4Second && isShownVenn4Fourth ? 'hoveredCircle' : ''}`}
+          className={`st2_4 ${isShownVenn4SecondAndFourth ? 'hoveredCircle' : ''}`}
           d='M779.04,238.42c-35.25,8.45-76.21,29.87-116.02,61.82c25.99,27.98,46.83,57.29,61.62,85.41
     C764.53,331.59,784.67,276.86,779.04,238.42z'
         />
         <path
-          className={`st2_4 ${isShownVenn4First && isShownVenn4Second ? 'hoveredCircle' : ''}`}
+          className={`st2_4 ${isShownVenn4FirstAndSecond ? 'hoveredCircle' : ''}`}
           d='M571.84,368.77c10.5-13.22,22.15-26.32,34.88-39.05c12.17-12.17,24.68-23.36,37.3-33.49
     c-3.9-4.2-7.92-8.38-12.05-12.51c-19.71-19.71-40.3-36.84-60.84-51.07c-20.06,14.03-40.15,30.82-59.4,50.07
     c-4.32,4.32-8.51,8.69-12.58,13.09c12.8,10.24,25.49,21.57,37.83,33.91C549.69,342.45,561.34,355.55,571.84,368.77z'
         />
         <path
-          className={`st2_4 ${isShownVenn4Third && isShownVenn4Fourth ? 'hoveredCircle' : ''}`}
+          className={`st2_4 ${isShownVenn4ThirdAndFourth ? 'hoveredCircle' : ''}`}
           d='M509.29,563.92c2,13.67,7.26,25.29,16.05,34.08c10.28,10.28,24.41,15.72,41.18,16.78
     c0.48,0.03,0.97,0.05,1.45,0.07c0.48,0.02,0.96,0.05,1.44,0.06c0.67,0.02,1.33,0.03,1.99,0.04c0.48,0.01,0.96,0.01,1.44,0.01
     c0.48,0,0.96-0.01,1.44-0.01c0.66-0.01,1.32-0.02,1.99-0.04c0.48-0.02,0.96-0.04,1.44-0.06c0.48-0.02,0.96-0.05,1.45-0.07
@@ -376,12 +395,12 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
     C550.09,550.59,528.81,559.24,509.29,563.92z'
         />
         <path
-          className={`st2_4 ${isShownVenn4Second && isShownVenn4Third ? 'hoveredCircle' : ''}`}
+          className={`st2_4 ${isShownVenn4SecondAndThird ? 'hoveredCircle' : ''}`}
           d='M501.71,487.27c-11.73-9.8-23.34-20.53-34.66-32.14c-16.82-17.25-31.76-35.15-44.63-53.12
     c-29.15,57.4-34.22,109.77-8.09,136.57c17.31,17.75,45.58,21.46,78.96,13.25C490.66,533.36,493.67,511.25,501.71,487.27z'
         />
         <path
-          className={`st2_4 ${isShownVenn4First && isShownVenn4Fourth ? 'hoveredCircle' : ''}`}
+          className={`st2_4 ${isShownVenn4FirstAndFourth ? 'hoveredCircle' : ''}`}
           d='M678.62,453.64c-11.41,11.64-23.11,22.38-34.93,32.2c8.39,24.6,11.46,47.24,8.54,65.99
     c33.45,8.21,61.77,4.54,79.11-13.14c26.31-26.84,20.99-79.48-8.7-137.04C709.91,419.23,695.18,436.75,678.62,453.64z'
         />
@@ -391,7 +410,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
     c-32.24-30.04-102.43-15.86-172.96,30.12c20.55,13.27,41.15,29.24,60.87,47.61C650,276.42,654.02,280.31,657.93,284.22z'
         />
         <path
-          className={`st2_4 ${isShownVenn4First ? 'hoveredCircle' : ''}`}
+          className={`st2_4 ${isShownVenn4First ? 'hoveredCircle' : ''} pipapo`}
           d='M500.17,272.38c20.04-18.28,40.95-34.21,61.83-47.54c-72.87-46.06-145.14-60.11-178.46-29.72
     c-8.93,8.15-14.35,18.85-16.54,31.44c36.5,8.01,78.86,28.18,120.07,58.25C491.3,280.63,495.67,276.48,500.17,272.38z'
         />
@@ -414,42 +433,257 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
   let variantTexts3: {
     transform: string;
     variant: VariantSelector;
+    className: string;
   }[] = [
     {
       transform: 'matrix(1 0 0 1 897.6821 99.9163)',
       variant: variants[0],
+      className: `svgPlotText ${
+        isShownVenn3First ||
+        isShownVenn3FirstAndSecond ||
+        isShownVenn3FirstAndThird ||
+        isShownVenn3FirstAndSecondAndThird
+          ? 'hovered'
+          : ''
+      }`,
     },
     {
       transform: 'matrix(1 0 0 1 9.3525 1110.3396)',
       variant: variants[1],
+      className: `svgPlotText ${
+        isShownVenn3Second ||
+        isShownVenn3SecondAndThird ||
+        isShownVenn3FirstAndSecond ||
+        isShownVenn3FirstAndSecondAndThird
+          ? 'hovered'
+          : ''
+      }`,
     },
     {
       transform: 'matrix(1 0 0 1 969.281 1110.3396)',
       variant: variants[2],
+      className: `svgPlotText ${
+        isShownVenn3Third ||
+        isShownVenn3SecondAndThird ||
+        isShownVenn3FirstAndThird ||
+        isShownVenn3FirstAndSecondAndThird
+          ? 'hovered'
+          : ''
+      }`,
     },
   ];
 
   let variantTexts4: {
     transform: string;
     variant: VariantSelector;
+    className: string;
   }[] = [
     {
       transform: 'matrix(1 0 0 1 758.7764 174.9609)',
       variant: variants[1],
+      className: `svgPlotText st3 st5 ${
+        isShownVenn4Second ||
+        isShownVenn4FirstAndSecond ||
+        isShownVenn4FirstAndSecondAndFourth ||
+        isShownVenn4FirstAndSecondAndThird ||
+        isShownVenn4FirstAndSecondAndThirdAndFourth ||
+        isShownVenn4SecondAndFourth ||
+        isShownVenn4SecondAndThird ||
+        isShownVenn4SecondAndThirdAndFourth
+          ? 'hovered'
+          : ''
+      }`,
     },
     {
       transform: 'matrix(1 0 0 1 321.7764 174.9609)',
       variant: variants[0],
+      className: `svgPlotText st3 st5 ${
+        isShownVenn4First ||
+        isShownVenn4FirstAndSecond ||
+        isShownVenn4FirstAndSecondAndFourth ||
+        isShownVenn4FirstAndSecondAndThird ||
+        isShownVenn4FirstAndSecondAndThirdAndFourth ||
+        isShownVenn4FirstAndFourth ||
+        isShownVenn4FirstAndThird ||
+        isShownVenn4FirstAndThirdAndFourth
+          ? 'hovered'
+          : ''
+      }`,
     },
     {
       transform: 'matrix(1 0 0 1 143.7764 242.9609)',
       variant: variants[2],
+      className: `svgPlotText st3 st5 ${
+        isShownVenn4Third ||
+        isShownVenn4SecondAndThird ||
+        isShownVenn4SecondAndThirdAndFourth ||
+        isShownVenn4FirstAndSecondAndThird ||
+        isShownVenn4FirstAndSecondAndThirdAndFourth ||
+        isShownVenn4ThirdAndFourth ||
+        isShownVenn4FirstAndThird ||
+        isShownVenn4FirstAndThirdAndFourth
+          ? 'hovered'
+          : ''
+      }`,
     },
     {
       transform: 'matrix(1 0 0 1 912.7764 242.9609)',
       variant: variants[3],
+      className: `svgPlotText st3 st5 ${
+        isShownVenn4Fourth ||
+        isShownVenn4SecondAndFourth ||
+        isShownVenn4SecondAndThirdAndFourth ||
+        isShownVenn4FirstAndSecondAndFourth ||
+        isShownVenn4FirstAndSecondAndThirdAndFourth ||
+        isShownVenn4ThirdAndFourth ||
+        isShownVenn4FirstAndFourth ||
+        isShownVenn4FirstAndThirdAndFourth
+          ? 'hovered'
+          : ''
+      }`,
     },
   ];
+
+  function showMutationText(index: number) {
+    console.log(vennGeneralData);
+    return vennGeneralData ? MutationListFormat2(vennGeneralData[index].mutations) : '';
+  }
+
+  function animatePlot(index: number) {
+    switch (index) {
+      case 0:
+        if (numberOfvariants === 2) {
+          setIsShownVenn2First(true);
+        } else if (numberOfvariants === 3) {
+          setIsShownVenn3First(true);
+        } else if (numberOfvariants === 4) {
+          setIsShownVenn4First(true);
+        }
+        setVariantIndex(0);
+
+        break;
+      case 1:
+        if (numberOfvariants === 2) {
+          setIsShownVenn2FirstAndSecond(true);
+        } else if (numberOfvariants === 3) {
+          setIsShownVenn3Second(true);
+        } else if (numberOfvariants === 4) {
+          setIsShownVenn4Second(true);
+        }
+        setVariantIndex(1);
+        break;
+      case 2:
+        if (numberOfvariants === 2) {
+          setIsShownVenn2Second(true);
+        } else if (numberOfvariants === 3) {
+          setIsShownVenn3Third(true);
+        } else if (numberOfvariants === 4) {
+          setIsShownVenn4Third(true);
+        }
+        setVariantIndex(2);
+        break;
+      case 3:
+        if (numberOfvariants === 3) {
+          setIsShownVenn3FirstAndSecondAndThird(true);
+        } else if (numberOfvariants === 4) {
+          setIsShownVenn4Fourth(true);
+        }
+        setVariantIndex(3);
+        break;
+      case 4:
+        if (numberOfvariants === 3) {
+          setIsShownVenn3FirstAndSecond(true);
+        } else if (numberOfvariants === 4) {
+          setIsShownVenn4FirstAndSecondAndThirdAndFourth(true);
+        }
+        setVariantIndex(4);
+        break;
+      case 5:
+        if (numberOfvariants === 3) {
+          setIsShownVenn3FirstAndThird(true);
+        } else if (numberOfvariants === 4) {
+          setIsShownVenn4FirstAndSecond(true);
+        }
+        setVariantIndex(5);
+        break;
+      case 6:
+        if (numberOfvariants === 3) {
+          setIsShownVenn3SecondAndThird(true);
+        } else if (numberOfvariants === 4) {
+          setIsShownVenn4FirstAndThird(true);
+        }
+        setVariantIndex(6);
+        break;
+      case 7:
+        setIsShownVenn4FirstAndFourth(true);
+        setVariantIndex(7);
+        break;
+      case 8:
+        setIsShownVenn4SecondAndThird(true);
+        setVariantIndex(8);
+        break;
+      case 9:
+        setIsShownVenn4SecondAndFourth(true);
+        setVariantIndex(9);
+        break;
+      case 10:
+        setIsShownVenn4ThirdAndFourth(true);
+        setVariantIndex(10);
+        break;
+      case 11:
+        setIsShownVenn4FirstAndSecondAndThird(true);
+        setVariantIndex(11);
+        break;
+      case 12:
+        setIsShownVenn4FirstAndSecondAndFourth(true);
+        setVariantIndex(12);
+        break;
+      case 13:
+        setIsShownVenn4SecondAndThirdAndFourth(true);
+        setVariantIndex(13);
+        break;
+      case 14:
+        setIsShownVenn4FirstAndThirdAndFourth(true);
+        setVariantIndex(14);
+        break;
+      case 15:
+        setIsShownVenn4First(true);
+        setIsShownVenn4Second(true);
+        setIsShownVenn4Third(true);
+        setIsShownVenn4Fourth(true);
+        setVariantIndex(15);
+        break;
+    }
+  }
+
+  function resetPlot() {
+    setIsShownVenn2First(false);
+    setIsShownVenn2Second(false);
+    setIsShownVenn3First(false);
+    setIsShownVenn3Second(false);
+    setIsShownVenn3Third(false);
+    setIsShownVenn4First(false);
+    setIsShownVenn4Second(false);
+    setIsShownVenn4Third(false);
+    setIsShownVenn4Fourth(false);
+    setIsShownVenn2FirstAndSecond(false);
+    setIsShownVenn3SecondAndThird(false);
+    setIsShownVenn3FirstAndSecond(false);
+    setIsShownVenn3FirstAndThird(false);
+    setIsShownVenn3FirstAndSecondAndThird(false);
+    setIsShownVenn4FirstAndSecondAndThirdAndFourth(false);
+    setIsShownVenn4FirstAndSecondAndThird(false);
+    setIsShownVenn4SecondAndThirdAndFourth(false);
+    setIsShownVenn4FirstAndSecondAndFourth(false);
+    setIsShownVenn4FirstAndThirdAndFourth(false);
+    setIsShownVenn4FirstAndThird(false);
+    setIsShownVenn4SecondAndFourth(false);
+    setIsShownVenn4FirstAndSecond(false);
+    setIsShownVenn4ThirdAndFourth(false);
+    setIsShownVenn4SecondAndThird(false);
+    setIsShownVenn4FirstAndFourth(false);
+    setVariantIndex(undefined);
+  }
 
   return (
     <>
@@ -550,156 +784,40 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
               onClick={() => navigator.clipboard.writeText(mutations.join(','))}
               transform={svgTransform}
               className={`svgPlotNumber ${numberOfvariants === 4 ? 'st3 st4' : 'st1 st2'}`}
-              data-for={`venn-area-${index} ${domain} ${numberOfvariants}`}
-              data-tip
-              onMouseEnter={() => {
-                switch (index) {
-                  case 0:
-                    if (numberOfvariants === 2) {
-                      setIsShownVenn2First(true);
-                    } else if (numberOfvariants === 3) {
-                      setIsShownVenn3First(true);
-                    } else if (numberOfvariants === 4) {
-                      setIsShownVenn4First(true);
-                    }
-                    break;
-                  case 1:
-                    if (numberOfvariants === 2) {
-                      setIsShownVenn2First(true);
-                      setIsShownVenn2Second(true);
-                    } else if (numberOfvariants === 3) {
-                      setIsShownVenn3Second(true);
-                    } else if (numberOfvariants === 4) {
-                      setIsShownVenn4Second(true);
-                    }
-                    break;
-                  case 2:
-                    if (numberOfvariants === 2) {
-                      setIsShownVenn2Second(true);
-                    } else if (numberOfvariants === 3) {
-                      setIsShownVenn3Third(true);
-                    } else if (numberOfvariants === 4) {
-                      setIsShownVenn4Third(true);
-                    }
-                    break;
-
-                  case 3:
-                    if (numberOfvariants === 3) {
-                      setIsShownVenn3First(true);
-                      setIsShownVenn3Third(true);
-                      setIsShownVenn3Second(true);
-                    } else if (numberOfvariants === 4) {
-                      setIsShownVenn4Fourth(true);
-                    }
-                    break;
-                  case 4:
-                    if (numberOfvariants === 3) {
-                      setIsShownVenn3First(true);
-                      setIsShownVenn3Second(true);
-                    } else if (numberOfvariants === 4) {
-                      setIsShownVenn4First(true);
-                      setIsShownVenn4Second(true);
-                      setIsShownVenn4Third(true);
-                      setIsShownVenn4Fourth(true);
-                    }
-                    break;
-                  case 5:
-                    if (numberOfvariants === 3) {
-                      setIsShownVenn3First(true);
-                      setIsShownVenn3Third(true);
-                    } else if (numberOfvariants === 4) {
-                      setIsShownVenn4First(true);
-                      setIsShownVenn4Second(true);
-                    }
-                    break;
-                  case 6:
-                    if (numberOfvariants === 3) {
-                      setIsShownVenn3Second(true);
-                      setIsShownVenn3Third(true);
-                    } else if (numberOfvariants === 4) {
-                      setIsShownVenn4First(true);
-                      setIsShownVenn4Third(true);
-                    }
-                    break;
-                  case 7:
-                    setIsShownVenn4First(true);
-                    setIsShownVenn4Fourth(true);
-                    break;
-                  case 8:
-                    setIsShownVenn4Second(true);
-                    setIsShownVenn4Third(true);
-                    break;
-                  case 9:
-                    setIsShownVenn4Second(true);
-                    setIsShownVenn4Fourth(true);
-                    break;
-                  case 10:
-                    setIsShownVenn4Third(true);
-                    setIsShownVenn4Fourth(true);
-                    break;
-                  case 11:
-                    setIsShownVenn4First(true);
-                    setIsShownVenn4Second(true);
-                    setIsShownVenn4Third(true);
-                    break;
-                  case 12:
-                    setIsShownVenn4First(true);
-                    setIsShownVenn4Second(true);
-                    setIsShownVenn4Fourth(true);
-                    break;
-                  case 13:
-                    setIsShownVenn4Second(true);
-                    setIsShownVenn4Third(true);
-                    setIsShownVenn4Fourth(true);
-                    break;
-                  case 14:
-                    setIsShownVenn4First(true);
-                    setIsShownVenn4Third(true);
-                    setIsShownVenn4Fourth(true);
-                    break;
-                  case 15:
-                    setIsShownVenn4First(true);
-                    setIsShownVenn4Second(true);
-                    setIsShownVenn4Third(true);
-                    setIsShownVenn4Fourth(true);
-                    break;
-                }
-              }}
-              onMouseLeave={() => {
-                setIsShownVenn2First(false);
-                setIsShownVenn2Second(false);
-                setIsShownVenn3First(false);
-                setIsShownVenn3Second(false);
-                setIsShownVenn3Third(false);
-                setIsShownVenn4First(false);
-                setIsShownVenn4Second(false);
-                setIsShownVenn4Third(false);
-                setIsShownVenn4Fourth(false);
-              }}
+              onMouseEnter={() => animatePlot(index)}
+              onMouseLeave={() => resetPlot()}
             >
               {mutations.length}
             </text>
           ))}
 
           {numberOfvariants === 3 ? (
-            variantTexts3.map(({ transform, variant }) => (
-              <text transform={transform} className='svgPlotText'>
+            variantTexts3.map(({ transform, variant, className }) => (
+              <text transform={transform} className={className}>
                 {variant && formatVariantDisplayName(variant)}
               </text>
             ))
           ) : numberOfvariants === 4 ? (
-            variantTexts4.map(({ transform, variant }) => (
-              <text transform={transform} className='svgPlotText st3 st5'>
+            variantTexts4.map(({ transform, variant, className }) => (
+              <text transform={transform} className={className}>
                 {variant && formatVariantDisplayName(variant)}
               </text>
             ))
           ) : numberOfvariants === 2 ? (
             <>
               {' '}
-              <text x='8.785' y='37.948' className={`svgPlotText ${isShownVenn2First ? 'hovered' : ''}`}>
+              <text
+                x='8.785'
+                y='37.948'
+                className={`svgPlotText ${isShownVenn2First || isShownVenn2FirstAndSecond ? 'hovered' : ''}`}
+              >
                 {variants[0] && formatVariantDisplayName(variants[0])}
               </text>
-              <text x='777.125' y='31.79' className={`svgPlotText ${isShownVenn2Second ? 'hovered' : ''}`}>
+              <text
+                x='777.125'
+                y='31.79'
+                className={`svgPlotText ${isShownVenn2Second || isShownVenn2FirstAndSecond ? 'hovered' : ''}`}
+              >
                 {variants[1] && formatVariantDisplayName(variants[1])}
               </text>
             </>
@@ -707,16 +825,10 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
             ''
           )}
         </svg>
-
-        {vennGeneralData.map(({ mutations }, index) => (
-          <ReactTooltip
-            id={`venn-area-${index} ${domain} ${numberOfvariants}`}
-            key={`venn-area-${index} ${domain} ${numberOfvariants}`}
-          >
-            {mutations.length ? MutationListFormat(mutations) : '-'}
-          </ReactTooltip>
-        ))}
       </div>
+      <br />
+
+      <div>{variantIndex !== undefined && showMutationText(variantIndex)}</div>
     </>
   );
 };
@@ -737,6 +849,30 @@ export function MutationListFormat(mutations: string[]): JSX.Element {
       {lines.map((line, index) => (
         <div key={index}>{line.join(', ')}</div>
       ))}
+    </>
+  );
+}
+
+export function MutationListFormat2(mutations: string[]): JSX.Element {
+  // Up to five mutations shall be shown on a line.
+  let line: string[] = [];
+
+  for (let mutation of mutations.sort()) {
+    line.push(mutation);
+  }
+  return (
+    <>
+      {' '}
+      <div>
+        {' '}
+        <span style={{ fontWeight: 'bold', color: 'blue' }}> {line.length > 0 && `Mutations: `} </span>
+        {line.map((item, index) => (
+          <span key={index}>
+            {item}
+            {index !== line.length - 1 ? ', ' : ''}
+          </span>
+        ))}
+      </div>
     </>
   );
 }
