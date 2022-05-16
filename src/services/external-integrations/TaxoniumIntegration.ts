@@ -62,7 +62,7 @@ export class TaxoniumIntegration implements Integration {
       for (let aaMutation of aaMutations) {
         const decoded = decodeAAMutation(aaMutation);
         searchList.push({
-          key: 'search2',
+          key: 'search2' + Math.random(),
           type: 'mutation',
           method: 'mutation',
           text: '',
@@ -86,7 +86,7 @@ export class TaxoniumIntegration implements Integration {
       });
     }
     params.set('srch', JSON.stringify(searchList));
-    params.set('enabled', JSON.stringify({ search1: true, search2: true, search3: true }));
+    params.set('enabled', JSON.stringify(Object.fromEntries(searchList.map(s => [s.key, true]))));
     window.open(`${baseUrl}?${params.toString()}`);
   }
 }
