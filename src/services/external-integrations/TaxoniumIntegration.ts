@@ -37,7 +37,7 @@ export class TaxoniumIntegration implements Integration {
     params.set(
       'color',
       JSON.stringify({
-        field:"none"
+        field: 'none',
       })
     );
     // The variant
@@ -48,47 +48,48 @@ export class TaxoniumIntegration implements Integration {
     const searchList = [];
     if (pangoLineage) {
       searchList.push({
-        key: "search1",
+        key: 'search1',
         type: 'meta_pangolin_lineage',
         method: 'text_exact',
         text: pangoLineage,
         new_residue: 'any',
         position: 484,
         min_tips: 0,
-        gene: 'S'
+        gene: 'S',
       });
     }
     if (aaMutations) {
       for (let aaMutation of aaMutations) {
         const decoded = decodeAAMutation(aaMutation);
         searchList.push({
-        key: "search2",
-        type: 'mutation',
-        method: 'mutation',
-        text: pangoLineage,
-        new_residue: decoded.mutatedBase ?? 'any',
-        position: decoded.position,
-        min_tips: 0,
-        gene: decoded.gene
+          key: 'search2',
+          type: 'mutation',
+          method: 'mutation',
+          text: pangoLineage,
+          new_residue: decoded.mutatedBase ?? 'any',
+          position: decoded.position,
+          min_tips: 0,
+          gene: decoded.gene,
         });
       }
     }
     if (location.country) {
       searchList.push({
-        key: "search3",
+        key: 'search3',
         type: 'meta_pangolin_lineage',
         method: 'text_exact',
         text: await LocationService.getGisaidName(location.country),
         new_residue: 'any',
         position: 484,
         min_tips: 0,
-        gene: 'S'
+        gene: 'S',
       });
     }
     params.set('search', JSON.stringify(searchList));
-    params.set('enabled', JSON.stringify({"search1":true,"search2":true,"search3":true}));
+    params.set(
+      'enabled',
+      JSON.stringify({ search1: true, search2: true, search3: true })
+    );
     window.open(`${baseUrl}?${params.toString()}`);
-
-    
   }
 }
