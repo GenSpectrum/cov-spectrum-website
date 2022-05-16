@@ -85,7 +85,7 @@ export class TaxoniumIntegration implements Integration {
         gene: 'S',
       });
     }
-    params.set('search', JSON.stringify(searchList));
+    params.set('srch', JSON.stringify(searchList));
     params.set('enabled', JSON.stringify({ search1: true, search2: true, search3: true }));
     window.open(`${baseUrl}?${params.toString()}`);
   }
