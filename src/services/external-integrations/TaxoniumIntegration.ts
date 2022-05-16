@@ -86,10 +86,7 @@ export class TaxoniumIntegration implements Integration {
       });
     }
     params.set('search', JSON.stringify(searchList));
-    params.set(
-      'enabled',
-      JSON.stringify({ search1: true, search2: true, search3: true })
-    );
+    params.set('enabled', JSON.stringify({ search1: true, search2: true, search3: true }));
     window.open(`${baseUrl}?${params.toString()}`);
   }
 }
