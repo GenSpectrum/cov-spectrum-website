@@ -34,7 +34,12 @@ export class TaxoniumIntegration implements Integration {
     const params = new URLSearchParams();
 
     params.set('zoomToSearch', '0');
-
+    params.set(
+      'color',
+      JSON.stringify({
+        field:"none"
+      })
+    );
     // The variant
     if (!variant) {
       return;
@@ -45,10 +50,10 @@ export class TaxoniumIntegration implements Integration {
       searchList.push({
         key: "search1",
         type: 'meta_pangolin_lineage',
-        method: 'text_exact'
+        method: 'text_exact',
         text: pangoLineage,
         new_residue: 'any',
-        position: 484
+        position: 484,
         min_tips: 0,
         gene: 'S'
       });
@@ -59,7 +64,7 @@ export class TaxoniumIntegration implements Integration {
         searchList.push({
         key: "search2",
         type: 'mutation',
-        method: 'mutation'
+        method: 'mutation',
         text: pangoLineage,
         new_residue: decoded.mutatedBase ?? 'any',
         position: decoded.position,
@@ -72,10 +77,10 @@ export class TaxoniumIntegration implements Integration {
       searchList.push({
         key: "search3",
         type: 'meta_pangolin_lineage',
-        method: 'text_exact'
+        method: 'text_exact',
         text: await LocationService.getGisaidName(location.country),
         new_residue: 'any',
-        position: 484
+        position: 484,
         min_tips: 0,
         gene: 'S'
       });
