@@ -65,7 +65,7 @@ export class TaxoniumIntegration implements Integration {
           key: 'search2',
           type: 'mutation',
           method: 'mutation',
-          text: "",
+          text: '',
           new_residue: decoded.mutatedBase ?? 'any',
           position: decoded.position,
           min_tips: 0,
