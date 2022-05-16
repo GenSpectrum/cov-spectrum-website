@@ -76,7 +76,7 @@ export class TaxoniumIntegration implements Integration {
     if (location.country) {
       searchList.push({
         key: 'search3',
-        type: 'meta_pangolin_lineage',
+        type: 'meta_country',
         method: 'text_exact',
         text: await LocationService.getGisaidName(location.country),
         new_residue: 'any',
