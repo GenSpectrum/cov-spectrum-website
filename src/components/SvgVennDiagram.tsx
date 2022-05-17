@@ -16,6 +16,8 @@ import Slider from 'rc-slider';
 import FormControl from '@mui/material/FormControl';
 import { formatVariantDisplayName, VariantSelector } from '../data/VariantSelector';
 import './style/svgPlots.css';
+import { sortAAMutationList } from '../helpers/aa-mutation';
+import { sortNucMutationList } from '../helpers/nuc-mutation';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -367,7 +369,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
   }));
 
   function showMutationText(index: number) {
-    return vennGeneralData ? MutationListFormat2(vennGeneralData[index].mutations) : '';
+    return vennGeneralData ? MutationListFormat2(vennGeneralData[index].mutations, domain) : '';
   }
 
   return (
@@ -520,20 +522,15 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
   );
 };
 
-export function MutationListFormat2(mutations: string[]): JSX.Element {
-  // Up to five mutations shall be shown on a line.
-  let line: string[] = [];
-
-  for (let mutation of mutations.sort()) {
-    line.push(mutation);
-  }
+export function MutationListFormat2(mutations: string[], domain: SequenceType): JSX.Element {
+  let sorted: string[] = domain === 'aa' ? sortAAMutationList(mutations) : sortNucMutationList(mutations);
   return (
     <>
       {' '}
       <div>
         {' '}
         <span style={{ fontWeight: 'bold', color: 'blue' }}> {'Mutations: '} </span>
-        {line.length > 0 ? line.join(', ') : '-'}
+        {sorted.length > 0 ? sorted.join(', ') : '-'}
       </div>
     </>
   );
