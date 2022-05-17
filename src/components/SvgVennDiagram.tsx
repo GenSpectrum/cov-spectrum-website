@@ -301,30 +301,18 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
     venn4: { viewBox: '100 100 1500 550', className: 'svgPlot4' },
   };
 
-  const paths = {
-    venn2: (
-      <g>
-        {vennGeneralData.map(({ path }, index) => (
-          <path className={`st0 ${variantIndex === index ? 'hoveredCircle' : ''}`} d={path} />
-        ))}
-      </g>
-    ),
-    venn3: (
-      <g>
-        {vennGeneralData.map(({ path }, index) => (
-          <path className={`st0 ${variantIndex === index ? 'hoveredCircle' : ''}`} d={path} />
-        ))}
-      </g>
-    ),
-
-    venn4: (
-      <g>
-        {vennGeneralData.map(({ path }, index) => (
-          <path className={`st2_4 ${variantIndex === index ? 'hoveredCircle' : ''}`} d={path} />
-        ))}
-      </g>
-    ),
-  };
+  const paths = (
+    <g>
+      {vennGeneralData.map(({ path }, index) => (
+        <path
+          className={`st0 ${variantIndex === index ? 'hoveredCircle' : ''}`}
+          d={path}
+          onMouseEnter={() => setVariantIndex(index)}
+          onMouseLeave={() => setVariantIndex(undefined)}
+        />
+      ))}
+    </g>
+  );
 
   let variantTexts3: {
     transform: string;
@@ -468,13 +456,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
               : ''
           }
         >
-          {numberOfvariants === 2
-            ? paths.venn2
-            : numberOfvariants === 3
-            ? paths.venn3
-            : numberOfvariants === 4
-            ? paths.venn4
-            : ''}
+          {paths}
 
           {vennGeneralData.map(({ svgTransform, mutations }, index) => (
             <text
