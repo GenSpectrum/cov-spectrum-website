@@ -310,7 +310,7 @@ export const VariantMutations = ({ selector }: Props) => {
           </MutationList>
 
           <div className='ml-0 mt-9'>
-            <div className='mt-9'>Leading and tailing deletions are excluded.</div>
+            <div className='mt-9'>Leading and trailing deletions are excluded.</div>
 
             {sortOptions.map((opt, index) => (
               <>
@@ -326,7 +326,7 @@ export const VariantMutations = ({ selector }: Props) => {
             ))}
           </div>
           <div className='ml-0'>
-            *Leading and tailing deletions are excluded. <br />
+            *Leading and trailing deletions are excluded. <br />
           </div>
           <MutationList className='list-disc' width={width ? width : 1}>
             {sortNucMutations(data.nuc, commonNucMutationsSort, nucMutationUniqueness)
