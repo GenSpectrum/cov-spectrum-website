@@ -103,13 +103,13 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     // For now, just providing a few mutations so that the auto-complete list is not entirely empty.
     return [
       'S:D614G',
-      'ORF1b:P314L',
+      `ORF1b:P314L ${getEquivalent('ORF1b:P314L')}`,
       'N:R203K',
       'N:G204R',
       'N:M1X',
-      'ORF1a:G3676-',
-      'ORF1a:S3675-',
-      'ORF1a:F3677-',
+      `ORF1a:G3676- ${getEquivalent('ORF1a:G3676-')}`,
+      `ORF1a:S3675- ${getEquivalent('ORF1a:S3675-')}`,
+      `ORF1a:F3677- ${getEquivalent('ORF1a:F3677-')}`,
       'S:N501Y',
       'S:P681H',
       'S:H69-',
@@ -117,20 +117,20 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       'S:A570D',
       'S:T716I',
       'S:Y144-',
-      'ORF1a:T1001I',
+      `ORF1a:T1001I ${getEquivalent('ORF1a:T1001I')}`,
       'S:D1118H',
       'ORF8:Y73C',
-      'ORF1a:A1708D',
+      `ORF1a:T1001I ${getEquivalent('ORF1a:T1001I')}`,
       'N:S235F',
       'ORF8:Q27*',
       'S:S982A',
       'ORF8:R52I',
       'N:D3L',
-      'ORF1a:I2230T',
+      `ORF1a:I2230T ${getEquivalent('ORF1a:I2230T')}`,
       'ORF3a:Q57H',
       'ORF8:K68*',
-      'ORF1a:T265I',
-      'ORF1b:K1383R',
+      `ORF1a:T265I ${getEquivalent('ORF1a:T265I')}`,
+      `ORF1b:K1383R ${getEquivalent('ORF1b:K1383R')}`,
       'S:L452R',
       'S:A222V',
       'N:D377Y',
@@ -142,17 +142,18 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       'S:L18F',
       'ORF3a:S26L',
       'ORF1a:T3255I',
+      `ORF1a:T3255I ${getEquivalent('ORF1a:T3255I')}`,
       'N:R203M',
       'S:E484K',
-      'ORF1b:P1000L',
-      'ORF7a:T120I',
-      'ORF1b:P218L',
-      'ORF1b:G662S',
+      `ORF1b:P1000L ${getEquivalent('ORF1b:P1000L')}`,
+      `ORF7a:T120I ${getEquivalent('ORF7a:T120I')}`,
+      `ORF1b:P218L ${getEquivalent('ORF1b:P218L')}`,
+      `ORF1b:G662S ${getEquivalent('ORF1b:G662S')}`,
       'S:T19R',
       'ORF7a:V82A',
       'ORF9b:T60A',
       'N:D63G',
-    ].filter(m => m.toUpperCase().startsWith(query.toUpperCase()));
+    ].filter(m => m.toUpperCase().includes(query.toUpperCase()));
   };
 
   const suggestOptions = (query: string): SearchOption[] => {
@@ -175,6 +176,59 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     return suggestions.slice(0, 20);
   };
 
+  interface NspMap {
+    [name: string]: number;
+  }
+
+  const nsps: NspMap = {
+    nsp1: 1,
+    nsp2: 181,
+    nsp3: 819,
+    nsp4: 2764,
+    nsp5: 3264,
+    nsp6: 3570,
+    nsp7: 3860,
+    nsp8: 3942,
+    nsp9: 4141,
+    nsp10: 4254,
+    nsp12: 4393,
+    nsp13: 5325,
+    nsp14: 5926,
+    nsp15: 6453,
+    nsp16: 6799,
+  };
+
+  function getEquivalent(value: string) {
+    return `(= ${translateMutation(value)})`;
+  }
+
+  const translateMutation = (oldValue: string) => {
+    let nsp: string | null = null;
+    let orf1aorbcodon: number | null = null;
+    let nspCodon: number | null = null;
+    let combinedCodon: number | null = 3646;
+    let mutationArray = oldValue.split(':');
+
+    if (mutationArray[0] === 'ORF1b' || mutationArray[0] === 'ORF1a') {
+      let letterBefore = mutationArray[1].charAt(0);
+      let letterAfter = mutationArray[1].charAt(mutationArray[1].length - 1);
+      orf1aorbcodon = parseInt(mutationArray[1].slice(1, -1));
+      combinedCodon = orf1aorbcodon + (mutationArray[0] === 'ORF1b' ? 4401 : 0);
+      console.log(combinedCodon, orf1aorbcodon);
+      nsp = 'nsp1';
+      nspCodon = combinedCodon - nsps[nsp] + 1;
+      for (const [key, value] of Object.entries(nsps)) {
+        if (combinedCodon > value && combinedCodon - value < combinedCodon - nsps[nsp]) {
+          nsp = key;
+          nspCodon = combinedCodon - value + 1;
+        }
+      }
+
+      return `${nsp}:${letterBefore}${nspCodon}${letterAfter} = ORF1ab:${letterBefore}:${combinedCodon}${letterAfter}`;
+    }
+    return '';
+  };
+  // nsp + ':' + letterBefore + nspCodon; //
   /**
    * Handles the input change:
    * 1) when input value contains "," or "+", call the handleCommaSeparatedInput function
@@ -357,3 +411,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     </div>
   );
 };
+
+function is_numeric(str: string) {
+  return /^\d+$/.test(str);
+}
