@@ -46,6 +46,7 @@ import { ErrorBoundaryFallback } from '../components/ErrorBoundaryFallback';
 import * as Sentry from '@sentry/react';
 import { isDefaultHostSelector } from '../data/HostSelector';
 import { VariantHosts } from '../components/VariantHosts';
+import { HuismanScire2021ReContainer } from '../models/huismanScire2021Re/HuismanScire2021ReContainer';
 
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
@@ -388,6 +389,15 @@ export const FocusSinglePage = () => {
                   variantDateCounts={variantDateCount.data}
                   wholeDateCounts={wholeDateCountWithDateFilter.data}
                 />
+              </GridCell>
+              <GridCell minWidth={600}>
+                <NamedCard title='Reproduction number'>
+                  <HuismanScire2021ReContainer
+                    wholeDateCounts={wholeDateCountWithDateFilter.data}
+                    variantDateCounts={variantDateCount.data}
+                    caseCounts={caseCountDataset}
+                  />
+                </NamedCard>
               </GridCell>
               {isDefaultHostSelector(host) && (
                 <GridCell minWidth={600}>
