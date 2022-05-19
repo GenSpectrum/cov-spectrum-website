@@ -13,7 +13,7 @@ jest.mock('react-resize-detector');
 describe('<VariantDivisionDistributionChart>', () => {
   it('dataset0 renders correctly', async () => {
     const { variantDivisionCount, wholeDivisionCount } = dataset0;
-    (useResizeDetector as any).mockReturnValue({ width: 800, height: 450 });
+    (useResizeDetector as any).mockReturnValue({ width: 800, height: 400 });
     const tree = renderer.create(
       <VariantDivisionDistributionChart
         variantSampleSet={variantDivisionCount}
