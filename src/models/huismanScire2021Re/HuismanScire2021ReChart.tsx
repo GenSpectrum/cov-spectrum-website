@@ -1,6 +1,15 @@
 import { HuismanScire2021ReResult } from './types';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../../widgets/common';
-import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import {
+  Area,
+  ComposedChart,
+  Line,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import Metric, { MetricsWrapper } from '../../widgets/Metrics';
 import React, { useMemo, useState } from 'react';
 import { formatDate } from '../../widgets/VariantTimeDistributionLineChartInner';
@@ -89,6 +98,7 @@ export const HuismanScire2021ReChart = ({ data }: Props) => {
                 dot={false}
                 isAnimationActive={false}
               />
+              <ReferenceLine y={1} isFront={true} strokeWidth={2} stroke='darkgrey' strokeDasharray='3 3' />
             </ComposedChart>
           </ResponsiveContainer>
         </ChartWrapper>
