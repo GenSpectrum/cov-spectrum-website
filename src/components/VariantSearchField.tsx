@@ -76,10 +76,20 @@ const translateMutation = (oldValue: string) => {
 
     return `${nsp}:${letterBefore}${nspCodon}${letterAfter} = ORF1ab:${letterBefore}:${combinedCodon}${letterAfter}`;
   } else if (mutationArray[0].toLowerCase().startsWith('nsp')) {
-    nspCodon = is_numeric(mutationArray[1].charAt(0))
-      ? parseInt(mutationArray[1].slice(0, -1))
-      : parseInt(mutationArray[1].slice(1, -1));
-    console.log(nspCodon);
+    let letterBefore = !is_numeric(mutationArray[1].charAt(mutationArray[1].length - 1))
+      ? mutationArray[1].charAt(mutationArray[1].length - 1)
+      : '';
+
+    if (letterBefore != '') {
+      nspCodon = is_numeric(mutationArray[1].charAt(0))
+        ? parseInt(mutationArray[1].slice(0, -1))
+        : parseInt(mutationArray[1].slice(1, -1));
+    } else {
+      nspCodon = is_numeric(mutationArray[1].charAt(0))
+        ? parseInt(mutationArray[1])
+        : parseInt(mutationArray[1].slice(1));
+    }
+
     nsp = mutationArray[0];
     combinedCodon = nsps[nsp] + nspCodon - 1;
     if (combinedCodon >= nsps['nsp13']) {
@@ -105,16 +115,13 @@ const translateMutation = (oldValue: string) => {
 };
 
 function mapOption(optionString: string, type: SearchType): SearchOption {
-  let actualLabel = optionString;
-
   let actualValue = optionString;
+
   if (optionString.includes('(=')) {
     actualValue = optionString.split(' ')[0];
-  }
-
-  if (optionString.toLowerCase().includes('nsp')) {
-    if (translateMutation(optionString)) {
-      actualLabel = actualValue = translateMutation(optionString);
+  } else if (optionString.toLowerCase().startsWith('nsp')) {
+    if (translateMutation(optionString.toLocaleLowerCase())) {
+      actualValue = translateMutation(optionString.toLocaleLowerCase());
     }
   }
 
@@ -414,7 +421,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
             loadOptions={promiseOptions}
             onChange={(_, change) => {
               if (change.action === 'select-option') {
-                console.log(change.option);
                 setSelectedOptions([...selectedOptions, change.option]);
                 setInputValue('');
                 setMenuIsOpen(false);
