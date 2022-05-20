@@ -25,10 +25,97 @@ const backgroundColor: { [key in SearchType]: string } = {
   'nuc-mutation': 'rgba(33,162,162,0.29)',
 };
 
+interface NspMap {
+  [name: string]: number;
+}
+
+const nsps: NspMap = {
+  nsp1: 1,
+  nsp2: 181,
+  nsp3: 819,
+  nsp4: 2764,
+  nsp5: 3264,
+  nsp6: 3570,
+  nsp7: 3860,
+  nsp8: 3942,
+  nsp9: 4141,
+  nsp10: 4254,
+  nsp12: 4393,
+  nsp13: 5325,
+  nsp14: 5926,
+  nsp15: 6453,
+  nsp16: 6799,
+};
+
+function getEquivalent(value: string) {
+  return `(= ${translateMutation(value)})`;
+}
+
+const translateMutation = (oldValue: string) => {
+  let orf1aorb: string | null = null;
+  let orf1aorbcodon: number | null = null;
+  let nsp: string | null = null;
+
+  let nspCodon: number | null = null;
+  let combinedCodon: number | null = 3646;
+  let mutationArray = oldValue.split(':');
+
+  if (mutationArray[0] === 'ORF1b' || mutationArray[0] === 'ORF1a') {
+    let letterBefore = mutationArray[1].charAt(0);
+    let letterAfter = mutationArray[1].charAt(mutationArray[1].length - 1);
+    orf1aorbcodon = parseInt(mutationArray[1].slice(1, -1));
+    combinedCodon = orf1aorbcodon + (mutationArray[0] === 'ORF1b' ? 4401 : 0);
+    nsp = 'nsp1';
+    nspCodon = combinedCodon - nsps[nsp] + 1;
+    for (const [key, value] of Object.entries(nsps)) {
+      if (combinedCodon > value && combinedCodon - value < combinedCodon - nsps[nsp]) {
+        nsp = key;
+        nspCodon = combinedCodon - value + 1;
+      }
+    }
+
+    return `${nsp}:${letterBefore}${nspCodon}${letterAfter} = ORF1ab:${letterBefore}:${combinedCodon}${letterAfter}`;
+  } else if (mutationArray[0].toLowerCase().startsWith('nsp')) {
+    nspCodon = is_numeric(mutationArray[1].charAt(0))
+      ? parseInt(mutationArray[1].slice(0, -1))
+      : parseInt(mutationArray[1].slice(1, -1));
+    console.log(nspCodon);
+    nsp = mutationArray[0];
+    combinedCodon = nsps[nsp] + nspCodon - 1;
+    if (combinedCodon >= nsps['nsp13']) {
+      orf1aorbcodon = nsps[nsp] + nspCodon - 1 - 4401;
+      orf1aorb = 'ORF1b';
+    } else {
+      orf1aorbcodon = nsps[nsp] + nspCodon - 1;
+      orf1aorb = 'ORF1a';
+    }
+    return orf1aorb + ':' + orf1aorbcodon;
+  } else if (mutationArray[0].toLocaleLowerCase() === 'orf1ab') {
+    combinedCodon = parseInt(mutationArray[1].slice(0, -1));
+    if (combinedCodon > 4401) {
+      orf1aorbcodon = combinedCodon - 4401;
+      orf1aorb = 'ORF1b';
+    } else {
+      orf1aorb = 'ORF1a';
+      orf1aorbcodon = combinedCodon;
+    }
+    return orf1aorb + ':' + orf1aorbcodon;
+  }
+  return oldValue;
+};
+
 function mapOption(optionString: string, type: SearchType): SearchOption {
+  let actualLabel = optionString;
+
   let actualValue = optionString;
   if (optionString.includes('(=')) {
     actualValue = optionString.split(' ')[0];
+  }
+
+  if (optionString.toLowerCase().includes('nsp')) {
+    if (translateMutation(optionString)) {
+      actualLabel = actualValue = translateMutation(optionString);
+    }
   }
 
   return {
@@ -180,85 +267,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     }
     suggestions.push(...suggestMutations(query).map(pl => mapOption(pl, 'aa-mutation')));
     return suggestions.slice(0, 20);
-  };
-
-  interface NspMap {
-    [name: string]: number;
-  }
-
-  const nsps: NspMap = {
-    nsp1: 1,
-    nsp2: 181,
-    nsp3: 819,
-    nsp4: 2764,
-    nsp5: 3264,
-    nsp6: 3570,
-    nsp7: 3860,
-    nsp8: 3942,
-    nsp9: 4141,
-    nsp10: 4254,
-    nsp12: 4393,
-    nsp13: 5325,
-    nsp14: 5926,
-    nsp15: 6453,
-    nsp16: 6799,
-  };
-
-  function getEquivalent(value: string) {
-    return `(= ${translateMutation(value)})`;
-  }
-
-  const translateMutation = (oldValue: string) => {
-    let orf1aorb: string | null = null;
-    let orf1aorbcodon: number | null = null;
-    let nsp: string | null = null;
-
-    let nspCodon: number | null = null;
-    let combinedCodon: number | null = 3646;
-    let mutationArray = oldValue.split(':');
-
-    if (mutationArray[0] === 'ORF1b' || mutationArray[0] === 'ORF1a') {
-      let letterBefore = mutationArray[1].charAt(0);
-      let letterAfter = mutationArray[1].charAt(mutationArray[1].length - 1);
-      orf1aorbcodon = parseInt(mutationArray[1].slice(1, -1));
-      combinedCodon = orf1aorbcodon + (mutationArray[0] === 'ORF1b' ? 4401 : 0);
-      nsp = 'nsp1';
-      nspCodon = combinedCodon - nsps[nsp] + 1;
-      for (const [key, value] of Object.entries(nsps)) {
-        if (combinedCodon > value && combinedCodon - value < combinedCodon - nsps[nsp]) {
-          nsp = key;
-          nspCodon = combinedCodon - value + 1;
-        }
-      }
-
-      return `${nsp}:${letterBefore}${nspCodon}${letterAfter} = ORF1ab:${letterBefore}:${combinedCodon}${letterAfter}`;
-    } else if (mutationArray[0].toLowerCase().startsWith('nsp')) {
-      nspCodon = is_numeric(mutationArray[1].charAt(0))
-        ? parseInt(mutationArray[1].slice(0, -1))
-        : parseInt(mutationArray[1].slice(1, -1));
-      console.log(nspCodon);
-      nsp = mutationArray[0];
-      combinedCodon = nsps[nsp] + nspCodon - 1;
-      if (combinedCodon >= nsps['nsp13']) {
-        orf1aorbcodon = nsps[nsp] + nspCodon - 1 - 4401;
-        orf1aorb = 'ORF1b';
-      } else {
-        orf1aorbcodon = nsps[nsp] + nspCodon - 1;
-        orf1aorb = 'ORF1a';
-      }
-      return orf1aorb + ':' + orf1aorbcodon;
-    } else if (mutationArray[0].toLocaleLowerCase() === 'orf1ab') {
-      combinedCodon = parseInt(mutationArray[1].slice(0, -1));
-      if (combinedCodon > 4401) {
-        orf1aorbcodon = combinedCodon - 4401;
-        orf1aorb = 'ORF1b';
-      } else {
-        orf1aorb = 'ORF1a';
-        orf1aorbcodon = combinedCodon;
-      }
-      return orf1aorb + ':' + orf1aorbcodon;
-    }
-    return oldValue;
   };
 
   // nsp + ':' + letterBefore + nspCodon; //
