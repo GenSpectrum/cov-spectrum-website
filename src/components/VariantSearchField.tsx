@@ -26,9 +26,14 @@ const backgroundColor: { [key in SearchType]: string } = {
 };
 
 function mapOption(optionString: string, type: SearchType): SearchOption {
+  let actualValue = optionString;
+  if (optionString.includes('(=')) {
+    actualValue = optionString.split(' ')[0];
+  }
+
   return {
     label: optionString,
-    value: optionString,
+    value: actualValue,
     type,
   };
 }
@@ -159,6 +164,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const suggestOptions = (query: string): SearchOption[] => {
     const onePLAlreadySelected = selectedOptions.filter(option => option.type === 'pango-lineage').length > 0;
     const suggestions: SearchOption[] = [];
+
     if (isValidAAMutation(query)) {
       suggestions.push(mapOption(query, 'aa-mutation'));
     } else if (isValidNucMutation(query)) {
@@ -203,8 +209,10 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   }
 
   const translateMutation = (oldValue: string) => {
-    let nsp: string | null = null;
+    let orf1aorb: string | null = null;
     let orf1aorbcodon: number | null = null;
+    let nsp: string | null = null;
+
     let nspCodon: number | null = null;
     let combinedCodon: number | null = 3646;
     let mutationArray = oldValue.split(':');
@@ -214,7 +222,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       let letterAfter = mutationArray[1].charAt(mutationArray[1].length - 1);
       orf1aorbcodon = parseInt(mutationArray[1].slice(1, -1));
       combinedCodon = orf1aorbcodon + (mutationArray[0] === 'ORF1b' ? 4401 : 0);
-      console.log(combinedCodon, orf1aorbcodon);
       nsp = 'nsp1';
       nspCodon = combinedCodon - nsps[nsp] + 1;
       for (const [key, value] of Object.entries(nsps)) {
@@ -225,9 +232,35 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       }
 
       return `${nsp}:${letterBefore}${nspCodon}${letterAfter} = ORF1ab:${letterBefore}:${combinedCodon}${letterAfter}`;
+    } else if (mutationArray[0].toLowerCase().startsWith('nsp')) {
+      nspCodon = is_numeric(mutationArray[1].charAt(0))
+        ? parseInt(mutationArray[1].slice(0, -1))
+        : parseInt(mutationArray[1].slice(1, -1));
+      console.log(nspCodon);
+      nsp = mutationArray[0];
+      combinedCodon = nsps[nsp] + nspCodon - 1;
+      if (combinedCodon >= nsps['nsp13']) {
+        orf1aorbcodon = nsps[nsp] + nspCodon - 1 - 4401;
+        orf1aorb = 'ORF1b';
+      } else {
+        orf1aorbcodon = nsps[nsp] + nspCodon - 1;
+        orf1aorb = 'ORF1a';
+      }
+      return orf1aorb + ':' + orf1aorbcodon;
+    } else if (mutationArray[0].toLocaleLowerCase() === 'orf1ab') {
+      combinedCodon = parseInt(mutationArray[1].slice(0, -1));
+      if (combinedCodon > 4401) {
+        orf1aorbcodon = combinedCodon - 4401;
+        orf1aorb = 'ORF1b';
+      } else {
+        orf1aorb = 'ORF1a';
+        orf1aorbcodon = combinedCodon;
+      }
+      return orf1aorb + ':' + orf1aorbcodon;
     }
-    return '';
+    return oldValue;
   };
+
   // nsp + ':' + letterBefore + nspCodon; //
   /**
    * Handles the input change:
@@ -297,7 +330,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     // remove the last "," in the invalidQueries string
     invalidQueries = invalidQueries.slice(0, -1);
     setInputValue(invalidQueries);
-
     setMenuIsOpen(invalidQueries !== '');
   };
 
@@ -374,6 +406,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
             loadOptions={promiseOptions}
             onChange={(_, change) => {
               if (change.action === 'select-option') {
+                console.log(change.option);
                 setSelectedOptions([...selectedOptions, change.option]);
                 setInputValue('');
                 setMenuIsOpen(false);
