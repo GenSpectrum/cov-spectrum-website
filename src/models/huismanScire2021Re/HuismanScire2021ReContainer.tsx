@@ -10,6 +10,7 @@ import { HuismanScire2021ReChart } from './HuismanScire2021ReChart';
 import { calculatePlotData, EstimatedCasesPlotEntry } from '../../widgets/EstimatedCasesChartInner';
 import { Utils } from '../../services/Utils';
 import { ExpandableTextBox } from '../../components/ExpandableTextBox';
+import { ExternalLink } from '../../components/ExternalLink';
 
 type Props = {
   wholeDateCounts: DateCountSampleDataset;
@@ -104,7 +105,13 @@ export const HuismanScire2021ReContainer = ({ wholeDateCounts, variantDateCounts
         <HuismanScire2021ReChart data={data.result} />
         <div>
           <h2>Reference</h2>
-          <small>Jana & Jeremie TODO</small>
+          <small>
+            Huisman, Jana S., Scire, Jérémie, et al. "Estimation and worldwide monitoring of the effective
+            reproductive number of SARS-CoV-2." medRxiv (2021); doi:{' '}
+            <ExternalLink url='https://doi.org/10.1101/2020.11.26.20239368'>
+              10.1101/2020.11.26.20239368
+            </ExternalLink>
+          </small>
         </div>
       </>
     );
