@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import { components, InputActionMeta, Styles } from 'react-select';
-import { isValidAAMutation } from '../helpers/aa-mutation';
+import { isValidAAMutation, isValidNspNotation, isValidABNotation } from '../helpers/aa-mutation';
 import { CSSPseudos } from 'styled-components';
 import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
 import { isValidPangoLineageQuery, VariantSelector } from '../data/VariantSelector';
@@ -76,11 +76,11 @@ const translateMutation = (oldValue: string) => {
 
     return `${nsp}:${letterBefore}${nspCodon}${letterAfter} = ORF1ab:${letterBefore}:${combinedCodon}${letterAfter}`;
   } else if (mutationArray[0].toLowerCase().startsWith('nsp')) {
-    let letterBefore = !is_numeric(mutationArray[1].charAt(mutationArray[1].length - 1))
+    let letterAfter = !is_numeric(mutationArray[1].charAt(mutationArray[1].length - 1))
       ? mutationArray[1].charAt(mutationArray[1].length - 1)
       : '';
 
-    if (letterBefore != '') {
+    if (letterAfter !== '') {
       nspCodon = is_numeric(mutationArray[1].charAt(0))
         ? parseInt(mutationArray[1].slice(0, -1))
         : parseInt(mutationArray[1].slice(1, -1));
@@ -101,7 +101,20 @@ const translateMutation = (oldValue: string) => {
     }
     return orf1aorb + ':' + orf1aorbcodon;
   } else if (mutationArray[0].toLocaleLowerCase() === 'orf1ab') {
-    combinedCodon = parseInt(mutationArray[1].slice(0, -1));
+    let letterAfter = !is_numeric(mutationArray[1].charAt(mutationArray[1].length - 1))
+      ? mutationArray[1].charAt(mutationArray[1].length - 1)
+      : '';
+
+    if (letterAfter != '') {
+      combinedCodon = is_numeric(mutationArray[1].charAt(0))
+        ? parseInt(mutationArray[1].slice(0, -1))
+        : parseInt(mutationArray[1].slice(1, -1));
+    } else {
+      combinedCodon = is_numeric(mutationArray[1].charAt(0))
+        ? parseInt(mutationArray[1])
+        : parseInt(mutationArray[1].slice(1));
+    }
+
     if (combinedCodon > 4401) {
       orf1aorbcodon = combinedCodon - 4401;
       orf1aorb = 'ORF1b';
@@ -123,10 +136,20 @@ function mapOption(optionString: string, type: SearchType): SearchOption {
     if (translateMutation(optionString.toLocaleLowerCase())) {
       actualValue = translateMutation(optionString.toLocaleLowerCase());
     }
+  } else if (optionString.toLowerCase().startsWith('orf1ab')) {
+    if (translateMutation(optionString.toLocaleLowerCase())) {
+      actualValue = translateMutation(optionString.toLocaleLowerCase());
+    }
   }
 
   return {
-    label: optionString,
+    label: `${
+      isValidNspNotation(optionString)
+        ? optionString + ' = '
+        : isValidABNotation(optionString)
+        ? optionString + ' = '
+        : ''
+    }${actualValue}`,
     value: actualValue,
     type,
   };
@@ -260,6 +283,8 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     const suggestions: SearchOption[] = [];
 
     if (isValidAAMutation(query)) {
+      suggestions.push(mapOption(query, 'aa-mutation'));
+    } else if (isValidABNotation(query)) {
       suggestions.push(mapOption(query, 'aa-mutation'));
     } else if (isValidNucMutation(query)) {
       suggestions.push(mapOption(query, 'nuc-mutation'));
