@@ -55,10 +55,9 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
     }
   };
 
-  const handleDateRangeChange = (update: [Date, Date]) => {
-    setDateRange(update);
+  useEffect(() => {
     changeDate();
-  };
+  }, [dateRange]);
 
   return (
     <>
@@ -77,13 +76,18 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
             disabledKeyboardNavigation={true}
             selected={startDate}
             onChange={(date: Date) => {
-              endDate && handleDateRangeChange([date, endDate]);
+              setDateRange([date, endDate]);
+            }}
+            onSelect={(date: Date) => {
+              setDateRange([date, endDate]);
             }}
             selectsStart
             startDate={startDate}
             endDate={endDate}
             dateFormat='yyyy-MM-dd'
             onKeyDown={changeDate}
+            onBlur={changeDate}
+            onClickOutside={changeDate}
           />
           <span>to:</span>
           <DatePicker
@@ -96,8 +100,17 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
             useWeekdaysShort={true}
             disabledKeyboardNavigation={true}
             onChange={(date: Date) => {
-              startDate && handleDateRangeChange([startDate, date]);
+              setDateRange([startDate, date]);
+
+              // startDate && handleDateRangeChange([startDate, date]);
             }}
+            onSelect={(date: Date) => {
+              setDateRange([startDate, date]);
+
+              // startDate && handleDateRangeChange([startDate, date]);
+            }}
+            onBlur={changeDate}
+            onClickOutside={changeDate}
             selectsEnd
             startDate={startDate}
             endDate={endDate}
