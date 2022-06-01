@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import { components, InputActionMeta, Styles } from 'react-select';
-import { isValidAAMutation, isValidNspNotation, isValidABNotation } from '../helpers/aa-mutation';
+import { isValidAAMutation, isValidABNotation } from '../helpers/aa-mutation';
 import { CSSPseudos } from 'styled-components';
 import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
 import { isValidPangoLineageQuery, VariantSelector } from '../data/VariantSelector';
@@ -47,8 +47,32 @@ const nsps: NspMap = {
   nsp16: 6799,
 };
 
-function getEquivalent(value: string) {
-  return `(= ${translateMutation(value)})`;
+function getEquivalent(value: string, notation: string) {
+  let orf1aorb: string | null = null;
+  let orf1aorbcodon: number | null = null;
+  let nsp: string | null = null;
+  let nspCodon: number | null = null;
+  let combinedCodon: number | null = 3646;
+  let mutationArray = value.split(':');
+  if (mutationArray[0] === 'ORF1b' || mutationArray[0] === 'ORF1a') {
+    let letterBefore = mutationArray[1].charAt(0);
+    let letterAfter = mutationArray[1].charAt(mutationArray[1].length - 1);
+    orf1aorbcodon = parseInt(mutationArray[1].slice(1, -1));
+    combinedCodon = orf1aorbcodon + (mutationArray[0] === 'ORF1b' ? 4401 : 0);
+    nsp = 'nsp1';
+    nspCodon = combinedCodon - nsps[nsp] + 1;
+    for (const [key, value] of Object.entries(nsps)) {
+      if (combinedCodon > value && combinedCodon - value < combinedCodon - nsps[nsp]) {
+        nsp = key;
+        nspCodon = combinedCodon - value + 1;
+      }
+    }
+    if (notation == 'nsp') {
+      return `${nsp}:${letterBefore}${nspCodon}${letterAfter}`;
+    } else {
+      return `ORF1ab:${letterBefore}:${combinedCodon}${letterAfter}`;
+    }
+  }
 }
 
 const translateMutation = (oldValue: string) => {
@@ -130,7 +154,7 @@ const translateMutation = (oldValue: string) => {
 function mapOption(optionString: string, type: SearchType): SearchOption {
   let actualValue = optionString;
 
-  if (optionString.includes('(=')) {
+  if (optionString.includes(' =')) {
     actualValue = optionString.split(' ')[0];
   } else if (optionString.toLowerCase().startsWith('nsp')) {
     if (translateMutation(optionString.toLocaleLowerCase())) {
@@ -143,13 +167,7 @@ function mapOption(optionString: string, type: SearchType): SearchOption {
   }
 
   return {
-    label: `${
-      isValidNspNotation(optionString)
-        ? optionString + ' = '
-        : isValidABNotation(optionString)
-        ? optionString + ' = '
-        : ''
-    }${actualValue}`,
+    label: optionString,
     value: actualValue,
     type,
   };
@@ -223,15 +241,16 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const suggestMutations = (query: string): string[] => {
     // TODO Fetch all/common known mutations from the server
     // For now, just providing a few mutations so that the auto-complete list is not entirely empty.
-    return [
+    let notation = query.toLowerCase().startsWith('n') ? 'nsp' : query.startsWith('orf1ab') ? 'orf1ab' : '';
+    let options: string[] = [
       'S:D614G',
-      `ORF1b:P314L ${getEquivalent('ORF1b:P314L')}`,
+      `ORF1b:P314L`,
       'N:R203K',
       'N:G204R',
       'N:M1X',
-      `ORF1a:G3676- ${getEquivalent('ORF1a:G3676-')}`,
-      `ORF1a:S3675- ${getEquivalent('ORF1a:S3675-')}`,
-      `ORF1a:F3677- ${getEquivalent('ORF1a:F3677-')}`,
+      `ORF1a:G3676`,
+      `ORF1a:S3675`,
+      `ORF1a:F3677`,
       'S:N501Y',
       'S:P681H',
       'S:H69-',
@@ -239,20 +258,20 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       'S:A570D',
       'S:T716I',
       'S:Y144-',
-      `ORF1a:T1001I ${getEquivalent('ORF1a:T1001I')}`,
+      `ORF1a:T1001I`,
       'S:D1118H',
       'ORF8:Y73C',
-      `ORF1a:T1001I ${getEquivalent('ORF1a:T1001I')}`,
+      `ORF1a:T1001I`,
       'N:S235F',
       'ORF8:Q27*',
       'S:S982A',
       'ORF8:R52I',
       'N:D3L',
-      `ORF1a:I2230T ${getEquivalent('ORF1a:I2230T')}`,
+      `ORF1a:I2230T`,
       'ORF3a:Q57H',
       'ORF8:K68*',
-      `ORF1a:T265I ${getEquivalent('ORF1a:T265I')}`,
-      `ORF1b:K1383R ${getEquivalent('ORF1b:K1383R')}`,
+      `ORF1a:T265I`,
+      `ORF1b:K1383R`,
       'S:L452R',
       'S:A222V',
       'N:D377Y',
@@ -264,18 +283,24 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       'S:L18F',
       'ORF3a:S26L',
       'ORF1a:T3255I',
-      `ORF1a:T3255I ${getEquivalent('ORF1a:T3255I')}`,
+      `ORF1a:T3255I`,
       'N:R203M',
       'S:E484K',
-      `ORF1b:P1000L ${getEquivalent('ORF1b:P1000L')}`,
-      `ORF7a:T120I ${getEquivalent('ORF7a:T120I')}`,
-      `ORF1b:P218L ${getEquivalent('ORF1b:P218L')}`,
-      `ORF1b:G662S ${getEquivalent('ORF1b:G662S')}`,
+      `ORF1b:P1000L`,
+      `ORF7a:T120I`,
+      `ORF1b:P218L`,
+      `ORF1b:G662S`,
       'S:T19R',
       'ORF7a:V82A',
       'ORF9b:T60A',
       'N:D63G',
-    ].filter(m => m.toUpperCase().includes(query.toUpperCase()));
+    ].map(i => {
+      if (i.startsWith('ORF1')) {
+        return `${i} = (${getEquivalent(i, notation)})`;
+      }
+      return i;
+    });
+    return options.filter(m => m.toUpperCase().includes(query.toUpperCase()));
   };
 
   const suggestOptions = (query: string): SearchOption[] => {
