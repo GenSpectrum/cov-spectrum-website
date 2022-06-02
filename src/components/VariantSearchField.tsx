@@ -159,10 +159,12 @@ function mapOption(optionString: string, type: SearchType): SearchOption {
   } else if (optionString.toLowerCase().startsWith('nsp')) {
     if (translateMutation(optionString.toLocaleLowerCase())) {
       actualValue = translateMutation(optionString.toLocaleLowerCase());
+      optionString = `${actualValue} = (${optionString})`;
     }
   } else if (optionString.toLowerCase().startsWith('orf1ab')) {
     if (translateMutation(optionString.toLocaleLowerCase())) {
       actualValue = translateMutation(optionString.toLocaleLowerCase());
+      optionString = `${actualValue} = (${optionString})`;
     }
   }
 
