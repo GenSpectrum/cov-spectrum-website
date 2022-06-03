@@ -27,6 +27,7 @@ import { HostCountSampleEntry } from './sample/HostCountSampleEntry';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
+const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
 
 export const HUMAN = sequenceDataSource === 'gisaid' ? 'Human' : 'Homo sapiens';
 
@@ -215,6 +216,9 @@ export async function getLinkTo(
   }
   if (minProportion) {
     params.set('minProportion', minProportion);
+  }
+  if (ACCESS_KEY) {
+    params.set('accessKey', ACCESS_KEY);
   }
   if (omitHost) {
     return `/sample/${endpoint}?${params.toString()}`;
