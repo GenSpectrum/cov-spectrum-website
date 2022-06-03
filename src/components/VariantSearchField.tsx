@@ -48,7 +48,6 @@ const nsps: NspMap = {
 };
 
 function getEquivalent(value: string, notation: string) {
-  let orf1aorb: string | null = null;
   let orf1aorbcodon: number | null = null;
   let nsp: string | null = null;
   let nspCodon: number | null = null;
@@ -67,7 +66,7 @@ function getEquivalent(value: string, notation: string) {
         nspCodon = combinedCodon - value + 1;
       }
     }
-    if (notation == 'nsp') {
+    if (notation === 'nsp') {
       return `${nsp}:${letterBefore}${nspCodon}${letterAfter}`;
     } else {
       return `ORF1ab:${letterBefore}:${combinedCodon}${letterAfter}`;
@@ -123,13 +122,15 @@ const translateMutation = (oldValue: string) => {
       orf1aorbcodon = nsps[nsp] + nspCodon - 1;
       orf1aorb = 'ORF1a';
     }
-    return orf1aorb + ':' + orf1aorbcodon;
+    return orf1aorb + ':' + orf1aorbcodon + letterAfter.toUpperCase();
   } else if (mutationArray[0].toLocaleLowerCase() === 'orf1ab') {
     let letterAfter = !is_numeric(mutationArray[1].charAt(mutationArray[1].length - 1))
       ? mutationArray[1].charAt(mutationArray[1].length - 1)
       : '';
 
-    if (letterAfter != '') {
+    let letterBefore = !is_numeric(mutationArray[1].charAt(0)) ? mutationArray[1].charAt(0) : '';
+
+    if (letterAfter !== '') {
       combinedCodon = is_numeric(mutationArray[1].charAt(0))
         ? parseInt(mutationArray[1].slice(0, -1))
         : parseInt(mutationArray[1].slice(1, -1));
@@ -146,7 +147,7 @@ const translateMutation = (oldValue: string) => {
       orf1aorb = 'ORF1a';
       orf1aorbcodon = combinedCodon;
     }
-    return orf1aorb + ':' + orf1aorbcodon;
+    return orf1aorb + ':' + letterBefore.toUpperCase() + orf1aorbcodon + letterAfter.toUpperCase();
   }
   return oldValue;
 };
