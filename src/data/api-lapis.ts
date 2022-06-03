@@ -49,7 +49,11 @@ export const get = async (endpoint: string, signal?: AbortSignal) => {
 };
 
 export async function fetchLapisDataVersionDate(signal?: AbortSignal) {
-  const res = await get('/sample/info', signal);
+  let url = '/sample/info';
+  if (ACCESS_KEY) {
+    url += '?accessKey=' + ACCESS_KEY;
+  }
+  const res = await get(url, signal);
   if (!res.ok) {
     throw new Error('Error fetching info');
   }
@@ -62,7 +66,11 @@ export function getCurrentLapisDataVersionDate(): Date | undefined {
 }
 
 export async function fetchAllHosts(): Promise<string[]> {
-  const res = await get('/sample/aggregated?fields=host');
+  let url = '/sample/aggregated?fields=host';
+  if (ACCESS_KEY) {
+    url += '&accessKey=' + ACCESS_KEY;
+  }
+  const res = await get(url);
   if (!res.ok) {
     throw new Error('Error fetching new samples data');
   }
