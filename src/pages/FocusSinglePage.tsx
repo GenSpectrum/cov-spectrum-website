@@ -12,7 +12,11 @@ import { VariantInternationalComparisonChartWidget } from '../widgets/VariantInt
 import { VariantDivisionDistributionChartWidget } from '../widgets/VariantDivisionDistributionChartWidget';
 import { DivisionCountSampleData } from '../data/sample/DivisionCountSampleDataset';
 import { NamedCard } from '../components/NamedCard';
-import { Chen2021FitnessPreview } from '../models/chen2021Fitness/Chen2021FitnessPreview';
+import {
+  Chen2021FitnessExplanation,
+  Chen2021FitnessPreview,
+  TemporaryFitnessBanner,
+} from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { Althaus2021GrowthWidget } from '../models/althaus2021Growth/Althaus2021GrowthWidget';
 import { VariantAgeDistributionChartWidget } from '../widgets/VariantAgeDistributionChartWidget';
 import { AgeCountSampleData } from '../data/sample/AgeCountSampleDataset';
@@ -361,22 +365,15 @@ export const FocusSinglePage = () => {
                 }
               </GridCell>
               <GridCell minWidth={600}>
+                <TemporaryFitnessBanner />
                 <NamedCard
                   title='Relative growth advantage'
                   toolbar={[
                     deepFocusButtons.chen2021Fitness,
                     createDivisionBreakdownButton('Chen2021Fitness', setShowChen2021FitnessDivGrid),
                   ]}
-                  description={`
-         If variants spread pre-dominantly by local transmission across demographic groups, this estimate reflects 
-         the relative growth advantage of the focal variant. Importantly, the relative growth advantage estimate 
-         reflects the advantage compared to co-circulating strains. Thus, as new variants spread, the advantage of 
-         the focal variant may decrease. Many factors can contribute to a growth advantage, including an intrinsic 
-         transmission advantage and immune evasion. When absolute numbers of a variant are low, the advantage may 
-         merely reflect the current importance of introductions from abroad or the variant spreading in a particular
-          demographic group. In this case, the estimate does not provide information on any intrinsic fitness 
-          advantages.`}
                 >
+                  <Chen2021FitnessExplanation />
                   <div style={{ height: window.innerWidth < 640 ? 600 : 400 }}>
                     <Chen2021FitnessPreview
                       variantDateCounts={variantDateCount.data}
@@ -387,7 +384,7 @@ export const FocusSinglePage = () => {
               </GridCell>
               <GridCell minWidth={700}>
                 <Althaus2021GrowthWidget.ShareableComponent
-                  title='Relative growth advantage'
+                  title='Relative growth advantage: three mechanisms'
                   variantDateCounts={variantDateCount.data}
                   wholeDateCounts={wholeDateCountWithDateFilter.data}
                 />
@@ -508,19 +505,8 @@ export const FocusSinglePage = () => {
               getData={splitSequencesOverTime.getData}
               splitData={splitSequencesOverTime.splitData}
               generate={(division, d) => (
-                <NamedCard
-                  title={division}
-                  toolbar={deepFocusButtons.chen2021Fitness}
-                  description={`
-          If variants spread pre-dominantly by local transmission across demographic groups, this estimate reflects 
-          the relative growth advantage of the focal variant. Importantly, the relative growth advantage estimate 
-          reflects the advantage compared to co-circulating strains. Thus, as new variants spread, the advantage of 
-          the focal variant may decrease. Many factors can contribute to a growth advantage, including an intrinsic 
-          transmission advantage and immune evasion. When absolute numbers of a variant are low, the advantage may 
-          merely reflect the current importance of introductions from abroad or the variant spreading in a particular
-           demographic group. In this case, the estimate does not provide information on any intrinsic fitness 
-           advantages.`}
-                >
+                <NamedCard title={division} toolbar={deepFocusButtons.chen2021Fitness}>
+                  <Chen2021FitnessExplanation />
                   <div style={{ height: 350 }}>
                     <Chen2021FitnessPreview variantDateCounts={d.variant} wholeDateCounts={d.whole} />
                   </div>

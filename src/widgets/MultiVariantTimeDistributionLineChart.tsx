@@ -133,7 +133,7 @@ export const MultiVariantTimeDistributionLineChart = ({
       <ChartAndMetricsWrapper>
         <ChartWrapper>
           <ResponsiveContainer>
-            <ComposedChart data={plotData} margin={{ top: 6, right: 15, left: 0, bottom: 0 }}>
+            <ComposedChart data={plotData} margin={{ top: 6, right: 15, left: 15, bottom: 0 }}>
               <XAxis
                 dataKey='date'
                 scale='time'

@@ -14,6 +14,9 @@ import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import NumericInput from 'react-numeric-input';
 import { LapisSelector } from '../data/LapisSelector';
 import { useResizeDetector } from 'react-resize-detector';
+import Checkbox from '@mui/material/Checkbox';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 export interface Props {
   selector: LapisSelector;
@@ -58,6 +61,7 @@ type MergedAAAndNucEntry = {
 };
 
 export const VariantMutations = ({ selector }: Props) => {
+  const [checked, setChecked] = useState<boolean>(false);
   const [showMergedList, setShowMergedList] = useState(false);
   const [commonAAMutationsSort, setCommonAAMutationsSort] = useState<SortOptions>('position');
   const [commonNucMutationsSort, setCommonNucMutationsSort] = useState<SortOptions>('position');
@@ -65,6 +69,10 @@ export const VariantMutations = ({ selector }: Props) => {
   const [nucMutationUniqueness, setNucMutationUniqueness] = useState<MutationUniquenessMap>({});
   const [minProportion, setMinProportion] = useState<number>(0.05);
   const [maxProportion, setMaxProportion] = useState<number>(1);
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChecked(event.target.checked);
+  };
 
   const { width, ref } = useResizeDetector<HTMLDivElement>();
 
@@ -193,6 +201,22 @@ export const VariantMutations = ({ selector }: Props) => {
         </div>
       </div>
 
+      <div>
+        {' '}
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={checked}
+                onChange={handleChange}
+                inputProps={{ 'aria-label': 'controlled' }}
+              />
+            }
+            label='Show deletions'
+          />
+        </FormGroup>
+      </div>
+
       {showMergedList ? (
         <>
           <div className='ml-0'>
@@ -213,6 +237,9 @@ export const VariantMutations = ({ selector }: Props) => {
           <MutationList className='list-disc' width={width ? width : 1}>
             {sortMergedEntries(data.mergedEntries, commonAAMutationsSort, aaMutationUniqueness)
               .filter(({ aa }) => aa.proportion >= minProportion && aa.proportion <= maxProportion)
+              .filter(({ aa }) => {
+                return !checked ? aa.mutation.slice(-1) !== '-' : true;
+              })
               .map(({ aa, nucs }) => (
                 <MutationEntry key={aa.mutation}>
                   &#8226;
@@ -235,6 +262,9 @@ export const VariantMutations = ({ selector }: Props) => {
           <MutationList className='list-circle ml-6' width={width ? width : 1}>
             {sortNucMutations(data.additionalNucs, commonAAMutationsSort, nucMutationUniqueness)
               .filter(({ proportion }) => proportion >= minProportion && proportion <= maxProportion)
+              .filter(({ mutation }) => {
+                return !checked ? mutation.slice(-1) !== '-' : true;
+              })
               .map(({ mutation, proportion }) => {
                 return (
                   <MutationEntry key={mutation} style={{ display: 'inline-block' }}>
@@ -265,6 +295,9 @@ export const VariantMutations = ({ selector }: Props) => {
           <MutationList className='list-disc' width={width ? width : 1}>
             {sortAAMutations(data.aa, commonAAMutationsSort, aaMutationUniqueness)
               .filter(({ proportion }) => proportion >= minProportion && proportion <= maxProportion)
+              .filter(({ mutation }) => {
+                return !checked ? mutation.slice(-1) !== '-' : true;
+              })
               .map(({ mutation, proportion }) => {
                 return (
                   <MutationEntry key={mutation} style={{ display: 'inline-block' }}>
@@ -277,7 +310,7 @@ export const VariantMutations = ({ selector }: Props) => {
           </MutationList>
 
           <div className='ml-0 mt-9'>
-            <div className='mt-9'>Leading and tailing deletions are excluded.</div>
+            <div className='mt-9'>Leading and trailing deletions are excluded.</div>
 
             {sortOptions.map((opt, index) => (
               <>
@@ -293,11 +326,14 @@ export const VariantMutations = ({ selector }: Props) => {
             ))}
           </div>
           <div className='ml-0'>
-            *Leading and tailing deletions are excluded. <br />
+            *Leading and trailing deletions are excluded. <br />
           </div>
           <MutationList className='list-disc' width={width ? width : 1}>
             {sortNucMutations(data.nuc, commonNucMutationsSort, nucMutationUniqueness)
               .filter(({ proportion }) => proportion >= minProportion && proportion <= maxProportion)
+              .filter(({ mutation }) => {
+                return !checked ? mutation.slice(-1) !== '-' : true;
+              })
               .map(({ mutation, proportion }) => {
                 return (
                   <MutationEntry key={mutation} style={{ display: 'inline-block' }}>

@@ -19,7 +19,52 @@ import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { DivisionModal } from '../components/DivisionModal';
 import { createDivisionBreakdownButton } from './FocusSinglePage';
 
+import Tab from '@mui/material/Tab';
+import Tabs from '@mui/material/Tabs';
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import { SvgVennDiagram } from '../components/SvgVennDiagram';
+
+interface TabPanelProps {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role='tabpanel'
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+function a11yProps(index: number) {
+  return {
+    'id': `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
+
 export const FocusCompareEqualsPage = () => {
+  const [value, setValue] = React.useState(0);
+
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setValue(newValue);
+  };
+
   const exploreUrl = useExploreUrl()!;
   const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
 
@@ -135,14 +180,87 @@ export const FocusCompareEqualsPage = () => {
                   />
                 </div>
               </NamedCard>
+
+              {ldvsSelectors.length === 2 ? (
+                <NamedCard title='Nucleotide mutations'>
+                  <SvgVennDiagram
+                    selectors={ldvsSelectors}
+                    domain='nuc'
+                    numberOfvariants={ldvsSelectors.length}
+                  />
+                </NamedCard>
+              ) : ldvsSelectors.length === 3 ? (
+                <NamedCard title='Nucleotide mutations'>
+                  <SvgVennDiagram
+                    selectors={ldvsSelectors}
+                    domain='nuc'
+                    numberOfvariants={ldvsSelectors.length}
+                  />
+                </NamedCard>
+              ) : ldvsSelectors.length === 4 ? (
+                <NamedCard title='Nucleotide mutations'>
+                  <SvgVennDiagram
+                    selectors={ldvsSelectors}
+                    domain='nuc'
+                    numberOfvariants={ldvsSelectors.length}
+                  />
+                </NamedCard>
+              ) : (
+                ''
+              )}
             </GridCell>
           )}
-          {ldvsSelectors.length === 2 && (
+          {ldvsSelectors.length === 2 ? (
             <GridCell minWidth={600}>
               <NamedCard title='Amino acid changes'>
-                <VariantMutationComparison selectors={ldvsSelectors} />
+                <Box sx={{ width: '100%' }}>
+                  <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                    <Tabs
+                      value={value}
+                      onChange={handleChange}
+                      aria-label='basic tabs example'
+                      centered
+                      variant='fullWidth'
+                    >
+                      <Tab label='Chart' {...a11yProps(0)} style={{ borderStyle: 'none' }} />
+                      <Tab label='Table' {...a11yProps(1)} style={{ borderStyle: 'none' }} />
+                    </Tabs>
+                  </Box>
+                  <TabPanel value={value} index={0}>
+                    <SvgVennDiagram
+                      selectors={ldvsSelectors}
+                      domain='aa'
+                      numberOfvariants={ldvsSelectors.length}
+                    />
+                  </TabPanel>
+                  <TabPanel value={value} index={1}>
+                    <VariantMutationComparison selectors={ldvsSelectors} />
+                  </TabPanel>
+                </Box>
               </NamedCard>
             </GridCell>
+          ) : ldvsSelectors.length === 3 ? (
+            <GridCell minWidth={600}>
+              <NamedCard title='Amino acid changes'>
+                <SvgVennDiagram
+                  selectors={ldvsSelectors}
+                  domain='aa'
+                  numberOfvariants={ldvsSelectors.length}
+                />
+              </NamedCard>
+            </GridCell>
+          ) : ldvsSelectors.length === 4 ? (
+            <GridCell minWidth={600}>
+              <NamedCard title='Amino acid changes'>
+                <SvgVennDiagram
+                  selectors={ldvsSelectors}
+                  domain='aa'
+                  numberOfvariants={ldvsSelectors.length}
+                />
+              </NamedCard>
+            </GridCell>
+          ) : (
+            ''
           )}
         </PackedGrid>
       </div>

@@ -17,6 +17,8 @@ export type Chen2021FitnessRequestConfig = {
   initialCasesVariant: number;
 };
 
+export type Chen2021FitnessRequestConfigPartial = Partial<Chen2021FitnessRequestConfig>;
+
 export type Chen2021FitnessRequest = {
   data: Chen2021FitnessRequestData;
   config: Chen2021FitnessRequestConfig;
