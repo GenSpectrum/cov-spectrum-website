@@ -30,23 +30,16 @@ export class TaxoniumIntegration implements Integration {
   }
 
   private async _open({ variant, location }: LocationDateVariantSelector) {
-    const baseUrl = 'https://taxonium.org/';
+    const baseUrl = 'https://cov2tree.org/';
     const params = new URLSearchParams();
 
-    // Some default parameters
-    params.set('protoUrl', '/nodelist.pb.gz');
-    params.set('blinking', 'false');
     params.set('zoomToSearch', '0');
     params.set(
-      'colourBy',
+      'color',
       JSON.stringify({
-        variable: 'none',
-        colourLines: false,
-        gene: 'S', // That is just the default for when the user switches to the AA site coloring
-        residue: '681',
+        field: 'none',
       })
     );
-
     // The variant
     if (!variant) {
       return;
@@ -55,46 +48,45 @@ export class TaxoniumIntegration implements Integration {
     const searchList = [];
     if (pangoLineage) {
       searchList.push({
-        id: Math.random(),
-        category: 'lineage',
-        value: pangoLineage,
-        enabled: true,
-        aa_final: 'any',
-        min_tips: 1,
-        aa_gene: 'S',
-        search_for_ids: '',
+        key: 'search1',
+        type: 'meta_pangolin_lineage',
+        method: 'text_exact',
+        text: pangoLineage,
+        new_residue: 'any',
+        position: 484,
+        min_tips: 0,
+        gene: 'S',
       });
     }
     if (aaMutations) {
       for (let aaMutation of aaMutations) {
         const decoded = decodeAAMutation(aaMutation);
         searchList.push({
-          id: Math.random(),
-          category: 'mutation',
-          value: '',
-          enabled: true,
-          aa_final: decoded.mutatedBase ?? 'any',
-          min_tips: 1,
-          aa_gene: decoded.gene,
-          search_for_ids: '',
-          aa_pos: decoded.position,
+          key: 'search2' + Math.random(),
+          type: 'mutation',
+          method: 'mutation',
+          text: '',
+          new_residue: decoded.mutatedBase ?? 'any',
+          position: decoded.position,
+          min_tips: 0,
+          gene: decoded.gene,
         });
       }
     }
     if (location.country) {
       searchList.push({
-        id: 0.123,
-        category: 'country',
-        value: await LocationService.getGisaidName(location.country),
-        enabled: true,
-        aa_final: 'Y',
-        min_tips: 1,
-        aa_gene: 'S',
-        search_for_ids: '',
-        aa_pos: '501',
+        key: 'search3',
+        type: 'meta_country',
+        method: 'text_exact',
+        text: await LocationService.getGisaidName(location.country),
+        new_residue: 'any',
+        position: 484,
+        min_tips: 0,
+        gene: 'S',
       });
     }
-    params.set('search', JSON.stringify(searchList));
+    params.set('srch', JSON.stringify(searchList));
+    params.set('enabled', JSON.stringify(Object.fromEntries(searchList.map(s => [s.key, true]))));
     window.open(`${baseUrl}?${params.toString()}`);
   }
 }

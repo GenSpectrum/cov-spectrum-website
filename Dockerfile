@@ -2,6 +2,7 @@
 
 FROM node:14-buster AS builder
 WORKDIR /build
+ARG REACT_APP_LAPIS_ACCESS_KEY
 
 COPY package.json .
 COPY package-lock.json .

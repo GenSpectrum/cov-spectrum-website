@@ -27,6 +27,7 @@ import { HostCountSampleEntry } from './sample/HostCountSampleEntry';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
+const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
 
 export const HUMAN = sequenceDataSource === 'gisaid' ? 'Human' : 'Homo sapiens';
 
@@ -48,7 +49,11 @@ export const get = async (endpoint: string, signal?: AbortSignal) => {
 };
 
 export async function fetchLapisDataVersionDate(signal?: AbortSignal) {
-  const res = await get('/sample/info', signal);
+  let url = '/sample/info';
+  if (ACCESS_KEY) {
+    url += '?accessKey=' + ACCESS_KEY;
+  }
+  const res = await get(url, signal);
   if (!res.ok) {
     throw new Error('Error fetching info');
   }
@@ -61,7 +66,11 @@ export function getCurrentLapisDataVersionDate(): Date | undefined {
 }
 
 export async function fetchAllHosts(): Promise<string[]> {
-  const res = await get('/sample/aggregated?fields=host');
+  let url = '/sample/aggregated?fields=host';
+  if (ACCESS_KEY) {
+    url += '&accessKey=' + ACCESS_KEY;
+  }
+  const res = await get(url);
   if (!res.ok) {
     throw new Error('Error fetching new samples data');
   }
@@ -215,6 +224,9 @@ export async function getLinkTo(
   }
   if (minProportion) {
     params.set('minProportion', minProportion);
+  }
+  if (ACCESS_KEY) {
+    params.set('accessKey', ACCESS_KEY);
   }
   if (omitHost) {
     return `/sample/${endpoint}?${params.toString()}`;
