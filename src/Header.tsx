@@ -164,7 +164,7 @@ const Header = () => {
                 )}
                 <a
                   className={getDropdownButtonClasses('')}
-                  href='https://twitter.com/covSpectrum'
+                  href='https://twitter.com/genSpectrum'
                   rel='noopener noreferrer'
                   target='_blank'
                 >
