@@ -300,7 +300,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       'ORF9b:T60A',
       'N:D63G',
     ].map(i => {
-      if (i.startsWith('ORF1')) {
+      if (i.startsWith('ORF1') && (notation === 'nsp' || notation === 'orf1ab')) {
         return `${i} = (${getEquivalent(i, notation)})`;
       }
       return i;
