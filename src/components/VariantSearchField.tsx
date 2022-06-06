@@ -70,6 +70,8 @@ function getEquivalent(value: string, notation: string) {
       return `${nsp}:${letterBefore}${nspCodon}${letterAfter}`;
     } else if (notation === 'orf1ab') {
       return `ORF1ab:${letterBefore}:${combinedCodon}${letterAfter}`;
+    } else {
+      return value;
     }
   }
 }
