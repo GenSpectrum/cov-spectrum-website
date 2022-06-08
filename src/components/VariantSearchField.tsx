@@ -105,6 +105,8 @@ const translateMutation = (oldValue: string) => {
       ? mutationArray[1].charAt(mutationArray[1].length - 1)
       : '';
 
+    let letterBefore = !is_numeric(mutationArray[1].charAt(0)) ? mutationArray[1].charAt(0) : '';
+
     if (letterAfter !== '') {
       nspCodon = is_numeric(mutationArray[1].charAt(0))
         ? parseInt(mutationArray[1].slice(0, -1))
@@ -124,7 +126,7 @@ const translateMutation = (oldValue: string) => {
       orf1aorbcodon = nsps[nsp] + nspCodon - 1;
       orf1aorb = 'ORF1a';
     }
-    return orf1aorb + ':' + orf1aorbcodon + letterAfter.toUpperCase();
+    return orf1aorb + ':' + letterBefore.toUpperCase() + orf1aorbcodon + letterAfter.toUpperCase();
   } else if (mutationArray[0].toLocaleLowerCase() === 'orf1ab') {
     let letterAfter = !is_numeric(mutationArray[1].charAt(mutationArray[1].length - 1))
       ? mutationArray[1].charAt(mutationArray[1].length - 1)
