@@ -2,8 +2,8 @@ import TextField from '@mui/material/TextField';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import React, { useEffect, useRef, useState } from 'react';
-import ReactDatePicker from 'react-datepicker';
+import React, { useEffect, useState } from 'react';
+//import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { HeaderDateRangeSelect } from './HeaderDateRangeSelect';
 import { useExploreUrl } from '../helpers/explore-url';
@@ -32,9 +32,9 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
   const prevDateTo = globalDateCache.getDayUsingDayjs(dayjs(initialEndDate));
 
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([initialStartDate, initialEndDate]);
+  const [raw, setRaw] = useState<string>('01/06/2020');
+  const dateRegex = /[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
 
-  //const [startDate, endDate] = dateRange;
-  const datePickerRef = useRef<ReactDatePicker>(null);
   const exploreUrl = useExploreUrl();
 
   useEffect(() => {
@@ -57,15 +57,12 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
             dateTo: newDateTo,
           })
         );
-        if (datePickerRef.current?.isCalendarOpen()) {
-          datePickerRef.current?.setOpen(false);
-        }
       }
     }
   };
 
   useEffect(() => {
-    if (startDate && endDate) {
+    if (startDate && endDate && raw.match(dateRegex)) {
       changeDate();
     }
   }, [dateRange]);
@@ -75,8 +72,6 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
       setDateRange([startDate, endDate]);
     }
   }, [startDate, endDate]);
-
-  const dateRegex = /[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
 
   return (
     <>
@@ -88,7 +83,10 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
             <DatePicker
               label='from'
               value={startDate}
-              onChange={value => {
+              onChange={(value, keyboardInputValue) => {
+                if (keyboardInputValue) {
+                  setRaw(keyboardInputValue);
+                }
                 setStartDate(value);
               }}
               renderInput={params => (
