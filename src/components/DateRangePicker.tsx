@@ -3,7 +3,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import React, { useEffect, useState } from 'react';
-//import ReactDatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { HeaderDateRangeSelect } from './HeaderDateRangeSelect';
 import { useExploreUrl } from '../helpers/explore-url';
@@ -30,11 +29,9 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
   const initialEndDate = dateTo ? dateTo.dayjs.toDate() : today;
   const prevDateFrom = globalDateCache.getDayUsingDayjs(dayjs(initialStartDate));
   const prevDateTo = globalDateCache.getDayUsingDayjs(dayjs(initialEndDate));
-
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([initialStartDate, initialEndDate]);
   const [raw, setRaw] = useState<string>('01/06/2020');
   const dateRegex = /[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
-
   const exploreUrl = useExploreUrl();
 
   useEffect(() => {
