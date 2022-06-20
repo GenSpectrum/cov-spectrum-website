@@ -47,7 +47,7 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
         value={value}
         onChange={handleChange}
         className='rounded-l rounded-r-none mt-1'
-        style={{ height: '55px' }}
+        style={{ height: '55px', marginRight: '5px' }}
       >
         <option value='' disabled>
           Custom Range
