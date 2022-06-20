@@ -25,7 +25,7 @@ const nsps: NspMap = {
   nsp5: 3264,
   nsp6: 3570,
   nsp7: 3860,
-  nsp8: 3942,
+  nsp8: 3943,
   nsp9: 4141,
   nsp10: 4254,
   nsp12: 4393,
