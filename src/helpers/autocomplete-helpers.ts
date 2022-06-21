@@ -79,7 +79,7 @@ export const translateMutation = (oldValue: string) => {
     let nspCodon = getCodon(mutationArray[1]);
     let combinedCodon = nsps[nsp] + nspCodon - 1;
 
-    if (combinedCodon >= nsps['nsp13']) {
+    if (combinedCodon >= 4401) {
       orf1aorbcodon = nsps[nsp] + nspCodon - 1 - 4401;
       orf1aorb = 'ORF1b';
     } else {
