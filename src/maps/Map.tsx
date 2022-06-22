@@ -14,6 +14,7 @@ import switzerland from './switzerland.json';
 import usa from './usa.json';
 import southafrica from './southafrica.json';
 import botswana from './botswana.json';
+import leg2 from './leg2.png';
 
 export interface VectorMapLayer {
   /** Unique ID of each layer. */
@@ -211,6 +212,7 @@ const Map = ({ data: inputData, country }: Props) => {
       metricsTitle={focusData && focusData.division !== null ? focusData.division : undefined}
       notFullWidth={true}
     >
+      <img src={leg2} alt='color scale legend' />
       <Wrapper data={data} focusDivision={focusData ? focusData.division : null} className='pd-1 md:m-2'>
         {country === 'Brazil' && <VectorMap {...brazil} layerProps={layerProps} />}
         {country === 'China' && <VectorMap {...china} layerProps={layerProps} />}

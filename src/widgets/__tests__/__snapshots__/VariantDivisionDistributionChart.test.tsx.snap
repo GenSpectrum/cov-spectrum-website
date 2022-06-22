@@ -22,6 +22,10 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
       <div
         className="w-full lg:w-2/3"
       >
+        <img
+          alt="color scale legend"
+          src="leg2.png"
+        />
         <div
           className="***masked*** pd-1 md:m-2"
           data={
