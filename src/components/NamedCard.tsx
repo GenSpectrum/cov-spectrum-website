@@ -14,6 +14,7 @@ export type TabConfig = {
   labels: string[];
   activeTabIndex: number;
   onNewTabSelect: (tabIndex: number) => void;
+  labelWidth?: number;
 };
 
 interface Props {
@@ -64,13 +65,14 @@ export const TabbedCard = ({
       {tabConfig.labels.map((label, index) => (
         <button
           key={label}
-          className={`p-2 shadow-lg w-40 text-center text-sm outline-none rounded-b -mt-1
+          className={`p-2 shadow-lg text-center text-sm outline-none rounded-b -mt-1
             ${
               tabConfig.activeTabIndex === index
                 ? 'relative bg-white cursor-default border-b-2 border-black font-bold'
                 : 'bg-gray-100 text-gray-500'
             }
           `}
+          style={{ width: tabConfig.labelWidth ?? 200 }}
           onClick={_ => tabConfig.onNewTabSelect(index)}
         >
           {label}

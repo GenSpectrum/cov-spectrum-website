@@ -1,63 +1,77 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { LoaderSmall } from './Loader';
-import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
 import { VariantSelector } from '../data/VariantSelector';
 import { LapisSelector } from '../data/LapisSelector';
+import { useQuery } from '../helpers/query-hook';
+import { _fetchAggSamples } from '../data/api-lapis';
 
 export interface Props {
   selector: LapisSelector;
   onVariantSelect: (selection: VariantSelector[]) => void;
+  type: 'pangoLineage' | 'nextcladePangoLineage' | 'nextstrainClade';
 }
 
 const LineageEntry = styled.li`
   width: 250px;
-  margin-left: 8px;
+  margin-left: 25px;
 `;
 
-export const VariantLineages = ({ selector, onVariantSelect }: Props) => {
-  const [data, setData] = useState<
+export const VariantLineages = ({ selector, onVariantSelect, type }: Props) => {
+  const { data } = useQuery(signal => _fetchAggSamples(selector, [type], signal), [selector, type]);
+
+  const distribution:
     | {
-        pangoLineage: string | null;
+        lineage: string | null;
         proportion: number;
       }[]
-    | undefined
-  >(undefined);
-
-  useEffect(() => {
-    PangoCountSampleData.fromApi(selector).then(pangoCountDataset => {
-      const total = pangoCountDataset.payload.reduce((prev, curr) => prev + curr.count, 0);
-      const proportions = pangoCountDataset.payload.map(e => ({
-        pangoLineage: e.pangoLineage,
-        proportion: e.count / total,
-      }));
-      setData(proportions);
-    });
-  }, [selector]);
+    | undefined = useMemo(() => {
+    if (!data) {
+      return undefined;
+    }
+    const total = data.reduce((prev, curr) => prev + curr.count, 0);
+    return data.map(e => ({
+      lineage: e[type],
+      proportion: e.count / total,
+    }));
+  }, [data, type]);
 
   return (
     <>
-      <div>Sequences of this variant belong to the following Pango lineages:</div>
-      <br />
-
-      {!data ? (
+      {!distribution ? (
         <div className='h-20 w-full flex items-center'>
           <LoaderSmall />
         </div>
       ) : (
         <ul className='list-disc flex flex-wrap max-h-24 overflow-y-auto '>
-          {data
+          {distribution
             .sort((a, b) => b.proportion - a.proportion)
-            .map(({ pangoLineage, proportion }) => {
-              const label = pangoLineage || 'Unknown';
+            .map(({ lineage, proportion }) => {
+              const label = lineage || 'Unknown';
               return (
                 <LineageEntry key={label}>
-                  {pangoLineage ? (
+                  {lineage ? (
                     <button
                       className='underline outline-none'
-                      onClick={() => onVariantSelect([{ pangoLineage }])}
+                      onClick={() => {
+                        let variant: VariantSelector;
+                        switch (type) {
+                          case 'pangoLineage':
+                            variant = { pangoLineage: lineage };
+                            break;
+                          case 'nextcladePangoLineage':
+                            variant = { variantQuery: `nextcladePangoLineage:${lineage}` };
+                            break;
+                          case 'nextstrainClade':
+                            variant = { variantQuery: `nextstrainClade:${lineage}` };
+                            break;
+                          default:
+                            throw new Error(`Unexpected lineage type: ${type}`);
+                        }
+                        onVariantSelect([variant]);
+                      }}
                     >
-                      {pangoLineage}
+                      {lineage}
                     </button>
                   ) : (
                     'Unknown'

@@ -52,6 +52,7 @@ const SWISS_SPECIALTIES_ACTIVATED = false;
 
 export const FocusSinglePage = () => {
   const exploreUrl = useExploreUrl();
+  const [lineageDistributionIndex, setLineageDistributionIndex] = useState(0);
   const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
   const [showEstimatedCasesDivGrid, setShowEstimatedCasesDivGrid] = useState(false);
   const [showVariantAgeDistributionDivGrid, setShowVariantAgeDistributionDivGrid] = useState(false);
@@ -236,7 +237,6 @@ export const FocusSinglePage = () => {
   if (!exploreUrl || !exploreUrl.variant) {
     return null;
   }
-  const { pangoLineage } = exploreUrl.variant;
   const { country } = exploreUrl.location;
   const host = exploreUrl.host;
 
@@ -306,11 +306,25 @@ export const FocusSinglePage = () => {
                 <VariantHosts selector={ldvsSelector} />
               </div>
             )}
-            {(!pangoLineage || pangoLineage.endsWith('*')) && (
-              <div className='mx-0.5 mt-1 mb-5 md:mx-3 shadow-lg rounded-lg bg-white p-2 pl-4'>
-                <VariantLineages onVariantSelect={exploreUrl.setVariants} selector={ldvsSelector} />
-              </div>
-            )}
+            <NamedCard
+              title='Lineages'
+              tabs={{
+                labels: ['Pango lineage (pangolin)', 'Pango lineage (Nextclade)', 'Nextstrain clade'],
+                activeTabIndex: lineageDistributionIndex,
+                onNewTabSelect: newIndex => setLineageDistributionIndex(newIndex),
+              }}
+            >
+              <VariantLineages
+                onVariantSelect={exploreUrl.setVariants}
+                selector={ldvsSelector}
+                type={
+                  (['pangoLineage', 'nextcladePangoLineage', 'nextstrainClade'] as const)[
+                    lineageDistributionIndex
+                  ]
+                }
+                key={lineageDistributionIndex}
+              />
+            </NamedCard>
             <PackedGrid maxColumns={2}>
               <GridCell minWidth={600}>
                 {
