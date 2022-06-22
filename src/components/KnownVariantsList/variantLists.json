@@ -4,7 +4,10 @@
     "fillUpUntil": 12,
     "variants": [
       {
-        "variantQuery": "BA.4* | BA.5* | (BA.2* & 12160A & 9866C & (27788T | 27259A))"
+        "variantQuery": "nextcladePangoLineage:BA.4*"
+      },
+      {
+        "variantQuery": "nextcladePangoLineage:BA.5*"
       },
       {
         "pangoLineage": "BA.2*",
@@ -42,9 +45,6 @@
       {
         "pangoLineage": "BA.2*",
         "aaMutations": ["S:356R"]
-      },
-      {
-        "pangoLineage": "BA.1*"
       },
       {
         "pangoLineage": "BA.2*"
