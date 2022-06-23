@@ -78,7 +78,7 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
         <div className={`flex flex-row ${width && width < 600 ? 'flex-wrap mt-2 mb-2 ml-0' : 'ml-2'}`}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
-              inputFormat='MM-dd-yyyy'
+              inputFormat='yyyy-MM-dd'
               label='from'
               value={startDate}
               onChange={(value, keyboardInputValue) => {
@@ -92,7 +92,7 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
           </LocalizationProvider>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
-              inputFormat='MM-dd-yyyy'
+              inputFormat='yyyy-MM-dd'
               label='to'
               value={endDate}
               onChange={value => {
