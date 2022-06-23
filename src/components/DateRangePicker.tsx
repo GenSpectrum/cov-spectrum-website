@@ -3,7 +3,6 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import React, { useEffect, useState } from 'react';
-import 'react-datepicker/dist/react-datepicker.css';
 import { HeaderDateRangeSelect } from './HeaderDateRangeSelect';
 import { useExploreUrl } from '../helpers/explore-url';
 import dayjs from 'dayjs';
