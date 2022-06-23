@@ -30,8 +30,8 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
   const prevDateFrom = globalDateCache.getDayUsingDayjs(dayjs(initialStartDate));
   const prevDateTo = globalDateCache.getDayUsingDayjs(dayjs(initialEndDate));
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([initialStartDate, initialEndDate]);
-  const [raw, setRaw] = useState<string>('01/06/2020');
-  const dateRegex = /[0-9]{2}\/[0-9]{2}\/[0-9]{4}$/;
+  const [raw, setRaw] = useState<string>('2020-01-06');
+  const dateRegex = /[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
   const exploreUrl = useExploreUrl();
 
   useEffect(() => {
