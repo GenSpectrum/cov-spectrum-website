@@ -9,7 +9,6 @@ import { HuismanScire2021ReResultResponse } from './types';
 import { HuismanScire2021ReChart } from './HuismanScire2021ReChart';
 import { calculatePlotData, EstimatedCasesPlotEntry } from '../../widgets/EstimatedCasesChartInner';
 import { Utils } from '../../services/Utils';
-import { ExpandableTextBox } from '../../components/ExpandableTextBox';
 import { ExternalLink } from '../../components/ExternalLink';
 
 type Props = {
@@ -76,53 +75,30 @@ export const HuismanScire2021ReContainer = ({ wholeDateCounts, variantDateCounts
 
   const data = newlyCalculatedData || preExistingData;
 
-  if (preExistingIsLoading || !preExistingData || !data) {
-    return <Loader />;
-  }
+  let mainContent = <></>;
 
-  if (calculationQueueFull) {
-    return (
+  if (preExistingIsLoading || !preExistingData || !data) {
+    mainContent = <Loader />;
+  } else if (calculationQueueFull) {
+    mainContent = (
       <>
         There are currently too many Re calculation requests and we do not have sufficient capacity to accept
         more requests. Please try it later again.
       </>
     );
-  }
-
-  if (calculationTriggered) {
-    return (
+  } else if (calculationTriggered) {
+    mainContent = (
       <>
         Calculating.. This can take up to ten minutes. The plot will be automatically loaded once the results
         are available.
       </>
     );
-  }
-
-  if (data.state === 'RESULT_AVAILABLE' && data.result) {
-    return (
-      <>
-        <ExpandableTextBox text='Description: TODO' maxChars={80} />
-        <HuismanScire2021ReChart data={data.result} />
-        <div>
-          <h2>Reference</h2>
-          <small>
-            Huisman, Jana S., Scire, Jérémie, et al. "Estimation and worldwide monitoring of the effective
-            reproductive number of SARS-CoV-2." medRxiv (2021); doi:{' '}
-            <ExternalLink url='https://doi.org/10.1101/2020.11.26.20239368'>
-              10.1101/2020.11.26.20239368
-            </ExternalLink>
-          </small>
-        </div>
-      </>
-    );
-  }
-
-  if (data.state === 'CALCULATION_FAILED') {
-    return <>It was not possible to estimate the Re.</>;
-  }
-
-  if (data.state === 'RESULT_UNAVAILABLE') {
-    return (
+  } else if (data.state === 'RESULT_AVAILABLE' && data.result) {
+    mainContent = <HuismanScire2021ReChart data={data.result} />;
+  } else if (data.state === 'CALCULATION_FAILED') {
+    mainContent = <>It was not possible to estimate the Re.</>;
+  } else if (data?.state === 'RESULT_UNAVAILABLE') {
+    mainContent = (
       <>
         The Re has not been estimated.{' '}
         <button onClick={() => calculate()} className='underline'>
@@ -131,7 +107,33 @@ export const HuismanScire2021ReContainer = ({ wholeDateCounts, variantDateCounts
         Please note that the calculation can take up to ten minutes.
       </>
     );
+  } else {
+    throw new Error('Unexpected case in HuismanScire2021ReContainer');
   }
 
-  throw new Error('Unexpected case in HuismanScire2021ReContainer');
+  return (
+    <>
+      <div>
+        The following plot shows the estimated effective reproduction number based on the estimated cases (see
+        plot above).{' '}
+        <strong>
+          {' '}
+          The model does not take the uncertainties of the case number estimates into account.{' '}
+        </strong>
+        In particular, this implies that the high uncertainties about the prevalence of a variant in the
+        recent data points are not reflected in the uncertainty intervals of this plot.
+      </div>
+      <div className='mt-4'>{mainContent}</div>
+      <div>
+        <h2>Reference</h2>
+        <small>
+          Huisman, Jana S., Scire, Jérémie, et al. "Estimation and worldwide monitoring of the effective
+          reproductive number of SARS-CoV-2." medRxiv (2021); doi:{' '}
+          <ExternalLink url='https://doi.org/10.1101/2020.11.26.20239368'>
+            10.1101/2020.11.26.20239368
+          </ExternalLink>
+        </small>
+      </div>
+    </>
+  );
 };
