@@ -85,8 +85,10 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   );
   const [inputValue, setInputValue] = useState<string>('');
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
-  const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? '');
+  const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? inputValue);
   const [advancedSearch, setAdvancedSearch] = useState(!!currentSelection?.variantQuery);
+
+  console.log(currentSelection?.variantQuery);
 
   const pangoLineages = useQuery(
     signal =>
@@ -336,6 +338,17 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     submitVariant();
   }, [selectedOptions, variantQuery, advancedSearch, onVariantSelect]);
 
+  function handleCheckboxChange() {
+    let newQuery: string = '';
+    if (selectedOptions.length > 0) {
+      newQuery = selectedOptions.map(i => i.value).join(' & ');
+    } else if (inputValue) {
+      newQuery = inputValue;
+    }
+    setAdvancedSearch(!advancedSearch);
+    setVariantQuery(newQuery);
+  }
+
   return (
     <div>
       <form
@@ -386,7 +399,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
           type='checkbox'
           label='Advanced search'
           checked={advancedSearch}
-          onChange={_ => setAdvancedSearch(!advancedSearch)}
+          onChange={_ => handleCheckboxChange()}
         />
       </div>
     </div>
