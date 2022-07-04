@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import { components, InputActionMeta, Styles } from 'react-select';
-import { isValidAAMutation } from '../helpers/aa-mutation';
+import { isValidAAMutation, isValidABNotation, isValidNspNotation } from '../helpers/aa-mutation';
 import { CSSPseudos } from 'styled-components';
 import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
 import { isValidPangoLineageQuery, VariantSelector } from '../data/VariantSelector';
@@ -10,6 +10,7 @@ import { useQuery } from '../helpers/query-hook';
 import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 import Form from 'react-bootstrap/Form';
 import { SamplingStrategy } from '../data/SamplingStrategy';
+import { getEquivalent, translateMutation } from '../helpers/autocomplete-helpers';
 
 type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
 
@@ -26,9 +27,23 @@ const backgroundColor: { [key in SearchType]: string } = {
 };
 
 function mapOption(optionString: string, type: SearchType): SearchOption {
+  let actualValue = optionString;
+  if (optionString.includes(' =')) {
+    actualValue = optionString.split(' ')[0];
+  } else if (optionString.toLowerCase().startsWith('nsp')) {
+    if (translateMutation(optionString.toLowerCase())) {
+      actualValue = translateMutation(optionString.toLowerCase());
+      optionString = `${actualValue} = (${optionString})`;
+    }
+  } else if (optionString.toLowerCase().startsWith('orf1ab')) {
+    if (translateMutation(optionString.toLowerCase())) {
+      actualValue = translateMutation(optionString.toLowerCase());
+      optionString = `${actualValue} = (${optionString})`;
+    }
+  }
   return {
     label: optionString,
-    value: optionString,
+    value: actualValue,
     type,
   };
 }
@@ -101,15 +116,16 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const suggestMutations = (query: string): string[] => {
     // TODO Fetch all/common known mutations from the server
     // For now, just providing a few mutations so that the auto-complete list is not entirely empty.
-    return [
+    let notation = query.toLowerCase().startsWith('n') ? 'nsp' : query.startsWith('orf1ab') ? 'orf1ab' : '';
+    let options: string[] = [
       'S:D614G',
       'ORF1b:P314L',
       'N:R203K',
       'N:G204R',
       'N:M1X',
-      'ORF1a:G3676-',
-      'ORF1a:S3675-',
-      'ORF1a:F3677-',
+      'ORF1a:G3676',
+      'ORF1a:S3675',
+      'ORF1a:F3677',
       'S:N501Y',
       'S:P681H',
       'S:H69-',
@@ -120,7 +136,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       'ORF1a:T1001I',
       'S:D1118H',
       'ORF8:Y73C',
-      'ORF1a:A1708D',
+      'ORF1a:T1001I',
       'N:S235F',
       'ORF8:Q27*',
       'S:S982A',
@@ -142,6 +158,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       'S:L18F',
       'ORF3a:S26L',
       'ORF1a:T3255I',
+      'ORF1a:T3255I',
       'N:R203M',
       'S:E484K',
       'ORF1b:P1000L',
@@ -152,13 +169,22 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       'ORF7a:V82A',
       'ORF9b:T60A',
       'N:D63G',
-    ].filter(m => m.toUpperCase().startsWith(query.toUpperCase()));
+    ].map(i => {
+      if (i.startsWith('ORF1') && (notation === 'nsp' || notation === 'orf1ab')) {
+        return `${i} = (${getEquivalent(i, notation)})`;
+      }
+      return i;
+    });
+    return options.filter(m => m.toUpperCase().includes(query.toUpperCase()));
   };
 
   const suggestOptions = (query: string): SearchOption[] => {
     const onePLAlreadySelected = selectedOptions.filter(option => option.type === 'pango-lineage').length > 0;
     const suggestions: SearchOption[] = [];
+
     if (isValidAAMutation(query)) {
+      suggestions.push(mapOption(query, 'aa-mutation'));
+    } else if (isValidABNotation(query)) {
       suggestions.push(mapOption(query, 'aa-mutation'));
     } else if (isValidNucMutation(query)) {
       suggestions.push(mapOption(query, 'nuc-mutation'));
@@ -175,6 +201,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     return suggestions.slice(0, 20);
   };
 
+  // nsp + ':' + letterBefore + nspCodon; //
   /**
    * Handles the input change:
    * 1) when input value contains "," or "+", call the handleCommaSeparatedInput function
@@ -210,7 +237,16 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
    * @param inputValue comma-separated string
    */
   const handleCommaSeparatedInput = (inputValue: string) => {
-    const inputValues = inputValue.split(/[,+]/);
+    // const input = inputValue.split(/[,+]/);
+    const inputValues = inputValue.split(/[,+]/).map(value => {
+      if (isValidABNotation(value)) {
+        return translateMutation(value);
+      } else if (isValidNspNotation(value)) {
+        return translateMutation(value);
+      } else {
+        return value;
+      }
+    });
     let newSelectedOptions: SearchOption[] = [];
     let invalidQueries = '';
     for (let query of inputValues) {
@@ -243,7 +279,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     // remove the last "," in the invalidQueries string
     invalidQueries = invalidQueries.slice(0, -1);
     setInputValue(invalidQueries);
-
     setMenuIsOpen(invalidQueries !== '');
   };
 

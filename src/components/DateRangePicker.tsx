@@ -1,16 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
-import ReactDatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
+import TextField from '@mui/material/TextField';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import React, { useEffect, useState } from 'react';
 import { HeaderDateRangeSelect } from './HeaderDateRangeSelect';
 import { useExploreUrl } from '../helpers/explore-url';
 import dayjs from 'dayjs';
-import {
-  DateRangeSelector,
-  dateRangeStringRegex,
-  dateStringRegex,
-  FixedDateRangeSelector,
-} from '../data/DateRangeSelector';
+import { DateRangeSelector, FixedDateRangeSelector } from '../data/DateRangeSelector';
 import { globalDateCache } from '../helpers/date-cache';
+import { useResizeDetector } from 'react-resize-detector';
 
 interface Props {
   dateRangeSelector: DateRangeSelector;
@@ -20,20 +18,26 @@ const minimumDate: Date = new Date('2020-01-06'); // first day of first week of 
 const today = new Date();
 
 export const DateRangePicker = ({ dateRangeSelector }: Props) => {
+  const { width, ref } = useResizeDetector<HTMLDivElement>();
+
+  const [startDate, setStartDate] = React.useState<Date | null>(null);
+  const [endDate, setEndDate] = React.useState<Date | null>(null);
+
   const { dateFrom, dateTo } = dateRangeSelector.getDateRange();
   const initialStartDate = dateFrom ? dateFrom.dayjs.toDate() : minimumDate;
   const initialEndDate = dateTo ? dateTo.dayjs.toDate() : today;
   const prevDateFrom = globalDateCache.getDayUsingDayjs(dayjs(initialStartDate));
   const prevDateTo = globalDateCache.getDayUsingDayjs(dayjs(initialEndDate));
-
   const [dateRange, setDateRange] = useState<[Date | null, Date | null]>([initialStartDate, initialEndDate]);
-  const [startDate, endDate] = dateRange;
-  const datePickerRef = useRef<ReactDatePicker>(null);
+  const [raw, setRaw] = useState<string>('2020-01-06');
+  const dateRegex = /[0-9]{4}-[0-9]{2}-[0-9]{2}$/;
   const exploreUrl = useExploreUrl();
 
   useEffect(() => {
     const startDate = dateFrom ? dateFrom.dayjs.toDate() : minimumDate;
     const endDate = dateTo ? dateTo.dayjs.toDate() : today;
+    setStartDate(startDate);
+    setEndDate(endDate);
     setDateRange([startDate, endDate]);
   }, [dateFrom, dateTo]);
 
@@ -49,53 +53,62 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
             dateTo: newDateTo,
           })
         );
-        if (datePickerRef.current?.isCalendarOpen()) {
-          datePickerRef.current?.setOpen(false);
-        }
       }
     }
   };
 
-  const handleDateRangeChangeRaw = (event: React.FocusEvent<HTMLInputElement>) => {
-    if (
-      event &&
-      event.target &&
-      event.target.value &&
-      (dateStringRegex.test(event.target.value) || dateRangeStringRegex.test(event.target.value))
-    ) {
-      const range = event.target.value.split(' - ');
-      const start = range?.length > 0 ? globalDateCache.getDay(range[0]).dayjs.toDate() : null;
-      const end = range?.length > 1 ? globalDateCache.getDay(range[1]).dayjs.toDate() : null;
-      setDateRange([start, end]);
+  useEffect(() => {
+    if (startDate && endDate && raw.match(dateRegex)) {
+      changeDate();
     }
-  };
+  }, [dateRange]);
 
-  const handleDateRangeChange = (update: [Date, Date]) => {
-    setDateRange(update);
-  };
+  useEffect(() => {
+    if (startDate && endDate) {
+      setDateRange([startDate, endDate]);
+    }
+  }, [startDate, endDate]);
 
   return (
     <>
-      <div className='w-full flex flex-row items-center'>
+      <div ref={ref} className='w-full flex flex-row items-center flex-wrap'>
         <HeaderDateRangeSelect exploreUrl={exploreUrl} />
-        <ReactDatePicker
-          ref={datePickerRef}
-          className='border rounded py-1.5 px-1.5 focus:outline-none focus:ring focus:border-blue-200 rounded-l-none border-left-0'
-          dateFormat='yyyy-MM-dd'
-          selectsRange={true}
-          startDate={startDate}
-          endDate={endDate}
-          minDate={minimumDate}
-          onChangeRaw={handleDateRangeChangeRaw}
-          onChange={handleDateRangeChange}
-          calendarStartDay={1}
-          useWeekdaysShort={true}
-          disabledKeyboardNavigation={true}
-          onBlur={changeDate}
-          onKeyDown={changeDate}
-          shouldCloseOnSelect={false}
-          onClickOutside={changeDate}
-        />
+
+        <div className={`flex flex-row ${width && width < 600 ? 'flex-wrap mt-2 mb-2 ml-0' : 'ml-2'}`}>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              inputFormat='yyyy-MM-dd'
+              label='from'
+              value={startDate}
+              onChange={(value, keyboardInputValue) => {
+                if (keyboardInputValue) {
+                  setRaw(keyboardInputValue);
+                }
+                setStartDate(value);
+              }}
+              renderInput={params => <TextField {...params} sx={{ height: '50px', width: '150px' }} />}
+            />
+          </LocalizationProvider>
+          <LocalizationProvider dateAdapter={AdapterDateFns}>
+            <DatePicker
+              inputFormat='yyyy-MM-dd'
+              label='to'
+              value={endDate}
+              onChange={value => {
+                setEndDate(value);
+              }}
+              renderInput={params => (
+                <TextField
+                  InputProps={{
+                    readOnly: true,
+                  }}
+                  {...params}
+                  sx={{ marginLeft: '5px', height: '50px', width: '150px' }}
+                />
+              )}
+            />
+          </LocalizationProvider>
+        </div>
       </div>
     </>
   );

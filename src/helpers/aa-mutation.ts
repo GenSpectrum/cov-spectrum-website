@@ -65,3 +65,14 @@ export function isValidAAMutation(mutation: string): boolean {
   // TODO Only allow existing genes
   return /^[A-Z]{1,3}[0-9]{0,2}[AB]?:[A-Z]?[0-9]+[A-Z-*\\.]?$/.test(mutation.toUpperCase());
 }
+
+export function isValidNspNotation(mutation: string): boolean {
+  // TODO Only allow existing genes
+  return /^NSP[0-9]{0,2}:[A-Z]?[0-9]+[A-Z]?$/.test(mutation.toUpperCase());
+}
+
+export function isValidABNotation(mutation: string): boolean {
+  // TODO Only allow existing genes
+
+  return /^ORF1AB:[A-Z]?[0-9]+[A-Z]?$/.test(mutation.toUpperCase());
+}
