@@ -72,4 +72,10 @@ export class Utils {
   static setEquals<T>(set1: Set<T>, set2: Set<T>): boolean {
     return set1.size === set2.size && [...set1].every(el => set2.has(el));
   }
+
+  static sleep(milliseconds: number): Promise<void> {
+    return new Promise<void>(resolve => {
+      setTimeout(() => resolve(), milliseconds);
+    });
+  }
 }
