@@ -88,8 +88,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? inputValue);
   const [advancedSearch, setAdvancedSearch] = useState(!!currentSelection?.variantQuery);
 
-  console.log(currentSelection?.variantQuery);
-
   const pangoLineages = useQuery(
     signal =>
       PangoCountSampleData.fromApi(
