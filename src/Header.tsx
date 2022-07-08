@@ -79,6 +79,7 @@ const Header = () => {
     username = AccountService.getUsername();
   }
   const location = useLocation();
+  const exploreUrl = useExploreUrl();
 
   const getButtonClasses = (path?: string): string =>
     `${
@@ -138,9 +139,11 @@ const Header = () => {
                     Done
                   </Button>
                 </div>
-                <button onClick={() => setShowAdvancedFilteringModal(true)}>
-                  Advanced <FaFilter className='inline' />
-                </button>
+                {exploreUrl && (
+                  <button onClick={() => setShowAdvancedFilteringModal(true)}>
+                    Advanced <FaFilter className='inline' />
+                  </button>
+                )}
                 <a className={getDropdownButtonClasses('/collections')} href='/collections'>
                   Collections
                 </a>
@@ -240,13 +243,15 @@ const Header = () => {
                 <div className='flex items-center z-20 mt-2 md:mt-0'>
                   <HeaderCountrySelect />
                   <HeaderSamplingStrategySelect />
-                  <Button
-                    variant={ButtonVariant.SECONDARY}
-                    onClick={() => setShowAdvancedFilteringModal(true)}
-                    className='hidden lg:block'
-                  >
-                    Advanced <FaFilter className='inline' />
-                  </Button>
+                  {exploreUrl && (
+                    <Button
+                      variant={ButtonVariant.SECONDARY}
+                      onClick={() => setShowAdvancedFilteringModal(true)}
+                      className='hidden lg:block'
+                    >
+                      Advanced <FaFilter className='inline' />
+                    </Button>
+                  )}
                   <FilterDropdown />
                 </div>
               </div>
