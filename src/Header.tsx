@@ -141,6 +141,9 @@ const Header = () => {
                 <button onClick={() => setShowAdvancedFilteringModal(true)}>
                   Advanced <FaFilter className='inline' />
                 </button>
+                <a className={getDropdownButtonClasses('/collections')} href='/collections'>
+                  Collections
+                </a>
                 <a className={getDropdownButtonClasses('/stories')} href='/stories'>
                   Stories
                 </a>
@@ -249,6 +252,9 @@ const Header = () => {
               </div>
               <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>
                 <div className='ml-1 flex items-center'>
+                  <a className={getButtonClasses('/collections')} href='/collections'>
+                    Collections
+                  </a>
                   <a className={getButtonClasses('/stories')} href='/stories'>
                     Stories
                   </a>

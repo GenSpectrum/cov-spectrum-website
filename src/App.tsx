@@ -28,6 +28,9 @@ import { FocusPage } from './pages/FocusPage';
 import { formatQcSelectorAsString, isDefaultQcSelector } from './data/QcSelector';
 import { isDefaultHostSelector } from './data/HostSelector';
 import { FaFilter } from 'react-icons/fa';
+import { CollectionOverviewPage } from './pages/CollectionOverviewPage';
+import { CollectionSinglePage } from './pages/CollectionSinglePage';
+import { CollectionAddPage } from './pages/CollectionAddPage';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -135,6 +138,15 @@ export const App = () => {
           </Route>
           <Route path='/stories/:storyId'>
             <StoryRouter />
+          </Route>
+          <Route exact path='/collections'>
+            <CollectionOverviewPage />
+          </Route>
+          <Route exact path='/collections/add'>
+            <CollectionAddPage />
+          </Route>
+          <Route path='/collections/:collectionId'>
+            <CollectionSinglePage />
           </Route>
           <Route path='/about'>
             <AboutPage />
