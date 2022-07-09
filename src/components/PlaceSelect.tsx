@@ -1,24 +1,24 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { getLocation } from '../helpers/get-location';
 import { LocationService } from '../services/LocationService';
 import { useQuery } from '../helpers/query-hook';
 import { Autocomplete, Box, TextField } from '@mui/material';
-import { useExploreUrl } from '../helpers/explore-url';
+import {
+  decodeLocationSelectorFromSingleString,
+  encodeLocationSelectorToSingleString,
+  LocationSelector,
+} from '../data/LocationSelector';
 export interface Props {
-  id?: string;
-  selected: string | undefined;
-  onSelect: (country: string | undefined) => void;
-  onMenuToggle: (show: boolean) => void;
+  selected: LocationSelector;
+  onSelect: (place: LocationSelector) => void;
 }
 
-export const PlaceSelect = ({ onSelect }: Props) => {
-  const exploreUrl = useExploreUrl();
+export const PlaceSelect = ({ onSelect, selected }: Props) => {
   const [value, setValue] = useState<string | null>('');
 
   useEffect(() => {
-    let place: string = getLocation(exploreUrl);
-    setValue(place);
-  });
+    const locationString = encodeLocationSelectorToSingleString(selected);
+    setValue(locationString);
+  }, [selected]);
 
   const places: string[] = useQuery(() => LocationService.getAllLocationNames(), []).data ?? [];
 
@@ -64,7 +64,7 @@ export const PlaceSelect = ({ onSelect }: Props) => {
         onChange={(event: any, newValue: any) => {
           if (newValue !== null && newValue.place) {
             setValue(newValue.place);
-            onSelect(newValue.place);
+            onSelect(decodeLocationSelectorFromSingleString(newValue.place));
           }
         }}
         renderInput={params => (
