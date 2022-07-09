@@ -1,7 +1,7 @@
 import { useHistory, useLocation, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
 import { fetchCollections } from '../data/api';
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Loader from '../components/Loader';
 import { Link } from 'react-router-dom';
 import { Button, ButtonVariant } from '../helpers/ui';
@@ -27,6 +27,9 @@ import Typography from '@mui/material/Typography';
 import { Dataset } from '../data/Dataset';
 import { DateCountSampleEntry } from '../data/sample/DateCountSampleEntry';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
+import { GridCell, PackedGrid } from '../components/PackedGrid';
+import { VariantTimeDistributionChartWidget } from '../widgets/VariantTimeDistributionChartWidget';
+import { SpecialDateRangeSelector } from '../data/DateRangeSelector';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -41,6 +44,7 @@ export const CollectionSingleViewPage = () => {
     const queryParams = new URLSearchParams(queryString);
     return getLocationSelectorFromUrlSearchParams(queryParams);
   }, [queryString]);
+  const dateRangeSelector = new SpecialDateRangeSelector('Past6M'); // TODO
 
   // Fetch collection
   const { data: collections } = useQuery(signal => fetchCollections(signal), []);
@@ -72,10 +76,28 @@ export const CollectionSingleViewPage = () => {
                   location: locationSelector,
                   variant: variant.query,
                   samplingStrategy: SamplingStrategy.AllSamples,
+                  dateRange: dateRangeSelector,
                 },
                 signal
               )
             )
+          )
+        : Promise.resolve(undefined),
+    [variants, locationSelector]
+  );
+  const { data: baselineDateCounts } = useQuery(
+    signal =>
+      variants
+        ? DateCountSampleData.fromApi(
+            {
+              host: undefined,
+              qc: {},
+              location: locationSelector,
+              variant: undefined,
+              samplingStrategy: SamplingStrategy.AllSamples,
+              dateRange: dateRangeSelector,
+            },
+            signal
           )
         : Promise.resolve(undefined),
     [variants, locationSelector]
@@ -117,6 +139,9 @@ export const CollectionSingleViewPage = () => {
           selected={locationSelector}
         />
       </div>
+      <div>
+        Using data from the <strong>past 6 months</strong>
+      </div>
 
       <Box className='mt-4' sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={tab} onChange={(_, i) => setTab(i)}>
@@ -134,7 +159,13 @@ export const CollectionSingleViewPage = () => {
         )}
       </TabPanel>
       <TabPanel value={tab} index={1}>
-        TODO
+        {variants && variantsDateCounts && baselineDateCounts && (
+          <SequencesOverTimeTabContent
+            variants={variants}
+            variantsDateCounts={variantsDateCounts}
+            baselineDateCounts={baselineDateCounts}
+          />
+        )}
       </TabPanel>
     </div>
   );
@@ -192,9 +223,9 @@ const TableTabContent = ({ locationSelector, variants, variantsDateCounts }: Tab
         );
       },
     },
-    { field: 'description', headerName: 'Description', minWidth: 300 },
     { field: 'queryFormatted', headerName: 'Query', minWidth: 300 },
     { field: 'total', headerName: 'Number sequences', minWidth: 150 },
+    { field: 'description', headerName: 'Description', minWidth: 450 },
   ];
 
   const variantTableData = useMemo(() => {
@@ -213,11 +244,46 @@ const TableTabContent = ({ locationSelector, variants, variantsDateCounts }: Tab
     <>
       {variantTableData ? (
         <div className='mt-4'>
-          <DataGrid columns={tableColumns} rows={variantTableData} autoHeight={true} density={'compact'} />
+          <DataGrid
+            columns={tableColumns}
+            rows={variantTableData}
+            autoHeight={true}
+            getRowHeight={() => 'auto'}
+            density={'compact'}
+          />
         </div>
       ) : (
         <Loader />
       )}
+    </>
+  );
+};
+
+type SequencesOverTimeTabContentProps = {
+  variants: { query: VariantSelector; name: string; description: string }[];
+  variantsDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>[];
+  baselineDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>;
+};
+
+const SequencesOverTimeTabContent = ({
+  variants,
+  variantsDateCounts,
+  baselineDateCounts,
+}: SequencesOverTimeTabContentProps) => {
+  return (
+    <>
+      <PackedGrid maxColumns={3}>
+        {variants.map((variant, i) => (
+          <GridCell minWidth={600} key={i}>
+            <VariantTimeDistributionChartWidget.ShareableComponent
+              title={variant.name}
+              height={300}
+              variantSampleSet={variantsDateCounts[i]}
+              wholeSampleSet={baselineDateCounts}
+            />
+          </GridCell>
+        ))}
+      </PackedGrid>
     </>
   );
 };
