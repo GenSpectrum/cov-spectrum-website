@@ -52,6 +52,15 @@ export const put = (endpoint: string, body: unknown, signal?: AbortSignal, strin
   });
 };
 
+export const del = (endpoint: string, signal?: AbortSignal) => {
+  const url = HOST + endpoint;
+  return fetch(url, {
+    method: 'DELETE',
+    headers: getBaseHeaders(),
+    signal,
+  });
+};
+
 export async function fetchCurrentUserCountry(signal?: AbortSignal): Promise<UserCountry> {
   const res = await get('/internal/my-country', signal);
   if (!res.ok) {
@@ -140,8 +149,15 @@ export async function addCollection(collection: Collection): Promise<AddCollecti
 
 export async function updateCollection(collection: Collection, adminKey: string): Promise<void> {
   const url = `/resource/collection/${collection.id}?adminKey=${adminKey}`;
-  console.log(collection);
   const res = await put(url, collection);
+  if (!res.ok) {
+    throw new Error('Error updating collection');
+  }
+}
+
+export async function deleteCollection(id: number, adminKey: string): Promise<void> {
+  const url = `/resource/collection/${id}?adminKey=${adminKey}`;
+  const res = await del(url);
   if (!res.ok) {
     throw new Error('Error updating collection');
   }

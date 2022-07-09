@@ -12,6 +12,10 @@ export const CollectionAddPage = () => {
   const history = useHistory();
 
   const submit = async () => {
+    if (title.length === 0) {
+      // TODO Implement a better input validation
+      return;
+    }
     const response = await addCollection({
       title,
       description,

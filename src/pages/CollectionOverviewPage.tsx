@@ -5,7 +5,10 @@ import { Button, ButtonVariant } from '../helpers/ui';
 import { Link } from 'react-router-dom';
 
 export const CollectionOverviewPage = () => {
-  const { data } = useQuery(signal => fetchCollections(signal), []);
+  const { data } = useQuery(
+    signal => fetchCollections(signal).then(collections => collections.sort((a, b) => b.id! - a.id!)),
+    []
+  );
 
   return (
     <div className='mx-8 my-4'>
@@ -24,7 +27,7 @@ export const CollectionOverviewPage = () => {
         <div>
           <ul className='list-disc'>
             {data.map(c => (
-              <li className='ml-8'>
+              <li className='ml-8' key={c.id}>
                 <Link to={`collections/${c.id}`}>{c.title}</Link> (by {c.maintainers})
               </li>
             ))}

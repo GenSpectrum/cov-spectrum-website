@@ -1,11 +1,24 @@
-import { useLocation, useParams } from 'react-router';
+import { useHistory, useLocation, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
-import { fetchCollections, updateCollection, validateCollectionAdminKey } from '../data/api';
+import {
+  deleteCollection,
+  fetchCollections,
+  updateCollection,
+  validateCollectionAdminKey,
+} from '../data/api';
 import React, { useMemo, useState } from 'react';
 import Loader from '../components/Loader';
 import { Link } from 'react-router-dom';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
-import { TextField } from '@mui/material';
+import {
+  Button as MuiButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
+} from '@mui/material';
 import { Collection } from '../data/Collection';
 import { VariantSearchField } from '../components/VariantSearchField';
 import { VariantSelector } from '../data/VariantSelector';
@@ -50,6 +63,10 @@ export const CollectionSingleAdminPage = () => {
         </Link>
       </div>
     );
+  }
+
+  if (adminKeyIsValid === undefined) {
+    return <Loader />;
   }
 
   if (!adminKeyIsValid) {
@@ -98,6 +115,8 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
   const [maintainers, setMaintainers] = useState(collection.maintainers);
   const [email, setEmail] = useState(collection.email);
   const [variants, setVariants] = useState(collection.variants);
+  const [deletionDialogOpen, setDeletionDialogOpen] = React.useState(false);
+  const history = useHistory();
 
   const variantsParsed = useMemo(
     () =>
@@ -146,6 +165,10 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
   };
 
   const submit = async () => {
+    if (title.length === 0) {
+      // TODO Implement a better input validation
+      return;
+    }
     await updateCollection(
       {
         id: collection.id,
@@ -157,6 +180,13 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
       },
       adminKey
     );
+  };
+
+  const initCollectionDeletion = () => setDeletionDialogOpen(true);
+  const abortCollectionDeletion = () => setDeletionDialogOpen(false);
+  const confirmCollectionDeletion = async () => {
+    await deleteCollection(collection.id!, adminKey);
+    history.push('/collections');
   };
 
   return (
@@ -234,6 +264,33 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
           Add variant
         </Button>
       </div>
+      <h2>Delete collection</h2>
+      <Button variant={ButtonVariant.PRIMARY} className='w-48 mt-8' onClick={initCollectionDeletion}>
+        Delete collection
+      </Button>
+      <Dialog
+        open={deletionDialogOpen}
+        onClose={abortCollectionDeletion}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle id='alert-dialog-title'>Delete Collection?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            Are you sure that you want to delete the collection{' '}
+            <strong>
+              {collection.title} (maintained by {collection.maintainers})
+            </strong>
+            ?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <MuiButton onClick={abortCollectionDeletion} autoFocus>
+            Abort
+          </MuiButton>
+          <MuiButton onClick={confirmCollectionDeletion}>Delete</MuiButton>
+        </DialogActions>
+      </Dialog>
     </>
   );
 };
