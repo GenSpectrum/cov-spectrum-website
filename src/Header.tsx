@@ -79,6 +79,7 @@ const Header = () => {
     username = AccountService.getUsername();
   }
   const location = useLocation();
+  const exploreUrl = useExploreUrl();
 
   const getButtonClasses = (path?: string): string =>
     `${
@@ -138,9 +139,14 @@ const Header = () => {
                     Done
                   </Button>
                 </div>
-                <button onClick={() => setShowAdvancedFilteringModal(true)}>
-                  Advanced <FaFilter className='inline' />
-                </button>
+                {exploreUrl && (
+                  <button onClick={() => setShowAdvancedFilteringModal(true)}>
+                    Advanced <FaFilter className='inline' />
+                  </button>
+                )}
+                <a className={getDropdownButtonClasses('/collections')} href='/collections'>
+                  Collections
+                </a>
                 <a className={getDropdownButtonClasses('/stories')} href='/stories'>
                   Stories
                 </a>
@@ -237,18 +243,23 @@ const Header = () => {
                 <div className='flex items-center z-20 mt-2 md:mt-0'>
                   <HeaderCountrySelect />
                   <HeaderSamplingStrategySelect />
-                  <Button
-                    variant={ButtonVariant.SECONDARY}
-                    onClick={() => setShowAdvancedFilteringModal(true)}
-                    className='hidden lg:block'
-                  >
-                    Advanced <FaFilter className='inline' />
-                  </Button>
+                  {exploreUrl && (
+                    <Button
+                      variant={ButtonVariant.SECONDARY}
+                      onClick={() => setShowAdvancedFilteringModal(true)}
+                      className='hidden lg:block'
+                    >
+                      Advanced <FaFilter className='inline' />
+                    </Button>
+                  )}
                   <FilterDropdown />
                 </div>
               </div>
               <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>
                 <div className='ml-1 flex items-center'>
+                  <a className={getButtonClasses('/collections')} href='/collections'>
+                    Collections
+                  </a>
                   <a className={getButtonClasses('/stories')} href='/stories'>
                     Stories
                   </a>

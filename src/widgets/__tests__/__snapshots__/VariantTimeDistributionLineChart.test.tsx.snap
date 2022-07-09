@@ -138,6 +138,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
             id="metric-tooltip-Proportion"
           >
             <style
+              aria-hidden="true"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "
@@ -288,6 +289,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
             id="metric-tooltip-Confidence int."
           >
             <style
+              aria-hidden="true"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "

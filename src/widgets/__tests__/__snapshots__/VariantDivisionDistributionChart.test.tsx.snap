@@ -355,6 +355,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
             id="metric-tooltip-Prevalence range"
           >
             <style
+              aria-hidden="true"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "
@@ -505,6 +506,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
             id="metric-tooltip-Divisions"
           >
             <style
+              aria-hidden="true"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "
