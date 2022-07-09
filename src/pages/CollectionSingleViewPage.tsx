@@ -1,7 +1,7 @@
 import { useHistory, useLocation, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
 import { fetchCollections } from '../data/api';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Loader from '../components/Loader';
 import { Link } from 'react-router-dom';
 import { Button, ButtonVariant } from '../helpers/ui';
@@ -18,13 +18,22 @@ import {
   addLocationSelectorToUrlSearchParams,
   encodeLocationSelectorToSingleString,
   getLocationSelectorFromUrlSearchParams,
+  LocationSelector,
 } from '../data/LocationSelector';
+import { Box } from '@mui/material';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Typography from '@mui/material/Typography';
+import { Dataset } from '../data/Dataset';
+import { DateCountSampleEntry } from '../data/sample/DateCountSampleEntry';
+import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
   const collectionId = Number.parseInt(collectionIdStr);
   const history = useHistory();
   const locationState = useLocation();
+  const [tab, setTab] = useState(0);
 
   // Parse filters from URL
   const queryString = locationState.search;
@@ -72,22 +81,6 @@ export const CollectionSingleViewPage = () => {
     [variants, locationSelector]
   );
 
-  // Variant table
-  const variantTableData = useMemo(() => {
-    if (!variants || !variantsDateCounts) {
-      return undefined;
-    }
-    return variants.map((variant, i) => {
-      return {
-        id: i,
-        ...variant,
-        name: variant.name.length > 0 ? variant.name : formatVariantDisplayName(variant.query),
-        queryFormatted: formatVariantDisplayName(variant.query),
-        total: variantsDateCounts[i].payload.reduce((prev, curr) => prev + curr.count, 0),
-      };
-    });
-  }, [variants, variantsDateCounts]);
-
   // Rendering
   if (!collections) {
     return <Loader />;
@@ -108,6 +101,76 @@ export const CollectionSingleViewPage = () => {
     );
   }
 
+  return (
+    <div className='mx-8 my-4'>
+      <h1>{collection.title}</h1>
+      <p className='italic'>Maintained by {collection.maintainers}</p>
+      <p className='whitespace-pre-wrap'>{collection.description}</p>
+      <h2>Variants</h2>
+      <div className='w-96'>
+        <PlaceSelect
+          onSelect={selector => {
+            const queryParams = new URLSearchParams();
+            addLocationSelectorToUrlSearchParams(selector, queryParams);
+            history.push(locationState.pathname + '?' + queryParams.toString());
+          }}
+          selected={locationSelector}
+        />
+      </div>
+
+      <Box className='mt-4' sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Tabs value={tab} onChange={(_, i) => setTab(i)}>
+          <Tab label='Table' id='collection-tab-0' />
+          <Tab label='Sequences over time' id='collection-tab-1' />
+        </Tabs>
+      </Box>
+      <TabPanel value={tab} index={0}>
+        {variants && variantsDateCounts && (
+          <TableTabContent
+            locationSelector={locationSelector}
+            variants={variants}
+            variantsDateCounts={variantsDateCounts}
+          />
+        )}
+      </TabPanel>
+      <TabPanel value={tab} index={1}>
+        TODO
+      </TabPanel>
+    </div>
+  );
+};
+
+type TabPanelProps = {
+  children?: React.ReactNode;
+  index: number;
+  value: number;
+};
+
+const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => {
+  return (
+    <div
+      role='tabpanel'
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box sx={{ p: 3 }}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+};
+
+type TableTabContentProps = {
+  locationSelector: LocationSelector;
+  variants: { query: VariantSelector; name: string; description: string }[];
+  variantsDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>[];
+};
+
+const TableTabContent = ({ locationSelector, variants, variantsDateCounts }: TableTabContentProps) => {
   const tableColumns: GridColDef[] = [
     {
       field: 'name',
@@ -134,22 +197,20 @@ export const CollectionSingleViewPage = () => {
     { field: 'total', headerName: 'Number sequences', minWidth: 150 },
   ];
 
+  const variantTableData = useMemo(() => {
+    return variants.map((variant, i) => {
+      return {
+        id: i,
+        ...variant,
+        name: variant.name.length > 0 ? variant.name : formatVariantDisplayName(variant.query),
+        queryFormatted: formatVariantDisplayName(variant.query),
+        total: variantsDateCounts[i].payload.reduce((prev, curr) => prev + curr.count, 0),
+      };
+    });
+  }, [variants, variantsDateCounts]);
+
   return (
-    <div className='mx-8 my-4'>
-      <h1>{collection.title}</h1>
-      <p className='italic'>Maintained by {collection.maintainers}</p>
-      <p className='whitespace-pre-wrap'>{collection.description}</p>
-      <h2>Variants</h2>
-      <div className='w-96'>
-        <PlaceSelect
-          onSelect={selector => {
-            const queryParams = new URLSearchParams();
-            addLocationSelectorToUrlSearchParams(selector, queryParams);
-            history.push(locationState.pathname + '?' + queryParams.toString());
-          }}
-          selected={locationSelector}
-        />
-      </div>
+    <>
       {variantTableData ? (
         <div className='mt-4'>
           <DataGrid columns={tableColumns} rows={variantTableData} autoHeight={true} density={'compact'} />
@@ -157,6 +218,6 @@ export const CollectionSingleViewPage = () => {
       ) : (
         <Loader />
       )}
-    </div>
+    </>
   );
 };
