@@ -8,7 +8,7 @@ import { CountryMapping } from './CountryMapping';
 import { AccountService } from '../services/AccountService';
 import { ReferenceGenomeInfo } from './ReferenceGenomeInfo';
 import { UserCountry } from './UserCountry';
-import { Collection } from './Collection';
+import { AddCollectionResponse, Collection } from './Collection';
 
 const HOST = process.env.REACT_APP_SERVER_HOST;
 
@@ -114,7 +114,16 @@ export async function fetchCollections(signal?: AbortSignal): Promise<Collection
   const url = '/resource/collection';
   const res = await get(url, signal);
   if (!res.ok) {
-    throw new Error('Error fetching reference genome information');
+    throw new Error('Error fetching collection');
   }
   return (await res.json()) as Collection[];
+}
+
+export async function addCollection(collection: Collection): Promise<AddCollectionResponse> {
+  const url = '/resource/collection';
+  const res = await post(url, collection);
+  if (!res.ok) {
+    throw new Error('Error adding collection');
+  }
+  return (await res.json()) as AddCollectionResponse;
 }

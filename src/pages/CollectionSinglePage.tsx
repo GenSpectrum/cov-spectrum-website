@@ -117,7 +117,7 @@ export const CollectionSinglePage = () => {
     <div className='mx-8 my-4'>
       <h1>{collection.title}</h1>
       <p className='italic'>Maintained by {collection.maintainers}</p>
-      <p className='whitespace-pre'>{collection.description}</p>
+      <p className='whitespace-pre-wrap'>{collection.description}</p>
       <h2>Variants</h2>
       <div className='mt-4'>
         <DataGrid columns={tableColumns} rows={variantTableData} autoHeight={true} density={'compact'} />

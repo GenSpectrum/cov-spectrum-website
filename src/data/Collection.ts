@@ -1,5 +1,5 @@
 export type Collection = {
-  id: number;
+  id?: number;
   title: string;
   description: string;
   maintainers: string;
@@ -14,3 +14,8 @@ export type CollectionVariant = {
 };
 
 export type CreateCollectionRequest = Omit<Collection, 'id'>;
+
+export type AddCollectionResponse = {
+  id: number;
+  adminKey: string;
+};
