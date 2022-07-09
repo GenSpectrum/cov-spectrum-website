@@ -125,6 +125,26 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
     setVariants(newVariants);
   };
 
+  const addVariant = () => {
+    const newVariants = [
+      ...variants,
+      {
+        name: '',
+        description: '',
+        query: '{}',
+      },
+    ];
+    setVariants(newVariants);
+  };
+
+  const deleteVariant = (index: number) => {
+    const newVariants = [];
+    for (let i = 0; i < variants.length; i++) {
+      if (i !== index) newVariants.push(variants[i]);
+    }
+    setVariants(newVariants);
+  };
+
   const submit = async () => {
     await updateCollection(
       {
@@ -180,7 +200,10 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
       <h2>Variants</h2>
       <div className='mt-4'>
         {variantsParsed.map((variant, i) => (
-          <div className='flex flex-col bg-blue-50 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-800'>
+          <div
+            key={i}
+            className='flex flex-col bg-blue-50 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-800'
+          >
             <TextField
               label='Name'
               variant='standard'
@@ -202,8 +225,14 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
               onVariantSelect={newSelection => changeVariant('query', JSON.stringify(newSelection), i)}
               triggerSearch={() => {}}
             />
+            <Button variant={ButtonVariant.PRIMARY} className='w-48 mt-8' onClick={() => deleteVariant(i)}>
+              Delete variant
+            </Button>
           </div>
         ))}
+        <Button variant={ButtonVariant.PRIMARY} className='w-48 mt-8' onClick={() => addVariant()}>
+          Add variant
+        </Button>
       </div>
     </>
   );
