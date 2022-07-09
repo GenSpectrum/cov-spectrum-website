@@ -32,12 +32,22 @@ export const get = (endpoint: string, signal?: AbortSignal) => {
   });
 };
 
-export const post = (endpoint: string, body: unknown, signal?: AbortSignal) => {
+export const post = (endpoint: string, body: unknown, signal?: AbortSignal, stringifyBody = true) => {
   const url = HOST + endpoint;
   return fetch(url, {
     method: 'POST',
     headers: getBaseHeaders(),
-    body: JSON.stringify(body),
+    body: stringifyBody ? JSON.stringify(body) : (body as any),
+    signal,
+  });
+};
+
+export const put = (endpoint: string, body: unknown, signal?: AbortSignal, stringifyBody = true) => {
+  const url = HOST + endpoint;
+  return fetch(url, {
+    method: 'PUT',
+    headers: getBaseHeaders(),
+    body: stringifyBody ? JSON.stringify(body) : (body as any),
     signal,
   });
 };
@@ -126,4 +136,22 @@ export async function addCollection(collection: Collection): Promise<AddCollecti
     throw new Error('Error adding collection');
   }
   return (await res.json()) as AddCollectionResponse;
+}
+
+export async function updateCollection(collection: Collection, adminKey: string): Promise<void> {
+  const url = `/resource/collection/${collection.id}?adminKey=${adminKey}`;
+  console.log(collection);
+  const res = await put(url, collection);
+  if (!res.ok) {
+    throw new Error('Error updating collection');
+  }
+}
+
+export async function validateCollectionAdminKey(id: number, adminKey: string): Promise<boolean> {
+  const url = `/resource/collection/${id}/validate-admin-key`;
+  const res = await post(url, adminKey, undefined, false);
+  if (!res.ok) {
+    throw new Error('Error validating admin key');
+  }
+  return (await res.json()) as boolean;
 }

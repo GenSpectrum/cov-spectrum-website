@@ -29,8 +29,8 @@ import { formatQcSelectorAsString, isDefaultQcSelector } from './data/QcSelector
 import { isDefaultHostSelector } from './data/HostSelector';
 import { FaFilter } from 'react-icons/fa';
 import { CollectionOverviewPage } from './pages/CollectionOverviewPage';
-import { CollectionSinglePage } from './pages/CollectionSinglePage';
 import { CollectionAddPage } from './pages/CollectionAddPage';
+import { CollectionSinglePage } from './pages/CollectionSinglePage';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
