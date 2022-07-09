@@ -69,6 +69,7 @@ exports[`<Metric> renders correctly 1`] = `
     id="metric-tooltip-Proportion"
   >
     <style
+      aria-hidden="true"
       dangerouslySetInnerHTML={
         Object {
           "__html": "
