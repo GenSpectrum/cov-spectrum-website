@@ -1,12 +1,14 @@
 import { useLocation, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
 import { fetchCollections, updateCollection, validateCollectionAdminKey } from '../data/api';
-import { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Loader from '../components/Loader';
 import { Link } from 'react-router-dom';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 import { TextField } from '@mui/material';
 import { Collection } from '../data/Collection';
+import { VariantSearchField } from '../components/VariantSearchField';
+import { VariantSelector } from '../data/VariantSelector';
 
 export const CollectionSingleAdminPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -97,6 +99,32 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
   const [email, setEmail] = useState(collection.email);
   const [variants, setVariants] = useState(collection.variants);
 
+  const variantsParsed = useMemo(
+    () =>
+      variants.map(v => ({
+        ...v,
+        selector: JSON.parse(v.query) as VariantSelector,
+      })),
+    [variants]
+  );
+
+  const changeVariant = (attr: 'name' | 'description' | 'query', value: string, index: number) => {
+    if (variants[index][attr] === value) {
+      return;
+    }
+    const newVariants = [];
+    for (let i = 0; i < variants.length; i++) {
+      if (i !== index) newVariants.push(variants[i]);
+      else {
+        newVariants.push({
+          ...variants[i],
+          [attr]: value,
+        });
+      }
+    }
+    setVariants(newVariants);
+  };
+
   const submit = async () => {
     await updateCollection(
       {
@@ -113,6 +141,9 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
 
   return (
     <>
+      <Button variant={ButtonVariant.PRIMARY} className='w-48 mt-8' onClick={() => submit()}>
+        Save changes
+      </Button>
       <div className='flex flex-col' style={{ maxWidth: 400 }}>
         <TextField
           label='Title'
@@ -145,12 +176,35 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
           onChange={e => setEmail(e.target.value)}
         />
       </div>
-      <Button variant={ButtonVariant.PRIMARY} className='w-48 mt-8' onClick={() => submit()}>
-        Save changes
-      </Button>
 
       <h2>Variants</h2>
-      <div className='mt-4'></div>
+      <div className='mt-4'>
+        {variantsParsed.map((variant, i) => (
+          <div className='flex flex-col bg-blue-50 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-800'>
+            <TextField
+              label='Name'
+              variant='standard'
+              className='mt-4'
+              value={variant.name}
+              onChange={e => changeVariant('name', e.target.value, i)}
+            />
+            <TextField
+              label='Description'
+              variant='standard'
+              className='my-4'
+              value={variant.description}
+              onChange={e => changeVariant('description', e.target.value, i)}
+            />
+            <VariantSearchField
+              key={i}
+              isSimple={false}
+              currentSelection={variant.selector}
+              onVariantSelect={newSelection => changeVariant('query', JSON.stringify(newSelection), i)}
+              triggerSearch={() => {}}
+            />
+          </div>
+        ))}
+      </div>
     </>
   );
 };
