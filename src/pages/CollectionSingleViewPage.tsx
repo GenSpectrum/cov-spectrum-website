@@ -1,7 +1,7 @@
 import { useHistory, useLocation, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
 import { fetchCollections } from '../data/api';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import Loader from '../components/Loader';
 import { Link } from 'react-router-dom';
 import { Button, ButtonVariant } from '../helpers/ui';
@@ -30,6 +30,9 @@ import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import { VariantTimeDistributionChartWidget } from '../widgets/VariantTimeDistributionChartWidget';
 import { SpecialDateRangeSelector } from '../data/DateRangeSelector';
+import { Chen2021FitnessResponse, ValueWithCI } from '../models/chen2021Fitness/chen2021Fitness-types';
+import { PromiseQueue } from '../helpers/PromiseQueue';
+import { getModelData } from '../models/chen2021Fitness/loading';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -150,11 +153,12 @@ export const CollectionSingleViewPage = () => {
         </Tabs>
       </Box>
       <TabPanel value={tab} index={0}>
-        {variants && variantsDateCounts && (
+        {variants && variantsDateCounts && baselineDateCounts && (
           <TableTabContent
             locationSelector={locationSelector}
             variants={variants}
             variantsDateCounts={variantsDateCounts}
+            wholeDateCounts={baselineDateCounts}
           />
         )}
       </TabPanel>
@@ -199,9 +203,31 @@ type TableTabContentProps = {
   locationSelector: LocationSelector;
   variants: { query: VariantSelector; name: string; description: string }[];
   variantsDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>[];
+  wholeDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>;
 };
 
-const TableTabContent = ({ locationSelector, variants, variantsDateCounts }: TableTabContentProps) => {
+const TableTabContent = ({
+  locationSelector,
+  variants,
+  variantsDateCounts,
+  wholeDateCounts,
+}: TableTabContentProps) => {
+  // Fetch relative growth advantage
+  const [relativeAdvantages, setRelativeAdvantages] = useState<(Chen2021FitnessResponse | undefined)[]>([]);
+  useEffect(() => {
+    const fetchQueue = new PromiseQueue();
+    for (let variantDateCounts of variantsDateCounts) {
+      fetchQueue.addTask(() =>
+        getModelData(variantDateCounts, wholeDateCounts, { generationTime: 7 }).then(({ response }) => {
+          setRelativeAdvantages(prev => [...prev, response]);
+        })
+      );
+    }
+  }, [variantsDateCounts, wholeDateCounts, setRelativeAdvantages]);
+
+  console.log(relativeAdvantages);
+
+  // Table definition and data
   const tableColumns: GridColDef[] = [
     {
       field: 'name',
@@ -225,20 +251,34 @@ const TableTabContent = ({ locationSelector, variants, variantsDateCounts }: Tab
     },
     { field: 'queryFormatted', headerName: 'Query', minWidth: 300 },
     { field: 'total', headerName: 'Number sequences', minWidth: 150 },
+    { field: 'advantage', headerName: 'Relative growth advantage', minWidth: 200 },
+    { field: 'advantageCiLower', headerName: 'CI (low)', minWidth: 100 },
+    { field: 'advantageCiUpper', headerName: 'CI (high)', minWidth: 100 },
     { field: 'description', headerName: 'Description', minWidth: 450 },
   ];
 
   const variantTableData = useMemo(() => {
     return variants.map((variant, i) => {
+      const advantage =
+        relativeAdvantages.length > i ? relativeAdvantages[i]?.params.fd ?? 'failed' : undefined;
+      let errorMessage: string | undefined = undefined;
+      if (advantage === 'failed') {
+        errorMessage = "Can't be calculated";
+      } else if (!advantage) {
+        errorMessage = 'Calculating...';
+      }
       return {
         id: i,
         ...variant,
         name: variant.name.length > 0 ? variant.name : formatVariantDisplayName(variant.query),
         queryFormatted: formatVariantDisplayName(variant.query),
         total: variantsDateCounts[i].payload.reduce((prev, curr) => prev + curr.count, 0),
+        advantage: errorMessage ?? ((advantage as ValueWithCI).value * 100).toFixed(2) + '%',
+        advantageCiLower: errorMessage ? '...' : ((advantage as ValueWithCI).ciLower * 100).toFixed(2) + '%',
+        advantageCiUpper: errorMessage ? '...' : ((advantage as ValueWithCI).ciUpper * 100).toFixed(2) + '%',
       };
     });
-  }, [variants, variantsDateCounts]);
+  }, [variants, variantsDateCounts, relativeAdvantages]);
 
   return (
     <>

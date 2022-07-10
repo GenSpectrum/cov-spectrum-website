@@ -189,3 +189,31 @@ export const useModelData = (
         : undefined,
   };
 };
+
+export const getModelData = async (
+  variantDateCounts: DateCountSampleDataset,
+  wholeDateCounts: DateCountSampleDataset,
+  config?: Chen2021FitnessRequestConfigPartial,
+  signal?: AbortSignal
+): Promise<{
+  response: Chen2021FitnessResponse | undefined;
+  request: Chen2021FitnessRequest;
+  t0: UnifiedDay;
+}> => {
+  // Create request
+  const data = transformToRequestData(variantDateCounts, wholeDateCounts);
+  const request = fillRequestWithDefaults(data.request, config);
+  const t0 = data.t0;
+
+  // Fetch data
+  let modelData = undefined;
+  try {
+    modelData = await getData(request, t0, signal);
+  } catch (_) {}
+
+  return {
+    request,
+    response: modelData,
+    t0,
+  };
+};
