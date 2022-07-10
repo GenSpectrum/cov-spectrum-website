@@ -217,11 +217,22 @@ const TableTabContent = ({
   useEffect(() => {
     const fetchQueue = new PromiseQueue();
     for (let variantDateCounts of variantsDateCounts) {
-      fetchQueue.addTask(() =>
-        getModelData(variantDateCounts, wholeDateCounts, { generationTime: 7 }).then(({ response }) => {
-          setRelativeAdvantages(prev => [...prev, response]);
-        })
-      );
+      const totalSequences = variantDateCounts.payload.reduce((prev, curr) => prev + curr.count, 0);
+      fetchQueue.addTask(() => {
+        if (totalSequences > 0) {
+          return getModelData(variantDateCounts, wholeDateCounts, { generationTime: 7 }).then(
+            ({ response }) => {
+              setRelativeAdvantages(prev => [...prev, response]);
+            }
+          );
+        } else {
+          // No need to calculate the advantage if there is no available sequence
+          return new Promise<void>(resolve => {
+            setRelativeAdvantages(prev => [...prev, undefined]);
+            resolve();
+          });
+        }
+      });
     }
   }, [variantsDateCounts, wholeDateCounts, setRelativeAdvantages]);
 
