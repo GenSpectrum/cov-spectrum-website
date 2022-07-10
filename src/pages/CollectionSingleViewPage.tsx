@@ -230,7 +230,7 @@ const TableTabContent = ({
     {
       field: 'name',
       headerName: 'Name',
-      minWidth: 150,
+      minWidth: 200,
       renderCell: (params: GridRenderCellParams<string>) => {
         const query = params.row.query;
         const urlParams = new URLSearchParams();
@@ -238,9 +238,7 @@ const TableTabContent = ({
         const placeString = encodeLocationSelectorToSingleString(locationSelector);
         return params.value ? (
           <Link to={`/explore/${placeString}/AllSamples/Past6M/variants?${urlParams.toString()}`}>
-            <button className='underline'>
-              <span className='w-60 text-ellipsis overflow-hidden block text-left'>{params.value}</span>
-            </button>
+            <button className='underline'>{params.value}</button>
           </Link>
         ) : (
           <></>
