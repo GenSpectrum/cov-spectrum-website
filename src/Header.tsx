@@ -153,21 +153,6 @@ const Header = () => {
                 <a className={getDropdownButtonClasses('/about')} href='/about'>
                   About
                 </a>
-                {username === null ? (
-                  <a className={getDropdownButtonClasses('/login')} href='/login'>
-                    Login
-                  </a>
-                ) : (
-                  <a
-                    className={getDropdownButtonClasses()}
-                    href='/login?left'
-                    onClick={() => {
-                      AccountService.logout();
-                    }}
-                  >
-                    Logout {username}
-                  </a>
-                )}
                 <a
                   className={getDropdownButtonClasses('')}
                   href='https://twitter.com/genSpectrum'
@@ -266,21 +251,6 @@ const Header = () => {
                   <a className={getButtonClasses('/about')} href='/about'>
                     About
                   </a>
-                  {username === null ? (
-                    <a className={getButtonClasses('/login')} href='/login'>
-                      Login
-                    </a>
-                  ) : (
-                    <a
-                      className={getButtonClasses()}
-                      href='/login?left'
-                      onClick={() => {
-                        AccountService.logout();
-                      }}
-                    >
-                      Logout {username}
-                    </a>
-                  )}
                   <ExternalLink url='https://twitter.com/covSpectrum'>
                     <AiOutlineTwitter
                       className='hidden md:block fill-current rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8 hover:opacity-70'
