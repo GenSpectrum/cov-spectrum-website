@@ -10,7 +10,7 @@ import {
   formatVariantDisplayName,
   VariantSelector,
 } from '../data/VariantSelector';
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, GridColDef, GridComparatorFn, GridRenderCellParams } from '@mui/x-data-grid';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 import { PlaceSelect } from '../components/PlaceSelect';
@@ -225,8 +225,6 @@ const TableTabContent = ({
     }
   }, [variantsDateCounts, wholeDateCounts, setRelativeAdvantages]);
 
-  console.log(relativeAdvantages);
-
   // Table definition and data
   const tableColumns: GridColDef[] = [
     {
@@ -251,9 +249,24 @@ const TableTabContent = ({
     },
     { field: 'queryFormatted', headerName: 'Query', minWidth: 300 },
     { field: 'total', headerName: 'Number sequences', minWidth: 150 },
-    { field: 'advantage', headerName: 'Relative growth advantage', minWidth: 200 },
-    { field: 'advantageCiLower', headerName: 'CI (low)', minWidth: 100 },
-    { field: 'advantageCiUpper', headerName: 'CI (high)', minWidth: 100 },
+    {
+      field: 'advantage',
+      headerName: 'Relative growth advantage',
+      minWidth: 200,
+      sortComparator: sortRelativeGrowthAdvantageValues,
+    },
+    {
+      field: 'advantageCiLower',
+      headerName: 'CI (low)',
+      minWidth: 100,
+      sortComparator: sortRelativeGrowthAdvantageValues,
+    },
+    {
+      field: 'advantageCiUpper',
+      headerName: 'CI (high)',
+      minWidth: 100,
+      sortComparator: sortRelativeGrowthAdvantageValues,
+    },
     { field: 'description', headerName: 'Description', minWidth: 450 },
   ];
 
@@ -303,6 +316,21 @@ type SequencesOverTimeTabContentProps = {
   variants: { query: VariantSelector; name: string; description: string }[];
   variantsDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>[];
   baselineDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>;
+};
+
+const sortRelativeGrowthAdvantageValues: GridComparatorFn<string> = (a, b) => {
+  if (!a.endsWith('%') && !b.endsWith('%')) {
+    return 0;
+  }
+  if (!a.endsWith('%')) {
+    return -1;
+  }
+  if (!b.endsWith('%')) {
+    return 1;
+  }
+  const aNumber = Number.parseFloat(a.substr(0, a.length - 1));
+  const bNumber = Number.parseFloat(b.substr(0, a.length - 1));
+  return aNumber - bNumber;
 };
 
 const SequencesOverTimeTabContent = ({
