@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
-import { AccountService } from './services/AccountService';
 import { ExternalLink } from './components/ExternalLink';
 import { AiOutlineGithub, AiOutlineTwitter } from 'react-icons/ai';
 import { FaExchangeAlt, FaFilter } from 'react-icons/fa';
@@ -73,11 +72,6 @@ const BackToExplore = () => {
 const Header = () => {
   const [showAdvancedFilteringModal, setShowAdvancedFilteringModal] = useState(false);
 
-  const loggedIn = AccountService.isLoggedIn();
-  let username: string | null | undefined = null;
-  if (loggedIn) {
-    username = AccountService.getUsername();
-  }
   const location = useLocation();
   const exploreUrl = useExploreUrl();
 
