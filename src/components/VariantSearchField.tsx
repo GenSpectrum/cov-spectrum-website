@@ -113,7 +113,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   useEffect(() => {
     if (exploreUrl) {
-      console.log(JSON.stringify(exploreUrl));
       setAdvancedSearch(true);
       if (exploreUrl.variant) {
         let values: SearchOption[] = [];
