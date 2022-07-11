@@ -11,6 +11,7 @@ import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 import Form from 'react-bootstrap/Form';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 import { getEquivalent, translateMutation } from '../helpers/autocomplete-helpers';
+import { useExploreUrl } from '../helpers/explore-url';
 
 type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
 
@@ -85,8 +86,9 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   );
   const [inputValue, setInputValue] = useState<string>('');
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
-  const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? inputValue);
+  const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? '');
   const [advancedSearch, setAdvancedSearch] = useState(!!currentSelection?.variantQuery);
+  const exploreUrl = useExploreUrl();
 
   const pangoLineages = useQuery(
     signal =>
@@ -108,6 +110,38 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       }
     }
   }, [currentSelection]);
+
+  useEffect(() => {
+    if (exploreUrl) {
+      console.log(JSON.stringify(exploreUrl));
+      setAdvancedSearch(true);
+      if (exploreUrl.variant) {
+        let values: SearchOption[] = [];
+        if (exploreUrl.variant.pangoLineage) {
+          values.push({
+            label: exploreUrl.variant.pangoLineage,
+            value: exploreUrl.variant.pangoLineage,
+            type: 'pango-lineage',
+          });
+          if (exploreUrl.variant.nucMutations) {
+            for (let i of exploreUrl.variant.nucMutations) {
+              values.push({ label: i, value: i, type: 'nuc-mutation' });
+            }
+          }
+          if (exploreUrl.variant.aaMutations) {
+            for (let i of exploreUrl.variant.aaMutations) {
+              values.push({ label: i, value: i, type: 'aa-mutation' });
+            }
+          }
+        }
+        setSelectedOptions(values);
+        setVariantQuery(selectedOptions.map(i => i.value).join(' & '));
+      }
+      if (exploreUrl.variant?.variantQuery) {
+        setVariantQuery(exploreUrl.variant.variantQuery);
+      }
+    }
+  }, [currentSelection, exploreUrl?.focusKey, exploreUrl?.variant]);
 
   const suggestPangolinLineages = (query: string): string[] => {
     return (pangoLineages.data ?? []).filter(pl => pl.toUpperCase().startsWith(query.toUpperCase()));
@@ -349,6 +383,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   return (
     <div>
+      {inputValue}
       <form
         className='w-full flex flex-row items-center'
         onSubmit={e => {
