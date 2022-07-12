@@ -88,6 +88,8 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
   const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? '');
   const [advancedSearch, setAdvancedSearch] = useState(!!currentSelection?.variantQuery);
+
+  //const [url, _] = useState<string>(window.location.href);
   const exploreUrl = useExploreUrl();
 
   const pangoLineages = useQuery(
@@ -113,7 +115,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   useEffect(() => {
     if (exploreUrl) {
-      setAdvancedSearch(true);
       if (exploreUrl.variant) {
         let values: SearchOption[] = [];
         if (exploreUrl.variant.pangoLineage) {
@@ -133,14 +134,15 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
             }
           }
         }
+        setAdvancedSearch(false);
         setSelectedOptions(values);
-        setVariantQuery(selectedOptions.map(i => i.value).join(' & '));
       }
       if (exploreUrl.variant?.variantQuery) {
+        setAdvancedSearch(true);
         setVariantQuery(exploreUrl.variant.variantQuery);
       }
     }
-  }, [currentSelection, exploreUrl?.focusKey, exploreUrl?.variant]);
+  }, [currentSelection, exploreUrl?.focusKey]);
 
   const suggestPangolinLineages = (query: string): string[] => {
     return (pangoLineages.data ?? []).filter(pl => pl.toUpperCase().startsWith(query.toUpperCase()));
@@ -382,7 +384,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   return (
     <div>
-      {inputValue}
       <form
         className='w-full flex flex-row items-center'
         onSubmit={e => {
