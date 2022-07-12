@@ -2,8 +2,8 @@ import { DateCountSampleDataset } from '../data/sample/DateCountSampleDataset';
 import { UnifiedDay } from '../helpers/date-cache';
 import { fillAndFilterFromDailyMap } from '../helpers/fill-missing';
 import { ChartAndMetricsWrapper, ChartWrapper, Wrapper } from './common';
-import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import React from 'react';
+import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import React, { useState } from 'react';
 import chroma from 'chroma-js';
 import { getTicks } from '../helpers/ticks';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
@@ -12,6 +12,18 @@ import dayjs from 'dayjs';
 import { useMemo } from 'react';
 import { formatDate } from './VariantTimeDistributionLineChartInner';
 import { AnalysisMode } from '../data/AnalysisMode';
+import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+
+function hexToRGB(hex: string, alpha: number) {
+  let r = parseInt(hex.slice(1, 3), 16),
+    g = parseInt(hex.slice(3, 5), 16),
+    b = parseInt(hex.slice(5, 7), 16);
+  if (alpha) {
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + alpha + ')';
+  } else {
+    return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+  }
+}
 
 export type MultiVariantTimeDistributionLineChartProps = {
   variantSampleSets: DateCountSampleDataset[];
@@ -24,6 +36,7 @@ export const MultiVariantTimeDistributionLineChart = ({
   wholeSampleSet,
   analysisMode,
 }: MultiVariantTimeDistributionLineChartProps) => {
+  const [showCI, setShowCI] = useState<boolean>(true);
   const { plotData, ticks } = useMemo(() => {
     // fill in dates with zero samples and merge sample sets
     const numberOfVariants = variantSampleSets.length;
@@ -102,6 +115,7 @@ export const MultiVariantTimeDistributionLineChart = ({
         const wilsonInterval = calculateWilsonInterval(variantCount, d.sequenced);
         pd[`variantProportionCILower${i}`] = Math.max(wilsonInterval[0], 0);
         pd[`variantProportionCIUpper${i}`] = Math.max(wilsonInterval[1], 0);
+        pd[`CI${i}`] = [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)];
         pd[`variantName${i}`] = formatVariantDisplayName(variantSampleSets[i].selector.variant!);
       }
 
@@ -126,10 +140,20 @@ export const MultiVariantTimeDistributionLineChart = ({
     return max === 0 ? 1 : max;
   }
 
-  const yMax: number = getYMax(plotData) <= 0.0005 && getYMax(plotData) > 0 ? 0.0005 : getYMax(plotData);
+  const colors = variantSampleSets.map(() => chroma.random().darken().hex());
 
+  const yMax: number = getYMax(plotData) <= 0.0005 && getYMax(plotData) > 0 ? 0.0005 : getYMax(plotData);
   return (
     <Wrapper>
+      {analysisMode !== AnalysisMode.CompareToBaseline && (
+        <FormGroup>
+          <FormControlLabel
+            control={<Checkbox defaultChecked checked={showCI} onChange={() => setShowCI(!showCI)} />}
+            label='Show CI'
+          />
+        </FormGroup>
+      )}
+
       <ChartAndMetricsWrapper>
         <ChartWrapper>
           <ResponsiveContainer>
@@ -180,13 +204,28 @@ export const MultiVariantTimeDistributionLineChart = ({
                     type='monotone'
                     dataKey={`variantProportion${index}`}
                     strokeWidth={3}
-                    stroke={lineColor}
+                    stroke={colors[index]}
                     dot={false}
                     isAnimationActive={false}
                     key={index}
                   />
                 );
               })}
+              {showCI &&
+                variantSampleSets.map((_, index) => {
+                  return (
+                    <Area
+                      yAxisId='variant-proportion'
+                      xAxisId='date'
+                      type='monotone'
+                      dataKey={`CI${index}`}
+                      fill={hexToRGB(colors[index], 0.5)}
+                      stroke='transparent'
+                      isAnimationActive={false}
+                      key={index + 10}
+                    />
+                  );
+                })}
             </ComposedChart>
           </ResponsiveContainer>
         </ChartWrapper>
