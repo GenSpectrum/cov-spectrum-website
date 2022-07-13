@@ -133,16 +133,18 @@ export const MultiVariantTimeDistributionLineChart = ({
     for (let i = 0; i < variantSampleSets.length; i++) {
       for (let item of pd) {
         if (item[`variantProportion${i}`] > max) {
-          max = item[`variantProportion${i}`];
+          max = Math.min(item[`variantProportion${i}`] * 1.5, item[`variantProportionCIUpper${i}`]);
         }
       }
     }
-    return max === 0 ? 1 : max;
+
+    return max;
   }
 
   const colors = variantSampleSets.map(() => chroma.random().darken().hex());
 
-  const yMax: number = getYMax(plotData) <= 0.0005 && getYMax(plotData) > 0 ? 0.0005 : getYMax(plotData);
+  const yMax: number = getYMax(plotData);
+
   return (
     <Wrapper>
       {analysisMode !== AnalysisMode.CompareToBaseline && (
@@ -172,7 +174,24 @@ export const MultiVariantTimeDistributionLineChart = ({
                 yAxisId='variant-proportion'
                 scale='auto'
                 domain={[0, yMax]}
+                allowDataOverflow
               />
+
+              {showCI &&
+                variantSampleSets.map((_, index) => {
+                  return (
+                    <Area
+                      yAxisId='variant-proportion'
+                      xAxisId='date'
+                      type='monotone'
+                      dataKey={`CI${index}`}
+                      fill={hexToRGB(colors[index], 0.5)}
+                      stroke='transparent'
+                      isAnimationActive={false}
+                      key={index + 10}
+                    />
+                  );
+                })}
               <Tooltip
                 formatter={(value: number, name: string, props: any) => {
                   const index = Number.parseInt(name.replaceAll('variantProportion', ''));
@@ -196,7 +215,6 @@ export const MultiVariantTimeDistributionLineChart = ({
                 labelFormatter={label => 'Date: ' + formatDateToWindow(label)}
               />
               {variantSampleSets.map((_, index) => {
-                const lineColor = chroma.random().darken().hex();
                 return (
                   <Line
                     yAxisId='variant-proportion'
@@ -211,21 +229,6 @@ export const MultiVariantTimeDistributionLineChart = ({
                   />
                 );
               })}
-              {showCI &&
-                variantSampleSets.map((_, index) => {
-                  return (
-                    <Area
-                      yAxisId='variant-proportion'
-                      xAxisId='date'
-                      type='monotone'
-                      dataKey={`CI${index}`}
-                      fill={hexToRGB(colors[index], 0.5)}
-                      stroke='transparent'
-                      isAnimationActive={false}
-                      key={index + 10}
-                    />
-                  );
-                })}
             </ComposedChart>
           </ResponsiveContainer>
         </ChartWrapper>
