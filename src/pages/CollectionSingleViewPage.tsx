@@ -67,44 +67,34 @@ export const CollectionSingleViewPage = () => {
   );
 
   // Fetch data about the variants
-  const { data: variantsDateCounts } = useQuery(
-    signal =>
-      variants
-        ? Promise.all(
-            variants.map(variant =>
-              DateCountSampleData.fromApi(
-                {
-                  host: undefined,
-                  qc: {},
-                  location: locationSelector,
-                  variant: variant.query,
-                  samplingStrategy: SamplingStrategy.AllSamples,
-                  dateRange: dateRangeSelector,
-                },
-                signal
-              )
-            )
-          )
-        : Promise.resolve(undefined),
-    [variants, locationSelector]
-  );
-  const { data: baselineDateCounts } = useQuery(
-    signal =>
-      variants
-        ? DateCountSampleData.fromApi(
+  const { data } = useQuery(
+    async signal => {
+      if (!variants) {
+        return undefined;
+      }
+      const [baselineDateCounts, ...variantsDateCounts] = await Promise.all(
+        [{ query: {} }, ...variants].map(variant =>
+          DateCountSampleData.fromApi(
             {
               host: undefined,
               qc: {},
               location: locationSelector,
-              variant: undefined,
+              variant: variant.query,
               samplingStrategy: SamplingStrategy.AllSamples,
               dateRange: dateRangeSelector,
             },
             signal
           )
-        : Promise.resolve(undefined),
+        )
+      );
+      return { baselineDateCounts, variantsDateCounts };
+    },
     [variants, locationSelector]
   );
+  const { baselineDateCounts, variantsDateCounts } = data ?? {
+    baselineDateCounts: undefined,
+    variantsDateCounts: undefined,
+  };
 
   // Rendering
   if (!collections) {
