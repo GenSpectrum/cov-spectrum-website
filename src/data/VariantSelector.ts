@@ -145,7 +145,7 @@ export function variantIsAllLineages(selector: VariantSelector): boolean {
   ] as const) {
     const fieldValue = selector[f];
     if (fieldValue !== undefined) {
-      if (f === 'aaMutations' || f === 'nucMutations') {
+      if (f === 'aaMutations' || f === 'nucMutations' || f === 'variantQuery') {
         if (fieldValue.length === 0) {
           continue;
         }
