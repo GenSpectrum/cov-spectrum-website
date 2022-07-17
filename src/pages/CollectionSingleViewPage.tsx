@@ -8,6 +8,8 @@ import { Button, ButtonVariant } from '../helpers/ui';
 import {
   addVariantSelectorToUrlSearchParams,
   formatVariantDisplayName,
+  transformToVariantQuery,
+  variantIsAllLineages,
   VariantSelector,
 } from '../data/VariantSelector';
 import { DataGrid, GridColDef, GridComparatorFn, GridRenderCellParams } from '@mui/x-data-grid';
@@ -33,10 +35,14 @@ import { SpecialDateRangeSelector } from '../data/DateRangeSelector';
 import { Chen2021FitnessResponse, ValueWithCI } from '../models/chen2021Fitness/chen2021Fitness-types';
 import { PromiseQueue } from '../helpers/PromiseQueue';
 import { getModelData } from '../models/chen2021Fitness/loading';
+import { VariantSearchField } from '../components/VariantSearchField';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
   const collectionId = Number.parseInt(collectionIdStr);
+  const [baselineVariant, setBaselineVariant] = useState<VariantSelector>({});
+  // The following variable stores the visual value in the input field which is not necessarily already the applied
+  const [baselineVariantInput, setBaselineVariantInput] = useState<VariantSelector>({});
   const history = useHistory();
   const locationState = useLocation();
   const [tab, setTab] = useState(0);
@@ -67,43 +73,67 @@ export const CollectionSingleViewPage = () => {
   );
 
   // Fetch data about the variants
-  const { data: variantsDateCounts } = useQuery(
-    signal =>
-      variants
-        ? Promise.all(
-            variants.map(variant =>
-              DateCountSampleData.fromApi(
-                {
-                  host: undefined,
-                  qc: {},
-                  location: locationSelector,
-                  variant: variant.query,
-                  samplingStrategy: SamplingStrategy.AllSamples,
-                  dateRange: dateRangeSelector,
-                },
-                signal
-              )
-            )
-          )
-        : Promise.resolve(undefined),
-    [variants, locationSelector]
-  );
-  const { data: baselineDateCounts } = useQuery(
-    signal =>
-      variants
-        ? DateCountSampleData.fromApi(
+  const { data: baselineAndVariantsDateCounts } = useQuery(
+    async signal => {
+      if (!variants) {
+        return undefined;
+      }
+      const [baselineDateCounts, ...variantsDateCounts] = await Promise.all(
+        [{ query: baselineVariant }, ...variants].map(variant =>
+          DateCountSampleData.fromApi(
             {
               host: undefined,
               qc: {},
               location: locationSelector,
-              variant: undefined,
+              variant: variant.query,
               samplingStrategy: SamplingStrategy.AllSamples,
               dateRange: dateRangeSelector,
             },
             signal
           )
-        : Promise.resolve(undefined),
-    [variants, locationSelector]
+        )
+      );
+      return { baselineDateCounts, variantsDateCounts };
+    },
+    [variants, locationSelector, baselineVariant]
+  );
+  const { baselineDateCounts, variantsDateCounts } = baselineAndVariantsDateCounts ?? {
+    baselineDateCounts: undefined,
+    variantsDateCounts: undefined,
+  };
+  // If no baseline variant is selected, baselineDateCounts includes all lineages. Then, the wholeDateCounts (which are relevant for the relative advantage calculation) for all
+  // variants in the collection is just that. If a baseline is selected, the wholeDateCounts for a variant is the union
+  // of the baseline variant and the focal variant.
+  // In following, we fetch the wholeDateCounts if necessary.
+  const { data: allWholeDateCounts } = useQuery(
+    async signal => {
+      if (!variants || !baselineDateCounts) {
+        return undefined;
+      }
+      if (variantIsAllLineages(baselineVariant)) {
+        return variants.map(_ => baselineDateCounts);
+      }
+      return Promise.all(
+        variants.map(variant =>
+          DateCountSampleData.fromApi(
+            {
+              host: undefined,
+              qc: {},
+              location: locationSelector,
+              variant: {
+                variantQuery: `(${transformToVariantQuery(variant.query)})  | (${transformToVariantQuery(
+                  baselineVariant
+                )})`,
+              },
+              samplingStrategy: SamplingStrategy.AllSamples,
+              dateRange: dateRangeSelector,
+            },
+            signal
+          )
+        )
+      );
+    },
+    [variants, locationSelector, baselineVariant, baselineDateCounts]
   );
 
   // Rendering
@@ -132,6 +162,7 @@ export const CollectionSingleViewPage = () => {
       <p className='italic'>Maintained by {collection.maintainers}</p>
       <p className='whitespace-pre-wrap'>{collection.description}</p>
       <h2>Variants</h2>
+      {/* Filters */}
       <div className='w-96'>
         <PlaceSelect
           onSelect={selector => {
@@ -145,6 +176,32 @@ export const CollectionSingleViewPage = () => {
       <div>
         Using data from the <strong>past 6 months</strong>
       </div>
+      {/* Baseline variant */}
+      <div className='mt-4'>
+        <p>
+          <strong>Baseline:</strong> You can select a baseline variant to compare the variants in the
+          collection against that variant.{' '}
+          <strong>
+            Currently,{' '}
+            {variantIsAllLineages(baselineVariant)
+              ? 'no baseline variant is selected'
+              : `the baseline variant is ${formatVariantDisplayName(baselineVariant)}`}
+            .
+          </strong>
+        </p>
+        <VariantSearchField
+          isSimple={false}
+          onVariantSelect={setBaselineVariantInput}
+          triggerSearch={() => setBaselineVariant(baselineVariantInput)}
+        />
+        <Button
+          className='w-48'
+          variant={ButtonVariant.PRIMARY}
+          onClick={() => setBaselineVariant(baselineVariantInput)}
+        >
+          Select baseline
+        </Button>
+      </div>
 
       <Box className='mt-4' sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs value={tab} onChange={(_, i) => setTab(i)}>
@@ -153,22 +210,27 @@ export const CollectionSingleViewPage = () => {
         </Tabs>
       </Box>
       <TabPanel value={tab} index={0}>
-        {variants && variantsDateCounts && baselineDateCounts && (
+        {variants && variantsDateCounts && allWholeDateCounts ? (
           <TableTabContent
             locationSelector={locationSelector}
             variants={variants}
             variantsDateCounts={variantsDateCounts}
-            wholeDateCounts={baselineDateCounts}
+            allWholeDateCounts={allWholeDateCounts}
           />
+        ) : (
+          <Loader />
         )}
       </TabPanel>
       <TabPanel value={tab} index={1}>
-        {variants && variantsDateCounts && baselineDateCounts && (
+        {variants && variantsDateCounts && baselineDateCounts ? (
           <SequencesOverTimeTabContent
             variants={variants}
             variantsDateCounts={variantsDateCounts}
             baselineDateCounts={baselineDateCounts}
+            mode={variantIsAllLineages(baselineVariant) ? 'Single' : 'CompareToBaseline'}
           />
+        ) : (
+          <Loader />
         )}
       </TabPanel>
     </div>
@@ -203,20 +265,22 @@ type TableTabContentProps = {
   locationSelector: LocationSelector;
   variants: { query: VariantSelector; name: string; description: string }[];
   variantsDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>[];
-  wholeDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>;
+  allWholeDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>[];
 };
 
 const TableTabContent = ({
   locationSelector,
   variants,
   variantsDateCounts,
-  wholeDateCounts,
+  allWholeDateCounts,
 }: TableTabContentProps) => {
   // Fetch relative growth advantage
   const [relativeAdvantages, setRelativeAdvantages] = useState<(Chen2021FitnessResponse | undefined)[]>([]);
   useEffect(() => {
     const fetchQueue = new PromiseQueue();
-    for (let variantDateCounts of variantsDateCounts) {
+    for (let i = 0; i < variantsDateCounts.length; i++) {
+      const variantDateCounts = variantsDateCounts[i];
+      const wholeDateCounts = allWholeDateCounts[i];
       const totalSequences = variantDateCounts.payload.reduce((prev, curr) => prev + curr.count, 0);
       fetchQueue.addTask(() => {
         if (totalSequences > 0) {
@@ -234,7 +298,7 @@ const TableTabContent = ({
         }
       });
     }
-  }, [variantsDateCounts, wholeDateCounts, setRelativeAdvantages]);
+  }, [variantsDateCounts, allWholeDateCounts, setRelativeAdvantages]);
 
   // Table definition and data
   const tableColumns: GridColDef[] = [
@@ -325,6 +389,7 @@ type SequencesOverTimeTabContentProps = {
   variants: { query: VariantSelector; name: string; description: string }[];
   variantsDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>[];
   baselineDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>;
+  mode: 'Single' | 'CompareToBaseline';
 };
 
 const sortRelativeGrowthAdvantageValues: GridComparatorFn<string> = (a, b) => {
@@ -346,6 +411,7 @@ const SequencesOverTimeTabContent = ({
   variants,
   variantsDateCounts,
   baselineDateCounts,
+  mode,
 }: SequencesOverTimeTabContentProps) => {
   return (
     <>
@@ -353,7 +419,7 @@ const SequencesOverTimeTabContent = ({
         {variants.map((variant, i) => (
           <GridCell minWidth={600} key={i}>
             <VariantTimeDistributionChartWidget.ShareableComponent
-              title={variant.name}
+              title={mode === 'Single' ? variant.name : `Comparing ${variant.name} to baseline`}
               height={300}
               variantSampleSet={variantsDateCounts[i]}
               wholeSampleSet={baselineDateCounts}
