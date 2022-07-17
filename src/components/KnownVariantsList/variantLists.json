@@ -3,8 +3,8 @@
     "name": "Editor's choice",
     "fillUpUntil": 12,
     "variants": [
-      { 
-        "variantQuery": "nextcladePangoLineage:BA.2.75*" 
+      {
+        "variantQuery": "nextcladePangoLineage:BA.2.75*"
       },
       {
         "variantQuery": "nextcladePangoLineage:BA.4*"
