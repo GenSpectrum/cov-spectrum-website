@@ -37,6 +37,7 @@ export const MultiVariantTimeDistributionLineChart = ({
   analysisMode,
 }: MultiVariantTimeDistributionLineChartProps) => {
   const [showCI, setShowCI] = useState<boolean>(true);
+  const [logit, setLogit] = useState<boolean>(false);
   const { plotData, ticks } = useMemo(() => {
     // fill in dates with zero samples and merge sample sets
     const numberOfVariants = variantSampleSets.length;
@@ -117,6 +118,22 @@ export const MultiVariantTimeDistributionLineChart = ({
         pd[`variantProportionCIUpper${i}`] = Math.max(wilsonInterval[1], 0);
         pd[`CI${i}`] = [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)];
         pd[`variantName${i}`] = formatVariantDisplayName(variantSampleSets[i].selector.variant!);
+
+        let logit = Math.log(proportion / (1 - proportion));
+
+        pd[`logit${i}`] = logit === null || logit === -Infinity ? Number.MIN_SAFE_INTEGER : logit;
+
+        let logitCILower = Math.log(Math.max(wilsonInterval[0], 0) / (1 - Math.max(wilsonInterval[0], 0)));
+        pd[`logitCILower${i}`] =
+          logitCILower === null || logitCILower === -Infinity ? Number.MIN_SAFE_INTEGER : logitCILower;
+
+        pd[`logitCI${i}`] = [
+          logitCILower === null || logitCILower === -Infinity ? Number.MIN_SAFE_INTEGER : logitCILower,
+          Math.log(Math.max(wilsonInterval[1], 0) / (1 - Math.max(wilsonInterval[1], 0))),
+        ];
+        pd[`logitCIUpper${i}`] = Math.log(
+          Math.max(wilsonInterval[1], 0) / (1 - Math.max(wilsonInterval[1], 0))
+        );
       }
 
       return pd;
@@ -142,8 +159,11 @@ export const MultiVariantTimeDistributionLineChart = ({
   }
 
   const colors = variantSampleSets.map(() => chroma.random().darken().hex());
-
   const yMax: number = getYMax(plotData);
+
+  function logitRound(n: number) {
+    return ((n * 100) / 100).toFixed(2);
+  }
 
   return (
     <Wrapper>
@@ -152,6 +172,10 @@ export const MultiVariantTimeDistributionLineChart = ({
           <FormControlLabel
             control={<Checkbox defaultChecked checked={showCI} onChange={() => setShowCI(!showCI)} />}
             label='Show CI'
+          />
+          <FormControlLabel
+            control={<Checkbox defaultChecked checked={logit} onChange={() => setLogit(!logit)} />}
+            label='Logit scale'
           />
         </FormGroup>
       )}
@@ -169,58 +193,80 @@ export const MultiVariantTimeDistributionLineChart = ({
                 ticks={ticks}
                 xAxisId='date'
               />
-              <YAxis
-                tickFormatter={tick => `${Math.round(tick * 100 * 100) / 100}%`}
-                yAxisId='variant-proportion'
-                scale='auto'
-                domain={[0, yMax]}
-                allowDataOverflow
-              />
+              {!logit ? (
+                <YAxis
+                  tickFormatter={tick => `${Math.round(tick * 100 * 100) / 100}%`}
+                  yAxisId='variant-proportion'
+                  scale='auto'
+                  domain={[0, yMax]}
+                  allowDataOverflow
+                />
+              ) : (
+                <YAxis
+                  yAxisId='logit'
+                  scale='auto'
+                  tickFormatter={tick => `${Math.round(tick * 100) / 100}`}
+                  domain={[-10, 10]}
+                  allowDataOverflow
+                />
+              )}
 
-              {showCI &&
-                variantSampleSets.map((_, index) => {
-                  return (
-                    <Area
-                      yAxisId='variant-proportion'
-                      xAxisId='date'
-                      type='monotone'
-                      dataKey={`CI${index}`}
-                      fill={hexToRGB(colors[index], 0.5)}
-                      stroke='transparent'
-                      isAnimationActive={false}
-                      key={index + 10}
-                    />
-                  );
-                })}
               <Tooltip
                 formatter={(value: number, name: string, props: any) => {
-                  const index = Number.parseInt(name.replaceAll('variantProportion', ''));
                   const payload = props.payload;
-                  const proportionString = (payload[`variantProportion${index}`] * 100).toFixed(2) + '%';
-                  const proportionCiString =
-                    ' [' +
-                    (payload[`variantProportionCILower${index}`] * 100).toFixed(2) +
-                    '-' +
-                    (payload[`variantProportionCIUpper${index}`] * 100).toFixed(2) +
-                    '%]';
-                  return [
-                    // It does not make sense to show a CI (as it is calculated right now) if the chosen variants are
-                    // not a subset of the baseline.
-                    // TODO Do show the CI if a variant is a subset of the baseline
-                    proportionString +
-                      (analysisMode !== AnalysisMode.CompareToBaseline ? proportionCiString : ''),
-                    payload[`variantName${index}`],
-                  ];
+                  if (name.includes('variantProportion')) {
+                    const index = Number.parseInt(name.replaceAll('variantProportion', ''));
+                    const proportionString = (payload[`variantProportion${index}`] * 100).toFixed(2) + '%';
+                    const proportionCiString =
+                      ' [' +
+                      (payload[`variantProportionCILower${index}`] * 100).toFixed(2) +
+                      '-' +
+                      (payload[`variantProportionCIUpper${index}`] * 100).toFixed(2) +
+                      '%]';
+
+                    return [
+                      // It does not make sense to show a CI (as it is calculated right now) if the chosen variants are
+                      // not a subset of the baseline.
+                      // TODO Do show the CI if a variant is a subset of the baseline
+                      proportionString +
+                        (analysisMode !== AnalysisMode.CompareToBaseline ? proportionCiString : ''),
+                      payload[`variantName${index}`],
+                    ];
+                  }
+                  if (name.includes('logit')) {
+                    const index = Number.parseInt(name.replaceAll('logit', ''));
+
+                    let logitString =
+                      payload[`logit${index}`] === Number.MIN_SAFE_INTEGER
+                        ? '-Infinity'
+                        : logitRound(payload[`logit${index}`]);
+
+                    let logitCIstring =
+                      payload[`logitCILower${index}`] === Number.MIN_SAFE_INTEGER
+                        ? ' [' + ' -Infinity' + ' - ' + logitRound(payload[`logitCIUpper${index}`]) + ' ]'
+                        : ' [' +
+                          logitRound(payload[`logitCILower${index}`]) +
+                          ' - ' +
+                          logitRound(payload[`logitCIUpper${index}`]) +
+                          ' ]';
+
+                    return [
+                      logitString + (analysisMode !== AnalysisMode.CompareToBaseline ? logitCIstring : ''),
+                      payload[`variantName${index}`],
+                    ];
+                  }
+                  return [null, null];
                 }}
                 labelFormatter={label => 'Date: ' + formatDateToWindow(label)}
               />
+
               {variantSampleSets.map((_, index) => {
                 return (
                   <Line
-                    yAxisId='variant-proportion'
+                    yAxisId={!logit ? 'variant-proportion' : 'logit'}
                     xAxisId='date'
                     type='monotone'
-                    dataKey={`variantProportion${index}`}
+                    dataKey={!logit ? `variantProportion${index}` : `logit${index}`}
                     strokeWidth={3}
                     stroke={colors[index]}
                     dot={false}
@@ -229,6 +275,22 @@ export const MultiVariantTimeDistributionLineChart = ({
                   />
                 );
               })}
+
+              {showCI &&
+                variantSampleSets.map((_, index) => {
+                  return (
+                    <Area
+                      yAxisId={!logit ? 'variant-proportion' : 'logit'}
+                      xAxisId='date'
+                      type='monotone'
+                      dataKey={!logit ? `CI${index}` : `logitCI${index}`}
+                      fill={hexToRGB(colors[index], 0.5)}
+                      stroke='transparent'
+                      isAnimationActive={false}
+                      key={index + 10}
+                    />
+                  );
+                })}
             </ComposedChart>
           </ResponsiveContainer>
         </ChartWrapper>
