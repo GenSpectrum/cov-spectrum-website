@@ -120,8 +120,7 @@ export const MultiVariantTimeDistributionLineChart = ({
         pd[`variantName${i}`] = formatVariantDisplayName(variantSampleSets[i].selector.variant!);
 
         let logit = Math.log(proportion / (1 - proportion));
-
-        pd[`logit${i}`] = logit === null || logit === -Infinity ? Number.MIN_SAFE_INTEGER : logit;
+        pd[`logit${i}`] = logit; // === -Infinity ? Number.MIN_SAFE_INTEGER : logit;
 
         let logitCILower = Math.log(Math.max(wilsonInterval[0], 0) / (1 - Math.max(wilsonInterval[0], 0)));
         pd[`logitCILower${i}`] =
