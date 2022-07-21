@@ -118,14 +118,11 @@ export const MultiVariantTimeDistributionLineChart = ({
         pd[`variantProportionCIUpper${i}`] = Math.max(wilsonInterval[1], 0);
         pd[`CI${i}`] = [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)];
         pd[`variantName${i}`] = formatVariantDisplayName(variantSampleSets[i].selector.variant!);
-
         let logit = Math.log(proportion / (1 - proportion));
         pd[`logit${i}`] = logit; // === -Infinity ? Number.MIN_SAFE_INTEGER : logit;
-
         let logitCILower = Math.log(Math.max(wilsonInterval[0], 0) / (1 - Math.max(wilsonInterval[0], 0)));
         pd[`logitCILower${i}`] =
           logitCILower === null || logitCILower === -Infinity ? Number.MIN_SAFE_INTEGER : logitCILower;
-
         pd[`logitCI${i}`] = [
           logitCILower === null || logitCILower === -Infinity ? Number.MIN_SAFE_INTEGER : logitCILower,
           Math.log(Math.max(wilsonInterval[1], 0) / (1 - Math.max(wilsonInterval[1], 0))),
