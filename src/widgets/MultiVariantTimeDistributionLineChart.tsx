@@ -118,13 +118,11 @@ export const MultiVariantTimeDistributionLineChart = ({
         pd[`variantProportionCIUpper${i}`] = Math.max(wilsonInterval[1], 0);
         pd[`CI${i}`] = [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)];
         pd[`variantName${i}`] = formatVariantDisplayName(variantSampleSets[i].selector.variant!);
-        let logit = Math.log(proportion / (1 - proportion));
-        pd[`logit${i}`] = logit; // === -Infinity ? Number.MIN_SAFE_INTEGER : logit;
+        pd[`logit${i}`] = Math.log(proportion / (1 - proportion));
         let logitCILower = Math.log(Math.max(wilsonInterval[0], 0) / (1 - Math.max(wilsonInterval[0], 0)));
-        pd[`logitCILower${i}`] =
-          logitCILower === null || logitCILower === -Infinity ? Number.MIN_SAFE_INTEGER : logitCILower;
+        pd[`logitCILower${i}`] = logitCILower === -Infinity ? Number.MIN_SAFE_INTEGER : logitCILower;
         pd[`logitCI${i}`] = [
-          logitCILower === null || logitCILower === -Infinity ? Number.MIN_SAFE_INTEGER : logitCILower,
+          logitCILower === -Infinity ? Number.MIN_SAFE_INTEGER : logitCILower,
           Math.log(Math.max(wilsonInterval[1], 0) / (1 - Math.max(wilsonInterval[1], 0))),
         ];
         pd[`logitCIUpper${i}`] = Math.log(
@@ -169,12 +167,14 @@ export const MultiVariantTimeDistributionLineChart = ({
             control={<Checkbox defaultChecked checked={showCI} onChange={() => setShowCI(!showCI)} />}
             label='Show CI'
           />
-          <FormControlLabel
-            control={<Checkbox defaultChecked checked={logit} onChange={() => setLogit(!logit)} />}
-            label='Logit scale'
-          />
         </FormGroup>
       )}
+      <FormGroup>
+        <FormControlLabel
+          control={<Checkbox defaultChecked checked={logit} onChange={() => setLogit(!logit)} />}
+          label='Logit scale'
+        />
+      </FormGroup>
 
       <ChartAndMetricsWrapper>
         <ChartWrapper>

@@ -10,6 +10,7 @@ import DownloadWrapper from './DownloadWrapper';
 import { maxYAxis } from '../helpers/max-y-axis';
 import { ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
+import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 
 export type VariantTimeDistributionLineChartEntry = {
   date: UnifiedDay;
@@ -25,6 +26,8 @@ type PlotEntry = {
   date: Date;
   proportion: number;
   proportionCI: [number, number];
+  logit: number;
+  logitCI: [number, number];
 };
 
 export function formatDate(date: number) {
@@ -38,6 +41,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
   ({ data }: VariantTimeDistributionLineChartProps): JSX.Element => {
     const [active, setActive] = useState<PlotEntry | undefined>(undefined);
     const [absoluteNumbers, setAbsoluteNumbers] = useState<boolean>(false);
+    const [logit, setLogit] = useState<boolean>(false);
 
     const {
       plotData,
@@ -77,6 +81,8 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             date: date.dayjs.toDate(),
             proportion: NaN,
             proportionCI: [NaN, NaN],
+            logit: NaN,
+            logitCI: [NaN, NaN],
           });
           continue;
         }
@@ -86,16 +92,28 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             // If we don't have data, we carry over the last available value as our "best guess". The CI is from 0 to 1.
             proportion: lastProportion,
             proportionCI: [0, 1],
+            logit: Math.log(lastProportion / (1 - lastProportion)),
+            logitCI: [-10, 10],
           });
           continue;
         }
         lastProportion = Math.max(variantCount / sequenced, 0);
         const wilsonInterval = calculateWilsonInterval(variantCount, sequenced);
+        let lowerLogitCI =
+          Math.log(Math.max(wilsonInterval[0], 0) / (1 - Math.max(wilsonInterval[0], 0))) === -Infinity
+            ? Number.MIN_SAFE_INTEGER
+            : Math.log(Math.max(wilsonInterval[0], 0) / (1 - Math.max(wilsonInterval[0], 0)));
+        let upperLogitCI = Math.log(Math.max(wilsonInterval[1], 0) / (1 - Math.max(wilsonInterval[1], 0)));
         // Math.max(..., 0) compensates for numerical inaccuracies which can lead to negative values.
+        console.log([lowerLogitCI, upperLogitCI]);
         plotData.push({
           date: date.dayjs.toDate(),
           proportion: absoluteNumbers ? variantCount : Math.max(variantCount / sequenced, 0),
           proportionCI: [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)],
+          logit: Math.log(
+            Math.max(variantCount / sequenced, 0) / (1 - Math.max(variantCount / sequenced, 0))
+          ),
+          logitCI: [lowerLogitCI, upperLogitCI],
         });
       }
 
@@ -152,6 +170,8 @@ export const VariantTimeDistributionLineChartInner = React.memo(
       }
     };
 
+    console.log(plotData);
+
     return (
       <DownloadWrapper name='EstimatedCasesPlot' csvData={csvData}>
         <Wrapper>
@@ -182,6 +202,14 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                   Absolute
                 </Button>
               </ButtonGroup>
+              {!absoluteNumbers && (
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Checkbox defaultChecked checked={logit} onChange={() => setLogit(!logit)} />}
+                    label='Logit scale'
+                  />
+                </FormGroup>
+              )}
             </ButtonToolbar>
           </TitleWrapper>
           <ChartAndMetricsWrapper>
@@ -192,6 +220,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                   margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
                 >
                   <XAxis
+                    xAxisId='date'
                     dataKey='date'
                     scale='time'
                     type='number'
@@ -199,17 +228,29 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     domain={[(dataMin: any) => dataMin, () => plotData[plotData.length - 1].date.getTime()]}
                     ticks={ticks}
                   />
-                  <YAxis
-                    tickFormatter={tick =>
-                      absoluteNumbers ? `${tick}` : `${Math.round(tick * 100 * 100) / 100}%`
-                    }
-                    allowDecimals={true}
-                    hide={false}
-                    width={50}
-                    domain={[0, maxYAxis(yMax)]}
-                    allowDataOverflow={true}
-                    scale='linear'
-                  />
+
+                  {!logit ? (
+                    <YAxis
+                      yAxisId='proportion'
+                      tickFormatter={tick =>
+                        absoluteNumbers ? `${tick}` : `${Math.round(tick * 100 * 100) / 100}%`
+                      }
+                      allowDecimals={true}
+                      hide={false}
+                      width={50}
+                      domain={[0, maxYAxis(yMax)]}
+                      allowDataOverflow={true}
+                      scale='linear'
+                    />
+                  ) : (
+                    <YAxis
+                      yAxisId='logit'
+                      scale='auto'
+                      tickFormatter={tick => `${Math.round(tick * 100) / 100}`}
+                      domain={[-10, 10]}
+                      allowDataOverflow
+                    />
+                  )}
                   <Tooltip
                     active={false}
                     content={e => {
@@ -223,15 +264,19 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     }}
                   />
                   <Area
+                    xAxisId='date'
+                    yAxisId={!logit ? 'proportion' : 'logit'}
                     type='monotone'
-                    dataKey='proportionCI'
+                    dataKey={!logit ? 'proportionCI' : 'logitCI'}
                     fill={colors.activeSecondary}
-                    stroke='transparent'
                     isAnimationActive={false}
+                    stroke='transparent'
                   />
                   <Line
+                    xAxisId='date'
+                    yAxisId={!logit ? 'proportion' : 'logit'}
                     type='monotone'
-                    dataKey='proportion'
+                    dataKey={!logit ? 'proportion' : 'logit'}
                     stroke={colors.active}
                     strokeWidth={3}
                     dot={false}
