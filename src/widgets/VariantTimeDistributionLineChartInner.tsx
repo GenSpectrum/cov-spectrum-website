@@ -105,7 +105,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             : Math.log(Math.max(wilsonInterval[0], 0) / (1 - Math.max(wilsonInterval[0], 0)));
         let upperLogitCI = Math.log(Math.max(wilsonInterval[1], 0) / (1 - Math.max(wilsonInterval[1], 0)));
         // Math.max(..., 0) compensates for numerical inaccuracies which can lead to negative values.
-        console.log([lowerLogitCI, upperLogitCI]);
+
         plotData.push({
           date: date.dayjs.toDate(),
           proportion: absoluteNumbers ? variantCount : Math.max(variantCount / sequenced, 0),
@@ -169,8 +169,6 @@ export const VariantTimeDistributionLineChartInner = React.memo(
         );
       }
     };
-
-    console.log(plotData);
 
     return (
       <DownloadWrapper name='EstimatedCasesPlot' csvData={csvData}>
