@@ -26,8 +26,8 @@ type PlotEntry = {
   date: Date;
   proportion: number;
   proportionCI: [number, number];
-  logit: number;
-  logitCI: [number, number];
+  logit?: number | undefined;
+  logitCI?: [number | undefined, number | undefined];
 };
 
 export function formatDate(date: number) {
@@ -92,29 +92,25 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             // If we don't have data, we carry over the last available value as our "best guess". The CI is from 0 to 1.
             proportion: lastProportion,
             proportionCI: [0, 1],
-            logit: Math.log(lastProportion / (1 - lastProportion)),
-            logitCI: [-10, 10],
+            logit: lastProportion !== 0 ? lastProportion : undefined,
+            logitCI: [0.001, 1],
           });
           continue;
         }
         lastProportion = Math.max(variantCount / sequenced, 0);
         const wilsonInterval = calculateWilsonInterval(variantCount, sequenced);
-        let lowerLogitCI =
-          Math.log(Math.max(wilsonInterval[0], 0) / (1 - Math.max(wilsonInterval[0], 0))) === -Infinity
-            ? Number.MIN_SAFE_INTEGER
-            : Math.log(Math.max(wilsonInterval[0], 0) / (1 - Math.max(wilsonInterval[0], 0)));
-        let upperLogitCI = Math.log(Math.max(wilsonInterval[1], 0) / (1 - Math.max(wilsonInterval[1], 0)));
-        // Math.max(..., 0) compensates for numerical inaccuracies which can lead to negative values.
 
-        plotData.push({
+        let item: PlotEntry = {
           date: date.dayjs.toDate(),
           proportion: absoluteNumbers ? variantCount : Math.max(variantCount / sequenced, 0),
           proportionCI: [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)],
-          logit: Math.log(
-            Math.max(variantCount / sequenced, 0) / (1 - Math.max(variantCount / sequenced, 0))
-          ),
-          logitCI: [lowerLogitCI, upperLogitCI],
-        });
+          logit:
+            Math.max(variantCount / sequenced, 0) !== 0 ? Math.max(variantCount / sequenced, 0) : undefined,
+        };
+        if (item['logit']) {
+          item['logitCI'] = item['proportionCI'];
+        }
+        plotData.push(item);
       }
 
       const ticks = getTicks(
@@ -227,52 +223,47 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     ticks={ticks}
                   />
 
-                  {!logit ? (
-                    <YAxis
-                      yAxisId='proportion'
-                      tickFormatter={tick =>
-                        absoluteNumbers ? `${tick}` : `${Math.round(tick * 100 * 100) / 100}%`
-                      }
-                      allowDecimals={true}
-                      hide={false}
-                      width={50}
-                      domain={[0, maxYAxis(yMax)]}
-                      allowDataOverflow={true}
-                      scale='linear'
-                    />
-                  ) : (
-                    <YAxis
-                      yAxisId='logit'
-                      scale='auto'
-                      tickFormatter={tick => `${Math.round(tick * 100) / 100}`}
-                      domain={[-10, 10]}
-                      allowDataOverflow
-                    />
-                  )}
+                  <YAxis
+                    yAxisId='proportion'
+                    tickFormatter={tick =>
+                      absoluteNumbers ? `${tick}` : `${Math.round(tick * 100 * 100) / 100}%`
+                    }
+                    allowDecimals={true}
+                    hide={false}
+                    width={50}
+                    scale={logit ? 'log' : 'linear'}
+                    domain={logit ? ['auto', 'auto'] : [0, maxYAxis(yMax)]}
+                    allowDataOverflow={true}
+                  />
+
                   <Tooltip
                     active={false}
                     content={e => {
-                      if (e.active && e.payload !== undefined) {
-                        const newActive = e.payload[0].payload;
-                        if (active === undefined || active.date.getTime() !== newActive.date.getTime()) {
-                          setActive(newActive);
+                      if (e !== undefined && e.active && e.payload !== undefined) {
+                        if (e.payload[0] !== undefined && e.payload[0].payload !== undefined) {
+                          const newActive = e.payload[0].payload;
+                          if (active === undefined || active.date.getTime() !== newActive.date.getTime()) {
+                            setActive(newActive);
+                          }
                         }
                       }
                       return <></>;
                     }}
                   />
+
                   <Area
                     xAxisId='date'
-                    yAxisId={!logit ? 'proportion' : 'logit'}
+                    yAxisId='proportion'
                     type='monotone'
                     dataKey={!logit ? 'proportionCI' : 'logitCI'}
                     fill={colors.activeSecondary}
                     isAnimationActive={false}
                     stroke='transparent'
                   />
+
                   <Line
                     xAxisId='date'
-                    yAxisId={!logit ? 'proportion' : 'logit'}
+                    yAxisId='proportion'
                     type='monotone'
                     dataKey={!logit ? 'proportion' : 'logit'}
                     stroke={colors.active}
