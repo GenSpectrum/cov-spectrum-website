@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
-import { random, shuffle, times } from 'lodash';
 import { DateCacheClassForTests, UnifiedDay, UnifiedIsoWeek } from '../date-cache';
+import { times, shuffle, random } from '../lodash_alternatives';
 
 // UnifiedDay and UnifiedIsoWeek mutually recursively contain each other.
 // Jest has a bug which makes it crash when recursive objects are used with toBe

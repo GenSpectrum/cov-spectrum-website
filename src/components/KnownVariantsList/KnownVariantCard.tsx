@@ -2,7 +2,7 @@ import React from 'react';
 import { Card } from 'react-bootstrap';
 import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import styled from 'styled-components';
-import { mean } from 'lodash';
+import { mean } from '../../helpers/lodash_alternatives';
 import { colors } from '../../widgets/common';
 import { getWHOLabel } from '../../services/who-label';
 

@@ -6,7 +6,7 @@ import Loader from '../../../components/Loader';
 import { Utils } from '../../../services/Utils';
 import { GridCell, PackedGrid } from '../../../components/PackedGrid';
 import { WasteWaterLocationTimeWidget } from '../WasteWaterLocationTimeWidget';
-import _ from 'lodash';
+import { sortBy } from '../../../helpers/lodash_alternatives';
 import { ShowMoreButton } from '../../../helpers/ui';
 
 export const WasteWaterStoryPage = () => {
@@ -21,10 +21,11 @@ export const WasteWaterStoryPage = () => {
     if (!wasteWaterData) {
       return undefined;
     }
-    const locationGrouped = _.sortBy(
-      [...Utils.groupBy(wasteWaterData, d => d.location).values()],
-      [d => d[0].location]
-    );
+
+    const locationGrouped = [...Utils.groupBy(wasteWaterData, d => d.location).values()]
+      .concat()
+      .sort(sortBy('location'));
+
     return locationGrouped.map(locationData => {
       const location = locationData[0].location;
       const variantsTimeseriesSummaries = locationData.map(({ variantName, data }) => ({

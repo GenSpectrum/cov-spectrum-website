@@ -24,7 +24,7 @@ import { VariantMutations } from '../components/VariantMutations';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
 import { useAsyncDataset } from '../helpers/use-async-dataset';
 import { Button, ButtonVariant, ShowMoreButton } from '../helpers/ui';
-import { mapValues } from 'lodash';
+
 import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
 import { VariantHeader } from '../components/VariantHeader';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
@@ -60,13 +60,30 @@ export const FocusSinglePage = () => {
   const [showChen2021FitnessDivGrid, setShowChen2021FitnessDivGrid] = useState(false);
 
   // Deep focus buttons
-  const deepFocusButtons = useMemo(
-    () =>
-      mapValues(deepFocusPaths, suffix => {
-        return <ShowMoreButton key={suffix} to={exploreUrl?.getDeepFocusPageUrl(suffix) ?? '#'} />;
-      }),
-    [exploreUrl]
-  );
+
+  type deepFocusButtonType = {
+    internationalComparison: React.ReactChild;
+    chen2021Fitness: React.ReactChild;
+    hospitalizationAndDeath: React.ReactChild;
+    wasteWater: React.ReactChild;
+  };
+
+  function mapValues(obj: typeof deepFocusPaths) {
+    let res = Object.entries(obj).reduce<Partial<deepFocusButtonType>>((a, [key, suffix]) => {
+      (a[key as keyof typeof deepFocusPaths] as unknown) = (
+        <ShowMoreButton key={suffix} to={exploreUrl?.getDeepFocusPageUrl(suffix) ?? '#'} />
+      );
+      return a;
+    }, {});
+
+    console.log(res);
+
+    return res;
+  }
+
+  const deepFocusButtons = useMemo(() => mapValues(deepFocusPaths), [exploreUrl]);
+
+  console.log('deepFocusButtons', deepFocusButtons);
 
   // --- Fetch data ---
   const { ldvsSelector, ldsSelector, dvsSelector, dsSelector, lSelector } = useSingleSelectorsFromExploreUrl(
@@ -384,6 +401,7 @@ export const FocusSinglePage = () => {
                 <NamedCard
                   title='Relative growth advantage'
                   toolbar={[
+                    // @ts-ignore
                     deepFocusButtons.chen2021Fitness,
                     createDivisionBreakdownButton('Chen2021Fitness', setShowChen2021FitnessDivGrid),
                   ]}
