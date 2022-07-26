@@ -10,6 +10,7 @@ import DownloadWrapper from './DownloadWrapper';
 import { maxYAxis } from '../helpers/max-y-axis';
 import { ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
+import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 
 export type VariantTimeDistributionLineChartEntry = {
   date: UnifiedDay;
@@ -25,6 +26,8 @@ type PlotEntry = {
   date: Date;
   proportion: number;
   proportionCI: [number, number];
+  log?: number | undefined;
+  logCI?: [number | undefined, number | undefined];
 };
 
 export function formatDate(date: number) {
@@ -38,6 +41,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
   ({ data }: VariantTimeDistributionLineChartProps): JSX.Element => {
     const [active, setActive] = useState<PlotEntry | undefined>(undefined);
     const [absoluteNumbers, setAbsoluteNumbers] = useState<boolean>(false);
+    const [log, setLog] = useState<boolean>(false);
 
     const {
       plotData,
@@ -77,6 +81,8 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             date: date.dayjs.toDate(),
             proportion: NaN,
             proportionCI: [NaN, NaN],
+            log: NaN,
+            logCI: [NaN, NaN],
           });
           continue;
         }
@@ -86,17 +92,25 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             // If we don't have data, we carry over the last available value as our "best guess". The CI is from 0 to 1.
             proportion: lastProportion,
             proportionCI: [0, 1],
+            log: lastProportion !== 0 ? lastProportion : undefined,
+            logCI: [0.001, 1],
           });
           continue;
         }
         lastProportion = Math.max(variantCount / sequenced, 0);
         const wilsonInterval = calculateWilsonInterval(variantCount, sequenced);
         // Math.max(..., 0) compensates for numerical inaccuracies which can lead to negative values.
-        plotData.push({
+        let item: PlotEntry = {
           date: date.dayjs.toDate(),
           proportion: absoluteNumbers ? variantCount : Math.max(variantCount / sequenced, 0),
           proportionCI: [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)],
-        });
+          log:
+            Math.max(variantCount / sequenced, 0) !== 0 ? Math.max(variantCount / sequenced, 0) : undefined,
+        };
+        if (item['log']) {
+          item['logCI'] = item['proportionCI'];
+        }
+        plotData.push(item);
       }
 
       const ticks = getTicks(
@@ -182,6 +196,14 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                   Absolute
                 </Button>
               </ButtonGroup>
+              {!absoluteNumbers && (
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Checkbox defaultChecked checked={log} onChange={() => setLog(!log)} />}
+                    label='Log scale'
+                  />
+                </FormGroup>
+              )}
             </ButtonToolbar>
           </TitleWrapper>
           <ChartAndMetricsWrapper>
@@ -206,9 +228,9 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     allowDecimals={true}
                     hide={false}
                     width={50}
-                    domain={[0, maxYAxis(yMax)]}
+                    scale={log ? 'log' : 'linear'}
+                    domain={log ? ['auto', 'auto'] : [0, maxYAxis(yMax)]}
                     allowDataOverflow={true}
-                    scale='linear'
                   />
                   <Tooltip
                     active={false}
@@ -224,14 +246,14 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                   />
                   <Area
                     type='monotone'
-                    dataKey='proportionCI'
+                    dataKey={!log ? 'proportionCI' : 'logCI'}
                     fill={colors.activeSecondary}
                     stroke='transparent'
                     isAnimationActive={false}
                   />
                   <Line
                     type='monotone'
-                    dataKey='proportion'
+                    dataKey={!log ? 'proportion' : 'log'}
                     stroke={colors.active}
                     strokeWidth={3}
                     dot={false}
