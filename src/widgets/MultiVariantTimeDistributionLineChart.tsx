@@ -221,6 +221,7 @@ export const MultiVariantTimeDistributionLineChart = ({
               })}
 
               {showCI &&
+                analysisMode !== AnalysisMode.CompareToBaseline &&
                 variantSampleSets.map((_, index) => {
                   return (
                     <Area
