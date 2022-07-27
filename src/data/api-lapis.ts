@@ -160,6 +160,19 @@ export async function fetchMutationProportions(
   return _extractLapisData(body);
 }
 
+export async function fetchGenbankAccessions(
+  selector: LapisSelector,
+  signal?: AbortSignal
+): Promise<string[]> {
+  const url = await getLinkTo(`genbank-accession`, selector, undefined, undefined, undefined, true);
+  const res = await get(url, signal);
+  if (!res.ok) {
+    throw new Error('Error fetching data');
+  }
+  const body = await res.text();
+  return body.split('\n');
+}
+
 export async function getLinkToStrainNames(
   selector: LapisSelector,
   orderAndLimit?: OrderAndLimitConfig
