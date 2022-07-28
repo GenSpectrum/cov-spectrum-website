@@ -1,7 +1,7 @@
 import { LapisSelector } from '../data/LapisSelector';
 import { useQuery } from '../helpers/query-hook';
 import { fetchGenbankAccessions } from '../data/api-lapis';
-import { fetchClusters, fetchMrca } from '../data/api-cladeness';
+import { fetchClusters } from '../data/api-cladeness';
 import Loader from './Loader';
 import { ExpandableTextBox } from './ExpandableTextBox';
 import { CladenessCluster } from '../data/cladeness-types';
@@ -14,15 +14,6 @@ type Props = {
 export const TreeStatistics = ({ selector }: Props) => {
   const { data: accessions } = useQuery(signal => fetchGenbankAccessions(selector, signal), [selector]);
 
-  const { data: mrcaResult } = useQuery(
-    signal => {
-      if (!accessions) {
-        return Promise.resolve(undefined);
-      }
-      return fetchMrca(accessions, signal);
-    },
-    [accessions]
-  );
   const { data: clustersResult } = useQuery(
     signal => {
       if (!accessions) {
@@ -33,14 +24,11 @@ export const TreeStatistics = ({ selector }: Props) => {
     [accessions]
   );
 
-  return mrcaResult && clustersResult ? (
+  return clustersResult ? (
     <div>
       <div>
-        {mrcaResult.notFound.length} sequences are missing in the tree:{' '}
-        <ExpandableTextBox text={mrcaResult.notFound.join(', ')} maxChars={300} />
-      </div>
-      <div className='mt-4'>
-        <span className='font-bold'>MRCA:</span> {mrcaResult.result}
+        {clustersResult.notFound.length} sequences are missing in the tree:{' '}
+        <ExpandableTextBox text={clustersResult.notFound.join(', ')} maxChars={300} />
       </div>
       <div className='mt-4'>
         <div className='font-bold'>Clusters:</div>
