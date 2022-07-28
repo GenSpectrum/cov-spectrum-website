@@ -142,7 +142,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
         setVariantQuery(exploreUrl.variant.variantQuery);
       }
     }
-  }, [currentSelection, exploreUrl?.focusKey]);
+  }, [exploreUrl?.focusKey]);
 
   const suggestPangolinLineages = (query: string): string[] => {
     return (pangoLineages.data ?? []).filter(pl => pl.toUpperCase().startsWith(query.toUpperCase()));
