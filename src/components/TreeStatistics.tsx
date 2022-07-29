@@ -44,6 +44,15 @@ export const TreeStatistics = ({ selector }: Props) => {
 
   return (
     <div>
+      {/* Description */}
+      <p>
+        Tree statistics are computed based on the latest phylogenetic tree of fully public SARS-CoV-2
+        sequences placed by UShER (downloaded from{' '}
+        <ExternalLink url='https://hgwdev.gi.ucsc.edu/~angie/UShER_SARS-CoV-2/'>here</ExternalLink>). The
+        sequences from the current search were clustered into different clades on the tree. Below, the MRCA
+        (most recent common ancestor), size (number of sequences) and clade coverage (share of clustered
+        sequences in overall clade) of each cluster are shown, along with their relationship on the tree.
+      </p>
       {/* Controls */}
       <div className='mb-4'>
         <FormControl size='small'>
