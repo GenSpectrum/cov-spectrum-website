@@ -1,4 +1,5 @@
 import { CladenessClustersResponse, CladenessMrcaResponse } from './cladeness-types';
+import { DateRange } from './DateRange';
 
 const HOST = 'https://cladeness.cov-spectrum.org';
 
@@ -30,7 +31,15 @@ export async function fetchMrca(ids: string[], signal?: AbortSignal): Promise<Cl
   return body as CladenessMrcaResponse;
 }
 
-export async function fetchClusters(ids: string[], signal?: AbortSignal): Promise<CladenessClustersResponse> {
+export async function fetchClusters(
+  ids: string[],
+  selector: {
+    region?: string;
+    country?: string;
+    dateRange?: DateRange;
+  },
+  signal?: AbortSignal
+): Promise<CladenessClustersResponse> {
   const url = '/clusters';
   const res = await post(
     url,
@@ -38,6 +47,10 @@ export async function fetchClusters(ids: string[], signal?: AbortSignal): Promis
       ids,
       min_rel_size: 0.01,
       n_clusters: 8,
+      region: selector.region,
+      country: selector.country,
+      date_from: selector.dateRange?.dateFrom?.string,
+      date_to: selector.dateRange?.dateTo?.string,
     },
     signal
   );

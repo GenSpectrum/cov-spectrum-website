@@ -4,29 +4,82 @@ import { fetchGenbankAccessions } from '../data/api-lapis';
 import { fetchClusters } from '../data/api-cladeness';
 import Loader from './Loader';
 import { ExpandableTextBox } from './ExpandableTextBox';
-import { CladenessCluster } from '../data/cladeness-types';
+import { CladenessCluster, CladenessClustersResponse } from '../data/cladeness-types';
 import { ExternalLink } from './ExternalLink';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import FormControl from '@mui/material/FormControl';
+import { useState } from 'react';
 
 type Props = {
   selector: LapisSelector;
 };
 
 export const TreeStatistics = ({ selector }: Props) => {
-  const { data: accessions } = useQuery(signal => fetchGenbankAccessions(selector, signal), [selector]);
+  const [cladenessMode, setCladenessMode] = useState<'filtered' | 'overall'>('filtered');
 
+  const { data: accessions } = useQuery(signal => fetchGenbankAccessions(selector, signal), [selector]);
   const { data: clustersResult } = useQuery(
     signal => {
       if (!accessions) {
         return Promise.resolve(undefined);
       }
-      return fetchClusters(accessions, signal);
+      if (cladenessMode === 'filtered') {
+        return fetchClusters(
+          accessions,
+          {
+            region: selector.location.region,
+            country: selector.location.country,
+            dateRange: selector.dateRange?.getDateRange(),
+          },
+          signal
+        );
+      } else {
+        return fetchClusters(accessions, {}, signal);
+      }
     },
-    [accessions]
+    [accessions, cladenessMode]
   );
-  const totalSequences = clustersResult?.result.statistics.size ?? NaN;
 
-  return clustersResult ? (
+  return (
     <div>
+      {/* Controls */}
+      <div className='mb-4'>
+        <FormControl size='small'>
+          <RadioGroup value={cladenessMode} onChange={e => setCladenessMode(e.target.value as any)}>
+            <FormControlLabel
+              value='filtered'
+              control={<Radio size='small' />}
+              label='Calculate clade coverage for selected country and date range'
+              className='mb-0'
+            />
+            <FormControlLabel
+              value='overall'
+              control={<Radio size='small' />}
+              label='Calculate overall clade coverage'
+              className='mb-0'
+            />
+          </RadioGroup>
+        </FormControl>
+      </div>
+      <hr />
+      {/* Results */}
+      <div className='mt-4'>
+        {clustersResult ? <TreeStatisticsResults clustersResult={clustersResult} /> : <Loader />}
+      </div>
+    </div>
+  );
+};
+
+type TreeStatisticsResultsProps = {
+  clustersResult: CladenessClustersResponse;
+};
+
+const TreeStatisticsResults = ({ clustersResult }: TreeStatisticsResultsProps) => {
+  const totalSequences = clustersResult.result.statistics.size;
+  return (
+    <>
       <div>
         {clustersResult.notFound.length} sequences are missing in the tree:{' '}
         <ExpandableTextBox text={clustersResult.notFound.join(', ')} maxChars={300} />
@@ -35,9 +88,7 @@ export const TreeStatistics = ({ selector }: Props) => {
         <div className='font-bold'>Clusters:</div>
         <Cluster cluster={clustersResult.result} totalSequences={totalSequences} />
       </div>
-    </div>
-  ) : (
-    <Loader />
+    </>
   );
 };
 
@@ -54,7 +105,7 @@ const Cluster = ({ cluster, totalSequences }: ClusterProps) => {
         <ExternalLink
           url={`https://taxonium.org/?treeUrl=https%3A%2F%2Fcladeness.cov-spectrum.org%2Ftree.nwk.gz&ladderizeTree=true&srch=%5B%7B%22key%22%3A%22aa1%22%2C%22type%22%3A%22name%22%2C%22method%22%3A%22text_match%22%2C%22text%22%3A%22${cluster.node}%22%2C%22gene%22%3A%22S%22%2C%22position%22%3A484%2C%22new_residue%22%3A%22any%22%2C%22min_tips%22%3A0%7D%5D`}
         >
-          <img src='/img/taxonium.png' className='mx-2 w-4 h-4' />
+          <img src='/img/taxonium.png' alt='Taxonium' className='mx-2 w-4 h-4' />
         </ExternalLink>{' '}
         (size: {cluster.statistics.size} ({((cluster.statistics.size * 100) / totalSequences).toFixed(2)}%),
         clade coverage: {(cluster.statistics.cladeness * 100).toFixed(2)}%)
