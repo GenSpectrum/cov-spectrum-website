@@ -23,6 +23,7 @@ export const TreeStatistics = ({ selector }: Props) => {
     },
     [accessions]
   );
+  const totalSequences = clustersResult?.result.statistics.size ?? NaN;
 
   return clustersResult ? (
     <div>
@@ -32,7 +33,7 @@ export const TreeStatistics = ({ selector }: Props) => {
       </div>
       <div className='mt-4'>
         <div className='font-bold'>Clusters:</div>
-        <Cluster cluster={clustersResult.result} />
+        <Cluster cluster={clustersResult.result} totalSequences={totalSequences} />
       </div>
     </div>
   ) : (
@@ -40,7 +41,12 @@ export const TreeStatistics = ({ selector }: Props) => {
   );
 };
 
-const Cluster = ({ cluster }: { cluster: CladenessCluster }) => {
+type ClusterProps = {
+  cluster: CladenessCluster;
+  totalSequences: number;
+};
+
+const Cluster = ({ cluster, totalSequences }: ClusterProps) => {
   return (
     <>
       <div className='flex flex-row items-center'>
@@ -50,11 +56,12 @@ const Cluster = ({ cluster }: { cluster: CladenessCluster }) => {
         >
           <img src='/img/taxonium.png' className='mx-2 w-4 h-4' />
         </ExternalLink>{' '}
-        (size: {cluster.statistics.size}, cladeness: {(cluster.statistics.cladeness * 100).toFixed(2)}%)
+        (size: {cluster.statistics.size} ({((cluster.statistics.size * 100) / totalSequences).toFixed(2)}%),
+        clade coverage: {(cluster.statistics.cladeness * 100).toFixed(2)}%)
       </div>
       <div className='ml-8'>
         {cluster.children?.map(child => (
-          <Cluster cluster={child} key={child.node} />
+          <Cluster cluster={child} key={child.node} totalSequences={totalSequences} />
         ))}
       </div>
     </>
