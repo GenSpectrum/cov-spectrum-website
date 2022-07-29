@@ -111,7 +111,7 @@ const Cluster = ({ cluster, totalSequences }: ClusterProps) => {
     <>
       <div className='flex flex-row items-center'>
         <ExternalLink
-          url={`https://taxonium.org/?treeUrl=https%3A%2F%2Fcladeness.cov-spectrum.org%2Ftree.nwk.gz&ladderizeTree=true&srch=%5B%7B%22key%22%3A%22aa1%22%2C%22type%22%3A%22name%22%2C%22method%22%3A%22text_match%22%2C%22text%22%3A%22${cluster.node}%22%2C%22gene%22%3A%22S%22%2C%22position%22%3A484%2C%22new_residue%22%3A%22any%22%2C%22min_tips%22%3A0%7D%5D`}
+          url={` https://cov2tree.org/?srch=%5B%7B%22key%22%3A%22aa1%22%2C%22type%22%3A%22name%22%2C%22method%22%3A%22text_exact%22%2C%22text%22%3A%22${cluster.node}%22%2C%22gene%22%3A%22S%22%2C%22position%22%3A484%2C%22new_residue%22%3A%22any%22%2C%22min_tips%22%3A0%7D%5D`}
         >
           <img src='/img/taxonium.png' alt='Taxonium' className='mx-2 w-4 h-4' />
         </ExternalLink>{' '}
