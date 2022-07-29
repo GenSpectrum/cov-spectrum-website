@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
-import { AccountService } from './services/AccountService';
 import { ExternalLink } from './components/ExternalLink';
 import { AiOutlineGithub, AiOutlineTwitter } from 'react-icons/ai';
 import { FaExchangeAlt, FaFilter } from 'react-icons/fa';
@@ -73,12 +72,8 @@ const BackToExplore = () => {
 const Header = () => {
   const [showAdvancedFilteringModal, setShowAdvancedFilteringModal] = useState(false);
 
-  const loggedIn = AccountService.isLoggedIn();
-  let username: string | null | undefined = null;
-  if (loggedIn) {
-    username = AccountService.getUsername();
-  }
   const location = useLocation();
+  const exploreUrl = useExploreUrl();
 
   const getButtonClasses = (path?: string): string =>
     `${
@@ -138,30 +133,20 @@ const Header = () => {
                     Done
                   </Button>
                 </div>
-                <button onClick={() => setShowAdvancedFilteringModal(true)}>
-                  Advanced <FaFilter className='inline' />
-                </button>
+                {exploreUrl && (
+                  <button onClick={() => setShowAdvancedFilteringModal(true)}>
+                    Advanced <FaFilter className='inline' />
+                  </button>
+                )}
+                <a className={getDropdownButtonClasses('/collections')} href='/collections'>
+                  Collections
+                </a>
                 <a className={getDropdownButtonClasses('/stories')} href='/stories'>
                   Stories
                 </a>
                 <a className={getDropdownButtonClasses('/about')} href='/about'>
                   About
                 </a>
-                {username === null ? (
-                  <a className={getDropdownButtonClasses('/login')} href='/login'>
-                    Login
-                  </a>
-                ) : (
-                  <a
-                    className={getDropdownButtonClasses()}
-                    href='/login?left'
-                    onClick={() => {
-                      AccountService.logout();
-                    }}
-                  >
-                    Logout {username}
-                  </a>
-                )}
                 <a
                   className={getDropdownButtonClasses('')}
                   href='https://twitter.com/genSpectrum'
@@ -237,39 +222,29 @@ const Header = () => {
                 <div className='flex items-center z-20 mt-2 md:mt-0'>
                   <HeaderCountrySelect />
                   <HeaderSamplingStrategySelect />
-                  <Button
-                    variant={ButtonVariant.SECONDARY}
-                    onClick={() => setShowAdvancedFilteringModal(true)}
-                    className='hidden lg:block'
-                  >
-                    Advanced <FaFilter className='inline' />
-                  </Button>
+                  {exploreUrl && (
+                    <Button
+                      variant={ButtonVariant.SECONDARY}
+                      onClick={() => setShowAdvancedFilteringModal(true)}
+                      className='hidden lg:block'
+                    >
+                      Advanced <FaFilter className='inline' />
+                    </Button>
+                  )}
                   <FilterDropdown />
                 </div>
               </div>
               <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>
                 <div className='ml-1 flex items-center'>
+                  <a className={getButtonClasses('/collections')} href='/collections'>
+                    Collections
+                  </a>
                   <a className={getButtonClasses('/stories')} href='/stories'>
                     Stories
                   </a>
                   <a className={getButtonClasses('/about')} href='/about'>
                     About
                   </a>
-                  {username === null ? (
-                    <a className={getButtonClasses('/login')} href='/login'>
-                      Login
-                    </a>
-                  ) : (
-                    <a
-                      className={getButtonClasses()}
-                      href='/login?left'
-                      onClick={() => {
-                        AccountService.logout();
-                      }}
-                    >
-                      Logout {username}
-                    </a>
-                  )}
                   <ExternalLink url='https://twitter.com/covSpectrum'>
                     <AiOutlineTwitter
                       className='hidden md:block fill-current rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8 hover:opacity-70'

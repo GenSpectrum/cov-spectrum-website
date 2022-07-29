@@ -130,6 +130,32 @@ export function variantIsOnlyDefinedBy(
   return true;
 }
 
+/**
+ * Returns true if no filter is set
+ */
+export function variantIsAllLineages(selector: VariantSelector): boolean {
+  // Other fields are undefined:
+  for (const f of [
+    'pangoLineage',
+    'gisaidClade',
+    'nextstrainClade',
+    'aaMutations',
+    'nucMutations',
+    'variantQuery',
+  ] as const) {
+    const fieldValue = selector[f];
+    if (fieldValue !== undefined) {
+      if (f === 'aaMutations' || f === 'nucMutations' || f === 'variantQuery') {
+        if (fieldValue.length === 0) {
+          continue;
+        }
+      }
+      return false;
+    }
+  }
+  return true;
+}
+
 export function isValidPangoLineageQuery(query: string): boolean {
   return /^([A-Z]){1,2}(\.[0-9]{1,3})*(\.?\*)?$/.test(query.toUpperCase());
 }

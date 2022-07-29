@@ -86,8 +86,10 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   );
   const [inputValue, setInputValue] = useState<string>('');
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
+
   const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? '');
   const [advancedSearch, setAdvancedSearch] = useState(!!currentSelection?.variantQuery);
+
 
   //const [url, _] = useState<string>(window.location.href);
   const exploreUrl = useExploreUrl();
@@ -103,7 +105,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   useDeepCompareEffect(() => {
     if (currentSelection) {
-      if (currentSelection.variantQuery) {
+      if (currentSelection.variantQuery !== undefined) {
         setAdvancedSearch(true);
         setVariantQuery(currentSelection.variantQuery);
       } else {

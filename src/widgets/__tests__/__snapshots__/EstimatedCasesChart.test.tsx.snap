@@ -94,6 +94,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
             id="metric-tooltip-Est. cases"
           >
             <style
+              aria-hidden="true"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "
@@ -244,6 +245,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
             id="metric-tooltip-Confidence int."
           >
             <style
+              aria-hidden="true"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "

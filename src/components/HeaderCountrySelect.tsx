@@ -1,6 +1,6 @@
 import React from 'react';
 import { useExploreUrl } from '../helpers/explore-url';
-import { RequiredPlaceSelect } from './RequiredPlaceSelect';
+import { PlaceSelect } from './PlaceSelect';
 
 export const HeaderCountrySelect = () => {
   const exploreUrl = useExploreUrl();
@@ -11,11 +11,7 @@ export const HeaderCountrySelect = () => {
 
   return (
     <div>
-      <RequiredPlaceSelect
-        id='countrySelect'
-        selected={exploreUrl.location}
-        onSelect={exploreUrl.setLocation}
-      />
+      <PlaceSelect selected={exploreUrl.location} onSelect={exploreUrl.setLocation} />
     </div>
   );
 };

@@ -25,6 +25,14 @@ export function addLocationSelectorToUrlSearchParams(selector: LocationSelector,
   }
 }
 
+export function getLocationSelectorFromUrlSearchParams(params: URLSearchParams): LocationSelector {
+  return {
+    region: params.get('region') ?? undefined,
+    country: params.get('country') ?? undefined,
+    division: params.get('division') ?? undefined,
+  };
+}
+
 export function decodeLocationSelectorFromSingleString(encoded: string): LocationSelector {
   if (encoded === 'World') {
     return {};

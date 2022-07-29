@@ -121,6 +121,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
             id="metric-tooltip-Proportion"
           >
             <style
+              aria-hidden="true"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "
@@ -271,6 +272,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
             id="metric-tooltip-Samples"
           >
             <style
+              aria-hidden="true"
               dangerouslySetInnerHTML={
                 Object {
                   "__html": "

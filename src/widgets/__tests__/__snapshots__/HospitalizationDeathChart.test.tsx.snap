@@ -200,6 +200,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                 id="metric-tooltip-Dead"
               >
                 <style
+                  aria-hidden="true"
                   dangerouslySetInnerHTML={
                     Object {
                       "__html": "
@@ -350,6 +351,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                 id="metric-tooltip-Not dead"
               >
                 <style
+                  aria-hidden="true"
                   dangerouslySetInnerHTML={
                     Object {
                       "__html": "
@@ -640,6 +642,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                 id="metric-tooltip-Hospitalized"
               >
                 <style
+                  aria-hidden="true"
                   dangerouslySetInnerHTML={
                     Object {
                       "__html": "
@@ -790,6 +793,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                 id="metric-tooltip-Not hosp."
               >
                 <style
+                  aria-hidden="true"
                   dangerouslySetInnerHTML={
                     Object {
                       "__html": "
