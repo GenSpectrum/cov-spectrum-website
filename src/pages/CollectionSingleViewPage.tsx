@@ -36,6 +36,7 @@ import { Chen2021FitnessResponse, ValueWithCI } from '../models/chen2021Fitness/
 import { PromiseQueue } from '../helpers/PromiseQueue';
 import { getModelData } from '../models/chen2021Fitness/loading';
 import { VariantSearchField } from '../components/VariantSearchField';
+import { ErrorAlert } from '../components/ErrorAlert';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -73,12 +74,12 @@ export const CollectionSingleViewPage = () => {
   );
 
   // Fetch data about the variants
-  const { data: baselineAndVariantsDateCounts } = useQuery(
+  const { data: baselineAndVariantsDateCounts, error } = useQuery(
     async signal => {
       if (!variants) {
         return undefined;
       }
-      const [baselineDateCounts, ...variantsDateCounts] = await Promise.all(
+      const [baselineDateCounts, ...variantsDateCounts] = await Promise.allSettled(
         [{ query: baselineVariant }, ...variants].map(variant =>
           DateCountSampleData.fromApi(
             {
@@ -93,7 +94,10 @@ export const CollectionSingleViewPage = () => {
           )
         )
       );
-      return { baselineDateCounts, variantsDateCounts };
+      if (baselineDateCounts.status === 'rejected') {
+        throw new Error(baselineDateCounts.reason);
+      }
+      return { baselineDateCounts: baselineDateCounts.value, variantsDateCounts };
     },
     [variants, locationSelector, baselineVariant]
   );
@@ -110,27 +114,28 @@ export const CollectionSingleViewPage = () => {
       if (!variants || !baselineDateCounts) {
         return undefined;
       }
-      if (variantIsAllLineages(baselineVariant)) {
-        return variants.map(_ => baselineDateCounts);
-      }
-      return Promise.all(
-        variants.map(variant =>
-          DateCountSampleData.fromApi(
-            {
-              host: undefined,
-              qc: {},
-              location: locationSelector,
-              variant: {
-                variantQuery: `(${transformToVariantQuery(variant.query)})  | (${transformToVariantQuery(
-                  baselineVariant
-                )})`,
+      return Promise.allSettled(
+        variants.map(variant => {
+          if (!variantIsAllLineages(baselineVariant)) {
+            return DateCountSampleData.fromApi(
+              {
+                host: undefined,
+                qc: {},
+                location: locationSelector,
+                variant: {
+                  variantQuery: `(${transformToVariantQuery(variant.query)})  | (${transformToVariantQuery(
+                    baselineVariant
+                  )})`,
+                },
+                samplingStrategy: SamplingStrategy.AllSamples,
+                dateRange: dateRangeSelector,
               },
-              samplingStrategy: SamplingStrategy.AllSamples,
-              dateRange: dateRangeSelector,
-            },
-            signal
-          )
-        )
+              signal
+            );
+          } else {
+            return Promise.resolve(baselineDateCounts);
+          }
+        })
       );
     },
     [variants, locationSelector, baselineVariant, baselineDateCounts]
@@ -203,36 +208,42 @@ export const CollectionSingleViewPage = () => {
         </Button>
       </div>
 
-      <Box className='mt-4' sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Tabs value={tab} onChange={(_, i) => setTab(i)}>
-          <Tab label='Table' id='collection-tab-0' />
-          <Tab label='Sequences over time' id='collection-tab-1' />
-        </Tabs>
-      </Box>
-      <TabPanel value={tab} index={0}>
-        {variants && variantsDateCounts && allWholeDateCounts ? (
-          <TableTabContent
-            locationSelector={locationSelector}
-            variants={variants}
-            variantsDateCounts={variantsDateCounts}
-            allWholeDateCounts={allWholeDateCounts}
-          />
-        ) : (
-          <Loader />
-        )}
-      </TabPanel>
-      <TabPanel value={tab} index={1}>
-        {variants && variantsDateCounts && baselineDateCounts ? (
-          <SequencesOverTimeTabContent
-            variants={variants}
-            variantsDateCounts={variantsDateCounts}
-            baselineDateCounts={baselineDateCounts}
-            mode={variantIsAllLineages(baselineVariant) ? 'Single' : 'CompareToBaseline'}
-          />
-        ) : (
-          <Loader />
-        )}
-      </TabPanel>
+      {!error ? (
+        <>
+          <Box className='mt-4' sx={{ borderBottom: 1, borderColor: 'divider' }}>
+            <Tabs value={tab} onChange={(_, i) => setTab(i)}>
+              <Tab label='Table' id='collection-tab-0' />
+              <Tab label='Sequences over time' id='collection-tab-1' />
+            </Tabs>
+          </Box>
+          <TabPanel value={tab} index={0}>
+            {variants && variantsDateCounts && allWholeDateCounts ? (
+              <TableTabContent
+                locationSelector={locationSelector}
+                variants={variants}
+                variantsDateCounts={variantsDateCounts}
+                allWholeDateCounts={allWholeDateCounts}
+              />
+            ) : (
+              <Loader />
+            )}
+          </TabPanel>
+          <TabPanel value={tab} index={1}>
+            {variants && variantsDateCounts && baselineDateCounts ? (
+              <SequencesOverTimeTabContent
+                variants={variants}
+                variantsDateCounts={variantsDateCounts}
+                baselineDateCounts={baselineDateCounts}
+                mode={variantIsAllLineages(baselineVariant) ? 'Single' : 'CompareToBaseline'}
+              />
+            ) : (
+              <Loader />
+            )}
+          </TabPanel>
+        </>
+      ) : (
+        <ErrorAlert messages={[error]} />
+      )}
     </div>
   );
 };
@@ -264,8 +275,8 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => {
 type TableTabContentProps = {
   locationSelector: LocationSelector;
   variants: { query: VariantSelector; name: string; description: string }[];
-  variantsDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>[];
-  allWholeDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>[];
+  variantsDateCounts: PromiseSettledResult<Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>>[];
+  allWholeDateCounts: PromiseSettledResult<Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>>[];
 };
 
 const TableTabContent = ({
@@ -279,8 +290,19 @@ const TableTabContent = ({
   useEffect(() => {
     const fetchQueue = new PromiseQueue();
     for (let i = 0; i < variantsDateCounts.length; i++) {
-      const variantDateCounts = variantsDateCounts[i];
-      const wholeDateCounts = allWholeDateCounts[i];
+      const variantDateCountsStatus = variantsDateCounts[i];
+      const allWholeDateCountsStatus = allWholeDateCounts[i];
+      if (variantDateCountsStatus.status === 'rejected' || allWholeDateCountsStatus.status === 'rejected') {
+        fetchQueue.addTask(() => {
+          return new Promise<void>(resolve => {
+            setRelativeAdvantages(prev => [...prev, undefined]);
+            resolve();
+          });
+        });
+        return;
+      }
+      const variantDateCounts = variantDateCountsStatus.value;
+      const wholeDateCounts = allWholeDateCountsStatus.value;
       const totalSequences = variantDateCounts.payload.reduce((prev, curr) => prev + curr.count, 0);
       fetchQueue.addTask(() => {
         if (totalSequences > 0) {
@@ -353,16 +375,34 @@ const TableTabContent = ({
       } else if (!advantage) {
         errorMessage = 'Calculating...';
       }
-      return {
-        id: i,
-        ...variant,
-        name: variant.name.length > 0 ? variant.name : formatVariantDisplayName(variant.query),
-        queryFormatted: formatVariantDisplayName(variant.query),
-        total: variantsDateCounts[i].payload.reduce((prev, curr) => prev + curr.count, 0),
-        advantage: errorMessage ?? ((advantage as ValueWithCI).value * 100).toFixed(2) + '%',
-        advantageCiLower: errorMessage ? '...' : ((advantage as ValueWithCI).ciLower * 100).toFixed(2) + '%',
-        advantageCiUpper: errorMessage ? '...' : ((advantage as ValueWithCI).ciUpper * 100).toFixed(2) + '%',
-      };
+      const vcd = variantsDateCounts[i];
+      if (vcd.status === 'fulfilled') {
+        return {
+          id: i,
+          ...variant,
+          name: variant.name.length > 0 ? variant.name : formatVariantDisplayName(variant.query),
+          queryFormatted: formatVariantDisplayName(variant.query),
+          total: vcd.value.payload.reduce((prev, curr) => prev + curr.count, 0),
+          advantage: errorMessage ?? ((advantage as ValueWithCI).value * 100).toFixed(2) + '%',
+          advantageCiLower: errorMessage
+            ? '...'
+            : ((advantage as ValueWithCI).ciLower * 100).toFixed(2) + '%',
+          advantageCiUpper: errorMessage
+            ? '...'
+            : ((advantage as ValueWithCI).ciUpper * 100).toFixed(2) + '%',
+        };
+      } else {
+        return {
+          id: i,
+          ...variant,
+          name: variant.name.length > 0 ? variant.name : formatVariantDisplayName(variant.query),
+          queryFormatted: formatVariantDisplayName(variant.query),
+          total: vcd.reason,
+          advantage: '-',
+          advantageCiLower: '-',
+          advantageCiUpper: '-',
+        };
+      }
     });
   }, [variants, variantsDateCounts, relativeAdvantages]);
 
@@ -387,7 +427,7 @@ const TableTabContent = ({
 
 type SequencesOverTimeTabContentProps = {
   variants: { query: VariantSelector; name: string; description: string }[];
-  variantsDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>[];
+  variantsDateCounts: PromiseSettledResult<Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>>[];
   baselineDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>;
   mode: 'Single' | 'CompareToBaseline';
 };
@@ -416,16 +456,27 @@ const SequencesOverTimeTabContent = ({
   return (
     <>
       <PackedGrid maxColumns={3}>
-        {variants.map((variant, i) => (
-          <GridCell minWidth={600} key={i}>
-            <VariantTimeDistributionChartWidget.ShareableComponent
-              title={mode === 'Single' ? variant.name : `Comparing ${variant.name} to baseline`}
-              height={300}
-              variantSampleSet={variantsDateCounts[i]}
-              wholeSampleSet={baselineDateCounts}
-            />
-          </GridCell>
-        ))}
+        {variants.map((variant, i) => {
+          const vdc = variantsDateCounts[i];
+          if (vdc.status === 'fulfilled') {
+            return (
+              <GridCell minWidth={600} key={i}>
+                <VariantTimeDistributionChartWidget.ShareableComponent
+                  title={mode === 'Single' ? variant.name : `Comparing ${variant.name} to baseline`}
+                  height={300}
+                  variantSampleSet={vdc.value}
+                  wholeSampleSet={baselineDateCounts}
+                />
+              </GridCell>
+            );
+          } else {
+            return (
+              <GridCell minWidth={600} key={i}>
+                <ErrorAlert messages={[vdc.reason.message]} />
+              </GridCell>
+            );
+          }
+        })}
       </PackedGrid>
     </>
   );
