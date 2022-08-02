@@ -47,6 +47,7 @@ import * as Sentry from '@sentry/react';
 import { isDefaultHostSelector } from '../data/HostSelector';
 import { VariantHosts } from '../components/VariantHosts';
 import { HuismanScire2021ReContainer } from '../models/huismanScire2021Re/HuismanScire2021ReContainer';
+import { ErrorAlert } from '../components/ErrorAlert';
 
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
@@ -240,6 +241,23 @@ export const FocusSinglePage = () => {
   }
   const { country } = exploreUrl.location;
   const host = exploreUrl.host;
+
+  // Error handling
+  const allErrors = [
+    variantDateCount.error,
+    wholeDateCountWithDateFilter.error,
+    variantAgeCount.error,
+    wholeAgeCount.error,
+    variantDivisionCount.error,
+    wholeDivisionCount.error,
+    variantInternationalDateCount.error,
+    wholeInternationalDateCount.error,
+    variantHospDeathAgeCount.error,
+    wholeHospDeathAgeCount.error,
+  ].filter(e => !!e) as string[];
+  if (allErrors.length > 0) {
+    return <ErrorAlert messages={allErrors} />;
+  }
 
   // Wastewater plot
   let wasteWaterSummaryPlot = undefined;

@@ -245,7 +245,13 @@ export async function _fetchAggSamples(
   additionalParams.set('fields', fields.join(','));
   const res = await get(`${linkPrefix}&${additionalParams}`, signal);
   if (!res.ok) {
-    throw new Error('Error fetching new samples data!!');
+    if (res.body !== null) {
+      const errors = (await res.json()).errors as { message: string }[];
+      if (errors.length > 0) {
+        throw new Error(errors.map(e => e.message).join(' '));
+      }
+    }
+    throw new Error();
   }
   const body = (await res.json()) as LapisResponse<FullSampleAggEntryRaw[]>;
 

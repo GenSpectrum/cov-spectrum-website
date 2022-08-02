@@ -24,6 +24,7 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { SvgVennDiagram } from '../components/SvgVennDiagram';
+import { ErrorAlert } from '../components/ErrorAlert';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -148,6 +149,14 @@ export const FocusCompareEqualsPage = () => {
   ]);
 
   // --- Rendering ---
+
+  // Error handling
+  const allErrors = [variantDateCounts.error, wholeDateCountWithDateFilter.error].filter(
+    e => !!e
+  ) as string[];
+  if (allErrors.length > 0) {
+    return <ErrorAlert messages={allErrors} />;
+  }
 
   return (
     <>
