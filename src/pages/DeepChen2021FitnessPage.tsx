@@ -19,9 +19,10 @@ export const DeepChen2021FitnessPage = () => {
   const exploreUrl = useExploreUrl();
 
   const { ldvsSelector, lvsSelector, lsSelector, lSelector } = useSingleSelectorsFromExploreUrl(exploreUrl!);
-  const variantDateCount = useQuery(signal => DateCountSampleData.fromApi(lvsSelector, signal), [
-    lvsSelector,
-  ]);
+  const variantDateCount = useQuery(
+    signal => DateCountSampleData.fromApi(lvsSelector, signal),
+    [lvsSelector]
+  );
   const wholeDateCount = useQuery(signal => DateCountSampleData.fromApi(lsSelector, signal), [lsSelector]);
 
   // Start date: day of first variant case
