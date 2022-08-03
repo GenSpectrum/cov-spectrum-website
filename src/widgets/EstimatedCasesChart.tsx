@@ -17,10 +17,11 @@ export const EstimatedCasesChart = ({
   variantDateCounts,
   caseCounts,
 }: EstimatedCasesChartProps) => {
-  const data = useMemo(
-    () => prepareData(variantDateCounts, wholeDateCounts, caseCounts),
-    [caseCounts, variantDateCounts, wholeDateCounts]
-  );
+  const data = useMemo(() => prepareData(variantDateCounts, wholeDateCounts, caseCounts), [
+    caseCounts,
+    variantDateCounts,
+    wholeDateCounts,
+  ]);
   if (!data) {
     return <Loader />;
   }
