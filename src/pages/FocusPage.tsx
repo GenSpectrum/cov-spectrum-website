@@ -63,10 +63,12 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
         }
         //setAdvancedSearch(false);
         setSelectedOptions1(values);
+        setVariantQuery1('');
       }
       if (exploreUrl.variant?.variantQuery) {
         //setAdvancedSearch(true);
         setVariantQuery1(exploreUrl.variant.variantQuery);
+        setSelectedOptions1([]);
       }
     }
   }, [exploreUrl?.focusKey]);
@@ -162,8 +164,8 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
                 onVariantSelect={exploreUrl.setVariants}
                 currentSelection={exploreUrl.variants}
                 analysisMode={exploreUrl.analysisMode}
-                selectedValue={selectedOptions1}
-                //variantQuery1={variantQuery1}
+                selectedOptions1={selectedOptions1}
+                variantQuery1={variantQuery1}
               />
             </div>
           </div>

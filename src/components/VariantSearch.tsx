@@ -16,7 +16,8 @@ type Props = {
   currentSelection?: VariantSelector[];
   onVariantSelect: (selections: VariantSelector[], analysisMode?: AnalysisMode) => void;
   analysisMode: AnalysisMode;
-  selectedValue?: SearchOption[] | String;
+  selectedOptions1?: SearchOption[];
+  variantQuery1?: string;
 };
 
 type SelectorWithId = {
@@ -24,7 +25,13 @@ type SelectorWithId = {
   id: number;
 };
 
-export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode, selectedValue }: Props) => {
+export const VariantSearch = ({
+  currentSelection,
+  onVariantSelect,
+  analysisMode,
+  selectedOptions1,
+  variantQuery1,
+}: Props) => {
   const [selections, setSelections] = useState<SelectorWithId[]>(
     currentSelection
       ? currentSelection.map(selector => ({
@@ -108,6 +115,8 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode,
             currentSelection={selections[0].selector}
             onVariantSelect={newSelection => changeSelection(newSelection, 0)}
             triggerSearch={submitSearch}
+            variantQuery1={variantQuery1}
+            selectedOptions1={selectedOptions1}
           />
         </div>
         <Button variant={ButtonVariant.PRIMARY} className='w-40' onClick={() => submitSearch()}>
@@ -134,6 +143,8 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode,
                     currentSelection={selection.selector}
                     onVariantSelect={newSelection => changeSelection(newSelection, index)}
                     triggerSearch={submitSearch}
+                    variantQuery1={variantQuery1}
+                    selectedOptions1={selectedOptions1}
                   />
                 </div>
               </div>

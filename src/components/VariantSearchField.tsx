@@ -11,7 +11,7 @@ import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 import Form from 'react-bootstrap/Form';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 import { getEquivalent, translateMutation } from '../helpers/autocomplete-helpers';
-import { useExploreUrl } from '../helpers/explore-url';
+//import { useExploreUrl } from '../helpers/explore-url';
 
 type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
 
@@ -78,9 +78,17 @@ type Props = {
   onVariantSelect: (selection: VariantSelector) => void;
   isSimple: boolean;
   triggerSearch: () => void;
+  selectedOptions1?: SearchOption[];
+  variantQuery1?: string;
 };
 
-export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerSearch }: Props) => {
+export const VariantSearchField = ({
+  onVariantSelect,
+  currentSelection,
+  triggerSearch,
+  selectedOptions1,
+  variantQuery1,
+}: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<SearchOption[]>(
     currentSelection ? variantSelectorToOptions(currentSelection) : []
   );
@@ -90,7 +98,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? '');
   const [advancedSearch, setAdvancedSearch] = useState(!!currentSelection?.variantQuery);
 
-  const exploreUrl = useExploreUrl();
+  // const exploreUrl = useExploreUrl();
 
   const pangoLineages = useQuery(
     signal =>
@@ -114,35 +122,47 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   }, [currentSelection]);
 
   useEffect(() => {
-    if (exploreUrl) {
-      if (exploreUrl.variant) {
-        let values: SearchOption[] = [];
-        if (exploreUrl.variant.pangoLineage) {
-          values.push({
-            label: exploreUrl.variant.pangoLineage,
-            value: exploreUrl.variant.pangoLineage,
-            type: 'pango-lineage',
-          });
-          if (exploreUrl.variant.nucMutations) {
-            for (let i of exploreUrl.variant.nucMutations) {
-              values.push({ label: i, value: i, type: 'nuc-mutation' });
-            }
-          }
-          if (exploreUrl.variant.aaMutations) {
-            for (let i of exploreUrl.variant.aaMutations) {
-              values.push({ label: i, value: i, type: 'aa-mutation' });
-            }
-          }
-        }
-        setAdvancedSearch(false);
-        setSelectedOptions(values);
-      }
-      if (exploreUrl.variant?.variantQuery) {
-        setAdvancedSearch(true);
-        setVariantQuery(exploreUrl.variant.variantQuery);
-      }
+    if (selectedOptions1 != undefined && selectedOptions1.length > 0) {
+      setAdvancedSearch(false);
+      setVariantQuery('');
+      setSelectedOptions(selectedOptions1);
+    } else if (variantQuery1 !== undefined && variantQuery1.length > 0) {
+      setAdvancedSearch(true);
+      setSelectedOptions([]);
+      setVariantQuery(variantQuery1);
     }
-  }, [exploreUrl?.focusKey]);
+  }, [variantQuery1, selectedOptions1]);
+
+  // useEffect(() => {
+  //   if (exploreUrl) {
+  //     if (exploreUrl.variant) {
+  //       let values: SearchOption[] = [];
+  //       if (exploreUrl.variant.pangoLineage) {
+  //         values.push({
+  //           label: exploreUrl.variant.pangoLineage,
+  //           value: exploreUrl.variant.pangoLineage,
+  //           type: 'pango-lineage',
+  //         });
+  //         if (exploreUrl.variant.nucMutations) {
+  //           for (let i of exploreUrl.variant.nucMutations) {
+  //             values.push({ label: i, value: i, type: 'nuc-mutation' });
+  //           }
+  //         }
+  //         if (exploreUrl.variant.aaMutations) {
+  //           for (let i of exploreUrl.variant.aaMutations) {
+  //             values.push({ label: i, value: i, type: 'aa-mutation' });
+  //           }
+  //         }
+  //       }
+  //       setAdvancedSearch(false);
+  //       setSelectedOptions(values);
+  //     }
+  //     if (exploreUrl.variant?.variantQuery) {
+  //       setAdvancedSearch(true);
+  //       setVariantQuery(exploreUrl.variant.variantQuery);
+  //     }
+  //   }
+  // }, [exploreUrl?.focusKey]);
 
   const suggestPangolinLineages = (query: string): string[] => {
     return (pangoLineages.data ?? []).filter(pl => pl.toUpperCase().startsWith(query.toUpperCase()));
