@@ -75,9 +75,10 @@ export const FocusCompareEqualsPage = () => {
       Promise.all(ldvsSelectors.map(ldvsSelector => DateCountSampleData.fromApi(ldvsSelector, signal))),
     [ldvsSelectors]
   );
-  const wholeDateCountWithDateFilter = useQuery(signal => DateCountSampleData.fromApi(ldsSelector, signal), [
-    ldsSelector,
-  ]);
+  const wholeDateCountWithDateFilter = useQuery(
+    signal => DateCountSampleData.fromApi(ldsSelector, signal),
+    [ldsSelector]
+  );
 
   // --- Prepare data for sub-division plots ---
   const splitField = !exploreUrl?.location.country ? 'country' : 'division';
@@ -141,11 +142,10 @@ export const FocusCompareEqualsPage = () => {
     };
   };
 
-  const splitSequencesOverTime = useDeepCompareMemo(() => generateSplitData(splitField, 'date'), [
-    splitField,
-    ldvsSelectors,
-    ldsSelector,
-  ]);
+  const splitSequencesOverTime = useDeepCompareMemo(
+    () => generateSplitData(splitField, 'date'),
+    [splitField, ldvsSelectors, ldsSelector]
+  );
 
   // --- Rendering ---
 

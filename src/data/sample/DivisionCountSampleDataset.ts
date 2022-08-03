@@ -14,9 +14,7 @@ export class DivisionCountSampleData {
     };
   }
 
-  static countByDivisionGroup(
-    data: DivisionCountSampleEntry[]
-  ): {
+  static countByDivisionGroup(data: DivisionCountSampleEntry[]): {
     divisionData: Map<string, number>;
     geoInfoArray: { country: string | null; region: string | null }[];
   } {
