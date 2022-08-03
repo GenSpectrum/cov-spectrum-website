@@ -33,17 +33,17 @@ export const CollectionSingleAdminPage = () => {
   const url = process.env.REACT_APP_WEBSITE_HOST + '/collections/' + collectionId;
 
   // Validate admin key
-  const { data: adminKeyIsValid } = useQuery(() => validateCollectionAdminKey(collectionId, adminKey), [
-    collectionId,
-    adminKey,
-  ]);
+  const { data: adminKeyIsValid } = useQuery(
+    () => validateCollectionAdminKey(collectionId, adminKey),
+    [collectionId, adminKey]
+  );
 
   // Fetch collection
   const { data: collections } = useQuery(signal => fetchCollections(signal), []);
-  const collection = useMemo(() => collections?.find(c => c.id === collectionId), [
-    collectionId,
-    collections,
-  ]);
+  const collection = useMemo(
+    () => collections?.find(c => c.id === collectionId),
+    [collectionId, collections]
+  );
 
   // Rendering
   if (!collections) {
