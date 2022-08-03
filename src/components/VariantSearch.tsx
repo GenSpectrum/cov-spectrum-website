@@ -4,10 +4,19 @@ import React, { useState } from 'react';
 import { VariantSearchField } from './VariantSearchField';
 import { AnalysisMode } from '../data/AnalysisMode';
 
+type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
+
+type SearchOption = {
+  label: string;
+  value: string;
+  type: SearchType;
+};
+
 type Props = {
   currentSelection?: VariantSelector[];
   onVariantSelect: (selections: VariantSelector[], analysisMode?: AnalysisMode) => void;
   analysisMode: AnalysisMode;
+  selectedValue?: SearchOption[] | String;
 };
 
 type SelectorWithId = {
@@ -15,7 +24,7 @@ type SelectorWithId = {
   id: number;
 };
 
-export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode }: Props) => {
+export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode, selectedValue }: Props) => {
   const [selections, setSelections] = useState<SelectorWithId[]>(
     currentSelection
       ? currentSelection.map(selector => ({

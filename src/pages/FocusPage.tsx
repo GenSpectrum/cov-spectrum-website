@@ -4,7 +4,7 @@ import { FocusSinglePage } from './FocusSinglePage';
 import { SplitExploreWrapper, SplitFocusWrapper, SplitParentWrapper } from '../helpers/app-layout';
 import { KnownVariantsList } from '../components/KnownVariantsList/KnownVariantsList';
 import Loader from '../components/Loader';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useQuery } from '../helpers/query-hook';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
@@ -15,13 +15,61 @@ import { FocusCompareEqualsPage } from './FocusCompareEqualsPage';
 import { FocusCompareToBaselinePage } from './FocusCompareToBaselinePage';
 import { getLocation } from '../helpers/get-location';
 import { formatVariantDisplayName } from '../data/VariantSelector';
+import { VariantSelector } from '../data/VariantSelector';
+
+type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
+
+type SearchOption = {
+  label: string;
+  value: string;
+  type: SearchType;
+};
 
 type Props = {
   isSmallScreen: boolean;
 };
 
+type SelectorWithId = {
+  selector: VariantSelector;
+  id: number;
+};
+
 export const FocusPage = ({ isSmallScreen }: Props) => {
   const exploreUrl = useExploreUrl()!;
+
+  const [variantQuery1, setVariantQuery1] = useState('');
+  const [selectedOptions1, setSelectedOptions1] = useState<SearchOption[]>([]);
+
+  useEffect(() => {
+    if (exploreUrl) {
+      if (exploreUrl.variant) {
+        let values: SearchOption[] = [];
+        if (exploreUrl.variant.pangoLineage) {
+          values.push({
+            label: exploreUrl.variant.pangoLineage,
+            value: exploreUrl.variant.pangoLineage,
+            type: 'pango-lineage',
+          });
+          if (exploreUrl.variant.nucMutations) {
+            for (let i of exploreUrl.variant.nucMutations) {
+              values.push({ label: i, value: i, type: 'nuc-mutation' });
+            }
+          }
+          if (exploreUrl.variant.aaMutations) {
+            for (let i of exploreUrl.variant.aaMutations) {
+              values.push({ label: i, value: i, type: 'aa-mutation' });
+            }
+          }
+        }
+        //setAdvancedSearch(false);
+        setSelectedOptions1(values);
+      }
+      if (exploreUrl.variant?.variantQuery) {
+        //setAdvancedSearch(true);
+        setVariantQuery1(exploreUrl.variant.variantQuery);
+      }
+    }
+  }, [exploreUrl?.focusKey]);
 
   // fetch data
   const { lsSelector, hostAndQc } = useSingleSelectorsFromExploreUrl(exploreUrl);
@@ -114,6 +162,8 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
                 onVariantSelect={exploreUrl.setVariants}
                 currentSelection={exploreUrl.variants}
                 analysisMode={exploreUrl.analysisMode}
+                selectedValue={selectedOptions1}
+                //variantQuery1={variantQuery1}
               />
             </div>
           </div>

@@ -90,7 +90,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? '');
   const [advancedSearch, setAdvancedSearch] = useState(!!currentSelection?.variantQuery);
 
-  //const [url, _] = useState<string>(window.location.href);
   const exploreUrl = useExploreUrl();
 
   const pangoLineages = useQuery(
