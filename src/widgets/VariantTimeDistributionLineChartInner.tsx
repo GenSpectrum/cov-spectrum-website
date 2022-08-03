@@ -228,17 +228,19 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     allowDecimals={true}
                     hide={false}
                     width={50}
-                    scale={log ? 'log' : 'linear'}
-                    domain={log ? ['auto', 'auto'] : [0, maxYAxis(yMax)]}
+                    scale={log && !absoluteNumbers ? 'log' : 'linear'}
+                    domain={log && !absoluteNumbers ? ['auto', 'auto'] : [0, maxYAxis(yMax)]}
                     allowDataOverflow={true}
                   />
                   <Tooltip
                     active={false}
                     content={e => {
                       if (e.active && e.payload !== undefined) {
-                        const newActive = e.payload[0].payload;
-                        if (active === undefined || active.date.getTime() !== newActive.date.getTime()) {
-                          setActive(newActive);
+                        if (e.payload[0] !== undefined && e.payload[0].payload !== undefined) {
+                          const newActive = e.payload[0].payload;
+                          if (active === undefined || active.date.getTime() !== newActive.date.getTime()) {
+                            setActive(newActive);
+                          }
                         }
                       }
                       return <></>;
@@ -246,14 +248,14 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                   />
                   <Area
                     type='monotone'
-                    dataKey={!log ? 'proportionCI' : 'logCI'}
+                    dataKey={log && !absoluteNumbers ? 'logCI' : 'proportionCI'}
                     fill={colors.activeSecondary}
                     stroke='transparent'
                     isAnimationActive={false}
                   />
                   <Line
                     type='monotone'
-                    dataKey={!log ? 'proportion' : 'log'}
+                    dataKey={log && !absoluteNumbers ? 'log' : 'proportion'}
                     stroke={colors.active}
                     strokeWidth={3}
                     dot={false}
