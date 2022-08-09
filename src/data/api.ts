@@ -2,7 +2,6 @@ import { CaseCountEntry, CaseCountEntryRaw, parseCaseCountEntry } from './CaseCo
 import { LocationDateSelector } from './LocationDateSelector';
 import { addLocationSelectorToUrlSearchParams } from './LocationSelector';
 import { addDateRangeSelectorToUrlSearchParams } from './DateRangeSelector';
-import { ArticleEntry, ArticleEntryRaw, parseArticleEntry } from './ArticleEntry';
 import { PangoLineageAlias } from './PangoLineageAlias';
 import { CountryMapping } from './CountryMapping';
 import { AccountService } from '../services/AccountService';
@@ -88,18 +87,6 @@ export async function fetchCaseCounts(
   }
   const body = (await res.json()) as CaseCountEntryRaw[];
   return body.map(raw => parseCaseCountEntry(raw));
-}
-
-export async function fetchArticles(pangoLineage: string, signal?: AbortSignal): Promise<ArticleEntry[]> {
-  const params = new URLSearchParams();
-  params.set('pangoLineage', pangoLineage);
-
-  const res = await get(`/resource/article?${params.toString()}`, signal);
-  if (!res.ok) {
-    throw new Error('Error fetching case data data');
-  }
-  const body = (await res.json()) as ArticleEntryRaw[];
-  return body.map(raw => parseArticleEntry(raw));
 }
 
 export async function fetchPangoLineageAliases(signal?: AbortSignal): Promise<PangoLineageAlias[]> {

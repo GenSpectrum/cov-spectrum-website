@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
-import { getWHOLabel, getWHOVariantType } from '../services/who-label';
-import { formatVariantDisplayName, variantIsOnlyDefinedBy, VariantSelector } from '../data/VariantSelector';
+import { formatVariantDisplayName, VariantSelector } from '../data/VariantSelector';
 import { DateRangeSelector } from '../data/DateRangeSelector';
 
 export interface Props {
@@ -13,13 +12,6 @@ export interface Props {
 
 export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
   const [resolvedFullName, setResolvedFullName] = useState<string | undefined>();
-
-  const label = variantIsOnlyDefinedBy(variant, 'pangoLineage')
-    ? getWHOLabel(variant.pangoLineage!)
-    : undefined;
-  const type = variantIsOnlyDefinedBy(variant, 'pangoLineage')
-    ? getWHOVariantType(variant.pangoLineage!)
-    : undefined;
 
   useEffect(() => {
     let isSubscribed = true;
@@ -44,11 +36,9 @@ export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
         <div className='flex-grow flex flex-row flex-wrap items-end'>
           <h1 className='md:mr-2'>
             {formatVariantDisplayName(variant)}
-            {label && ` (${label})`}
             {!!titleSuffix && ' - '}
             {titleSuffix}
           </h1>
-          {type && <h3 className='text-gray-500 sm:mr-2'>{`variant of ${type}`}</h3>}
         </div>
       </div>
       {resolvedFullName && <h3 className=' text-gray-500'>Alias for {resolvedFullName}</h3>}

@@ -37,8 +37,6 @@ import { WasteWaterDataset } from '../models/wasteWater/types';
 import { filter, getData } from '../models/wasteWater/loading';
 import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
-import { ArticleData } from '../data/ArticleDataset';
-import { ArticleListWidget } from '../widgets/ArticleListWidget';
 import { HospDiedAgeSampleData } from '../data/sample/HospDiedAgeSampleDataset';
 import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
@@ -135,15 +133,6 @@ export const FocusSinglePage = () => {
       isMounted = false;
     };
   }, [exploreUrl?.location.country, pangoLineageWithoutAsterisk]);
-
-  // Articles
-  const articleDataset = useQuery(
-    signal =>
-      exploreUrl?.variant?.pangoLineage
-        ? ArticleData.fromApi(exploreUrl?.variant?.pangoLineage, signal)
-        : Promise.resolve(undefined),
-    [exploreUrl?.variant?.pangoLineage]
-  );
 
   // --- Prepare data for sub-division plots ---
   // If this is not a country page, the sub-plots will be split by countries. Otherwise, they should be split by
@@ -460,18 +449,6 @@ export const FocusSinglePage = () => {
                 </GridCell>
               )}
               {isDefaultHostSelector(host) && wasteWaterSummaryPlot}
-              {exploreUrl?.variant?.pangoLineage && ( // TODO Check that nothing else is set
-                <GridCell minWidth={800}>
-                  {articleDataset.data && articleDataset.isSuccess ? (
-                    <ArticleListWidget.ShareableComponent
-                      title='Publications and pre-Prints'
-                      articleDataset={articleDataset.data}
-                    />
-                  ) : (
-                    <Loader />
-                  )}
-                </GridCell>
-              )}
             </PackedGrid>
 
             <div className='m-4'>
