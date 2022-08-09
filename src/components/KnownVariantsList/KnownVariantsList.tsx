@@ -199,8 +199,7 @@ export const KnownVariantsList = ({
     };
 
     async function fetchAll(collection: Collection) {
-      return await Promise.all(
-        // TODO handle broken variant queries
+      const promises = await Promise.allSettled(
         collection.variants.map(async variant => {
           const selector = createSelector(JSON.parse(variant.query) as VariantSelector, hostAndQc);
           return {
@@ -209,6 +208,14 @@ export const KnownVariantsList = ({
           };
         })
       );
+      // The failed variants (likely because the variant query is broken) will be filtered out.
+      const collectionVariants = [];
+      for (let p of promises) {
+        if (p.status === 'fulfilled') {
+          collectionVariants.push(p.value);
+        }
+      }
+      return collectionVariants;
     }
     fetchAll(selectedCollection).then(sampleSets => {
       const _chartData = convertKnownVariantChartData({
