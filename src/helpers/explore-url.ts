@@ -38,7 +38,6 @@ export interface ExploreUrl {
   validUrl: true;
   location: LocationSelector;
   dateRange: DateRangeSelector;
-  variant?: VariantSelector;
   variants?: VariantSelector[];
   samplingStrategy: SamplingStrategy;
   analysisMode: AnalysisMode;
@@ -262,17 +261,8 @@ export function useExploreUrl(): ExploreUrl | undefined {
   const dateRangeSelector = dateRangeUrlToSelector(encoded.dateRange);
 
   // Get variant selector if given
-  let variantSelector: VariantSelector | undefined = undefined;
   let variantSelectors: VariantSelector[] | undefined = undefined;
   if (routeMatches.locationSamplingDateVariant) {
-    variantSelector = {
-      pangoLineage: query.get('pangoLineage') ?? undefined,
-      gisaidClade: query.get('gisaidClade') ?? undefined,
-      nextstrainClade: query.get('nextstrainClade') ?? undefined,
-      aaMutations: query.get('aaMutations')?.split(','),
-      nucMutations: query.get('nucMutations')?.split(','),
-      variantQuery: query.get('variantQuery') ?? undefined,
-    };
     variantSelectors = decodeVariantListFromUrl(queryString);
   }
 
@@ -283,7 +273,6 @@ export function useExploreUrl(): ExploreUrl | undefined {
     validUrl: true,
     location: locationSelector,
     dateRange: dateRangeSelector,
-    variant: variantSelector,
     variants: variantSelectors,
     samplingStrategy,
     analysisMode,

@@ -118,7 +118,7 @@ export const FocusSinglePage = () => {
 
   // Wastewater
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
-  const pangoLineageWithoutAsterisk = exploreUrl?.variant?.pangoLineage?.replace('*', '');
+  const pangoLineageWithoutAsterisk = exploreUrl?.variants![0].pangoLineage?.replace('*', '');
   useEffect(() => {
     let isMounted = true;
     const country = exploreUrl?.location.country;
@@ -225,7 +225,7 @@ export const FocusSinglePage = () => {
 
   // --- Rendering ---
 
-  if (!exploreUrl || !exploreUrl.variant) {
+  if (!exploreUrl || !exploreUrl.variants) {
     return null;
   }
   const { country } = exploreUrl.location;
@@ -290,7 +290,7 @@ export const FocusSinglePage = () => {
     <>
       <VariantHeader
         dateRange={exploreUrl.dateRange}
-        variant={exploreUrl.variant}
+        variant={exploreUrl.variants[0]}
         controls={<FocusVariantHeaderControls selector={ldvsSelector} />}
       />
       {variantDateCount.data &&
@@ -441,7 +441,7 @@ export const FocusSinglePage = () => {
                     field='hospitalized'
                     variantSampleSet={variantHospDeathAgeCount.data}
                     wholeSampleSet={wholeHospDeathAgeCount.data}
-                    variantName={exploreUrl.variant.pangoLineage ?? 'unnamed variant'}
+                    variantName={exploreUrl.variants[0].pangoLineage ?? 'unnamed variant'}
                     title='Hospitalization probabilities'
                     height={300}
                     toolbarChildren={deepFocusButtons.hospitalizationAndDeath}

@@ -47,7 +47,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
 
   useEffect(() => {
     // Include the variant name and location of interest in the page title
-    let variant = exploreUrl.variant ? formatVariantDisplayName(exploreUrl.variant) : '';
+    let variant = formatVariantDisplayName(exploreUrl.variants![0]);
     let place: string = getLocation(exploreUrl);
     document.title = `${variant} - ${place} - covSPECTRUM`;
   });
