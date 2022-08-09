@@ -4,7 +4,6 @@ import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import styled from 'styled-components';
 import { mean } from 'lodash';
 import { colors } from '../../widgets/common';
-import { getWHOLabel } from '../../services/who-label';
 
 const TREND_START = 9;
 const TREND_END = 3;
@@ -81,7 +80,6 @@ const SimpleAreaPlot = React.memo(
 );
 
 export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, selected }: Props) => {
-  const WHOLabel: string | undefined = getWHOLabel(name);
   return (
     <Card
       as={StyledCard}
@@ -95,10 +93,7 @@ export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, s
           selected ? 'font-bold' : ''
         } mx-2 mt-2 flex flex-row flex-nowrap items-end space-between`}
       >
-        <div className='flex flex-row items-end flex-grow-1 overflow-hidden'>
-          <p className=''>{name}</p>
-          <p className='inline text-xs'>{WHOLabel !== undefined && ` ${WHOLabel}`}</p>
-        </div>
+        <div className='flex flex-row items-end flex-grow-1 overflow-hidden'>{name}</div>
         {chartData?.length && (
           <div className='text-muted float-right ml-2 md:ml-0.5'>
             <p>{(Math.round(recentProportion! * 100 * 10) / 10).toString()}%</p>
