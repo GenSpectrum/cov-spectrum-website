@@ -1,8 +1,9 @@
 import { formatVariantDisplayName, VariantSelector } from '../data/VariantSelector';
 import { Button, ButtonVariant } from '../helpers/ui';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { VariantSearchField } from './VariantSearchField';
 import { AnalysisMode } from '../data/AnalysisMode';
+import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 
 type Props = {
   currentSelection?: VariantSelector[];
@@ -25,7 +26,7 @@ const defaultSelections: SelectorWithId[] = [
 export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode }: Props) => {
   const [selections, setSelections] = useState<SelectorWithId[]>(defaultSelections);
 
-  useEffect(() => {
+  useDeepCompareEffect(() => {
     if (currentSelection) {
       setSelections(
         currentSelection.map(selector => ({
