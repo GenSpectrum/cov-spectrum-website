@@ -1,6 +1,6 @@
 import { formatVariantDisplayName, VariantSelector } from '../data/VariantSelector';
 import { Button, ButtonVariant } from '../helpers/ui';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { VariantSearchField } from './VariantSearchField';
 import { AnalysisMode } from '../data/AnalysisMode';
 
@@ -15,20 +15,28 @@ type SelectorWithId = {
   id: number;
 };
 
+const defaultSelections: SelectorWithId[] = [
+  {
+    selector: {},
+    id: Math.random(),
+  },
+];
+
 export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode }: Props) => {
-  const [selections, setSelections] = useState<SelectorWithId[]>(
-    currentSelection
-      ? currentSelection.map(selector => ({
+  const [selections, setSelections] = useState<SelectorWithId[]>(defaultSelections);
+
+  useEffect(() => {
+    if (currentSelection) {
+      setSelections(
+        currentSelection.map(selector => ({
           selector,
           id: Math.random(),
         }))
-      : [
-          {
-            selector: {},
-            id: Math.random(),
-          },
-        ]
-  );
+      );
+    } else {
+      setSelections(defaultSelections);
+    }
+  }, [currentSelection]);
 
   // --- Functions to modify and submit selection ---
 
