@@ -2,7 +2,7 @@ import assert from 'assert';
 import { useCallback, useMemo } from 'react';
 import { useHistory, useLocation, useRouteMatch } from 'react-router';
 import {
-  decodeVariantListFromUrl,
+  readVariantListFromUrlSearchParams,
   addVariantSelectorsToUrlSearchParams,
   VariantSelector,
 } from '../data/VariantSelector';
@@ -35,7 +35,6 @@ import {
 import { HUMAN } from '../data/api-lapis';
 
 export interface ExploreUrl {
-  validUrl: true;
   location: LocationSelector;
   dateRange: DateRangeSelector;
   variants?: VariantSelector[];
@@ -55,10 +54,6 @@ export interface ExploreUrl {
   getDeepExplorePageUrl: (pagePath: string) => string;
   getDeepFocusPageUrl: (pagePath: string) => string;
   focusKey: string;
-}
-
-function useQuery(queryString: string) {
-  return useMemo(() => new URLSearchParams(queryString), [queryString]);
 }
 
 export const defaultDateRange: DateRangeUrlEncoded = 'Past6M';
@@ -89,7 +84,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     }>(`/explore/:location/:samplingStrategy/:dateRange/variants`),
   };
   let queryString = useLocation().search;
-  let query = useQuery(queryString);
+  let query = useMemo(() => new URLSearchParams(queryString), [queryString]);
 
   // Navigation functions
   const setLocation = useCallback(
@@ -215,17 +210,36 @@ export function useExploreUrl(): ExploreUrl | undefined {
     [locationState.search, routeMatches.locationSamplingDate?.url]
   );
 
-  // Parse Host and QC
-  const { host, qc } = useMemo(
+  // Parse from query params
+  const { variants, analysisMode, host, qc } = useMemo(
     () => ({
+      variants: readVariantListFromUrlSearchParams(query),
+      analysisMode: decodeAnalysisMode(query.get('analysisMode')) ?? defaultAnalysisMode,
       host: readHostSelectorFromUrlSearchParams(query),
       qc: readQcSelectorFromUrlSearchParams(query),
     }),
     [query]
   );
 
+  // Parse from path params
+  const encoded = {
+    location: routeMatches.locationSamplingDate?.params.location,
+    dateRange: routeMatches.locationSamplingDate?.params.dateRange,
+    samplingStrategy: routeMatches.locationSamplingDate?.params.samplingStrategy,
+  };
+  const pathParams = useMemo(() => {
+    if (!encoded.location || !encoded.dateRange || !encoded.samplingStrategy) {
+      return undefined;
+    }
+    return {
+      location: decodeLocationSelectorFromSingleString(encoded.location),
+      samplingStrategy: decodeSamplingStrategy(encoded.samplingStrategy),
+      dateRange: isDateRangeEncoded(encoded.dateRange) ? dateRangeUrlToSelector(encoded.dateRange) : null,
+    };
+  }, [encoded.dateRange, encoded.location, encoded.samplingStrategy]);
+
   // Redirecting if the explore URL is not complete
-  if (!routeMatches.locationSamplingDate) {
+  if (!routeMatches.locationSamplingDate || !pathParams) {
     if (routeMatches.locationSampling) {
       const { location, samplingStrategy } = routeMatches.locationSampling.params;
       history.push(`/explore/${location}/${samplingStrategy}/`);
@@ -239,42 +253,23 @@ export function useExploreUrl(): ExploreUrl | undefined {
     return undefined;
   }
 
-  const encoded = {
-    location: routeMatches.locationSamplingDate.params.location,
-    dateRange: routeMatches.locationSamplingDate.params.dateRange,
-    samplingStrategy: routeMatches.locationSamplingDate.params.samplingStrategy,
-  };
-
-  // Parse location and date range
-  const locationSelector = decodeLocationSelectorFromSingleString(encoded.location);
-  const samplingStrategy = decodeSamplingStrategy(encoded.samplingStrategy);
-  if (samplingStrategy === null) {
+  // Redirect if something is not alright with the params
+  if (pathParams.samplingStrategy === null) {
     // Redirecting because of an invalid sampling strategy
     history.push(`/explore/${encoded.location}/${defaultSamplingStrategy}/${encoded.dateRange}`);
     return undefined;
   }
-  if (!isDateRangeEncoded(encoded.dateRange)) {
+  if (pathParams.dateRange === null) {
     // Redirecting because of an invalid date range
     history.push(`/explore/${encoded.location}/${encoded.samplingStrategy}/${defaultDateRange}`);
     return undefined;
   }
-  const dateRangeSelector = dateRangeUrlToSelector(encoded.dateRange);
-
-  // Get variant selector if given
-  let variantSelectors: VariantSelector[] | undefined = undefined;
-  if (routeMatches.locationSamplingDateVariant) {
-    variantSelectors = decodeVariantListFromUrl(queryString);
-  }
-
-  // Parse analysis mode
-  const analysisMode = decodeAnalysisMode(query.get('analysisMode')) ?? defaultAnalysisMode;
 
   return {
-    validUrl: true,
-    location: locationSelector,
-    dateRange: dateRangeSelector,
-    variants: variantSelectors,
-    samplingStrategy,
+    location: pathParams.location,
+    dateRange: pathParams.dateRange,
+    samplingStrategy: pathParams.samplingStrategy,
+    variants: routeMatches.locationSamplingDateVariant !== null ? variants : undefined,
     analysisMode,
     host,
     qc,
