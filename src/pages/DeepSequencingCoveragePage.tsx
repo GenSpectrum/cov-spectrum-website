@@ -45,9 +45,11 @@ export const DeepSequencingCoveragePage = () => {
           <h1>Sequencing coverage</h1>
         </div>
         <div>
-          <Button className='mt-2' variant='secondary' as={Link} to={exploreUrl.getExplorePageUrl()}>
-            Back to overview
-          </Button>
+          <Link to={exploreUrl.getExplorePageUrl()}>
+            <Button className='mt-2' variant='secondary'>
+              Back to overview
+            </Button>
+          </Link>
         </div>
       </div>
     </div>,
