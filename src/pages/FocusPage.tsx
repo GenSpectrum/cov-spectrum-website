@@ -109,7 +109,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
             <div className='m-1'>
               <DateRangePicker dateRangeSelector={exploreUrl.dateRange} />
             </div>
-            <div className='m-1 flex-grow mt-3'>
+            <div className='flex-grow mt-1'>
               <VariantSearch
                 onVariantSelect={exploreUrl.setVariants}
                 currentSelection={exploreUrl.variants}

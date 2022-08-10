@@ -28,7 +28,7 @@ const getLoadVariantCardLoaders = (numberCards: number) => {
 
 export interface KnownVariantWithChartData {
   selector: VariantSelector;
-  name: string;
+  variant: CollectionVariant;
   chartData: number[]; // proportion (0-1) per week
   recentProportion: number; // the proportion of the last 14 days
 }
@@ -101,7 +101,7 @@ export function convertKnownVariantChartData({
 
   return variantSampleSets.map(({ variant, data }, i) => ({
     selector: data.selector.variant!,
-    name: variant.name,
+    variant,
     chartData: filledData[i],
     recentProportion: recentVariantTotal[i] / recentWholeTotal,
   }));
@@ -242,11 +242,11 @@ export const KnownVariantsList = ({
         onSelect={setSelectedVariantList}
       />
       <Grid isHorizontal={isHorizontal} isLandingPage={isLandingPage}>
-        {chartData.map(({ selector, name, chartData, recentProportion }) => (
+        {chartData.map(({ selector, variant, chartData, recentProportion }) => (
           <div className={`${isHorizontal && 'h-full w-36'}`} key={formatVariantDisplayName(selector, true)}>
             <KnownVariantCard
               key={formatVariantDisplayName(selector, true)}
-              name={name}
+              variant={variant}
               chartData={chartData}
               recentProportion={recentProportion}
               onClick={() => {

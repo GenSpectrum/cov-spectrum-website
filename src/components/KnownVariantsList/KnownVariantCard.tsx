@@ -4,12 +4,13 @@ import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import styled from 'styled-components';
 import { mean } from 'lodash';
 import { colors } from '../../widgets/common';
+import { CollectionVariant } from '../../data/Collection';
 
 const TREND_START = 9;
 const TREND_END = 3;
 
 interface Props {
-  name: string;
+  variant: CollectionVariant;
   chartData?: number[];
   recentProportion?: number;
   selected?: boolean;
@@ -79,30 +80,36 @@ const SimpleAreaPlot = React.memo(
   }
 );
 
-export const KnownVariantCard = ({ name, chartData, recentProportion, onClick, selected }: Props) => {
+export const KnownVariantCard = ({ variant, chartData, recentProportion, onClick, selected }: Props) => {
+  const startDrag = (ev: React.DragEvent<HTMLDivElement>) => {
+    ev.dataTransfer.setData('drag-item', variant.query);
+  };
+
   return (
-    <Card
-      as={StyledCard}
-      className={`shadow-md border-0 m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl w-full`}
-      onClick={onClick}
-      selected={selected}
-    >
-      <div
-        id='variant-title'
-        className={`${
-          selected ? 'font-bold' : ''
-        } mx-2 mt-2 flex flex-row flex-nowrap items-end space-between`}
+    <div draggable onDragStart={startDrag}>
+      <Card
+        as={StyledCard}
+        className={`shadow-md border-0 m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl w-full`}
+        onClick={onClick}
+        selected={selected}
       >
-        <div className='flex flex-row items-end flex-grow-1 overflow-hidden'>{name}</div>
-        {chartData?.length && (
-          <div className='text-muted float-right ml-2 md:ml-0.5'>
-            <p>{(Math.round(recentProportion! * 100 * 10) / 10).toString()}%</p>
-          </div>
-        )}
-      </div>
-      <div>
-        <SimpleAreaPlot data={chartData} selected={selected ? selected : false} />
-      </div>
-    </Card>
+        <div
+          id='variant-title'
+          className={`${
+            selected ? 'font-bold' : ''
+          } mx-2 mt-2 flex flex-row flex-nowrap items-end space-between`}
+        >
+          <div className='flex flex-row items-end flex-grow-1 overflow-hidden'>{variant.name}</div>
+          {chartData?.length && (
+            <div className='text-muted float-right ml-2 md:ml-0.5'>
+              <p>{(Math.round(recentProportion! * 100 * 10) / 10).toString()}%</p>
+            </div>
+          )}
+        </div>
+        <div>
+          <SimpleAreaPlot data={chartData} selected={selected ? selected : false} />
+        </div>
+      </Card>
+    </div>
   );
 };
