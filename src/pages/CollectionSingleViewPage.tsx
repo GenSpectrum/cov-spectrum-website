@@ -168,7 +168,7 @@ export const CollectionSingleViewPage = () => {
       <p className='whitespace-pre-wrap'>{collection.description}</p>
       <h2>Variants</h2>
       {/* Filters */}
-      <div className='w-96'>
+      <div className='w-full sm:w-96'>
         <PlaceSelect
           onSelect={selector => {
             const queryParams = new URLSearchParams();
