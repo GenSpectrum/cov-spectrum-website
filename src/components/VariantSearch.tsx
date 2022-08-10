@@ -171,9 +171,6 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
           <div>
             {selections.slice(1).map((selection, index) => (
               <div className='flex' key={selection.id}>
-                <button className='mr-2 mb-6 outline-none' onClick={() => removeSelection(index + 1)}>
-                  X
-                </button>
                 <div className='flex-grow'>
                   <VariantSearchField
                     key={selection.id}
@@ -181,8 +178,12 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
                     currentSelection={selection.selector}
                     onVariantSelect={newSelection => changeSelection(newSelection, index + 1)}
                     triggerSearch={submitSearch}
+                    analysisMode={analysisMode}
                   />
                 </div>
+                <button className='mr-2 mb-8 outline-none' onClick={() => removeSelection(index + 1)}>
+                  X
+                </button>
               </div>
             ))}
           </div>
