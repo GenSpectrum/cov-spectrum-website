@@ -11,6 +11,7 @@ import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 import Form from 'react-bootstrap/Form';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 import { getEquivalent, translateMutation } from '../helpers/autocomplete-helpers';
+import { AnalysisMode } from '../data/AnalysisMode';
 
 type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
 
@@ -77,9 +78,15 @@ type Props = {
   onVariantSelect: (selection: VariantSelector) => void;
   isSimple: boolean;
   triggerSearch: () => void;
+  analysisMode?: AnalysisMode;
 };
 
-export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerSearch }: Props) => {
+export const VariantSearchField = ({
+  onVariantSelect,
+  currentSelection,
+  triggerSearch,
+  analysisMode,
+}: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<SearchOption[]>(
     currentSelection ? variantSelectorToOptions(currentSelection) : []
   );
@@ -387,7 +394,8 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       onDragLeave={dragLeave}
       onDrop={drop}
       className={
-        'p-1 m-1 border-2 border-dashed ' + (dragOngoingDepth ? 'border-black' : 'border-transparent')
+        `${analysisMode !== AnalysisMode.CompareToBaseline ? 'm-1' : 'mt-1'} p-1 border-2 border-dashed ` +
+        (dragOngoingDepth ? 'border-black' : 'border-transparent')
       }
     >
       <form
@@ -439,6 +447,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
           label='Advanced search'
           checked={advancedSearch}
           onChange={_ => handleCheckboxChange()}
+          className='w-full mb-3'
         />
       </div>
     </div>

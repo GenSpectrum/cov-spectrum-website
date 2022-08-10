@@ -105,7 +105,12 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
               </p>
             </div>
           )}
-          <div id='variant-search-bar' className='flex flex-row flex-wrap m-1'>
+          <div
+            id='variant-search-bar'
+            className={`flex ${
+              exploreUrl.analysisMode !== 'CompareToBaseline' ? 'flex-row' : 'flex-column'
+            } flex-wrap m-1`}
+          >
             <div className='m-1'>
               <DateRangePicker dateRangeSelector={exploreUrl.dateRange} />
             </div>

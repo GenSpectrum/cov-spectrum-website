@@ -139,7 +139,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
             ))}
           </div>
 
-          <button className='underline cursor-pointer outline-none' onClick={() => addSelection()}>
+          <button className='underline cursor-pointer outline-none mr-2' onClick={() => addSelection()}>
             Add variant
           </button>
         </div>
@@ -152,11 +152,10 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
 
   if (analysisMode === AnalysisMode.CompareToBaseline) {
     return (
-      <div className='flex flex-wrap'>
+      <div className='flex flex-wrap w-8/12'>
         <div className='flex-grow'>
-          Baseline variant:
+          <span className='ml-1'>Baseline variant:</span>
           <div className='flex'>
-            <button className='mr-2 mb-6 outline-none invisible'>X</button>
             <div className='flex-grow'>
               <VariantSearchField
                 key={selections[0].id}
@@ -164,10 +163,11 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
                 currentSelection={selections[0].selector}
                 onVariantSelect={newSelection => changeSelection(newSelection, 0)}
                 triggerSearch={submitSearch}
+                analysisMode={analysisMode}
               />
             </div>
           </div>
-          Comparing with:
+          <span className='ml-1'>Comparing with:</span>
           <div>
             {selections.slice(1).map((selection, index) => (
               <div className='flex' key={selection.id}>
@@ -186,7 +186,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
               </div>
             ))}
           </div>
-          <button className='underline cursor-pointer outline-none' onClick={() => addSelection()}>
+          <button className='underline cursor-pointer outline-none ml-1' onClick={() => addSelection()}>
             Add variant
           </button>
         </div>
