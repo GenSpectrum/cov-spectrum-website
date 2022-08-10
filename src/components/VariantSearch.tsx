@@ -139,6 +139,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
                 <button
                   className='mb-6 outline-none hover:text-yellow-500'
                   onClick={() => removeSelection(index + 1)}
+                  title='Delete'
                 >
                   <AiFillDelete />
                 </button>
@@ -188,12 +189,14 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
                   <button
                     className='mb-2 outline-none hover:text-yellow-500'
                     onClick={() => removeSelection(index + 1)}
+                    title='Delete'
                   >
                     <AiFillDelete />
                   </button>
                   <button
                     className='outline-none hover:text-yellow-500'
                     onClick={() => moveSelectionToTop(index + 1)}
+                    title='Set as baseline'
                   >
                     <FaArrowUp />
                   </button>
