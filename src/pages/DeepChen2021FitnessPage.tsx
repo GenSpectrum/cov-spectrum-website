@@ -112,9 +112,11 @@ export const DeepChen2021FitnessPage = () => {
       dateRange={exploreUrl.dateRange}
       variant={exploreUrl.variants![0]}
       controls={
-        <Button className='mt-2' variant='secondary' as={Link} to={exploreUrl.getOverviewPageUrl()}>
-          Back to overview
-        </Button>
+        <Link to={exploreUrl.getOverviewPageUrl()}>
+          <Button className='mt-2' variant='secondary'>
+            Back to overview
+          </Button>
+        </Link>
       }
       titleSuffix='Relative growth advantage'
     />,

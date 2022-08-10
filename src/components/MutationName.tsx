@@ -150,10 +150,10 @@ export const MutationName = ({ mutation }: Props) => {
   const information = getInformation(gene, parseInt(position));
   const popover = (
     <Popover id='popover-basic' style={{ maxWidth: '600px' }}>
-      <Popover.Title as='h3'>{information.header}</Popover.Title>
-      <Popover.Content>
+      <Popover.Header as='h3'>{information.header}</Popover.Header>
+      <Popover.Body>
         {information.text || <i className='text-muted'>No description available</i>}
-      </Popover.Content>
+      </Popover.Body>
     </Popover>
   );
 
