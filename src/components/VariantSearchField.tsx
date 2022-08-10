@@ -87,6 +87,9 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
   const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? inputValue);
   const [advancedSearch, setAdvancedSearch] = useState(currentSelection?.variantQuery !== undefined);
+  // dragEnter increases the depth by one and dragLeave decreases it. The two functions is being called every time when
+  // the mouse enters or leaves the object or one of the children.
+  const [dragOngoingDepth, setDragOngoingDepth] = useState(0);
 
   const pangoLineages = useQuery(
     signal =>
@@ -97,15 +100,19 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     []
   );
 
+  const applySelector = (selector: VariantSelector) => {
+    if (selector.variantQuery !== undefined) {
+      setAdvancedSearch(true);
+      setVariantQuery(selector.variantQuery);
+    } else {
+      setAdvancedSearch(false);
+      setSelectedOptions(variantSelectorToOptions(selector));
+    }
+  };
+
   useDeepCompareEffect(() => {
     if (currentSelection) {
-      if (currentSelection.variantQuery !== undefined) {
-        setAdvancedSearch(true);
-        setVariantQuery(currentSelection.variantQuery);
-      } else {
-        setAdvancedSearch(false);
-        setSelectedOptions(variantSelectorToOptions(currentSelection));
-      }
+      applySelector(currentSelection);
     }
   }, [currentSelection]);
 
@@ -347,8 +354,42 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     setVariantQuery(newQuery);
   }
 
+  // --- Drag&drop ---
+
+  const dragOver = (ev: React.DragEvent<HTMLDivElement>) => {
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = 'copy';
+  };
+
+  const dragEnter = () => {
+    setDragOngoingDepth(d => d + 1);
+  };
+
+  const dragLeave = () => {
+    setDragOngoingDepth(d => Math.max(0, d - 1));
+  };
+
+  const drop = (ev: React.DragEvent<HTMLDivElement>) => {
+    const droppedItem = ev.dataTransfer.getData('drag-item');
+    if (droppedItem) {
+      const selector = JSON.parse(droppedItem) as VariantSelector;
+      applySelector(selector);
+    }
+    setDragOngoingDepth(0);
+  };
+
+  // --- Rendering ---
+
   return (
-    <div>
+    <div
+      onDragOver={dragOver}
+      onDragEnter={dragEnter}
+      onDragLeave={dragLeave}
+      onDrop={drop}
+      className={
+        'p-1 m-1 border-2 border-dashed ' + (dragOngoingDepth ? 'border-black' : 'border-transparent')
+      }
+    >
       <form
         className='w-full flex flex-row items-center'
         onSubmit={e => {

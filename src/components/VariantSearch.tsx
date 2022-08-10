@@ -109,7 +109,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
             triggerSearch={submitSearch}
           />
         </div>
-        <Button variant={ButtonVariant.PRIMARY} className='w-40' onClick={() => submitSearch()}>
+        <Button variant={ButtonVariant.PRIMARY} className='w-40 mt-3' onClick={() => submitSearch()}>
           Search
         </Button>
       </div>
@@ -143,7 +143,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
             Add variant
           </button>
         </div>
-        <Button variant={ButtonVariant.PRIMARY} className='w-40' onClick={() => submitSearch()}>
+        <Button variant={ButtonVariant.PRIMARY} className='w-40 mt-3' onClick={() => submitSearch()}>
           Search
         </Button>
       </div>
@@ -190,7 +190,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
             Add variant
           </button>
         </div>
-        <Button variant={ButtonVariant.PRIMARY} className='w-40 mt-6' onClick={() => submitSearch()}>
+        <Button variant={ButtonVariant.PRIMARY} className='w-40 mt-9' onClick={() => submitSearch()}>
           Search
         </Button>
       </div>
