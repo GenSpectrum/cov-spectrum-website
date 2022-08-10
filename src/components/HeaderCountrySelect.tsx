@@ -9,9 +9,5 @@ export const HeaderCountrySelect = () => {
     return null;
   }
 
-  return (
-    <div>
-      <PlaceSelect selected={exploreUrl.location} onSelect={exploreUrl.setLocation} />
-    </div>
-  );
+  return <PlaceSelect selected={exploreUrl.location} onSelect={exploreUrl.setLocation} />;
 };

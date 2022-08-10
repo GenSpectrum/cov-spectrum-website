@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { ExternalLink } from './components/ExternalLink';
-import { AiOutlineGithub, AiOutlineTwitter } from 'react-icons/ai';
+import { AiOutlineGithub, AiOutlineTwitter, AiOutlineMenu } from 'react-icons/ai';
 import { FaExchangeAlt, FaFilter } from 'react-icons/fa';
-import { BsFillInfoCircleFill } from 'react-icons/bs';
-import { RiDeleteBack2Fill } from 'react-icons/ri';
 import { Button, ButtonVariant } from './helpers/ui';
 import { useExploreUrl } from './helpers/explore-url';
-import { useHistory } from 'react-router';
 import { alternativeSequenceDataSourceUrl, sequenceDataSource } from './helpers/sequence-data-source';
 import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrategySelect';
 import { encodeLocationSelectorToSingleString } from './data/LocationSelector';
@@ -48,29 +45,9 @@ const Logo = () => {
   );
 };
 
-const BackToExplore = () => {
-  const history = useHistory();
-
-  return history.location.pathname.includes('variant') ? (
-    <div className='relative inline-block text-left ml-3'>
-      <button
-        type='button'
-        className='border border-black bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center w-full rounded-md  px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500'
-        id='options-menu'
-        onClick={() => {
-          history.push(history.location.pathname.split('variant')[0]);
-        }}
-      >
-        <RiDeleteBack2Fill />
-      </button>
-    </div>
-  ) : (
-    <></>
-  );
-};
-
 const Header = () => {
   const [showAdvancedFilteringModal, setShowAdvancedFilteringModal] = useState(false);
+  const [showOffCanvas, setShowOffCanvas] = useState(false);
 
   const location = useLocation();
   const exploreUrl = useExploreUrl();
@@ -79,97 +56,6 @@ const Header = () => {
     `${
       path && location.pathname === path ? 'text-gray-800' : 'text-gray-400 hover:text-gray-800'
     } px-3 mr-4 rounded-md text-sm font-medium`;
-
-  const getDropdownButtonClasses = (path?: string): string =>
-    `${
-      path && location.pathname === path ? 'text-gray-800' : 'text-gray-400 hover:text-gray-800'
-    } mr-4 rounded-md text-lg font-medium`;
-
-  const FilterDropdown = () => {
-    const [infoOpen, setInfoOpen] = useState(false);
-
-    const exploreUrl = useExploreUrl();
-
-    return (
-      <div className='flex'>
-        {exploreUrl && <div className='flex'></div>}
-        {exploreUrl && (
-          <div className='lg:hidden'>
-            <BackToExplore />
-          </div>
-        )}
-        <div id='info-dropdown' className='relative text-left ml-3 lg:hidden'>
-          {' '}
-          <div>
-            <button
-              type='button'
-              className='border border-gray-300 bg-white dark:bg-gray-800 shadow-sm flex items-center justify-center w-full rounded-md  px-4 py-3 text-sm font-medium text-gray-700 dark:text-gray-50 hover:bg-gray-50 dark:hover:bg-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-100 focus:ring-gray-500'
-              id='options-menu'
-              onClick={() => {
-                setInfoOpen(!infoOpen);
-              }}
-            >
-              <div className={infoOpen ? 'fill-current animate-pulse bg-red' : ''}>
-                <BsFillInfoCircleFill />
-              </div>
-            </button>
-          </div>
-          {infoOpen && (
-            <div className='origin-top-right absolute right-0 mt-4 w-48 rounded-md shadow-xl bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5'>
-              <div
-                className='py-2 px-4 flex flex-col items-start'
-                role='menu'
-                aria-orientation='vertical'
-                aria-labelledby='options-menu'
-              >
-                <div className='flex w-full justify-between items-center mb-2'>
-                  <h2>Links</h2>
-                  <Button
-                    variant={ButtonVariant.SECONDARY}
-                    onClick={() => {
-                      setInfoOpen(false);
-                    }}
-                  >
-                    Done
-                  </Button>
-                </div>
-                {exploreUrl && (
-                  <button onClick={() => setShowAdvancedFilteringModal(true)}>
-                    Advanced <FaFilter className='inline' />
-                  </button>
-                )}
-                <a className={getDropdownButtonClasses('/collections')} href='/collections'>
-                  Collections
-                </a>
-                <a className={getDropdownButtonClasses('/stories')} href='/stories'>
-                  Stories
-                </a>
-                <a className={getDropdownButtonClasses('/about')} href='/about'>
-                  About
-                </a>
-                <a
-                  className={getDropdownButtonClasses('')}
-                  href='https://twitter.com/genSpectrum'
-                  rel='noopener noreferrer'
-                  target='_blank'
-                >
-                  Twitter
-                </a>
-                <a
-                  className={getDropdownButtonClasses('')}
-                  href='https://github.com/cevo-public/cov-spectrum-website'
-                  rel='noopener noreferrer'
-                  target='_blank'
-                >
-                  Github
-                </a>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  };
 
   const buttonToAlternativeSequenceDataSource = alternativeSequenceDataSourceUrl ? (
     <ExternalLink
@@ -185,11 +71,17 @@ const Header = () => {
 
   return (
     <>
-      <nav className='flex h-full content-center shadow-md z-50 bg-white '>
+      <OffcanvasNav
+        show={showOffCanvas}
+        onClose={() => setShowOffCanvas(false)}
+        setShowAdvancedFilteringModal={setShowAdvancedFilteringModal}
+      />
+      <nav className='flex h-full content-center shadow-md z-50 bg-white pb-2'>
         <div className='w-full mx-auto px-2 md:px-0 flex content-center'>
           <div className='md:mx-4 w-full justify-between'>
             <div className='w-full h-full flex justify-center md:justify-between items-center'>
               <div id='logo-and-search' className='flex h-full md:flex-row flex-column justify-center'>
+                {/* Logo */}
                 <div id='logo-and-gsid' className='flex flex-column items-center justify-center md:pr-4'>
                   <div>
                     <Logo />
@@ -219,9 +111,22 @@ const Header = () => {
                     </>
                   )}
                 </div>
-                <div className='flex items-center z-20 mt-2 md:mt-0'>
-                  <HeaderCountrySelect />
-                  <HeaderSamplingStrategySelect />
+                {/* Mobile off-canvas menu opener button */}
+                <button
+                  onClick={() => setShowOffCanvas(true)}
+                  className='outline-none border-solid border border-gray-400 p-1 rounded-lg absolute lg:hidden'
+                  style={{ top: 7, right: 7 }}
+                >
+                  <AiOutlineMenu size='1.5em' />
+                </button>
+                {/* Filters and more */}
+                <div className='flex flex-wrap items-center justify-center gap-y-2 z-20 mt-2 md:mt-0'>
+                  <div className='flex-grow'>
+                    <HeaderCountrySelect />
+                  </div>
+                  <div className='flex-grow'>
+                    <HeaderSamplingStrategySelect />
+                  </div>
                   {exploreUrl && (
                     <Button
                       variant={ButtonVariant.SECONDARY}
@@ -231,9 +136,9 @@ const Header = () => {
                       Advanced <FaFilter className='inline' />
                     </Button>
                   )}
-                  <FilterDropdown />
                 </div>
               </div>
+              {/* Right part */}
               <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>
                 <div className='ml-1 flex items-center'>
                   <a className={getButtonClasses('/collections')} href='/collections'>
@@ -245,19 +150,8 @@ const Header = () => {
                   <a className={getButtonClasses('/about')} href='/about'>
                     About
                   </a>
-                  <ExternalLink url='https://twitter.com/covSpectrum'>
-                    <AiOutlineTwitter
-                      className='hidden md:block fill-current rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8 hover:opacity-70'
-                      size={'1.5em'}
-                      style={{ color: '#1d9bf0' }}
-                    />
-                  </ExternalLink>
-                  <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website'>
-                    <AiOutlineGithub
-                      className='hidden md:block fill-current hover:text-gray-500 rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8 text-black'
-                      size={'1.5em'}
-                    />
-                  </ExternalLink>
+                  {TwitterButton}
+                  {GitHubButton}
                 </div>
               </div>
             </div>
@@ -276,5 +170,92 @@ const Header = () => {
     </>
   );
 };
+
+type OffcanvasNavProps = {
+  show: boolean;
+  onClose: () => void;
+  setShowAdvancedFilteringModal: (value: boolean) => void;
+};
+
+const OffcanvasNav = ({ show, onClose, setShowAdvancedFilteringModal }: OffcanvasNavProps) => {
+  const exploreUrl = useExploreUrl();
+  return (
+    <>
+      {show && (
+        <div
+          className={`h-full fixed bg-black bg-opacity-60 w-screen`}
+          style={{ zIndex: 1000, top: 0, left: 0, bottom: 0 }}
+          onClick={() => onClose()}
+        >
+          <div
+            className={`h-full bg-white bg-opacity-100 fixed`}
+            style={{ width: '80vw' }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div className='font-bold m-4'>
+              <a href='/'>CoV-Spectrum</a>
+            </div>
+            <div className='divide-y-2 divide-gray-300 divide-solid border-t-2 border-b-2 border-gray-300 border-solid'>
+              {exploreUrl && (
+                <OffcanvasNavItem
+                  text='Advanced filters'
+                  onClick={() => {
+                    onClose();
+                    setShowAdvancedFilteringModal(true);
+                  }}
+                />
+              )}
+              <OffcanvasNavItem text='Collections' url='/collections' onClick={onClose} />
+              <OffcanvasNavItem text='Stories' url='/stories' onClick={onClose} />
+              <OffcanvasNavItem text='About' url='/about' onClick={onClose} />
+            </div>
+            <div className='flex justify-center mt-4'>
+              <div className='mx-6'>{TwitterButton}</div>
+              <div className='mx-6'>{GitHubButton}</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+type OffcanvasNavItemProps = {
+  text: string;
+  url?: string;
+  onClick?: () => void;
+};
+
+const OffcanvasNavItem = ({ text, url, onClick }: OffcanvasNavItemProps) => {
+  let inner = (
+    <div className='h-12 flex items-center' onClick={onClick}>
+      <div className='pl-4'>{text}</div>
+    </div>
+  );
+  if (url) {
+    inner = <Link to={url}>{inner}</Link>;
+  }
+
+  return <div>{inner}</div>;
+};
+
+const GitHubButton = (
+  <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website'>
+    <AiOutlineGithub
+      className='fill-current hover:text-gray-500 rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8 text-black'
+      size={'1.5em'}
+    />
+  </ExternalLink>
+);
+
+const TwitterButton = (
+  <ExternalLink url='https://twitter.com/GenSpectrum'>
+    <AiOutlineTwitter
+      className='fill-current rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8 hover:opacity-70'
+      size={'1.5em'}
+      style={{ color: '#1d9bf0' }}
+    />
+  </ExternalLink>
+);
 
 export default Header;
