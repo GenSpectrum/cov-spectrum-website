@@ -152,7 +152,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
 
   if (analysisMode === AnalysisMode.CompareToBaseline) {
     return (
-      <div className='flex flex-wrap w-8/12'>
+      <div className='flex flex-wrap w-10/12'>
         <div className='flex-grow'>
           <span className='ml-1'>Baseline variant:</span>
           <div className='flex'>
