@@ -110,7 +110,7 @@ export const DeepChen2021FitnessPage = () => {
   return makeLayout(
     <VariantHeader
       dateRange={exploreUrl.dateRange}
-      variant={exploreUrl.variant!}
+      variant={exploreUrl.variants![0]}
       controls={
         <Button className='mt-2' variant='secondary' as={Link} to={exploreUrl.getOverviewPageUrl()}>
           Back to overview

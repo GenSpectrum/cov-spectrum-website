@@ -63,8 +63,7 @@ function removeVariantSelectorsFromUrlSearchParams(params: URLSearchParams) {
   }
 }
 
-export function decodeVariantListFromUrl(query: string): VariantSelector[] {
-  const params = new URLSearchParams(query);
+export function readVariantListFromUrlSearchParams(params: URLSearchParams): VariantSelector[] {
   // Find out how many variants are specified and which index/ID they have.
   const variantIds = new Set<number>();
   for (let key of params.keys()) {

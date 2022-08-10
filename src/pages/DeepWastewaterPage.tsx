@@ -16,7 +16,7 @@ export const DeepWastewaterPage = () => {
   return makeLayout(
     <VariantHeader
       dateRange={exploreUrl.dateRange}
-      variant={exploreUrl.variant!}
+      variant={exploreUrl.variants![0]}
       controls={
         <Button className='mt-2' variant='secondary' as={Link} to={exploreUrl.getOverviewPageUrl()}>
           Back to overview
@@ -27,7 +27,7 @@ export const DeepWastewaterPage = () => {
     exploreUrl.location.country === 'Switzerland' ? (
       <WasteWaterDeepFocus
         country={exploreUrl.location.country}
-        variantName={exploreUrl.variant?.pangoLineage?.replace('*', '')}
+        variantName={exploreUrl.variants![0].pangoLineage?.replace('*', '')}
       />
     ) : (
       <>Nothing to see here.</>
