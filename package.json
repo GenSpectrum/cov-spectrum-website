@@ -76,7 +76,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test -u",
+    "test": "craco test",
     "eject": "react-scripts eject",
     "format": "prettier --write . && npx eslint . --fix",
     "check-format": "prettier --check .",
