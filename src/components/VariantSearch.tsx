@@ -122,7 +122,11 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
             triggerSearch={submitSearch}
           />
         </div>
-        <Button variant={ButtonVariant.PRIMARY} className='w-40 mt-3' onClick={() => submitSearch()}>
+        <Button
+          variant={ButtonVariant.PRIMARY}
+          className='w-full sm:w-40 sm:mt-3'
+          onClick={() => submitSearch()}
+        >
           Search
         </Button>
       </div>
