@@ -181,41 +181,42 @@ const OffcanvasNav = ({ show, onClose, setShowAdvancedFilteringModal }: Offcanva
   const exploreUrl = useExploreUrl();
   return (
     <>
+      {/* Gray and transparent layer */}
       {show && (
         <div
           className={`h-full fixed bg-black bg-opacity-60 w-screen`}
-          style={{ zIndex: 1000, top: 0, left: 0, bottom: 0 }}
+          style={{ zIndex: 1000, top: 0, left: 0 }}
           onClick={() => onClose()}
-        >
-          <div
-            className={`h-full bg-white bg-opacity-100 fixed`}
-            style={{ width: '80vw' }}
-            onClick={e => e.stopPropagation()}
-          >
-            <div className='font-bold m-4'>
-              <a href='/'>CoV-Spectrum</a>
-            </div>
-            <div className='divide-y-2 divide-gray-300 divide-solid border-t-2 border-b-2 border-gray-300 border-solid'>
-              {exploreUrl && (
-                <OffcanvasNavItem
-                  text='Advanced filters'
-                  onClick={() => {
-                    onClose();
-                    setShowAdvancedFilteringModal(true);
-                  }}
-                />
-              )}
-              <OffcanvasNavItem text='Collections' url='/collections' onClick={onClose} />
-              <OffcanvasNavItem text='Stories' url='/stories' onClick={onClose} />
-              <OffcanvasNavItem text='About' url='/about' onClick={onClose} />
-            </div>
-            <div className='flex justify-center mt-4'>
-              <div className='mx-6'>{TwitterButton}</div>
-              <div className='mx-6'>{GitHubButton}</div>
-            </div>
-          </div>
-        </div>
+        ></div>
       )}
+      {/* The actual menu */}
+      <div
+        className={`h-full bg-white bg-opacity-100 fixed`}
+        style={{ zIndex: 1001, top: 0, left: !show ? '-100vw' : 0, width: '80vw', transition: 'left 0.6s' }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div className='font-bold m-4'>
+          <a href='/'>CoV-Spectrum</a>
+        </div>
+        <div className='divide-y-2 divide-gray-300 divide-solid border-t-2 border-b-2 border-gray-300 border-solid'>
+          {exploreUrl && (
+            <OffcanvasNavItem
+              text='Advanced filters'
+              onClick={() => {
+                onClose();
+                setShowAdvancedFilteringModal(true);
+              }}
+            />
+          )}
+          <OffcanvasNavItem text='Collections' url='/collections' onClick={onClose} />
+          <OffcanvasNavItem text='Stories' url='/stories' onClick={onClose} />
+          <OffcanvasNavItem text='About' url='/about' onClick={onClose} />
+        </div>
+        <div className='flex justify-center mt-4'>
+          <div className='mx-6'>{TwitterButton}</div>
+          <div className='mx-6'>{GitHubButton}</div>
+        </div>
+      </div>
     </>
   );
 };
