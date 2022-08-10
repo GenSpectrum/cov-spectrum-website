@@ -115,6 +115,7 @@ export const MultiVariantTimeDistributionLineChart = ({
         }
 
         pd[`variantProportion${i}`] = proportion;
+        // select only those values which are greater than zero for the log scale
         pd[`variantProportionLog${i}`] = proportion !== 0 ? proportion : undefined;
 
         const wilsonInterval = calculateWilsonInterval(variantCount, d.sequenced);

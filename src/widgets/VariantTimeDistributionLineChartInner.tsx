@@ -104,6 +104,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
           date: date.dayjs.toDate(),
           proportion: absoluteNumbers ? variantCount : Math.max(variantCount / sequenced, 0),
           proportionCI: [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)],
+          // select only those values which are greater than zero for the log scale
           log:
             Math.max(variantCount / sequenced, 0) !== 0 ? Math.max(variantCount / sequenced, 0) : undefined,
         };
