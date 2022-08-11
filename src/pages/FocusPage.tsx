@@ -47,7 +47,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
 
   useEffect(() => {
     // Include the variant name and location of interest in the page title
-    let variant = exploreUrl.variant ? formatVariantDisplayName(exploreUrl.variant) : '';
+    let variant = formatVariantDisplayName(exploreUrl.variants![0]);
     let place: string = getLocation(exploreUrl);
     document.title = `${variant} - ${place} - covSPECTRUM`;
   });
@@ -109,7 +109,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
             <div className='m-1'>
               <DateRangePicker dateRangeSelector={exploreUrl.dateRange} />
             </div>
-            <div className='m-1 flex-grow'>
+            <div className='flex-grow mt-1'>
               <VariantSearch
                 onVariantSelect={exploreUrl.setVariants}
                 currentSelection={exploreUrl.variants}

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dropdown } from 'react-bootstrap';
-import { VariantList } from './KnownVariantsList';
+import { Collection } from '../../data/Collection';
 
 type CustomToggleProps = {
   children: React.ReactNode;
@@ -36,19 +36,19 @@ const CustomMenu = React.forwardRef(
 );
 
 type Props = {
-  variantLists: VariantList[];
-  selected: string;
-  onSelect: (name: string) => void;
+  collections: Collection[];
+  selected: number;
+  onSelect: (id: number) => void;
 };
 
-export const KnownVariantsListSelection = ({ variantLists, selected, onSelect }: Props) => {
+export const KnownVariantsListSelection = ({ collections, selected, onSelect }: Props) => {
   return (
     <Dropdown>
-      <Dropdown.Toggle as={CustomToggle}>{selected}</Dropdown.Toggle>
+      <Dropdown.Toggle as={CustomToggle}>{collections.find(c => c.id === selected)!.title}</Dropdown.Toggle>
       <Dropdown.Menu as={CustomMenu}>
-        {variantLists.map(({ name }, index) => (
-          <Dropdown.Item key={index} active={name === selected} onClick={() => onSelect(name)}>
-            {name}
+        {collections.map(({ id, title }) => (
+          <Dropdown.Item key={id} active={id === selected} onClick={() => onSelect(id!)}>
+            {title}
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>

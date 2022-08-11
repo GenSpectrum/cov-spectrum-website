@@ -21,6 +21,7 @@ import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { DivisionModal } from '../components/DivisionModal';
 import { createDivisionBreakdownButton } from './FocusSinglePage';
 import { LapisSelector } from '../data/LapisSelector';
+import { ErrorAlert } from '../components/ErrorAlert';
 
 export const FocusCompareToBaselinePage = () => {
   const exploreUrl = useExploreUrl()!;
@@ -122,15 +123,21 @@ export const FocusCompareToBaselinePage = () => {
     };
   };
 
-  const splitSequencesOverTime = useDeepCompareMemo(() => generateSplitData(splitField, 'date'), [
-    splitField,
-    ldvsSelectors,
-  ]);
+  const splitSequencesOverTime = useDeepCompareMemo(
+    () => generateSplitData(splitField, 'date'),
+    [splitField, ldvsSelectors]
+  );
 
   // --- Rendering ---
 
   if (!exploreUrl.variants) {
     return null;
+  }
+
+  // Error handling
+  const allErrors = [variantDateCounts.error, wholeDateCount.error].filter(e => !!e) as string[];
+  if (allErrors.length > 0) {
+    return <ErrorAlert messages={allErrors} />;
   }
 
   return (

@@ -50,9 +50,7 @@ export const App = () => {
   return (
     <div className='w-full'>
       {/* Header */}
-      <div className='h-32 md:h-20'>
-        <Header />
-      </div>
+      <Header />
       <div ref={ref} className='w-full'>
         {/* Preview warning */}
         {isPreview && (
@@ -161,15 +159,18 @@ export const App = () => {
             <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
           </div>
         )}
-        <div className='flex flex-wrap justify-center items-center my-4 mt-8'>
+        <div className='flex flex-wrap justify-center items-center gap-x-8 gap-y-4 my-4 mt-8 px-2'>
           <ExternalLink url='https://ethz.ch'>
-            <img className='h-5 mx-6' alt='ETH Zurich' src='/img/ethz.png' />
+            <img className='h-5' alt='ETH Zurich' src='/img/ethz.png' />
+          </ExternalLink>
+          <ExternalLink url='https://bsse.ethz.ch/cevo'>
+            <img className='h-7' alt='Computational Evolution Group' src='/img/cEvo.png' />
           </ExternalLink>
           <ExternalLink url='https://www.sib.swiss/'>
-            <img className='h-7 mx-6' alt='SIB Swiss Institute of Bioinformatics' src='/img/sib.svg' />
+            <img className='h-7' alt='SIB Swiss Institute of Bioinformatics' src='/img/sib.svg' />
           </ExternalLink>
           <ExternalLink url='https://vercel.com/?utm_source=cov-spectrum&utm_campaign=oss'>
-            <img className='h-6 mx-6' alt='Powered by Vercel' src='/img/powered-by-vercel.svg' />
+            <img className='h-6' alt='Powered by Vercel' src='/img/powered-by-vercel.svg' />
           </ExternalLink>
         </div>
       </Footer>

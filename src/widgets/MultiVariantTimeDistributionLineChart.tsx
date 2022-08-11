@@ -177,43 +177,33 @@ export const MultiVariantTimeDistributionLineChart = ({
                 allowDataOverflow
               />
 
-              {showCI &&
-                variantSampleSets.map((_, index) => {
-                  return (
-                    <Area
-                      yAxisId='variant-proportion'
-                      xAxisId='date'
-                      type='monotone'
-                      dataKey={`CI${index}`}
-                      fill={hexToRGB(colors[index], 0.5)}
-                      stroke='transparent'
-                      isAnimationActive={false}
-                      key={index + 10}
-                    />
-                  );
-                })}
               <Tooltip
                 formatter={(value: number, name: string, props: any) => {
-                  const index = Number.parseInt(name.replaceAll('variantProportion', ''));
-                  const payload = props.payload;
-                  const proportionString = (payload[`variantProportion${index}`] * 100).toFixed(2) + '%';
-                  const proportionCiString =
-                    ' [' +
-                    (payload[`variantProportionCILower${index}`] * 100).toFixed(2) +
-                    '-' +
-                    (payload[`variantProportionCIUpper${index}`] * 100).toFixed(2) +
-                    '%]';
-                  return [
-                    // It does not make sense to show a CI (as it is calculated right now) if the chosen variants are
-                    // not a subset of the baseline.
-                    // TODO Do show the CI if a variant is a subset of the baseline
-                    proportionString +
-                      (analysisMode !== AnalysisMode.CompareToBaseline ? proportionCiString : ''),
-                    payload[`variantName${index}`],
-                  ];
+                  if (name.includes('variantProportion')) {
+                    const index = Number.parseInt(name.replaceAll('variantProportion', ''));
+                    const payload = props.payload;
+                    const proportionString = (payload[`variantProportion${index}`] * 100).toFixed(2) + '%';
+                    const proportionCiString =
+                      ' [' +
+                      (payload[`variantProportionCILower${index}`] * 100).toFixed(2) +
+                      '-' +
+                      (payload[`variantProportionCIUpper${index}`] * 100).toFixed(2) +
+                      '%]';
+
+                    return [
+                      // It does not make sense to show a CI (as it is calculated right now) if the chosen variants are
+                      // not a subset of the baseline.
+                      // TODO Do show the CI if a variant is a subset of the baseline
+                      proportionString +
+                        (analysisMode !== AnalysisMode.CompareToBaseline ? proportionCiString : ''),
+                      payload[`variantName${index}`],
+                    ];
+                  }
+                  return [null, null];
                 }}
                 labelFormatter={label => 'Date: ' + formatDateToWindow(label)}
               />
+
               {variantSampleSets.map((_, index) => {
                 return (
                   <Line
@@ -229,6 +219,23 @@ export const MultiVariantTimeDistributionLineChart = ({
                   />
                 );
               })}
+
+              {showCI &&
+                analysisMode !== AnalysisMode.CompareToBaseline &&
+                variantSampleSets.map((_, index) => {
+                  return (
+                    <Area
+                      yAxisId='variant-proportion'
+                      xAxisId='date'
+                      type='monotone'
+                      dataKey={`CI${index}`}
+                      fill={hexToRGB(colors[index], 0.5)}
+                      stroke='transparent'
+                      isAnimationActive={false}
+                      key={index + 10}
+                    />
+                  );
+                })}
             </ComposedChart>
           </ResponsiveContainer>
         </ChartWrapper>

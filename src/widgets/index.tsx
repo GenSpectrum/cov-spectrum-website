@@ -1,7 +1,6 @@
 import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
 import { WasteWaterTimeWidget } from '../models/wasteWater/WasteWaterTimeWidget';
 import { WasteWaterHeatMapWidget } from '../models/wasteWater/WasteWaterHeatMapWidget';
-import { ArticleListWidget } from './ArticleListWidget';
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
 import { WasteWaterLocationTimeWidget } from '../models/wasteWater/WasteWaterLocationTimeWidget';
 import { SequencingRepresentativenessChartWidget } from './SequencingRepresentativenessChartWidget';
@@ -17,7 +16,6 @@ import { Althaus2021GrowthWidget } from '../models/althaus2021Growth/Althaus2021
 // import { VariantInternationalComparisonMapWidget } from './VariantInternationalComparisonMapWidget';
 
 export const allWidgets = [
-  ArticleListWidget,
   EstimatedCasesChartWidget,
   HospitalizationDeathChartWidget,
   MetadataAvailabilityChartWidget,
