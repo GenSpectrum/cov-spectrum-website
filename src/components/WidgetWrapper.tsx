@@ -50,7 +50,7 @@ export function pickExternalProps<T extends { [K in keyof ExternalProps]?: never
       remaining[k] = v;
     }
   }
-  return { external: (external as any) as ExternalProps, remaining: remaining as any };
+  return { external: external as any as ExternalProps, remaining: remaining as any };
 }
 
 type Props = InternalProps & ExternalProps;
