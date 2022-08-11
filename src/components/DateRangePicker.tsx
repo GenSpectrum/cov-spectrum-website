@@ -85,11 +85,17 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
                 }
                 setStartDate(value);
               }}
-              renderInput={params => <TextField {...params} sx={{ height: '50px', width: '150px' }} />}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  sx={{ height: `${width && width < 330 ? '70px' : '50px'}`, width: '150px' }}
+                />
+              )}
             />
           </LocalizationProvider>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
+              className={`${width && width < 330 ? 'mt-10' : ''}`}
               inputFormat='yyyy-MM-dd'
               label='to'
               value={endDate}
@@ -102,7 +108,7 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
                     readOnly: true,
                   }}
                   {...params}
-                  sx={{ marginLeft: '5px', height: '50px', width: '150px' }}
+                  sx={{ marginLeft: `${width && width < 330 ? '0' : '5px'}`, height: '50px', width: '150px' }}
                 />
               )}
             />
