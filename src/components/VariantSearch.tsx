@@ -10,7 +10,6 @@ type Props = {
   currentSelection?: VariantSelector[];
   onVariantSelect: (selections: VariantSelector[], analysisMode?: AnalysisMode) => void;
   analysisMode: AnalysisMode;
-  isSmallScreen?: boolean;
 };
 
 type SelectorWithId = {
@@ -25,7 +24,7 @@ const defaultSelections: SelectorWithId[] = [
   },
 ];
 
-export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode, isSmallScreen }: Props) => {
+export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode }: Props) => {
   const [selections, setSelections] = useState<SelectorWithId[]>(defaultSelections);
 
   useEffect(() => {
@@ -136,7 +135,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode,
 
   if (analysisMode === AnalysisMode.CompareEquals) {
     return (
-      <div className={`flex flex-wrap ${isSmallScreen ? 'w-10/12' : 'w-8/12'}`}>
+      <div className='flex flex-wrap w-full'>
         <div className='flex-grow'>
           <div>
             {selections.map((selection, index) => (
@@ -175,7 +174,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode,
 
   if (analysisMode === AnalysisMode.CompareToBaseline) {
     return (
-      <div className={`flex flex-wrap ${isSmallScreen ? 'w-10/12' : 'w-8/12'}`}>
+      <div className='flex flex-wrap w-full'>
         <div className='flex-grow'>
           <span className='ml-1'>Baseline variant:</span>
           <div className=''>

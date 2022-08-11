@@ -111,17 +111,16 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
               exploreUrl.analysisMode === 'CompareToBaseline' || exploreUrl.analysisMode === 'CompareEquals'
                 ? 'flex-column'
                 : 'flex-row'
-            } flex-wrap m-1`}
+            } flex-wrap ${isSmallScreen ? 'w-full' : 'w-4/6'}`}
           >
             <div className='m-1'>
               <DateRangePicker dateRangeSelector={exploreUrl.dateRange} />
             </div>
-            <div className='flex-grow mt-1'>
+            <div className='flex-grow'>
               <VariantSearch
                 onVariantSelect={exploreUrl.setVariants}
                 currentSelection={exploreUrl.variants}
                 analysisMode={exploreUrl.analysisMode}
-                isSmallScreen={isSmallScreen}
               />
             </div>
           </div>
