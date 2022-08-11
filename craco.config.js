@@ -5,4 +5,13 @@ module.exports = {
       plugins: [require('tailwindcss'), require('autoprefixer')],
     },
   },
+  webpack: {
+    configure: {
+      resolve: {
+        fallback: {
+          assert: false,
+        }
+      }
+    }
+  }
 };
