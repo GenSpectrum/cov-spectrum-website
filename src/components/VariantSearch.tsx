@@ -136,7 +136,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode,
 
   if (analysisMode === AnalysisMode.CompareEquals) {
     return (
-      <div className='flex flex-wrap w-9/12'>
+      <div className={`flex flex-wrap ${isSmallScreen ? 'w-10/12' : '8/12'}`}>
         <div className='flex-grow'>
           <div>
             {selections.map((selection, index) => (
