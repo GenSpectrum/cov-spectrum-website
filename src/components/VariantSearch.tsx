@@ -136,7 +136,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode,
 
   if (analysisMode === AnalysisMode.CompareEquals) {
     return (
-      <div className={`flex flex-wrap ${isSmallScreen ? 'w-10/12' : '8/12'}`}>
+      <div className={`flex flex-wrap ${isSmallScreen ? 'w-10/12' : 'w-8/12'}`}>
         <div className='flex-grow'>
           <div>
             {selections.map((selection, index) => (
@@ -175,7 +175,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode,
 
   if (analysisMode === AnalysisMode.CompareToBaseline) {
     return (
-      <div className={`flex flex-wrap ${isSmallScreen ? 'w-10/12' : '8/12'}`}>
+      <div className={`flex flex-wrap ${isSmallScreen ? 'w-10/12' : 'w-8/12'}`}>
         <div className='flex-grow'>
           <span className='ml-1'>Baseline variant:</span>
           <div className=''>
