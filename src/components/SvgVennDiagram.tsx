@@ -1,7 +1,6 @@
 import { Checkbox, InputLabel, ListItemText, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Loader } from 'react-bootstrap-typeahead';
 import { useResizeDetector } from 'react-resize-detector';
 import { LapisSelector } from '../data/LapisSelector';
 import { MutationProportionData } from '../data/MutationProportionDataset';
@@ -18,6 +17,7 @@ import { formatVariantDisplayName, VariantSelector } from '../data/VariantSelect
 import './style/svgPlots.css';
 import { sortAAMutationList } from '../helpers/aa-mutation';
 import { sortNucMutationList } from '../helpers/nuc-mutation';
+import Loader from './Loader';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
