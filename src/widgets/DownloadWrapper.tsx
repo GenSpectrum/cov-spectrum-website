@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { exportComponentAsPNG } from 'react-component-export-image';
 import { ExportManagerContext } from '../components/CombinedExport/ExportManager';
-import { writeToString as writeCsvToString } from '@fast-csv/format';
-import download from 'downloadjs';
 
 interface Props {
   name: string;
@@ -32,7 +30,8 @@ const DownloadWrapper = ({ name = 'plot', csvData, children }: Props) => {
   useEffect(() => {
     if (csvData) {
       const handle = exportManager.register('Download CSV', async () => {
-        download(await writeCsvToString(csvData, { headers: true }), `${name}.csv`, 'text/csv');
+        // TODO
+        alert('Sorry, this feature is currently not available.');
       });
 
       return handle.deregister;

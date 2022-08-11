@@ -123,10 +123,10 @@ export const FocusCompareToBaselinePage = () => {
     };
   };
 
-  const splitSequencesOverTime = useDeepCompareMemo(() => generateSplitData(splitField, 'date'), [
-    splitField,
-    ldvsSelectors,
-  ]);
+  const splitSequencesOverTime = useDeepCompareMemo(
+    () => generateSplitData(splitField, 'date'),
+    [splitField, ldvsSelectors]
+  );
 
   // --- Rendering ---
 

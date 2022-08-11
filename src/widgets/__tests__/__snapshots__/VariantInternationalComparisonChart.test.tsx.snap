@@ -2,10 +2,10 @@
 
 exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = `
 <div
-  className="sc-bdfBwQ gxTDyK"
+  className="sc-bczRLJ FSYQs"
 >
   <div
-    className="sc-hKgILt eckubB"
+    className="sc-hKMtZM hYabjo"
   >
     <div
       className=" ***masked***-container"
@@ -23,7 +23,7 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
         onTouchEnd={[Function]}
       >
         <div
-          className=" ***masked***-ValueContainer"
+          className=" ***masked***-Component"
         >
           <div
             className="***masked***-multiValue"
@@ -166,7 +166,7 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
             </div>
           </div>
           <div
-            className="***masked***-Input"
+            className="***masked***-Component"
           >
             <div
               className=""
@@ -224,7 +224,7 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
           </div>
         </div>
         <div
-          className=" ***masked***-IndicatorsContainer"
+          className=" ***masked***-Component"
         >
           <div
             aria-hidden="true"
@@ -272,11 +272,24 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
     </div>
   </div>
   <div
-    className="sc-gsTCUz eZVlMF"
+    className="sc-gsnTZi ehOUsR"
   >
     <div
-      className="sc-dlfnbm dfaRDa"
-    />
+      className="sc-dkzDqf jHWsVm"
+    >
+      <div
+        className="recharts-responsive-container"
+        style={
+          Object {
+            "height": "100%",
+            "maxHeight": undefined,
+            "minHeight": undefined,
+            "minWidth": undefined,
+            "width": "100%",
+          }
+        }
+      />
+    </div>
   </div>
 </div>
 `;
