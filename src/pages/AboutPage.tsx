@@ -40,13 +40,20 @@ export const AboutPage = () => {
       <h1>CoV-Spectrum</h1>
       <p>
         Explore up-to-date genome data and monitor variants of SARS-CoV-2! CoV-Spectrum is a fully interactive
-        platform aiming to help scientists investigate known variants as well as identifying new ones. It is
-        in an early stage of development. Suggestions for improvements, bug reports as well as active
-        contributions are highly welcome. Please create an issue in our{' '}
+        platform aiming to help scientists investigate known variants as well as identifying new ones.
+        Suggestions for improvements, bug reports as well as active contributions are highly welcome. Please
+        create an issue in our{' '}
         <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website'>
           Github repository
         </ExternalLink>{' '}
         or send an email to <EmailLink email='chaoran.chen@bsse.ethz.ch' />.
+      </p>
+      <p>
+        CoV-Spectrum uses the{' '}
+        <ExternalLink url='https://github.com/cevo-public/LAPIS'>LAPIS API</ExternalLink> to filter and
+        aggregate the genomic data. An instance of LAPIS that uses the data from GenBank is openly available,
+        please find the documentation{' '}
+        <ExternalLink url='https://lapis-docs.readthedocs.io/'>here</ExternalLink>.
       </p>
       <p>If you would like to reference CoV-Spectrum in scientific works, please cite our publication:</p>
       <div className='p-4 mt-4 mb-6 bg-gray-100 rounded-xl'>
@@ -63,7 +70,7 @@ export const AboutPage = () => {
         We distinguish between two ways to specify a variant. A variant can be defined as a clade on the
         phylogenetic tree. This approach is followed by the{' '}
         <ExternalLink url='https://cov-lineages.org/'>Pango lineages</ExternalLink>. Additionally, a variant
-        can be defined as a set of amino acid mutations. On{' '}
+        can be defined as a set of (amino acid or nucleotide) mutations. On{' '}
         <ExternalLink url='https://covariants.org/'>CoVariants</ExternalLink> and{' '}
         <ExternalLink url='https://cov-lineages.org/global_report.html'>Cov-Lineages</ExternalLink> , you can
         find detailed information about variants that are currently of particular interest. Different to these
@@ -71,9 +78,12 @@ export const AboutPage = () => {
         analyze new variants.
       </Question>
       <Question title='Which data do you use?' id='faq-data-sources'>
-        We use genomic data from GISAID and unreleased/not yet released sequences from the Swiss SARS-CoV-2
-        Sequencing Consortium (S3C) complemented by metadata provided by the Federal Office of Public Health
-        (FOPH) of Switzerland.
+        We offer two instances of CoV-Spectrum On{' '}
+        <ExternalLink url='https://cov-spectrum.org'>cov-spectrum.org</ExternalLink>, we use genomic data from
+        GISAID. On <ExternalLink url='https://open.cov-spectrum.org'>open.cov-spectrum.org</ExternalLink>, we
+        use the data from GenBank which is fully open. The API that we use for the GenBank instance is openly
+        available and can be used for other projects (
+        <ExternalLink url='https://lapis-docs.readthedocs.io/'>API documentation</ExternalLink>).
       </Question>
       <Question title='How can I search a variant?' id='faq-search-variants'>
         <p>
@@ -94,7 +104,7 @@ export const AboutPage = () => {
         <p>
           Formally: &lt;gene&gt;:[&lt;reference AA&gt;]&lt;position&gt;[&lt;new AA&gt;|&lt;special
           character&gt;] - where:
-          <ul className='list-disc'>
+          <ul className='list-disc ml-6'>
             <li>
               &lt;gene&gt; - one of the following: E, M, N, ORF1a, ORF1b, ORF3a, ORF6, ORF7a, ORF7b, ORF8,
               ORF9b, S
@@ -113,7 +123,7 @@ export const AboutPage = () => {
         </p>
         <p>
           Examples:
-          <ul className='list-disc'>
+          <ul className='list-disc ml-6'>
             <li>
               S:N501Y: the reference genome has a N at the 501st position on the S-gene, and this query is
               looking for sequences which has instead a Y at that position
@@ -136,7 +146,7 @@ export const AboutPage = () => {
         <p>
           Formally: &lt;reference base&gt;]&lt;position&gt;[&lt;new base&gt;|&lt;special character&gt;] -
           where:
-          <ul className='list-disc'>
+          <ul className='list-disc ml-6'>
             <li>&lt;reference base&gt; - this is optional and will be ignored</li>
             <li>
               &lt;position&gt; - an integer specifying the position on the nucleotide sequence of the
@@ -149,7 +159,7 @@ export const AboutPage = () => {
         </p>
         <p>
           Examples:
-          <ul className='list-disc'>
+          <ul className='list-disc ml-6'>
             <li>
               A23403G: the reference genome has an A at the 23403th position, and this query is looking for
               sequences which has instead a G at that position
@@ -167,17 +177,6 @@ export const AboutPage = () => {
             <li>23403N: the 23403th position is unknown</li>
           </ul>
         </p>
-        <p>
-          We will soon support <b>Nextstrain and GISAID clades</b>. Follow{' '}
-          <ExternalLink url='https://github.com/cevo-public/cov-spectrum-website/issues/274'>
-            #274 in our Github repository
-          </ExternalLink>{' '}
-          to get notifications about the progress.
-        </p>
-      </Question>
-      <Question title='What is the "Login" and can I gain access?' id='faq-login'>
-        For Switzerland, we have some confidential data. The access can only be provided to very few people.
-        Please contact us if you believe that you are eligible.
       </Question>
       <Question title='Can I use the plots on my own website?' id='faq-embed-widget'>
         Yes! You can embed all the interactive plots of CoV-Spectrum on your own website. Just click on the
@@ -188,32 +187,9 @@ export const AboutPage = () => {
         Click on the "Export" button next to the plots and then on "Download CSV" to get the data as a CSV
         file.
       </Question>
-      <h1 id='components'>Components</h1>
-      <Component title='Known variants list'>
-        <p>
-          <img
-            src='/img/about-known-variants-list.png'
-            alt='The known variants list component'
-            className='w-full max-w-xl'
-          />
-        </p>
-        <p>
-          The known variants are variants defined by the Pango lineages. With the search (1), it is possible
-          to search for a Pango lineage. To include the sub-lineages of a Pango lineage, write a "*" at the
-          end. For example, "B.1.*" and "B.1*" will use all samples that were classified as "B.1" or as a
-          Pango lineage that starts with "B.1.".
-        </p>
-        <p>
-          In (2), we show a preview of 12 known variants for the past three months with sequencing data.
-          Currently, the first 8 are the WHO variants of concerns and are fixed for all countries. The
-          remaining 4 are the variants with the most sequenced samples in the past 3 months. The proportion
-          number in the preview plots (3) is the prevalence of the variant in the most recent 14 days for
-          which sequencing data are available in the selected country.
-        </p>
-      </Component>
 
       <Disclaimer>
-        <ul className='list-disc'>
+        <ul className='list-disc ml-6'>
           <li>
             Although ETH Zurich takes all possible care to ensure the correctness of published information, no
             warranty can be accepted regarding the correctness, accuracy, uptodateness, reliability and
@@ -228,16 +204,6 @@ export const AboutPage = () => {
       </Disclaimer>
 
       <h1 id='acknowledgements'>Acknowlegements</h1>
-      <Component title='FOPH and S3C'>
-        We gratefully acknowledge the{' '}
-        <ExternalLink url='https://www.bag.admin.ch/'>Federal Office of Public Health (FOPH)</ExternalLink>{' '}
-        and all members of the{' '}
-        <ExternalLink url='https://bsse.ethz.ch/cevo/research/sars-cov-2/swiss-sequencing-consortium---viollier.html'>
-          Swiss SARS-CoV-2 Sequencing Consortium (S3C)
-        </ExternalLink>{' '}
-        for providing sequence and metadata for Switzerland.
-      </Component>
-
       <Component title='GISAID'>
         We gratefully acknowledge all data contributors, i.e. the Authors and their Originating laboratories
         responsible for obtaining the specimens, and their Submitting laboratories for generating the genetic
@@ -250,6 +216,14 @@ export const AboutPage = () => {
         <ExternalLink url='https://dx.doi.org/10.1002/gch2.1018'>10.1002/gch2.1018</ExternalLink>, PMCID:{' '}
         <ExternalLink url='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6607375/'>31565258</ExternalLink>
       </p>
+      <Component title='GenBank and ENA'>
+        We gratefully acknowledge all data contributors that share genetic sequences and metadata openly
+        through <ExternalLink url='https://www.ncbi.nlm.nih.gov/genbank/'>GenBank</ExternalLink> and the{' '}
+        <ExternalLink url='https://www.ebi.ac.uk/ena/browser/home'>
+          European Nucleotide Archive (ENA)
+        </ExternalLink>
+        .
+      </Component>
 
       <h1 className='font-bold mb-2 mt-4' id='contact'>
         Contact
