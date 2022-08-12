@@ -7,7 +7,6 @@ import Metric, { MetricsWrapper } from '../../widgets/Metrics';
 import { ExternalLink } from '../../components/ExternalLink';
 import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
 import { ExpandableTextBox } from '../../components/ExpandableTextBox';
-import { Alert, AlertVariant } from '../../helpers/ui';
 
 type Props = {
   variantDateCounts: DateCountSampleDataset;
@@ -104,17 +103,5 @@ Example: Assume that 100 infections from the focal variant and 10 infections fro
       maxChars={80}
       keepNewLine={true}
     />
-  );
-};
-
-export const TemporaryFitnessBanner = () => {
-  return (
-    <>
-      <Alert variant={AlertVariant.INFO}>
-        <b>Update:</b> Previously, we reported the relative growth advantage under the assumption of a
-        generation time of 4.8 days. We changed this and now report the relative growth advantage per week.
-        Detailed information about our model is in the description below.
-      </Alert>
-    </>
   );
 };

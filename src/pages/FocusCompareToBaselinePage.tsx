@@ -11,7 +11,6 @@ import { AnalysisMode } from '../data/AnalysisMode';
 import {
   Chen2021FitnessExplanation,
   Chen2021FitnessPreview,
-  TemporaryFitnessBanner,
 } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { Althaus2021GrowthWidget } from '../models/althaus2021Growth/Althaus2021GrowthWidget';
 import { FullSampleAggEntry, FullSampleAggEntryField } from '../data/sample/FullSampleAggEntry';
@@ -178,7 +177,6 @@ export const FocusCompareToBaselinePage = () => {
           )}
           {variantDateCounts.data && wholeDateCount.data && (
             <GridCell minWidth={600}>
-              <TemporaryFitnessBanner />
               <NamedCard
                 title='Relative growth advantage'
                 toolbar={[createDivisionBreakdownButton('Chen2021Fitness', setShowChen2021FitnessDivGrid)]}

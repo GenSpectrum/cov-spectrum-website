@@ -15,7 +15,6 @@ import { NamedCard } from '../components/NamedCard';
 import {
   Chen2021FitnessExplanation,
   Chen2021FitnessPreview,
-  TemporaryFitnessBanner,
 } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { Althaus2021GrowthWidget } from '../models/althaus2021Growth/Althaus2021GrowthWidget';
 import { VariantAgeDistributionChartWidget } from '../widgets/VariantAgeDistributionChartWidget';
@@ -391,7 +390,6 @@ export const FocusSinglePage = () => {
                 }
               </GridCell>
               <GridCell minWidth={600}>
-                <TemporaryFitnessBanner />
                 <NamedCard
                   title='Relative growth advantage'
                   toolbar={[
