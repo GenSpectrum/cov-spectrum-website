@@ -19,7 +19,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
         className="sc-bczRLJ FSYQs"
       >
         <h3
-          className="my-0 pb-4 pr-10 pt-0 text-gray-500"
+          className="my-0 pr-10 pt-0 text-gray-500"
         >
           Estimated probability of death by age group
         </h3>
@@ -474,7 +474,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
         className="sc-bczRLJ FSYQs"
       >
         <h3
-          className="my-0 pb-4 pr-10 pt-0 text-gray-500"
+          className="my-0 pr-10 pt-0 text-gray-500"
         >
           Estimated probability of hospitalization by age group
         </h3>
