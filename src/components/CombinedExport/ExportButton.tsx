@@ -1,12 +1,8 @@
-//import { sortBy } from '../../helpers/lodash_alternatives';
+import { sortBy } from '../../helpers/lodash_alternatives';
 import React, { useContext, useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { ButtonVariant, DropdownButton } from '../../helpers/ui';
 import { ExportManagerContext, RegisteredExport } from './ExportManager';
-
-const sortBy = (key: string) => {
-  return (a: any, b: any) => (a[key] > b[key] ? 1 : b[key] > a[key] ? -1 : 0);
-};
 
 interface Props {
   className?: string;

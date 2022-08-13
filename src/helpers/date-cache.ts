@@ -92,7 +92,7 @@ class DateCache {
       isoYear: year,
       isoWeek: week,
       yearWeekString,
-      firstDay: undefined as any as UnifiedDay,
+      firstDay: (undefined as any) as UnifiedDay,
     };
     output.firstDay = this._getDay(firstDayString, firstDayDayjs, output);
     assert(output.firstDay.isoWeek === output);

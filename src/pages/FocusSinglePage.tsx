@@ -75,28 +75,22 @@ export const FocusSinglePage = () => {
       return a;
     }, {});
 
-    console.log(res);
-
     return res;
   }
 
   const deepFocusButtons = useMemo(() => mapValues(deepFocusPaths), [exploreUrl]);
-
-  console.log('deepFocusButtons', deepFocusButtons);
 
   // --- Fetch data ---
   const { ldvsSelector, ldsSelector, dvsSelector, dsSelector, lSelector } = useSingleSelectorsFromExploreUrl(
     exploreUrl!
   );
   // Date counts
-  const variantDateCount = useQuery(
-    signal => DateCountSampleData.fromApi(ldvsSelector, signal),
-    [ldvsSelector]
-  );
-  const wholeDateCountWithDateFilter = useQuery(
-    signal => DateCountSampleData.fromApi(ldsSelector, signal),
-    [ldsSelector]
-  );
+  const variantDateCount = useQuery(signal => DateCountSampleData.fromApi(ldvsSelector, signal), [
+    ldvsSelector,
+  ]);
+  const wholeDateCountWithDateFilter = useQuery(signal => DateCountSampleData.fromApi(ldsSelector, signal), [
+    ldsSelector,
+  ]);
   const variantInternationalDateCount = useQuery(
     signal => CountryDateCountSampleData.fromApi(dvsSelector, signal),
     [dvsSelector]
@@ -106,34 +100,29 @@ export const FocusSinglePage = () => {
     [dsSelector]
   );
   // Age counts
-  const variantAgeCount = useQuery(
-    signal => AgeCountSampleData.fromApi(ldvsSelector, signal),
-    [ldvsSelector]
-  );
+  const variantAgeCount = useQuery(signal => AgeCountSampleData.fromApi(ldvsSelector, signal), [
+    ldvsSelector,
+  ]);
   const wholeAgeCount = useQuery(
     // Used by the focus page
     signal => AgeCountSampleData.fromApi(ldsSelector, signal),
     [ldsSelector]
   );
   // Division counts
-  const variantDivisionCount = useQuery(
-    signal => DivisionCountSampleData.fromApi(ldvsSelector, signal),
-    [ldvsSelector]
-  );
-  const wholeDivisionCount = useQuery(
-    signal => DivisionCountSampleData.fromApi(ldsSelector, signal),
-    [ldsSelector]
-  );
+  const variantDivisionCount = useQuery(signal => DivisionCountSampleData.fromApi(ldvsSelector, signal), [
+    ldvsSelector,
+  ]);
+  const wholeDivisionCount = useQuery(signal => DivisionCountSampleData.fromApi(ldsSelector, signal), [
+    ldsSelector,
+  ]);
 
   // Hospitalization and death
-  const variantHospDeathAgeCount = useQuery(
-    signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal),
-    [ldvsSelector]
-  );
-  const wholeHospDeathAgeCount = useQuery(
-    signal => HospDiedAgeSampleData.fromApi(ldsSelector, signal),
-    [ldsSelector]
-  );
+  const variantHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal), [
+    ldvsSelector,
+  ]);
+  const wholeHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldsSelector, signal), [
+    ldsSelector,
+  ]);
 
   // Cases
   const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(lSelector, ({ selector }, { signal }) =>
@@ -235,14 +224,17 @@ export const FocusSinglePage = () => {
     };
   };
 
-  const splitSequencesOverTime = useDeepCompareMemo(
-    () => generateSplitData(splitField, 'date'),
-    [splitField, ldvsSelector, ldsSelector, [...(caseCountDatasetSplit?.keys() ?? [])]]
-  );
-  const splitAgeDistribution = useDeepCompareMemo(
-    () => generateSplitData(splitField, 'age'),
-    [splitField, ldvsSelector, ldsSelector]
-  );
+  const splitSequencesOverTime = useDeepCompareMemo(() => generateSplitData(splitField, 'date'), [
+    splitField,
+    ldvsSelector,
+    ldsSelector,
+    [...(caseCountDatasetSplit?.keys() ?? [])],
+  ]);
+  const splitAgeDistribution = useDeepCompareMemo(() => generateSplitData(splitField, 'age'), [
+    splitField,
+    ldvsSelector,
+    ldsSelector,
+  ]);
 
   // --- Rendering ---
 

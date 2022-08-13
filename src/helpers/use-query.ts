@@ -17,13 +17,12 @@ export function useQueryWithEncoder<T>(encoder: QueryEncoder<T> | undefined): T 
 export function useQueryWithAsyncEncoder<T>(encoder: AsyncQueryEncoder<T> | undefined): AsyncState<T> {
   const location = useLocation();
   const promiseFn = useMemo<PromiseFn<T>>(
-    () =>
-      (options, { signal }) => {
-        if (!encoder) {
-          throw new Error('no encoder specified');
-        }
-        return encoder.decode(new URLSearchParams(location.search), signal);
-      },
+    () => (options, { signal }) => {
+      if (!encoder) {
+        throw new Error('no encoder specified');
+      }
+      return encoder.decode(new URLSearchParams(location.search), signal);
+    },
     [location.search, encoder]
   );
   return useAsync(promiseFn);

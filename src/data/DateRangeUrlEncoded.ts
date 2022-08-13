@@ -32,7 +32,7 @@ export function dateRangeUrlToSelector(dateRangeEncoded: DateRangeUrlEncoded): D
 export function dateRangeUrlFromSelector(selector: DateRangeSelector): DateRangeUrlEncoded {
   if (selector instanceof FixedDateRangeSelector) {
     const { dateFrom, dateTo } = selector.getDateRange();
-    return `from=${dateFrom?.string}&to=${dateTo?.string}` as unknown as DateRangeUrlEncoded;
+    return (`from=${dateFrom?.string}&to=${dateTo?.string}` as unknown) as DateRangeUrlEncoded;
   }
   if (selector instanceof SpecialDateRangeSelector) {
     return selector.mode;

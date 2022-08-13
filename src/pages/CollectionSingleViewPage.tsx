@@ -58,10 +58,10 @@ export const CollectionSingleViewPage = () => {
 
   // Fetch collection
   const { data: collections } = useQuery(signal => fetchCollections(signal), []);
-  const collection = useMemo(
-    () => collections?.find(c => c.id === collectionId),
-    [collectionId, collections]
-  );
+  const collection = useMemo(() => collections?.find(c => c.id === collectionId), [
+    collectionId,
+    collections,
+  ]);
   const variants = useMemo(
     () =>
       collection
