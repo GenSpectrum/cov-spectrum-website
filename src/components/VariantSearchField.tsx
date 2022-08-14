@@ -11,8 +11,10 @@ import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 import Form from 'react-bootstrap/Form';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 import { translateMutation } from '../helpers/autocomplete-helpers';
+import { isValidAAInsertion } from '../helpers/aa-insertion';
+import { isValidNucInsertion } from '../helpers/nuc-insertion';
 
-type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
+type SearchType = 'aa-mutation' | 'nuc-mutation' | 'aa-insertion' | 'nuc-insertion' | 'pango-lineage';
 
 type SearchOption = {
   label: string;
@@ -24,6 +26,8 @@ const backgroundColor: { [key in SearchType]: string } = {
   'pango-lineage': 'rgba(29,78,207,0.1)',
   'aa-mutation': 'rgba(4,133,27,0.1)',
   'nuc-mutation': 'rgba(33,162,162,0.29)',
+  'aa-insertion': 'rgba(4,133,27,0.1)',
+  'nuc-insertion': 'rgba(33,162,162,0.29)',
 };
 
 function mapOption(optionString: string, type: SearchType): SearchOption {
@@ -58,6 +62,12 @@ function variantSelectorToOptions(selector: VariantSelector): SearchOption[] {
   }
   if (selector.nucMutations) {
     selector.nucMutations.forEach(m => options.push({ label: m, value: m, type: 'nuc-mutation' }));
+  }
+  if (selector.aaInsertions) {
+    selector.aaInsertions.forEach(m => options.push({ label: m, value: m, type: 'aa-insertion' }));
+  }
+  if (selector.nucInsertions) {
+    selector.nucInsertions.forEach(m => options.push({ label: m, value: m, type: 'nuc-insertion' }));
   }
   return options;
 }
@@ -130,6 +140,10 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       suggestions.push(mapOption(query, 'aa-mutation'));
     } else if (isValidNucMutation(query)) {
       suggestions.push(mapOption(query, 'nuc-mutation'));
+    } else if (isValidAAInsertion(query)) {
+      suggestions.push(mapOption(query, 'aa-insertion'));
+    } else if (isValidNucInsertion(query)) {
+      suggestions.push(mapOption(query, 'nuc-insertion'));
     } else if (!onePLAlreadySelected && isValidPangoLineageQuery(query)) {
       suggestions.push(mapOption(query, 'pango-lineage'));
       if (!query.endsWith('*')) {
@@ -203,6 +217,8 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
         if (
           selectedOption.type === 'aa-mutation' ||
           selectedOption.type === 'nuc-mutation' ||
+          selectedOption.type === 'aa-insertion' ||
+          selectedOption.type === 'nuc-insertion' ||
           (selectedOption.type === 'pango-lineage' &&
             newSelectedOptions.filter(option => option.type === 'pango-lineage').length < 1)
         ) {
@@ -259,12 +275,18 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
         const selector: VariantSelector = {
           aaMutations: [],
           nucMutations: [],
+          aaInsertions: [],
+          nucInsertions: [],
         };
         for (let { type, value } of selectedOptions) {
           if (type === 'aa-mutation') {
             selector.aaMutations!.push(value);
           } else if (type === 'nuc-mutation') {
             selector.nucMutations!.push(value);
+          } else if (type === 'aa-insertion') {
+            selector.aaInsertions!.push(value);
+          } else if (type === 'nuc-insertion') {
+            selector.nucInsertions!.push(value);
           } else if (type === 'pango-lineage') {
             selector.pangoLineage = value;
           }
