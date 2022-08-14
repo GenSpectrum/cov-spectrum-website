@@ -17,6 +17,7 @@ import { useResizeDetector } from 'react-resize-detector';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { NamedCard } from './NamedCard';
 
 export interface Props {
   selector: LapisSelector;
@@ -26,13 +27,13 @@ interface MutationListProps {
   width: number;
 }
 
-const MutationList = styled.ul<MutationListProps>`
+export const MutationList = styled.ul<MutationListProps>`
   list-style-type: disc;
   margin-top: 10px;
   column-count: ${props => (Math.floor(props.width / 280) >= 1 ? Math.floor(props.width / 300) : 1)};
 `;
 
-const MutationEntry = styled.li`
+export const MutationEntry = styled.li`
   width: 260px;
   display: inline-block;
 `;
@@ -158,7 +159,7 @@ export const VariantMutations = ({ selector }: Props) => {
   const data = queryStatus.data;
 
   return (
-    <div className='bg-coolGray-50 group-hover:bg-coolGray-100 rounded-md shadow-md transition duration-200 p-10'>
+    <NamedCard title='Subsitutions and deletions'>
       <div className='mb-8'>
         <div className='ml-0' ref={ref}>
           <span
@@ -345,7 +346,7 @@ export const VariantMutations = ({ selector }: Props) => {
           </MutationList>
         </>
       )}
-    </div>
+    </NamedCard>
   );
 };
 
