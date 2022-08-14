@@ -46,16 +46,16 @@ export const VariantInsertions = ({ selector }: VariantInsertionsProps) => {
       <h2>Amino acids</h2>
       <MutationList className='list-disc' width={width ? width : 1}>
         {aaInsertionsSorted.map(({ insertion, count }) => (
-          <MutationEntry key={insertion} style={{ display: 'inline-block' }}>
-            &#8226; {insertion} ({count} seqs)
+          <MutationEntry key={insertion} style={{ display: 'inline-block' }} className='break-words'>
+            &#8226;&nbsp;{insertion} ({count} seqs)
           </MutationEntry>
         ))}
       </MutationList>
       <h2>Nucleotides</h2>
       <MutationList className='list-disc' width={width ? width : 1}>
         {nucInsertionsSorted.map(({ insertion, count }) => (
-          <MutationEntry key={insertion} style={{ display: 'inline-block' }}>
-            &#8226; {insertion} ({count} seqs)
+          <MutationEntry key={insertion} style={{ display: 'inline-block' }} className='break-words'>
+            &#8226;&nbsp;{insertion} ({count} seqs)
           </MutationEntry>
         ))}
       </MutationList>
