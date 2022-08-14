@@ -357,7 +357,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
           <AsyncSelect
             className='w-full mr-2'
             components={{ DropdownIndicator }}
-            placeholder='B.1.1.7, S:484K, C913'
+            placeholder='ins_S:214:EPE, ins_22204:?GAG?GAA?, B.1.1.7, S:484K, C913'
             isMulti
             defaultOptions={suggestOptions('')}
             loadOptions={promiseOptions}

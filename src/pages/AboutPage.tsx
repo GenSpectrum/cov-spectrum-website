@@ -87,9 +87,16 @@ export const AboutPage = () => {
       </Question>
       <Question title='How can I search a variant?' id='faq-search-variants'>
         <p>
-          CoV-Spectrum supports a wide range of search queries. First of all,{' '}
-          <b>the search is case-insensitive</b>.
+          CoV-Spectrum supports a wide range of search queries. The following sections presents search options
+          of the basic search bar. For information on the <b>advanced search</b>, please read{' '}
+          <ExternalLink url='https://lapis-docs.readthedocs.io/en/latest/concepts/variant_query.html'>
+            the documentation here
+          </ExternalLink>
+          .
         </p>
+        <div className='border-solid border border-gray-500 p-2 bg-white mx-6 my-2'>
+          <img src='/img/search-example.png' alt='Search bar with example values' />
+        </div>
         <p>
           <b>Pango lineages:</b> You can search for a single Pango lineage (e.g., B.1.617) or include the
           sub-lineages by adding a "*" at the end (e.g., B.1.617*). The search is aware of Pango lineage
@@ -97,29 +104,9 @@ export const AboutPage = () => {
           possible to enter the "full name" instead of an alias (e.g., B.1.617.2.1 instead of AY.1).
         </p>
         <p>
-          <b>Amino acid mutations:</b> An amino acid (AA) mutation is encoded as the name of the gene,
-          followed by a colon, optionally the base in the reference genome, the position on the amino acid
-          sequence, and optionally the new base or a special character.
-        </p>
-        <p>
-          Formally: &lt;gene&gt;:[&lt;reference AA&gt;]&lt;position&gt;[&lt;new AA&gt;|&lt;special
-          character&gt;] - where:
-          <ul className='list-disc ml-6'>
-            <li>
-              &lt;gene&gt; - one of the following: E, M, N, ORF1a, ORF1b, ORF3a, ORF6, ORF7a, ORF7b, ORF8,
-              ORF9b, S
-            </li>
-            <li>&lt;reference AA&gt; - this is optional and will be ignored</li>
-            <li>
-              &lt;position&gt; - an integer specifying the position on the amino acid sequence of the
-              respective gene, it starts with 1.
-            </li>
-            <li>&lt;new AA&gt; - the AA at the specified position</li>
-            <li>
-              &lt;special character&gt; - one of the following: X (=unknown), - (=deletion), * (=stop codon),
-              . (=not mutated)
-            </li>
-          </ul>
+          <b>Amino acid substitutions and deletions:</b> An amino acid (AA) mutation is encoded as the name of
+          the gene, followed by a colon, optionally the base in the reference genome, the position on the
+          amino acid sequence, and optionally the new base or a special character.
         </p>
         <p>
           Examples:
@@ -141,21 +128,7 @@ export const AboutPage = () => {
           </ul>
         </p>
         <p>
-          <b>Nucleotide mutations:</b>
-        </p>
-        <p>
-          Formally: &lt;reference base&gt;]&lt;position&gt;[&lt;new base&gt;|&lt;special character&gt;] -
-          where:
-          <ul className='list-disc ml-6'>
-            <li>&lt;reference base&gt; - this is optional and will be ignored</li>
-            <li>
-              &lt;position&gt; - an integer specifying the position on the nucleotide sequence of the
-              respective gene, it starts with 1.
-            </li>
-            <li>
-              &lt;special character&gt; - one of the following: N (=unknown), - (=deletion), . (=not mutated)
-            </li>
-          </ul>
+          <b>Nucleotide substitutions and deletions:</b>
         </p>
         <p>
           Examples:
@@ -175,6 +148,40 @@ export const AboutPage = () => {
             </li>
             <li>23403-: the 23403th position is deleted</li>
             <li>23403N: the 23403th position is unknown</li>
+          </ul>
+        </p>
+        <p>
+          <b>Amino acid insertions:</b> CoV-Spectrum supports insertion queries that contain wildcards ("?").
+        </p>
+        <p>
+          Examples:
+          <ul className='list-disc ml-6'>
+            <li>
+              ins_S:214:EPE: the spike gene has an insertion of exactly "EPE" between the positions 214 and
+              215
+            </li>
+            <li>
+              ins_S:214:?EP?: the spike gene has an insertion of "EP" between the positions 214 and 215 but
+              possibly also other AAs. I.e., a sequence with an insertion of "EPE" is also going to be
+              matched.
+            </li>
+            <li>
+              ins_S:214:?: the spike gene has any (but at least one) insertion between the positions 214 and
+              215
+            </li>
+          </ul>
+        </p>
+        <p>
+          <b>Nucleotide insertions:</b>
+        </p>
+        <p>
+          Examples:
+          <ul className='list-disc ml-6'>
+            <li>
+              ins_22204:GAG: the sequence has an insertion of exactly "GAG" between the positions 22204 and
+              22205
+            </li>
+            <li>ins_22204:?GAG?GAA?: you can for sure guess what it means ;-)</li>
           </ul>
         </p>
       </Question>
