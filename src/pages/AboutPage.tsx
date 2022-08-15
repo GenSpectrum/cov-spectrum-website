@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { ExternalLink } from '../components/ExternalLink';
 import { EmailLink } from '../components/EmailLink';
+import { InternalLink } from '../components/InternalLink';
 
 const Question = ({ title, id, children }: { title: string; id?: string; children: React.ReactNode }) => {
   return (
@@ -89,10 +90,7 @@ export const AboutPage = () => {
         <p>
           CoV-Spectrum supports a wide range of search queries. The following sections presents search options
           of the basic search bar. For information on the <b>advanced search</b>, please read{' '}
-          <ExternalLink url='https://lapis-docs.readthedocs.io/en/latest/concepts/variant_query.html'>
-            the documentation here
-          </ExternalLink>
-          .
+          <InternalLink path='#advanced-search'>the question box below</InternalLink>.
         </p>
         <div className='border-solid border border-gray-500 p-2 bg-white mx-6 my-2'>
           <img src='/img/search-example.png' alt='Search bar with example values' />
@@ -185,6 +183,40 @@ export const AboutPage = () => {
           </ul>
         </p>
       </Question>
+      <Question title='How does the advanced search work?' id='advanced-search'>
+        <p>
+          The advanced search supports Boolean logic. Expressions can be connected with & (and), | (or) and !
+          (not). Parentheses ( and ) can be used to define the order of the operations. Further, there is a
+          special syntax to match sequences for which at least or exactly n out of a list of expressions are
+          fulfilled.
+        </p>
+        <p>
+          <b>Examples:</b>
+        </p>
+        <p>
+          Get the sequences with the nucleotide mutation 300G, without a deletion at position 400 and either
+          the AA change S:123T or the AA change S:234A:
+        </p>
+        <p className='border-solid border border-gray-200 p-2 mx-2 my-2 bg-white rounded-lg font-mono'>
+          300G & !400- & (S:123T | S:234A)
+        </p>
+        <p>Get the sequences with at least 3 out of five mutations:</p>
+        <p className='border-solid border border-gray-200 p-2 mx-2 my-2 bg-white rounded-lg font-mono'>
+          [3-of: 123A, 234T, S:345-, ORF1a:456K, ORF7:567-]
+        </p>
+        <p>Get the sequences that fulfill exactly 2 out of 4 conditions:</p>
+        <p className='border-solid border border-gray-200 p-2 mx-2 my-2 bg-white rounded-lg font-mono'>
+          [exactly-2-of: 123A & 234T, !234T, S:345- | S:346-, [2-of: 222T, 333G, 444A, 555C]]
+        </p>
+        <p>Filter sequences by Pango lineage, Pango lineage as called by Nextclade and Nextstrain clade:</p>
+        <p className='border-solid border border-gray-200 p-2 mx-2 my-2 bg-white rounded-lg font-mono'>
+          BA.5* | nextcladePangoLineage:BA.5* | nextstrainClade:22B
+        </p>
+        <p>Get the sequences that have the insertion "ins_S:214:EPE?" and are not BA.1:</p>
+        <p className='border-solid border border-gray-200 p-2 mx-2 my-2 bg-white rounded-lg font-mono'>
+          ins_S:214:EPE? & !BA.1*
+        </p>
+      </Question>
       <Question title='Can I use the plots on my own website?' id='faq-embed-widget'>
         Yes! You can embed all the interactive plots of CoV-Spectrum on your own website. Just click on the
         "Export" and then on the "Embed widget" button and copy and paste the code to your page. The plot will
@@ -210,7 +242,7 @@ export const AboutPage = () => {
         </ul>
       </Disclaimer>
 
-      <h1 id='acknowledgements'>Acknowlegements</h1>
+      <h1 id='acknowledgements'>Acknowledgements</h1>
       <Component title='GISAID'>
         We gratefully acknowledge all data contributors, i.e. the Authors and their Originating laboratories
         responsible for obtaining the specimens, and their Submitting laboratories for generating the genetic
