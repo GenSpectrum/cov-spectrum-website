@@ -28,7 +28,7 @@ const isEqual = (first: any, second: any) => {
     if (!Object.hasOwn(second, key)) return false;
 
     /* Using the function recursively  and passing 
-    the values of each property into it to check if they are equal. */
+      the values of each property into it to check if they are equal. */
     if (isEqual(first[key], second[key]) === false) return false;
   }
   /* if no case matches, returning true */
