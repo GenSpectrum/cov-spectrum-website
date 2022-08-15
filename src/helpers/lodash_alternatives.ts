@@ -3,7 +3,7 @@ import { UnifiedIsoWeek } from './date-cache';
 /*
 sortBy(collection, [iteratees=[_.identity]])
 Native alternative for the lodash sortBy function: https://www.npmjs.com/package/lodash.sortby
-Sorts an array of elementsin ascending order by the results of running each element 
+Sorts an array of elements in ascending order by the results of running each element 
 in a collection through each iteratee. This method  preserves the original sort order of equal elements. 
 The iteratees are invoked with one argument: (value).
 Unlike the lodash version, this implementation modifies the given array.
