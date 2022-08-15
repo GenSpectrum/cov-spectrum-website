@@ -1,12 +1,10 @@
-const CSVstringify = (data: any[]) => {
-  let result = '';
-  if (data.length > 0) {
-    result += Object.keys(data[0]).join(',') + '\n';
-    data.slice(1).forEach(item => {
-      result += Object.values(item).join(',') + '\n';
-    });
-  }
-  return result;
-};
+export const CSVstringify = (data: any[]) => {
+  const replacer = (key: any, value: any) => (value === null || value === undefined ? '' : value);
+  const header = Object.keys(data[0]);
+  const csv = [
+    header.join(','),
+    ...data.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(',')),
+  ].join('\r\n');
 
-export default CSVstringify;
+  return csv;
+};
