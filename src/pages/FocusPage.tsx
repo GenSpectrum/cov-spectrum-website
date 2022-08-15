@@ -100,7 +100,8 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
           {!isSmallScreen && (
             <div className='text-sm mb-2'>
               <p>
-                Search for Pango lineages, amino acid mutations, and nucleotide mutations (
+                Search for Pango lineages, Nextstrain clades, AA and nucleotide substitutions, deletions, and
+                🌟 <b>insertions</b> 🌟 (
                 <InternalLink path='/about#faq-search-variants'>see documentation</InternalLink>):
               </p>
             </div>

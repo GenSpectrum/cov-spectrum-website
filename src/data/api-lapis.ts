@@ -25,6 +25,7 @@ import { addHostSelectorToUrlSearchParams } from './HostSelector';
 import { addQcSelectorToUrlSearchParams } from './QcSelector';
 import { HostCountSampleEntry } from './sample/HostCountSampleEntry';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
+import { InsertionCountEntry } from './InsertionCountEntry';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
@@ -157,6 +158,20 @@ export async function fetchMutationProportions(
     throw new Error('Error fetching new samples data');
   }
   const body = (await res.json()) as LapisResponse<MutationProportionEntry[]>;
+  return _extractLapisData(body);
+}
+
+export async function fetchInsertionCounts(
+  selector: LapisSelector,
+  sequenceType: SequenceType,
+  signal?: AbortSignal
+): Promise<InsertionCountEntry[]> {
+  const url = await getLinkTo(`${sequenceType}-insertions`, selector, undefined, undefined, undefined, true);
+  const res = await get(url, signal);
+  if (!res.ok) {
+    throw new Error('Error fetching new samples data');
+  }
+  const body = (await res.json()) as LapisResponse<InsertionCountEntry[]>;
   return _extractLapisData(body);
 }
 
