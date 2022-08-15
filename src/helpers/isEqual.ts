@@ -25,7 +25,7 @@ const isEqual = (first: any, second: any) => {
   /* Iterating through all the properties of the first object */
   for (let key of first_keys) {
     /* Making sure that every property in the first object also exists in second object. */
-    if (!Object.hasOwn(second, key)) return false;
+    if (!second.hasOwnProperty(key)) return false;
 
     /* Using the function recursively  and passing 
       the values of each property into it to check if they are equal. */
