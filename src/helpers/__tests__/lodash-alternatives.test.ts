@@ -2,7 +2,10 @@ import * as lodashAlternatives from '../lodash_alternatives';
 import { globalDateCache, UnifiedIsoWeek } from '../date-cache';
 import isEqual from '../isEqual';
 
-// data for the tests
+/*
+Data for the tests
+*/
+
 const fromTemplate = (template: [string, number][]): [UnifiedIsoWeek, number][] =>
   template.map(([yearWeek, value]) => [globalDateCache.getIsoWeek(yearWeek), value]);
 
@@ -99,6 +102,10 @@ const object3: objectToCompare = {
   item5: { array: [5, 4, 5, 6] },
   item6: { name: 'someName', quantity: 3, isAvailable: true },
 };
+
+/*
+Tests
+*/
 
 describe('Array manipulation tests', () => {
   test('mean() function returns the mean value of an array', () => {
