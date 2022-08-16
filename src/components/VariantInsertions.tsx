@@ -47,13 +47,17 @@ export const VariantInsertions = ({ selector }: VariantInsertionsProps) => {
     <NamedCard title='Insertions'>
       <div ref={ref}></div>
       <h2>Amino acids</h2>
-      <MutationList className='list-disc' width={width ? width : 1}>
-        {aaInsertionsForDisplay.data.map(({ insertion, count }) => (
-          <MutationEntry key={insertion} style={{ display: 'inline-block' }} className='break-words'>
-            &#8226;&nbsp;{insertion} ({count} seqs)
-          </MutationEntry>
-        ))}
-      </MutationList>
+      {aaInsertionsForDisplay.totalInsertions > 0 ? (
+        <MutationList className='list-disc' width={width ? width : 1}>
+          {aaInsertionsForDisplay.data.map(({ insertion, count }) => (
+            <MutationEntry key={insertion} style={{ display: 'inline-block' }} className='break-words'>
+              &#8226;&nbsp;{insertion} ({count} seqs)
+            </MutationEntry>
+          ))}
+        </MutationList>
+      ) : (
+        <div className='italic'>No insertions found</div>
+      )}
       {aaInsertionsForDisplay.totalInsertions > truncatedSize ? (
         <button className='underline my-2' onClick={() => setShowAllAA(!showAllAA)}>
           {showAllAA ? 'Show less' : 'Show all'}
@@ -62,13 +66,17 @@ export const VariantInsertions = ({ selector }: VariantInsertionsProps) => {
         <></>
       )}
       <h2>Nucleotides</h2>
-      <MutationList className='list-disc' width={width ? width : 1}>
-        {nucInsertionsForDisplay.data.map(({ insertion, count }) => (
-          <MutationEntry key={insertion} style={{ display: 'inline-block' }} className='break-words'>
-            &#8226;&nbsp;{insertion} ({count} seqs)
-          </MutationEntry>
-        ))}
-      </MutationList>
+      {nucInsertionsForDisplay.totalInsertions > 0 ? (
+        <MutationList className='list-disc' width={width ? width : 1}>
+          {nucInsertionsForDisplay.data.map(({ insertion, count }) => (
+            <MutationEntry key={insertion} style={{ display: 'inline-block' }} className='break-words'>
+              &#8226;&nbsp;{insertion} ({count} seqs)
+            </MutationEntry>
+          ))}
+        </MutationList>
+      ) : (
+        <div className='italic'>No insertions found</div>
+      )}
       {nucInsertionsForDisplay.totalInsertions > truncatedSize ? (
         <button className='underline my-2' onClick={() => setShowAllNuc(!showAllNuc)}>
           {showAllNuc ? 'Show less' : 'Show all'}
