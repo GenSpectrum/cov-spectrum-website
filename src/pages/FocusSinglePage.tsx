@@ -46,6 +46,7 @@ import { isDefaultHostSelector } from '../data/HostSelector';
 import { VariantHosts } from '../components/VariantHosts';
 import { HuismanScire2021ReContainer } from '../models/huismanScire2021Re/HuismanScire2021ReContainer';
 import { ErrorAlert } from '../components/ErrorAlert';
+import * as lodashAlternatives from '../helpers/lodash_alternatives';
 
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
@@ -59,26 +60,13 @@ export const FocusSinglePage = () => {
   const [showChen2021FitnessDivGrid, setShowChen2021FitnessDivGrid] = useState(false);
 
   // Deep focus buttons
-
-  type deepFocusButtonType = {
-    internationalComparison: React.ReactChild;
-    chen2021Fitness: React.ReactChild;
-    hospitalizationAndDeath: React.ReactChild;
-    wasteWater: React.ReactChild;
-  };
-
-  function mapValues(obj: typeof deepFocusPaths) {
-    let res = Object.entries(obj).reduce<Partial<deepFocusButtonType>>((a, [key, suffix]) => {
-      (a[key as keyof typeof deepFocusPaths] as unknown) = (
+  const deepFocusButtons = useMemo(
+    () =>
+      lodashAlternatives.mapValues(deepFocusPaths, (suffix: string) => (
         <ShowMoreButton key={suffix} to={exploreUrl?.getDeepFocusPageUrl(suffix) ?? '#'} />
-      );
-      return a;
-    }, {});
-
-    return res;
-  }
-
-  const deepFocusButtons = useMemo(() => mapValues(deepFocusPaths), [exploreUrl]);
+      )),
+    [exploreUrl]
+  );
 
   // --- Fetch data ---
   const { ldvsSelector, ldsSelector, dvsSelector, dsSelector, lSelector } = useSingleSelectorsFromExploreUrl(

@@ -1,5 +1,5 @@
 import { DependencyList, EffectCallback, useEffect, useRef, useState } from 'react';
-import isEqual from './isEqual';
+import { isEqual } from './lodash_alternatives';
 
 // Thanks https://stackoverflow.com/a/54096391/8376759
 function useDeepCompareMemoize<T>(value: T): T | undefined {

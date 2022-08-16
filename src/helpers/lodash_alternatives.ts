@@ -1,5 +1,3 @@
-import { UnifiedIsoWeek } from './date-cache';
-
 /*
 sortBy(collection, [iteratees=[_.identity]])
 Native alternative for the lodash sortBy function: https://www.npmjs.com/package/lodash.sortby
@@ -38,9 +36,9 @@ Invokes the iteratee n times,
 returning an array of the results of each invocation. 
 
 */
-export const times = (n: number, callbackfunction: Function) => {
+export const times = (n: number, callback: Function) => {
   return [...Array(n)].map(() => {
-    return callbackfunction();
+    return callback();
   });
 };
 
@@ -52,24 +50,8 @@ The function shuffles the indexes using the js Math.random(),
 */
 export function shuffle(inputArray: any[]) {
   let array = [...inputArray];
-  let currentIndex = array.length,
-    randomIndex;
-  while (currentIndex !== 0) {
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex--;
-    [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
-  }
-  return array;
-}
-
-/*
-The above shuffle function modified in order 
-to be able to deal whith the specific structure: [UnifiedIsoWeek, number][] | [T, number][]
-*/
-export function shuffle_UnifiedIsoWeek<T>(inputArray: [UnifiedIsoWeek, number][] | [T, number][]) {
-  let array = [...inputArray];
-  let currentIndex = array.length,
-    randomIndex;
+  let currentIndex = array.length;
+  let randomIndex;
   while (currentIndex !== 0) {
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
@@ -95,4 +77,54 @@ Converts the first character of string to upper case and the remaining to lower 
 
 export const capitalize = (string: string) => {
   return string ? string.charAt(0).toUpperCase() + string.slice(1).toLowerCase() : '';
+};
+
+/* TODO: Comment */
+export const mapValues = (
+  obj: any,
+  callback: Function = (value: any) => {
+    return value;
+  }
+) => {
+  return Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => {
+      return [key, callback(value)];
+    })
+  );
+};
+
+/* 
+A recursive function for a deep comparison of two objects.
+The compared objects can contain nested structures 
+like other objects and arrays with strings, 
+numbers and booleans. 
+*/
+export const isEqual = (first: any, second: any) => {
+  /* Checking if the two arguments are the strictly equal. */
+  if (first === second) return true;
+
+  /* Checking if any arguments are null */
+  if (first === null || second === null) return false;
+
+  /* Checking if any argument is none object */
+  if (typeof first !== 'object' || typeof second !== 'object') return false;
+
+  /* Using Object.getOwnPropertyNames() method to return the list of the objects’ properties */
+  let first_keys = Object.getOwnPropertyNames(first);
+  let second_keys = Object.getOwnPropertyNames(second);
+
+  /* Checking if the objects' length are same*/
+  if (first_keys.length !== second_keys.length) return false;
+
+  /* Iterating through all the properties of the first object */
+  for (let key of first_keys) {
+    /* Making sure that every property in the first object also exists in second object. */
+    if (!second.hasOwnProperty(key)) return false;
+
+    /* Using the function recursively  and passing 
+      the values of each property into it to check if they are equal. */
+    if (isEqual(first[key], second[key]) === false) return false;
+  }
+  /* if no case matches, returning true */
+  return true;
 };

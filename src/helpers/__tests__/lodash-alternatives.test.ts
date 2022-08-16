@@ -1,20 +1,8 @@
 import * as lodashAlternatives from '../lodash_alternatives';
-import { globalDateCache, UnifiedIsoWeek } from '../date-cache';
-import isEqual from '../isEqual';
 
 /*
 Data for the tests
 */
-
-const fromTemplate = (template: [string, number][]): [UnifiedIsoWeek, number][] =>
-  template.map(([yearWeek, value]) => [globalDateCache.getIsoWeek(yearWeek), value]);
-
-const inputFromTemplate = fromTemplate([
-  ['2012-07', 20],
-  ['2012-08', 13],
-  ['2012-09', 13],
-  ['2012-10', 13],
-]);
 
 const numbersArray: number[] = [2, 44, 69, 345, 394, 543, 4, 0, 2, 8];
 const dataToBeSorted: any[] = [
@@ -39,26 +27,7 @@ const dataToBeSorted: any[] = [
 ];
 
 // sorted by 'createdAt'
-const expectedSortingResult: any[] = [
-  {
-    id: 25,
-    name: 'Haldór Laxness',
-    createdAt: '2016-04-12T12:48:55.000Z',
-    updatedAt: '2017-04-12T12:48:55.000Z',
-  },
-  {
-    id: 3,
-    name: 'Robertson Davies',
-    createdAt: '2017-04-12T11:24:03.000Z',
-    updatedAt: '2021-08-12T11:25:03.000Z',
-  },
-  {
-    id: 1,
-    name: 'Ivo Andrić',
-    createdAt: '2020-04-12T11:20:03.000Z',
-    updatedAt: '2021-09-12T11:25:03.000Z',
-  },
-];
+const expectedSortingResult: any[] = [dataToBeSorted[0], dataToBeSorted[2], dataToBeSorted[1]];
 
 // nested objects to compare with isEqual
 type customType = {
@@ -85,23 +54,10 @@ const object1: objectToCompare = {
   item6: { name: 'someName', quantity: 3, isAvailable: true },
 };
 
-const object2: objectToCompare = {
-  item1: 'string',
-  item2: 1,
-  item3: [1, 2, 3, 4, { string: 'string', number: 1 }],
-  item4: ['1', '2', '3'],
-  item5: { array: [5, 4, 5, 6] },
-  item6: { name: 'someName', quantity: 3, isAvailable: true },
-};
+const object2: objectToCompare = JSON.parse(JSON.stringify(object1));
 
-const object3: objectToCompare = {
-  item1: 'string',
-  item2: 1,
-  item3: [1, 2, 3, 4, { string: 'string', number: 2 }],
-  item4: ['1', '2', '3'],
-  item5: { array: [5, 4, 5, 6] },
-  item6: { name: 'someName', quantity: 3, isAvailable: true },
-};
+const object3: objectToCompare = JSON.parse(JSON.stringify(object1));
+object3.item3[4].number = 2;
 
 /*
 Tests
@@ -109,7 +65,7 @@ Tests
 
 describe('Array manipulation tests', () => {
   test('mean() function returns the mean value of an array', () => {
-    expect(lodashAlternatives.mean(numbersArray)).toBe(141.1);
+    expect(lodashAlternatives.mean([2, 4, 6])).toBe(4);
   });
 
   test('sortBy() sorts an array in ascending order by a given key (createdAT)', () => {
@@ -129,12 +85,6 @@ describe('Array manipulation tests', () => {
   test('shuffle() shuffles the given array', () => {
     const resultArray: number[] = lodashAlternatives.shuffle(numbersArray);
     expect(resultArray).not.toStrictEqual(numbersArray);
-  });
-
-  test('shuffle_UnifiedIsoWeek() shuffles the given array', () => {
-    const resultArray: [UnifiedIsoWeek, number][] =
-      lodashAlternatives.shuffle_UnifiedIsoWeek(inputFromTemplate);
-    expect(resultArray).not.toStrictEqual(inputFromTemplate);
   });
 });
 
@@ -163,7 +113,20 @@ describe('Testint the times() function', () => {
 
 describe('Testint isEqual()', () => {
   test('isEqual() performs a deep comparison of nested objects', () => {
-    expect(isEqual(object1, object2)).toBe(true);
-    expect(isEqual(object1, object3)).toBe(false);
+    expect(lodashAlternatives.isEqual(object1, object2)).toBe(true);
+    expect(lodashAlternatives.isEqual(object1, object3)).toBe(false);
+  });
+});
+
+describe('mapValues', () => {
+  test('mapValues', () => {
+    var fruits = {
+      apple: { name: 'apple', number: 5 },
+      orange: { name: 'orange', number: 10 },
+    };
+    expect(lodashAlternatives.mapValues(fruits, (value: any) => value.number)).toStrictEqual({
+      apple: 5,
+      orange: 10,
+    });
   });
 });
