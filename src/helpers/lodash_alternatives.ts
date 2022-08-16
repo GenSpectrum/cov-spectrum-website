@@ -22,7 +22,6 @@ Native alternative for the lodash pullAll function: https://lodash.com/docs/4.17
 Accepts an array of values to remove from an array.
 Unlike lodash, where the function mutates the array, this implementation creates and returns its copy. 
 */
-
 export const pullAll = (a: any[], b: any[]) => {
   let itemsToDeleteSet = new Set([...b]);
   return [...a].filter(item => {
@@ -34,7 +33,6 @@ export const pullAll = (a: any[], b: any[]) => {
 Native alternative for the lodash times function: https://lodash.com/docs/4.17.15#times
 Invokes the iteratee n times, 
 returning an array of the results of each invocation. 
-
 */
 export const times = (n: number, callback: Function) => {
   return [...Array(n)].map(() => {
