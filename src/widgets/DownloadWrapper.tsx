@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { exportComponentAsPNG } from 'react-component-export-image';
 import { ExportManagerContext } from '../components/CombinedExport/ExportManager';
-import { csvStringify } from '../helpers/csvStringify';
+import { csvStringify } from '../helpers/csvStringifyHelper';
 import download from 'downloadjs';
 
 interface Props {

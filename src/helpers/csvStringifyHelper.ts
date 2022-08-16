@@ -1,3 +1,4 @@
+// converts an object to a csv string
 export const csvStringify = (data: any[]) => {
   const replacer = (key: any, value: any) => (value === null || value === undefined ? '' : value);
   const header = Object.keys(data[0]);
