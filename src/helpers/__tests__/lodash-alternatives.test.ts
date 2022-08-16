@@ -111,15 +111,13 @@ describe('Testint the times() function', () => {
   });
 });
 
-describe('Testint isEqual()', () => {
+describe('Objects manipulation tests', () => {
   test('isEqual() performs a deep comparison of nested objects', () => {
     expect(lodashAlternatives.isEqual(object1, object2)).toBe(true);
     expect(lodashAlternatives.isEqual(object1, object3)).toBe(false);
   });
-});
 
-describe('mapValues', () => {
-  test('mapValues', () => {
+  test('mapValues() reates a new mapped object with the same keys of the given object and the values that are generated using the given callback function', () => {
     var fruits = {
       apple: { name: 'apple', number: 5 },
       orange: { name: 'orange', number: 10 },

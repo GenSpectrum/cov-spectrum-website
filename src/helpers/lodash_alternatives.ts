@@ -76,8 +76,10 @@ Converts the first character of string to upper case and the remaining to lower 
 export const capitalize = (string: string) => {
   return string ? string.charAt(0).toUpperCase() + string.slice(1).toLowerCase() : '';
 };
-
-/* TODO: Comment */
+/*
+A native alternative for the lodash random function: https://lodash.com/docs/3.10.1#mapValues
+Creates a new mapped object with the same keys of the given object and the values that are generated using the given callback function.
+ */
 export const mapValues = (
   obj: any,
   callback: Function = (value: any) => {
