@@ -382,13 +382,11 @@ export const FocusSinglePage = () => {
                 />
               </GridCell>
               <GridCell minWidth={600}>
-                {
-                  <VariantDivisionDistributionChartWidget.ShareableComponent
-                    title='Geographic distribution'
-                    variantSampleSet={variantDivisionCount.data}
-                    wholeSampleSet={wholeDivisionCount.data}
-                  />
-                }
+                <VariantDivisionDistributionChartWidget.ShareableComponent
+                  title='Geographic distribution'
+                  variantSampleSet={variantDivisionCount.data}
+                  wholeSampleSet={wholeDivisionCount.data}
+                />
               </GridCell>
               <GridCell minWidth={600}>
                 <NamedCard
