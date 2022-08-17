@@ -139,6 +139,16 @@ export async function fetchHostCountSamples(
   return _fetchAggSamples(selector, ['host'], signal);
 }
 
+export async function fetchNumberSubmittedSamplesInPastTenDays(
+  selector: LapisSelector,
+  signal?: AbortSignal
+): Promise<number> {
+  const additionalParams = new URLSearchParams();
+  additionalParams.set('dateSubmittedFrom', dayjs().subtract(10, 'days').toISOString().substring(0, 10));
+  const res = await _fetchAggSamples(selector, [], signal, additionalParams);
+  return res[0].count;
+}
+
 export async function fetchMutationProportions(
   selector: LapisSelector,
   sequenceType: SequenceType,
@@ -253,12 +263,13 @@ export async function getLinkTo(
 export async function _fetchAggSamples(
   selector: LapisSelector,
   fields: string[],
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  additionalParams?: URLSearchParams
 ): Promise<FullSampleAggEntry[]> {
   const linkPrefix = await getLinkTo('aggregated', selector, undefined, undefined, undefined, true);
-  const additionalParams = new URLSearchParams();
-  additionalParams.set('fields', fields.join(','));
-  const res = await get(`${linkPrefix}&${additionalParams}`, signal);
+  const _additionalParams = new URLSearchParams(additionalParams);
+  _additionalParams.set('fields', fields.join(','));
+  const res = await get(`${linkPrefix}&${_additionalParams}`, signal);
   if (!res.ok) {
     if (res.body !== null) {
       const errors = (await res.json()).errors as { message: string }[];

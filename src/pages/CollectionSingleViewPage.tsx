@@ -37,6 +37,7 @@ import { PromiseQueue } from '../helpers/PromiseQueue';
 import { getModelData } from '../models/chen2021Fitness/loading';
 import { VariantSearchField } from '../components/VariantSearchField';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { fetchNumberSubmittedSamplesInPastTenDays } from '../data/api-lapis';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -73,7 +74,7 @@ export const CollectionSingleViewPage = () => {
     [collection]
   );
 
-  // Fetch data about the variants
+  // Fetch number of sequences over time of the variants
   const { data: baselineAndVariantsDateCounts, error } = useQuery(
     async signal => {
       if (!variants) {
@@ -139,6 +140,31 @@ export const CollectionSingleViewPage = () => {
       );
     },
     [variants, locationSelector, baselineVariant, baselineDateCounts]
+  );
+
+  // Fetch the number of sequences submitted in the past 10 days
+  const { data: variantsNumberNewSequences } = useQuery(
+    async signal => {
+      if (!variants) {
+        return undefined;
+      }
+      return Promise.allSettled(
+        variants.map(variant =>
+          fetchNumberSubmittedSamplesInPastTenDays(
+            {
+              host: undefined,
+              qc: {},
+              location: locationSelector,
+              variant: variant.query,
+              samplingStrategy: SamplingStrategy.AllSamples,
+              dateRange: dateRangeSelector,
+            },
+            signal
+          )
+        )
+      );
+    },
+    [variants, locationSelector]
   );
 
   // Rendering
@@ -217,11 +243,12 @@ export const CollectionSingleViewPage = () => {
             </Tabs>
           </Box>
           <TabPanel value={tab} index={0}>
-            {variants && variantsDateCounts && allWholeDateCounts ? (
+            {variants && variantsDateCounts && variantsNumberNewSequences && allWholeDateCounts ? (
               <TableTabContent
                 locationSelector={locationSelector}
                 variants={variants}
                 variantsDateCounts={variantsDateCounts}
+                variantsNumberNewSequences={variantsNumberNewSequences}
                 allWholeDateCounts={allWholeDateCounts}
               />
             ) : (
@@ -276,6 +303,7 @@ type TableTabContentProps = {
   locationSelector: LocationSelector;
   variants: { query: VariantSelector; name: string; description: string }[];
   variantsDateCounts: PromiseSettledResult<Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>>[];
+  variantsNumberNewSequences: PromiseSettledResult<number>[];
   allWholeDateCounts: PromiseSettledResult<Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>>[];
 };
 
@@ -283,6 +311,7 @@ const TableTabContent = ({
   locationSelector,
   variants,
   variantsDateCounts,
+  variantsNumberNewSequences,
   allWholeDateCounts,
 }: TableTabContentProps) => {
   // Fetch relative growth advantage
@@ -344,6 +373,7 @@ const TableTabContent = ({
     },
     { field: 'queryFormatted', headerName: 'Query', minWidth: 300 },
     { field: 'total', headerName: 'Number sequences', minWidth: 150 },
+    { field: 'newSequences', headerName: 'Submitted in past 10 days', minWidth: 200 },
     {
       field: 'advantage',
       headerName: 'Relative growth advantage',
@@ -376,13 +406,19 @@ const TableTabContent = ({
         errorMessage = 'Calculating...';
       }
       const vcd = variantsDateCounts[i];
+      const vnns = variantsNumberNewSequences[i];
       if (vcd.status === 'fulfilled') {
+        if (vnns.status !== 'fulfilled') {
+          // Strange that one request was successful but the other one wasn't
+          throw new Error('Unexpected error');
+        }
         return {
           id: i,
           ...variant,
           name: variant.name.length > 0 ? variant.name : formatVariantDisplayName(variant.query),
           queryFormatted: formatVariantDisplayName(variant.query),
           total: vcd.value.payload.reduce((prev, curr) => prev + curr.count, 0),
+          newSequences: vnns.value,
           advantage: errorMessage ?? ((advantage as ValueWithCI).value * 100).toFixed(2) + '%',
           advantageCiLower: errorMessage
             ? '...'
@@ -398,13 +434,14 @@ const TableTabContent = ({
           name: variant.name.length > 0 ? variant.name : formatVariantDisplayName(variant.query),
           queryFormatted: formatVariantDisplayName(variant.query),
           total: vcd.reason,
+          newSequences: '-',
           advantage: '-',
           advantageCiLower: '-',
           advantageCiUpper: '-',
         };
       }
     });
-  }, [variants, variantsDateCounts, relativeAdvantages]);
+  }, [variants, variantsDateCounts, variantsNumberNewSequences, relativeAdvantages]);
 
   return (
     <>
