@@ -1,15 +1,14 @@
 import DownloadWrapper from './DownloadWrapper';
-import Map from '../maps/Map';
+import MapComponent from '../maps/Map';
 import React, { useMemo, useState } from 'react';
 import styled from 'styled-components';
-import Table from 'react-bootstrap/Table';
-import {
-  DivisionCountSampleData,
-  DivisionCountSampleDataset,
-} from '../data/sample/DivisionCountSampleDataset';
+import { DivisionCountSampleDataset } from '../data/sample/DivisionCountSampleDataset';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
-import { aggregateGeo } from '../helpers/geoAgg';
+import { LocationField, locationFields } from '../data/LocationSelector';
+import { Utils } from '../services/Utils';
+import _ from 'lodash';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
 
 export type VariantDivisionDistributionChartProps = {
   variantSampleSet: DivisionCountSampleDataset;
@@ -18,7 +17,7 @@ export type VariantDivisionDistributionChartProps = {
 
 const Wrapper = styled.div`
   overflow-y: auto;
-  height: 300px;
+  height: 400px;
 `;
 
 const countriesWithMaps = [
@@ -35,220 +34,121 @@ const countriesWithMaps = [
   'Botswana',
 ];
 
-const TableHeader = styled.th`
-  font-weight: bolder;
-  margin-top: 10px;
-  &:hover,
-  &:focus {
-    color: #0276fd;
-    cursor: pointer;
-  }
-`;
-
-const sortOptions = ['division', 'count', 'prevalence'] as const;
-type SortOptions = typeof sortOptions[number];
-
 interface GeoSummary {
-  division: string;
+  id: number; // The ID is used for the MUI DataGrid
+  location: string;
   count: number;
   prevalence: number;
 }
 
-const sortGeoTable = (entries: GeoSummary[], sortOption: SortOptions, ifAscendic: boolean): GeoSummary[] => {
-  switch (sortOption) {
-    case 'count':
-      return ifAscendic
-        ? entries.sort((a, b) => a.count - b.count)
-        : entries.sort((a, b) => b.count - a.count);
-    case 'prevalence':
-      return ifAscendic
-        ? entries.sort((a, b) => a.prevalence - b.prevalence)
-        : entries.sort((a, b) => b.prevalence - a.prevalence);
-    case 'division':
-      return ifAscendic
-        ? entries.sort((a, b) => (a.division > b.division ? 1 : b.division > a.division ? -1 : 0))
-        : entries.sort((a, b) => (b.division > a.division ? 1 : a.division > b.division ? -1 : 0));
-  }
-};
+const tableColumns: GridColDef[] = [
+  { field: 'location', headerName: 'Location', minWidth: 250 },
+  { field: 'count', headerName: 'Number of sequences', minWidth: 200 },
+  {
+    field: 'prevalence',
+    headerName: 'Prevalence',
+    minWidth: 100,
+    valueFormatter: params => (params.value * 100).toFixed(3) + '%',
+  },
+];
 
 export const VariantDivisionDistributionChart = ({
   variantSampleSet,
   wholeSampleSet,
 }: VariantDivisionDistributionChartProps) => {
-  const [geoOption, setGeoOption] = useState<string>('Countries');
-  const [sortOption, setSortOption] = useState<SortOptions>('division');
-  const [ifAscending, setIfAscending] = useState<boolean>(true);
-  const [ifAscCount, setIfAscCount] = useState<boolean>(true);
-  const [ifAscPrevalence, setIfAscPrevalence] = useState<boolean>(true);
-  const [ifAscLocation, setIfAscLocation] = useState<boolean>(false);
-
   const country = wholeSampleSet.selector.location.country;
+  const [selectedLocationField, setSelectedLocationField] = useState<LocationField>(
+    !country ? 'country' : 'division'
+  );
 
-  const processedData = useMemo(() => {
-    const geoData = DivisionCountSampleData.proportionByDivision(
-      variantSampleSet.payload,
-      wholeSampleSet.payload
-    ).geoInfoArray;
-
-    const variantDivisions = DivisionCountSampleData.proportionByDivision(
-      variantSampleSet.payload,
-      wholeSampleSet.payload
-    ).divisionData;
-
-    const wholeDivisions = DivisionCountSampleData.proportionByDivision(
-      wholeSampleSet.payload,
-      wholeSampleSet.payload
-    ).divisionData;
-
-    const plotData: {
-      division: string | null;
-      count: number;
-      prevalence?: number;
-      country: string | null;
-      region: string | null;
-    }[] = [...variantDivisions.entries()]
-      .map(([division, value], index) => {
-        const whole = wholeDivisions.get(division);
-        return {
-          division,
-          count: value.count,
-          prevalence: whole ? value.count / whole.count : undefined,
-          country: geoData[index].country,
-          region: geoData[index].region,
-        };
-      })
-      .sort((a, b) => {
-        if (!a.division[0]) {
-          return 1;
+  const geoSummariesMap = useMemo(() => {
+    const geoSummariesMap = new Map<LocationField, GeoSummary[]>();
+    locationFields.forEach(locationField => {
+      const variantGrouped = Utils.groupBy(variantSampleSet.payload, x => x[locationField]);
+      const wholeGrouped = Utils.groupBy(wholeSampleSet.payload, x => x[locationField]);
+      const geoSummaries: GeoSummary[] = [];
+      let index = 0;
+      for (const [location, entries] of variantGrouped.entries()) {
+        if (!location) {
+          continue;
         }
-        if (!b.division[0]) {
-          return -1;
-        }
-        return a.division[0] > b.division[0] ? 1 : -1;
-      });
-    return plotData;
+        const variantCount = entries.reduce((prev, curr) => prev + curr.count, 0);
+        const wholeCount = wholeGrouped.get(location)!.reduce((prev, curr) => prev + curr.count, 0);
+        geoSummaries.push({
+          id: index++, // Creating an ID because the MUI DataGrid needs one
+          location,
+          count: variantCount,
+          prevalence: variantCount / wholeCount,
+        });
+      }
+      geoSummariesMap.set(locationField, geoSummaries);
+    });
+    return geoSummariesMap;
   }, [variantSampleSet, wholeSampleSet]);
 
-  const csvData = processedData.map(({ division, prevalence, count }) => ({
-    division,
-    numberSamples: count,
-    proportionWithinDivision: prevalence?.toFixed(6),
-  }));
-
-  function handleGeoOptionChange(e: React.MouseEvent<HTMLElement>, option: string) {
-    e.preventDefault();
-    setGeoOption(option);
-  }
-
-  let aggDataArray = [];
-
-  for (const [key, value] of aggregateGeo(geoOption, processedData).entries()) {
-    let item = { division: key, count: value.count, prevalence: value.prevalence };
-    aggDataArray.push(item);
-  }
-
-  let sortedAggData = sortGeoTable(aggDataArray, sortOption, ifAscending);
-
-  function handleClick(target: string): void {
-    switch (target) {
-      case 'division':
-        setSortOption('division');
-        setIfAscLocation(!ifAscLocation);
-        setIfAscending(ifAscLocation);
-        sortedAggData = sortGeoTable(sortedAggData, 'division', ifAscending);
-        break;
-      case 'count':
-        setSortOption('count');
-        setIfAscCount(!ifAscCount);
-        setIfAscending(ifAscCount);
-        sortedAggData = sortGeoTable(sortedAggData, 'count', ifAscending);
-        break;
-      case 'prevalence':
-        setSortOption('prevalence');
-        setIfAscPrevalence(!ifAscPrevalence);
-        setIfAscending(ifAscPrevalence);
-        sortedAggData = sortGeoTable(sortedAggData, 'prevalence', ifAscending);
-    }
-  }
-
-  const granualityWorldOptions: JSX.Element = (
-    <>
-      <Dropdown.Item onClick={(e: React.MouseEvent<HTMLElement>) => handleGeoOptionChange(e, 'Regions')}>
-        Regions
-      </Dropdown.Item>
-      <Dropdown.Item onClick={(e: React.MouseEvent<HTMLElement>) => handleGeoOptionChange(e, 'Countries')}>
-        Countries
-      </Dropdown.Item>
-      <Dropdown.Item onClick={(e: React.MouseEvent<HTMLElement>) => handleGeoOptionChange(e, 'Divisions')}>
-        Divisions
-      </Dropdown.Item>
-    </>
+  const selectedGeoSummaries = useMemo(
+    () => _.sortBy(geoSummariesMap.get(selectedLocationField)!, x => x.location),
+    [geoSummariesMap, selectedLocationField]
   );
 
-  const granualityCountryOptions: JSX.Element = (
-    <>
-      <Dropdown.Item onClick={(e: React.MouseEvent<HTMLElement>) => handleGeoOptionChange(e, 'Countries')}>
-        Countries
-      </Dropdown.Item>
-      <Dropdown.Item onClick={(e: React.MouseEvent<HTMLElement>) => handleGeoOptionChange(e, 'Divisions')}>
-        Divisions
-      </Dropdown.Item>
-    </>
+  const csvData = useMemo(
+    // Gets rid of the id column and improve column naming
+    () =>
+      selectedGeoSummaries.map(({ location, count, prevalence }) => ({
+        [selectedLocationField]: location,
+        count,
+        prevalence,
+      })),
+    [selectedLocationField, selectedGeoSummaries]
   );
+
+  // Used for the division map
+  const mapData = useMemo(
+    () =>
+      geoSummariesMap.get('division')!.map(({ location, count, prevalence }) => ({
+        division: location,
+        count,
+        prevalence,
+      })),
+    [geoSummariesMap]
+  );
+
+  const locationFieldLabels = {
+    region: 'Regions',
+    country: 'Countries',
+    division: 'Divisions',
+  };
 
   return (
-    <DownloadWrapper name='VariantDivisionDistributionChart' csvData={csvData}>
-      {variantSampleSet.selector.location.country && country && !countriesWithMaps.includes(country) ? (
-        <DropdownButton id='dropdown-basic-button' title={geoOption}>
-          {granualityCountryOptions}
-        </DropdownButton>
-      ) : !country ? (
-        <DropdownButton id='dropdown-basic-button' title={geoOption}>
-          {granualityWorldOptions}
-        </DropdownButton>
-      ) : null}
-      <br />
-
+    <DownloadWrapper name='GeographicDistribution' csvData={csvData}>
       {country && countriesWithMaps.includes(country) ? (
-        <Map data={processedData} country={country} />
+        <MapComponent data={mapData} country={country} />
       ) : (
         <Wrapper>
-          <Table striped bordered hover>
-            <thead>
-              <tr>
-                <TableHeader
-                  onClick={() => {
-                    handleClick('division');
-                  }}
-                >
-                  Location
-                </TableHeader>
-                <TableHeader
-                  onClick={() => {
-                    handleClick('count');
-                  }}
-                >
-                  Number of sequences
-                </TableHeader>
-                <TableHeader
-                  onClick={() => {
-                    handleClick('prevalence');
-                  }}
-                >
-                  Prevalence
-                </TableHeader>
-              </tr>
-            </thead>
-            <tbody>
-              {sortedAggData.map(({ division, count, prevalence }) => (
-                <tr key={division}>
-                  <td>{division ?? 'Unknown'}</td>
-                  <td>{count}</td>
-                  <td>{prevalence ? Math.ceil(prevalence * 100 * 1000) / 1000 + '%' : '-'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
+          {!country && (
+            <DropdownButton
+              id='dropdown-basic-button'
+              title={locationFieldLabels[selectedLocationField]}
+              className='mb-3'
+            >
+              {locationFields.map(field =>
+                !wholeSampleSet.selector.location[field] ? (
+                  <Dropdown.Item onClick={() => setSelectedLocationField(field)}>
+                    {locationFieldLabels[field]}
+                  </Dropdown.Item>
+                ) : (
+                  <></>
+                )
+              )}
+            </DropdownButton>
+          )}
+          {/* TODO The MUI DataGrid (in the free version) is quite limited and thus not the best choice here */}
+          <DataGrid
+            columns={tableColumns}
+            rows={selectedGeoSummaries}
+            autoHeight={true}
+            rowsPerPageOptions={[100, 200, 500]}
+          />
         </Wrapper>
       )}
     </DownloadWrapper>
