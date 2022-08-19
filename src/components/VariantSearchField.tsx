@@ -10,7 +10,7 @@ import { useQuery } from '../helpers/query-hook';
 import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 import Form from 'react-bootstrap/Form';
 import { SamplingStrategy } from '../data/SamplingStrategy';
-import { AnalysisMode } from '../data/AnalysisMode';
+
 import { translateMutation } from '../helpers/autocomplete-helpers';
 import { isValidAAInsertion } from '../helpers/aa-insertion';
 import { isValidNucInsertion } from '../helpers/nuc-insertion';
@@ -88,15 +88,9 @@ type Props = {
   onVariantSelect: (selection: VariantSelector) => void;
   isSimple: boolean;
   triggerSearch: () => void;
-  analysisMode?: AnalysisMode;
 };
 
-export const VariantSearchField = ({
-  onVariantSelect,
-  currentSelection,
-  triggerSearch,
-  analysisMode,
-}: Props) => {
+export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerSearch }: Props) => {
   const [selectedOptions, setSelectedOptions] = useState<SearchOption[]>(
     currentSelection ? variantSelectorToOptions(currentSelection) : []
   );
