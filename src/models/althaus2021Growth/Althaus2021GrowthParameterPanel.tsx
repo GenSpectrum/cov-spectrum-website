@@ -79,9 +79,8 @@ const mathFunctions = new Map([
 ] as [Althaus2021GrowthParametersAttribute, (vars: MathVariables) => number][]);
 
 export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: Props) => {
-  const [estimateAttribute, setEstimateAttribute] = useState<Althaus2021GrowthParametersAttribute>(
-    'transmissibilityIncrease'
-  );
+  const [estimateAttribute, setEstimateAttribute] =
+    useState<Althaus2021GrowthParametersAttribute>('transmissibilityIncrease');
   const [currentParams, setCurrentParams] = useState({
     ...defaultParams,
     [estimateAttribute]: calc(estimateAttribute, defaultParams),
@@ -241,7 +240,7 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
     <>
       <div className='flex flex-row flex-wrap'>
         {paramEntries.map(p => (
-          <div className='px-4 py-1'>
+          <div className='px-4 py-1' key={p.attribute}>
             <div className='mb-2'>{p.label}</div>
             <div className='flex flex-row align-items-center'>
               {/* TODO Oh.. Only after I implemented this, I realized that I don't need a new library

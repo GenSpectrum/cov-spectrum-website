@@ -15,7 +15,6 @@ import { NamedCard } from '../components/NamedCard';
 import {
   Chen2021FitnessExplanation,
   Chen2021FitnessPreview,
-  TemporaryFitnessBanner,
 } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { Althaus2021GrowthWidget } from '../models/althaus2021Growth/Althaus2021GrowthWidget';
 import { VariantAgeDistributionChartWidget } from '../widgets/VariantAgeDistributionChartWidget';
@@ -46,6 +45,7 @@ import { isDefaultHostSelector } from '../data/HostSelector';
 import { VariantHosts } from '../components/VariantHosts';
 import { HuismanScire2021ReContainer } from '../models/huismanScire2021Re/HuismanScire2021ReContainer';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { VariantInsertions } from '../components/VariantInsertions';
 
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
@@ -72,12 +72,14 @@ export const FocusSinglePage = () => {
     exploreUrl!
   );
   // Date counts
-  const variantDateCount = useQuery(signal => DateCountSampleData.fromApi(ldvsSelector, signal), [
-    ldvsSelector,
-  ]);
-  const wholeDateCountWithDateFilter = useQuery(signal => DateCountSampleData.fromApi(ldsSelector, signal), [
-    ldsSelector,
-  ]);
+  const variantDateCount = useQuery(
+    signal => DateCountSampleData.fromApi(ldvsSelector, signal),
+    [ldvsSelector]
+  );
+  const wholeDateCountWithDateFilter = useQuery(
+    signal => DateCountSampleData.fromApi(ldsSelector, signal),
+    [ldsSelector]
+  );
   const variantInternationalDateCount = useQuery(
     signal => CountryDateCountSampleData.fromApi(dvsSelector, signal),
     [dvsSelector]
@@ -87,29 +89,34 @@ export const FocusSinglePage = () => {
     [dsSelector]
   );
   // Age counts
-  const variantAgeCount = useQuery(signal => AgeCountSampleData.fromApi(ldvsSelector, signal), [
-    ldvsSelector,
-  ]);
+  const variantAgeCount = useQuery(
+    signal => AgeCountSampleData.fromApi(ldvsSelector, signal),
+    [ldvsSelector]
+  );
   const wholeAgeCount = useQuery(
     // Used by the focus page
     signal => AgeCountSampleData.fromApi(ldsSelector, signal),
     [ldsSelector]
   );
   // Division counts
-  const variantDivisionCount = useQuery(signal => DivisionCountSampleData.fromApi(ldvsSelector, signal), [
-    ldvsSelector,
-  ]);
-  const wholeDivisionCount = useQuery(signal => DivisionCountSampleData.fromApi(ldsSelector, signal), [
-    ldsSelector,
-  ]);
+  const variantDivisionCount = useQuery(
+    signal => DivisionCountSampleData.fromApi(ldvsSelector, signal),
+    [ldvsSelector]
+  );
+  const wholeDivisionCount = useQuery(
+    signal => DivisionCountSampleData.fromApi(ldsSelector, signal),
+    [ldsSelector]
+  );
 
   // Hospitalization and death
-  const variantHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal), [
-    ldvsSelector,
-  ]);
-  const wholeHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldsSelector, signal), [
-    ldsSelector,
-  ]);
+  const variantHospDeathAgeCount = useQuery(
+    signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal),
+    [ldvsSelector]
+  );
+  const wholeHospDeathAgeCount = useQuery(
+    signal => HospDiedAgeSampleData.fromApi(ldsSelector, signal),
+    [ldsSelector]
+  );
 
   // Cases
   const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(lSelector, ({ selector }, { signal }) =>
@@ -211,17 +218,14 @@ export const FocusSinglePage = () => {
     };
   };
 
-  const splitSequencesOverTime = useDeepCompareMemo(() => generateSplitData(splitField, 'date'), [
-    splitField,
-    ldvsSelector,
-    ldsSelector,
-    [...(caseCountDatasetSplit?.keys() ?? [])],
-  ]);
-  const splitAgeDistribution = useDeepCompareMemo(() => generateSplitData(splitField, 'age'), [
-    splitField,
-    ldvsSelector,
-    ldsSelector,
-  ]);
+  const splitSequencesOverTime = useDeepCompareMemo(
+    () => generateSplitData(splitField, 'date'),
+    [splitField, ldvsSelector, ldsSelector, [...(caseCountDatasetSplit?.keys() ?? [])]]
+  );
+  const splitAgeDistribution = useDeepCompareMemo(
+    () => generateSplitData(splitField, 'age'),
+    [splitField, ldvsSelector, ldsSelector]
+  );
 
   // --- Rendering ---
 
@@ -378,16 +382,13 @@ export const FocusSinglePage = () => {
                 />
               </GridCell>
               <GridCell minWidth={600}>
-                {
-                  <VariantDivisionDistributionChartWidget.ShareableComponent
-                    title='Geographic distribution'
-                    variantSampleSet={variantDivisionCount.data}
-                    wholeSampleSet={wholeDivisionCount.data}
-                  />
-                }
+                <VariantDivisionDistributionChartWidget.ShareableComponent
+                  title='Geographic distribution'
+                  variantSampleSet={variantDivisionCount.data}
+                  wholeSampleSet={wholeDivisionCount.data}
+                />
               </GridCell>
               <GridCell minWidth={600}>
-                <TemporaryFitnessBanner />
                 <NamedCard
                   title='Relative growth advantage'
                   toolbar={[
@@ -450,6 +451,12 @@ export const FocusSinglePage = () => {
               )}
               {isDefaultHostSelector(host) && wasteWaterSummaryPlot}
             </PackedGrid>
+
+            <div className='m-4'>
+              <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
+                <VariantInsertions selector={ldvsSelector} />
+              </Sentry.ErrorBoundary>
+            </div>
 
             <div className='m-4'>
               <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useRef } from 'react';
 import { exportComponentAsPNG } from 'react-component-export-image';
 import { ExportManagerContext } from '../components/CombinedExport/ExportManager';
-import { writeToString as writeCsvToString } from '@fast-csv/format';
+import { csvStringify } from '../helpers/csvStringifyHelper';
 import download from 'downloadjs';
 
 interface Props {
@@ -32,9 +32,8 @@ const DownloadWrapper = ({ name = 'plot', csvData, children }: Props) => {
   useEffect(() => {
     if (csvData) {
       const handle = exportManager.register('Download CSV', async () => {
-        download(await writeCsvToString(csvData, { headers: true }), `${name}.csv`, 'text/csv');
+        download(await csvStringify(csvData), `${name}.csv`, 'text/csv');
       });
-
       return handle.deregister;
     }
   }, [componentRef, csvData, exportManager, name]);

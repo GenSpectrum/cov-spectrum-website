@@ -39,10 +39,9 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
     'Past6M',
   ];
   return (
-    <Form inline>
+    <Form>
       <Form.Control
         as='select'
-        custom
         id='dateRangeSelect'
         value={value}
         onChange={handleChange}

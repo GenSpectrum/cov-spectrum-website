@@ -29,8 +29,7 @@ const textMap: { [index: string]: string | undefined } = {
 const ORF1abProteins = [
   {
     range: [1, 180],
-    text:
-      "N-terminal product of viral replicase, mediates RNA replication and processing, suppresses hosts' immune functions",
+    text: "N-terminal product of viral replicase, mediates RNA replication and processing, suppresses hosts' immune functions",
     name: 'Nsp1',
   },
   {
@@ -55,8 +54,7 @@ const ORF1abProteins = [
   },
   {
     range: [3570, 3859],
-    text:
-      'transmembrane domain, relevant for initial induction of autophagosomes from host ER, suppresses IFN-I signalling',
+    text: 'transmembrane domain, relevant for initial induction of autophagosomes from host ER, suppresses IFN-I signalling',
     name: 'Nsp6',
   },
   {
@@ -81,8 +79,7 @@ const ORF1abProteins = [
   },
   {
     range: [4393, 5324],
-    text:
-      'RNA dependent RNA polymerase (catalytic subunit), responsible for replication and transcription of viral RNA',
+    text: 'RNA dependent RNA polymerase (catalytic subunit), responsible for replication and transcription of viral RNA',
     name: 'Nsp12',
   },
   {
@@ -150,10 +147,10 @@ export const MutationName = ({ mutation }: Props) => {
   const information = getInformation(gene, parseInt(position));
   const popover = (
     <Popover id='popover-basic' style={{ maxWidth: '600px' }}>
-      <Popover.Title as='h3'>{information.header}</Popover.Title>
-      <Popover.Content>
+      <Popover.Header as='h3'>{information.header}</Popover.Header>
+      <Popover.Body>
         {information.text || <i className='text-muted'>No description available</i>}
-      </Popover.Content>
+      </Popover.Body>
     </Popover>
   );
 

@@ -14,12 +14,14 @@ export const DeepHospitalizationDeathPage = () => {
   const exploreUrl = useExploreUrl();
 
   const { ldvsSelector, ldsSelector } = useSingleSelectorsFromExploreUrl(exploreUrl!);
-  const variantHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal), [
-    ldvsSelector,
-  ]);
-  const wholeHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldsSelector, signal), [
-    ldsSelector,
-  ]);
+  const variantHospDeathAgeCount = useQuery(
+    signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal),
+    [ldvsSelector]
+  );
+  const wholeHospDeathAgeCount = useQuery(
+    signal => HospDiedAgeSampleData.fromApi(ldsSelector, signal),
+    [ldsSelector]
+  );
 
   if (!exploreUrl) {
     return null;
@@ -30,9 +32,11 @@ export const DeepHospitalizationDeathPage = () => {
       dateRange={exploreUrl.dateRange}
       variant={exploreUrl.variants![0]}
       controls={
-        <Button className='mt-2' variant='secondary' as={Link} to={exploreUrl.getOverviewPageUrl()}>
-          Back to overview
-        </Button>
+        <Link to={exploreUrl.getOverviewPageUrl()}>
+          <Button className='mt-2' variant='secondary'>
+            Back to overview
+          </Button>
+        </Link>
       }
       titleSuffix='Hospitalization and death'
     />,

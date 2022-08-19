@@ -10,10 +10,12 @@ import { useQuery } from '../helpers/query-hook';
 import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 import Form from 'react-bootstrap/Form';
 import { SamplingStrategy } from '../data/SamplingStrategy';
-import { getEquivalent, translateMutation } from '../helpers/autocomplete-helpers';
 import { AnalysisMode } from '../data/AnalysisMode';
+import { translateMutation } from '../helpers/autocomplete-helpers';
+import { isValidAAInsertion } from '../helpers/aa-insertion';
+import { isValidNucInsertion } from '../helpers/nuc-insertion';
 
-type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
+type SearchType = 'aa-mutation' | 'nuc-mutation' | 'aa-insertion' | 'nuc-insertion' | 'pango-lineage';
 
 type SearchOption = {
   label: string;
@@ -25,6 +27,8 @@ const backgroundColor: { [key in SearchType]: string } = {
   'pango-lineage': 'rgba(29,78,207,0.1)',
   'aa-mutation': 'rgba(4,133,27,0.1)',
   'nuc-mutation': 'rgba(33,162,162,0.29)',
+  'aa-insertion': 'rgba(4,133,27,0.1)',
+  'nuc-insertion': 'rgba(33,162,162,0.29)',
 };
 
 function mapOption(optionString: string, type: SearchType): SearchOption {
@@ -59,6 +63,12 @@ function variantSelectorToOptions(selector: VariantSelector): SearchOption[] {
   }
   if (selector.nucMutations) {
     selector.nucMutations.forEach(m => options.push({ label: m, value: m, type: 'nuc-mutation' }));
+  }
+  if (selector.aaInsertions) {
+    selector.aaInsertions.forEach(m => options.push({ label: m, value: m, type: 'aa-insertion' }));
+  }
+  if (selector.nucInsertions) {
+    selector.nucInsertions.forEach(m => options.push({ label: m, value: m, type: 'nuc-insertion' }));
   }
   return options;
 }
@@ -127,71 +137,6 @@ export const VariantSearchField = ({
     return (pangoLineages.data ?? []).filter(pl => pl.toUpperCase().startsWith(query.toUpperCase()));
   };
 
-  const suggestMutations = (query: string): string[] => {
-    // TODO Fetch all/common known mutations from the server
-    // For now, just providing a few mutations so that the auto-complete list is not entirely empty.
-    let notation = query.toLowerCase().startsWith('n') ? 'nsp' : query.startsWith('orf1ab') ? 'orf1ab' : '';
-    let options: string[] = [
-      'S:D614G',
-      'ORF1b:P314L',
-      'N:R203K',
-      'N:G204R',
-      'N:M1X',
-      'ORF1a:G3676',
-      'ORF1a:S3675',
-      'ORF1a:F3677',
-      'S:N501Y',
-      'S:P681H',
-      'S:H69-',
-      'S:V70-',
-      'S:A570D',
-      'S:T716I',
-      'S:Y144-',
-      'ORF1a:T1001I',
-      'S:D1118H',
-      'ORF8:Y73C',
-      'ORF1a:T1001I',
-      'N:S235F',
-      'ORF8:Q27*',
-      'S:S982A',
-      'ORF8:R52I',
-      'N:D3L',
-      'ORF1a:I2230T',
-      'ORF3a:Q57H',
-      'ORF8:K68*',
-      'ORF1a:T265I',
-      'ORF1b:K1383R',
-      'S:L452R',
-      'S:A222V',
-      'N:D377Y',
-      'N:A220V',
-      'M:I82T',
-      'S:T478K',
-      'S:P681R',
-      'N:P199L',
-      'S:L18F',
-      'ORF3a:S26L',
-      'ORF1a:T3255I',
-      'ORF1a:T3255I',
-      'N:R203M',
-      'S:E484K',
-      'ORF1b:P1000L',
-      'ORF7a:T120I',
-      'ORF1b:P218L',
-      'ORF1b:G662S',
-      'S:T19R',
-      'ORF7a:V82A',
-      'ORF9b:T60A',
-      'N:D63G',
-    ].map(i => {
-      if (i.startsWith('ORF1') && (notation === 'nsp' || notation === 'orf1ab')) {
-        return `${i} = (${getEquivalent(i, notation)})`;
-      }
-      return i;
-    });
-    return options.filter(m => m.toUpperCase().includes(query.toUpperCase()));
-  };
-
   const suggestOptions = (query: string): SearchOption[] => {
     const onePLAlreadySelected = selectedOptions.filter(option => option.type === 'pango-lineage').length > 0;
     const suggestions: SearchOption[] = [];
@@ -202,6 +147,10 @@ export const VariantSearchField = ({
       suggestions.push(mapOption(query, 'aa-mutation'));
     } else if (isValidNucMutation(query)) {
       suggestions.push(mapOption(query, 'nuc-mutation'));
+    } else if (isValidAAInsertion(query)) {
+      suggestions.push(mapOption(query, 'aa-insertion'));
+    } else if (isValidNucInsertion(query)) {
+      suggestions.push(mapOption(query, 'nuc-insertion'));
     } else if (!onePLAlreadySelected && isValidPangoLineageQuery(query)) {
       suggestions.push(mapOption(query, 'pango-lineage'));
       if (!query.endsWith('*')) {
@@ -211,7 +160,6 @@ export const VariantSearchField = ({
     if (!onePLAlreadySelected) {
       suggestions.push(...suggestPangolinLineages(query).map(pl => mapOption(pl, 'pango-lineage')));
     }
-    suggestions.push(...suggestMutations(query).map(pl => mapOption(pl, 'aa-mutation')));
     return suggestions.slice(0, 20);
   };
 
@@ -276,6 +224,8 @@ export const VariantSearchField = ({
         if (
           selectedOption.type === 'aa-mutation' ||
           selectedOption.type === 'nuc-mutation' ||
+          selectedOption.type === 'aa-insertion' ||
+          selectedOption.type === 'nuc-insertion' ||
           (selectedOption.type === 'pango-lineage' &&
             newSelectedOptions.filter(option => option.type === 'pango-lineage').length < 1)
         ) {
@@ -332,12 +282,18 @@ export const VariantSearchField = ({
         const selector: VariantSelector = {
           aaMutations: [],
           nucMutations: [],
+          aaInsertions: [],
+          nucInsertions: [],
         };
         for (let { type, value } of selectedOptions) {
           if (type === 'aa-mutation') {
             selector.aaMutations!.push(value);
           } else if (type === 'nuc-mutation') {
             selector.nucMutations!.push(value);
+          } else if (type === 'aa-insertion') {
+            selector.aaInsertions!.push(value);
+          } else if (type === 'nuc-insertion') {
+            selector.nucInsertions!.push(value);
           } else if (type === 'pango-lineage') {
             selector.pangoLineage = value;
           }
@@ -409,7 +365,7 @@ export const VariantSearchField = ({
           <AsyncSelect
             className='w-full mr-2'
             components={{ DropdownIndicator }}
-            placeholder='B.1.1.7, S:484K, C913'
+            placeholder='ins_S:214:EPE, ins_22204:?GAG?GAA?, B.1.1.7, S:484K, C913'
             isMulti
             defaultOptions={suggestOptions('')}
             loadOptions={promiseOptions}

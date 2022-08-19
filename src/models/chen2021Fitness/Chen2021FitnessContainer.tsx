@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { ChangePoint, Chen2021FitnessRequest } from './chen2021Fitness-types';
-import { Button, Col, Form } from 'react-bootstrap';
+import { Button, Col, Form, Row } from 'react-bootstrap';
 import styled from 'styled-components';
 import { Chen2021FitnessResults } from './Chen2021FitnessResults';
 import { fillRequestWithDefaults, transformToRequestData } from './loading';
@@ -210,7 +210,7 @@ export const Chen2021FitnessContainer = ({ selector, defaults }: ContainerProps)
         </p>
         <SectionHeader>Parameters</SectionHeader>
         <Form>
-          <Form.Row>
+          <Row>
             <Form.Group as={Col} controlId='formGenerationTime'>
               <Form.Label>Generation time</Form.Label>
               <Form.Control
@@ -225,8 +225,8 @@ export const Chen2021FitnessContainer = ({ selector, defaults }: ContainerProps)
                 onChange={x => setFormReproductionNumberWildtype(x.target.value)}
               />
             </Form.Group>
-          </Form.Row>
-          <Form.Row>
+          </Row>
+          <Row>
             <Form.Group as={Col} controlId='formInitialWildtypeCases'>
               <Form.Label>Initial wildtype cases</Form.Label>
               <Form.Control
@@ -241,8 +241,8 @@ export const Chen2021FitnessContainer = ({ selector, defaults }: ContainerProps)
                 onChange={x => setFormInitialVariantCases(x.target.value)}
               />
             </Form.Group>
-          </Form.Row>
-          <Form.Row>
+          </Row>
+          <Row>
             <Form.Group as={Col} controlId='formPlotStartDate'>
               <Form.Label>Start date</Form.Label>
               <Form.Control value={formPlotStartDate} onChange={x => setFormPlotStartDate(x.target.value)} />
@@ -251,10 +251,10 @@ export const Chen2021FitnessContainer = ({ selector, defaults }: ContainerProps)
               <Form.Label>End date</Form.Label>
               <Form.Control value={formPlotEndDate} onChange={x => setFormPlotEndDate(x.target.value)} />
             </Form.Group>
-          </Form.Row>
+          </Row>
           <div className='font-bold'>Changes in reproduction number of the wildtype</div>
           {changePoints.map(({ reproductionNumberString, dateString }, i) => (
-            <Form.Row>
+            <Row>
               <Form.Group as={Col} controlId={`changePointDate-${i}`}>
                 <Form.Label>Date</Form.Label>
                 <Form.Control value={dateString} onChange={x => setChangePointDate(i, x.target.value)} />
@@ -275,7 +275,7 @@ export const Chen2021FitnessContainer = ({ selector, defaults }: ContainerProps)
               >
                 Remove
               </button>
-            </Form.Row>
+            </Row>
           ))}
         </Form>
         <div>

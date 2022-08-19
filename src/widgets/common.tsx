@@ -30,7 +30,7 @@ export const Wrapper = styled.div`
 
 export const TitleWrapper = ({ children, id }: { children: React.ReactNode; id?: string }) => {
   return (
-    <h3 id={id} className='my-0 pb-4 pr-10 pt-0 text-gray-500'>
+    <h3 id={id} className='my-0 pr-10 pt-0 text-gray-500'>
       {children}
     </h3>
   );

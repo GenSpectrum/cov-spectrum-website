@@ -3,6 +3,8 @@ import { Button, ButtonVariant } from '../helpers/ui';
 import React, { useEffect, useState } from 'react';
 import { VariantSearchField } from './VariantSearchField';
 import { AnalysisMode } from '../data/AnalysisMode';
+import { FaArrowUp } from 'react-icons/fa';
+import { AiFillDelete } from 'react-icons/ai';
 
 type Props = {
   currentSelection?: VariantSelector[];
@@ -87,6 +89,17 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
     setSelections(newSelections);
   };
 
+  const moveSelectionToTop = (index: number) => {
+    const newTopSelection = selections[index];
+    const newSelections = [newTopSelection];
+    for (let i = 0; i < selections.length; i++) {
+      if (index !== i) {
+        newSelections.push(selections[i]);
+      }
+    }
+    setSelections(newSelections);
+  };
+
   const submitSearch = () => {
     onVariantSelect(
       selections.map(s => s.selector),
@@ -109,7 +122,11 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
             triggerSearch={submitSearch}
           />
         </div>
-        <Button variant={ButtonVariant.PRIMARY} className='w-40 mt-3' onClick={() => submitSearch()}>
+        <Button
+          variant={ButtonVariant.PRIMARY}
+          className='w-full sm:w-40 sm:mt-3'
+          onClick={() => submitSearch()}
+        >
           Search
         </Button>
       </div>
@@ -123,8 +140,12 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
           <div>
             {selections.map((selection, index) => (
               <div className='flex' key={selection.id}>
-                <button className='mr-2 mb-6 outline-none' onClick={() => removeSelection(index)}>
-                  X
+                <button
+                  className='mb-6 outline-none hover:text-yellow-500'
+                  onClick={() => removeSelection(index + 1)}
+                  title='Delete'
+                >
+                  <AiFillDelete />
                 </button>
                 <div className='flex-grow'>
                   <VariantSearchField
@@ -154,8 +175,9 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
     return (
       <div className='flex flex-wrap w-10/12'>
         <div className='flex-grow'>
-          <span className='ml-1'>Baseline variant:</span>
+          Baseline variant:
           <div className='flex'>
+            <button className='mr-2 mb-6 outline-none invisible'>X</button>
             <div className='flex-grow'>
               <VariantSearchField
                 key={selections[0].id}
@@ -163,7 +185,6 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
                 currentSelection={selections[0].selector}
                 onVariantSelect={newSelection => changeSelection(newSelection, 0)}
                 triggerSearch={submitSearch}
-                analysisMode={analysisMode}
               />
             </div>
           </div>
@@ -171,6 +192,9 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
           <div>
             {selections.slice(1).map((selection, index) => (
               <div className='flex' key={selection.id}>
+                <button className='mr-2 mb-6 outline-none' onClick={() => removeSelection(index + 1)}>
+                  X
+                </button>
                 <div className='flex-grow'>
                   <VariantSearchField
                     key={selection.id}

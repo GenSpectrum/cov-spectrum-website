@@ -16,25 +16,38 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
       className="h-full"
     >
       <div
-        className="sc-bdfBwQ gxTDyK"
+        className="sc-bczRLJ FSYQs"
       >
         <h3
-          className="my-0 pb-4 pr-10 pt-0 text-gray-500"
+          className="my-0 pr-10 pt-0 text-gray-500"
         >
           Estimated probability of death by age group
         </h3>
         <div
-          className="sc-gsTCUz eZVlMF"
+          className="sc-gsnTZi ehOUsR"
         >
           <div
-            className="sc-dlfnbm dfaRDa"
-          />
+            className="sc-dkzDqf jHWsVm"
+          >
+            <div
+              className="recharts-responsive-container"
+              style={
+                Object {
+                  "height": "100%",
+                  "maxHeight": undefined,
+                  "minHeight": undefined,
+                  "minWidth": undefined,
+                  "width": "100%",
+                }
+              }
+            />
+          </div>
           <div
             className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
           >
             <div>
               <div
-                className="sc-eCssSg ehgvVD"
+                className="sc-eCYdqJ NUQUw"
               >
                 <svg
                   height={30}
@@ -70,7 +83,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   />
                 </svg>
                 <div
-                  className="sc-jSgupP jdrOer"
+                  className="sc-jSMfEi bFDDWb"
                   style={
                     Object {
                       "color": "#1F407A",
@@ -81,7 +94,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                 </div>
               </div>
               <div
-                className="sc-eCssSg ehgvVD"
+                className="sc-eCYdqJ NUQUw"
               >
                 <svg
                   height={30}
@@ -121,7 +134,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   </g>
                 </svg>
                 <div
-                  className="sc-jSgupP jdrOer"
+                  className="sc-jSMfEi bFDDWb"
                   style={
                     Object {
                       "color": "#7f8c8d",
@@ -154,7 +167,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                     0
                   </div>
                   <div
-                    className="sc-hKgILt edDYek self-end"
+                    className="sc-hKMtZM dKrOdR self-end"
                   />
                 </div>
                 <div
@@ -185,10 +198,10 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        d="M12 6C9.831 6 8.066 7.765 8.066 9.934h2C10.066 8.867 10.934 8 12 8s1.934.867 1.934 1.934c0 .598-.481 1.032-1.216 1.626-.255.207-.496.404-.691.599C11.029 13.156 11 14.215 11 14.333V15h2l-.001-.633c.001-.016.033-.386.441-.793.15-.15.339-.3.535-.458.779-.631 1.958-1.584 1.958-3.182C15.934 7.765 14.169 6 12 6zM11 16H13V18H11z"
+                        d="M12 6a3.939 3.939 0 0 0-3.934 3.934h2C10.066 8.867 10.934 8 12 8s1.934.867 1.934 1.934c0 .598-.481 1.032-1.216 1.626a9.208 9.208 0 0 0-.691.599c-.998.997-1.027 2.056-1.027 2.174V15h2l-.001-.633c.001-.016.033-.386.441-.793.15-.15.339-.3.535-.458.779-.631 1.958-1.584 1.958-3.182A3.937 3.937 0 0 0 12 6zm-1 10h2v2h-2z"
                       />
                       <path
-                        d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"
+                        d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"
                       />
                     </svg>
                   </div>
@@ -305,7 +318,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                     110
                   </div>
                   <div
-                    className="sc-hKgILt edDYek self-end"
+                    className="sc-hKMtZM dKrOdR self-end"
                   />
                 </div>
                 <div
@@ -336,10 +349,10 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        d="M12 6C9.831 6 8.066 7.765 8.066 9.934h2C10.066 8.867 10.934 8 12 8s1.934.867 1.934 1.934c0 .598-.481 1.032-1.216 1.626-.255.207-.496.404-.691.599C11.029 13.156 11 14.215 11 14.333V15h2l-.001-.633c.001-.016.033-.386.441-.793.15-.15.339-.3.535-.458.779-.631 1.958-1.584 1.958-3.182C15.934 7.765 14.169 6 12 6zM11 16H13V18H11z"
+                        d="M12 6a3.939 3.939 0 0 0-3.934 3.934h2C10.066 8.867 10.934 8 12 8s1.934.867 1.934 1.934c0 .598-.481 1.032-1.216 1.626a9.208 9.208 0 0 0-.691.599c-.998.997-1.027 2.056-1.027 2.174V15h2l-.001-.633c.001-.016.033-.386.441-.793.15-.15.339-.3.535-.458.779-.631 1.958-1.584 1.958-3.182A3.937 3.937 0 0 0 12 6zm-1 10h2v2h-2z"
                       />
                       <path
-                        d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"
+                        d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"
                       />
                     </svg>
                   </div>
@@ -458,25 +471,38 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
       className="h-full"
     >
       <div
-        className="sc-bdfBwQ gxTDyK"
+        className="sc-bczRLJ FSYQs"
       >
         <h3
-          className="my-0 pb-4 pr-10 pt-0 text-gray-500"
+          className="my-0 pr-10 pt-0 text-gray-500"
         >
           Estimated probability of hospitalization by age group
         </h3>
         <div
-          className="sc-gsTCUz eZVlMF"
+          className="sc-gsnTZi ehOUsR"
         >
           <div
-            className="sc-dlfnbm dfaRDa"
-          />
+            className="sc-dkzDqf jHWsVm"
+          >
+            <div
+              className="recharts-responsive-container"
+              style={
+                Object {
+                  "height": "100%",
+                  "maxHeight": undefined,
+                  "minHeight": undefined,
+                  "minWidth": undefined,
+                  "width": "100%",
+                }
+              }
+            />
+          </div>
           <div
             className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
           >
             <div>
               <div
-                className="sc-eCssSg ehgvVD"
+                className="sc-eCYdqJ NUQUw"
               >
                 <svg
                   height={30}
@@ -512,7 +538,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   />
                 </svg>
                 <div
-                  className="sc-jSgupP jdrOer"
+                  className="sc-jSMfEi bFDDWb"
                   style={
                     Object {
                       "color": "#1F407A",
@@ -523,7 +549,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                 </div>
               </div>
               <div
-                className="sc-eCssSg ehgvVD"
+                className="sc-eCYdqJ NUQUw"
               >
                 <svg
                   height={30}
@@ -563,7 +589,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   </g>
                 </svg>
                 <div
-                  className="sc-jSgupP jdrOer"
+                  className="sc-jSMfEi bFDDWb"
                   style={
                     Object {
                       "color": "#7f8c8d",
@@ -596,7 +622,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                     2
                   </div>
                   <div
-                    className="sc-hKgILt edDYek self-end"
+                    className="sc-hKMtZM dKrOdR self-end"
                   />
                 </div>
                 <div
@@ -627,10 +653,10 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        d="M12 6C9.831 6 8.066 7.765 8.066 9.934h2C10.066 8.867 10.934 8 12 8s1.934.867 1.934 1.934c0 .598-.481 1.032-1.216 1.626-.255.207-.496.404-.691.599C11.029 13.156 11 14.215 11 14.333V15h2l-.001-.633c.001-.016.033-.386.441-.793.15-.15.339-.3.535-.458.779-.631 1.958-1.584 1.958-3.182C15.934 7.765 14.169 6 12 6zM11 16H13V18H11z"
+                        d="M12 6a3.939 3.939 0 0 0-3.934 3.934h2C10.066 8.867 10.934 8 12 8s1.934.867 1.934 1.934c0 .598-.481 1.032-1.216 1.626a9.208 9.208 0 0 0-.691.599c-.998.997-1.027 2.056-1.027 2.174V15h2l-.001-.633c.001-.016.033-.386.441-.793.15-.15.339-.3.535-.458.779-.631 1.958-1.584 1.958-3.182A3.937 3.937 0 0 0 12 6zm-1 10h2v2h-2z"
                       />
                       <path
-                        d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"
+                        d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"
                       />
                     </svg>
                   </div>
@@ -747,7 +773,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                     108
                   </div>
                   <div
-                    className="sc-hKgILt edDYek self-end"
+                    className="sc-hKMtZM dKrOdR self-end"
                   />
                 </div>
                 <div
@@ -778,10 +804,10 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <path
-                        d="M12 6C9.831 6 8.066 7.765 8.066 9.934h2C10.066 8.867 10.934 8 12 8s1.934.867 1.934 1.934c0 .598-.481 1.032-1.216 1.626-.255.207-.496.404-.691.599C11.029 13.156 11 14.215 11 14.333V15h2l-.001-.633c.001-.016.033-.386.441-.793.15-.15.339-.3.535-.458.779-.631 1.958-1.584 1.958-3.182C15.934 7.765 14.169 6 12 6zM11 16H13V18H11z"
+                        d="M12 6a3.939 3.939 0 0 0-3.934 3.934h2C10.066 8.867 10.934 8 12 8s1.934.867 1.934 1.934c0 .598-.481 1.032-1.216 1.626a9.208 9.208 0 0 0-.691.599c-.998.997-1.027 2.056-1.027 2.174V15h2l-.001-.633c.001-.016.033-.386.441-.793.15-.15.339-.3.535-.458.779-.631 1.958-1.584 1.958-3.182A3.937 3.937 0 0 0 12 6zm-1 10h2v2h-2z"
                       />
                       <path
-                        d="M12,2C6.486,2,2,6.486,2,12s4.486,10,10,10s10-4.486,10-10S17.514,2,12,2z M12,20c-4.411,0-8-3.589-8-8s3.589-8,8-8 s8,3.589,8,8S16.411,20,12,20z"
+                        d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10 10-4.486 10-10S17.514 2 12 2zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"
                       />
                     </svg>
                   </div>

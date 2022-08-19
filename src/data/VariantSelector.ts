@@ -6,6 +6,8 @@ export const VariantSelectorEncodedSchema = zod.object({
   nextstrainClade: zod.string().optional(),
   aaMutations: zod.array(zod.string()).optional(),
   nucMutations: zod.array(zod.string()).optional(),
+  aaInsertions: zod.array(zod.string()).optional(),
+  nucInsertions: zod.array(zod.string()).optional(),
   variantQuery: zod.string().optional(),
 });
 
@@ -24,13 +26,12 @@ export function addVariantSelectorToUrlSearchParams(
   params: URLSearchParams,
   index?: number
 ) {
-  if (selector.aaMutations?.length) {
-    const aaMutationsKey = index && index > 0 ? `aaMutations${index}` : 'aaMutations';
-    params.set(aaMutationsKey, selector.aaMutations.join(','));
-  }
-  if (selector.nucMutations?.length) {
-    const nucMutationsKey = index && index > 0 ? `nucMutations${index}` : 'nucMutations';
-    params.set(nucMutationsKey, selector.nucMutations.join(','));
+  for (const k of ['aaMutations', 'nucMutations', 'aaInsertions', 'nucInsertions'] as const) {
+    const arr = selector[k];
+    if (arr?.length) {
+      const key = index && index > 0 ? `${k}${index}` : k;
+      params.set(key, arr.join(','));
+    }
   }
   for (const k of ['pangoLineage', 'gisaidClade', 'nextstrainClade', 'variantQuery'] as const) {
     const value = selector[k];
@@ -53,6 +54,8 @@ function removeVariantSelectorsFromUrlSearchParams(params: URLSearchParams) {
     if (
       key.startsWith('aaMutations') ||
       key.startsWith('nucMutations') ||
+      key.startsWith('aaInsertions') ||
+      key.startsWith('nucInsertions') ||
       key.startsWith('pangoLineage') ||
       key.startsWith('gisaidClade') ||
       key.startsWith('nextstrainClade') ||
@@ -69,7 +72,7 @@ export function readVariantListFromUrlSearchParams(params: URLSearchParams): Var
   for (let key of params.keys()) {
     // The number in "aaMutations1", "pangoLineage3", ... should be parsed out.
     const match = key.match(
-      /(pangoLineage|gisaidClade|nextstrainClade|aaMutations|nucMutations|variantQuery)(\d+)/
+      /(pangoLineage|gisaidClade|nextstrainClade|aaMutations|nucMutations|aaInsertions|nucInsertions|variantQuery)(\d+)/
     );
     if (match) {
       variantIds.add(Number.parseInt(match[2]));
@@ -83,6 +86,8 @@ export function readVariantListFromUrlSearchParams(params: URLSearchParams): Var
       nextstrainClade: params.get('nextstrainClade') ?? undefined,
       aaMutations: params.get('aaMutations')?.split(','),
       nucMutations: params.get('nucMutations')?.split(','),
+      aaInsertions: params.get('aaInsertions')?.split(','),
+      nucInsertions: params.get('nucInsertions')?.split(','),
       variantQuery: params.get('variantQuery') ?? undefined,
     },
   ];
@@ -93,6 +98,8 @@ export function readVariantListFromUrlSearchParams(params: URLSearchParams): Var
       nextstrainClade: params.get('nextstrainClade' + id) ?? undefined,
       aaMutations: params.get('aaMutations' + id)?.split(','),
       nucMutations: params.get('nucMutations' + id)?.split(','),
+      aaInsertions: params.get('aaInsertions' + id)?.split(','),
+      nucInsertions: params.get('nucInsertions' + id)?.split(','),
       variantQuery: params.get('variantQuery' + id) ?? undefined,
     });
   }
@@ -101,7 +108,15 @@ export function readVariantListFromUrlSearchParams(params: URLSearchParams): Var
 
 export function variantIsOnlyDefinedBy(
   selector: VariantSelector,
-  field: 'pangoLineage' | 'gisaidClade' | 'nextstrainClade' | 'aaMutations' | 'nucMutations' | 'variantQuery'
+  field:
+    | 'pangoLineage'
+    | 'gisaidClade'
+    | 'nextstrainClade'
+    | 'aaMutations'
+    | 'nucMutations'
+    | 'aaInsertions'
+    | 'nucInsertions'
+    | 'variantQuery'
 ): boolean {
   // The field is not undefined:
   if (selector[field] === undefined) {
@@ -114,11 +129,13 @@ export function variantIsOnlyDefinedBy(
     'nextstrainClade',
     'aaMutations',
     'nucMutations',
+    'aaInsertions',
+    'nucInsertions',
     'variantQuery',
   ] as const) {
     const fieldValue = selector[f];
     if (f !== field && fieldValue !== undefined) {
-      if (f === 'aaMutations' || f === 'nucMutations') {
+      if (f === 'aaMutations' || f === 'nucMutations' || f === 'aaInsertions' || f === 'nucInsertions') {
         if (fieldValue.length === 0) {
           continue;
         }
@@ -140,11 +157,19 @@ export function variantIsAllLineages(selector: VariantSelector): boolean {
     'nextstrainClade',
     'aaMutations',
     'nucMutations',
+    'aaInsertions',
+    'nucInsertions',
     'variantQuery',
   ] as const) {
     const fieldValue = selector[f];
     if (fieldValue !== undefined) {
-      if (f === 'aaMutations' || f === 'nucMutations' || f === 'variantQuery') {
+      if (
+        f === 'aaMutations' ||
+        f === 'nucMutations' ||
+        f === 'aaInsertions' ||
+        f === 'nucInsertions' ||
+        f === 'variantQuery'
+      ) {
         if (fieldValue.length === 0) {
           continue;
         }
@@ -160,7 +185,16 @@ export function isValidPangoLineageQuery(query: string): boolean {
 }
 
 export function formatVariantDisplayName(
-  { pangoLineage, gisaidClade, nextstrainClade, nucMutations, aaMutations, variantQuery }: VariantSelector,
+  {
+    pangoLineage,
+    gisaidClade,
+    nextstrainClade,
+    nucMutations,
+    aaMutations,
+    nucInsertions,
+    aaInsertions,
+    variantQuery,
+  }: VariantSelector,
   dense = false
 ): string {
   if (variantQuery) {
@@ -172,6 +206,8 @@ export function formatVariantDisplayName(
     nextstrainClade,
     nucMutations?.join(', '),
     aaMutations?.join(', '),
+    nucInsertions?.join(', '),
+    aaInsertions?.join(', '),
   ].filter(c => !!c && c.length > 0);
   if (components.length === 0) {
     return 'All lineages';
@@ -189,6 +225,8 @@ export function transformToVariantQuery(selector: VariantSelector): string {
     selector.gisaidClade ? `gisaid:${selector.gisaidClade}` : undefined,
     ...(selector.aaMutations ?? []),
     ...(selector.nucMutations ?? []),
+    ...(selector.aaInsertions ?? []),
+    ...(selector.nucInsertions ?? []),
   ].filter(c => !!c) as string[];
   return components.join(' & ');
 }

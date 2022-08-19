@@ -19,9 +19,10 @@ export const DeepChen2021FitnessPage = () => {
   const exploreUrl = useExploreUrl();
 
   const { ldvsSelector, lvsSelector, lsSelector, lSelector } = useSingleSelectorsFromExploreUrl(exploreUrl!);
-  const variantDateCount = useQuery(signal => DateCountSampleData.fromApi(lvsSelector, signal), [
-    lvsSelector,
-  ]);
+  const variantDateCount = useQuery(
+    signal => DateCountSampleData.fromApi(lvsSelector, signal),
+    [lvsSelector]
+  );
   const wholeDateCount = useQuery(signal => DateCountSampleData.fromApi(lsSelector, signal), [lsSelector]);
 
   // Start date: day of first variant case
@@ -112,9 +113,11 @@ export const DeepChen2021FitnessPage = () => {
       dateRange={exploreUrl.dateRange}
       variant={exploreUrl.variants![0]}
       controls={
-        <Button className='mt-2' variant='secondary' as={Link} to={exploreUrl.getOverviewPageUrl()}>
-          Back to overview
-        </Button>
+        <Link to={exploreUrl.getOverviewPageUrl()}>
+          <Button className='mt-2' variant='secondary'>
+            Back to overview
+          </Button>
+        </Link>
       }
       titleSuffix='Relative growth advantage'
     />,
