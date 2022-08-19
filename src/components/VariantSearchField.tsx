@@ -10,6 +10,7 @@ import { useQuery } from '../helpers/query-hook';
 import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 import Form from 'react-bootstrap/Form';
 import { SamplingStrategy } from '../data/SamplingStrategy';
+
 import { translateMutation } from '../helpers/autocomplete-helpers';
 import { isValidAAInsertion } from '../helpers/aa-insertion';
 import { isValidNucInsertion } from '../helpers/nuc-insertion';
@@ -343,7 +344,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       onDragLeave={dragLeave}
       onDrop={drop}
       className={
-        'p-1 m-1 border-2 border-dashed ' + (dragOngoingDepth ? 'border-black' : 'border-transparent')
+        'm-1 p-1 border-2 border-dashed ' + (dragOngoingDepth ? 'border-black' : 'border-transparent')
       }
     >
       <form
@@ -395,6 +396,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
           label='Advanced search'
           checked={advancedSearch}
           onChange={_ => handleCheckboxChange()}
+          className='mb-3'
         />
       </div>
     </div>

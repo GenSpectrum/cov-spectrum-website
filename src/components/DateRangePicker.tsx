@@ -73,7 +73,7 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
     <>
       <div ref={ref} className='w-full flex flex-row items-center flex-wrap'>
         <HeaderDateRangeSelect exploreUrl={exploreUrl} />
-        <div className={`flex flex-row ${width && width < 450 ? 'flex-wrap mt-2 mb-2 ml-0' : 'ml-2'}`}>
+        <div className={`flex flex-row ${width && width < 480 ? 'flex-wrap mt-2 mb-2 ml-1' : 'ml-2'}`}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
               inputFormat='yyyy-MM-dd'
@@ -85,11 +85,17 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
                 }
                 setStartDate(value);
               }}
-              renderInput={params => <TextField {...params} sx={{ height: '50px', width: '150px' }} />}
+              renderInput={params => (
+                <TextField
+                  {...params}
+                  sx={{ height: `${width && width < 330 ? '70px' : '50px'}`, width: '150px' }}
+                />
+              )}
             />
           </LocalizationProvider>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
+              className={`${width && width < 330 ? 'mt-10' : ''}`}
               inputFormat='yyyy-MM-dd'
               label='to'
               value={endDate}
@@ -102,7 +108,11 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
                     readOnly: true,
                   }}
                   {...params}
-                  sx={{ marginLeft: '5px', height: '50px', width: '150px' }}
+                  sx={{
+                    marginLeft: `${width && width < 320 ? '2px' : '5px'}`,
+                    height: '50px',
+                    width: '150px',
+                  }}
                 />
               )}
             />
