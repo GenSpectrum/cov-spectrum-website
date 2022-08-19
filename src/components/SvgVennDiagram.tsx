@@ -1,7 +1,7 @@
 import { Checkbox, InputLabel, ListItemText, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import { Loader } from 'react-bootstrap-typeahead';
+import Loader from './Loader';
 import { useResizeDetector } from 'react-resize-detector';
 import { LapisSelector } from '../data/LapisSelector';
 import { MutationProportionData } from '../data/MutationProportionDataset';
