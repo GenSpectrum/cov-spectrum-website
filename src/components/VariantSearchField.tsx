@@ -350,8 +350,11 @@ export const VariantSearchField = ({
       onDragLeave={dragLeave}
       onDrop={drop}
       className={
-        `${analysisMode !== AnalysisMode.CompareToBaseline && 'm-1'} p-1 border-2 border-dashed ` +
-        (dragOngoingDepth ? 'border-black' : 'border-transparent')
+        `${
+          analysisMode === AnalysisMode.CompareToBaseline || analysisMode === AnalysisMode.CompareEquals
+            ? 'm-0'
+            : 'm-1'
+        } p-1 border-2 border-dashed ` + (dragOngoingDepth ? 'border-black' : 'border-transparent')
       }
     >
       <form
@@ -403,7 +406,7 @@ export const VariantSearchField = ({
           label='Advanced search'
           checked={advancedSearch}
           onChange={_ => handleCheckboxChange()}
-          className='w-full mb-3'
+          className='mb-3'
         />
       </div>
     </div>
