@@ -350,11 +350,7 @@ export const VariantSearchField = ({
       onDragLeave={dragLeave}
       onDrop={drop}
       className={
-        `${
-          analysisMode === AnalysisMode.CompareToBaseline || analysisMode === AnalysisMode.CompareEquals
-            ? 'm-0'
-            : 'm-1'
-        } p-1 border-2 border-dashed ` + (dragOngoingDepth ? 'border-black' : 'border-transparent')
+        'm-1 p-1 border-2 border-dashed ' + (dragOngoingDepth ? 'border-black' : 'border-transparent')
       }
     >
       <form

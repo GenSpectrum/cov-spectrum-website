@@ -135,7 +135,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
   if (analysisMode === AnalysisMode.CompareEquals) {
     return (
       <div className='flex flex-wrap w-full'>
-        <div className='flex-grow'>
+        <div className='flex-grow m-0'>
           <div>
             {selections.map((selection, index) => (
               <div className='flex mr-4' key={selection.id}>
@@ -153,7 +153,6 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
                     currentSelection={selection.selector}
                     onVariantSelect={newSelection => changeSelection(newSelection, index)}
                     triggerSearch={submitSearch}
-                    analysisMode={analysisMode}
                   />
                 </div>
               </div>
@@ -176,14 +175,13 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
       <div className='flex flex-wrap w-full'>
         <div className='flex-grow'>
           <span className='ml-1'>Baseline variant:</span>
-          <div className=''>
+          <div className='m-0'>
             <VariantSearchField
               key={selections[0].id}
               isSimple={false}
               currentSelection={selections[0].selector}
               onVariantSelect={newSelection => changeSelection(newSelection, 0)}
               triggerSearch={submitSearch}
-              analysisMode={analysisMode}
             />
           </div>
           <span className='ml-1'>Comparing with:</span>
@@ -214,7 +212,6 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
                     currentSelection={selection.selector}
                     onVariantSelect={newSelection => changeSelection(newSelection, index + 1)}
                     triggerSearch={submitSearch}
-                    analysisMode={analysisMode}
                   />
                 </div>
               </div>
