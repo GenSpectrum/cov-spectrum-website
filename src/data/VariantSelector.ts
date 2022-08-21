@@ -207,7 +207,7 @@ export function transformToVariantQuery(selector: VariantSelector): string {
   const components = [
     selector.pangoLineage,
     selector.nextcladePangoLineage ? `nextcladePangoLineage:${selector.nextcladePangoLineage}` : undefined,
-    selector.nextstrainClade ? `nextstrain:${selector.nextstrainClade}` : undefined,
+    selector.nextstrainClade ? `nextstrainClade:${selector.nextstrainClade}` : undefined,
     selector.gisaidClade ? `gisaid:${selector.gisaidClade}` : undefined,
     ...(selector.aaMutations ?? []),
     ...(selector.nucMutations ?? []),

@@ -4,7 +4,7 @@ import { components, InputActionMeta, Styles } from 'react-select';
 import { isValidAAMutation, isValidABNotation, isValidNspNotation } from '../helpers/aa-mutation';
 import { CSSPseudos } from 'styled-components';
 import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
-import { isValidPangoLineageQuery, VariantSelector } from '../data/VariantSelector';
+import { isValidPangoLineageQuery, transformToVariantQuery, VariantSelector } from '../data/VariantSelector';
 import { isValidNucMutation } from '../helpers/nuc-mutation';
 import { useQuery } from '../helpers/query-hook';
 import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
@@ -102,6 +102,33 @@ function variantSelectorToOptions(selector: VariantSelector): SearchOption[] {
     selector.nucInsertions.forEach(m => options.push({ label: m, value: m, type: 'nuc-insertion' }));
   }
   return options;
+}
+
+function optionsToVariantSelector(options: SearchOption[]): VariantSelector {
+  const selector: VariantSelector = {
+    aaMutations: [],
+    nucMutations: [],
+    aaInsertions: [],
+    nucInsertions: [],
+  };
+  for (let { type, value } of options) {
+    if (type === 'aa-mutation') {
+      selector.aaMutations!.push(value);
+    } else if (type === 'nuc-mutation') {
+      selector.nucMutations!.push(value);
+    } else if (type === 'aa-insertion') {
+      selector.aaInsertions!.push(value);
+    } else if (type === 'nuc-insertion') {
+      selector.nucInsertions!.push(value);
+    } else if (type === 'pango-lineage') {
+      selector.pangoLineage = value;
+    } else if (type === 'nextclade-pango-lineage') {
+      selector.nextcladePangoLineage = value;
+    } else if (type === 'nextstrain-clade') {
+      selector.nextstrainClade = value;
+    }
+  }
+  return selector;
 }
 
 const colorStyles: Partial<Styles<any, true, any>> = {
@@ -338,30 +365,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   useEffect(() => {
     const submitVariant = () => {
       if (!advancedSearch) {
-        const selector: VariantSelector = {
-          aaMutations: [],
-          nucMutations: [],
-          aaInsertions: [],
-          nucInsertions: [],
-        };
-        for (let { type, value } of selectedOptions) {
-          if (type === 'aa-mutation') {
-            selector.aaMutations!.push(value);
-          } else if (type === 'nuc-mutation') {
-            selector.nucMutations!.push(value);
-          } else if (type === 'aa-insertion') {
-            selector.aaInsertions!.push(value);
-          } else if (type === 'nuc-insertion') {
-            selector.nucInsertions!.push(value);
-          } else if (type === 'pango-lineage') {
-            selector.pangoLineage = value;
-          } else if (type === 'nextclade-pango-lineage') {
-            selector.nextcladePangoLineage = value;
-          } else if (type === 'nextstrain-clade') {
-            selector.nextstrainClade = value;
-          }
-        }
-        onVariantSelect(selector);
+        onVariantSelect(optionsToVariantSelector(selectedOptions));
       } else {
         onVariantSelect({ variantQuery });
       }
@@ -372,7 +376,8 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   function handleCheckboxChange() {
     let newQuery: string = '';
     if (selectedOptions.length > 0) {
-      newQuery = selectedOptions.map(i => i.value).join(' & ');
+      const selector = optionsToVariantSelector(selectedOptions);
+      newQuery = transformToVariantQuery(selector);
     } else if (inputValue) {
       newQuery = inputValue;
     }
