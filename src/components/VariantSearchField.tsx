@@ -15,7 +15,13 @@ import { translateMutation } from '../helpers/autocomplete-helpers';
 import { isValidAAInsertion } from '../helpers/aa-insertion';
 import { isValidNucInsertion } from '../helpers/nuc-insertion';
 
-type SearchType = 'aa-mutation' | 'nuc-mutation' | 'aa-insertion' | 'nuc-insertion' | 'pango-lineage';
+type SearchType =
+  | 'aa-mutation'
+  | 'nuc-mutation'
+  | 'aa-insertion'
+  | 'nuc-insertion'
+  | 'pango-lineage'
+  | 'nextclade-pango-lineage';
 
 type SearchOption = {
   label: string;
@@ -25,6 +31,7 @@ type SearchOption = {
 
 const backgroundColor: { [key in SearchType]: string } = {
   'pango-lineage': 'rgba(29,78,207,0.1)',
+  'nextclade-pango-lineage': 'rgba(29,78,207,0.1)',
   'aa-mutation': 'rgba(4,133,27,0.1)',
   'nuc-mutation': 'rgba(33,162,162,0.29)',
   'aa-insertion': 'rgba(4,133,27,0.1)',
@@ -32,23 +39,27 @@ const backgroundColor: { [key in SearchType]: string } = {
 };
 
 function mapOption(optionString: string, type: SearchType): SearchOption {
-  let actualValue = optionString;
+  let value = optionString;
+  let label = optionString;
   if (optionString.includes(' =')) {
-    actualValue = optionString.split(' ')[0];
+    value = optionString.split(' ')[0];
   } else if (optionString.toLowerCase().startsWith('nsp')) {
     if (translateMutation(optionString.toLowerCase())) {
-      actualValue = translateMutation(optionString.toLowerCase());
-      optionString = `${actualValue} = (${optionString})`;
+      value = translateMutation(optionString.toLowerCase());
+      label = `${value} = (${optionString})`;
     }
   } else if (optionString.toLowerCase().startsWith('orf1ab')) {
     if (translateMutation(optionString.toLowerCase())) {
-      actualValue = translateMutation(optionString.toLowerCase());
-      optionString = `${actualValue} = (${optionString})`;
+      value = translateMutation(optionString.toLowerCase());
+      label = `${value} = (${optionString})`;
     }
   }
+  if (type === 'nextclade-pango-lineage') {
+    label = `${optionString} (Nextclade)`;
+  }
   return {
-    label: optionString,
-    value: actualValue,
+    label,
+    value,
     type,
   };
 }
@@ -57,6 +68,13 @@ function variantSelectorToOptions(selector: VariantSelector): SearchOption[] {
   const options: SearchOption[] = [];
   if (selector.pangoLineage) {
     options.push({ label: selector.pangoLineage, value: selector.pangoLineage, type: 'pango-lineage' });
+  }
+  if (selector.nextcladePangoLineage) {
+    options.push({
+      label: selector.nextcladePangoLineage + ' (Nextclade)',
+      value: selector.nextcladePangoLineage,
+      type: 'nextclade-pango-lineage',
+    });
   }
   if (selector.aaMutations) {
     selector.aaMutations.forEach(m => options.push({ label: m, value: m, type: 'aa-mutation' }));
@@ -132,9 +150,19 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   };
 
   const suggestOptions = (query: string): SearchOption[] => {
-    const onePLAlreadySelected = selectedOptions.filter(option => option.type === 'pango-lineage').length > 0;
+    const onePLAlreadySelected =
+      selectedOptions.filter(
+        option => option.type === 'pango-lineage' || option.type === 'nextclade-pango-lineage'
+      ).length > 0;
     const suggestions: SearchOption[] = [];
 
+    const queryWithoutNextcladeLabel = query.replace('(Nextclade)', '').trim();
+    if (!onePLAlreadySelected && isValidPangoLineageQuery(queryWithoutNextcladeLabel)) {
+      suggestions.push(mapOption(queryWithoutNextcladeLabel, 'nextclade-pango-lineage'));
+      if (!query.includes('*')) {
+        suggestions.push(mapOption(queryWithoutNextcladeLabel + '*', 'nextclade-pango-lineage'));
+      }
+    }
     if (isValidAAMutation(query)) {
       suggestions.push(mapOption(query, 'aa-mutation'));
     } else if (isValidABNotation(query)) {
@@ -208,7 +236,11 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     for (let query of inputValues) {
       query = query.trim();
       const suggestions = suggestOptions(query);
-      const selectedOption = suggestions.find(option => option.value.toUpperCase() === query.toUpperCase());
+      const selectedOption = suggestions.find(
+        option =>
+          option.value.toUpperCase() === query.toUpperCase() ||
+          option.label.toUpperCase() === query.toUpperCase()
+      );
       if (
         suggestions &&
         suggestions.length > 0 &&
@@ -220,8 +252,10 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
           selectedOption.type === 'nuc-mutation' ||
           selectedOption.type === 'aa-insertion' ||
           selectedOption.type === 'nuc-insertion' ||
-          (selectedOption.type === 'pango-lineage' &&
-            newSelectedOptions.filter(option => option.type === 'pango-lineage').length < 1)
+          ((selectedOption.type === 'pango-lineage' || selectedOption.type === 'nextclade-pango-lineage') &&
+            newSelectedOptions.filter(
+              option => option.type === 'pango-lineage' || option.type === 'nextclade-pango-lineage'
+            ).length < 1)
         ) {
           newSelectedOptions.push(selectedOption);
         }
@@ -290,6 +324,8 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
             selector.nucInsertions!.push(value);
           } else if (type === 'pango-lineage') {
             selector.pangoLineage = value;
+          } else if (type === 'nextclade-pango-lineage') {
+            selector.nextcladePangoLineage = value;
           }
         }
         onVariantSelect(selector);
