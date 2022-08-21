@@ -14,6 +14,7 @@ import { SamplingStrategy } from '../data/SamplingStrategy';
 import { translateMutation } from '../helpers/autocomplete-helpers';
 import { isValidAAInsertion } from '../helpers/aa-insertion';
 import { isValidNucInsertion } from '../helpers/nuc-insertion';
+import { _fetchAggSamples } from '../data/api-lapis';
 
 type SearchType =
   | 'aa-mutation'
@@ -21,7 +22,8 @@ type SearchType =
   | 'aa-insertion'
   | 'nuc-insertion'
   | 'pango-lineage'
-  | 'nextclade-pango-lineage';
+  | 'nextclade-pango-lineage'
+  | 'nextstrain-clade';
 
 type SearchOption = {
   label: string;
@@ -32,6 +34,7 @@ type SearchOption = {
 const backgroundColor: { [key in SearchType]: string } = {
   'pango-lineage': 'rgba(29,78,207,0.1)',
   'nextclade-pango-lineage': 'rgba(29,78,207,0.1)',
+  'nextstrain-clade': 'rgba(29,78,207,0.1)',
   'aa-mutation': 'rgba(4,133,27,0.1)',
   'nuc-mutation': 'rgba(33,162,162,0.29)',
   'aa-insertion': 'rgba(4,133,27,0.1)',
@@ -57,6 +60,9 @@ function mapOption(optionString: string, type: SearchType): SearchOption {
   if (type === 'nextclade-pango-lineage') {
     label = `${optionString} (Nextclade)`;
   }
+  if (type === 'nextstrain-clade') {
+    label = `${optionString} (Nextstrain clade)`;
+  }
   return {
     label,
     value,
@@ -74,6 +80,13 @@ function variantSelectorToOptions(selector: VariantSelector): SearchOption[] {
       label: selector.nextcladePangoLineage + ' (Nextclade)',
       value: selector.nextcladePangoLineage,
       type: 'nextclade-pango-lineage',
+    });
+  }
+  if (selector.nextstrainClade) {
+    options.push({
+      label: selector.nextstrainClade + ' (Nextstrain clade)',
+      value: selector.nextstrainClade,
+      type: 'nextstrain-clade',
     });
   }
   if (selector.aaMutations) {
@@ -129,6 +142,16 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     []
   );
 
+  const nextstrainCladesSet = useQuery(
+    signal =>
+      _fetchAggSamples(
+        { location: {}, samplingStrategy: SamplingStrategy.AllSamples, host: undefined, qc: {} },
+        ['nextstrainClade'],
+        signal
+      ).then(dataset => new Set(dataset.filter(e => e.nextstrainClade).map(e => e.nextstrainClade!))),
+    []
+  );
+
   const applySelector = (selector: VariantSelector) => {
     if (selector.variantQuery !== undefined) {
       setAdvancedSearch(true);
@@ -154,6 +177,8 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       selectedOptions.filter(
         option => option.type === 'pango-lineage' || option.type === 'nextclade-pango-lineage'
       ).length > 0;
+    const oneNCAlreadySelected =
+      selectedOptions.filter(option => option.type === 'nextstrain-clade').length > 0;
     const suggestions: SearchOption[] = [];
 
     const queryWithoutNextcladeLabel = query.replace('(Nextclade)', '').trim();
@@ -178,6 +203,10 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       if (!query.endsWith('*')) {
         suggestions.push(mapOption(query + '*', 'pango-lineage'));
       }
+    }
+    const queryWithoutNextstrainLabel = query.replace('(Nextstrain clade)', '').trim();
+    if (!oneNCAlreadySelected && nextstrainCladesSet.data?.has(queryWithoutNextstrainLabel.toUpperCase())) {
+      suggestions.push(mapOption(queryWithoutNextstrainLabel, 'nextstrain-clade'));
     }
     if (!onePLAlreadySelected) {
       suggestions.push(...suggestPangolinLineages(query).map(pl => mapOption(pl, 'pango-lineage')));
@@ -255,7 +284,9 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
           ((selectedOption.type === 'pango-lineage' || selectedOption.type === 'nextclade-pango-lineage') &&
             newSelectedOptions.filter(
               option => option.type === 'pango-lineage' || option.type === 'nextclade-pango-lineage'
-            ).length < 1)
+            ).length < 1) ||
+          (selectedOption.type === 'nextstrain-clade' &&
+            newSelectedOptions.filter(option => option.type === 'nextstrain-clade').length < 1)
         ) {
           newSelectedOptions.push(selectedOption);
         }
@@ -326,6 +357,8 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
             selector.pangoLineage = value;
           } else if (type === 'nextclade-pango-lineage') {
             selector.nextcladePangoLineage = value;
+          } else if (type === 'nextstrain-clade') {
+            selector.nextstrainClade = value;
           }
         }
         onVariantSelect(selector);
