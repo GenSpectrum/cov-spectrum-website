@@ -23,7 +23,6 @@ import { VariantMutations } from '../components/VariantMutations';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
 import { useAsyncDataset } from '../helpers/use-async-dataset';
 import { Button, ButtonVariant, ShowMoreButton } from '../helpers/ui';
-import { mapValues } from 'lodash';
 import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
 import { VariantHeader } from '../components/VariantHeader';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
@@ -46,6 +45,7 @@ import { VariantHosts } from '../components/VariantHosts';
 import { HuismanScire2021ReContainer } from '../models/huismanScire2021Re/HuismanScire2021ReContainer';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { VariantInsertions } from '../components/VariantInsertions';
+import * as lodashAlternatives from '../helpers/lodash_alternatives';
 
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
@@ -61,9 +61,9 @@ export const FocusSinglePage = () => {
   // Deep focus buttons
   const deepFocusButtons = useMemo(
     () =>
-      mapValues(deepFocusPaths, suffix => {
-        return <ShowMoreButton key={suffix} to={exploreUrl?.getDeepFocusPageUrl(suffix) ?? '#'} />;
-      }),
+      lodashAlternatives.mapValues(deepFocusPaths, (suffix: string) => (
+        <ShowMoreButton key={suffix} to={exploreUrl?.getDeepFocusPageUrl(suffix) ?? '#'} />
+      )),
     [exploreUrl]
   );
 

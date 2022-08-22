@@ -6,7 +6,7 @@ import { GridCell, PackedGrid } from '../../../components/PackedGrid';
 import { WasteWaterTimeWidget } from '../WasteWaterTimeWidget';
 import { WasteWaterHeatMapWidget } from '../WasteWaterHeatMapWidget';
 import Loader from '../../../components/Loader';
-import _ from 'lodash';
+import { sortBy } from '../../../helpers/lodash_alternatives';
 
 export const WasteWaterLocationPage = () => {
   const routeMatch = useRouteMatch<{ location: string }>(
@@ -29,35 +29,38 @@ export const WasteWaterLocationPage = () => {
       <a href='..'>&#60; Return</a>
       <h1 className='mt-0'>Wastewater in Switzerland - {location}</h1>
 
-      {_.sortBy(wasteWaterData, [d => d.variantName]).map(({ variantName, data }) => (
-        <div key={variantName} style={{ marginTop: '20px' }}>
-          <h2>{variantName}</h2>
-          <PackedGrid maxColumns={2}>
-            <GridCell minWidth={500}>
-              <WasteWaterTimeWidget.ShareableComponent
-                data={data.timeseriesSummary}
-                variantName={variantName}
-                country={country}
-                location={location}
-                title='Estimated proportion'
-                height={500}
-              />
-            </GridCell>
-            {data.mutationOccurrences && (
-              <GridCell minWidth={800}>
-                <WasteWaterHeatMapWidget.ShareableComponent
-                  data={data.mutationOccurrences}
+      {wasteWaterData
+        .concat()
+        .sort(sortBy('variantName'))
+        .map(({ variantName, data }) => (
+          <div key={variantName} style={{ marginTop: '20px' }}>
+            <h2>{variantName}</h2>
+            <PackedGrid maxColumns={2}>
+              <GridCell minWidth={500}>
+                <WasteWaterTimeWidget.ShareableComponent
+                  data={data.timeseriesSummary}
                   variantName={variantName}
                   country={country}
                   location={location}
-                  title='Occurrences of individual mutations'
+                  title='Estimated proportion'
                   height={500}
                 />
               </GridCell>
-            )}
-          </PackedGrid>
-        </div>
-      ))}
+              {data.mutationOccurrences && (
+                <GridCell minWidth={800}>
+                  <WasteWaterHeatMapWidget.ShareableComponent
+                    data={data.mutationOccurrences}
+                    variantName={variantName}
+                    country={country}
+                    location={location}
+                    title='Occurrences of individual mutations'
+                    height={500}
+                  />
+                </GridCell>
+              )}
+            </PackedGrid>
+          </div>
+        ))}
     </div>
   );
 };
