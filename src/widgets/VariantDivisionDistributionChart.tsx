@@ -86,8 +86,6 @@ export const VariantDivisionDistributionChart = ({
     return geoSummariesMap;
   }, [variantSampleSet, wholeSampleSet]);
 
-  // const g = geoSummariesMap.get(selectedLocationField)!.concat().sort(sortBy('location'));
-
   const selectedGeoSummaries = useMemo(
     () => geoSummariesMap.get(selectedLocationField)!.concat().sort(sortBy('location')),
 

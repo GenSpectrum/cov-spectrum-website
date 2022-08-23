@@ -60,7 +60,7 @@ export function shuffle(inputArray: any[]) {
 
 /*
 A native alternative for the lodash random function: https://lodash.com/docs/4.17.15#random
-Produces a random number between two parameter values: the inclusive lower and upper bounds.
+Produces a random integer between two parameter values: the inclusive lower and upper bounds.
 */
 export const random = (a = 1, b = 0) => {
   const lower = Math.ceil(Math.min(a, b));
@@ -77,7 +77,7 @@ export const capitalize = (string: string) => {
   return string ? string.charAt(0).toUpperCase() + string.slice(1).toLowerCase() : '';
 };
 /*
-A native alternative for the lodash random function: https://lodash.com/docs/3.10.1#mapValues
+A native alternative for the lodash mapValues function: https://lodash.com/docs/3.10.1#mapValues
 Creates a new mapped object with the same keys of the given object and the values that are generated using the given callback function.
  */
 export const mapValues = (

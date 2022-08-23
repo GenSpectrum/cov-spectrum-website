@@ -30,22 +30,22 @@ const dataToBeSorted: any[] = [
 const expectedSortingResult: any[] = [dataToBeSorted[0], dataToBeSorted[2], dataToBeSorted[1]];
 
 // nested objects to compare with isEqual
-type customType = {
+type CustomType = {
   name: string;
   quantity: number;
   isAvailable: boolean;
 };
 
-type objectToCompare = {
+type ObjectToCompare = {
   item1: string;
   item2: number;
   item3: any[];
   item4: string[];
   item5: { array: number[] };
-  item6: customType;
+  item6: CustomType;
 };
 
-const object1: objectToCompare = {
+const object1: ObjectToCompare = {
   item1: 'string',
   item2: 1,
   item3: [1, 2, 3, 4, { string: 'string', number: 1 }],
@@ -54,9 +54,9 @@ const object1: objectToCompare = {
   item6: { name: 'someName', quantity: 3, isAvailable: true },
 };
 
-const object2: objectToCompare = JSON.parse(JSON.stringify(object1));
+const object2: ObjectToCompare = JSON.parse(JSON.stringify(object1));
 
-const object3: objectToCompare = JSON.parse(JSON.stringify(object1));
+const object3: ObjectToCompare = JSON.parse(JSON.stringify(object1));
 object3.item3[4].number = 2;
 
 /*
