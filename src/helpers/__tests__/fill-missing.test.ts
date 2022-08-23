@@ -1,4 +1,4 @@
-import { shuffle } from 'lodash';
+import { shuffle } from '../lodash_alternatives';
 import { globalDateCache, UnifiedIsoWeek } from '../date-cache';
 import { fillFromPrimitiveMap, fillFromWeeklyMap, possibleAgeKeys } from '../fill-missing';
 
@@ -113,7 +113,7 @@ describe('fillWeeklyApiData', () => {
     test(c.label, () => {
       const expectedOutput: Output = fromTemplate(c.output).map(([key, value]) => ({ key, value }));
       for (let i = 0; i < 5; i++) {
-        const inputMap = new Map(shuffle(fromTemplate(c.input)));
+        const inputMap = new Map<UnifiedIsoWeek, number>(shuffle(fromTemplate(c.input)));
         const actualOutput = fillFromWeeklyMap(inputMap, c.fillValue);
         assertOutputEqual(actualOutput, expectedOutput);
       }

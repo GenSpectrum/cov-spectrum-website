@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import { random, shuffle, times } from 'lodash';
+import { times, shuffle, random } from '../lodash_alternatives';
+
 import { DateCacheClassForTests, UnifiedDay, UnifiedIsoWeek } from '../date-cache';
 
 // UnifiedDay and UnifiedIsoWeek mutually recursively contain each other.

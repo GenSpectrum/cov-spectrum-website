@@ -1,4 +1,4 @@
-import { sortBy } from 'lodash';
+import { sortBy } from '../../helpers/lodash_alternatives';
 import React, { useContext, useState } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { ButtonVariant, DropdownButton } from '../../helpers/ui';
@@ -16,7 +16,7 @@ export const ExportButton = ({ className }: Props) => {
   return (
     <DropdownButton
       className={className}
-      onToggle={() => setItems(sortBy([...exportManager.getRegistered()], ({ label }) => label))}
+      onToggle={() => setItems([...exportManager.getRegistered()].concat().sort(sortBy('label')))}
       variant={ButtonVariant.SECONDARY}
     >
       {items.map(({ label, doExport }) => (

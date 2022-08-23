@@ -7,8 +7,8 @@ import DropdownButton from 'react-bootstrap/DropdownButton';
 import Dropdown from 'react-bootstrap/Dropdown';
 import { LocationField, locationFields } from '../data/LocationSelector';
 import { Utils } from '../services/Utils';
-import _ from 'lodash';
 import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import { sortBy } from '../helpers/lodash_alternatives';
 
 export type VariantDivisionDistributionChartProps = {
   variantSampleSet: DivisionCountSampleDataset;
@@ -87,7 +87,8 @@ export const VariantDivisionDistributionChart = ({
   }, [variantSampleSet, wholeSampleSet]);
 
   const selectedGeoSummaries = useMemo(
-    () => _.sortBy(geoSummariesMap.get(selectedLocationField)!, x => x.location),
+    () => geoSummariesMap.get(selectedLocationField)!.concat().sort(sortBy('location')),
+
     [geoSummariesMap, selectedLocationField]
   );
 

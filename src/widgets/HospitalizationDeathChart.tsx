@@ -7,7 +7,7 @@ import {
   ValueWithConfidence,
   PerTrueFalse,
 } from './HospitalizationDeathChartInner';
-import { capitalize } from 'lodash';
+import { capitalize } from '../helpers/lodash_alternatives';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import { useResizeDetector } from 'react-resize-detector';
 import React, { useMemo } from 'react';
