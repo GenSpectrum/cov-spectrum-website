@@ -430,10 +430,10 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   return (
     <div
-      onDragOver={dragOver}
-      onDragEnter={dragEnter}
-      onDragLeave={dragLeave}
-      onDrop={dropFromMouse}
+      // onDragOver={dragOver}
+      // onDragEnter={dragEnter}
+      // onDragLeave={dragLeave}
+      // onDrop={dropFromMouse}
       ref={drop}
       className={
         'm-1 p-1 border-2 border-dashed ' +

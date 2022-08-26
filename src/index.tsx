@@ -11,6 +11,8 @@ import { fetchLapisDataVersionDate } from './data/api-lapis';
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import { env } from './env';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 
 export let baseLocation = 'Europe';
 
@@ -61,7 +63,9 @@ async function main() {
             <EmbedPage />
           </Route>
           <Route path='/'>
-            <App />
+            <DndProvider backend={HTML5Backend}>
+              <App />
+            </DndProvider>
           </Route>
         </Switch>
       </BrowserRouter>
