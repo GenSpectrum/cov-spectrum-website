@@ -32,8 +32,7 @@ import { CollectionOverviewPage } from './pages/CollectionOverviewPage';
 import { CollectionAddPage } from './pages/CollectionAddPage';
 import { CollectionSinglePage } from './pages/CollectionSinglePage';
 import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
-
+import { TouchBackend } from 'react-dnd-touch-backend';
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
 const Footer = styled.footer`
@@ -50,7 +49,7 @@ export const App = () => {
   const { host, qc, setHostAndQc } = useExploreUrl() ?? {};
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <DndProvider backend={TouchBackend} options={{ enableMouseEvents: false }}>
       <div className='w-full'>
         {/* Header */}
         <Header />

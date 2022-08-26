@@ -157,6 +157,9 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
   const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? inputValue);
   const [advancedSearch, setAdvancedSearch] = useState(currentSelection?.variantQuery !== undefined);
+  // dragEnter increases the depth by one and dragLeave decreases it. The two functions is being called every time when
+  // the mouse enters or leaves the object or one of the children.
+  const [dragOngoingDepth, setDragOngoingDepth] = useState(0);
 
   const pangoLineages = useQuery(
     signal =>
@@ -401,12 +404,41 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     }),
   }));
 
+  const dragOver = (ev: React.DragEvent<HTMLDivElement>) => {
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = 'copy';
+  };
+
+  const dragEnter = () => {
+    setDragOngoingDepth(d => d + 1);
+  };
+
+  const dragLeave = () => {
+    setDragOngoingDepth(d => Math.max(0, d - 1));
+  };
+
+  const dropFromMouse = (ev: React.DragEvent<HTMLDivElement>) => {
+    const droppedItem = ev.dataTransfer.getData('drag-item');
+    if (droppedItem) {
+      const selector = JSON.parse(droppedItem) as VariantSelector;
+      applySelector(selector);
+    }
+    setDragOngoingDepth(0);
+  };
+
   // --- Rendering ---
 
   return (
     <div
+      onDragOver={dragOver}
+      onDragEnter={dragEnter}
+      onDragLeave={dragLeave}
+      onDrop={dropFromMouse}
       ref={drop}
-      className={'m-1 p-1 border-2 border-dashed ' + (isOver ? 'border-black' : 'border-transparent')}
+      className={
+        'm-1 p-1 border-2 border-dashed ' +
+        (isOver || dragOngoingDepth ? 'border-black' : 'border-transparent')
+      }
     >
       <form
         className='w-full flex flex-row items-center'
