@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import { mean } from '../../helpers/lodash_alternatives';
 import { colors } from '../../widgets/common';
 import { CollectionVariant } from '../../data/Collection';
+import { useDrag } from 'react-dnd';
 
 const TREND_START = 9;
 const TREND_END = 3;
@@ -81,12 +82,16 @@ const SimpleAreaPlot = React.memo(
 );
 
 export const KnownVariantCard = ({ variant, chartData, recentProportion, onClick, selected }: Props) => {
-  const startDrag = (ev: React.DragEvent<HTMLDivElement>) => {
-    ev.dataTransfer.setData('drag-item', variant.query);
-  };
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'div',
+    item: { query: variant.query },
+    collect: monitor => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
 
   return (
-    <div draggable onDragStart={startDrag} title={variant.description}>
+    <div title={variant.description} ref={drag}>
       <Card
         as={StyledCard}
         className={`shadow-md border-0 m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl w-full`}

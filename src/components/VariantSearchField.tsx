@@ -15,6 +15,7 @@ import { translateMutation } from '../helpers/autocomplete-helpers';
 import { isValidAAInsertion } from '../helpers/aa-insertion';
 import { isValidNucInsertion } from '../helpers/nuc-insertion';
 import { _fetchAggSamples } from '../data/api-lapis';
+import { useDrop } from 'react-dnd';
 
 type SearchType =
   | 'aa-mutation'
@@ -156,9 +157,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
   const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? inputValue);
   const [advancedSearch, setAdvancedSearch] = useState(currentSelection?.variantQuery !== undefined);
-  // dragEnter increases the depth by one and dragLeave decreases it. The two functions is being called every time when
-  // the mouse enters or leaves the object or one of the children.
-  const [dragOngoingDepth, setDragOngoingDepth] = useState(0);
 
   const pangoLineages = useQuery(
     signal =>
@@ -387,39 +385,28 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   // --- Drag&drop ---
 
-  const dragOver = (ev: React.DragEvent<HTMLDivElement>) => {
-    ev.preventDefault();
-    ev.dataTransfer.dropEffect = 'copy';
-  };
-
-  const dragEnter = () => {
-    setDragOngoingDepth(d => d + 1);
-  };
-
-  const dragLeave = () => {
-    setDragOngoingDepth(d => Math.max(0, d - 1));
-  };
-
-  const drop = (ev: React.DragEvent<HTMLDivElement>) => {
-    const droppedItem = ev.dataTransfer.getData('drag-item');
-    if (droppedItem) {
-      const selector = JSON.parse(droppedItem) as VariantSelector;
+  const dropToField = (query: any) => {
+    if (query) {
+      console.log(query);
+      const selector = JSON.parse(query) as VariantSelector;
       applySelector(selector);
     }
-    setDragOngoingDepth(0);
   };
+
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: 'div',
+    drop: (item: any) => dropToField(item.query),
+    collect: monitor => ({
+      isOver: !!monitor.isOver(),
+    }),
+  }));
 
   // --- Rendering ---
 
   return (
     <div
-      onDragOver={dragOver}
-      onDragEnter={dragEnter}
-      onDragLeave={dragLeave}
-      onDrop={drop}
-      className={
-        'm-1 p-1 border-2 border-dashed ' + (dragOngoingDepth ? 'border-black' : 'border-transparent')
-      }
+      ref={drop}
+      className={'m-1 p-1 border-2 border-dashed ' + (isOver ? 'border-black' : 'border-transparent')}
     >
       <form
         className='w-full flex flex-row items-center'
