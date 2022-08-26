@@ -49,7 +49,7 @@ export const App = () => {
   const { host, qc, setHostAndQc } = useExploreUrl() ?? {};
 
   return (
-    <DndProvider backend={TouchBackend} options={{ enableMouseEvents: false }}>
+    <DndProvider backend={TouchBackend}>
       <div className='w-full'>
         {/* Header */}
         <Header />
