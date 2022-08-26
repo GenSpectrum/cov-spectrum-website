@@ -94,8 +94,9 @@ export const KnownVariantCard = ({ variant, chartData, recentProportion, onClick
     }),
   }));
 
+  // draggable onDragStart={startDrag}
   return (
-    <div title={variant.description} ref={drag} draggable onDragStart={startDrag}>
+    <div title={variant.description} ref={drag}>
       <Card
         as={StyledCard}
         className={`shadow-md border-0 m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl w-full`}
