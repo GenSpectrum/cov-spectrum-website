@@ -49,7 +49,7 @@ export const App = () => {
   const { host, qc, setHostAndQc } = useExploreUrl() ?? {};
 
   return (
-    <DndProvider backend={TouchBackend} options={{ delayTouchStart: 1000, ignoreContextmenu: true }}>
+    <DndProvider backend={TouchBackend} options={{ delayTouchStart: 1000 }}>
       <div className='w-full'>
         {/* Header */}
         <Header />
