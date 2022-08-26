@@ -430,12 +430,15 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   return (
     <div
-      // onDragOver={dragOver}
-      // onDragEnter={dragEnter}
-      // onDragLeave={dragLeave}
-      // onDrop={dropFromMouse}
+      onDragOver={dragOver}
+      onDragEnter={dragEnter}
+      onDragLeave={dragLeave}
+      onDrop={dropFromMouse}
       ref={drop}
-      className={'m-1 p-1 border-2 border-dashed ' + (isOver ? 'border-black' : 'border-transparent')}
+      className={
+        'm-1 p-1 border-2 border-dashed ' +
+        (isOver || dragOngoingDepth ? 'border-black' : 'border-transparent')
+      }
     >
       <form
         className='w-full flex flex-row items-center'
