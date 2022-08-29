@@ -64,7 +64,7 @@ async function main() {
             <EmbedPage />
           </Route>
           <Route path='/'>
-            <DndProvider backend={TouchBackend} options={{ delayTouchStart: 500, enableMouseEvents: true }}>
+            <DndProvider backend={TouchBackend} options={{ delayTouchStart: 500 }}>
               <App />
             </DndProvider>
           </Route>
