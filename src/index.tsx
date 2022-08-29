@@ -12,7 +12,8 @@ import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import { env } from './env';
 import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
+// import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
 
 export let baseLocation = 'Europe';
 
@@ -63,7 +64,7 @@ async function main() {
             <EmbedPage />
           </Route>
           <Route path='/'>
-            <DndProvider backend={HTML5Backend}>
+            <DndProvider backend={TouchBackend} options={{ delayTouchStart: 500, enableMouseEvents: true }}>
               <App />
             </DndProvider>
           </Route>

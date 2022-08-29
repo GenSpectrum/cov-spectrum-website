@@ -390,7 +390,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   const dropToField = (query: any) => {
     if (query) {
-      console.log(query);
       const selector = JSON.parse(query) as VariantSelector;
       applySelector(selector);
     }
@@ -430,10 +429,10 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   return (
     <div
-      // onDragOver={dragOver}
-      // onDragEnter={dragEnter}
-      // onDragLeave={dragLeave}
-      // onDrop={dropFromMouse}
+      onDragOver={dragOver}
+      onDragEnter={dragEnter}
+      onDragLeave={dragLeave}
+      onDrop={dropFromMouse}
       ref={drop}
       className={
         'm-1 p-1 border-2 border-dashed ' +
