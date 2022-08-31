@@ -15,6 +15,7 @@ import { translateMutation } from '../helpers/autocomplete-helpers';
 import { isValidAAInsertion } from '../helpers/aa-insertion';
 import { isValidNucInsertion } from '../helpers/nuc-insertion';
 import { _fetchAggSamples } from '../data/api-lapis';
+import { DropTarget, HitDragData } from 'react-drag-drop-container-typescript';
 
 type SearchType =
   | 'aa-mutation'
@@ -387,11 +388,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   // --- Drag&drop ---
 
-  const dragOver = (ev: React.DragEvent<HTMLDivElement>) => {
-    ev.preventDefault();
-    ev.dataTransfer.dropEffect = 'copy';
-  };
-
   const dragEnter = () => {
     setDragOngoingDepth(d => d + 1);
   };
@@ -400,8 +396,8 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     setDragOngoingDepth(d => Math.max(0, d - 1));
   };
 
-  const drop = (ev: React.DragEvent<HTMLDivElement>) => {
-    const droppedItem = ev.dataTransfer.getData('drag-item');
+  const dropToField = (ev: CustomEvent<HitDragData<any>>) => {
+    const droppedItem: any = ev.detail.dragData;
     if (droppedItem) {
       const selector = JSON.parse(droppedItem) as VariantSelector;
       applySelector(selector);
@@ -412,67 +408,65 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   // --- Rendering ---
 
   return (
-    <div
-      onDragOver={dragOver}
-      onDragEnter={dragEnter}
-      onDragLeave={dragLeave}
-      onDrop={drop}
-      className={
-        'm-1 p-1 border-2 border-dashed ' + (dragOngoingDepth ? 'border-black' : 'border-transparent')
-      }
-    >
-      <form
-        className='w-full flex flex-row items-center'
-        onSubmit={e => {
-          e.preventDefault();
-          triggerSearch();
-        }}
+    <DropTarget targetKey='drag-item' onDragEnter={dragEnter} onDragLeave={dragLeave} onHit={dropToField}>
+      <div
+        className={
+          'm-1 p-1 border-2 border-dashed ' + (dragOngoingDepth ? 'border-black' : 'border-transparent')
+        }
       >
-        {!advancedSearch ? (
-          <AsyncSelect
-            className='w-full mr-2'
-            components={{ DropdownIndicator }}
-            placeholder='ins_S:214:EPE, ins_22204:?GAG?GAA?, B.1.1.7, S:484K, C913'
-            isMulti
-            defaultOptions={suggestOptions('')}
-            loadOptions={promiseOptions}
-            onChange={(_, change) => {
-              if (change.action === 'select-option') {
-                setSelectedOptions([...selectedOptions, change.option]);
-                setInputValue('');
-                setMenuIsOpen(false);
-              } else if (change.action === 'remove-value' || change.action === 'pop-value') {
-                setSelectedOptions(selectedOptions.filter(o => o.value !== change.removedValue.value));
-              } else if (change.action === 'clear') {
-                setSelectedOptions([]);
-                setInputValue('');
-              }
-            }}
-            styles={colorStyles}
-            onInputChange={handleInputChange}
-            value={selectedOptions}
-            inputValue={inputValue}
-            menuIsOpen={menuIsOpen}
+        <form
+          className='w-full flex flex-row items-center'
+          onSubmit={e => {
+            e.preventDefault();
+            triggerSearch();
+          }}
+        >
+          {!advancedSearch ? (
+            <AsyncSelect
+              className='w-full mr-2'
+              components={{ DropdownIndicator }}
+              placeholder='ins_S:214:EPE, ins_22204:?GAG?GAA?, B.1.1.7, S:484K, C913'
+              isMulti
+              defaultOptions={suggestOptions('')}
+              loadOptions={promiseOptions}
+              onChange={(_, change) => {
+                if (change.action === 'select-option') {
+                  setSelectedOptions([...selectedOptions, change.option]);
+                  setInputValue('');
+                  setMenuIsOpen(false);
+                } else if (change.action === 'remove-value' || change.action === 'pop-value') {
+                  setSelectedOptions(selectedOptions.filter(o => o.value !== change.removedValue.value));
+                } else if (change.action === 'clear') {
+                  setSelectedOptions([]);
+                  setInputValue('');
+                }
+              }}
+              styles={colorStyles}
+              onInputChange={handleInputChange}
+              value={selectedOptions}
+              inputValue={inputValue}
+              menuIsOpen={menuIsOpen}
+            />
+          ) : (
+            <Form.Control
+              type='text'
+              placeholder='(B.1.1.529* | S:67V) & !C913T'
+              className='w-full mr-2'
+              value={variantQuery}
+              onChange={e => setVariantQuery(e.target.value)}
+            />
+          )}
+        </form>
+        <div>
+          <Form.Check
+            type='checkbox'
+            label='Advanced search'
+            checked={advancedSearch}
+            onChange={_ => handleCheckboxChange()}
+            className='mb-3'
           />
-        ) : (
-          <Form.Control
-            type='text'
-            placeholder='(B.1.1.529* | S:67V) & !C913T'
-            className='w-full mr-2'
-            value={variantQuery}
-            onChange={e => setVariantQuery(e.target.value)}
-          />
-        )}
-      </form>
-      <div>
-        <Form.Check
-          type='checkbox'
-          label='Advanced search'
-          checked={advancedSearch}
-          onChange={_ => handleCheckboxChange()}
-          className='mb-3'
-        />
+        </div>
       </div>
-    </div>
+    </DropTarget>
   );
 };

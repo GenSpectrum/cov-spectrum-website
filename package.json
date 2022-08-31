@@ -50,6 +50,8 @@
     "react-component-export-image": "^1.0.6",
     "react-country-flag": "^3.0.2",
     "react-dom": "^17.0.2",
+    "react-drag-drop-container": "^6.1.1",
+    "react-drag-drop-container-typescript": "^1.4.1",
     "react-icons": "^4.4.0",
     "react-numeric-input": "^2.2.3",
     "react-plotly.js": "^2.5.1",
