@@ -83,11 +83,11 @@ const SimpleAreaPlot = React.memo(
 
 export const KnownVariantCard = ({ variant, chartData, recentProportion, onClick, selected }: Props) => {
   return (
-    <DragDropContainer targetKey='drag-item' dragData={variant.query}>
+    <DragDropContainer targetKey='drag-item' dragData={variant.query} dragClone={true}>
       <div title={variant.description}>
         <Card
           as={StyledCard}
-          className={`shadow-md border-0 m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl w-full`}
+          className={`shadow-md border-0 m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl w-95`}
           onClick={onClick}
           selected={selected}
         >
