@@ -50,7 +50,7 @@
     "react-bootstrap": "^2.5.0",
     "react-component-export-image": "^1.0.6",
     "react-country-flag": "^3.0.2",
-    "react-dnd": "^15.0.1",
+    "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-multi-backend": "^6.0.2",
     "react-dnd-touch-backend": "^16.0.1",
