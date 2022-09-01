@@ -403,36 +403,10 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     }),
   }));
 
-  const dragOver = (ev: React.DragEvent<HTMLDivElement>) => {
-    ev.preventDefault();
-    ev.dataTransfer.dropEffect = 'copy';
-  };
-
-  const dragEnter = () => {
-    setDragOngoingDepth(d => d + 1);
-  };
-
-  const dragLeave = () => {
-    setDragOngoingDepth(d => Math.max(0, d - 1));
-  };
-
-  const dropFromMouse = (ev: React.DragEvent<HTMLDivElement>) => {
-    const droppedItem = ev.dataTransfer.getData('drag-item');
-    if (droppedItem) {
-      const selector = JSON.parse(droppedItem) as VariantSelector;
-      applySelector(selector);
-    }
-    setDragOngoingDepth(0);
-  };
-
   // --- Rendering ---
 
   return (
     <div
-      onDragOver={dragOver}
-      onDragEnter={dragEnter}
-      onDragLeave={dragLeave}
-      onDrop={dropFromMouse}
       ref={drop}
       className={
         'm-1 p-1 border-2 border-dashed ' +

@@ -11,8 +11,8 @@ import { fetchLapisDataVersionDate } from './data/api-lapis';
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import { env } from './env';
-import { DndProvider } from 'react-dnd';
-import { TouchBackend } from 'react-dnd-touch-backend';
+import { DndProvider } from 'react-dnd-multi-backend';
+import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 
 export let baseLocation = 'Europe';
 
@@ -63,7 +63,7 @@ async function main() {
             <EmbedPage />
           </Route>
           <Route path='/'>
-            <DndProvider backend={TouchBackend} options={{ delayTouchStart: 500 }}>
+            <DndProvider options={HTML5toTouch}>
               <App />
             </DndProvider>
           </Route>

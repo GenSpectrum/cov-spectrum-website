@@ -122,3 +122,7 @@ export const ShowMoreButton = ({ to }: { to: string }) => {
     </Button>
   );
 };
+
+// window.matchMedia("(any-pointer: coarse)").matches returns true on
+// mobile devices (touch screen only) and false on desktops
+export const isTouchscreenDevice = window.matchMedia('(any-pointer: coarse)').matches;
