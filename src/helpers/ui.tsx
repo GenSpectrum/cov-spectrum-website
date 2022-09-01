@@ -125,4 +125,7 @@ export const ShowMoreButton = ({ to }: { to: string }) => {
 
 // window.matchMedia("(any-pointer: coarse)").matches returns true on
 // mobile devices (touch screen only) and false on desktops
-export const isTouchscreenDevice = window.matchMedia('(any-pointer: coarse)').matches;
+// window.matchMedia may not be available in the test suite
+export const isTouchscreenDevice = window.matchMedia
+  ? window.matchMedia('(any-pointer: coarse)').matches
+  : undefined;
