@@ -164,7 +164,7 @@ export function variantIsAllLineages(selector: VariantSelector): boolean {
 }
 
 export function isValidPangoLineageQuery(query: string): boolean {
-  return /^([A-Z]){1,2}(\.[0-9]{1,3})*(\.?\*)?$/.test(query.toUpperCase());
+  return /^([A-Z]){1,3}(\.[0-9]{1,3})*(\.?\*)?$/.test(query.toUpperCase());
 }
 
 export function formatVariantDisplayName(
