@@ -28,6 +28,7 @@ export const CollectionOverviewPage = () => {
           <ul className='list-disc'>
             {data.map(c => (
               <li className='ml-8' key={c.id}>
+                <span className='text-gray-400 mr-1'>#{c.id}</span>{' '}
                 <Link to={`collections/${c.id}`}>{c.title}</Link> (by {c.maintainers})
               </li>
             ))}

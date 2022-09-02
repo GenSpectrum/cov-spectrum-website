@@ -38,6 +38,7 @@ import { getModelData } from '../models/chen2021Fitness/loading';
 import { VariantSearchField } from '../components/VariantSearchField';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { fetchNumberSubmittedSamplesInPastTenDays } from '../data/api-lapis';
+import { Collection } from '../data/Collection';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -189,7 +190,7 @@ export const CollectionSingleViewPage = () => {
 
   return (
     <div className='mx-8 my-4'>
-      <h1>{collection.title}</h1>
+      <CollectionSinglePageTitle collection={collection} />
       <p className='italic'>Maintained by {collection.maintainers}</p>
       <p className='whitespace-pre-wrap'>{collection.description}</p>
       <h2>Variants</h2>
@@ -516,5 +517,17 @@ const SequencesOverTimeTabContent = ({
         })}
       </PackedGrid>
     </>
+  );
+};
+
+type CollectionSinglePageTitleProps = {
+  collection: Collection;
+};
+
+export const CollectionSinglePageTitle = ({ collection }: CollectionSinglePageTitleProps) => {
+  return (
+    <h1>
+      <span className='text-gray-400 font-normal'>#{collection.id}</span> {collection.title}
+    </h1>
   );
 };

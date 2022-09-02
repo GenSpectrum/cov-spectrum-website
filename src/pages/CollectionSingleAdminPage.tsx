@@ -22,6 +22,7 @@ import {
 import { Collection } from '../data/Collection';
 import { VariantSearchField } from '../components/VariantSearchField';
 import { VariantSelector } from '../data/VariantSelector';
+import { CollectionSinglePageTitle } from './CollectionSingleViewPage';
 
 export const CollectionSingleAdminPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -72,7 +73,7 @@ export const CollectionSingleAdminPage = () => {
   if (!adminKeyIsValid) {
     return (
       <div className='mx-8 my-4'>
-        <h1>{collection.title}</h1>
+        <CollectionSinglePageTitle collection={collection} />
         <Alert variant={AlertVariant.DANGER}>
           <h2>Authentication failed</h2>
           <p>The provided admin key is wrong.</p>
@@ -83,7 +84,7 @@ export const CollectionSingleAdminPage = () => {
 
   return (
     <div className='mx-8 my-4'>
-      <h1>{collection.title}</h1>
+      <CollectionSinglePageTitle collection={collection} />
       <Alert variant={AlertVariant.WARNING}>
         <h2>Admin area</h2>
         <p>
