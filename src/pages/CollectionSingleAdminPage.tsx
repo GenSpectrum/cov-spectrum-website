@@ -114,7 +114,8 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
   const [description, setDescription] = useState(collection.description);
   const [maintainers, setMaintainers] = useState(collection.maintainers);
   const [email, setEmail] = useState(collection.email);
-  const [variants, setVariants] = useState(collection.variants);
+  // We assign an ID to every variant for the sole purpose of having a "key" for rendering.
+  const [variants, setVariants] = useState(collection.variants.map(v => ({ ...v, tmpId: Math.random() })));
   const [deletionDialogOpen, setDeletionDialogOpen] = React.useState(false);
   const history = useHistory();
 
@@ -151,6 +152,7 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
         name: '',
         description: '',
         query: '{}',
+        tmpId: Math.random(),
       },
     ];
     setVariants(newVariants);
@@ -231,7 +233,7 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
       <div className='mt-4'>
         {variantsParsed.map((variant, i) => (
           <div
-            key={i}
+            key={variant.tmpId}
             className='flex flex-col bg-blue-50 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-800'
           >
             <TextField
@@ -249,7 +251,6 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
               onChange={e => changeVariant('description', e.target.value, i)}
             />
             <VariantSearchField
-              key={i}
               isSimple={false}
               currentSelection={variant.selector}
               onVariantSelect={newSelection => changeVariant('query', JSON.stringify(newSelection), i)}
