@@ -68,6 +68,16 @@ export class Utils {
     }
   }
 
+  static safeParseFloat(s: string | null | undefined): number | undefined {
+    try {
+      if (s) {
+        return Number.parseFloat(s);
+      }
+    } catch (_) {
+      return undefined;
+    }
+  }
+
   // Checks if two sets are equal: It expects that the elements el1 and el2 are equal iff el1 === el2.
   static setEquals<T>(set1: Set<T>, set2: Set<T>): boolean {
     return set1.size === set2.size && [...set1].every(el => set2.has(el));
