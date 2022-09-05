@@ -171,7 +171,6 @@ const joinNucMutations = (mutations: string[]): string => {
   return mutations.map(i => i.toUpperCase).join(', ');
 };
 
-//ins_22204:?GAG?GAG?GAA?
 const joinAAMutations = (mutations: string[]): string => {
   return mutations
     .map(i => {
@@ -186,7 +185,6 @@ const joinAAMutations = (mutations: string[]): string => {
 };
 
 const joinAAInsertions = (insertions: string[]): string => {
-  // e. g. ins_S:214:EPE
   return insertions
     .map(i => {
       let items = i.split(':');
@@ -201,7 +199,6 @@ const joinAAInsertions = (insertions: string[]): string => {
 };
 
 const joinNucInsertions = (insertions: string[]): string => {
-  // e. g. ins_22204:?GAG?GAG?GAA?
   return insertions
     .map(i => {
       let items = i.split(':');
@@ -240,10 +237,6 @@ export function formatVariantDisplayName(
   if (components.length === 0) {
     return 'All lineages';
   }
-  console.log('!!!!!!!!!!!!!!!!!');
-  console.log('NUC INSERTIONS', nucInsertions);
-  console.log('AA INSERTIONS', aaInsertions);
-  console.log(components.join(dense ? '+' : ' + '));
   return components.join(dense ? '+' : ' + ');
 }
 
