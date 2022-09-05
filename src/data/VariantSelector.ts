@@ -170,17 +170,17 @@ export function isValidPangoLineageQuery(query: string): boolean {
 const formatGeneName = (gene: string): string => {
   return gene.length === 1
     ? gene.toUpperCase()
-    : gene.substring(0, gene.length - 1).toUpperCase() + gene.slice(-1).toLowerCase();
+    : gene.slice(0, -1).toUpperCase() + gene.slice(-1).toLowerCase();
 };
 
-const normalizeMutationName = (name: string, isInsertion: boolean = false): string => {
+const normalizeMutationName = (name: string): string => {
   let items = name.split(':');
-  if (isInsertion) {
+  if (name.startsWith('ins_')) {
     return items.length === 3
-      ? 'ins_' + formatGeneName(items[0].substring(4)) + ':' + items[1] + ':' + items[2].toUpperCase()
-      : items[0].toLowerCase() + ':' + items[1].toUpperCase();
+      ? `ins_${formatGeneName(items[0].substring(4))}:${items[1]}:${items[2].toUpperCase()}`
+      : `${items[0].toLowerCase()}:${items[1].toUpperCase()}`;
   } else {
-    return items.length === 0 ? name.toUpperCase() : formatGeneName(items[0]) + ':' + items[1].toUpperCase();
+    return items.length === 1 ? name.toUpperCase() : `${formatGeneName(items[0])}:${items[1].toUpperCase()}`;
   }
 };
 
@@ -208,8 +208,8 @@ export function formatVariantDisplayName(
     nextstrainClade ? nextstrainClade.toUpperCase() + ' (Nextstrain clade)' : undefined,
     nucMutations && nucMutations.map(i => normalizeMutationName(i)).join(', '),
     aaMutations && aaMutations.map(i => normalizeMutationName(i)).join(', '),
-    nucInsertions && nucInsertions.map(i => normalizeMutationName(i, true)).join(', '),
-    aaInsertions && aaInsertions.map(i => normalizeMutationName(i, true)).join(', '),
+    nucInsertions && nucInsertions.map(i => normalizeMutationName(i)).join(', '),
+    aaInsertions && aaInsertions.map(i => normalizeMutationName(i)).join(', '),
   ].filter(c => !!c && c.length > 0);
   if (components.length === 0) {
     return 'All lineages';
