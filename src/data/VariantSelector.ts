@@ -167,6 +167,49 @@ export function isValidPangoLineageQuery(query: string): boolean {
   return /^([A-Z]){1,3}(\.[0-9]{1,3})*(\.?\*)?$/.test(query.toUpperCase());
 }
 
+const joinNucMutations = (mutations: string[]): string => {
+  return mutations.map(i => i.toUpperCase).join(', ');
+};
+
+//ins_22204:?GAG?GAG?GAA?
+const joinAAMutations = (mutations: string[]): string => {
+  return mutations
+    .map(i => {
+      let items = i.split(':');
+      let gene =
+        items[0].length === 1
+          ? items[0].toUpperCase()
+          : items[0].substring(0, items[0].length - 1).toUpperCase() + items[0].slice(-1).toLowerCase();
+      return gene + ':' + items[1].toUpperCase();
+    })
+    .join(', ');
+};
+
+const joinAAInsertions = (insertions: string[]): string => {
+  // e. g. ins_S:214:EPE
+  return insertions
+    .map(i => {
+      let items = i.split(':');
+      let gene = items[0].substring(4);
+      gene =
+        gene.length === 1
+          ? gene.toUpperCase()
+          : gene.substring(0, gene.length - 1).toUpperCase() + gene.slice(-1).toLowerCase();
+      return 'ins_' + gene + ':' + items[1] + ':' + items[2].toUpperCase();
+    })
+    .join(', ');
+};
+
+const joinNucInsertions = (insertions: string[]): string => {
+  // e. g. ins_22204:?GAG?GAG?GAA?
+  return insertions
+    .map(i => {
+      let items = i.split(':');
+      return items[0].toLowerCase() + ':' + items[1].toUpperCase();
+    })
+    .join(', ');
+};
+
 export function formatVariantDisplayName(
   {
     pangoLineage,
@@ -185,18 +228,22 @@ export function formatVariantDisplayName(
     return variantQuery;
   }
   const components = [
-    pangoLineage,
-    nextcladePangoLineage ? nextcladePangoLineage + ' (Nextclade)' : undefined,
-    gisaidClade ? gisaidClade + ' (GISAID clade)' : undefined,
-    nextstrainClade ? nextstrainClade + ' (Nextstrain clade)' : undefined,
-    nucMutations?.join(', '),
-    aaMutations?.join(', '),
-    nucInsertions?.join(', '),
-    aaInsertions?.join(', '),
+    pangoLineage?.toUpperCase(),
+    nextcladePangoLineage ? nextcladePangoLineage.toUpperCase() + ' (Nextclade)' : undefined,
+    gisaidClade ? gisaidClade.toUpperCase() + ' (GISAID clade)' : undefined,
+    nextstrainClade ? nextstrainClade.toUpperCase() + ' (Nextstrain clade)' : undefined,
+    nucMutations && joinNucMutations(nucMutations),
+    aaMutations && joinAAMutations(aaMutations),
+    nucInsertions && joinNucInsertions(nucInsertions),
+    aaInsertions && joinAAInsertions(aaInsertions),
   ].filter(c => !!c && c.length > 0);
   if (components.length === 0) {
     return 'All lineages';
   }
+  console.log('!!!!!!!!!!!!!!!!!');
+  console.log('NUC INSERTIONS', nucInsertions);
+  console.log('AA INSERTIONS', aaInsertions);
+  console.log(components.join(dense ? '+' : ' + '));
   return components.join(dense ? '+' : ' + ');
 }
 
