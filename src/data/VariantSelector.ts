@@ -167,44 +167,21 @@ export function isValidPangoLineageQuery(query: string): boolean {
   return /^([A-Z]){1,3}(\.[0-9]{1,3})*(\.?\*)?$/.test(query.toUpperCase());
 }
 
-const joinNucMutations = (mutations: string[]): string => {
-  return mutations.map(i => i.toUpperCase).join(', ');
+const formatGeneName = (gene: string): string => {
+  return gene.length === 1
+    ? gene.toUpperCase()
+    : gene.substring(0, gene.length - 1).toUpperCase() + gene.slice(-1).toLowerCase();
 };
 
-const joinAAMutations = (mutations: string[]): string => {
-  return mutations
-    .map(i => {
-      let items = i.split(':');
-      let gene =
-        items[0].length === 1
-          ? items[0].toUpperCase()
-          : items[0].substring(0, items[0].length - 1).toUpperCase() + items[0].slice(-1).toLowerCase();
-      return gene + ':' + items[1].toUpperCase();
-    })
-    .join(', ');
-};
-
-const joinAAInsertions = (insertions: string[]): string => {
-  return insertions
-    .map(i => {
-      let items = i.split(':');
-      let gene = items[0].substring(4);
-      gene =
-        gene.length === 1
-          ? gene.toUpperCase()
-          : gene.substring(0, gene.length - 1).toUpperCase() + gene.slice(-1).toLowerCase();
-      return 'ins_' + gene + ':' + items[1] + ':' + items[2].toUpperCase();
-    })
-    .join(', ');
-};
-
-const joinNucInsertions = (insertions: string[]): string => {
-  return insertions
-    .map(i => {
-      let items = i.split(':');
-      return items[0].toLowerCase() + ':' + items[1].toUpperCase();
-    })
-    .join(', ');
+const normalizeMutationName = (name: string, isInsertion: boolean = false): string => {
+  let items = name.split(':');
+  if (isInsertion) {
+    return items.length === 3
+      ? 'ins_' + formatGeneName(items[0].substring(4)) + ':' + items[1] + ':' + items[2].toUpperCase()
+      : items[0].toLowerCase() + ':' + items[1].toUpperCase();
+  } else {
+    return items.length === 0 ? name.toUpperCase() : formatGeneName(items[0]) + ':' + items[1].toUpperCase();
+  }
 };
 
 export function formatVariantDisplayName(
@@ -229,10 +206,10 @@ export function formatVariantDisplayName(
     nextcladePangoLineage ? nextcladePangoLineage.toUpperCase() + ' (Nextclade)' : undefined,
     gisaidClade ? gisaidClade.toUpperCase() + ' (GISAID clade)' : undefined,
     nextstrainClade ? nextstrainClade.toUpperCase() + ' (Nextstrain clade)' : undefined,
-    nucMutations && joinNucMutations(nucMutations),
-    aaMutations && joinAAMutations(aaMutations),
-    nucInsertions && joinNucInsertions(nucInsertions),
-    aaInsertions && joinAAInsertions(aaInsertions),
+    nucMutations && nucMutations.map(i => normalizeMutationName(i)).join(', '),
+    aaMutations && aaMutations.map(i => normalizeMutationName(i)).join(', '),
+    nucInsertions && nucInsertions.map(i => normalizeMutationName(i, true)).join(', '),
+    aaInsertions && aaInsertions.map(i => normalizeMutationName(i, true)).join(', '),
   ].filter(c => !!c && c.length > 0);
   if (components.length === 0) {
     return 'All lineages';
