@@ -1,4 +1,5 @@
 import * as zod from 'zod';
+import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 
 export const VariantSelectorEncodedSchema = zod.object({
   pangoLineage: zod.string().optional(),
@@ -173,14 +174,22 @@ const formatGeneName = (gene: string): string => {
     : gene.slice(0, -1).toUpperCase() + gene.slice(-1).toLowerCase();
 };
 
-const normalizeMutationName = (name: string): string => {
+export const normalizeMutationName = async (name: string) => {
+  let refData = await ReferenceGenomeService.data;
   let items = name.split(':');
   if (name.startsWith('ins_')) {
     return items.length === 3
       ? `ins_${formatGeneName(items[0].substring(4))}:${items[1]}:${items[2].toUpperCase()}`
       : `${items[0].toLowerCase()}:${items[1].toUpperCase()}`;
   } else {
-    return items.length === 1 ? name.toUpperCase() : `${formatGeneName(items[0])}:${items[1].toUpperCase()}`;
+    if (items.length === 1) {
+      return name.toUpperCase();
+    } else {
+      let refBase = refData.genes.filter(gene => gene.name === formatGeneName(items[0]))[0].aaSeq.toString()[
+        Number.parseInt(items[1]) - 1
+      ];
+      return `${formatGeneName(items[0])}:${refBase}${items[1].toUpperCase()}`;
+    }
   }
 };
 
@@ -201,19 +210,21 @@ export function formatVariantDisplayName(
   if (variantQuery) {
     return variantQuery;
   }
+
   const components = [
     pangoLineage?.toUpperCase(),
     nextcladePangoLineage ? nextcladePangoLineage.toUpperCase() + ' (Nextclade)' : undefined,
     gisaidClade ? gisaidClade.toUpperCase() + ' (GISAID clade)' : undefined,
     nextstrainClade ? nextstrainClade.toUpperCase() + ' (Nextstrain clade)' : undefined,
-    nucMutations && nucMutations.map(i => normalizeMutationName(i)).join(', '),
-    aaMutations && aaMutations.map(i => normalizeMutationName(i)).join(', '),
-    nucInsertions && nucInsertions.map(i => normalizeMutationName(i)).join(', '),
-    aaInsertions && aaInsertions.map(i => normalizeMutationName(i)).join(', '),
+    nucMutations && nucMutations.map(mutation => normalizeMutationName(mutation)).join(', '),
+    aaMutations && aaMutations.map(mutation => normalizeMutationName(mutation)).join(', '),
+    nucInsertions && nucInsertions.map(mutation => normalizeMutationName(mutation)).join(', '),
+    aaInsertions && aaInsertions.map(mutation => normalizeMutationName(mutation)).join(', '),
   ].filter(c => !!c && c.length > 0);
   if (components.length === 0) {
     return 'All lineages';
   }
+
   return components.join(dense ? '+' : ' + ');
 }
 
