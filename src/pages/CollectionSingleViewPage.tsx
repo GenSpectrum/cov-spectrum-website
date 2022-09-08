@@ -331,7 +331,7 @@ const TableTabContent = ({
             resolve();
           });
         });
-        return;
+        continue;
       }
       const variantDateCounts = variantDateCountsStatus.value;
       const wholeDateCounts = allWholeDateCountsStatus.value;
