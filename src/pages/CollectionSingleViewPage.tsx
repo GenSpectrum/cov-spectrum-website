@@ -118,25 +118,27 @@ export const CollectionSingleViewPage = () => {
       }
       return Promise.allSettled(
         variants.map(variant => {
-          if (!variantIsAllLineages(baselineVariant)) {
-            return DateCountSampleData.fromApi(
-              {
-                host: undefined,
-                qc: {},
-                location: locationSelector,
-                variant: {
-                  variantQuery: `(${transformToVariantQuery(variant.query)})  | (${transformToVariantQuery(
-                    baselineVariant
-                  )})`,
-                },
-                samplingStrategy: SamplingStrategy.AllSamples,
-                dateRange: dateRangeSelector,
-              },
-              signal
-            );
-          } else {
+          if (variantIsAllLineages(baselineVariant)) {
             return Promise.resolve(baselineDateCounts);
           }
+          const baselineVariantQuery = transformToVariantQuery(baselineVariant);
+          const variantVariantQuery = transformToVariantQuery(variant.query);
+          const variantSelector = variantIsAllLineages(variant.query)
+            ? {}
+            : {
+                variantQuery: `(${variantVariantQuery})  | (${baselineVariantQuery})`,
+              };
+          return DateCountSampleData.fromApi(
+            {
+              host: undefined,
+              qc: {},
+              location: locationSelector,
+              variant: variantSelector,
+              samplingStrategy: SamplingStrategy.AllSamples,
+              dateRange: dateRangeSelector,
+            },
+            signal
+          );
         })
       );
     },
