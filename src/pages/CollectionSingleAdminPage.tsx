@@ -53,7 +53,7 @@ export const CollectionSingleAdminPage = () => {
 
   if (!collection) {
     return (
-      <div className='mx-8 my-4'>
+      <>
         <h1>Collection not found</h1>
         <p>The collection does not exist.</p>
 
@@ -62,7 +62,7 @@ export const CollectionSingleAdminPage = () => {
             Go back to overview
           </Button>
         </Link>
-      </div>
+      </>
     );
   }
 
@@ -72,18 +72,18 @@ export const CollectionSingleAdminPage = () => {
 
   if (!adminKeyIsValid) {
     return (
-      <div className='mx-8 my-4'>
+      <>
         <CollectionSinglePageTitle collection={collection} />
         <Alert variant={AlertVariant.DANGER}>
           <h2>Authentication failed</h2>
           <p>The provided admin key is wrong.</p>
         </Alert>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className='mx-8 my-4'>
+    <>
       <CollectionSinglePageTitle collection={collection} />
       <Alert variant={AlertVariant.WARNING}>
         <h2>Admin area</h2>
@@ -101,7 +101,7 @@ export const CollectionSingleAdminPage = () => {
         <TextField label='View link' variant='standard' className='mt-2 my-4 w-100' value={url} />
       </Alert>
       <AdminPanel collection={collection} adminKey={adminKey} />
-    </div>
+    </>
   );
 };
 

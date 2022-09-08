@@ -177,7 +177,7 @@ export const CollectionSingleViewPage = () => {
 
   if (!collection) {
     return (
-      <div className='mx-8 my-4'>
+      <>
         <h1>Collection not found</h1>
         <p>The collection does not exist.</p>
 
@@ -186,12 +186,12 @@ export const CollectionSingleViewPage = () => {
             Go back to overview
           </Button>
         </Link>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className='mx-8 my-4'>
+    <>
       <CollectionSinglePageTitle collection={collection} />
       <p className='italic'>Maintained by {collection.maintainers}</p>
       <p className='whitespace-pre-wrap'>{collection.description}</p>
@@ -274,7 +274,7 @@ export const CollectionSingleViewPage = () => {
       ) : (
         <ErrorAlert messages={[error]} />
       )}
-    </div>
+    </>
   );
 };
 
