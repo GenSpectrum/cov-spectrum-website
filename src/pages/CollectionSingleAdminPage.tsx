@@ -23,6 +23,7 @@ import { Collection } from '../data/Collection';
 import { VariantSearchField } from '../components/VariantSearchField';
 import { VariantSelector } from '../data/VariantSelector';
 import { CollectionSinglePageTitle } from './CollectionSingleViewPage';
+import { AiOutlineStar, AiFillStar } from 'react-icons/ai';
 
 export const CollectionSingleAdminPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -129,7 +130,11 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
     [variants]
   );
 
-  const changeVariant = (attr: 'name' | 'description' | 'query', value: string, index: number) => {
+  const changeVariant = (
+    attr: 'name' | 'description' | 'query' | 'highlighted',
+    value: string | boolean,
+    index: number
+  ) => {
     if (variants[index][attr] === value) {
       return;
     }
@@ -153,6 +158,7 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
         name: '',
         description: '',
         query: '{}',
+        highlighted: false,
         tmpId: Math.random(),
       },
     ];
@@ -257,9 +263,18 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
               onVariantSelect={newSelection => changeVariant('query', JSON.stringify(newSelection), i)}
               triggerSearch={() => {}}
             />
-            <Button variant={ButtonVariant.PRIMARY} className='w-48 mt-8' onClick={() => deleteVariant(i)}>
-              Delete variant
-            </Button>
+            <div className='flex flex-row mt-4'>
+              <Button variant={ButtonVariant.PRIMARY} className='w-48 mr-4' onClick={() => deleteVariant(i)}>
+                Delete variant
+              </Button>
+              <button onClick={() => changeVariant('highlighted', !variant.highlighted, i)}>
+                {variant.highlighted ? (
+                  <AiFillStar size='1.5em' className='text-yellow-400' />
+                ) : (
+                  <AiOutlineStar size='1.5em' />
+                )}
+              </button>
+            </div>
           </div>
         ))}
         <Button variant={ButtonVariant.PRIMARY} className='w-48 mt-8' onClick={() => addVariant()}>
