@@ -11,6 +11,7 @@ export type CollectionVariant = {
   query: string;
   name: string;
   description: string;
+  highlighted: boolean;
 };
 
 export type CreateCollectionRequest = Omit<Collection, 'id'>;
