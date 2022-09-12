@@ -11,10 +11,41 @@ import { fetchLapisDataVersionDate } from './data/api-lapis';
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import { env } from './env';
-import { DndProvider } from 'react-dnd-multi-backend';
-import { HTML5toTouch } from 'rdndmb-html5-to-touch';
+// import { DndProvider } from 'react-dnd-multi-backend';
+// import { HTML5toTouch } from 'rdndmb-html5-to-touch';
+import {
+  DndProvider,
+  TouchTransition,
+  PointerTransition,
+  MultiBackendOptions,
+} from 'react-dnd-multi-backend';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
 
 export let baseLocation = 'Europe';
+
+const HTML5toTouch: MultiBackendOptions = {
+  backends: [
+    {
+      id: 'html5',
+      backend: HTML5Backend,
+      transition: PointerTransition,
+    },
+    {
+      id: 'touch',
+      backend: TouchBackend,
+      options: {
+        enableMouseEvents: true,
+        delayTouchStart: 500,
+        touchSlop: 10,
+      },
+      preview: true,
+      transition: TouchTransition,
+    },
+  ],
+};
+
+//{ id: string; backend: BackendFactory; transition: Transition; options?: undefined; preview?: undefined; }
 
 async function main() {
   // Initialize Sentry
