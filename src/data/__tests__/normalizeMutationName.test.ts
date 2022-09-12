@@ -2,15 +2,6 @@ import { normalizeMutationName } from '../VariantSelector';
 
 describe('Testing normalizeMutationName() function', () => {
   test('Testing if the mutation names are normalized correctly', async () => {
-    const example1 = await normalizeMutationName('c21t'); //nuc mutation
-    expect(example1).toBe('C21T');
-
-    const example1b = await normalizeMutationName('21t'); //nuc mutation
-    expect(example1b).toBe('C21T');
-
-    const example1c = await normalizeMutationName('21'); //nuc mutation
-    expect(example1c).toBe('C21');
-
     const example2 = await normalizeMutationName('ins_22204:?gag?gaa'); // nuc insertion
     expect(example2).toBe('ins_22204:?GAG?GAA');
 
@@ -28,5 +19,14 @@ describe('Testing normalizeMutationName() function', () => {
 
     const example4c = await normalizeMutationName('orf1b:t1050'); // aa mutation
     expect(example4c).toBe('ORF1b:T1050');
+
+    const example1 = await normalizeMutationName('c21t'); //nuc mutation
+    expect(example1).toBe('C21T');
+
+    const example1b = await normalizeMutationName('21t'); //nuc mutation
+    expect(example1b).toBe('C21T');
+
+    const example1c = await normalizeMutationName('21'); //nuc mutation
+    expect(example1c).toBe('C21');
   });
 });

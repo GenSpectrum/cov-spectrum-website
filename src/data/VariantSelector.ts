@@ -168,6 +168,9 @@ export function isValidPangoLineageQuery(query: string): boolean {
   return /^([A-Z]){1,3}(\.[0-9]{1,3})*(\.?\*)?$/.test(query.toUpperCase());
 }
 
+const stripNumber = (str: string) => Number.parseInt(str.replace(/\D+/g, ''));
+const isNumeric = (str: string) => /^\d+$/.test(str);
+
 const formatGeneName = (gene: string): string => {
   return gene.length === 1
     ? gene.toUpperCase()
@@ -176,19 +179,27 @@ const formatGeneName = (gene: string): string => {
 
 export const normalizeMutationName = async (name: string) => {
   let refData = await ReferenceGenomeService.data;
+
   let items = name.split(':');
-  if (name.startsWith('ins_')) {
+  if (name.toLowerCase().startsWith('ins_')) {
     return items.length === 3
       ? `ins_${formatGeneName(items[0].substring(4))}:${items[1]}:${items[2].toUpperCase()}`
       : `${items[0].toLowerCase()}:${items[1].toUpperCase()}`;
   } else {
     if (items.length === 1) {
+      if (isNumeric(name[0])) {
+        console.log(name, stripNumber(name));
+        let refBase = refData.nucSeq[stripNumber(name) - 1];
+        return `${refBase}${name}`.toUpperCase();
+      }
+
       return name.toUpperCase();
     } else {
       let refBase = refData.genes.filter(gene => gene.name === formatGeneName(items[0]))[0].aaSeq.toString()[
-        Number.parseInt(items[1]) - 1
+        stripNumber(items[1]) - 1
       ];
-      return `${formatGeneName(items[0])}:${refBase}${items[1].toUpperCase()}`;
+
+      return `${formatGeneName(items[0])}:${isNumeric(items[1][0]) ? refBase : ''}${items[1].toUpperCase()}`;
     }
   }
 };
