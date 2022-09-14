@@ -35,9 +35,7 @@ const HTML5toTouch: MultiBackendOptions = {
       id: 'touch',
       backend: TouchBackend,
       options: {
-        enableMouseEvents: true,
-        delayTouchStart: 500,
-        touchSlop: 10,
+        delayTouchStart: 200,
       },
       preview: true,
       transition: TouchTransition,
