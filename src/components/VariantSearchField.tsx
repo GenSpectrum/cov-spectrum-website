@@ -159,7 +159,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const [advancedSearch, setAdvancedSearch] = useState(currentSelection?.variantQuery !== undefined);
   // dragEnter increases the depth by one and dragLeave decreases it. The two functions is being called every time when
   // the mouse enters or leaves the object or one of the children.
-  const [dragOngoingDepth, setDragOngoingDepth] = useState(0);
 
   const pangoLineages = useQuery(
     signal =>
@@ -391,6 +390,11 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const dropToField = (query: any) => {
     if (query) {
       const selector = JSON.parse(query) as VariantSelector;
+      if (selector.variantQuery) {
+        setAdvancedSearch(true);
+      } else {
+        setAdvancedSearch(false);
+      }
       applySelector(selector);
     }
   };
@@ -408,10 +412,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   return (
     <div
       ref={drop}
-      className={
-        'm-1 p-1 border-2 border-dashed ' +
-        (isOver || dragOngoingDepth ? 'border-black' : 'border-transparent')
-      }
+      className={'m-1 p-1 border-2 border-dashed ' + (isOver ? 'border-black' : 'border-transparent')}
     >
       <form
         className='w-full flex flex-row items-center'
