@@ -389,6 +389,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   const dropToField = (query: any) => {
     if (query) {
+      console.log(query);
       const selector = JSON.parse(query) as VariantSelector;
       if (selector.variantQuery) {
         setAdvancedSearch(true);

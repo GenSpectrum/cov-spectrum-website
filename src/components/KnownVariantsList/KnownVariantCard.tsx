@@ -86,7 +86,7 @@ const SimpleAreaPlot = React.memo(
 export const KnownVariantCard = ({ variant, chartData, recentProportion, onClick, selected }: Props) => {
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'div',
-    item: { query: variant.query },
+    item: { query: variant.query, variant: variant.name },
     collect: monitor => ({
       isDragging: !!monitor.isDragging(),
     }),
@@ -102,7 +102,7 @@ export const KnownVariantCard = ({ variant, chartData, recentProportion, onClick
       <div
         style={{
           border: '1px solid #333',
-          padding: '5px',
+          padding: '10px',
           zIndex: 999,
           backgroundColor: 'rgba(255,255,255,0.5)',
           ...style,
