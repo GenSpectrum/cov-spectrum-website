@@ -1,5 +1,5 @@
 import * as zod from 'zod';
-import refData from './refData';
+import jsonRefData from './refData.json';
 
 export const VariantSelectorEncodedSchema = zod.object({
   pangoLineage: zod.string().optional(),
@@ -184,7 +184,10 @@ const formatGeneName = (gene: string): string => {
     : gene.slice(0, -1).toUpperCase() + gene.slice(-1).toLowerCase();
 };
 
+const loadRefData = () => JSON.parse(JSON.stringify(jsonRefData));
+
 export const normalizeMutationName = (name: string) => {
+  const refData = loadRefData();
   let items = name.split(':');
   if (name.toLowerCase().startsWith('ins_')) {
     return items.length === 3
