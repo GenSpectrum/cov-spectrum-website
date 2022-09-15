@@ -3,7 +3,7 @@ import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 
 import Select, { Styles } from 'react-select';
 import chroma from 'chroma-js';
 import styled, { CSSPseudos } from 'styled-components';
-import { ChartAndMetricsWrapper, ChartWrapper, Wrapper } from './common';
+import { Wrapper } from './common';
 import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
 import { Utils } from '../services/Utils';
 import { CountryDateCountSampleEntry } from '../data/sample/CountryDateCountSampleEntry';
@@ -224,40 +224,36 @@ export const VariantInternationalComparisonChart = ({
           value={selectedPlaceOptions}
         />
       </SelectWrapper>
-      <ChartAndMetricsWrapper>
-        <ChartWrapper>
-          <ResponsiveContainer>
-            <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
-              <XAxis dataKey='dateString' xAxisId='date' />
-              <YAxis
-                tickFormatter={tick => `${Math.round(tick * 100 * 100) / 100}%`}
-                yAxisId='variant-proportion'
-                scale={logScale ? 'log' : 'auto'}
-                domain={logScale ? ['auto', 'auto'] : [0, 'auto']}
-              />
-              <Tooltip
-                formatter={(value: number) => (value * 100).toFixed(2) + '%'}
-                labelFormatter={label => {
-                  return 'Date: ' + label;
-                }}
-              />
-              {selectedPlaceOptions.map((place: PlaceOption) => (
-                <Line
-                  yAxisId='variant-proportion'
-                  xAxisId='date'
-                  type='monotone'
-                  dataKey={place.value}
-                  strokeWidth={3}
-                  dot={false}
-                  stroke={place.color}
-                  isAnimationActive={false}
-                  key={place.value}
-                />
-              ))}
-            </ComposedChart>
-          </ResponsiveContainer>
-        </ChartWrapper>
-      </ChartAndMetricsWrapper>
+      <ResponsiveContainer>
+        <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
+          <XAxis dataKey='dateString' xAxisId='date' />
+          <YAxis
+            tickFormatter={tick => `${Math.round(tick * 100 * 100) / 100}%`}
+            yAxisId='variant-proportion'
+            scale={logScale ? 'log' : 'auto'}
+            domain={logScale ? ['auto', 'auto'] : [0, 'auto']}
+          />
+          <Tooltip
+            formatter={(value: number) => (value * 100).toFixed(2) + '%'}
+            labelFormatter={label => {
+              return 'Date: ' + label;
+            }}
+          />
+          {selectedPlaceOptions.map((place: PlaceOption) => (
+            <Line
+              yAxisId='variant-proportion'
+              xAxisId='date'
+              type='monotone'
+              dataKey={place.value}
+              strokeWidth={3}
+              dot={false}
+              stroke={place.color}
+              isAnimationActive={false}
+              key={place.value}
+            />
+          ))}
+        </ComposedChart>
+      </ResponsiveContainer>
     </Wrapper>
   );
 };

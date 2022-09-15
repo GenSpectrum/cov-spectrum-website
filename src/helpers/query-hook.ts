@@ -6,7 +6,7 @@ export type QueryStatus<T> = {
   isSuccess: boolean;
   isError: boolean;
   data: T | undefined;
-  error: any;
+  error: string | undefined;
 };
 
 export function useQuery<T>(
@@ -18,7 +18,7 @@ export function useQuery<T>(
   const [isError, setIsError] = useState<boolean>(false);
   const [isSuccess, setIsSuccess] = useState<boolean>(false);
   const [data, setData] = useState<T | undefined>(undefined);
-  const [error, setError] = useState<any>(undefined);
+  const [error, setError] = useState<string | undefined>(undefined);
 
   useEffectFunction(() => {
     let isSubscribed = true;
@@ -43,7 +43,7 @@ export function useQuery<T>(
           return;
         }
         setIsLoading(false);
-        setError(_error);
+        setError(_error.message);
         setIsError(true);
       });
     return () => {

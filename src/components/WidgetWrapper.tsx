@@ -50,7 +50,7 @@ export function pickExternalProps<T extends { [K in keyof ExternalProps]?: never
       remaining[k] = v;
     }
   }
-  return { external: (external as any) as ExternalProps, remaining: remaining as any };
+  return { external: external as any as ExternalProps, remaining: remaining as any };
 }
 
 type Props = InternalProps & ExternalProps;
@@ -80,13 +80,6 @@ export function WidgetWrapper({
   const [shownEmbeddingCode, setShownEmbeddingCode] = useState<string>();
 
   useEffect(() => {
-    // resize chart box to avoid overflow of its text
-    let chartBoxes = Array.from(
-      document.getElementsByClassName('chart-box') as HTMLCollectionOf<HTMLElement>
-    );
-    for (let i = 0; i < chartBoxes.length; i++) {
-      chartBoxes[i].style.height = 'auto';
-    }
     const handle = exportManagerRef.current.register('Embed widget', async () => {
       const embeddingCode = `<iframe src="${host}/embed/${await getShareUrl()}" width="800" height="500" frameborder="0"></iframe>`;
       setShownEmbeddingCode(embeddingCode);
@@ -108,9 +101,7 @@ export function WidgetWrapper({
           }
           tabs={tabs}
         >
-          <div className='chart-box' style={height ? { height } : undefined}>
-            {childrenAsArray[activeTabIndex]}
-          </div>
+          <div style={height ? { height } : undefined}>{childrenAsArray[activeTabIndex]}</div>
         </WidgetLayout>
       </ExportManagerContext.Provider>
 

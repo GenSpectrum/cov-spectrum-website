@@ -14,6 +14,7 @@ import { VariantSearch } from '../components/VariantSearch';
 import { AnalysisMode } from '../data/AnalysisMode';
 import { getLocation } from '../helpers/get-location';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
+import { InternalLink } from '../components/InternalLink';
 
 type Props = {
   isSmallScreen: boolean;
@@ -28,9 +29,10 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
     signal => DatelessCountrylessCountSampleData.fromApi(lsSelector, signal),
     [lsSelector]
   );
-  const wholeDateCountDataset = useQuery(signal => DateCountSampleData.fromApi(lsSelector, signal), [
-    lsSelector,
-  ]);
+  const wholeDateCountDataset = useQuery(
+    signal => DateCountSampleData.fromApi(lsSelector, signal),
+    [lsSelector]
+  );
   const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(lSelector, ({ selector }, { signal }) =>
     CaseCountData.fromApi(selector, signal)
   );
@@ -52,6 +54,13 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
     <div className={`w-full mx-auto max-w-6xl mt-4`}>
       <div className='p-2 mr-4 '>
         <h1>Detect and analyze variants of SARS-CoV-2</h1>
+        <div className='text-sm pl-3'>
+          <p>
+            Search for Pango lineages, Nextstrain clades, AA and nucleotide substitutions, deletions, and 🌟{' '}
+            <b>insertions</b> 🌟 (
+            <InternalLink path='/about#faq-search-variants'>see documentation</InternalLink>):
+          </p>
+        </div>
         <VariantSearch onVariantSelect={exploreUrl.setVariants} analysisMode={AnalysisMode.Single} />
       </div>
       <div className={`grid ${isSmallScreen ? '' : 'grid-cols-2'} h-full`}>

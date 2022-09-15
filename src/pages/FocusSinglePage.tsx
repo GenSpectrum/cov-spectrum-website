@@ -15,7 +15,6 @@ import { NamedCard } from '../components/NamedCard';
 import {
   Chen2021FitnessExplanation,
   Chen2021FitnessPreview,
-  TemporaryFitnessBanner,
 } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { Althaus2021GrowthWidget } from '../models/althaus2021Growth/Althaus2021GrowthWidget';
 import { VariantAgeDistributionChartWidget } from '../widgets/VariantAgeDistributionChartWidget';
@@ -24,7 +23,6 @@ import { VariantMutations } from '../components/VariantMutations';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
 import { useAsyncDataset } from '../helpers/use-async-dataset';
 import { Button, ButtonVariant, ShowMoreButton } from '../helpers/ui';
-import { mapValues } from 'lodash';
 import { CountryDateCountSampleData } from '../data/sample/CountryDateCountSampleDataset';
 import { VariantHeader } from '../components/VariantHeader';
 import { FocusVariantHeaderControls } from '../components/FocusVariantHeaderControls';
@@ -37,8 +35,6 @@ import { WasteWaterDataset } from '../models/wasteWater/types';
 import { filter, getData } from '../models/wasteWater/loading';
 import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
-import { ArticleData } from '../data/ArticleDataset';
-import { ArticleListWidget } from '../widgets/ArticleListWidget';
 import { HospDiedAgeSampleData } from '../data/sample/HospDiedAgeSampleDataset';
 import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
@@ -47,6 +43,9 @@ import * as Sentry from '@sentry/react';
 import { isDefaultHostSelector } from '../data/HostSelector';
 import { VariantHosts } from '../components/VariantHosts';
 import { HuismanScire2021ReContainer } from '../models/huismanScire2021Re/HuismanScire2021ReContainer';
+import { ErrorAlert } from '../components/ErrorAlert';
+import { VariantInsertions } from '../components/VariantInsertions';
+import * as lodashAlternatives from '../helpers/lodash_alternatives';
 
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
@@ -62,9 +61,9 @@ export const FocusSinglePage = () => {
   // Deep focus buttons
   const deepFocusButtons = useMemo(
     () =>
-      mapValues(deepFocusPaths, suffix => {
-        return <ShowMoreButton key={suffix} to={exploreUrl?.getDeepFocusPageUrl(suffix) ?? '#'} />;
-      }),
+      lodashAlternatives.mapValues(deepFocusPaths, (suffix: string) => (
+        <ShowMoreButton key={suffix} to={exploreUrl?.getDeepFocusPageUrl(suffix) ?? '#'} />
+      )),
     [exploreUrl]
   );
 
@@ -73,12 +72,14 @@ export const FocusSinglePage = () => {
     exploreUrl!
   );
   // Date counts
-  const variantDateCount = useQuery(signal => DateCountSampleData.fromApi(ldvsSelector, signal), [
-    ldvsSelector,
-  ]);
-  const wholeDateCountWithDateFilter = useQuery(signal => DateCountSampleData.fromApi(ldsSelector, signal), [
-    ldsSelector,
-  ]);
+  const variantDateCount = useQuery(
+    signal => DateCountSampleData.fromApi(ldvsSelector, signal),
+    [ldvsSelector]
+  );
+  const wholeDateCountWithDateFilter = useQuery(
+    signal => DateCountSampleData.fromApi(ldsSelector, signal),
+    [ldsSelector]
+  );
   const variantInternationalDateCount = useQuery(
     signal => CountryDateCountSampleData.fromApi(dvsSelector, signal),
     [dvsSelector]
@@ -88,29 +89,34 @@ export const FocusSinglePage = () => {
     [dsSelector]
   );
   // Age counts
-  const variantAgeCount = useQuery(signal => AgeCountSampleData.fromApi(ldvsSelector, signal), [
-    ldvsSelector,
-  ]);
+  const variantAgeCount = useQuery(
+    signal => AgeCountSampleData.fromApi(ldvsSelector, signal),
+    [ldvsSelector]
+  );
   const wholeAgeCount = useQuery(
     // Used by the focus page
     signal => AgeCountSampleData.fromApi(ldsSelector, signal),
     [ldsSelector]
   );
   // Division counts
-  const variantDivisionCount = useQuery(signal => DivisionCountSampleData.fromApi(ldvsSelector, signal), [
-    ldvsSelector,
-  ]);
-  const wholeDivisionCount = useQuery(signal => DivisionCountSampleData.fromApi(ldsSelector, signal), [
-    ldsSelector,
-  ]);
+  const variantDivisionCount = useQuery(
+    signal => DivisionCountSampleData.fromApi(ldvsSelector, signal),
+    [ldvsSelector]
+  );
+  const wholeDivisionCount = useQuery(
+    signal => DivisionCountSampleData.fromApi(ldsSelector, signal),
+    [ldsSelector]
+  );
 
   // Hospitalization and death
-  const variantHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal), [
-    ldvsSelector,
-  ]);
-  const wholeHospDeathAgeCount = useQuery(signal => HospDiedAgeSampleData.fromApi(ldsSelector, signal), [
-    ldsSelector,
-  ]);
+  const variantHospDeathAgeCount = useQuery(
+    signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal),
+    [ldvsSelector]
+  );
+  const wholeHospDeathAgeCount = useQuery(
+    signal => HospDiedAgeSampleData.fromApi(ldsSelector, signal),
+    [ldsSelector]
+  );
 
   // Cases
   const caseCountDataset: CaseCountAsyncDataset = useAsyncDataset(lSelector, ({ selector }, { signal }) =>
@@ -119,7 +125,7 @@ export const FocusSinglePage = () => {
 
   // Wastewater
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
-  const pangoLineageWithoutAsterisk = exploreUrl?.variant?.pangoLineage?.replace('*', '');
+  const pangoLineageWithoutAsterisk = exploreUrl?.variants![0].pangoLineage?.replace('*', '');
   useEffect(() => {
     let isMounted = true;
     const country = exploreUrl?.location.country;
@@ -134,15 +140,6 @@ export const FocusSinglePage = () => {
       isMounted = false;
     };
   }, [exploreUrl?.location.country, pangoLineageWithoutAsterisk]);
-
-  // Articles
-  const articleDataset = useQuery(
-    signal =>
-      exploreUrl?.variant?.pangoLineage
-        ? ArticleData.fromApi(exploreUrl?.variant?.pangoLineage, signal)
-        : Promise.resolve(undefined),
-    [exploreUrl?.variant?.pangoLineage]
-  );
 
   // --- Prepare data for sub-division plots ---
   // If this is not a country page, the sub-plots will be split by countries. Otherwise, they should be split by
@@ -221,25 +218,39 @@ export const FocusSinglePage = () => {
     };
   };
 
-  const splitSequencesOverTime = useDeepCompareMemo(() => generateSplitData(splitField, 'date'), [
-    splitField,
-    ldvsSelector,
-    ldsSelector,
-    [...(caseCountDatasetSplit?.keys() ?? [])],
-  ]);
-  const splitAgeDistribution = useDeepCompareMemo(() => generateSplitData(splitField, 'age'), [
-    splitField,
-    ldvsSelector,
-    ldsSelector,
-  ]);
+  const splitSequencesOverTime = useDeepCompareMemo(
+    () => generateSplitData(splitField, 'date'),
+    [splitField, ldvsSelector, ldsSelector, [...(caseCountDatasetSplit?.keys() ?? [])]]
+  );
+  const splitAgeDistribution = useDeepCompareMemo(
+    () => generateSplitData(splitField, 'age'),
+    [splitField, ldvsSelector, ldsSelector]
+  );
 
   // --- Rendering ---
 
-  if (!exploreUrl || !exploreUrl.variant) {
+  if (!exploreUrl || !exploreUrl.variants) {
     return null;
   }
   const { country } = exploreUrl.location;
   const host = exploreUrl.host;
+
+  // Error handling
+  const allErrors = [
+    variantDateCount.error,
+    wholeDateCountWithDateFilter.error,
+    variantAgeCount.error,
+    wholeAgeCount.error,
+    variantDivisionCount.error,
+    wholeDivisionCount.error,
+    variantInternationalDateCount.error,
+    wholeInternationalDateCount.error,
+    variantHospDeathAgeCount.error,
+    wholeHospDeathAgeCount.error,
+  ].filter(e => !!e) as string[];
+  if (allErrors.length > 0) {
+    return <ErrorAlert messages={allErrors} />;
+  }
 
   // Wastewater plot
   let wasteWaterSummaryPlot = undefined;
@@ -283,7 +294,7 @@ export const FocusSinglePage = () => {
     <>
       <VariantHeader
         dateRange={exploreUrl.dateRange}
-        variant={exploreUrl.variant}
+        variant={exploreUrl.variants[0]}
         controls={<FocusVariantHeaderControls selector={ldvsSelector} />}
       />
       {variantDateCount.data &&
@@ -371,16 +382,13 @@ export const FocusSinglePage = () => {
                 />
               </GridCell>
               <GridCell minWidth={600}>
-                {
-                  <VariantDivisionDistributionChartWidget.ShareableComponent
-                    title='Geographic distribution'
-                    variantSampleSet={variantDivisionCount.data}
-                    wholeSampleSet={wholeDivisionCount.data}
-                  />
-                }
+                <VariantDivisionDistributionChartWidget.ShareableComponent
+                  title='Geographic distribution'
+                  variantSampleSet={variantDivisionCount.data}
+                  wholeSampleSet={wholeDivisionCount.data}
+                />
               </GridCell>
               <GridCell minWidth={600}>
-                <TemporaryFitnessBanner />
                 <NamedCard
                   title='Relative growth advantage'
                   toolbar={[
@@ -434,7 +442,7 @@ export const FocusSinglePage = () => {
                     field='hospitalized'
                     variantSampleSet={variantHospDeathAgeCount.data}
                     wholeSampleSet={wholeHospDeathAgeCount.data}
-                    variantName={exploreUrl.variant.pangoLineage ?? 'unnamed variant'}
+                    variantName={exploreUrl.variants[0].pangoLineage ?? 'unnamed variant'}
                     title='Hospitalization probabilities'
                     height={300}
                     toolbarChildren={deepFocusButtons.hospitalizationAndDeath}
@@ -442,19 +450,13 @@ export const FocusSinglePage = () => {
                 </GridCell>
               )}
               {isDefaultHostSelector(host) && wasteWaterSummaryPlot}
-              {exploreUrl?.variant?.pangoLineage && ( // TODO Check that nothing else is set
-                <GridCell minWidth={800}>
-                  {articleDataset.data && articleDataset.isSuccess ? (
-                    <ArticleListWidget.ShareableComponent
-                      title='Publications and pre-Prints'
-                      articleDataset={articleDataset.data}
-                    />
-                  ) : (
-                    <Loader />
-                  )}
-                </GridCell>
-              )}
             </PackedGrid>
+
+            <div className='m-4'>
+              <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
+                <VariantInsertions selector={ldvsSelector} />
+              </Sentry.ErrorBoundary>
+            </div>
 
             <div className='m-4'>
               <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>

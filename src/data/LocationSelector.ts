@@ -8,6 +8,9 @@ export const LocationSelectorEncodedSchema = zod.object({
 
 export type LocationSelector = zod.infer<typeof LocationSelectorEncodedSchema>;
 
+export const locationFields = ['region', 'country', 'division'] as const;
+export type LocationField = typeof locationFields[number];
+
 export function encodeLocationSelector(selector: LocationSelector): LocationSelector {
   return selector;
 }
@@ -17,11 +20,17 @@ export function decodeLocationSelector(encoded: LocationSelector): LocationSelec
 }
 
 export function addLocationSelectorToUrlSearchParams(selector: LocationSelector, params: URLSearchParams) {
-  for (const k of ['region', 'country', 'division'] as const) {
+  for (const k of locationFields) {
     const value = selector[k];
     if (value !== undefined) {
       params.set(k, value);
     }
+  }
+}
+
+export function removeLocationSelectorToUrlSearchParams(params: URLSearchParams) {
+  for (const k of locationFields) {
+    params.delete(k);
   }
 }
 

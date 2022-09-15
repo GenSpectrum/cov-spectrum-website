@@ -3,7 +3,6 @@ import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
 import React, { useEffect, useMemo, useState } from 'react';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
-import _ from 'lodash';
 import Table from 'react-bootstrap/Table';
 import { formatVariantDisplayName } from '../data/VariantSelector';
 import ReactTooltip from 'react-tooltip';
@@ -11,6 +10,7 @@ import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import { sortAAMutationList } from '../helpers/aa-mutation';
 import { LapisSelector } from '../data/LapisSelector';
+import { pullAll } from '../helpers/lodash_alternatives';
 
 export interface Props {
   selectors: LapisSelector[];
@@ -37,9 +37,9 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
     const variant2Mutations = variant2.payload
       .filter(m => m.proportion >= minProportion)
       .map(m => m.mutation);
-    const shared = _.intersection(variant1Mutations, variant2Mutations);
-    const onlyVariant1 = _.pullAll(variant1Mutations, shared);
-    const onlyVariant2 = _.pullAll(variant2Mutations, shared);
+    const shared = [variant1Mutations, variant2Mutations].reduce((a, b) => a.filter(c => b.includes(c)));
+    const onlyVariant1 = pullAll(variant1Mutations, shared);
+    const onlyVariant2 = pullAll(variant2Mutations, shared);
     // Group by genes
     const genes = new Map<
       string,

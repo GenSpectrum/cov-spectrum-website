@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
-import { random, shuffle, times } from 'lodash';
+import { times, shuffle, random } from '../lodash_alternatives';
+
 import { DateCacheClassForTests, UnifiedDay, UnifiedIsoWeek } from '../date-cache';
 
 // UnifiedDay and UnifiedIsoWeek mutually recursively contain each other.
@@ -167,8 +168,9 @@ describe('DateCache', () => {
       for (let i = 0; i < 10; i++) {
         const dateCache = new DateCacheClassForTests();
         let testers = cases.flatMap(c =>
-          c.yearWeekStrings.map(yearWeekString => () =>
-            testRelationships(c.firstDayInWeek, yearWeekString, Math.random() > 0.5, dateCache)
+          c.yearWeekStrings.map(
+            yearWeekString => () =>
+              testRelationships(c.firstDayInWeek, yearWeekString, Math.random() > 0.5, dateCache)
           )
         );
         testers = testers.flatMap(tester => times(random(0, 3), () => tester));

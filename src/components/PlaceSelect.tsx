@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from 'react';
+import React, { Fragment, useState, useEffect, useMemo } from 'react';
 import { LocationService } from '../services/LocationService';
 import { useQuery } from '../helpers/query-hook';
 import { Autocomplete, Box, TextField } from '@mui/material';
@@ -12,48 +12,48 @@ export interface Props {
   onSelect: (place: LocationSelector) => void;
 }
 
+const regions = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
+
 export const PlaceSelect = ({ onSelect, selected }: Props) => {
-  const [value, setValue] = useState<string | null>('');
+  const [value, setValue] = useState<string | null>(encodeLocationSelectorToSingleString(selected));
 
   useEffect(() => {
     const locationString = encodeLocationSelectorToSingleString(selected);
     setValue(locationString);
   }, [selected]);
 
-  const places: string[] = useQuery(() => LocationService.getAllLocationNames(), []).data ?? [];
+  const countries = useQuery(() => LocationService.getCountries(), []).data?.sort();
 
-  const regions: string[] = ['Africa', 'Asia', 'Europe', 'North America', 'Oceania', 'South America'];
-  let countries: string[] = places
-    .filter(place => place !== 'Switzerland' && place !== 'World' && !regions.includes(place))
-    .sort();
+  const geoOptions = useMemo(() => {
+    if (!countries) {
+      return undefined;
+    }
+    const geoOptions: { group: string; place: string; code?: string }[] = [
+      { group: 'World', place: 'World' },
+    ];
+    for (const region of regions) {
+      geoOptions.push({ group: 'Regions', place: region });
+    }
+    for (const country of countries) {
+      geoOptions.push({
+        group: 'Countries',
+        place: country,
+        code: LocationService.getIsoAlpha2Code(country),
+      });
+    }
+    return geoOptions;
+  }, [countries]);
 
-  const geoOptions: { group: string; place: string; code?: string }[] = [{ group: 'World', place: 'World' }];
-
-  for (const region of regions) {
-    geoOptions.push({ group: 'Regions', place: region });
-  }
-  geoOptions.push({
-    group: 'Countries',
-    place: 'Switzerland',
-    code: 'CH',
-  });
-
-  for (const country of countries) {
-    geoOptions.push({ group: 'Countries', place: country, code: LocationService.getIsoAlpha2Code(country) });
+  if (!geoOptions) {
+    return <></>;
   }
 
   return (
     <>
       <Autocomplete
-        placeholder={
-          [...new Set(geoOptions)].filter(x => x.place === value)[0]
-            ? [...new Set(geoOptions)].filter(x => x.place === value)[0].place
-            : ''
-        }
         autoComplete
         includeInputInList
         value={[...new Set(geoOptions)].filter(x => x.place === value)[0]}
-        defaultValue={[...new Set(geoOptions)].filter(x => x.place === value)[0]}
         isOptionEqualToValue={(option, value) => option.place === value.place}
         size='small'
         sx={{ mr: 1, minWidth: 250 }}

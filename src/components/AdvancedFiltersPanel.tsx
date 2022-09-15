@@ -1,6 +1,6 @@
 import { ExternalLink } from './ExternalLink';
 import { useCallback, useState } from 'react';
-import { qcFieldsAndLabels, QcSelector } from '../data/QcSelector';
+import { qcFieldsAndLabels, QcFieldType, QcSelector } from '../data/QcSelector';
 import { Utils } from '../services/Utils';
 import { Button, ButtonVariant } from '../helpers/ui';
 import { useExploreUrl } from '../helpers/explore-url';
@@ -28,10 +28,10 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
   );
 
   const setQcValue = useCallback(
-    (field, valueString?: string) => {
+    (field, type: QcFieldType, valueString?: string) => {
       setQc(prev => ({
         ...prev,
-        [field]: Utils.safeParseInt(valueString),
+        [field]: type === 'integer' ? Utils.safeParseInt(valueString) : Utils.safeParseFloat(valueString),
       }));
     },
     [setQc]
@@ -120,21 +120,21 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
           Select only bad
         </button>
       </div>
-      {qcFieldsAndLabels.map(({ label, fromField, toField }) => (
+      {qcFieldsAndLabels.map(({ label, fromField, toField, type }) => (
         <div className='py-2' key={label}>
           {label}:{' '}
           <input
             className='border w-24'
             type='number'
             value={qc[fromField] ?? ''}
-            onChange={e => setQcValue(fromField, e.target.value)}
+            onChange={e => setQcValue(fromField, type, e.target.value)}
           />{' '}
           -{' '}
           <input
             className='border w-24'
             type='number'
             value={qc[toField] ?? ''}
-            onChange={e => setQcValue(toField, e.target.value)}
+            onChange={e => setQcValue(toField, type, e.target.value)}
           />
         </div>
       ))}

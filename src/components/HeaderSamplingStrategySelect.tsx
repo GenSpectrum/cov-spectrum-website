@@ -10,11 +10,10 @@ export const HeaderSamplingStrategySelect = () => {
   }
 
   return (
-    <Form inline className='mr-3'>
+    <Form className='mr-3'>
       <div>
         <Form.Control
           as='select'
-          custom
           id='samplingStrategySelect'
           value={exploreUrl.samplingStrategy}
           onChange={ev => exploreUrl.setSamplingStrategy(ev.target.value as SamplingStrategy)}

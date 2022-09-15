@@ -18,7 +18,7 @@ export const CollectionOverviewPage = () => {
         On the dedicated Collections pages, you can easily get an overview of the chosen variants.
       </div>
       <Link to='/collections/add'>
-        <Button variant={ButtonVariant.PRIMARY} className='w-96 my-4'>
+        <Button variant={ButtonVariant.PRIMARY} className='w-full sm:w-96 my-4'>
           Create a new collection
         </Button>
       </Link>
@@ -28,6 +28,7 @@ export const CollectionOverviewPage = () => {
           <ul className='list-disc'>
             {data.map(c => (
               <li className='ml-8' key={c.id}>
+                <span className='text-gray-400 mr-1'>#{c.id}</span>{' '}
                 <Link to={`collections/${c.id}`}>{c.title}</Link> (by {c.maintainers})
               </li>
             ))}

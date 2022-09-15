@@ -1,11 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { KnownVariantCard } from './KnownVariantCard';
-import _VARIANT_LISTS from './variantLists.json';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
 import { DateCountSampleData, DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
-import { PangoCountSampleData } from '../../data/sample/PangoCountSampleDataset';
 import { SpecialDateRangeSelector } from '../../data/DateRangeSelector';
-import { PangoCountSampleEntry } from '../../data/sample/PangoCountSampleEntry';
 import { formatVariantDisplayName, VariantSelector } from '../../data/VariantSelector';
 import { globalDateCache } from '../../helpers/date-cache';
 import assert from 'assert';
@@ -14,12 +11,12 @@ import { useQuery } from '../../helpers/query-hook';
 import { AnalysisMode } from '../../data/AnalysisMode';
 import { HostAndQcSelector } from '../../data/HostAndQcSelector';
 import { LapisSelector } from '../../data/LapisSelector';
+import { fetchCollections } from '../../data/api';
+import { Collection, CollectionVariant } from '../../data/Collection';
 
-const VARIANT_LISTS: VariantList[] = _VARIANT_LISTS;
-
-const getLoadVariantCardLoaders = () => {
+const getLoadVariantCardLoaders = (numberCards: number) => {
   let loaders = [];
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < numberCards; i++) {
     loaders.push(
       <div className='animate-pulse w-full' key={i}>
         <div className={`h-20 bg-gradient-to-r from-gray-400 to-gray-300 rounded w-full`} />
@@ -29,39 +26,9 @@ const getLoadVariantCardLoaders = () => {
   return loaders;
 };
 
-export type VariantList = {
-  name: string;
-  variants: VariantSelector[];
-  source?: string;
-  fillUpUntil: number;
-};
-
-function selectPreviewVariants(
-  definedVariants: VariantSelector[],
-  pangoLineageCounts: PangoCountSampleEntry[],
-  numberVariants: number
-): VariantSelector[] {
-  const variants = [...definedVariants];
-  pangoLineageCounts.sort((a, b) => b.count - a.count);
-  for (let { pangoLineage } of pangoLineageCounts) {
-    if (variants.length >= numberVariants) {
-      break;
-    }
-    if (!pangoLineage) {
-      continue;
-    }
-    if (variants.map(v => v.pangoLineage?.replace(/\*/g, '')).includes(pangoLineage)) {
-      continue;
-    }
-    variants.push({
-      pangoLineage: pangoLineage,
-    });
-  }
-  return variants;
-}
-
 export interface KnownVariantWithChartData {
   selector: VariantSelector;
+  variant: CollectionVariant;
   chartData: number[]; // proportion (0-1) per week
   recentProportion: number; // the proportion of the last 14 days
 }
@@ -76,11 +43,16 @@ export function convertKnownVariantChartData({
   variantSampleSets,
   wholeSampleSet,
 }: {
-  variantSampleSets: DateCountSampleDataset[];
+  variantSampleSets: {
+    variant: CollectionVariant;
+    data: DateCountSampleDataset;
+  }[];
   wholeSampleSet: DateCountSampleDataset;
 }): KnownVariantWithChartData[] {
   // Compute the weekly chart data
-  const variantWeeklyCounts = variantSampleSets.map(s => DateCountSampleData.countByWeek(s.payload));
+  const variantWeeklyCounts = variantSampleSets.map(({ data }) =>
+    DateCountSampleData.countByWeek(data.payload)
+  );
   const wholeWeeklyCounts = DateCountSampleData.countByWeek(wholeSampleSet.payload);
 
   const dataWeekRange = globalDateCache.rangeFromWeeks(
@@ -114,7 +86,7 @@ export function convertKnownVariantChartData({
   assert(new Set(filledData.map(d => d.length)).size === 1);
 
   // Compute the proportion during the last 14 days
-  const variantDailyCounts = variantSampleSets.map(s => DateCountSampleData.countByDay(s.payload));
+  const variantDailyCounts = variantSampleSets.map(s => DateCountSampleData.countByDay(s.data.payload));
   const wholeDateCounts = DateCountSampleData.countByDay(wholeSampleSet.payload);
   const maxDate = dayjs.max([...wholeDateCounts.keys()].map(d => d.dayjs));
   let recentVariantTotal = variantDailyCounts.map(_ => 0);
@@ -127,8 +99,9 @@ export function convertKnownVariantChartData({
     });
   }
 
-  return variantSampleSets.map((dataset, i) => ({
-    selector: dataset.selector.variant!,
+  return variantSampleSets.map(({ variant, data }, i) => ({
+    selector: data.selector.variant!,
+    variant,
     chartData: filledData[i],
     recentProportion: recentVariantTotal[i] / recentWholeTotal,
   }));
@@ -184,11 +157,21 @@ export const KnownVariantsList = ({
   isHorizontal = false,
   isLandingPage,
 }: Props) => {
-  const [selectedVariantList, setSelectedVariantList] = useState(VARIANT_LISTS[0].name);
+  const [selectedVariantList, setSelectedVariantList] = useState(1); // This is the ID of Editor's choice
   const [chartData, setChartData] = useState<KnownVariantWithChartData[] | undefined>(undefined);
 
+  // Load collections
+  const { data: collections } = useQuery(
+    signal => fetchCollections(signal).then(collections => collections.sort((a, b) => a.id! - b.id!)),
+    []
+  );
+  const selectedCollection = useMemo(
+    () => (collections ? collections.find(c => c.id === selectedVariantList) : undefined),
+    [collections, selectedVariantList]
+  );
+
   const KnownVariantLoader = () => {
-    const loaders = getLoadVariantCardLoaders();
+    const loaders = getLoadVariantCardLoaders(selectedCollection?.variants.length ?? 12);
     return (
       <Grid isHorizontal={isHorizontal} isLandingPage={isLandingPage}>
         {loaders}
@@ -196,34 +179,9 @@ export const KnownVariantsList = ({
     );
   };
 
-  const pangoCountDataset = useQuery(
-    signal =>
-      PangoCountSampleData.fromApi(
-        {
-          location: wholeDateCountSampleDataset.selector.location,
-          dateRange: new SpecialDateRangeSelector('Past3M'),
-          samplingStrategy: wholeDateCountSampleDataset.selector.samplingStrategy,
-          ...hostAndQc,
-        },
-        signal
-      ),
-    [wholeDateCountSampleDataset]
-  );
-  const knownVariantSelectors = useMemo(() => {
-    if (!pangoCountDataset.isSuccess || !pangoCountDataset.data) {
-      return [];
-    }
-    const variantList = VARIANT_LISTS.filter(({ name }) => name === selectedVariantList)[0];
-    return selectPreviewVariants(
-      variantList.variants,
-      pangoCountDataset.data.payload,
-      variantList.fillUpUntil
-    );
-  }, [pangoCountDataset.isSuccess, pangoCountDataset.data, selectedVariantList]);
-
   useEffect(() => {
     setChartData(undefined);
-    if (!knownVariantSelectors) {
+    if (!selectedCollection) {
       return;
     }
 
@@ -240,24 +198,35 @@ export const KnownVariantsList = ({
       };
     };
 
-    async function fetchAll(knownVariantSelectors: VariantSelector[]) {
-      return await Promise.all(
-        knownVariantSelectors.map(vs => {
-          const selector = createSelector(vs, hostAndQc);
-          return DateCountSampleData.fromApi(selector);
+    async function fetchAll(collection: Collection) {
+      const promises = await Promise.allSettled(
+        collection.variants.map(async variant => {
+          const selector = createSelector(JSON.parse(variant.query) as VariantSelector, hostAndQc);
+          return {
+            variant: variant,
+            data: await DateCountSampleData.fromApi(selector),
+          };
         })
       );
+      // The failed variants (likely because the variant query is broken) will be filtered out.
+      const collectionVariants = [];
+      for (let p of promises) {
+        if (p.status === 'fulfilled') {
+          collectionVariants.push(p.value);
+        }
+      }
+      return collectionVariants;
     }
-    fetchAll(knownVariantSelectors).then(sampleSets => {
+    fetchAll(selectedCollection).then(sampleSets => {
       const _chartData = convertKnownVariantChartData({
         variantSampleSets: sampleSets,
         wholeSampleSet: wholeDateCountSampleDataset,
       });
       setChartData(_chartData);
     });
-  }, [knownVariantSelectors, wholeDateCountSampleDataset, hostAndQc]);
+  }, [selectedCollection, wholeDateCountSampleDataset, hostAndQc]);
 
-  if (!chartData) {
+  if (!chartData || !collections) {
     return (
       <div className='mt-2'>
         <KnownVariantLoader />{' '}
@@ -268,16 +237,16 @@ export const KnownVariantsList = ({
   return (
     <>
       <KnownVariantsListSelection
-        variantLists={VARIANT_LISTS}
+        collections={collections}
         selected={selectedVariantList}
         onSelect={setSelectedVariantList}
       />
       <Grid isHorizontal={isHorizontal} isLandingPage={isLandingPage}>
-        {chartData.map(({ selector, chartData, recentProportion }) => (
+        {chartData.map(({ selector, variant, chartData, recentProportion }) => (
           <div className={`${isHorizontal && 'h-full w-36'}`} key={formatVariantDisplayName(selector, true)}>
             <KnownVariantCard
               key={formatVariantDisplayName(selector, true)}
-              name={formatVariantDisplayName(selector, true)}
+              variant={variant}
               chartData={chartData}
               recentProportion={recentProportion}
               onClick={() => {

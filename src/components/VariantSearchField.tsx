@@ -4,15 +4,26 @@ import { components, InputActionMeta, Styles } from 'react-select';
 import { isValidAAMutation, isValidABNotation, isValidNspNotation } from '../helpers/aa-mutation';
 import { CSSPseudos } from 'styled-components';
 import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
-import { isValidPangoLineageQuery, VariantSelector } from '../data/VariantSelector';
+import { isValidPangoLineageQuery, transformToVariantQuery, VariantSelector } from '../data/VariantSelector';
 import { isValidNucMutation } from '../helpers/nuc-mutation';
 import { useQuery } from '../helpers/query-hook';
 import { useDeepCompareEffect } from '../helpers/deep-compare-hooks';
 import Form from 'react-bootstrap/Form';
 import { SamplingStrategy } from '../data/SamplingStrategy';
-import { getEquivalent, translateMutation } from '../helpers/autocomplete-helpers';
 
-type SearchType = 'aa-mutation' | 'nuc-mutation' | 'pango-lineage';
+import { translateMutation } from '../helpers/autocomplete-helpers';
+import { isValidAAInsertion } from '../helpers/aa-insertion';
+import { isValidNucInsertion } from '../helpers/nuc-insertion';
+import { _fetchAggSamples } from '../data/api-lapis';
+
+type SearchType =
+  | 'aa-mutation'
+  | 'nuc-mutation'
+  | 'aa-insertion'
+  | 'nuc-insertion'
+  | 'pango-lineage'
+  | 'nextclade-pango-lineage'
+  | 'nextstrain-clade';
 
 type SearchOption = {
   label: string;
@@ -22,28 +33,39 @@ type SearchOption = {
 
 const backgroundColor: { [key in SearchType]: string } = {
   'pango-lineage': 'rgba(29,78,207,0.1)',
+  'nextclade-pango-lineage': 'rgba(29,78,207,0.1)',
+  'nextstrain-clade': 'rgba(29,78,207,0.1)',
   'aa-mutation': 'rgba(4,133,27,0.1)',
   'nuc-mutation': 'rgba(33,162,162,0.29)',
+  'aa-insertion': 'rgba(4,133,27,0.1)',
+  'nuc-insertion': 'rgba(33,162,162,0.29)',
 };
 
 function mapOption(optionString: string, type: SearchType): SearchOption {
-  let actualValue = optionString;
+  let value = optionString;
+  let label = optionString;
   if (optionString.includes(' =')) {
-    actualValue = optionString.split(' ')[0];
+    value = optionString.split(' ')[0];
   } else if (optionString.toLowerCase().startsWith('nsp')) {
     if (translateMutation(optionString.toLowerCase())) {
-      actualValue = translateMutation(optionString.toLowerCase());
-      optionString = `${actualValue} = (${optionString})`;
+      value = translateMutation(optionString.toLowerCase());
+      label = `${value} = (${optionString})`;
     }
   } else if (optionString.toLowerCase().startsWith('orf1ab')) {
     if (translateMutation(optionString.toLowerCase())) {
-      actualValue = translateMutation(optionString.toLowerCase());
-      optionString = `${actualValue} = (${optionString})`;
+      value = translateMutation(optionString.toLowerCase());
+      label = `${value} = (${optionString})`;
     }
   }
+  if (type === 'nextclade-pango-lineage') {
+    label = `${optionString} (Nextclade)`;
+  }
+  if (type === 'nextstrain-clade') {
+    label = `${optionString} (Nextstrain clade)`;
+  }
   return {
-    label: optionString,
-    value: actualValue,
+    label,
+    value,
     type,
   };
 }
@@ -53,13 +75,60 @@ function variantSelectorToOptions(selector: VariantSelector): SearchOption[] {
   if (selector.pangoLineage) {
     options.push({ label: selector.pangoLineage, value: selector.pangoLineage, type: 'pango-lineage' });
   }
+  if (selector.nextcladePangoLineage) {
+    options.push({
+      label: selector.nextcladePangoLineage + ' (Nextclade)',
+      value: selector.nextcladePangoLineage,
+      type: 'nextclade-pango-lineage',
+    });
+  }
+  if (selector.nextstrainClade) {
+    options.push({
+      label: selector.nextstrainClade + ' (Nextstrain clade)',
+      value: selector.nextstrainClade,
+      type: 'nextstrain-clade',
+    });
+  }
   if (selector.aaMutations) {
     selector.aaMutations.forEach(m => options.push({ label: m, value: m, type: 'aa-mutation' }));
   }
   if (selector.nucMutations) {
     selector.nucMutations.forEach(m => options.push({ label: m, value: m, type: 'nuc-mutation' }));
   }
+  if (selector.aaInsertions) {
+    selector.aaInsertions.forEach(m => options.push({ label: m, value: m, type: 'aa-insertion' }));
+  }
+  if (selector.nucInsertions) {
+    selector.nucInsertions.forEach(m => options.push({ label: m, value: m, type: 'nuc-insertion' }));
+  }
   return options;
+}
+
+function optionsToVariantSelector(options: SearchOption[]): VariantSelector {
+  const selector: VariantSelector = {
+    aaMutations: [],
+    nucMutations: [],
+    aaInsertions: [],
+    nucInsertions: [],
+  };
+  for (let { type, value } of options) {
+    if (type === 'aa-mutation') {
+      selector.aaMutations!.push(value);
+    } else if (type === 'nuc-mutation') {
+      selector.nucMutations!.push(value);
+    } else if (type === 'aa-insertion') {
+      selector.aaInsertions!.push(value);
+    } else if (type === 'nuc-insertion') {
+      selector.nucInsertions!.push(value);
+    } else if (type === 'pango-lineage') {
+      selector.pangoLineage = value;
+    } else if (type === 'nextclade-pango-lineage') {
+      selector.nextcladePangoLineage = value;
+    } else if (type === 'nextstrain-clade') {
+      selector.nextstrainClade = value;
+    }
+  }
+  return selector;
 }
 
 const colorStyles: Partial<Styles<any, true, any>> = {
@@ -87,6 +156,9 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
   const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? inputValue);
   const [advancedSearch, setAdvancedSearch] = useState(currentSelection?.variantQuery !== undefined);
+  // dragEnter increases the depth by one and dragLeave decreases it. The two functions is being called every time when
+  // the mouse enters or leaves the object or one of the children.
+  const [dragOngoingDepth, setDragOngoingDepth] = useState(0);
 
   const pangoLineages = useQuery(
     signal =>
@@ -97,15 +169,29 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     []
   );
 
+  const nextstrainCladesSet = useQuery(
+    signal =>
+      _fetchAggSamples(
+        { location: {}, samplingStrategy: SamplingStrategy.AllSamples, host: undefined, qc: {} },
+        ['nextstrainClade'],
+        signal
+      ).then(dataset => new Set(dataset.filter(e => e.nextstrainClade).map(e => e.nextstrainClade!))),
+    []
+  );
+
+  const applySelector = (selector: VariantSelector) => {
+    if (selector.variantQuery !== undefined) {
+      setAdvancedSearch(true);
+      setVariantQuery(selector.variantQuery);
+    } else {
+      setAdvancedSearch(false);
+      setSelectedOptions(variantSelectorToOptions(selector));
+    }
+  };
+
   useDeepCompareEffect(() => {
     if (currentSelection) {
-      if (currentSelection.variantQuery !== undefined) {
-        setAdvancedSearch(true);
-        setVariantQuery(currentSelection.variantQuery);
-      } else {
-        setAdvancedSearch(false);
-        setSelectedOptions(variantSelectorToOptions(currentSelection));
-      }
+      applySelector(currentSelection);
     }
   }, [currentSelection]);
 
@@ -113,91 +199,45 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     return (pangoLineages.data ?? []).filter(pl => pl.toUpperCase().startsWith(query.toUpperCase()));
   };
 
-  const suggestMutations = (query: string): string[] => {
-    // TODO Fetch all/common known mutations from the server
-    // For now, just providing a few mutations so that the auto-complete list is not entirely empty.
-    let notation = query.toLowerCase().startsWith('n') ? 'nsp' : query.startsWith('orf1ab') ? 'orf1ab' : '';
-    let options: string[] = [
-      'S:D614G',
-      'ORF1b:P314L',
-      'N:R203K',
-      'N:G204R',
-      'N:M1X',
-      'ORF1a:G3676',
-      'ORF1a:S3675',
-      'ORF1a:F3677',
-      'S:N501Y',
-      'S:P681H',
-      'S:H69-',
-      'S:V70-',
-      'S:A570D',
-      'S:T716I',
-      'S:Y144-',
-      'ORF1a:T1001I',
-      'S:D1118H',
-      'ORF8:Y73C',
-      'ORF1a:T1001I',
-      'N:S235F',
-      'ORF8:Q27*',
-      'S:S982A',
-      'ORF8:R52I',
-      'N:D3L',
-      'ORF1a:I2230T',
-      'ORF3a:Q57H',
-      'ORF8:K68*',
-      'ORF1a:T265I',
-      'ORF1b:K1383R',
-      'S:L452R',
-      'S:A222V',
-      'N:D377Y',
-      'N:A220V',
-      'M:I82T',
-      'S:T478K',
-      'S:P681R',
-      'N:P199L',
-      'S:L18F',
-      'ORF3a:S26L',
-      'ORF1a:T3255I',
-      'ORF1a:T3255I',
-      'N:R203M',
-      'S:E484K',
-      'ORF1b:P1000L',
-      'ORF7a:T120I',
-      'ORF1b:P218L',
-      'ORF1b:G662S',
-      'S:T19R',
-      'ORF7a:V82A',
-      'ORF9b:T60A',
-      'N:D63G',
-    ].map(i => {
-      if (i.startsWith('ORF1') && (notation === 'nsp' || notation === 'orf1ab')) {
-        return `${i} = (${getEquivalent(i, notation)})`;
-      }
-      return i;
-    });
-    return options.filter(m => m.toUpperCase().includes(query.toUpperCase()));
-  };
-
   const suggestOptions = (query: string): SearchOption[] => {
-    const onePLAlreadySelected = selectedOptions.filter(option => option.type === 'pango-lineage').length > 0;
+    const onePLAlreadySelected =
+      selectedOptions.filter(
+        option => option.type === 'pango-lineage' || option.type === 'nextclade-pango-lineage'
+      ).length > 0;
+    const oneNCAlreadySelected =
+      selectedOptions.filter(option => option.type === 'nextstrain-clade').length > 0;
     const suggestions: SearchOption[] = [];
 
+    const queryWithoutNextcladeLabel = query.replace('(Nextclade)', '').trim();
+    if (!onePLAlreadySelected && isValidPangoLineageQuery(queryWithoutNextcladeLabel)) {
+      suggestions.push(mapOption(queryWithoutNextcladeLabel, 'nextclade-pango-lineage'));
+      if (!query.includes('*')) {
+        suggestions.push(mapOption(queryWithoutNextcladeLabel + '*', 'nextclade-pango-lineage'));
+      }
+    }
     if (isValidAAMutation(query)) {
       suggestions.push(mapOption(query, 'aa-mutation'));
     } else if (isValidABNotation(query)) {
       suggestions.push(mapOption(query, 'aa-mutation'));
     } else if (isValidNucMutation(query)) {
       suggestions.push(mapOption(query, 'nuc-mutation'));
+    } else if (isValidAAInsertion(query)) {
+      suggestions.push(mapOption(query, 'aa-insertion'));
+    } else if (isValidNucInsertion(query)) {
+      suggestions.push(mapOption(query, 'nuc-insertion'));
     } else if (!onePLAlreadySelected && isValidPangoLineageQuery(query)) {
       suggestions.push(mapOption(query, 'pango-lineage'));
       if (!query.endsWith('*')) {
         suggestions.push(mapOption(query + '*', 'pango-lineage'));
       }
     }
+    const queryWithoutNextstrainLabel = query.replace('(Nextstrain clade)', '').trim();
+    if (!oneNCAlreadySelected && nextstrainCladesSet.data?.has(queryWithoutNextstrainLabel.toUpperCase())) {
+      suggestions.push(mapOption(queryWithoutNextstrainLabel, 'nextstrain-clade'));
+    }
     if (!onePLAlreadySelected) {
       suggestions.push(...suggestPangolinLineages(query).map(pl => mapOption(pl, 'pango-lineage')));
     }
-    suggestions.push(...suggestMutations(query).map(pl => mapOption(pl, 'aa-mutation')));
     return suggestions.slice(0, 20);
   };
 
@@ -252,7 +292,11 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     for (let query of inputValues) {
       query = query.trim();
       const suggestions = suggestOptions(query);
-      const selectedOption = suggestions.find(option => option.value.toUpperCase() === query.toUpperCase());
+      const selectedOption = suggestions.find(
+        option =>
+          option.value.toUpperCase() === query.toUpperCase() ||
+          option.label.toUpperCase() === query.toUpperCase()
+      );
       if (
         suggestions &&
         suggestions.length > 0 &&
@@ -262,8 +306,14 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
         if (
           selectedOption.type === 'aa-mutation' ||
           selectedOption.type === 'nuc-mutation' ||
-          (selectedOption.type === 'pango-lineage' &&
-            newSelectedOptions.filter(option => option.type === 'pango-lineage').length < 1)
+          selectedOption.type === 'aa-insertion' ||
+          selectedOption.type === 'nuc-insertion' ||
+          ((selectedOption.type === 'pango-lineage' || selectedOption.type === 'nextclade-pango-lineage') &&
+            newSelectedOptions.filter(
+              option => option.type === 'pango-lineage' || option.type === 'nextclade-pango-lineage'
+            ).length < 1) ||
+          (selectedOption.type === 'nextstrain-clade' &&
+            newSelectedOptions.filter(option => option.type === 'nextstrain-clade').length < 1)
         ) {
           newSelectedOptions.push(selectedOption);
         }
@@ -315,20 +365,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   useEffect(() => {
     const submitVariant = () => {
       if (!advancedSearch) {
-        const selector: VariantSelector = {
-          aaMutations: [],
-          nucMutations: [],
-        };
-        for (let { type, value } of selectedOptions) {
-          if (type === 'aa-mutation') {
-            selector.aaMutations!.push(value);
-          } else if (type === 'nuc-mutation') {
-            selector.nucMutations!.push(value);
-          } else if (type === 'pango-lineage') {
-            selector.pangoLineage = value;
-          }
-        }
-        onVariantSelect(selector);
+        onVariantSelect(optionsToVariantSelector(selectedOptions));
       } else {
         onVariantSelect({ variantQuery });
       }
@@ -339,7 +376,8 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   function handleCheckboxChange() {
     let newQuery: string = '';
     if (selectedOptions.length > 0) {
-      newQuery = selectedOptions.map(i => i.value).join(' & ');
+      const selector = optionsToVariantSelector(selectedOptions);
+      newQuery = transformToVariantQuery(selector);
     } else if (inputValue) {
       newQuery = inputValue;
     }
@@ -347,8 +385,42 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     setVariantQuery(newQuery);
   }
 
+  // --- Drag&drop ---
+
+  const dragOver = (ev: React.DragEvent<HTMLDivElement>) => {
+    ev.preventDefault();
+    ev.dataTransfer.dropEffect = 'copy';
+  };
+
+  const dragEnter = () => {
+    setDragOngoingDepth(d => d + 1);
+  };
+
+  const dragLeave = () => {
+    setDragOngoingDepth(d => Math.max(0, d - 1));
+  };
+
+  const drop = (ev: React.DragEvent<HTMLDivElement>) => {
+    const droppedItem = ev.dataTransfer.getData('drag-item');
+    if (droppedItem) {
+      const selector = JSON.parse(droppedItem) as VariantSelector;
+      applySelector(selector);
+    }
+    setDragOngoingDepth(0);
+  };
+
+  // --- Rendering ---
+
   return (
-    <div>
+    <div
+      onDragOver={dragOver}
+      onDragEnter={dragEnter}
+      onDragLeave={dragLeave}
+      onDrop={drop}
+      className={
+        'm-1 p-1 border-2 border-dashed ' + (dragOngoingDepth ? 'border-black' : 'border-transparent')
+      }
+    >
       <form
         className='w-full flex flex-row items-center'
         onSubmit={e => {
@@ -360,7 +432,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
           <AsyncSelect
             className='w-full mr-2'
             components={{ DropdownIndicator }}
-            placeholder='B.1.1.7, S:484K, C913'
+            placeholder='ins_S:214:EPE, ins_22204:?GAG?GAA?, B.1.1.7, S:484K, C913'
             isMulti
             defaultOptions={suggestOptions('')}
             loadOptions={promiseOptions}
@@ -398,6 +470,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
           label='Advanced search'
           checked={advancedSearch}
           onChange={_ => handleCheckboxChange()}
+          className='mb-3'
         />
       </div>
     </div>

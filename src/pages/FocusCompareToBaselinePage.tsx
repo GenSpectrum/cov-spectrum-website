@@ -11,7 +11,6 @@ import { AnalysisMode } from '../data/AnalysisMode';
 import {
   Chen2021FitnessExplanation,
   Chen2021FitnessPreview,
-  TemporaryFitnessBanner,
 } from '../models/chen2021Fitness/Chen2021FitnessPreview';
 import { Althaus2021GrowthWidget } from '../models/althaus2021Growth/Althaus2021GrowthWidget';
 import { FullSampleAggEntry, FullSampleAggEntryField } from '../data/sample/FullSampleAggEntry';
@@ -21,6 +20,7 @@ import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { DivisionModal } from '../components/DivisionModal';
 import { createDivisionBreakdownButton } from './FocusSinglePage';
 import { LapisSelector } from '../data/LapisSelector';
+import { ErrorAlert } from '../components/ErrorAlert';
 
 export const FocusCompareToBaselinePage = () => {
   const exploreUrl = useExploreUrl()!;
@@ -122,15 +122,21 @@ export const FocusCompareToBaselinePage = () => {
     };
   };
 
-  const splitSequencesOverTime = useDeepCompareMemo(() => generateSplitData(splitField, 'date'), [
-    splitField,
-    ldvsSelectors,
-  ]);
+  const splitSequencesOverTime = useDeepCompareMemo(
+    () => generateSplitData(splitField, 'date'),
+    [splitField, ldvsSelectors]
+  );
 
   // --- Rendering ---
 
   if (!exploreUrl.variants) {
     return null;
+  }
+
+  // Error handling
+  const allErrors = [variantDateCounts.error, wholeDateCount.error].filter(e => !!e) as string[];
+  if (allErrors.length > 0) {
+    return <ErrorAlert messages={allErrors} />;
   }
 
   return (
@@ -171,7 +177,6 @@ export const FocusCompareToBaselinePage = () => {
           )}
           {variantDateCounts.data && wholeDateCount.data && (
             <GridCell minWidth={600}>
-              <TemporaryFitnessBanner />
               <NamedCard
                 title='Relative growth advantage'
                 toolbar={[createDivisionBreakdownButton('Chen2021Fitness', setShowChen2021FitnessDivGrid)]}

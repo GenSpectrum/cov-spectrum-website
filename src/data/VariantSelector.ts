@@ -2,14 +2,38 @@ import * as zod from 'zod';
 
 export const VariantSelectorEncodedSchema = zod.object({
   pangoLineage: zod.string().optional(),
+  nextcladePangoLineage: zod.string().optional(),
   gisaidClade: zod.string().optional(),
   nextstrainClade: zod.string().optional(),
   aaMutations: zod.array(zod.string()).optional(),
   nucMutations: zod.array(zod.string()).optional(),
+  aaInsertions: zod.array(zod.string()).optional(),
+  nucInsertions: zod.array(zod.string()).optional(),
   variantQuery: zod.string().optional(),
 });
 
 export type VariantSelector = zod.infer<typeof VariantSelectorEncodedSchema>;
+
+export const variantFields = [
+  'pangoLineage',
+  'nextcladePangoLineage',
+  'gisaidClade',
+  'nextstrainClade',
+  'aaMutations',
+  'nucMutations',
+  'aaInsertions',
+  'nucInsertions',
+  'variantQuery',
+] as const;
+export type VariantField = typeof variantFields[number];
+const variantStringFields = [
+  'pangoLineage',
+  'nextcladePangoLineage',
+  'gisaidClade',
+  'nextstrainClade',
+  'variantQuery',
+] as const;
+const variantArrayFields = ['aaMutations', 'nucMutations', 'aaInsertions', 'nucInsertions'] as const;
 
 export function encodeVariantSelector(selector: VariantSelector): VariantSelector {
   return selector;
@@ -24,15 +48,14 @@ export function addVariantSelectorToUrlSearchParams(
   params: URLSearchParams,
   index?: number
 ) {
-  if (selector.aaMutations?.length) {
-    const aaMutationsKey = index && index > 0 ? `aaMutations${index}` : 'aaMutations';
-    params.set(aaMutationsKey, selector.aaMutations.join(','));
+  for (const k of variantArrayFields) {
+    const arr = selector[k];
+    if (arr?.length) {
+      const key = index && index > 0 ? `${k}${index}` : k;
+      params.set(key, arr.join(','));
+    }
   }
-  if (selector.nucMutations?.length) {
-    const nucMutationsKey = index && index > 0 ? `nucMutations${index}` : 'nucMutations';
-    params.set(nucMutationsKey, selector.nucMutations.join(','));
-  }
-  for (const k of ['pangoLineage', 'gisaidClade', 'nextstrainClade', 'variantQuery'] as const) {
+  for (const k of variantStringFields) {
     const value = selector[k];
     if (value !== undefined) {
       const key = index && index > 0 ? `${k}${index}` : k;
@@ -50,27 +73,22 @@ export function addVariantSelectorsToUrlSearchParams(selectors: VariantSelector[
 
 function removeVariantSelectorsFromUrlSearchParams(params: URLSearchParams) {
   for (const key of [...params.keys()]) {
-    if (
-      key.startsWith('aaMutations') ||
-      key.startsWith('nucMutations') ||
-      key.startsWith('pangoLineage') ||
-      key.startsWith('gisaidClade') ||
-      key.startsWith('nextstrainClade') ||
-      key.startsWith('variantQuery')
-    ) {
-      params.delete(key);
+    for (const field of variantFields) {
+      if (key.startsWith(field)) {
+        params.delete(key);
+        break;
+      }
     }
   }
 }
 
-export function decodeVariantListFromUrl(query: string): VariantSelector[] {
-  const params = new URLSearchParams(query);
+export function readVariantListFromUrlSearchParams(params: URLSearchParams): VariantSelector[] {
   // Find out how many variants are specified and which index/ID they have.
   const variantIds = new Set<number>();
   for (let key of params.keys()) {
     // The number in "aaMutations1", "pangoLineage3", ... should be parsed out.
     const match = key.match(
-      /(pangoLineage|gisaidClade|nextstrainClade|aaMutations|nucMutations|variantQuery)(\d+)/
+      /(pangoLineage|nextcladePangoLineage|gisaidClade|nextstrainClade|aaMutations|nucMutations|aaInsertions|nucInsertions|variantQuery)(\d+)/
     );
     if (match) {
       variantIds.add(Number.parseInt(match[2]));
@@ -80,46 +98,42 @@ export function decodeVariantListFromUrl(query: string): VariantSelector[] {
   const variants: VariantSelector[] = [
     {
       pangoLineage: params.get('pangoLineage') ?? undefined,
+      nextcladePangoLineage: params.get('nextcladePangoLineage') ?? undefined,
       gisaidClade: params.get('gisaidClade') ?? undefined,
       nextstrainClade: params.get('nextstrainClade') ?? undefined,
       aaMutations: params.get('aaMutations')?.split(','),
       nucMutations: params.get('nucMutations')?.split(','),
+      aaInsertions: params.get('aaInsertions')?.split(','),
+      nucInsertions: params.get('nucInsertions')?.split(','),
       variantQuery: params.get('variantQuery') ?? undefined,
     },
   ];
   for (let id of variantIds) {
     variants.push({
       pangoLineage: params.get('pangoLineage' + id) ?? undefined,
+      nextcladePangoLineage: params.get('nextcladePangoLineage' + id) ?? undefined,
       gisaidClade: params.get('gisaidClade' + id) ?? undefined,
       nextstrainClade: params.get('nextstrainClade' + id) ?? undefined,
       aaMutations: params.get('aaMutations' + id)?.split(','),
       nucMutations: params.get('nucMutations' + id)?.split(','),
+      aaInsertions: params.get('aaInsertions' + id)?.split(','),
+      nucInsertions: params.get('nucInsertions' + id)?.split(','),
       variantQuery: params.get('variantQuery' + id) ?? undefined,
     });
   }
   return variants;
 }
 
-export function variantIsOnlyDefinedBy(
-  selector: VariantSelector,
-  field: 'pangoLineage' | 'gisaidClade' | 'nextstrainClade' | 'aaMutations' | 'nucMutations' | 'variantQuery'
-): boolean {
+export function variantIsOnlyDefinedBy(selector: VariantSelector, field: VariantField): boolean {
   // The field is not undefined:
   if (selector[field] === undefined) {
     return false;
   }
   // Other fields are undefined:
-  for (const f of [
-    'pangoLineage',
-    'gisaidClade',
-    'nextstrainClade',
-    'aaMutations',
-    'nucMutations',
-    'variantQuery',
-  ] as const) {
+  for (const f of variantFields) {
     const fieldValue = selector[f];
     if (f !== field && fieldValue !== undefined) {
-      if (f === 'aaMutations' || f === 'nucMutations') {
+      if (variantArrayFields.includes(f as any)) {
         if (fieldValue.length === 0) {
           continue;
         }
@@ -134,18 +148,11 @@ export function variantIsOnlyDefinedBy(
  * Returns true if no filter is set
  */
 export function variantIsAllLineages(selector: VariantSelector): boolean {
-  // Other fields are undefined:
-  for (const f of [
-    'pangoLineage',
-    'gisaidClade',
-    'nextstrainClade',
-    'aaMutations',
-    'nucMutations',
-    'variantQuery',
-  ] as const) {
+  // All fields are undefined:
+  for (const f of variantFields) {
     const fieldValue = selector[f];
     if (fieldValue !== undefined) {
-      if (f === 'aaMutations' || f === 'nucMutations' || f === 'variantQuery') {
+      if (variantArrayFields.includes(f as any)) {
         if (fieldValue.length === 0) {
           continue;
         }
@@ -157,11 +164,21 @@ export function variantIsAllLineages(selector: VariantSelector): boolean {
 }
 
 export function isValidPangoLineageQuery(query: string): boolean {
-  return /^([A-Z]){1,2}(\.[0-9]{1,3})*(\.?\*)?$/.test(query.toUpperCase());
+  return /^([A-Z]){1,3}(\.[0-9]{1,3})*(\.?\*)?$/.test(query.toUpperCase());
 }
 
 export function formatVariantDisplayName(
-  { pangoLineage, gisaidClade, nextstrainClade, nucMutations, aaMutations, variantQuery }: VariantSelector,
+  {
+    pangoLineage,
+    nextcladePangoLineage,
+    gisaidClade,
+    nextstrainClade,
+    nucMutations,
+    aaMutations,
+    nucInsertions,
+    aaInsertions,
+    variantQuery,
+  }: VariantSelector,
   dense = false
 ): string {
   if (variantQuery) {
@@ -169,10 +186,13 @@ export function formatVariantDisplayName(
   }
   const components = [
     pangoLineage,
-    gisaidClade,
-    nextstrainClade,
+    nextcladePangoLineage ? nextcladePangoLineage + ' (Nextclade)' : undefined,
+    gisaidClade ? gisaidClade + ' (GISAID clade)' : undefined,
+    nextstrainClade ? nextstrainClade + ' (Nextstrain clade)' : undefined,
     nucMutations?.join(', '),
     aaMutations?.join(', '),
+    nucInsertions?.join(', '),
+    aaInsertions?.join(', '),
   ].filter(c => !!c && c.length > 0);
   if (components.length === 0) {
     return 'All lineages';
@@ -186,10 +206,13 @@ export function transformToVariantQuery(selector: VariantSelector): string {
   }
   const components = [
     selector.pangoLineage,
-    selector.nextstrainClade ? `nextstrain:${selector.nextstrainClade}` : undefined,
+    selector.nextcladePangoLineage ? `nextcladePangoLineage:${selector.nextcladePangoLineage}` : undefined,
+    selector.nextstrainClade ? `nextstrainClade:${selector.nextstrainClade}` : undefined,
     selector.gisaidClade ? `gisaid:${selector.gisaidClade}` : undefined,
     ...(selector.aaMutations ?? []),
     ...(selector.nucMutations ?? []),
+    ...(selector.aaInsertions ?? []),
+    ...(selector.nucInsertions ?? []),
   ].filter(c => !!c) as string[];
   return components.join(' & ');
 }
