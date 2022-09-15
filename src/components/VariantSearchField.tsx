@@ -180,6 +180,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   );
 
   const applySelector = (selector: VariantSelector) => {
+    alert('Apply selector');
     if (selector.variantQuery !== undefined) {
       setAdvancedSearch(true);
       setVariantQuery(selector.variantQuery);
@@ -387,14 +388,21 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
 
   // --- Drag&drop ---
 
+  const changeAdvancedSearch = (value: boolean) => {
+    setAdvancedSearch(value);
+  };
+
   const dropToField = (query: any) => {
     if (query) {
       const selector = JSON.parse(query) as VariantSelector;
       if (selector.variantQuery) {
-        setAdvancedSearch(true);
+        changeAdvancedSearch(true);
+        setSelectedOptions([]);
       } else {
-        setAdvancedSearch(false);
+        setVariantQuery('');
+        changeAdvancedSearch(false);
       }
+      alert('Selector from drop');
       applySelector(selector);
     }
   };
