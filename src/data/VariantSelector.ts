@@ -1,5 +1,5 @@
 import * as zod from 'zod';
-import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
+import refData from './refData';
 
 export const VariantSelectorEncodedSchema = zod.object({
   pangoLineage: zod.string().optional(),
@@ -171,15 +171,20 @@ export function isValidPangoLineageQuery(query: string): boolean {
 const stripNumber = (str: string) => Number.parseInt(str.replace(/\D+/g, ''));
 const isNumeric = (str: string) => /^\d+$/.test(str);
 
+type geneType = {
+  name: string;
+  startPosition: number;
+  endPosition: number;
+  aaSeq: string;
+};
+
 const formatGeneName = (gene: string): string => {
   return gene.length === 1
     ? gene.toUpperCase()
     : gene.slice(0, -1).toUpperCase() + gene.slice(-1).toLowerCase();
 };
 
-export const normalizeMutationName = async (name: string) => {
-  let refData = await ReferenceGenomeService.data;
-
+export const normalizeMutationName = (name: string) => {
   let items = name.split(':');
   if (name.toLowerCase().startsWith('ins_')) {
     return items.length === 3
@@ -195,9 +200,9 @@ export const normalizeMutationName = async (name: string) => {
 
       return name.toUpperCase();
     } else {
-      let refBase = refData.genes.filter(gene => gene.name === formatGeneName(items[0]))[0].aaSeq.toString()[
-        stripNumber(items[1]) - 1
-      ];
+      let refBase = refData.genes
+        .filter((gene: geneType) => gene.name === formatGeneName(items[0]))[0]
+        .aaSeq.toString()[stripNumber(items[1]) - 1];
 
       return `${formatGeneName(items[0])}:${isNumeric(items[1][0]) ? refBase : ''}${items[1].toUpperCase()}`;
     }
@@ -228,7 +233,7 @@ export function formatVariantDisplayName(
     gisaidClade ? gisaidClade.toUpperCase() + ' (GISAID clade)' : undefined,
     nextstrainClade ? nextstrainClade.toUpperCase() + ' (Nextstrain clade)' : undefined,
     nucMutations && nucMutations.map(mutation => normalizeMutationName(mutation)).join(', '),
-    aaMutations && aaMutations.map(mutation => normalizeMutationName(mutation)).join(', '),
+    aaMutations && aaMutations.map(mutation => normalizeMutationName(mutation)).join(', '), // normalizeMutationName(mutation)).join(', ')
     nucInsertions && nucInsertions.map(mutation => normalizeMutationName(mutation)).join(', '),
     aaInsertions && aaInsertions.map(mutation => normalizeMutationName(mutation)).join(', '),
   ].filter(c => !!c && c.length > 0);
