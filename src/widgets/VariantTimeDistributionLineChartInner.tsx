@@ -11,6 +11,7 @@ import { maxYAxis } from '../helpers/max-y-axis';
 import { ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import { boolean } from 'zod';
 
 export type VariantTimeDistributionLineChartEntry = {
   date: UnifiedDay;
@@ -41,7 +42,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
   ({ data }: VariantTimeDistributionLineChartProps): JSX.Element => {
     const [active, setActive] = useState<PlotEntry | undefined>(undefined);
     const [absoluteNumbers, setAbsoluteNumbers] = useState<boolean>(false);
-    const [log, setLog] = useState<boolean>(false);
+    const [logScale, setLogScale] = useState<boolean>(false);
 
     const {
       plotData,
@@ -105,8 +106,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
           proportion: absoluteNumbers ? variantCount : Math.max(variantCount / sequenced, 0),
           proportionCI: [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)],
           // select only those values which are greater than zero for the log scale
-          log:
-            Math.max(variantCount / sequenced, 0) !== 0 ? Math.max(variantCount / sequenced, 0) : undefined,
+          log: Math.max(variantCount / sequenced, 0) || undefined,
         };
         if (item['log']) {
           item['logCI'] = item['proportionCI'];
@@ -167,6 +167,8 @@ export const VariantTimeDistributionLineChartInner = React.memo(
       }
     };
 
+    const toggleLogScale = () => setLogScale(logScale => !logScale);
+
     return (
       <DownloadWrapper name='EstimatedCasesPlot' csvData={csvData}>
         <Wrapper>
@@ -200,7 +202,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
               {!absoluteNumbers && (
                 <FormGroup>
                   <FormControlLabel
-                    control={<Checkbox defaultChecked checked={log} onChange={() => setLog(!log)} />}
+                    control={<Checkbox defaultChecked checked={logScale} onChange={toggleLogScale} />}
                     label='Log scale'
                   />
                 </FormGroup>
@@ -229,8 +231,8 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     allowDecimals={true}
                     hide={false}
                     width={50}
-                    scale={log && !absoluteNumbers ? 'log' : 'linear'}
-                    domain={log && !absoluteNumbers ? ['auto', 'auto'] : [0, maxYAxis(yMax)]}
+                    scale={logScale && !absoluteNumbers ? 'log' : 'linear'}
+                    domain={logScale && !absoluteNumbers ? ['auto', 'auto'] : [0, maxYAxis(yMax)]}
                     allowDataOverflow={true}
                   />
                   <Tooltip
@@ -249,14 +251,14 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                   />
                   <Area
                     type='monotone'
-                    dataKey={log && !absoluteNumbers ? 'logCI' : 'proportionCI'}
+                    dataKey={logScale && !absoluteNumbers ? 'logCI' : 'proportionCI'}
                     fill={colors.activeSecondary}
                     stroke='transparent'
                     isAnimationActive={false}
                   />
                   <Line
                     type='monotone'
-                    dataKey={log && !absoluteNumbers ? 'log' : 'proportion'}
+                    dataKey={logScale && !absoluteNumbers ? 'log' : 'proportion'}
                     stroke={colors.active}
                     strokeWidth={3}
                     dot={false}
