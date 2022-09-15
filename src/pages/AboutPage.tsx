@@ -140,7 +140,6 @@ export const AboutPage = () => {
               23403: the 23403th position is mutated; in other words, it does not have the same base as the
               reference genome and it is not unknown
             </li>
-            <li>23403: the 23403th position is deleted</li>
             <li>
               23403.: the 23403th position is not mutated, i.e., it has the same base as the reference genome
             </li>
