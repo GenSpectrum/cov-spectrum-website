@@ -193,7 +193,6 @@ export const normalizeMutationName = (name: string) => {
   } else {
     if (items.length === 1) {
       if (isNumeric(name[0])) {
-        console.log(name, stripNumber(name));
         let refBase = refData.nucSeq[stripNumber(name) - 1];
         return `${refBase}${name}`.toUpperCase();
       }
