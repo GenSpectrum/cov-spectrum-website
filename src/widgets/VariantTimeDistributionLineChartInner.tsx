@@ -11,7 +11,6 @@ import { maxYAxis } from '../helpers/max-y-axis';
 import { ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
-import { boolean } from 'zod';
 
 export type VariantTimeDistributionLineChartEntry = {
   date: UnifiedDay;
