@@ -2,7 +2,7 @@ import { ReferenceGenomeInfo } from '../data/ReferenceGenomeInfo';
 import { fetchReferenceGenomeInfo } from '../data/api';
 
 export class ReferenceGenomeService {
-  private static data: Promise<ReferenceGenomeInfo> = ReferenceGenomeService.init();
+  static data: Promise<ReferenceGenomeInfo> = ReferenceGenomeService.init();
   static readonly genes = [
     'E',
     'N',
