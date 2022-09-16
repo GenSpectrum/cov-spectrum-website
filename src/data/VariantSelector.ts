@@ -171,7 +171,7 @@ export function isValidPangoLineageQuery(query: string): boolean {
 const stripNumber = (str: string) => Number.parseInt(str.replace(/\D+/g, ''));
 const isNumeric = (str: string) => /^\d+$/.test(str);
 
-type geneType = {
+type Gene = {
   name: string;
   startPosition: number;
   endPosition: number;
@@ -184,17 +184,21 @@ const formatGeneName = (gene: string): string => {
     : gene.slice(0, -1).toUpperCase() + gene.slice(-1).toLowerCase();
 };
 
+// getting a 'clean' copy: https://stackoverflow.com/a/51681510
 const loadRefData = () => JSON.parse(JSON.stringify(jsonRefData));
 
 export const normalizeMutationName = (name: string) => {
   const refData = loadRefData();
   let items = name.split(':');
   if (name.toLowerCase().startsWith('ins_')) {
+    // insertions
     return items.length === 3
-      ? `ins_${formatGeneName(items[0].substring(4))}:${items[1]}:${items[2].toUpperCase()}`
-      : `${items[0].toLowerCase()}:${items[1].toUpperCase()}`;
+      ? `ins_${formatGeneName(items[0].substring(4))}:${items[1]}:${items[2].toUpperCase()}` // AA insertions
+      : `${items[0].toLowerCase()}:${items[1].toUpperCase()}`; // Nuc insertions
   } else {
+    // mutations
     if (items.length === 1) {
+      // Nuc mutations
       if (isNumeric(name[0])) {
         let refBase = refData.nucSeq[stripNumber(name) - 1];
         return `${refBase}${name}`.toUpperCase();
@@ -202,9 +206,10 @@ export const normalizeMutationName = (name: string) => {
 
       return name.toUpperCase();
     } else {
-      let refBase = refData.genes
-        .filter((gene: geneType) => gene.name === formatGeneName(items[0]))[0]
-        .aaSeq.toString()[stripNumber(items[1]) - 1];
+      // AA mutations
+      const refBase = refData.genes.filter((gene: Gene) => gene.name === formatGeneName(items[0]))[0].aaSeq[
+        stripNumber(items[1]) - 1
+      ];
 
       return `${formatGeneName(items[0])}:${isNumeric(items[1][0]) ? refBase : ''}${items[1].toUpperCase()}`;
     }
@@ -235,7 +240,7 @@ export function formatVariantDisplayName(
     gisaidClade ? gisaidClade.toUpperCase() + ' (GISAID clade)' : undefined,
     nextstrainClade ? nextstrainClade.toUpperCase() + ' (Nextstrain clade)' : undefined,
     nucMutations && nucMutations.map(mutation => normalizeMutationName(mutation)).join(', '),
-    aaMutations && aaMutations.map(mutation => normalizeMutationName(mutation)).join(', '), // normalizeMutationName(mutation)).join(', ')
+    aaMutations && aaMutations.map(mutation => normalizeMutationName(mutation)).join(', '),
     nucInsertions && nucInsertions.map(mutation => normalizeMutationName(mutation)).join(', '),
     aaInsertions && aaInsertions.map(mutation => normalizeMutationName(mutation)).join(', '),
   ].filter(c => !!c && c.length > 0);
