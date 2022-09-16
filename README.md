@@ -25,6 +25,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/dameyerdave"><img src="https://avatars.githubusercontent.com/u/5663605?v=4?s=100" width="100px;" alt=""/><br /><sub><b>David Meyer</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=dameyerdave" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/anastasia-escher"><img src="https://avatars.githubusercontent.com/u/52914023?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Anastasia Escher</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=anastasia-escher" title="Code">💻</a></td>
     <td align="center"><a href="http://theo.io/"><img src="https://avatars.githubusercontent.com/u/19732295?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Theo Sanderson</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=theosanderson" title="Code">💻</a> <a href="#ideas-theosanderson" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/adrian-lison"><img src="https://avatars.githubusercontent.com/u/16266527?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Adrian Lison</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=adrian-lison" title="Code">💻</a></td>
   </tr>
 </table>
 
