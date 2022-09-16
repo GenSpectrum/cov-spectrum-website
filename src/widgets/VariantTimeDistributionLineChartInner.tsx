@@ -213,7 +213,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
               <ResponsiveContainer>
                 <ComposedChart
                   data={plotData}
-                  margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
+                  margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 5, bottom: 5 }}
                 >
                   <XAxis
                     dataKey='date'

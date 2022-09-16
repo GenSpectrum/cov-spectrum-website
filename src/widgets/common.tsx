@@ -40,6 +40,7 @@ export const ChartAndMetricsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   flex: 1;
+  margin-bottom: 70px;
 
   @media (min-width: 640px) {
     flex-direction: row;
