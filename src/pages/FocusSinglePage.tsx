@@ -52,7 +52,7 @@ const SWISS_SPECIALTIES_ACTIVATED = false;
 
 export const FocusSinglePage = () => {
   const exploreUrl = useExploreUrl();
-  const [lineageDistributionIndex, setLineageDistributionIndex] = useState(0);
+  const [lineageDistributionIndex, setLineageDistributionIndex] = useState(1);
   const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
   const [showEstimatedCasesDivGrid, setShowEstimatedCasesDivGrid] = useState(false);
   const [showVariantAgeDistributionDivGrid, setShowVariantAgeDistributionDivGrid] = useState(false);
