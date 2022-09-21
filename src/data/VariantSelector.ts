@@ -207,9 +207,12 @@ export const normalizeMutationName = (name: string) => {
       return name.toUpperCase();
     } else {
       // AA mutations
-      const refBase = refData.genes.filter((gene: Gene) => gene.name === formatGeneName(items[0]))[0].aaSeq[
-        stripNumber(items[1]) - 1
-      ];
+      const geneRefData = refData.genes.filter((gene: Gene) => gene.name === formatGeneName(items[0]))[0];
+      if (!geneRefData) {
+        // Unexpectedly, an unknown gene name was found.
+        return name;
+      }
+      const refBase = geneRefData.aaSeq[stripNumber(items[1]) - 1];
 
       return `${formatGeneName(items[0])}:${isNumeric(items[1][0]) ? refBase : ''}${items[1].toUpperCase()}`;
     }
