@@ -61,6 +61,11 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
         </div>
         <div
           className="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
+          style={
+            Object {
+              "visibility": "visible",
+            }
+          }
         >
           <label
             className="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
