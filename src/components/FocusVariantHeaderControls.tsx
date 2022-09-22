@@ -54,7 +54,6 @@ const StyledMenu = styled((props: MenuProps) => (
       '& .MuiSvgIcon-root': {
         fontSize: 18,
         color: theme.palette.text.secondary,
-        marginRight: theme.spacing(1.5),
       },
       '&:active': {
         backgroundColor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity),
@@ -138,12 +137,11 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
 
   return (
     <>
-      <div>
+      <div style={{ marginRight: '30px' }}>
         <Button
           style={{ marginRight: '4px' }}
           id='demo-customized-button'
           aria-controls={openSequence ? 'demo-customized-menu' : undefined}
-          aria-haspopup='true'
           aria-expanded={openSequence ? 'true' : undefined}
           variant='contained'
           disableElevation
@@ -153,6 +151,7 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
           Sequence
         </Button>
         <StyledMenu
+          disableScrollLock={true}
           id='demo-customized-menu'
           MenuListProps={{
             'aria-labelledby': 'demo-customized-button',
@@ -197,6 +196,7 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
           Other websites
         </Button1>
         <Menu
+          disableScrollLock={true}
           id='basic-menu'
           anchorEl={anchorEl}
           open={open}
