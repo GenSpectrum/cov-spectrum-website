@@ -198,14 +198,17 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                   Absolute
                 </Button>
               </ButtonGroup>
-              {!absoluteNumbers && (
-                <FormGroup>
-                  <FormControlLabel
-                    control={<Checkbox defaultChecked checked={logScale} onChange={toggleLogScale} />}
-                    label='Log scale'
-                  />
-                </FormGroup>
-              )}
+
+              <FormGroup
+                style={{
+                  visibility: `${absoluteNumbers ? 'hidden' : 'visible'}`,
+                }}
+              >
+                <FormControlLabel
+                  control={<Checkbox defaultChecked checked={logScale} onChange={toggleLogScale} />}
+                  label='Log scale'
+                />
+              </FormGroup>
             </ButtonToolbar>
           </TitleWrapper>
           <ChartAndMetricsWrapper>
@@ -217,7 +220,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     top: 6,
                     right: CHART_MARGIN_RIGHT,
                     left: 5,
-                    bottom: absoluteNumbers ? 0 : 5,
+                    bottom: 5,
                   }}
                 >
                   <XAxis
