@@ -4,47 +4,163 @@ import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
 import { transformToVariantQuery } from '../data/VariantSelector';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
-import { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { globalDateCache, UnifiedDay, UnifiedIsoWeek } from '../helpers/date-cache';
 import { NamedCard } from './NamedCard';
 import { sortListByNucMutation } from '../helpers/nuc-mutation';
 import { scaleLinear } from 'd3-scale';
 import { sortListByAAMutation } from '../helpers/aa-mutation';
 import { useResizeDetector } from 'react-resize-detector';
+import { SequenceType } from '../data/SequenceType';
+import NumericInput from 'react-numeric-input';
+import { Form } from 'react-bootstrap';
+import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 
-type ProportionRange = {
-  min: number;
-  max: number;
+type Data = {
+  weeks: UnifiedIsoWeek[];
+  mutations: {
+    mutation: string;
+    proportions: number[];
+    counts: number[];
+  }[];
+  ticks: { min: UnifiedDay; middle: UnifiedDay; max: UnifiedDay };
 };
 
 type Props = {
   selector: LapisSelector;
 };
-const proportionRange: ProportionRange = { min: 0.05, max: 0.95 };
 
 export const VariantMutationsTimelines = ({ selector }: Props) => {
-  const { width, ref } = useResizeDetector<HTMLDivElement>();
+  const [sequenceType, setSequenceType] = useState<SequenceType>('aa');
+  const [minProportion, setMinProportion] = useState(0.05);
+  const [maxProportion, setMaxProportion] = useState(0.9);
+  const [gene, setGene] = useState<string>('all');
 
+  const data = useData(selector, sequenceType, minProportion, maxProportion, gene);
+
+  const controls = (
+    <div className='mb-4'>
+      {/* TODO Reduce code redundancy: VariantMutations (and maybe other components) has very similar code */}
+      {/* AA vs. nucs */}
+      <div className='mb-2'>
+        Sequence type:{' '}
+        <span
+          className={sequenceType === 'aa' ? 'font-bold' : 'underline cursor-pointer'}
+          onClick={() => setSequenceType('aa')}
+        >
+          Amino acids
+        </span>
+        {' | '}
+        <span
+          className={sequenceType === 'nuc' ? 'font-bold' : 'underline cursor-pointer'}
+          onClick={() => setSequenceType('nuc')}
+        >
+          Nucleotides
+        </span>
+      </div>
+      {/* Proportions */}
+      <div className='mb-2'>
+        Proportions:{' '}
+        <NumericInput
+          precision={1}
+          step={0.1}
+          min={0.1}
+          max={99}
+          style={{ input: { width: '85px', textAlign: 'right' } }}
+          format={value => `${value}%`}
+          value={(minProportion * 100).toFixed(1)}
+          onChange={value => setMinProportion(value! / 100)}
+        />
+        {' - '}
+        <NumericInput
+          precision={1}
+          step={0.1}
+          min={0.2}
+          max={100}
+          style={{ input: { width: '85px', textAlign: 'right' } }}
+          format={value => `${value}%`}
+          value={(maxProportion * 100).toFixed(1)}
+          onChange={value => setMaxProportion(value! / 100)}
+        />
+      </div>
+      {/* Genes */}
+      {sequenceType === 'aa' && (
+        <div className='w-72 flex'>
+          <div className='mr-2'>Gene:</div>
+          <Form.Control
+            as='select'
+            value={gene}
+            onChange={ev => setGene(ev.target.value)}
+            className='flex-grow'
+            size='sm'
+          >
+            <option value='all'>All</option>
+            {ReferenceGenomeService.genes.map(g => (
+              <option value={g}>{g}</option>
+            ))}
+          </Form.Control>
+        </div>
+      )}
+    </div>
+  );
+
+  let plotArea;
+  if (!data) {
+    plotArea = <Loader />;
+  } else if (data === 'empty') {
+    plotArea = <>Not enough data available</>;
+  } else if (data === 'too-big') {
+    plotArea = <>There are too many mutation. Please adapt the filters to reduce the number of mutations.</>;
+  } else if (data.mutations.length === 0) {
+    plotArea = <>No mutation found</>;
+  } else {
+    plotArea = <Plot data={data} />;
+  }
+
+  return (
+    <NamedCard title='Substitutions over time'>
+      {controls}
+      {plotArea}
+    </NamedCard>
+  );
+};
+
+const useData = (
+  selector: LapisSelector,
+  sequenceType: SequenceType,
+  minProportion: number,
+  maxProportion: number,
+  gene: string
+): undefined | 'empty' | 'too-big' | Data => {
   // Fetch the date distribution and mutations of the variant
   const basicVariantDataQuery = useQuery(
-    signal =>
-      Promise.all([
+    async signal => ({
+      sequenceType,
+      result: await Promise.all([
         DateCountSampleData.fromApi(selector, signal),
-        MutationProportionData.fromApi(selector, 'aa', signal),
+        MutationProportionData.fromApi(selector, sequenceType, signal),
       ]),
-    [selector]
+    }),
+    [selector, sequenceType]
   );
-  const [variantDateCounts, variantMutations] = basicVariantDataQuery.data ?? [undefined, undefined];
+  const [variantDateCounts, variantMutations] = basicVariantDataQuery.data?.result ?? [undefined, undefined];
 
   // Fetch the date distributions of the "variant+mutation"s
   const mutationsTimesQuery = useQuery(
     async signal => {
-      if (!variantMutations) {
+      const sequenceType = basicVariantDataQuery.data?.sequenceType;
+      if (!variantMutations || !sequenceType) {
         return undefined;
       }
-      const filteredMutations = variantMutations.payload
-        .filter(m => m.proportion >= proportionRange.min && m.proportion <= proportionRange.max)
+      let filteredMutations = variantMutations.payload
+        .filter(m => m.proportion >= minProportion && m.proportion <= maxProportion)
         .filter(m => !m.mutation.endsWith('-')); // TODO We might want to allow the user to include deletions
+      if (sequenceType === 'aa' && gene !== 'all') {
+        filteredMutations = filteredMutations.filter(m => m.mutation.startsWith(gene + ':'));
+      }
+      if (filteredMutations.length > 50) {
+        return 'too-big';
+      }
       const variantAsVariantQuery = transformToVariantQuery(selector.variant ?? {});
       const selectorsWithMutation: LapisSelector[] = filteredMutations.map(m => ({
         ...selector,
@@ -52,36 +168,35 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
           variantQuery: `(${variantAsVariantQuery}) & ${m.mutation}`,
         },
       }));
-      return Promise.all(
-        selectorsWithMutation.map((s, i) =>
-          DateCountSampleData.fromApi(s, signal).then(data => ({
-            mutation: filteredMutations[i].mutation,
-            data,
-          }))
-        )
-      );
+      return {
+        sequenceType,
+        result: await Promise.all(
+          selectorsWithMutation.map((s, i) =>
+            DateCountSampleData.fromApi(s, signal).then(data => ({
+              mutation: filteredMutations[i].mutation,
+              data,
+            }))
+          )
+        ),
+      };
     },
-    [variantMutations]
+    [variantMutations, basicVariantDataQuery.data?.sequenceType, minProportion, maxProportion, gene]
   );
 
   // Transform the data: calculate weekly proportions
-  const data:
-    | undefined
-    | 'empty'
-    | {
-        weeks: UnifiedIsoWeek[];
-        mutations: {
-          mutation: string;
-          proportions: number[];
-          counts: number[];
-        }[];
-        ticks: { min: UnifiedDay; middle: UnifiedDay; max: UnifiedDay };
-      } = useMemo(() => {
+  const data = useMemo(() => {
     if (!variantDateCounts || !mutationsTimesQuery.data) {
       return undefined;
     }
+    if (mutationsTimesQuery.data === 'too-big') {
+      return 'too-big';
+    }
     if (variantDateCounts.payload.length === 0) {
       return 'empty';
+    }
+    const sequenceType = mutationsTimesQuery.data?.sequenceType;
+    if (!sequenceType) {
+      return undefined;
     }
 
     // Calculate weeks
@@ -96,7 +211,7 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
     const ticks = { min: weekRange.min.firstDay, middle: middleDay, max: weekRange.max.firstDay };
 
     // Calculate proportions
-    const mutations = mutationsTimesQuery.data.map(mutationDateCounts => {
+    const mutations = mutationsTimesQuery.data.result.map(mutationDateCounts => {
       const proportionsByWeek = DateCountSampleData.proportionByWeek(
         mutationDateCounts.data.payload,
         variantDateCounts.payload
@@ -114,25 +229,36 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
         counts,
       };
     });
-    const sorted2 = sortListByNucMutation(mutations, m => m.mutation);
-    const sorted = sortListByAAMutation(mutations, m => m.mutation);
+    const sortFunc = sequenceType === 'aa' ? sortListByAAMutation : sortListByNucMutation;
+    const sorted = sortFunc(mutations, m => m.mutation);
 
     return { weeks, mutations: sorted, ticks };
   }, [variantDateCounts, mutationsTimesQuery]);
 
-  if (!data) {
-    return <Loader />;
-  }
+  return data;
+};
 
-  if (data === 'empty') {
-    return <NamedCard title='Substitutions over time'>Not enough data available</NamedCard>;
-  }
+type PlotProps = {
+  data: Data;
+};
+
+const Plot = ({ data }: PlotProps) => {
+  const { width, ref } = useResizeDetector<HTMLDivElement>();
 
   // We only display the proportion numbers if each cell has at least 50px.
-  const showText = width ? (width - 150) / data.weeks.length > 50 : false;
+  let showText: ShowText;
+  if (!width) {
+    showText = 'hidden';
+  } else if ((width - 150) / data.weeks.length > 40) {
+    showText = 'normal';
+  } else if ((width - 150) / data.weeks.length > 28) {
+    showText = 'short';
+  } else {
+    showText = 'hidden';
+  }
 
   return (
-    <NamedCard title='Substitutions over time'>
+    <>
       <div
         ref={ref}
         style={{
@@ -159,13 +285,15 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
         <div>{data.ticks.middle.string}</div>
         <div>{data.ticks.max.string}</div>
       </div>
-    </NamedCard>
+    </>
   );
 };
 
+type ShowText = 'normal' | 'short' | 'hidden';
+
 type ProportionBoxProps = {
   proportion: number;
-  showText: boolean;
+  showText: ShowText;
 };
 
 const colorScale = scaleLinear<string, string>().domain([0, 1]).range(['#b9c8e2', '#045a8d']);
@@ -183,7 +311,8 @@ const ProportionBox = ({ proportion, showText }: ProportionBoxProps) => {
 
   return (
     <div style={{ backgroundColor, color }} className='text-xs	text-center w-full h-full'>
-      {showText && <>{(proportion * 100).toFixed(1)}%</>}
+      {showText === 'normal' && <>{(proportion * 100).toFixed(1)}%</>}
+      {showText === 'short' && <>{(proportion * 100).toFixed(0)}%</>}
     </div>
   );
 };
