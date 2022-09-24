@@ -26,6 +26,8 @@ type Data = {
   ticks: { min: UnifiedDay; middle: UnifiedDay; max: UnifiedDay };
 };
 
+type DeletionFilter = 'all' | 'non-deletion' | 'deletion-only';
+
 type Props = {
   selector: LapisSelector;
 };
@@ -35,9 +37,10 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
   const [minProportion, setMinProportion] = useState(0.05);
   const [maxProportion, setMaxProportion] = useState(0.9);
   const [gene, setGene] = useState<string>('all');
-  const [logitScale, setLogitScale] = useState(true);
+  const [deletionFilter, setDeletionFilter] = useState<DeletionFilter>('non-deletion');
+  const [logitScale, setLogitScale] = useState(false);
 
-  const data = useData(selector, sequenceType, minProportion, maxProportion, gene);
+  const data = useData(selector, sequenceType, minProportion, maxProportion, gene, deletionFilter);
 
   const controls = (
     <div className='mb-4'>
@@ -102,21 +105,44 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
           onChange={value => setMaxProportion(value! / 100)}
         />
       </div>
+      {/* Deletions */}
+      <div className='mb-2'>
+        <span
+          className={deletionFilter === 'all' ? 'font-bold' : 'underline cursor-pointer'}
+          onClick={() => setDeletionFilter('all')}
+        >
+          All
+        </span>
+        {' | '}
+        <span
+          className={deletionFilter === 'non-deletion' ? 'font-bold' : 'underline cursor-pointer'}
+          onClick={() => setDeletionFilter('non-deletion')}
+        >
+          Exclude deletions
+        </span>
+        {' | '}
+        <span
+          className={deletionFilter === 'deletion-only' ? 'font-bold' : 'underline cursor-pointer'}
+          onClick={() => setDeletionFilter('deletion-only')}
+        >
+          Deletions only
+        </span>
+      </div>
       {/* Color scale */}
       <div className='mb-2'>
         Color scale:{' '}
-        <span
-          className={logitScale ? 'font-bold' : 'underline cursor-pointer'}
-          onClick={() => setLogitScale(true)}
-        >
-          Logit
-        </span>
-        {' | '}
         <span
           className={!logitScale ? 'font-bold' : 'underline cursor-pointer'}
           onClick={() => setLogitScale(false)}
         >
           Linear
+        </span>
+        {' | '}
+        <span
+          className={logitScale ? 'font-bold' : 'underline cursor-pointer'}
+          onClick={() => setLogitScale(true)}
+        >
+          Logit
         </span>
       </div>
     </div>
@@ -136,7 +162,7 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
   }
 
   return (
-    <NamedCard title='Substitutions over time'>
+    <NamedCard title='Mutations over time'>
       {controls}
       {plotArea}
     </NamedCard>
@@ -148,7 +174,8 @@ const useData = (
   sequenceType: SequenceType,
   minProportion: number,
   maxProportion: number,
-  gene: string
+  gene: string,
+  deletionFilter: DeletionFilter
 ): undefined | 'empty' | 'too-big' | Data => {
   // Fetch the date distribution and mutations of the variant
   const basicVariantDataQuery = useQuery(
@@ -170,9 +197,14 @@ const useData = (
       if (!variantMutations || !sequenceType) {
         return undefined;
       }
-      let filteredMutations = variantMutations.payload
-        .filter(m => m.proportion >= minProportion && m.proportion <= maxProportion)
-        .filter(m => !m.mutation.endsWith('-')); // TODO We might want to allow the user to include deletions
+      let filteredMutations = variantMutations.payload.filter(
+        m => m.proportion >= minProportion && m.proportion <= maxProportion
+      );
+      if (deletionFilter === 'non-deletion') {
+        filteredMutations = filteredMutations.filter(m => !m.mutation.endsWith('-'));
+      } else if (deletionFilter === 'deletion-only') {
+        filteredMutations = filteredMutations.filter(m => m.mutation.endsWith('-'));
+      }
       if (sequenceType === 'aa' && gene !== 'all') {
         filteredMutations = filteredMutations.filter(m => m.mutation.startsWith(gene + ':'));
       }
@@ -198,7 +230,14 @@ const useData = (
         ),
       };
     },
-    [variantMutations, basicVariantDataQuery.data?.sequenceType, minProportion, maxProportion, gene]
+    [
+      variantMutations,
+      basicVariantDataQuery.data?.sequenceType,
+      minProportion,
+      maxProportion,
+      gene,
+      deletionFilter,
+    ]
   );
 
   // Transform the data: calculate weekly proportions
