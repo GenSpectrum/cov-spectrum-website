@@ -35,6 +35,7 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
   const [minProportion, setMinProportion] = useState(0.05);
   const [maxProportion, setMaxProportion] = useState(0.9);
   const [gene, setGene] = useState<string>('all');
+  const [logitScale, setLogitScale] = useState(true);
 
   const data = useData(selector, sequenceType, minProportion, maxProportion, gene);
 
@@ -58,6 +59,24 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
           Nucleotides
         </span>
       </div>
+      {/* Genes */}
+      {sequenceType === 'aa' && (
+        <div className='w-72 flex mb-2'>
+          <div className='mr-2'>Gene:</div>
+          <Form.Control
+            as='select'
+            value={gene}
+            onChange={ev => setGene(ev.target.value)}
+            className='flex-grow'
+            size='sm'
+          >
+            <option value='all'>All</option>
+            {ReferenceGenomeService.genes.map(g => (
+              <option value={g}>{g}</option>
+            ))}
+          </Form.Control>
+        </div>
+      )}
       {/* Proportions */}
       <div className='mb-2'>
         Proportions:{' '}
@@ -83,24 +102,23 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
           onChange={value => setMaxProportion(value! / 100)}
         />
       </div>
-      {/* Genes */}
-      {sequenceType === 'aa' && (
-        <div className='w-72 flex'>
-          <div className='mr-2'>Gene:</div>
-          <Form.Control
-            as='select'
-            value={gene}
-            onChange={ev => setGene(ev.target.value)}
-            className='flex-grow'
-            size='sm'
-          >
-            <option value='all'>All</option>
-            {ReferenceGenomeService.genes.map(g => (
-              <option value={g}>{g}</option>
-            ))}
-          </Form.Control>
-        </div>
-      )}
+      {/* Color scale */}
+      <div className='mb-2'>
+        Color scale:{' '}
+        <span
+          className={logitScale ? 'font-bold' : 'underline cursor-pointer'}
+          onClick={() => setLogitScale(true)}
+        >
+          Logit
+        </span>
+        {' | '}
+        <span
+          className={!logitScale ? 'font-bold' : 'underline cursor-pointer'}
+          onClick={() => setLogitScale(false)}
+        >
+          Linear
+        </span>
+      </div>
     </div>
   );
 
@@ -114,7 +132,7 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
   } else if (data.mutations.length === 0) {
     plotArea = <>No mutation found</>;
   } else {
-    plotArea = <Plot data={data} />;
+    plotArea = <Plot data={data} logitScale={logitScale} />;
   }
 
   return (
@@ -240,9 +258,10 @@ const useData = (
 
 type PlotProps = {
   data: Data;
+  logitScale: boolean;
 };
 
-const Plot = ({ data }: PlotProps) => {
+const Plot = ({ data, logitScale }: PlotProps) => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
 
   // We only display the proportion numbers if each cell has at least 50px.
@@ -274,7 +293,7 @@ const Plot = ({ data }: PlotProps) => {
             </div>
             {proportions.map((p, j) => (
               <div style={{ gridRowStart: i + 1, gridColumnStart: j + 2 }} className='py-1'>
-                <ProportionBox proportion={p} showText={showText} />
+                <ProportionBox proportion={p} showText={showText} logitScale={logitScale} />
               </div>
             ))}
           </>
@@ -294,18 +313,29 @@ type ShowText = 'normal' | 'short' | 'hidden';
 type ProportionBoxProps = {
   proportion: number;
   showText: ShowText;
+  logitScale: boolean;
 };
 
 const colorScale = scaleLinear<string, string>().domain([0, 1]).range(['#b9c8e2', '#045a8d']);
 
-const ProportionBox = ({ proportion, showText }: ProportionBoxProps) => {
+const logit = (p: number) => {
+  if (p === 1) {
+    return 1; // Instead of +Inf
+  }
+  if (p === 0) {
+    return 0; // Instead of -Inf
+  }
+  return Math.min(Math.max(Math.log(p / (1 - p)) / 8 + 0.5, 0), 1); // Arbitrary defined by me... looks alright
+};
+
+const ProportionBox = ({ proportion, showText, logitScale }: ProportionBoxProps) => {
   let backgroundColor = '';
   if (isNaN(proportion)) {
     backgroundColor = 'lightgrey';
   } else if (proportion === 0) {
     backgroundColor = 'white';
   } else {
-    backgroundColor = colorScale(proportion);
+    backgroundColor = colorScale(logitScale ? logit(proportion) : proportion);
   }
   const color = proportion < 0.5 ? 'black' : 'white';
 
