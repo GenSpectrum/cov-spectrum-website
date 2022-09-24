@@ -13,7 +13,7 @@ import { sortListByAAMutation } from '../helpers/aa-mutation';
 import { useResizeDetector } from 'react-resize-detector';
 import { SequenceType } from '../data/SequenceType';
 import NumericInput from 'react-numeric-input';
-import { Form } from 'react-bootstrap';
+import { Form, OverlayTrigger, Popover } from 'react-bootstrap';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 
 type Data = {
@@ -325,14 +325,21 @@ const Plot = ({ data, logitScale }: PlotProps) => {
           gridTemplateColumns: `8rem repeat(${data.weeks.length}, 1fr)`,
         }}
       >
-        {data.mutations.map(({ mutation, proportions }, i) => (
+        {data.mutations.map(({ mutation, proportions, counts }, i) => (
           <>
             <div className='text-right pr-4' style={{ gridRowStart: i + 1, gridColumnStart: 1 }}>
               {mutation}
             </div>
             {proportions.map((p, j) => (
               <div style={{ gridRowStart: i + 1, gridColumnStart: j + 2 }} className='py-1'>
-                <ProportionBox proportion={p} showText={showText} logitScale={logitScale} />
+                <ProportionBox
+                  mutation={mutation}
+                  week={data.weeks[j]}
+                  proportion={p}
+                  count={counts[j]}
+                  showText={showText}
+                  logitScale={logitScale}
+                />
               </div>
             ))}
           </>
@@ -350,7 +357,10 @@ const Plot = ({ data, logitScale }: PlotProps) => {
 type ShowText = 'normal' | 'short' | 'hidden';
 
 type ProportionBoxProps = {
+  week: UnifiedIsoWeek;
+  mutation: string;
   proportion: number;
+  count: number;
   showText: ShowText;
   logitScale: boolean;
 };
@@ -367,7 +377,7 @@ const logit = (p: number) => {
   return Math.min(Math.max(Math.log(p / (1 - p)) / 8 + 0.5, 0), 1); // Arbitrary defined by me... looks alright
 };
 
-const ProportionBox = ({ proportion, showText, logitScale }: ProportionBoxProps) => {
+const ProportionBox = ({ week, mutation, proportion, count, showText, logitScale }: ProportionBoxProps) => {
   let backgroundColor = '';
   if (isNaN(proportion)) {
     backgroundColor = 'lightgrey';
@@ -387,9 +397,31 @@ const ProportionBox = ({ proportion, showText, logitScale }: ProportionBoxProps)
     value = (proportion * 100).toFixed(0) + '%';
   }
 
+  const popover = (
+    <Popover id='popover-basic' style={{ maxWidth: '600px' }}>
+      <Popover.Body>
+        <div className='font-bold'>
+          Week {week.isoWeek}, {week.isoYear} ({week.firstDay.string})
+        </div>
+        <div>{mutation}</div>
+        <div>
+          {count} samples ({(proportion * 100).toFixed(2)}%)
+        </div>
+      </Popover.Body>
+    </Popover>
+  );
+
   return (
-    <div style={{ backgroundColor, color }} className='text-xs	text-center w-full h-full'>
-      {value}
-    </div>
+    <OverlayTrigger
+      trigger={['hover', 'focus']}
+      overlay={popover}
+      rootClose={true}
+      transition={false}
+      placement='top'
+    >
+      <div style={{ backgroundColor, color }} className='text-xs	text-center w-full h-full hover:font-bold'>
+        {value}
+      </div>
+    </OverlayTrigger>
   );
 };
