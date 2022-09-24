@@ -216,7 +216,7 @@ const useData = (
         mutationDateCounts.data.payload,
         variantDateCounts.payload
       );
-      const proportions: number[] = new Array(weeks.length).fill(0);
+      const proportions: number[] = new Array(weeks.length).fill(NaN);
       const counts: number[] = new Array(weeks.length).fill(0);
       proportionsByWeek.forEach(({ count, proportion }, week) => {
         const index = weekToIndexMap.get(week)!;
@@ -301,7 +301,7 @@ const colorScale = scaleLinear<string, string>().domain([0, 1]).range(['#b9c8e2'
 const ProportionBox = ({ proportion, showText }: ProportionBoxProps) => {
   let backgroundColor = '';
   if (isNaN(proportion)) {
-    backgroundColor = 'grey';
+    backgroundColor = 'lightgrey';
   } else if (proportion === 0) {
     backgroundColor = 'white';
   } else {
@@ -309,10 +309,18 @@ const ProportionBox = ({ proportion, showText }: ProportionBoxProps) => {
   }
   const color = proportion < 0.5 ? 'black' : 'white';
 
+  let value;
+  if (isNaN(proportion) || showText === 'hidden') {
+    value = undefined;
+  } else if (showText === 'normal') {
+    value = (proportion * 100).toFixed(1) + '%';
+  } else if (showText === 'short') {
+    value = (proportion * 100).toFixed(0) + '%';
+  }
+
   return (
     <div style={{ backgroundColor, color }} className='text-xs	text-center w-full h-full'>
-      {showText === 'normal' && <>{(proportion * 100).toFixed(1)}%</>}
-      {showText === 'short' && <>{(proportion * 100).toFixed(0)}%</>}
+      {value}
     </div>
   );
 };
