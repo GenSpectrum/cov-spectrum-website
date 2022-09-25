@@ -16,6 +16,7 @@ import NumericInput from 'react-numeric-input';
 import { Form, OverlayTrigger, Popover } from 'react-bootstrap';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import { ColorScale, ColorScaleInput } from './ColorScaleInput';
+import { PipeDividedOptionsButtons } from '../helpers/ui';
 
 type Data = {
   weeks: UnifiedIsoWeek[];
@@ -51,23 +52,16 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
 
   const controls = (
     <div className='mb-4'>
-      {/* TODO Reduce code redundancy: VariantMutations (and maybe other components) has very similar code */}
       {/* AA vs. nucs */}
-      <div className='mb-2'>
-        Sequence type:{' '}
-        <span
-          className={sequenceType === 'aa' ? 'font-bold' : 'underline cursor-pointer'}
-          onClick={() => setSequenceType('aa')}
-        >
-          Amino acids
-        </span>
-        {' | '}
-        <span
-          className={sequenceType === 'nuc' ? 'font-bold' : 'underline cursor-pointer'}
-          onClick={() => setSequenceType('nuc')}
-        >
-          Nucleotides
-        </span>
+      <div className='mb-2 flex'>
+        <PipeDividedOptionsButtons
+          options={[
+            { label: 'Amino acids', value: 'aa' },
+            { label: 'Nucleotides', value: 'nuc' },
+          ]}
+          selected={sequenceType}
+          onSelect={setSequenceType}
+        />
       </div>
       {/* Genes */}
       {sequenceType === 'aa' && (
@@ -114,43 +108,27 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
       </div>
       {/* Deletions */}
       <div className='mb-2'>
-        <span
-          className={deletionFilter === 'all' ? 'font-bold' : 'underline cursor-pointer'}
-          onClick={() => setDeletionFilter('all')}
-        >
-          All
-        </span>
-        {' | '}
-        <span
-          className={deletionFilter === 'non-deletion' ? 'font-bold' : 'underline cursor-pointer'}
-          onClick={() => setDeletionFilter('non-deletion')}
-        >
-          Exclude deletions
-        </span>
-        {' | '}
-        <span
-          className={deletionFilter === 'deletion-only' ? 'font-bold' : 'underline cursor-pointer'}
-          onClick={() => setDeletionFilter('deletion-only')}
-        >
-          Deletions only
-        </span>
+        <PipeDividedOptionsButtons
+          options={[
+            { label: 'All', value: 'all' },
+            { label: 'Exclude deletions', value: 'non-deletion' },
+            { label: 'Deletions only', value: 'deletion-only' },
+          ]}
+          selected={deletionFilter}
+          onSelect={setDeletionFilter}
+        />
       </div>
       {/* Color scale */}
-      <div className='mb-2'>
-        Color scale:{' '}
-        <span
-          className={!logitScale ? 'font-bold' : 'underline cursor-pointer'}
-          onClick={() => setLogitScale(false)}
-        >
-          Linear
-        </span>
-        {' | '}
-        <span
-          className={logitScale ? 'font-bold' : 'underline cursor-pointer'}
-          onClick={() => setLogitScale(true)}
-        >
-          Logit
-        </span>
+      <div className='mb-2 flex'>
+        <div className='mr-2'>Color scale:</div>
+        <PipeDividedOptionsButtons
+          options={[
+            { label: 'Linear', value: false },
+            { label: 'Logit', value: true },
+          ]}
+          selected={logitScale}
+          onSelect={setLogitScale}
+        />
       </div>
       <ColorScaleInput value={colorScale} onChange={setColorScale} />
     </div>

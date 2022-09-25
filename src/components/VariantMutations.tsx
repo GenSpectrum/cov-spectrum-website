@@ -18,6 +18,7 @@ import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { NamedCard } from './NamedCard';
+import { PipeDividedOptionsButtons } from '../helpers/ui';
 
 export interface Props {
   selector: LapisSelector;
@@ -162,19 +163,14 @@ export const VariantMutations = ({ selector }: Props) => {
     <NamedCard title='Subsitutions and deletions'>
       <div className='mb-8'>
         <div className='ml-0' ref={ref}>
-          <span
-            className={!showMergedList ? 'font-bold' : 'underline cursor-pointer'}
-            onClick={() => setShowMergedList(false)}
-          >
-            Show amino acid and nucleotide mutations separated
-          </span>
-          {' | '}
-          <span
-            className={showMergedList ? 'font-bold' : 'underline cursor-pointer'}
-            onClick={() => setShowMergedList(true)}
-          >
-            Show amino acid and nucleotide mutations together
-          </span>
+          <PipeDividedOptionsButtons
+            options={[
+              { label: 'Show amino acid and nucleotide mutations separated', value: false },
+              { label: 'Show amino acid and nucleotide mutations together', value: true },
+            ]}
+            selected={showMergedList}
+            onSelect={setShowMergedList}
+          />
         </div>
         <div className='ml-0'>
           The following amino acid mutations are present in between{' '}
@@ -220,20 +216,18 @@ export const VariantMutations = ({ selector }: Props) => {
 
       {showMergedList ? (
         <>
-          <div className='ml-0'>
-            {sortOptions.map((opt, index) => (
-              <>
-                {index > 0 && <> | </>}
-                <span
-                  key={opt}
-                  className={commonAAMutationsSort === opt ? 'font-bold' : 'underline cursor-pointer'}
-                  onClick={() => setCommonAAMutationsSort(opt)}
-                >
+          <PipeDividedOptionsButtons
+            options={sortOptions.map(opt => ({
+              label: (
+                <>
                   Sort by <span className={sortOptionCssClass[opt]}>{sortOptionLabels[opt]}</span>
-                </span>{' '}
-              </>
-            ))}
-          </div>
+                </>
+              ),
+              value: opt,
+            }))}
+            selected={commonAAMutationsSort}
+            onSelect={setCommonAAMutationsSort}
+          />
 
           <MutationList className='list-disc' width={width ? width : 1}>
             {sortMergedEntries(data.mergedEntries, commonAAMutationsSort, aaMutationUniqueness)
@@ -278,20 +272,18 @@ export const VariantMutations = ({ selector }: Props) => {
         </>
       ) : (
         <>
-          <div className='ml-0'>
-            {sortOptions.map((opt, index) => (
-              <>
-                {index > 0 && <> | </>}
-                <span
-                  key={opt}
-                  className={commonAAMutationsSort === opt ? 'font-bold' : 'underline cursor-pointer'}
-                  onClick={() => setCommonAAMutationsSort(opt)}
-                >
+          <PipeDividedOptionsButtons
+            options={sortOptions.map(opt => ({
+              label: (
+                <>
                   Sort by <span className={sortOptionCssClass[opt]}>{sortOptionLabels[opt]}</span>
-                </span>{' '}
-              </>
-            ))}
-          </div>
+                </>
+              ),
+              value: opt,
+            }))}
+            selected={commonAAMutationsSort}
+            onSelect={setCommonAAMutationsSort}
+          />
 
           <MutationList className='list-disc' width={width ? width : 1}>
             {sortAAMutations(data.aa, commonAAMutationsSort, aaMutationUniqueness)
@@ -310,25 +302,19 @@ export const VariantMutations = ({ selector }: Props) => {
               })}
           </MutationList>
 
-          <div className='ml-0 mt-9'>
-            <div className='mt-9'>Leading and trailing deletions are excluded.</div>
-
-            {sortOptions.map((opt, index) => (
-              <>
-                {index > 0 && <> | </>}
-                <span
-                  key={opt}
-                  className={commonNucMutationsSort === opt ? 'font-bold' : 'underline cursor-pointer'}
-                  onClick={() => setCommonNucMutationsSort(opt)}
-                >
+          <div className='mt-9'>Leading and trailing deletions are excluded.</div>
+          <PipeDividedOptionsButtons
+            options={sortOptions.map(opt => ({
+              label: (
+                <>
                   Sort by <span className={sortOptionCssClass[opt]}>{sortOptionLabels[opt]}</span>
-                </span>{' '}
-              </>
-            ))}
-          </div>
-          <div className='ml-0'>
-            *Leading and trailing deletions are excluded. <br />
-          </div>
+                </>
+              ),
+              value: opt,
+            }))}
+            selected={commonNucMutationsSort}
+            onSelect={setCommonNucMutationsSort}
+          />
           <MutationList className='list-disc' width={width ? width : 1}>
             {sortNucMutations(data.nuc, commonNucMutationsSort, nucMutationUniqueness)
               .filter(({ proportion }) => proportion >= minProportion && proportion <= maxProportion)
