@@ -46,6 +46,7 @@ import { HuismanScire2021ReContainer } from '../models/huismanScire2021Re/Huisma
 import { ErrorAlert } from '../components/ErrorAlert';
 import { VariantInsertions } from '../components/VariantInsertions';
 import * as lodashAlternatives from '../helpers/lodash_alternatives';
+import { VariantMutationsTimelines } from '../components/VariantMutationsTimelines';
 
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
@@ -451,6 +452,10 @@ export const FocusSinglePage = () => {
               )}
               {isDefaultHostSelector(host) && wasteWaterSummaryPlot}
             </PackedGrid>
+
+            <div className='m-4'>
+              <VariantMutationsTimelines selector={ldvsSelector} />
+            </div>
 
             <div className='m-4'>
               <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>

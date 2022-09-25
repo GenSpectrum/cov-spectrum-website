@@ -268,5 +268,10 @@ export function transformToVariantQuery(selector: VariantSelector): string {
     ...(selector.aaInsertions ?? []),
     ...(selector.nucInsertions ?? []),
   ].filter(c => !!c) as string[];
+  if (components.length === 0) {
+    // An empty variant query is considered as wrong and not as all-inclusive. We are therefore using this tautology
+    // to get all samples.
+    return 'B.1.1.7 | !B.1.1.7';
+  }
   return components.join(' & ');
 }

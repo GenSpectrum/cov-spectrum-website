@@ -133,6 +133,12 @@ class DateCache {
     return output;
   }
 
+  middleDay({ min, max }: { min: UnifiedDay; max: UnifiedDay }): UnifiedDay {
+    const diff = Math.abs(min.dayjs.diff(max.dayjs, 'days'));
+    const middle = min.dayjs.add(Math.floor(diff / 2), 'days');
+    return this.getDayUsingDayjs(middle);
+  }
+
   rangeFromWeeks(weeks: Iterable<UnifiedIsoWeek>): { min: UnifiedIsoWeek; max: UnifiedIsoWeek } | undefined {
     let min: UnifiedIsoWeek | undefined;
     let max: UnifiedIsoWeek | undefined;
