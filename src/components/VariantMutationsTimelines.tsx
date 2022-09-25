@@ -15,6 +15,7 @@ import { SequenceType } from '../data/SequenceType';
 import NumericInput from 'react-numeric-input';
 import { Form, OverlayTrigger, Popover } from 'react-bootstrap';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
+import { ColorScale, ColorScaleInput } from './ColorScaleInput';
 
 type Data = {
   weeks: UnifiedIsoWeek[];
@@ -39,6 +40,12 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
   const [gene, setGene] = useState<string>('all');
   const [deletionFilter, setDeletionFilter] = useState<DeletionFilter>('non-deletion');
   const [logitScale, setLogitScale] = useState(false);
+  const [colorScale, setColorScale] = useState<ColorScale>({
+    minValue: 0,
+    maxValue: 1,
+    minColor: '#bae0e3',
+    maxColor: '#040e8c',
+  });
 
   const data = useData(selector, sequenceType, minProportion, maxProportion, gene, deletionFilter);
 
@@ -145,6 +152,7 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
           Logit
         </span>
       </div>
+      <ColorScaleInput value={colorScale} onChange={setColorScale} />
     </div>
   );
 
@@ -158,7 +166,7 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
   } else if (data.mutations.length === 0) {
     plotArea = <>No mutation found</>;
   } else {
-    plotArea = <Plot data={data} logitScale={logitScale} />;
+    plotArea = <Plot data={data} logitScale={logitScale} colorScale={colorScale} />;
   }
 
   return (
@@ -298,9 +306,10 @@ const useData = (
 type PlotProps = {
   data: Data;
   logitScale: boolean;
+  colorScale: ColorScale;
 };
 
-const Plot = ({ data, logitScale }: PlotProps) => {
+const Plot = ({ data, logitScale, colorScale }: PlotProps) => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
 
   // We only display the proportion numbers if each cell has at least 50px.
@@ -339,6 +348,7 @@ const Plot = ({ data, logitScale }: PlotProps) => {
                   count={counts[j]}
                   showText={showText}
                   logitScale={logitScale}
+                  colorScale={colorScale}
                 />
               </div>
             ))}
@@ -363,9 +373,8 @@ type ProportionBoxProps = {
   count: number;
   showText: ShowText;
   logitScale: boolean;
+  colorScale: ColorScale;
 };
-
-const colorScale = scaleLinear<string, string>().domain([0, 1]).range(['#b9c8e2', '#045a8d']);
 
 const logit = (p: number) => {
   if (p === 1) {
@@ -374,19 +383,30 @@ const logit = (p: number) => {
   if (p === 0) {
     return 0; // Instead of -Inf
   }
-  return Math.min(Math.max(Math.log(p / (1 - p)) / 8 + 0.5, 0), 1); // Arbitrary defined by me... looks alright
+  return Math.log(p / (1 - p)) / 8 + 0.5; // Arbitrary defined by me... looks alright
 };
 
-const ProportionBox = ({ week, mutation, proportion, count, showText, logitScale }: ProportionBoxProps) => {
+const ProportionBox = ({
+  week,
+  mutation,
+  proportion,
+  count,
+  showText,
+  logitScale,
+  colorScale,
+}: ProportionBoxProps) => {
+  const { maxValue, minValue, maxColor, minColor } = colorScale;
+  const d3ColorScale = scaleLinear<string, string>().domain([minValue, maxValue]).range([minColor, maxColor]);
   let backgroundColor = '';
   if (isNaN(proportion)) {
     backgroundColor = 'lightgrey';
   } else if (proportion === 0) {
     backgroundColor = 'white';
   } else {
-    backgroundColor = colorScale(logitScale ? logit(proportion) : proportion);
+    const valueForColor = Math.max(Math.min(logitScale ? logit(proportion) : proportion, maxValue), minValue);
+    backgroundColor = d3ColorScale(valueForColor);
   }
-  const color = proportion < 0.5 ? 'black' : 'white';
+  const color = proportion < (maxValue - minValue) / 2 + minValue ? 'black' : 'white';
 
   let value;
   if (isNaN(proportion) || showText === 'hidden') {
