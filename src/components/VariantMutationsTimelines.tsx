@@ -194,7 +194,7 @@ const useData = (
       if (sequenceType === 'aa' && gene !== 'all') {
         filteredMutations = filteredMutations.filter(m => m.mutation.startsWith(gene + ':'));
       }
-      if (filteredMutations.length > 50) {
+      if (filteredMutations.length > 70) {
         return 'too-big';
       }
       const variantAsVariantQuery = transformToVariantQuery(selector.variant ?? {});
@@ -411,7 +411,7 @@ const ProportionBox = ({
 
   return (
     <OverlayTrigger
-      trigger={['hover', 'focus']}
+      trigger={['hover', 'focus', 'click']}
       overlay={popover}
       rootClose={true}
       transition={false}
