@@ -4,7 +4,6 @@ import { PangoLineageIntegration } from '../services/external-integrations/Pango
 import { OutbreakInfoIntegration } from '../services/external-integrations/OutbreakInfoIntegration';
 import { WikipediaIntegration } from '../services/external-integrations/WikipediaIntegration';
 import { CoVariantsIntegration } from '../services/external-integrations/CoVariantsIntegration';
-import { useState } from 'react';
 import { UsherIntegration } from '../services/external-integrations/UsherIntegration';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { TaxoniumIntegration } from '../services/external-integrations/TaxoniumIntegration';
@@ -77,14 +76,6 @@ const integrations: Integration[] = [
 ];
 
 export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.Element => {
-  const [showDropdown, setShowDropdown] = useState(false);
-  const showDropdownFunc = (_: any) => {
-    setShowDropdown(!showDropdown);
-  };
-  const hideDropdownFunc = (_: any) => {
-    setShowDropdown(false);
-  };
-
   // Sequence list download
   // If the open version is used, all the metadata will be downloaded. If GISAID is used, only the contributors
   // will be downloaded.
@@ -137,7 +128,7 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
 
   return (
     <>
-      <div style={{ marginRight: '30px' }}>
+      <div style={{ marginRight: '30px', marginTop: '5px' }}>
         <Button
           style={{ marginRight: '4px' }}
           id='demo-customized-button'
