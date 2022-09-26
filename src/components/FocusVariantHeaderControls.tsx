@@ -131,8 +131,6 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
       <div style={{ marginRight: '30px', marginTop: '5px' }}>
         <Button
           style={{ marginRight: '4px' }}
-          id='demo-customized-button'
-          aria-controls={openSequence ? 'demo-customized-menu' : undefined}
           aria-expanded={openSequence ? 'true' : undefined}
           variant='contained'
           disableElevation
@@ -143,10 +141,6 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
         </Button>
         <StyledMenu
           disableScrollLock={true}
-          id='demo-customized-menu'
-          MenuListProps={{
-            'aria-labelledby': 'demo-customized-button',
-          }}
           anchorEl={anchorElSequence}
           open={openSequence}
           onClose={() => handleClose(true)}
