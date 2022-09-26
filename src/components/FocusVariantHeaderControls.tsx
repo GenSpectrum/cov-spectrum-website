@@ -205,9 +205,12 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
             'aria-labelledby': 'basic-button',
           }}
         >
-          {integrations.map(integration => (
-            <MenuItem onClick={() => integration.open(selector)}> {integration.name}</MenuItem>
-          ))}
+          {integrations.map(
+            integration =>
+              integration.isAvailable(selector) && (
+                <MenuItem onClick={() => integration.open(selector)}> {integration.name}</MenuItem>
+              )
+          )}
         </Menu>
       </div>
     </>
