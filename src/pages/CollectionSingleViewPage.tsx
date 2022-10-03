@@ -41,6 +41,8 @@ import { ErrorAlert } from '../components/ErrorAlert';
 import { fetchNumberSubmittedSamplesInPastTenDays } from '../data/api-lapis';
 import { Collection } from '../data/Collection';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+import download from 'downloadjs';
+import { csvStringify } from '../helpers/csvStringifyHelper';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -293,6 +295,7 @@ export const CollectionSingleViewPage = () => {
             allWholeDateCounts &&
             datasetsInSync ? (
               <TableTabContent
+                collectionId={collectionId}
                 locationSelector={locationSelector}
                 variants={variants}
                 variantsDateCounts={variantsDateCounts}
@@ -348,6 +351,7 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => {
 };
 
 type TableTabContentProps = {
+  collectionId: number;
   locationSelector: LocationSelector;
   variants: { query: VariantSelector; name: string; description: string }[];
   variantsDateCounts: PromiseSettledResult<Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>>[];
@@ -356,6 +360,7 @@ type TableTabContentProps = {
 };
 
 const TableTabContent = ({
+  collectionId,
   locationSelector,
   variants,
   variantsDateCounts,
@@ -501,18 +506,37 @@ const TableTabContent = ({
     });
   }, [variants, variantsDateCounts, variantsNumberNewSequences, relativeAdvantages]);
 
+  const downloadAsCsv = () => {
+    const csvData = variantTableData.map(x => ({
+      name: x.name,
+      query: x.queryFormatted,
+      number_sequences: x.total,
+      submitted_past_10_days: x.newSequences,
+      relative_growth_advantage: x.advantage,
+      relative_growth_advantage_low: x.advantageCiLower,
+      relative_growth_advantage_high: x.advantageCiUpper,
+      description: x.description,
+    }));
+    download(csvStringify(csvData), `collection-${collectionId}.csv`, 'text/csv');
+  };
+
   return (
     <>
       {variantTableData ? (
-        <div className='mt-4'>
-          <DataGrid
-            columns={tableColumns}
-            rows={variantTableData}
-            autoHeight={true}
-            getRowHeight={() => 'auto'}
-            density={'compact'}
-          />
-        </div>
+        <>
+          <Button variant={ButtonVariant.PRIMARY} className='w-40' onClick={downloadAsCsv}>
+            Download CSV
+          </Button>
+          <div className='mt-4'>
+            <DataGrid
+              columns={tableColumns}
+              rows={variantTableData}
+              autoHeight={true}
+              getRowHeight={() => 'auto'}
+              density={'compact'}
+            />
+          </div>
+        </>
       ) : (
         <Loader />
       )}
