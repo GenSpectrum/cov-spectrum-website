@@ -199,10 +199,11 @@ export const Chen2021FitnessContainer = ({ selector, defaults }: ContainerProps)
         <p>
           The model assumes that the increase or decrease of the proportion of a variant follows a logistic
           function. It fits a logistic model to the data by optimizing the maximum likelihood to obtain the
-          logistic growth rate a in units per week. From that, an estimate of the growth advantage per week
-          (exp(a)-1) is obtained (assuming the growth advantage is due to a combination of intrinsic
-          transmission advantage, immune evasion, and a prolonged infectious period (Althaus, 2021)). Further,
-          the relative change in the reproductive number under a continuous (f<sub>c</sub>) and discrete (f
+          logistic growth rate a in units per day. From that, an estimate of the growth advantage per
+          generation (exp(ag)-1) is obtained (assuming the growth advantage is due to a combination of
+          intrinsic transmission advantage, immune evasion, and a prolonged infectious period (Althaus,
+          2021)). Further, the relative change in the reproductive number under a continuous (f<sub>c</sub>)
+          and discrete (f
           <sub>d</sub>) model is calculated ((Chen, 2021), assuming that the advantage stems either from an
           increased transmission rate or immune escape). f<sub>c</sub> and f<sub>d</sub> come without time
           units as they determine the change in the reproductive number which itself has no time unit
@@ -212,7 +213,7 @@ export const Chen2021FitnessContainer = ({ selector, defaults }: ContainerProps)
         <Form>
           <Row>
             <Form.Group as={Col} controlId='formGenerationTime'>
-              <Form.Label>Generation time</Form.Label>
+              <Form.Label>Generation time (g)</Form.Label>
               <Form.Control
                 value={formGenerationTime}
                 onChange={x => setFormGenerationTime(x.target.value)}
