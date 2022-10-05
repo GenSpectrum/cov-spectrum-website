@@ -1,5 +1,5 @@
 export type ReferenceGenomeInfo = {
-  nuqSeq: string;
+  nucSeq: string;
   genes: ReferenceGenomeGeneInfo[];
 };
 

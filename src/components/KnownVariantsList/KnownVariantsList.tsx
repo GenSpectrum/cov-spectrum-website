@@ -64,7 +64,7 @@ export function convertKnownVariantChartData({
 
   const plotWeekRange = {
     min: globalDateCache.getDayUsingDayjs(dataWeekRange.max.firstDay.dayjs.subtract(2, 'months')).isoWeek,
-    max: dataWeekRange.max,
+    max: globalDateCache.getDayUsingDayjs(dataWeekRange.max.firstDay.dayjs.subtract(7, 'days')).isoWeek,
   };
   if (globalDateCache.weekIsBefore(plotWeekRange.min, dataWeekRange.min)) {
     console.warn('not enough data was fetched to show the latest 2 month window');

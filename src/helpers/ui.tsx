@@ -123,6 +123,43 @@ export const ShowMoreButton = ({ to }: { to: string }) => {
   );
 };
 
+/**
+ * A button bar where the buttons are separated by "|". Exactly one of the options is selected. The selected
+ * one is displayed in bold. It looks roughly like this:
+ * <p>
+ * <u>Option 1</u> | <b>Option 2</b> | <u>Option 3</u>
+ */
+export const PipeDividedOptionsButtons = <T extends unknown>({
+  options,
+  selected,
+  onSelect,
+}: {
+  options: { label: React.ReactNode; value: T }[];
+  selected: T;
+  onSelect: (value: T) => void;
+}) => {
+  return (
+    <div>
+      {options.map(({ label, value }, index) => (
+        <>
+          {index > 0 && (
+            <span key={'sep-' + index} className='mx-2'>
+              |
+            </span>
+          )}
+          <span
+            key={'content-' + index}
+            className={value === selected ? 'font-bold' : 'underline cursor-pointer'}
+            onClick={() => onSelect(value)}
+          >
+            {label}
+          </span>
+        </>
+      ))}
+    </div>
+  );
+};
+
 // window.matchMedia("(any-pointer: coarse)").matches returns true on
 // mobile devices (touch screen only) and false on desktops
 // window.matchMedia may not be available in the test suite

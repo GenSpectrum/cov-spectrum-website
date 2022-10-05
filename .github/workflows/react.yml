@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       REACT_APP_IS_TESTING: true
+      REACT_APP_SERVER_HOST: https://cov-spectrum.org/api/v2
     strategy:
       matrix:
         node-version: [15.x]

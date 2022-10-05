@@ -48,7 +48,7 @@ export const KnownVariantsListSelection = ({ collections, selected, onSelect }: 
       <Dropdown.Menu as={CustomMenu}>
         {collections.map(({ id, title }) => (
           <Dropdown.Item key={id} active={id === selected} onClick={() => onSelect(id!)}>
-            {title}
+            <span className='text-gray-400 mr-1'>#{id}</span> {title}
           </Dropdown.Item>
         ))}
       </Dropdown.Menu>

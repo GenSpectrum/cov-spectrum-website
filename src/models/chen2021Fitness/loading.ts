@@ -11,7 +11,7 @@ import { useQuery } from '../../helpers/query-hook';
 import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
 import dayjs from 'dayjs';
 
-const endpoint = 'https://cov-spectrum.org/api/v2/computed/model/chen2021Fitness';
+const endpoint = process.env.REACT_APP_SERVER_HOST + '/computed/model/chen2021Fitness';
 
 export const transformToRequestData = (
   variantDateCounts: DateCountSampleDataset,

@@ -21,6 +21,7 @@ import {
   encodeLocationSelectorToSingleString,
   getLocationSelectorFromUrlSearchParams,
   LocationSelector,
+  removeLocationSelectorToUrlSearchParams,
 } from '../data/LocationSelector';
 import { Box } from '@mui/material';
 import Tabs from '@mui/material/Tabs';
@@ -38,6 +39,10 @@ import { getModelData } from '../models/chen2021Fitness/loading';
 import { VariantSearchField } from '../components/VariantSearchField';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { fetchNumberSubmittedSamplesInPastTenDays } from '../data/api-lapis';
+import { Collection } from '../data/Collection';
+import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+import download from 'downloadjs';
+import { csvStringify } from '../helpers/csvStringifyHelper';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -51,9 +56,12 @@ export const CollectionSingleViewPage = () => {
 
   // Parse filters from URL
   const queryString = locationState.search;
-  const locationSelector = useMemo(() => {
+  const { locationSelector, highlightedOnly } = useMemo(() => {
     const queryParams = new URLSearchParams(queryString);
-    return getLocationSelectorFromUrlSearchParams(queryParams);
+    return {
+      locationSelector: getLocationSelectorFromUrlSearchParams(queryParams),
+      highlightedOnly: queryParams.get('highlightedOnly') === 'true',
+    };
   }, [queryString]);
   const dateRangeSelector = new SpecialDateRangeSelector('Past6M'); // TODO
 
@@ -66,12 +74,14 @@ export const CollectionSingleViewPage = () => {
   const variants = useMemo(
     () =>
       collection
-        ? collection.variants.map(v => ({
-            ...v,
-            query: JSON.parse(v.query) as VariantSelector,
-          }))
+        ? collection.variants
+            .filter(v => (highlightedOnly ? v.highlighted : true))
+            .map(v => ({
+              ...v,
+              query: JSON.parse(v.query) as VariantSelector,
+            }))
         : undefined,
-    [collection]
+    [collection, highlightedOnly]
   );
 
   // Fetch number of sequences over time of the variants
@@ -117,25 +127,27 @@ export const CollectionSingleViewPage = () => {
       }
       return Promise.allSettled(
         variants.map(variant => {
-          if (!variantIsAllLineages(baselineVariant)) {
-            return DateCountSampleData.fromApi(
-              {
-                host: undefined,
-                qc: {},
-                location: locationSelector,
-                variant: {
-                  variantQuery: `(${transformToVariantQuery(variant.query)})  | (${transformToVariantQuery(
-                    baselineVariant
-                  )})`,
-                },
-                samplingStrategy: SamplingStrategy.AllSamples,
-                dateRange: dateRangeSelector,
-              },
-              signal
-            );
-          } else {
+          if (variantIsAllLineages(baselineVariant)) {
             return Promise.resolve(baselineDateCounts);
           }
+          const baselineVariantQuery = transformToVariantQuery(baselineVariant);
+          const variantVariantQuery = transformToVariantQuery(variant.query);
+          const variantSelector = variantIsAllLineages(variant.query)
+            ? {}
+            : {
+                variantQuery: `(${variantVariantQuery})  | (${baselineVariantQuery})`,
+              };
+          return DateCountSampleData.fromApi(
+            {
+              host: undefined,
+              qc: {},
+              location: locationSelector,
+              variant: variantSelector,
+              samplingStrategy: SamplingStrategy.AllSamples,
+              dateRange: dateRangeSelector,
+            },
+            signal
+          );
         })
       );
     },
@@ -167,6 +179,11 @@ export const CollectionSingleViewPage = () => {
     [variants, locationSelector]
   );
 
+  // The "highlighted only" button can filter the set of variants that we look at. The following variable can be used
+  // to check whether the datasets are about the same variants.
+  const datasetsInSync =
+    variants?.length === variantsDateCounts?.length && variants?.length === allWholeDateCounts?.length;
+
   // Rendering
   if (!collections) {
     return <Loader />;
@@ -174,7 +191,7 @@ export const CollectionSingleViewPage = () => {
 
   if (!collection) {
     return (
-      <div className='mx-8 my-4'>
+      <>
         <h1>Collection not found</h1>
         <p>The collection does not exist.</p>
 
@@ -183,13 +200,13 @@ export const CollectionSingleViewPage = () => {
             Go back to overview
           </Button>
         </Link>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className='mx-8 my-4'>
-      <h1>{collection.title}</h1>
+    <>
+      <CollectionSinglePageTitle collection={collection} />
       <p className='italic'>Maintained by {collection.maintainers}</p>
       <p className='whitespace-pre-wrap'>{collection.description}</p>
       <h2>Variants</h2>
@@ -197,7 +214,8 @@ export const CollectionSingleViewPage = () => {
       <div className='w-full sm:w-96'>
         <PlaceSelect
           onSelect={selector => {
-            const queryParams = new URLSearchParams();
+            const queryParams = new URLSearchParams(queryString);
+            removeLocationSelectorToUrlSearchParams(queryParams);
             addLocationSelectorToUrlSearchParams(selector, queryParams);
             history.push(locationState.pathname + '?' + queryParams.toString());
           }}
@@ -234,6 +252,34 @@ export const CollectionSingleViewPage = () => {
         </Button>
       </div>
 
+      {/* Highlighted only button */}
+      {highlightedOnly ? (
+        <Button
+          variant={ButtonVariant.PRIMARY}
+          className='w-48 mt-4'
+          onClick={() => {
+            const queryParams = new URLSearchParams(queryString);
+            queryParams.delete('highlightedOnly');
+            history.push(locationState.pathname + '?' + queryParams.toString());
+          }}
+        >
+          <AiFillStar size='1.5em' className='text-yellow-400 inline' /> only
+        </Button>
+      ) : (
+        <Button
+          variant={ButtonVariant.SECONDARY}
+          className='w-48 mt-4'
+          onClick={() => {
+            const queryParams = new URLSearchParams(queryString);
+            queryParams.delete('highlightedOnly');
+            queryParams.set('highlightedOnly', 'true');
+            history.push(locationState.pathname + '?' + queryParams.toString());
+          }}
+        >
+          <AiOutlineStar size='1.5em' className='inline' /> only
+        </Button>
+      )}
+
       {!error ? (
         <>
           <Box className='mt-4' sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -243,8 +289,13 @@ export const CollectionSingleViewPage = () => {
             </Tabs>
           </Box>
           <TabPanel value={tab} index={0}>
-            {variants && variantsDateCounts && variantsNumberNewSequences && allWholeDateCounts ? (
+            {variants &&
+            variantsDateCounts &&
+            variantsNumberNewSequences &&
+            allWholeDateCounts &&
+            datasetsInSync ? (
               <TableTabContent
+                collectionId={collectionId}
                 locationSelector={locationSelector}
                 variants={variants}
                 variantsDateCounts={variantsDateCounts}
@@ -256,7 +307,7 @@ export const CollectionSingleViewPage = () => {
             )}
           </TabPanel>
           <TabPanel value={tab} index={1}>
-            {variants && variantsDateCounts && baselineDateCounts ? (
+            {variants && variantsDateCounts && baselineDateCounts && datasetsInSync ? (
               <SequencesOverTimeTabContent
                 variants={variants}
                 variantsDateCounts={variantsDateCounts}
@@ -271,7 +322,7 @@ export const CollectionSingleViewPage = () => {
       ) : (
         <ErrorAlert messages={[error]} />
       )}
-    </div>
+    </>
   );
 };
 
@@ -300,6 +351,7 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => {
 };
 
 type TableTabContentProps = {
+  collectionId: number;
   locationSelector: LocationSelector;
   variants: { query: VariantSelector; name: string; description: string }[];
   variantsDateCounts: PromiseSettledResult<Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>>[];
@@ -308,6 +360,7 @@ type TableTabContentProps = {
 };
 
 const TableTabContent = ({
+  collectionId,
   locationSelector,
   variants,
   variantsDateCounts,
@@ -328,7 +381,7 @@ const TableTabContent = ({
             resolve();
           });
         });
-        return;
+        continue;
       }
       const variantDateCounts = variantDateCountsStatus.value;
       const wholeDateCounts = allWholeDateCountsStatus.value;
@@ -353,6 +406,16 @@ const TableTabContent = ({
 
   // Table definition and data
   const tableColumns: GridColDef[] = [
+    {
+      field: 'highlighted',
+      headerName: '',
+      width: 40,
+      minWidth: 40,
+      renderCell: (params: GridRenderCellParams<string>) => {
+        const highlighted = params.row.highlighted;
+        return highlighted ? <AiFillStar size='1.5em' className='text-yellow-400' /> : <></>;
+      },
+    },
     {
       field: 'name',
       headerName: 'Name',
@@ -443,18 +506,37 @@ const TableTabContent = ({
     });
   }, [variants, variantsDateCounts, variantsNumberNewSequences, relativeAdvantages]);
 
+  const downloadAsCsv = () => {
+    const csvData = variantTableData.map(x => ({
+      name: x.name,
+      query: x.queryFormatted,
+      number_sequences: x.total,
+      submitted_past_10_days: x.newSequences,
+      relative_growth_advantage: x.advantage,
+      relative_growth_advantage_low: x.advantageCiLower,
+      relative_growth_advantage_high: x.advantageCiUpper,
+      description: x.description,
+    }));
+    download(csvStringify(csvData), `collection-${collectionId}.csv`, 'text/csv');
+  };
+
   return (
     <>
       {variantTableData ? (
-        <div className='mt-4'>
-          <DataGrid
-            columns={tableColumns}
-            rows={variantTableData}
-            autoHeight={true}
-            getRowHeight={() => 'auto'}
-            density={'compact'}
-          />
-        </div>
+        <>
+          <Button variant={ButtonVariant.PRIMARY} className='w-40' onClick={downloadAsCsv}>
+            Download CSV
+          </Button>
+          <div className='mt-4'>
+            <DataGrid
+              columns={tableColumns}
+              rows={variantTableData}
+              autoHeight={true}
+              getRowHeight={() => 'auto'}
+              density={'compact'}
+            />
+          </div>
+        </>
       ) : (
         <Loader />
       )}
@@ -516,5 +598,17 @@ const SequencesOverTimeTabContent = ({
         })}
       </PackedGrid>
     </>
+  );
+};
+
+type CollectionSinglePageTitleProps = {
+  collection: Collection;
+};
+
+export const CollectionSinglePageTitle = ({ collection }: CollectionSinglePageTitleProps) => {
+  return (
+    <h1>
+      <span className='text-gray-400 font-normal'>#{collection.id}</span> {collection.title}
+    </h1>
   );
 };

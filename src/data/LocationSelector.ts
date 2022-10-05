@@ -28,6 +28,12 @@ export function addLocationSelectorToUrlSearchParams(selector: LocationSelector,
   }
 }
 
+export function removeLocationSelectorToUrlSearchParams(params: URLSearchParams) {
+  for (const k of locationFields) {
+    params.delete(k);
+  }
+}
+
 export function getLocationSelectorFromUrlSearchParams(params: URLSearchParams): LocationSelector {
   return {
     region: params.get('region') ?? undefined,

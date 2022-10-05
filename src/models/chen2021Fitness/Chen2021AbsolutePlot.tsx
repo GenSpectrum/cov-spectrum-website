@@ -201,8 +201,6 @@ export const Chen2021AbsolutePlot = ({
     };
   }, [modelData, request, t0, changePoints, estimatedCasesPlotData]);
 
-  console.log(caseNumbers);
-
   if (!caseNumbers) {
     return <></>;
   }

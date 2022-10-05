@@ -22,6 +22,8 @@ import {
 import { Collection } from '../data/Collection';
 import { VariantSearchField } from '../components/VariantSearchField';
 import { VariantSelector } from '../data/VariantSelector';
+import { CollectionSinglePageTitle } from './CollectionSingleViewPage';
+import { AiOutlineStar, AiFillStar } from 'react-icons/ai';
 
 export const CollectionSingleAdminPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -52,7 +54,7 @@ export const CollectionSingleAdminPage = () => {
 
   if (!collection) {
     return (
-      <div className='mx-8 my-4'>
+      <>
         <h1>Collection not found</h1>
         <p>The collection does not exist.</p>
 
@@ -61,7 +63,7 @@ export const CollectionSingleAdminPage = () => {
             Go back to overview
           </Button>
         </Link>
-      </div>
+      </>
     );
   }
 
@@ -71,19 +73,19 @@ export const CollectionSingleAdminPage = () => {
 
   if (!adminKeyIsValid) {
     return (
-      <div className='mx-8 my-4'>
-        <h1>{collection.title}</h1>
+      <>
+        <CollectionSinglePageTitle collection={collection} />
         <Alert variant={AlertVariant.DANGER}>
           <h2>Authentication failed</h2>
           <p>The provided admin key is wrong.</p>
         </Alert>
-      </div>
+      </>
     );
   }
 
   return (
-    <div className='mx-8 my-4'>
-      <h1>{collection.title}</h1>
+    <>
+      <CollectionSinglePageTitle collection={collection} />
       <Alert variant={AlertVariant.WARNING}>
         <h2>Admin area</h2>
         <p>
@@ -100,7 +102,7 @@ export const CollectionSingleAdminPage = () => {
         <TextField label='View link' variant='standard' className='mt-2 my-4 w-100' value={url} />
       </Alert>
       <AdminPanel collection={collection} adminKey={adminKey} />
-    </div>
+    </>
   );
 };
 
@@ -114,7 +116,8 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
   const [description, setDescription] = useState(collection.description);
   const [maintainers, setMaintainers] = useState(collection.maintainers);
   const [email, setEmail] = useState(collection.email);
-  const [variants, setVariants] = useState(collection.variants);
+  // We assign an ID to every variant for the sole purpose of having a "key" for rendering.
+  const [variants, setVariants] = useState(collection.variants.map(v => ({ ...v, tmpId: Math.random() })));
   const [deletionDialogOpen, setDeletionDialogOpen] = React.useState(false);
   const history = useHistory();
 
@@ -127,7 +130,11 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
     [variants]
   );
 
-  const changeVariant = (attr: 'name' | 'description' | 'query', value: string, index: number) => {
+  const changeVariant = (
+    attr: 'name' | 'description' | 'query' | 'highlighted',
+    value: string | boolean,
+    index: number
+  ) => {
     if (variants[index][attr] === value) {
       return;
     }
@@ -151,6 +158,8 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
         name: '',
         description: '',
         query: '{}',
+        highlighted: false,
+        tmpId: Math.random(),
       },
     ];
     setVariants(newVariants);
@@ -231,7 +240,7 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
       <div className='mt-4'>
         {variantsParsed.map((variant, i) => (
           <div
-            key={i}
+            key={variant.tmpId}
             className='flex flex-col bg-blue-50 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-800'
           >
             <TextField
@@ -249,15 +258,23 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
               onChange={e => changeVariant('description', e.target.value, i)}
             />
             <VariantSearchField
-              key={i}
               isSimple={false}
               currentSelection={variant.selector}
               onVariantSelect={newSelection => changeVariant('query', JSON.stringify(newSelection), i)}
               triggerSearch={() => {}}
             />
-            <Button variant={ButtonVariant.PRIMARY} className='w-48 mt-8' onClick={() => deleteVariant(i)}>
-              Delete variant
-            </Button>
+            <div className='flex flex-row mt-4'>
+              <Button variant={ButtonVariant.PRIMARY} className='w-48 mr-4' onClick={() => deleteVariant(i)}>
+                Delete variant
+              </Button>
+              <button onClick={() => changeVariant('highlighted', !variant.highlighted, i)}>
+                {variant.highlighted ? (
+                  <AiFillStar size='1.5em' className='text-yellow-400' />
+                ) : (
+                  <AiOutlineStar size='1.5em' />
+                )}
+              </button>
+            </div>
           </div>
         ))}
         <Button variant={ButtonVariant.PRIMARY} className='w-48 mt-8' onClick={() => addVariant()}>

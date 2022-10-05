@@ -32,6 +32,7 @@ module.exports = {
   variants: {
     extend: {
       animation: ['hover', 'focus'],
+      fontWeight: ['hover'],
     },
   },
   plugins: [],
