@@ -109,10 +109,13 @@ export const Chen2021FitnessContainer = ({ selector, defaults }: ContainerProps)
           p
             ? {
                 ...p.config,
-                initialCasesVariant: defaults?.initialVariantCases ?? p.config.initialCasesVariant,
-                initialCasesWildtype: defaults?.initialWildtypeCases ?? p.config.initialCasesWildtype,
+                initialCasesVariant: p.config.initialCasesVariant ?? defaults?.initialVariantCases,
+                initialCasesWildtype: p.config.initialCasesWildtype ?? defaults?.initialWildtypeCases,
               }
-            : undefined
+            : {
+                initialCasesVariant: defaults?.initialVariantCases,
+                initialCasesWildtype: defaults?.initialWildtypeCases,
+              }
         )
       ),
     [defaults, requestData]
