@@ -426,15 +426,25 @@ const TableTabContent = ({
         addVariantSelectorToUrlSearchParams(query, urlParams);
         const placeString = encodeLocationSelectorToSingleString(locationSelector);
         return params.value ? (
-          <Link to={`/explore/${placeString}/AllSamples/Past6M/variants?${urlParams.toString()}`}>
-            <button className='underline'>{params.value}</button>
+          <Link
+            to={`/explore/${placeString}/AllSamples/Past6M/variants?${urlParams.toString()}`}
+            className='overflow-hidden'
+          >
+            <button className='underline break-words overflow-hidden w-full'>{params.value}</button>
           </Link>
         ) : (
           <></>
         );
       },
     },
-    { field: 'queryFormatted', headerName: 'Query', minWidth: 300 },
+    {
+      field: 'queryFormatted',
+      headerName: 'Query',
+      minWidth: 300,
+      renderCell: (params: GridRenderCellParams<string>) => {
+        return <span className='break-words overflow-hidden'>{params.value}</span>;
+      },
+    },
     { field: 'total', headerName: 'Number sequences', minWidth: 150 },
     { field: 'newSequences', headerName: 'Submitted in past 10 days', minWidth: 200 },
     {
