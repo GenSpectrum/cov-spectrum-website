@@ -368,16 +368,23 @@ const TableTabContent = ({
   allWholeDateCounts,
 }: TableTabContentProps) => {
   // Fetch relative growth advantage
-  const [relativeAdvantages, setRelativeAdvantages] = useState<(Chen2021FitnessResponse | undefined)[]>([]);
+  const [relativeAdvantages, setRelativeAdvantages] = useState<
+    (Chen2021FitnessResponse | undefined | 'failed')[]
+  >([]);
   useEffect(() => {
-    const fetchQueue = new PromiseQueue();
+    const fetchQueue = new PromiseQueue(10);
     for (let i = 0; i < variantsDateCounts.length; i++) {
       const variantDateCountsStatus = variantsDateCounts[i];
       const allWholeDateCountsStatus = allWholeDateCounts[i];
+      const setFailedFunc = (prev: (Chen2021FitnessResponse | undefined | 'failed')[]) => {
+        const newArr = [...prev];
+        newArr[i] = 'failed';
+        return newArr;
+      };
       if (variantDateCountsStatus.status === 'rejected' || allWholeDateCountsStatus.status === 'rejected') {
         fetchQueue.addTask(() => {
           return new Promise<void>(resolve => {
-            setRelativeAdvantages(prev => [...prev, undefined]);
+            setRelativeAdvantages(setFailedFunc);
             resolve();
           });
         });
@@ -390,13 +397,21 @@ const TableTabContent = ({
         if (totalSequences > 0) {
           return getModelData(variantDateCounts, wholeDateCounts, { generationTime: 7 }).then(
             ({ response }) => {
-              setRelativeAdvantages(prev => [...prev, response]);
+              if (response === undefined) {
+                setRelativeAdvantages(setFailedFunc);
+              } else {
+                setRelativeAdvantages(prev => {
+                  const newArr = [...prev];
+                  newArr[i] = response;
+                  return newArr;
+                });
+              }
             }
           );
         } else {
           // No need to calculate the advantage if there is no available sequence
           return new Promise<void>(resolve => {
-            setRelativeAdvantages(prev => [...prev, undefined]);
+            setRelativeAdvantages(setFailedFunc);
             resolve();
           });
         }
@@ -470,13 +485,15 @@ const TableTabContent = ({
 
   const variantTableData = useMemo(() => {
     return variants.map((variant, i) => {
-      const advantage =
-        relativeAdvantages.length > i ? relativeAdvantages[i]?.params.fd ?? 'failed' : undefined;
+      let advantage = undefined;
       let errorMessage: string | undefined = undefined;
-      if (advantage === 'failed') {
+      const relativeAdvantage = relativeAdvantages[i];
+      if (relativeAdvantage === 'failed') {
         errorMessage = "Can't be calculated";
-      } else if (!advantage) {
+      } else if (relativeAdvantage === undefined) {
         errorMessage = 'Calculating...';
+      } else {
+        advantage = relativeAdvantage.params.fd;
       }
       const vcd = variantsDateCounts[i];
       const vnns = variantsNumberNewSequences[i];
