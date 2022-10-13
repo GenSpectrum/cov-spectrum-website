@@ -60,10 +60,10 @@ export const VariantLineages = ({ selector, onVariantSelect, type }: Props) => {
                             variant = { pangoLineage: lineage };
                             break;
                           case 'nextcladePangoLineage':
-                            variant = { variantQuery: `nextcladePangoLineage:${lineage}` };
+                            variant = { nextcladePangoLineage: `${lineage}` };
                             break;
                           case 'nextstrainClade':
-                            variant = { variantQuery: `nextstrainClade:${lineage}` };
+                            variant = { nextstrainClade: `${lineage}` };
                             break;
                           default:
                             throw new Error(`Unexpected lineage type: ${type}`);
