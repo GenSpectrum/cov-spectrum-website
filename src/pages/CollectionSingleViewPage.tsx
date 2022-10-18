@@ -32,7 +32,7 @@ import { DateCountSampleEntry } from '../data/sample/DateCountSampleEntry';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import { VariantTimeDistributionChartWidget } from '../widgets/VariantTimeDistributionChartWidget';
-import { SpecialDateRangeSelector } from '../data/DateRangeSelector';
+import { DateRangeSelector, SpecialDateRangeSelector } from '../data/DateRangeSelector';
 import { Chen2021FitnessResponse, ValueWithCI } from '../models/chen2021Fitness/chen2021Fitness-types';
 import { PromiseQueue } from '../helpers/PromiseQueue';
 import { getModelData } from '../models/chen2021Fitness/loading';
@@ -43,6 +43,7 @@ import { Collection } from '../data/Collection';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import download from 'downloadjs';
 import { csvStringify } from '../helpers/csvStringifyHelper';
+import { DateRangePicker } from '../components/DateRangePicker';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -63,7 +64,11 @@ export const CollectionSingleViewPage = () => {
       highlightedOnly: queryParams.get('highlightedOnly') === 'true',
     };
   }, [queryString]);
-  const dateRangeSelector = new SpecialDateRangeSelector('Past6M'); // TODO
+
+  // Date range
+  const [dateRangeSelector, setDateRangeSelector] = useState<DateRangeSelector | SpecialDateRangeSelector>(
+    new SpecialDateRangeSelector('Past6M')
+  );
 
   // Fetch collection
   const { data: collections } = useQuery(signal => fetchCollections(signal), []);
@@ -110,7 +115,7 @@ export const CollectionSingleViewPage = () => {
       }
       return { baselineDateCounts: baselineDateCounts.value, variantsDateCounts };
     },
-    [variants, locationSelector, baselineVariant]
+    [variants, locationSelector, baselineVariant, dateRangeSelector]
   );
   const { baselineDateCounts, variantsDateCounts } = baselineAndVariantsDateCounts ?? {
     baselineDateCounts: undefined,
@@ -151,7 +156,7 @@ export const CollectionSingleViewPage = () => {
         })
       );
     },
-    [variants, locationSelector, baselineVariant, baselineDateCounts]
+    [variants, locationSelector, baselineVariant, baselineDateCounts, dateRangeSelector]
   );
 
   // Fetch the number of sequences submitted in the past 10 days
@@ -176,7 +181,7 @@ export const CollectionSingleViewPage = () => {
         )
       );
     },
-    [variants, locationSelector]
+    [variants, locationSelector, dateRangeSelector]
   );
 
   // The "highlighted only" button can filter the set of variants that we look at. The following variable can be used
@@ -222,10 +227,13 @@ export const CollectionSingleViewPage = () => {
           selected={locationSelector}
         />
       </div>
-      <div>
-        Using data from the <strong>past 6 months</strong>
-      </div>
+
       {/* Baseline variant */}
+
+      <div className='mt-8'>
+        <DateRangePicker dateRangeSelector={dateRangeSelector} setDateRangeSelector={setDateRangeSelector} />
+      </div>
+
       <div className='mt-4'>
         <p>
           <strong>Baseline:</strong> You can select a baseline variant to compare the variants in the
