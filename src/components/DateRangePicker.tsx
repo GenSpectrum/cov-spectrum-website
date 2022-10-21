@@ -82,8 +82,7 @@ export const DateRangePicker = ({ dateRangeSelector, setDateRangeSelector }: Pro
   return (
     <>
       <div ref={ref} className='w-full flex flex-row items-center flex-wrap'>
-        <HeaderDateRangeSelect exploreUrl={exploreUrl} />
-
+        <HeaderDateRangeSelect exploreUrl={exploreUrl} setDateRangeSelector={setDateRangeSelector} />
         <div className={`flex flex-row ${width && width < 480 ? 'flex-wrap mt-2 mb-2 ml-1' : 'ml-2'}`}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
