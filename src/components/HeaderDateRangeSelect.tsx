@@ -3,6 +3,7 @@ import { Form } from 'react-bootstrap';
 import { ExploreUrl } from '../helpers/explore-url';
 import { dateRangeUrlToSelector, isDateRangeEncoded } from '../data/DateRangeUrlEncoded';
 import {
+  DateRangeSelector,
   SpecialDateRange,
   SpecialDateRangeSelector,
   specialDateRangeToString,
@@ -10,19 +11,22 @@ import {
 
 interface Props {
   exploreUrl?: ExploreUrl;
-  setDateRangeSelector?: any;
+  setDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
 }
 
 export const HeaderDateRangeSelect = ({ exploreUrl, setDateRangeSelector }: Props) => {
   const [dateRangeValue, setDateRangeValue] = useState<string>('Past6M');
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    if (isDateRangeEncoded(event.target.value) && exploreUrl) {
-      exploreUrl.setDateRange(dateRangeUrlToSelector(event.target.value));
-    }
-    if (setDateRangeSelector && isDateRangeEncoded(event.target.value)) {
-      setDateRangeValue(event.target.value);
-      setDateRangeSelector(dateRangeUrlToSelector(event.target.value));
+    if (isDateRangeEncoded(event.target.value)) {
+      if (exploreUrl) {
+        exploreUrl.setDateRange(dateRangeUrlToSelector(event.target.value));
+      }
+
+      if (setDateRangeSelector) {
+        setDateRangeValue(event.target.value);
+        setDateRangeSelector(dateRangeUrlToSelector(event.target.value));
+      }
     }
   };
 
@@ -43,23 +47,21 @@ export const HeaderDateRangeSelect = ({ exploreUrl, setDateRangeSelector }: Prop
     'Past6M',
   ];
   return (
-    <div>
-      <Form>
-        <Form.Control
-          as='select'
-          id='dateRangeSelect'
-          value={exploreUrl ? value : dateRangeValue}
-          onChange={handleChange}
-          className='rounded mt-1'
-          style={{ height: '55px', marginRight: '5px' }}
-        >
-          {specialDateRanges.map(d => (
-            <option value={d} key={specialDateRangeToString(d)}>
-              {specialDateRangeToString(d)}
-            </option>
-          ))}
-        </Form.Control>
-      </Form>
-    </div>
+    <Form>
+      <Form.Control
+        as='select'
+        id='dateRangeSelect'
+        value={exploreUrl ? value : dateRangeValue}
+        onChange={handleChange}
+        className='rounded mt-1'
+        style={{ height: '55px', marginRight: '5px' }}
+      >
+        {specialDateRanges.map(d => (
+          <option value={d} key={specialDateRangeToString(d)}>
+            {specialDateRangeToString(d)}
+          </option>
+        ))}
+      </Form.Control>
+    </Form>
   );
 };

@@ -66,7 +66,7 @@ export const CollectionSingleViewPage = () => {
   }, [queryString]);
 
   // Date range
-  const [dateRangeSelector, setDateRangeSelector] = useState<DateRangeSelector | SpecialDateRangeSelector>(
+  const [dateRangeSelector, setDateRangeSelector] = useState<DateRangeSelector>(
     new SpecialDateRangeSelector('Past6M')
   );
 

@@ -12,7 +12,7 @@ import { useResizeDetector } from 'react-resize-detector';
 
 interface Props {
   dateRangeSelector: DateRangeSelector;
-  setDateRangeSelector?: any;
+  setDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
 }
 
 const minimumDate: Date = new Date('2020-01-06'); // first day of first week of 2020
