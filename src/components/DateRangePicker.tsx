@@ -12,12 +12,13 @@ import { useResizeDetector } from 'react-resize-detector';
 
 interface Props {
   dateRangeSelector: DateRangeSelector;
+  setDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
 }
 
 const minimumDate: Date = new Date('2020-01-06'); // first day of first week of 2020
 const today = new Date();
 
-export const DateRangePicker = ({ dateRangeSelector }: Props) => {
+export const DateRangePicker = ({ dateRangeSelector, setDateRangeSelector }: Props) => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
 
   const [startDate, setStartDate] = React.useState<Date | null>(null);
@@ -54,6 +55,15 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
           })
         );
       }
+
+      if (setDateRangeSelector) {
+        setDateRangeSelector(
+          new FixedDateRangeSelector({
+            dateFrom: newDateFrom,
+            dateTo: newDateTo,
+          })
+        );
+      }
     }
   };
 
@@ -72,7 +82,7 @@ export const DateRangePicker = ({ dateRangeSelector }: Props) => {
   return (
     <>
       <div ref={ref} className='w-full flex flex-row items-center flex-wrap'>
-        <HeaderDateRangeSelect exploreUrl={exploreUrl} />
+        <HeaderDateRangeSelect exploreUrl={exploreUrl} setDateRangeSelector={setDateRangeSelector} />
         <div className={`flex flex-row ${width && width < 480 ? 'flex-wrap mt-2 mb-2 ml-1' : 'ml-2'}`}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
