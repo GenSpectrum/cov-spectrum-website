@@ -174,14 +174,13 @@ export const CollectionSingleViewPage = () => {
               location: locationSelector,
               variant: variant.query,
               samplingStrategy: SamplingStrategy.AllSamples,
-              dateRange: dateRangeSelector,
             },
             signal
           )
         )
       );
     },
-    [variants, locationSelector, dateRangeSelector]
+    [variants, locationSelector]
   );
 
   // The "highlighted only" button can filter the set of variants that we look at. The following variable can be used
