@@ -181,7 +181,7 @@ export const FocusCompareEqualsPage = () => {
                   createDivisionBreakdownButton('SequencesOverTime', setShowVariantTimeDistributionDivGrid),
                 ]}
               >
-                <div style={{ height: '400px' }}>
+                <div style={{ height: '300px' }}>
                   <MultiVariantTimeDistributionLineChart
                     variantSampleSets={variantDateCounts.data}
                     wholeSampleSet={wholeDateCountWithDateFilter.data}

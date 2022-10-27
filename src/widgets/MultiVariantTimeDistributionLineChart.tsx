@@ -161,7 +161,7 @@ export const MultiVariantTimeDistributionLineChart = ({
   const yMax: number = getYMax(plotData);
 
   return (
-    <div style={{ height: '100%' }}>
+    <div style={{ height: '90%' }}>
       <FormGroup>
         <div className='flex-wrap mb-3 mt-2'>
           {analysisMode !== AnalysisMode.CompareToBaseline && (
