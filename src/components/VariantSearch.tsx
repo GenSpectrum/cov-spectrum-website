@@ -141,7 +141,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
               <div className='flex mr-4' key={selection.id}>
                 <button
                   className='mb-9 outline-none hover:text-red-500'
-                  onClick={() => removeSelection(index + 1)}
+                  onClick={() => removeSelection(index)}
                   title='Delete'
                 >
                   <AiFillDelete />
