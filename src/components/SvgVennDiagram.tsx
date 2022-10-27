@@ -459,7 +459,11 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
 
           {vennGeneralData.map(({ svgTransform, mutations }, index) => (
             <text
-              onClick={() => navigator.clipboard.writeText(mutations.join(','))}
+              onClick={() => {
+                let sorted: string[] =
+                  domain === 'aa' ? sortAAMutationList(mutations) : sortNucMutationList(mutations);
+                navigator.clipboard.writeText(sorted.join(','));
+              }}
               transform={svgTransform}
               className={`svgPlotNumber ${numberOfvariants === 4 ? 'st3 st4' : 'st1 st2'}`}
               onMouseEnter={() => setVariantIndex(index)}
