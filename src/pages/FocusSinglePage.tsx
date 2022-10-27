@@ -33,7 +33,6 @@ import { Utils } from '../services/Utils';
 import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { WasteWaterDataset } from '../models/wasteWater/types';
 import { filter, getData } from '../models/wasteWater/loading';
-import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
 import { HospDiedAgeSampleData } from '../data/sample/HospDiedAgeSampleDataset';
 import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
@@ -47,6 +46,7 @@ import { ErrorAlert } from '../components/ErrorAlert';
 import { VariantInsertions } from '../components/VariantInsertions';
 import * as lodashAlternatives from '../helpers/lodash_alternatives';
 import { VariantMutationsTimelines } from '../components/VariantMutationsTimelines';
+import { wastewaterVariantColors } from '../models/wasteWater/constants';
 
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
@@ -258,7 +258,7 @@ export const FocusSinglePage = () => {
   if (
     country === 'Switzerland' &&
     pangoLineageWithoutAsterisk &&
-    WASTE_WATER_AVAILABLE_LINEAGES.includes(pangoLineageWithoutAsterisk)
+    wastewaterVariantColors.hasOwnProperty(pangoLineageWithoutAsterisk)
   ) {
     if (wasteWaterData) {
       wasteWaterSummaryPlot = (
