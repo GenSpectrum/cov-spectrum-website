@@ -256,13 +256,15 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                       return <></>;
                     }}
                   />
-                  <Area
-                    type='monotone'
-                    dataKey={logScale && !absoluteNumbers ? 'logCI' : 'proportionCI'}
-                    fill={colors.activeSecondary}
-                    stroke='transparent'
-                    isAnimationActive={false}
-                  />
+                  {!absoluteNumbers && (
+                    <Area
+                      type='monotone'
+                      dataKey={logScale && !absoluteNumbers ? 'logCI' : 'proportionCI'}
+                      fill={colors.activeSecondary}
+                      stroke='transparent'
+                      isAnimationActive={false}
+                    />
+                  )}
                   <Line
                     type='monotone'
                     dataKey={logScale && !absoluteNumbers ? 'log' : 'proportion'}

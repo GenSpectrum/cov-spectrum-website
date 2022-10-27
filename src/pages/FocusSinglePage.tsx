@@ -33,7 +33,6 @@ import { Utils } from '../services/Utils';
 import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { WasteWaterDataset } from '../models/wasteWater/types';
 import { filter, getData } from '../models/wasteWater/loading';
-import { WASTE_WATER_AVAILABLE_LINEAGES } from '../models/wasteWater/WasteWaterDeepFocus';
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
 import { HospDiedAgeSampleData } from '../data/sample/HospDiedAgeSampleDataset';
 import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
@@ -46,13 +45,15 @@ import { HuismanScire2021ReContainer } from '../models/huismanScire2021Re/Huisma
 import { ErrorAlert } from '../components/ErrorAlert';
 import { VariantInsertions } from '../components/VariantInsertions';
 import * as lodashAlternatives from '../helpers/lodash_alternatives';
+import { VariantMutationsTimelines } from '../components/VariantMutationsTimelines';
+import { wastewaterVariantColors } from '../models/wasteWater/constants';
 
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
 
 export const FocusSinglePage = () => {
   const exploreUrl = useExploreUrl();
-  const [lineageDistributionIndex, setLineageDistributionIndex] = useState(0);
+  const [lineageDistributionIndex, setLineageDistributionIndex] = useState(1);
   const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
   const [showEstimatedCasesDivGrid, setShowEstimatedCasesDivGrid] = useState(false);
   const [showVariantAgeDistributionDivGrid, setShowVariantAgeDistributionDivGrid] = useState(false);
@@ -257,7 +258,7 @@ export const FocusSinglePage = () => {
   if (
     country === 'Switzerland' &&
     pangoLineageWithoutAsterisk &&
-    WASTE_WATER_AVAILABLE_LINEAGES.includes(pangoLineageWithoutAsterisk)
+    wastewaterVariantColors.hasOwnProperty(pangoLineageWithoutAsterisk)
   ) {
     if (wasteWaterData) {
       wasteWaterSummaryPlot = (
@@ -451,6 +452,10 @@ export const FocusSinglePage = () => {
               )}
               {isDefaultHostSelector(host) && wasteWaterSummaryPlot}
             </PackedGrid>
+
+            <div className='m-4'>
+              <VariantMutationsTimelines selector={ldvsSelector} />
+            </div>
 
             <div className='m-4'>
               <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>

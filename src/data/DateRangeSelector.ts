@@ -40,6 +40,7 @@ export class SpecialDateRangeSelector implements DateRangeSelector {
   constructor(public mode: SpecialDateRange) {}
 
   getDateRange(): DateRange {
+    const daysAgo = (n: number) => globalDateCache.getDayUsingDayjs(dayjs().subtract(n, 'days'));
     const monthsAgo = (n: number) =>
       globalDateCache.getDayUsingDayjs(dayjs().subtract(n, 'months').weekday(0));
     const weeksAgo = (n: number) => globalDateCache.getDayUsingDayjs(dayjs().subtract(n, 'weeks'));
@@ -62,15 +63,15 @@ export class SpecialDateRangeSelector implements DateRangeSelector {
           dateTo: globalDateCache.getDay('2023-01-01'),
         };
       case 'Past2W':
-        return { dateFrom: weeksAgo(2) };
+        return { dateFrom: weeksAgo(2), dateTo: daysAgo(7) };
       case 'Past1M':
-        return { dateFrom: monthsAgo(1) };
+        return { dateFrom: monthsAgo(1), dateTo: daysAgo(7) };
       case 'Past2M':
-        return { dateFrom: monthsAgo(2) };
+        return { dateFrom: monthsAgo(2), dateTo: daysAgo(7) };
       case 'Past3M':
-        return { dateFrom: monthsAgo(3) };
+        return { dateFrom: monthsAgo(3), dateTo: daysAgo(7) };
       case 'Past6M':
-        return { dateFrom: monthsAgo(6) };
+        return { dateFrom: monthsAgo(6), dateTo: daysAgo(7) };
     }
   }
 }

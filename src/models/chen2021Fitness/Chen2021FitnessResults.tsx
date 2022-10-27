@@ -97,20 +97,20 @@ export const Chen2021FitnessResults = ({
   return (
     <>
       <Info title=''>
-        <div>Logistic growth rate a: {formatValueWithCI(mainData.params.a)}</div>
+        <div>Logistic growth rate a (per day): {formatValueWithCI(mainData.params.a)}</div>
         {/*TODO t_0 is currently difficult (or impossible?) to interpret.*/}
         {/*<div>Sigmoid's midpoint t_0: {modelData && formatValueWithCI(modelData.params.t0, 0)}</div>*/}
         <div>
-          Relative growth advantage f<sub>c</sub>: {formatValueWithCI(mainData.params.fc)}
+          Relative growth advantage f<sub>c</sub> (per generation): {formatValueWithCI(mainData.params.fc)}
         </div>
         {changePointsData.map(({ date, fc }) => (
           <>
-            Relative growth advantage f<sub>c</sub> after {date.toISOString().substring(0, 10)}:{' '}
-            {formatValueWithCI(fc)}
+            Relative growth advantage f<sub>c</sub> (per generation) after{' '}
+            {date.toISOString().substring(0, 10)}: {formatValueWithCI(fc)}
           </>
         ))}
         <div>
-          Relative growth advantage f<sub>d</sub>: {formatValueWithCI(mainData.params.fd)}
+          Relative growth advantage f<sub>d</sub> (per generation): {formatValueWithCI(mainData.params.fd)}
         </div>
       </Info>
 

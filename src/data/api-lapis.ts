@@ -152,7 +152,8 @@ export async function fetchNumberSubmittedSamplesInPastTenDays(
 export async function fetchMutationProportions(
   selector: LapisSelector,
   sequenceType: SequenceType,
-  signal?: AbortSignal
+  signal?: AbortSignal,
+  minProportion = 0.001
 ): Promise<MutationProportionEntry[]> {
   const url = await getLinkTo(
     `${sequenceType}-mutations`,
@@ -161,7 +162,7 @@ export async function fetchMutationProportions(
     undefined,
     undefined,
     true,
-    '0.001'
+    minProportion.toString()
   );
   const res = await get(url, signal);
   if (!res.ok) {

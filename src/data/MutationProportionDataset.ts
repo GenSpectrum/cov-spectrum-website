@@ -11,11 +11,12 @@ export class MutationProportionData {
   static async fromApi(
     selector: LapisSelector,
     sequenceType: SequenceType,
-    signal?: AbortSignal
+    signal?: AbortSignal,
+    minProportion?: number
   ): Promise<MutationProportionDataset> {
     return {
       selector,
-      payload: await fetchMutationProportions(selector, sequenceType, signal),
+      payload: await fetchMutationProportions(selector, sequenceType, signal, minProportion),
     };
   }
 }
