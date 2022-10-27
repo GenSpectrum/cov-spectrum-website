@@ -24,7 +24,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
           Estimated probability of death by age group
         </h3>
         <div
-          className="sc-gsnTZi bFTAqR"
+          className="sc-gsnTZi ehOUsR"
         >
           <div
             className="sc-dkzDqf jHWsVm"
@@ -479,7 +479,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
           Estimated probability of hospitalization by age group
         </h3>
         <div
-          className="sc-gsnTZi bFTAqR"
+          className="sc-gsnTZi ehOUsR"
         >
           <div
             className="sc-dkzDqf jHWsVm"
