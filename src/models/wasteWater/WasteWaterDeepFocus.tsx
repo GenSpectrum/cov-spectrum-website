@@ -8,27 +8,18 @@ import { GridCell, PackedGrid } from '../../components/PackedGrid';
 import { ExternalLink } from '../../components/ExternalLink';
 import Loader from '../../components/Loader';
 import { Utils } from '../../services/Utils';
+import { wastewaterVariantColors } from './constants';
 
 interface Props {
   country: string;
   variantName: string | undefined;
 }
 
-export const WASTE_WATER_AVAILABLE_LINEAGES = [
-  'B.1.1.7',
-  'B.1.351',
-  'P.1',
-  'B.1.617.2',
-  'B.1.617.1',
-  'BA.1',
-  'BA.2',
-];
-
 export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
   const [data, setData] = useState<WasteWaterDataset | undefined>(undefined);
 
   useEffect(() => {
-    if (country !== 'Switzerland' || !variantName || !WASTE_WATER_AVAILABLE_LINEAGES.includes(variantName)) {
+    if (country !== 'Switzerland' || !variantName || !wastewaterVariantColors.hasOwnProperty(variantName)) {
       return;
     }
     getData({
@@ -36,7 +27,7 @@ export const WasteWaterDeepFocus = ({ country, variantName }: Props) => {
     }).then(dataset => dataset && setData(filter(dataset, variantName)));
   }, [country, variantName]);
 
-  if (country !== 'Switzerland' || !variantName || !WASTE_WATER_AVAILABLE_LINEAGES.includes(variantName)) {
+  if (country !== 'Switzerland' || !variantName || !wastewaterVariantColors.hasOwnProperty(variantName)) {
     return <>Nothing to see here.</>;
   }
 

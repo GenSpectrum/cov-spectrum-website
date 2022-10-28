@@ -3,15 +3,30 @@
  * promises will be rejected as well.
  */
 export class PromiseQueue {
-  private prev: Promise<any> | undefined = undefined;
+  private blocker: Promise<any> | undefined = undefined;
+  private blockerResolve: ((value: any) => void) | undefined = undefined;
+
+  private running = 0;
+
+  constructor(private parallelLimit: number) {
+    if (parallelLimit < 1) {
+      throw new Error('parallelLimit may not be below 1.');
+    }
+  }
 
   async addTask<T>(task: () => Promise<T>): Promise<T> {
-    while (this.prev !== undefined) {
-      await this.prev;
+    while (this.running >= this.parallelLimit) {
+      await this.blocker;
     }
-    this.prev = task();
-    const result = await this.prev;
-    this.prev = undefined;
-    return result;
+    this.running++;
+    this.blocker = new Promise(resolve => (this.blockerResolve = resolve));
+    try {
+      return await task();
+    } catch (e) {
+      throw e;
+    } finally {
+      this.running--;
+      this.blockerResolve!(undefined);
+    }
   }
 }

@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { ExploreUrl } from '../helpers/explore-url';
 import { dateRangeUrlToSelector, isDateRangeEncoded } from '../data/DateRangeUrlEncoded';
 import {
+  DateRangeSelector,
   SpecialDateRange,
   SpecialDateRangeSelector,
   specialDateRangeToString,
@@ -10,23 +11,30 @@ import {
 
 interface Props {
   exploreUrl?: ExploreUrl;
+  setDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
 }
 
-export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
-  if (!exploreUrl) {
-    return null;
-  }
+export const HeaderDateRangeSelect = ({ exploreUrl, setDateRangeSelector }: Props) => {
+  const [dateRangeValue, setDateRangeValue] = useState<string>('Past6M');
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     if (isDateRangeEncoded(event.target.value)) {
-      exploreUrl.setDateRange(dateRangeUrlToSelector(event.target.value));
+      if (exploreUrl) {
+        exploreUrl.setDateRange(dateRangeUrlToSelector(event.target.value));
+      }
+
+      if (setDateRangeSelector) {
+        setDateRangeValue(event.target.value);
+        setDateRangeSelector(dateRangeUrlToSelector(event.target.value));
+      }
     }
   };
 
   let value = '';
-  if (exploreUrl.dateRange instanceof SpecialDateRangeSelector) {
+  if (exploreUrl && exploreUrl.dateRange instanceof SpecialDateRangeSelector) {
     value = exploreUrl.dateRange.mode;
   }
+
   const specialDateRanges: SpecialDateRange[] = [
     'AllTimes',
     'Y2020',
@@ -43,14 +51,11 @@ export const HeaderDateRangeSelect = ({ exploreUrl }: Props) => {
       <Form.Control
         as='select'
         id='dateRangeSelect'
-        value={value}
+        value={exploreUrl ? value : dateRangeValue}
         onChange={handleChange}
         className='rounded mt-1'
         style={{ height: '55px', marginRight: '5px' }}
       >
-        <option value='' disabled>
-          Custom Range
-        </option>
         {specialDateRanges.map(d => (
           <option value={d} key={specialDateRangeToString(d)}>
             {specialDateRangeToString(d)}

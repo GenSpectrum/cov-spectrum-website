@@ -32,7 +32,7 @@ import { DateCountSampleEntry } from '../data/sample/DateCountSampleEntry';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import { VariantTimeDistributionChartWidget } from '../widgets/VariantTimeDistributionChartWidget';
-import { SpecialDateRangeSelector } from '../data/DateRangeSelector';
+import { DateRangeSelector, SpecialDateRangeSelector } from '../data/DateRangeSelector';
 import { Chen2021FitnessResponse, ValueWithCI } from '../models/chen2021Fitness/chen2021Fitness-types';
 import { PromiseQueue } from '../helpers/PromiseQueue';
 import { getModelData } from '../models/chen2021Fitness/loading';
@@ -43,6 +43,7 @@ import { Collection } from '../data/Collection';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import download from 'downloadjs';
 import { csvStringify } from '../helpers/csvStringifyHelper';
+import { DateRangePicker } from '../components/DateRangePicker';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -63,7 +64,11 @@ export const CollectionSingleViewPage = () => {
       highlightedOnly: queryParams.get('highlightedOnly') === 'true',
     };
   }, [queryString]);
-  const dateRangeSelector = new SpecialDateRangeSelector('Past6M'); // TODO
+
+  // Date range
+  const [dateRangeSelector, setDateRangeSelector] = useState<DateRangeSelector>(
+    new SpecialDateRangeSelector('Past6M')
+  );
 
   // Fetch collection
   const { data: collections } = useQuery(signal => fetchCollections(signal), []);
@@ -110,7 +115,7 @@ export const CollectionSingleViewPage = () => {
       }
       return { baselineDateCounts: baselineDateCounts.value, variantsDateCounts };
     },
-    [variants, locationSelector, baselineVariant]
+    [variants, locationSelector, baselineVariant, dateRangeSelector]
   );
   const { baselineDateCounts, variantsDateCounts } = baselineAndVariantsDateCounts ?? {
     baselineDateCounts: undefined,
@@ -151,7 +156,7 @@ export const CollectionSingleViewPage = () => {
         })
       );
     },
-    [variants, locationSelector, baselineVariant, baselineDateCounts]
+    [variants, locationSelector, baselineVariant, baselineDateCounts, dateRangeSelector]
   );
 
   // Fetch the number of sequences submitted in the past 10 days
@@ -169,7 +174,6 @@ export const CollectionSingleViewPage = () => {
               location: locationSelector,
               variant: variant.query,
               samplingStrategy: SamplingStrategy.AllSamples,
-              dateRange: dateRangeSelector,
             },
             signal
           )
@@ -222,10 +226,13 @@ export const CollectionSingleViewPage = () => {
           selected={locationSelector}
         />
       </div>
-      <div>
-        Using data from the <strong>past 6 months</strong>
-      </div>
+
       {/* Baseline variant */}
+
+      <div className='mt-8'>
+        <DateRangePicker dateRangeSelector={dateRangeSelector} setDateRangeSelector={setDateRangeSelector} />
+      </div>
+
       <div className='mt-4'>
         <p>
           <strong>Baseline:</strong> You can select a baseline variant to compare the variants in the
@@ -368,16 +375,23 @@ const TableTabContent = ({
   allWholeDateCounts,
 }: TableTabContentProps) => {
   // Fetch relative growth advantage
-  const [relativeAdvantages, setRelativeAdvantages] = useState<(Chen2021FitnessResponse | undefined)[]>([]);
+  const [relativeAdvantages, setRelativeAdvantages] = useState<
+    (Chen2021FitnessResponse | undefined | 'failed')[]
+  >([]);
   useEffect(() => {
-    const fetchQueue = new PromiseQueue();
+    const fetchQueue = new PromiseQueue(10);
     for (let i = 0; i < variantsDateCounts.length; i++) {
       const variantDateCountsStatus = variantsDateCounts[i];
       const allWholeDateCountsStatus = allWholeDateCounts[i];
+      const setFailedFunc = (prev: (Chen2021FitnessResponse | undefined | 'failed')[]) => {
+        const newArr = [...prev];
+        newArr[i] = 'failed';
+        return newArr;
+      };
       if (variantDateCountsStatus.status === 'rejected' || allWholeDateCountsStatus.status === 'rejected') {
         fetchQueue.addTask(() => {
           return new Promise<void>(resolve => {
-            setRelativeAdvantages(prev => [...prev, undefined]);
+            setRelativeAdvantages(setFailedFunc);
             resolve();
           });
         });
@@ -390,13 +404,21 @@ const TableTabContent = ({
         if (totalSequences > 0) {
           return getModelData(variantDateCounts, wholeDateCounts, { generationTime: 7 }).then(
             ({ response }) => {
-              setRelativeAdvantages(prev => [...prev, response]);
+              if (response === undefined) {
+                setRelativeAdvantages(setFailedFunc);
+              } else {
+                setRelativeAdvantages(prev => {
+                  const newArr = [...prev];
+                  newArr[i] = response;
+                  return newArr;
+                });
+              }
             }
           );
         } else {
           // No need to calculate the advantage if there is no available sequence
           return new Promise<void>(resolve => {
-            setRelativeAdvantages(prev => [...prev, undefined]);
+            setRelativeAdvantages(setFailedFunc);
             resolve();
           });
         }
@@ -426,15 +448,25 @@ const TableTabContent = ({
         addVariantSelectorToUrlSearchParams(query, urlParams);
         const placeString = encodeLocationSelectorToSingleString(locationSelector);
         return params.value ? (
-          <Link to={`/explore/${placeString}/AllSamples/Past6M/variants?${urlParams.toString()}`}>
-            <button className='underline'>{params.value}</button>
+          <Link
+            to={`/explore/${placeString}/AllSamples/Past6M/variants?${urlParams.toString()}`}
+            className='overflow-hidden'
+          >
+            <button className='underline break-words overflow-hidden w-full'>{params.value}</button>
           </Link>
         ) : (
           <></>
         );
       },
     },
-    { field: 'queryFormatted', headerName: 'Query', minWidth: 300 },
+    {
+      field: 'queryFormatted',
+      headerName: 'Query',
+      minWidth: 300,
+      renderCell: (params: GridRenderCellParams<string>) => {
+        return <span className='break-words overflow-hidden'>{params.value}</span>;
+      },
+    },
     { field: 'total', headerName: 'Number sequences', minWidth: 150 },
     { field: 'newSequences', headerName: 'Submitted in past 10 days', minWidth: 200 },
     {
@@ -460,13 +492,15 @@ const TableTabContent = ({
 
   const variantTableData = useMemo(() => {
     return variants.map((variant, i) => {
-      const advantage =
-        relativeAdvantages.length > i ? relativeAdvantages[i]?.params.fd ?? 'failed' : undefined;
+      let advantage = undefined;
       let errorMessage: string | undefined = undefined;
-      if (advantage === 'failed') {
+      const relativeAdvantage = relativeAdvantages[i];
+      if (relativeAdvantage === 'failed') {
         errorMessage = "Can't be calculated";
-      } else if (!advantage) {
+      } else if (relativeAdvantage === undefined) {
         errorMessage = 'Calculating...';
+      } else {
+        advantage = relativeAdvantage.params.fd;
       }
       const vcd = variantsDateCounts[i];
       const vnns = variantsNumberNewSequences[i];
