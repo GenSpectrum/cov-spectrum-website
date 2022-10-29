@@ -1,6 +1,6 @@
 import { useHistory, useLocation, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
-import { fetchCollections } from '../data/api';
+import { fetchCollection } from '../data/api';
 import React, { useEffect, useMemo, useState } from 'react';
 import Loader from '../components/Loader';
 import { Link } from 'react-router-dom';
@@ -71,11 +71,7 @@ export const CollectionSingleViewPage = () => {
   );
 
   // Fetch collection
-  const { data: collections } = useQuery(signal => fetchCollections(signal), []);
-  const collection = useMemo(
-    () => collections?.find(c => c.id === collectionId),
-    [collectionId, collections]
-  );
+  const { data: collection, isLoading } = useQuery(signal => fetchCollection(collectionId, signal), []);
   const variants = useMemo(
     () =>
       collection
@@ -189,7 +185,7 @@ export const CollectionSingleViewPage = () => {
     variants?.length === variantsDateCounts?.length && variants?.length === allWholeDateCounts?.length;
 
   // Rendering
-  if (!collections) {
+  if (isLoading) {
     return <Loader />;
   }
 

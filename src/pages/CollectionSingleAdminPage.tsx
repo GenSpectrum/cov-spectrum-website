@@ -1,11 +1,6 @@
 import { useHistory, useLocation, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
-import {
-  deleteCollection,
-  fetchCollections,
-  updateCollection,
-  validateCollectionAdminKey,
-} from '../data/api';
+import { deleteCollection, fetchCollection, updateCollection, validateCollectionAdminKey } from '../data/api';
 import React, { useMemo, useState } from 'react';
 import Loader from '../components/Loader';
 import { Link } from 'react-router-dom';
@@ -41,14 +36,10 @@ export const CollectionSingleAdminPage = () => {
   );
 
   // Fetch collection
-  const { data: collections } = useQuery(signal => fetchCollections(signal), []);
-  const collection = useMemo(
-    () => collections?.find(c => c.id === collectionId),
-    [collectionId, collections]
-  );
+  const { data: collection, isLoading } = useQuery(signal => fetchCollection(collectionId, signal), []);
 
   // Rendering
-  if (!collections) {
+  if (isLoading) {
     return <Loader />;
   }
 
