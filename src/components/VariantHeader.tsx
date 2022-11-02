@@ -15,11 +15,16 @@ export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
 
   useEffect(() => {
     let isSubscribed = true;
-    if (variant.pangoLineage === undefined) {
+    if (variant.pangoLineage === undefined && variant.nextcladePangoLineage === undefined) {
       setResolvedFullName(undefined);
       return;
     }
-    PangoLineageAliasResolverService.findFullName(variant.pangoLineage).then(name => {
+    const pangoLineage: string = variant.pangoLineage
+      ? variant.pangoLineage
+      : variant.nextcladePangoLineage
+      ? variant.nextcladePangoLineage
+      : '';
+    PangoLineageAliasResolverService.findFullName(pangoLineage).then(name => {
       if (isSubscribed) {
         setResolvedFullName(name);
       }
@@ -27,7 +32,7 @@ export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
     return () => {
       isSubscribed = false;
     };
-  }, [variant.pangoLineage]);
+  }, [variant.pangoLineage, variant.nextcladePangoLineage]);
 
   return (
     <div className='pt-10 lg:pt-0 ml-1 md:ml-3 w-full relative'>
