@@ -9,7 +9,7 @@ import { Utils } from '../services/Utils';
 import { CountryDateCountSampleEntry } from '../data/sample/CountryDateCountSampleEntry';
 import { fillFromWeeklyMap } from '../helpers/fill-missing';
 import { UnifiedIsoWeek } from '../helpers/date-cache';
-
+import { Button, ButtonVariant } from '../helpers/ui';
 const CHART_MARGIN_RIGHT = 15;
 const DEFAULT_SHOW = 5;
 
@@ -97,10 +97,10 @@ export type VariantInternationalComparisonChartProps = {
 
 export const VariantInternationalComparisonChart = ({
   preSelectedCountries = [],
-  logScale = false,
   variantInternationalSampleSet,
   wholeInternationalSampleSet,
 }: VariantInternationalComparisonChartProps) => {
+  const [logScale, setLogScale] = useState<boolean>(false);
   const [selectedPlaceOptions, setSelectedPlaceOptions] = useState<any>(
     preSelectedCountries.map(c => ({
       value: c,
@@ -176,9 +176,7 @@ export const VariantInternationalComparisonChart = ({
         };
       }
     );
-
     const dateMap: Map<string, any> = new Map();
-
     for (let { countryName, data } of proportionCountries) {
       for (let { dateString, proportion } of data) {
         if (!dateMap.has(dateString)) {
@@ -214,6 +212,13 @@ export const VariantInternationalComparisonChart = ({
   return (
     <Wrapper>
       <SelectWrapper>
+        <Button
+          variant={ButtonVariant.SECONDARY}
+          className='mt-2 mb-4 w-40'
+          onClick={() => setLogScale(v => !v)}
+        >
+          Toggle log scale
+        </Button>
         <Select
           closeMenuOnSelect={false}
           placeholder='Select countries...'
