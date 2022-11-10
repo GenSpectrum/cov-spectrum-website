@@ -7,6 +7,12 @@ import {
 } from './DateRangeSelector';
 import { globalDateCache } from '../helpers/date-cache';
 
+export function deleteSubmissionDateParams(params: URLSearchParams) {
+  params.delete('dateSubmittedFrom');
+  params.delete('dateSubmittedTo');
+  params.delete('dateSubmitted');
+}
+
 export type DateRangeUrlEncoded = SpecialDateRange | typeof specificDateRangePattern;
 
 export const specificDateRangePattern = `^from=\\d{4}-\\d{2}-\\d{2}&to=\\d{4}-\\d{2}-\\d{2}$`;
@@ -36,6 +42,17 @@ export function dateRangeUrlFromSelector(selector: DateRangeSelector): DateRange
   }
   if (selector instanceof SpecialDateRangeSelector) {
     return selector.mode;
+  }
+  throw new Error('Unexpected date range selector type');
+}
+
+export function submissionDateRangeUrlFromSelector(selector: DateRangeSelector): DateRangeUrlEncoded {
+  if (selector instanceof FixedDateRangeSelector) {
+    const { dateFrom, dateTo } = selector.getDateRange();
+    return `dateSubmittedFrom=${dateFrom?.string}&dateSubmittedTo=${dateTo?.string}` as unknown as DateRangeUrlEncoded;
+  }
+  if (selector instanceof SpecialDateRangeSelector) {
+    return `dateSubmitted=${selector.mode}` as DateRangeUrlEncoded;
   }
   throw new Error('Unexpected date range selector type');
 }

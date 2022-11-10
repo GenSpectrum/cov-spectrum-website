@@ -12,13 +12,29 @@ import {
 interface Props {
   exploreUrl?: ExploreUrl;
   setDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
+  setSubmissionDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
+  setSpecialSubmissionDateRaw?: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
-export const HeaderDateRangeSelect = ({ exploreUrl, setDateRangeSelector }: Props) => {
+export const HeaderDateRangeSelect = ({
+  exploreUrl,
+  setDateRangeSelector,
+  setSubmissionDateRangeSelector,
+  setSpecialSubmissionDateRaw,
+}: Props) => {
   const [dateRangeValue, setDateRangeValue] = useState<string>('Past6M');
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     if (isDateRangeEncoded(event.target.value)) {
+      if (setSubmissionDateRangeSelector) {
+        setDateRangeValue(event.target.value);
+        setSubmissionDateRangeSelector(dateRangeUrlToSelector(event.target.value));
+        if (setSpecialSubmissionDateRaw) {
+          setSpecialSubmissionDateRaw(event.target.value);
+        }
+        return;
+      }
+
       if (exploreUrl) {
         exploreUrl.setDateRange(dateRangeUrlToSelector(event.target.value));
       }
@@ -51,7 +67,7 @@ export const HeaderDateRangeSelect = ({ exploreUrl, setDateRangeSelector }: Prop
       <Form.Control
         as='select'
         id='dateRangeSelect'
-        value={exploreUrl ? value : dateRangeValue}
+        value={setSubmissionDateRangeSelector ? dateRangeValue : exploreUrl ? value : dateRangeValue}
         onChange={handleChange}
         className='rounded mt-1'
         style={{ height: '55px', marginRight: '5px' }}

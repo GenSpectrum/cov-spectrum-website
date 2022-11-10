@@ -1,5 +1,5 @@
 import { ExternalLink } from './ExternalLink';
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { qcFieldsAndLabels, QcFieldType, QcSelector } from '../data/QcSelector';
 import { Utils } from '../services/Utils';
 import { Button, ButtonVariant } from '../helpers/ui';
@@ -10,6 +10,8 @@ import { HostService } from '../services/HostService';
 import { useQuery } from '../helpers/query-hook';
 import Loader from './Loader';
 import { HUMAN } from '../data/api-lapis';
+import { DateRangeSelector, SpecialDateRangeSelector } from '../data/DateRangeSelector';
+import { DateRangePicker } from './DateRangePicker';
 
 type Props = {
   onClose: () => void;
@@ -19,8 +21,15 @@ const toSelectOption = (s: string) => ({ label: s, value: s });
 
 export const AdvancedFiltersPanel = ({ onClose }: Props) => {
   const { setHostAndQc, host: initialHost, qc: initialQc } = useExploreUrl() ?? {};
+
   const [host, setHost] = useState<HostSelector>(initialHost ?? []);
   const [qc, setQc] = useState<QcSelector>(initialQc ?? {});
+
+  // Date range
+  const [submissionDateRangeSelector, setSubmissionDateRangeSelector] = useState<DateRangeSelector>(
+    new SpecialDateRangeSelector('Past6M')
+  );
+  const [specialSubmissionDateRaw, setSpecialSubmissionDateRaw] = useState<string | null>(null);
 
   const { data: allHosts } = useQuery(
     () => HostService.allHosts.then(hs => hs.sort((a, b) => a.localeCompare(b))),
@@ -45,9 +54,12 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
     if (!setHostAndQc) {
       return;
     }
-    setHostAndQc(host, qc);
+    setHostAndQc(host, qc, submissionDateRangeSelector, specialSubmissionDateRaw);
+
     onClose();
-  }, [host, qc, setHostAndQc, onClose]);
+  }, [host, qc, setHostAndQc, onClose, submissionDateRangeSelector]);
+
+  useEffect(() => {}, [submissionDateRangeSelector]);
 
   return (
     <>
@@ -85,6 +97,13 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
           <Loader />
         </div>
       )}
+      <div className='mt-4 mb-4'>
+        <DateRangePicker
+          setSpecialSubmissionDateRaw={setSpecialSubmissionDateRaw}
+          dateRangeSelector={submissionDateRangeSelector}
+          setSubmissionDateRangeSelector={setSubmissionDateRangeSelector}
+        />
+      </div>
       {/* Sequence quality */}
       <h2>Sequence quality</h2>
       Here, you can filter the sequences by the QC (quality control) metrics calculated by{' '}

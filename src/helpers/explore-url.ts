@@ -11,12 +11,19 @@ import {
   encodeLocationSelectorToSingleString,
   LocationSelector,
 } from '../data/LocationSelector';
-import { DateRangeSelector } from '../data/DateRangeSelector';
+import {
+  DateRangeSelector,
+  isSpecialDateRange,
+  SpecialDateRange,
+  SpecialDateRangeSelector,
+} from '../data/DateRangeSelector';
 import {
   DateRangeUrlEncoded,
   dateRangeUrlFromSelector,
   dateRangeUrlToSelector,
+  deleteSubmissionDateParams,
   isDateRangeEncoded,
+  submissionDateRangeUrlFromSelector,
 } from '../data/DateRangeUrlEncoded';
 import { decodeSamplingStrategy, SamplingStrategy } from '../data/SamplingStrategy';
 import { baseLocation } from '../index';
@@ -48,7 +55,13 @@ export interface ExploreUrl {
   setVariants: (variants: VariantSelector[], analysisMode?: AnalysisMode) => void;
   setAnalysisMode: (analysisMode: AnalysisMode) => void;
   setSamplingStrategy: (samplingStrategy: SamplingStrategy) => void;
-  setHostAndQc: (host?: HostSelector, qc?: QcSelector) => void;
+  setHostAndQc: (
+    host?: HostSelector,
+    qc?: QcSelector,
+    submissionDateRangeSelector?: DateRangeSelector,
+    specialSubmissionDateRaw?: string | null
+  ) => void;
+  setSubmissionDateRange: (dateRange: DateRangeSelector) => void;
   getOverviewPageUrl: () => string;
   getExplorePageUrl: () => string;
   getDeepExplorePageUrl: (pagePath: string) => string;
@@ -132,6 +145,21 @@ export function useExploreUrl(): ExploreUrl | undefined {
     },
     [history, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
   );
+
+  const setSubmissionDateRange = useCallback(
+    (dateRange: DateRangeSelector) => {
+      if (!routeMatches.locationSamplingDate) {
+        return;
+      }
+      const dateRangeEncoded = submissionDateRangeUrlFromSelector(dateRange);
+      const path = `${locationState.pathname}?${dateRangeEncoded}&`;
+      history.push(path);
+    },
+    [history, locationState.pathname]
+  );
+
+  // http://localhost:3000/explore/Switzerland/AllSamples/Y2020/variants?dateSubmittedFrom=2022-05-09&dateSubmittedTo=2022-11-03&dateSubmittedFrom=2020-01-06&dateSubmittedTo=2022-11-10&nextcladeQcOverallScoreTo=29&dateSubmittedFrom=2022-10-27&dateSubmittedTo=2022-11-03
+
   const setVariants = useCallback(
     (variants: VariantSelector[], analysisMode?: AnalysisMode) => {
       if (!routeMatches.locationSamplingDate) {
@@ -172,8 +200,25 @@ export function useExploreUrl(): ExploreUrl | undefined {
     [history, locationState.pathname, locationState.search, queryString, routeMatches.locationSamplingDate]
   );
   const setHostAndQc = useCallback(
-    (host?: HostSelector, qc?: QcSelector) => {
+    (
+      host?: HostSelector,
+      qc?: QcSelector,
+      submissionDateRangeSelector?: DateRangeSelector,
+      specialSubmissionDateRaw?: string | null
+    ) => {
       const newQueryParam = new URLSearchParams(queryString);
+      deleteSubmissionDateParams(newQueryParam);
+
+      const _specialDateRange: SpecialDateRange | null = isSpecialDateRange(specialSubmissionDateRaw)
+        ? specialSubmissionDateRaw
+        : null;
+
+      const _selector = _specialDateRange
+        ? new SpecialDateRangeSelector(_specialDateRange)
+        : submissionDateRangeSelector;
+
+      const submissionDatePaparms = _selector ? submissionDateRangeUrlFromSelector(_selector) : '';
+
       if (host) {
         if (isDefaultHostSelector(host)) {
           addHostSelectorToUrlSearchParams([], newQueryParam);
@@ -184,7 +229,8 @@ export function useExploreUrl(): ExploreUrl | undefined {
       if (qc) {
         addQcSelectorToUrlSearchParams(qc, newQueryParam);
       }
-      const path = `${locationState.pathname}?${newQueryParam}&`;
+
+      const path = `${locationState.pathname}?${newQueryParam}&${submissionDatePaparms}`; // `${locationState.pathname}?${newQueryParam}&${submissionDatePaparms}`;
       history.push(path);
     },
     [history, locationState.pathname, queryString]
@@ -280,10 +326,12 @@ export function useExploreUrl(): ExploreUrl | undefined {
     setVariants,
     setAnalysisMode,
     setHostAndQc,
+    setSubmissionDateRange,
     getOverviewPageUrl,
     getExplorePageUrl,
     getDeepExplorePageUrl,
     getDeepFocusPageUrl,
+
     focusKey: locationState.pathname + locationState.search,
   };
 }

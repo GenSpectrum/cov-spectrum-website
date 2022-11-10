@@ -13,12 +13,19 @@ import { useResizeDetector } from 'react-resize-detector';
 interface Props {
   dateRangeSelector: DateRangeSelector;
   setDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
+  setSubmissionDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
+  setSpecialSubmissionDateRaw?: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const minimumDate: Date = new Date('2020-01-06'); // first day of first week of 2020
 const today = new Date();
 
-export const DateRangePicker = ({ dateRangeSelector, setDateRangeSelector }: Props) => {
+export const DateRangePicker = ({
+  dateRangeSelector,
+  setDateRangeSelector,
+  setSubmissionDateRangeSelector,
+  setSpecialSubmissionDateRaw,
+}: Props) => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
 
   const [startDate, setStartDate] = React.useState<Date | null>(null);
@@ -46,6 +53,16 @@ export const DateRangePicker = ({ dateRangeSelector, setDateRangeSelector }: Pro
     if (startDate && endDate && startDate <= endDate) {
       const newDateFrom = globalDateCache.getDayUsingDayjs(dayjs(startDate));
       const newDateTo = globalDateCache.getDayUsingDayjs(dayjs(endDate));
+
+      if (setSubmissionDateRangeSelector) {
+        setSubmissionDateRangeSelector(
+          new FixedDateRangeSelector({
+            dateFrom: newDateFrom,
+            dateTo: newDateTo,
+          })
+        );
+        return;
+      }
 
       if (prevDateFrom.string !== newDateFrom.string || prevDateTo.string !== newDateTo.string) {
         exploreUrl?.setDateRange(
@@ -82,7 +99,13 @@ export const DateRangePicker = ({ dateRangeSelector, setDateRangeSelector }: Pro
   return (
     <>
       <div ref={ref} className='w-full flex flex-row items-center flex-wrap'>
-        <HeaderDateRangeSelect exploreUrl={exploreUrl} setDateRangeSelector={setDateRangeSelector} />
+        <HeaderDateRangeSelect
+          exploreUrl={exploreUrl}
+          setDateRangeSelector={setDateRangeSelector}
+          setSubmissionDateRangeSelector={setSubmissionDateRangeSelector}
+          setSpecialSubmissionDateRaw={setSpecialSubmissionDateRaw}
+        />
+
         <div className={`flex flex-row ${width && width < 480 ? 'flex-wrap mt-2 mb-2 ml-1' : 'ml-2'}`}>
           <LocalizationProvider dateAdapter={AdapterDateFns}>
             <DatePicker
