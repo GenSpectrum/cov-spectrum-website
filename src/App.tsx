@@ -73,27 +73,33 @@ export const App = () => {
           </Alert>
         )}
         {/* Warning - if advanced filters are active */}
-        {host && qc && setHostAndQc && (!isDefaultHostSelector(host) || !isDefaultQcSelector(qc)) && (
-          <Alert variant={AlertVariant.WARNING}>
-            <div className='flex flex-row'>
-              <FaFilter
-                className='m-1'
-                style={{ width: '30px', minWidth: '30px', height: '30px', minHeight: '30px' }}
-              />
-              <div className='ml-4 flex-grow-1'>
-                <div className='font-weight-bold'>Advanced filters are active</div>
-                {!isDefaultHostSelector(host) && <div>Selected hosts: {host.join(', ')}</div>}
-                {!isDefaultQcSelector(qc) && <div>Sequence quality: {formatQcSelectorAsString(qc)}</div>}
-                {parseDateSubmitted() && <div>{parseDateSubmitted()}</div>}
-                <div className='mt-4'>
-                  <button className='underline cursor-pointer' onClick={() => setHostAndQc(defaultHost, {})}>
-                    Remove filters
-                  </button>
+        {host &&
+          qc &&
+          setHostAndQc &&
+          (!isDefaultHostSelector(host) || !isDefaultQcSelector(qc) || parseDateSubmitted()) && (
+            <Alert variant={AlertVariant.WARNING}>
+              <div className='flex flex-row'>
+                <FaFilter
+                  className='m-1'
+                  style={{ width: '30px', minWidth: '30px', height: '30px', minHeight: '30px' }}
+                />
+                <div className='ml-4 flex-grow-1'>
+                  <div className='font-weight-bold'>Advanced filters are active</div>
+                  {!isDefaultHostSelector(host) && <div>Selected hosts: {host.join(', ')}</div>}
+                  {!isDefaultQcSelector(qc) && <div>Sequence quality: {formatQcSelectorAsString(qc)}</div>}
+                  {parseDateSubmitted() && <div>{parseDateSubmitted()}</div>}
+                  <div className='mt-4'>
+                    <button
+                      className='underline cursor-pointer'
+                      onClick={() => setHostAndQc(defaultHost, {})}
+                    >
+                      Remove filters
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Alert>
-        )}
+            </Alert>
+          )}
         {/*Main content*/}
         <Switch>
           <Route exact path='/'>
