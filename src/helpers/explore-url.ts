@@ -12,8 +12,10 @@ import {
   LocationSelector,
 } from '../data/LocationSelector';
 import {
+  DateRangeRaw,
   DateRangeSelector,
   isSpecialDateRange,
+  readDateRangeRawFromUrlSearchParams,
   SpecialDateRange,
   SpecialDateRangeSelector,
 } from '../data/DateRangeSelector';
@@ -49,6 +51,7 @@ export interface ExploreUrl {
   analysisMode: AnalysisMode;
   host: HostSelector;
   qc: QcSelector;
+  dateSubmittedRaw?: DateRangeRaw;
 
   setLocation: (location: LocationSelector) => void;
   setDateRange: (dateRange: DateRangeSelector) => void;
@@ -257,12 +260,13 @@ export function useExploreUrl(): ExploreUrl | undefined {
   );
 
   // Parse from query params
-  const { variants, analysisMode, host, qc } = useMemo(
+  const { variants, analysisMode, host, qc, dateSubmittedRaw } = useMemo(
     () => ({
       variants: readVariantListFromUrlSearchParams(query),
       analysisMode: decodeAnalysisMode(query.get('analysisMode')) ?? defaultAnalysisMode,
       host: readHostSelectorFromUrlSearchParams(query),
       qc: readQcSelectorFromUrlSearchParams(query),
+      dateSubmittedRaw: readDateRangeRawFromUrlSearchParams(query),
     }),
     [query]
   );
@@ -319,6 +323,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     analysisMode,
     host,
     qc,
+    dateSubmittedRaw,
 
     setLocation,
     setSamplingStrategy,

@@ -148,3 +148,19 @@ export function specialDateRangeToString(dateRange: SpecialDateRange): string {
       return '2022';
   }
 }
+
+export interface DateRangeRaw {
+  [key: string]: string | null;
+}
+
+const fields = ['dateSubmittedFrom', 'dateSubmittedTo', 'dateSubmitted'] as const;
+
+export function readDateRangeRawFromUrlSearchParams(params: URLSearchParams): DateRangeRaw {
+  const drs: DateRangeRaw = {};
+  for (const field of fields) {
+    if (params.has(field)) {
+      drs[field] = params.get(field);
+    }
+  }
+  return drs;
+}

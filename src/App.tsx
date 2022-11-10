@@ -45,7 +45,18 @@ export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
-  const { host, qc, setHostAndQc } = useExploreUrl() ?? {};
+  const { host, qc, setHostAndQc, dateSubmittedRaw } = useExploreUrl() ?? {};
+
+  const parseDateSubmitted = () => {
+    if (dateSubmittedRaw) {
+      if (dateSubmittedRaw.dateSubmitted) {
+        return `Submission date: ${dateSubmittedRaw.dateSubmitted}`;
+      } else if (dateSubmittedRaw.dateSubmittedFrom && dateSubmittedRaw.dateSubmittedTo) {
+        return `Submission date: from ${dateSubmittedRaw.dateSubmittedFrom} to ${dateSubmittedRaw.dateSubmittedTo}`;
+      }
+    }
+    return null;
+  };
 
   return (
     <div className='w-full'>
@@ -73,6 +84,7 @@ export const App = () => {
                 <div className='font-weight-bold'>Advanced filters are active</div>
                 {!isDefaultHostSelector(host) && <div>Selected hosts: {host.join(', ')}</div>}
                 {!isDefaultQcSelector(qc) && <div>Sequence quality: {formatQcSelectorAsString(qc)}</div>}
+                {parseDateSubmitted() && <div>{parseDateSubmitted()}</div>}
                 <div className='mt-4'>
                   <button className='underline cursor-pointer' onClick={() => setHostAndQc(defaultHost, {})}>
                     Remove filters
