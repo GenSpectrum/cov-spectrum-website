@@ -149,18 +149,6 @@ export function useExploreUrl(): ExploreUrl | undefined {
     [history, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
   );
 
-  const setSubmissionDateRange = useCallback(
-    (dateRange: DateRangeSelector) => {
-      if (!routeMatches.locationSamplingDate) {
-        return;
-      }
-      const dateRangeEncoded = submissionDateRangeUrlFromSelector(dateRange);
-      const path = `${locationState.pathname}?${dateRangeEncoded}&`;
-      history.push(path);
-    },
-    [history, locationState.pathname]
-  );
-
   // http://localhost:3000/explore/Switzerland/AllSamples/Y2020/variants?dateSubmittedFrom=2022-05-09&dateSubmittedTo=2022-11-03&dateSubmittedFrom=2020-01-06&dateSubmittedTo=2022-11-10&nextcladeQcOverallScoreTo=29&dateSubmittedFrom=2022-10-27&dateSubmittedTo=2022-11-03
 
   const setVariants = useCallback(
