@@ -64,7 +64,6 @@ export interface ExploreUrl {
     submissionDateRangeSelector?: DateRangeSelector,
     specialSubmissionDateRaw?: string | null
   ) => void;
-  setSubmissionDateRange: (dateRange: DateRangeSelector) => void;
   getOverviewPageUrl: () => string;
   getExplorePageUrl: () => string;
   getDeepExplorePageUrl: (pagePath: string) => string;
@@ -312,14 +311,12 @@ export function useExploreUrl(): ExploreUrl | undefined {
     host,
     qc,
     dateSubmittedRaw,
-
     setLocation,
     setSamplingStrategy,
     setDateRange,
     setVariants,
     setAnalysisMode,
     setHostAndQc,
-    setSubmissionDateRange,
     getOverviewPageUrl,
     getExplorePageUrl,
     getDeepExplorePageUrl,
