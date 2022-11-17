@@ -12,20 +12,21 @@ import {
   LocationSelector,
 } from '../data/LocationSelector';
 import {
+  addSubmittedDateRangeSelectorToUrlSearchParams,
   DateRangeRaw,
   DateRangeSelector,
-  isSpecialDateRange,
+  // isSpecialDateRange,
   readDateRangeRawFromUrlSearchParams,
-  SpecialDateRange,
-  SpecialDateRangeSelector,
+  // SpecialDateRange,
+  // SpecialDateRangeSelector,
 } from '../data/DateRangeSelector';
 import {
   DateRangeUrlEncoded,
   dateRangeUrlFromSelector,
   dateRangeUrlToSelector,
-  deleteSubmissionDateParams,
+  // deleteSubmissionDateParams,
   isDateRangeEncoded,
-  submissionDateRangeUrlFromSelector,
+  //  submissionDateRangeUrlFromSelector,
 } from '../data/DateRangeUrlEncoded';
 import { decodeSamplingStrategy, SamplingStrategy } from '../data/SamplingStrategy';
 import { baseLocation } from '../index';
@@ -61,7 +62,7 @@ export interface ExploreUrl {
   setHostAndQc: (
     host?: HostSelector,
     qc?: QcSelector,
-    submissionDateRangeSelector?: DateRangeSelector,
+    submissionDateRange?: DateRangeSelector,
     specialSubmissionDateRaw?: string | null
   ) => void;
   getOverviewPageUrl: () => string;
@@ -193,21 +194,22 @@ export function useExploreUrl(): ExploreUrl | undefined {
     (
       host?: HostSelector,
       qc?: QcSelector,
-      submissionDateRangeSelector?: DateRangeSelector,
+      submissionDateRange?: DateRangeSelector,
       specialSubmissionDateRaw?: string | null
     ) => {
       const newQueryParam = new URLSearchParams(queryString);
-      deleteSubmissionDateParams(newQueryParam);
 
-      const _specialDateRange: SpecialDateRange | null = isSpecialDateRange(specialSubmissionDateRaw)
-        ? specialSubmissionDateRaw
-        : null;
+      // deleteSubmissionDateParams(newQueryParam);
 
-      const _selector = _specialDateRange
-        ? new SpecialDateRangeSelector(_specialDateRange)
-        : submissionDateRangeSelector;
+      // const _specialDateRange: SpecialDateRange | null = isSpecialDateRange(specialSubmissionDateRaw)
+      //   ? specialSubmissionDateRaw
+      //   : null;
 
-      const submissionDatePaparms = _selector ? submissionDateRangeUrlFromSelector(_selector) : '';
+      // const _selector = _specialDateRange
+      //   ? new SpecialDateRangeSelector(_specialDateRange)
+      //   : submissionDateRange;
+
+      //  const submissionDatePaparms = _selector ? submissionDateRangeUrlFromSelector(_selector) : '';
 
       if (host) {
         if (isDefaultHostSelector(host)) {
@@ -220,7 +222,11 @@ export function useExploreUrl(): ExploreUrl | undefined {
         addQcSelectorToUrlSearchParams(qc, newQueryParam);
       }
 
-      const path = `${locationState.pathname}?${newQueryParam}&${submissionDatePaparms}`; // `${locationState.pathname}?${newQueryParam}&${submissionDatePaparms}`;
+      if (submissionDateRange) {
+        addSubmittedDateRangeSelectorToUrlSearchParams(submissionDateRange, newQueryParam);
+      }
+
+      const path = `${locationState.pathname}?${newQueryParam}`; // `${locationState.pathname}?${newQueryParam}&${submissionDatePaparms}`;
       history.push(path);
     },
     [history, locationState.pathname, queryString]

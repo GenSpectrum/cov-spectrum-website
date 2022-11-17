@@ -3,7 +3,10 @@ import { DateCountSampleEntry } from './sample/DateCountSampleEntry';
 import { AgeCountSampleEntry } from './sample/AgeCountSampleEntry';
 import { DivisionCountSampleEntry } from './sample/DivisionCountSampleEntry';
 import { addLocationSelectorToUrlSearchParams, LocationSelector } from './LocationSelector';
-import { addDateRangeSelectorToUrlSearchParams } from './DateRangeSelector';
+import {
+  addSubmittedDateRangeRawSelectorToUrlSearchParams,
+  addDateRangeSelectorToUrlSearchParams,
+} from './DateRangeSelector';
 import { addVariantSelectorToUrlSearchParams } from './VariantSelector';
 import { CountryDateCountSampleEntry } from './sample/CountryDateCountSampleEntry';
 import { PangoCountSampleEntry } from './sample/PangoCountSampleEntry';
@@ -225,6 +228,7 @@ export async function getLinkTo(
   omitHost = false,
   minProportion?: string
 ): Promise<string> {
+  console.log('GET LINK TO', endpoint, selector);
   const params = new URLSearchParams();
   _addOrderAndLimitToSearchParams(params, orderAndLimit);
   selector = await _mapCountryName(selector);
@@ -240,6 +244,10 @@ export async function getLinkTo(
   }
   if (selector.host) {
     addHostSelectorToUrlSearchParams(selector.host, params);
+  }
+
+  if (selector.dateSubmittedRaw) {
+    addSubmittedDateRangeRawSelectorToUrlSearchParams(selector.dateSubmittedRaw, params);
   }
   addQcSelectorToUrlSearchParams(selector.qc, params);
   if (downloadAsFile) {

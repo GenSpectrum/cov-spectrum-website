@@ -1,5 +1,5 @@
 import { ExternalLink } from './ExternalLink';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { qcFieldsAndLabels, QcFieldType, QcSelector } from '../data/QcSelector';
 import { Utils } from '../services/Utils';
 import { Button, ButtonVariant } from '../helpers/ui';
@@ -57,9 +57,7 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
     setHostAndQc(host, qc, submissionDateRangeSelector, specialSubmissionDateRaw);
 
     onClose();
-  }, [host, qc, setHostAndQc, onClose, submissionDateRangeSelector]);
-
-  useEffect(() => {}, [submissionDateRangeSelector]);
+  }, [host, qc, setHostAndQc, onClose, submissionDateRangeSelector, specialSubmissionDateRaw]);
 
   return (
     <>

@@ -162,5 +162,31 @@ export function readDateRangeRawFromUrlSearchParams(params: URLSearchParams): Da
       drs[field] = params.get(field);
     }
   }
+  console.log('readDateRangeRawFromUrlSearchParams', drs);
   return drs;
+}
+
+export function addSubmittedDateRangeSelectorToUrlSearchParams(
+  selector: DateRangeSelector,
+  params: URLSearchParams
+) {
+  for (const field of ['dateSubmittedFrom', 'dateSubmittedTo']) {
+    params.delete(field);
+  }
+  const _dateRange = selector.getDateRange();
+  _dateRange.dateFrom && params.set('dateSubmittedFrom', _dateRange.dateFrom.string);
+  _dateRange.dateTo && params.set('dateSubmittedTo', _dateRange.dateTo.string);
+}
+
+export function addSubmittedDateRangeRawSelectorToUrlSearchParams(
+  rawDateRangeSelector: DateRangeRaw,
+  params: URLSearchParams
+) {
+  for (const field of ['dateSubmittedFrom', 'dateSubmittedTo']) {
+    params.delete(field);
+  }
+  if (rawDateRangeSelector.dateSubmittedFrom && rawDateRangeSelector.dateSubmittedTo) {
+    params.set('dateSubmittedFrom', rawDateRangeSelector.dateSubmittedFrom);
+    params.set('dateSubmittedTo', rawDateRangeSelector.dateSubmittedTo);
+  }
 }
