@@ -14,6 +14,7 @@ RUN npm set progress=false && \
     npm config set depth 0 && \
     export REACT_APP_WEBSITE_HOST=https://open.cov-spectrum.org && \
     export REACT_APP_SERVER_HOST=https://cov-spectrum.org/api/v2 && \
+    export REACT_APP_PPRETTY_HOST=https://cov-spectrum.org/api/ppretty && \
     export REACT_APP_LAPIS_HOST=https://lapis.cov-spectrum.org/open/v1 && \
     export REACT_APP_SEQUENCE_DATA_SOURCE=open && \
     export REACT_APP_ALTERNATIVE_SEQUENCE_DATA_SOURCE_URL=https://cov-spectrum.org && \

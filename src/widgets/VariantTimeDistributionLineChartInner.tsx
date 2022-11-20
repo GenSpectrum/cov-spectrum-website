@@ -11,6 +11,7 @@ import { maxYAxis } from '../helpers/max-y-axis';
 import { ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import { PprettyRequest } from '../data/ppretty/ppretty-request';
 
 export type VariantTimeDistributionLineChartEntry = {
   date: UnifiedDay;
@@ -20,6 +21,10 @@ export type VariantTimeDistributionLineChartEntry = {
 
 export type VariantTimeDistributionLineChartProps = {
   data: VariantTimeDistributionLineChartEntry[];
+  pprettyMetadata?: {
+    location: string;
+    variant: string;
+  };
 };
 
 type PlotEntry = {
@@ -38,7 +43,7 @@ export function formatDate(date: number) {
 const CHART_MARGIN_RIGHT = 15;
 
 export const VariantTimeDistributionLineChartInner = React.memo(
-  ({ data }: VariantTimeDistributionLineChartProps): JSX.Element => {
+  ({ data, pprettyMetadata }: VariantTimeDistributionLineChartProps): JSX.Element => {
     const [active, setActive] = useState<PlotEntry | undefined>(undefined);
     const [absoluteNumbers, setAbsoluteNumbers] = useState<boolean>(false);
     const [logScale, setLogScale] = useState<boolean>(false);
@@ -141,14 +146,28 @@ export const VariantTimeDistributionLineChartInner = React.memo(
       setDefaultActive(plotData);
     }, [plotData]);
 
-    const csvData = useMemo(() => {
-      return plotData.map(({ date, proportion, proportionCI }) => ({
+    const { csvData, pprettyRequest } = useMemo(() => {
+      const csvData = plotData.map(({ date, proportion, proportionCI }) => ({
         date: dayjs(date).format('YYYY-MM-DD'),
-        estimatedCases: proportion.toFixed(4),
-        estimatedCasesCILower: proportionCI[0].toFixed(4),
-        estimatedCasesCIUpper: proportionCI[1].toFixed(4),
+        proportion: proportion.toFixed(4),
+        proportionCILow: proportionCI[0].toFixed(4),
+        proportionCIHigh: proportionCI[1].toFixed(4),
       }));
-    }, [plotData]);
+      const pprettyRequest: PprettyRequest | undefined = absoluteNumbers ? undefined : {
+        config: {
+          plotName: 'sequences-over-time',
+          plotType: 'line',
+        },
+        metadata: pprettyMetadata,
+        data: plotData.map(({ date, proportion, proportionCI }) => ({
+          date: dayjs(date).format('YYYY-MM-DD'),
+          proportion: proportion,
+          proportionCILow: proportionCI[0],
+          proportionCIHigh: proportionCI[1],
+        })),
+      };
+      return { csvData, pprettyRequest };
+    }, [plotData, pprettyMetadata, absoluteNumbers]);
 
     if (plotData.length === 0) {
       return <Alert variant={AlertVariant.INFO}>We do not have enough data for this plot.</Alert>;
@@ -169,7 +188,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
     const toggleLogScale = () => setLogScale(logScale => !logScale);
 
     return (
-      <DownloadWrapper name='EstimatedCasesPlot' csvData={csvData}>
+      <DownloadWrapper name='VariantTimeDistributionPlot' csvData={csvData} pprettyRequest={pprettyRequest}>
         <Wrapper>
           <TitleWrapper>
             <div>{titleDetails()}</div>
