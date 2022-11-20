@@ -10,6 +10,9 @@ import { CountryDateCountSampleEntry } from '../data/sample/CountryDateCountSamp
 import { fillFromWeeklyMap } from '../helpers/fill-missing';
 import { UnifiedIsoWeek } from '../helpers/date-cache';
 import { Button, ButtonVariant } from '../helpers/ui';
+import DownloadWrapper from './DownloadWrapper';
+import { PprettyRequest } from '../data/ppretty/ppretty-request';
+import { formatVariantDisplayName } from '../data/VariantSelector';
 const CHART_MARGIN_RIGHT = 15;
 const DEFAULT_SHOW = 5;
 
@@ -194,6 +197,36 @@ export const VariantInternationalComparisonChart = ({
     return [...dateMap.values()].sort((a, b) => Date.parse(a.dateString) - Date.parse(b.dateString));
   }, [logScale, variantSamplesByCountry, wholeInternationalSampleSet]);
 
+  const { csvData, pprettyRequest } = useMemo(() => {
+    const selectedPlaces = new Set(selectedPlaceOptions.map((s: any) => s.value));
+    const csvData: { date: string; proportion: number; location: string }[] = [];
+    for (let pd of plotData) {
+      const date = pd.dateString;
+      for (let field in pd) {
+        const value = pd[field];
+        if (!selectedPlaces.has(field) || isNaN(value)) {
+          continue;
+        }
+        csvData.push({
+          date,
+          proportion: value,
+          location: field,
+        });
+      }
+    }
+    const pprettyRequest: PprettyRequest = {
+      config: {
+        plotName: 'sequences-over-time_country-comparison',
+        plotType: 'line',
+      },
+      metadata: {
+        variant: formatVariantDisplayName(variantInternationalSampleSet.selector.variant!),
+      },
+      data: csvData,
+    };
+    return { csvData, pprettyRequest };
+  }, [plotData, selectedPlaceOptions, variantInternationalSampleSet.selector.variant]);
+
   const onChange = (value: any, { action, removedValue }: any) => {
     switch (action) {
       case 'remove-value':
@@ -210,55 +243,57 @@ export const VariantInternationalComparisonChart = ({
   };
 
   return (
-    <Wrapper>
-      <SelectWrapper>
-        <Button
-          variant={ButtonVariant.SECONDARY}
-          className='mt-2 mb-4 w-40'
-          onClick={() => setLogScale(v => !v)}
-        >
-          Toggle log scale
-        </Button>
-        <Select
-          closeMenuOnSelect={false}
-          placeholder='Select countries...'
-          isMulti
-          options={placeOptions}
-          styles={colorStyles}
-          onChange={onChange}
-          value={selectedPlaceOptions}
-        />
-      </SelectWrapper>
-      <ResponsiveContainer>
-        <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
-          <XAxis dataKey='dateString' xAxisId='date' />
-          <YAxis
-            tickFormatter={tick => `${Math.round(tick * 100 * 100) / 100}%`}
-            yAxisId='variant-proportion'
-            scale={logScale ? 'log' : 'auto'}
-            domain={logScale ? ['auto', 'auto'] : [0, 'auto']}
+    <DownloadWrapper name='InternationalComparison' csvData={csvData} pprettyRequest={pprettyRequest}>
+      <Wrapper>
+        <SelectWrapper>
+          <Button
+            variant={ButtonVariant.SECONDARY}
+            className='mt-2 mb-4 w-40'
+            onClick={() => setLogScale(v => !v)}
+          >
+            Toggle log scale
+          </Button>
+          <Select
+            closeMenuOnSelect={false}
+            placeholder='Select countries...'
+            isMulti
+            options={placeOptions}
+            styles={colorStyles}
+            onChange={onChange}
+            value={selectedPlaceOptions}
           />
-          <Tooltip
-            formatter={(value: number) => (value * 100).toFixed(2) + '%'}
-            labelFormatter={label => {
-              return 'Date: ' + label;
-            }}
-          />
-          {selectedPlaceOptions.map((place: PlaceOption) => (
-            <Line
+        </SelectWrapper>
+        <ResponsiveContainer>
+          <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
+            <XAxis dataKey='dateString' xAxisId='date' />
+            <YAxis
+              tickFormatter={tick => `${Math.round(tick * 100 * 100) / 100}%`}
               yAxisId='variant-proportion'
-              xAxisId='date'
-              type='monotone'
-              dataKey={place.value}
-              strokeWidth={3}
-              dot={false}
-              stroke={place.color}
-              isAnimationActive={false}
-              key={place.value}
+              scale={logScale ? 'log' : 'auto'}
+              domain={logScale ? ['auto', 'auto'] : [0, 'auto']}
             />
-          ))}
-        </ComposedChart>
-      </ResponsiveContainer>
-    </Wrapper>
+            <Tooltip
+              formatter={(value: number) => (value * 100).toFixed(2) + '%'}
+              labelFormatter={label => {
+                return 'Date: ' + label;
+              }}
+            />
+            {selectedPlaceOptions.map((place: PlaceOption) => (
+              <Line
+                yAxisId='variant-proportion'
+                xAxisId='date'
+                type='monotone'
+                dataKey={place.value}
+                strokeWidth={3}
+                dot={false}
+                stroke={place.color}
+                isAnimationActive={false}
+                key={place.value}
+              />
+            ))}
+          </ComposedChart>
+        </ResponsiveContainer>
+      </Wrapper>
+    </DownloadWrapper>
   );
 };
