@@ -1,10 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { ButtonToolbar, Form, Modal } from 'react-bootstrap';
 import { ExportButton } from './CombinedExport/ExportButton';
 import { ExportManager, ExportManagerContext } from './CombinedExport/ExportManager';
 import { NamedCard, TabConfig } from './NamedCard';
-
-const host = process.env.REACT_APP_WEBSITE_HOST;
 
 // InternalProps are passed by Widget
 export interface InternalProps {
@@ -56,7 +54,6 @@ export function pickExternalProps<T extends { [K in keyof ExternalProps]?: never
 type Props = InternalProps & ExternalProps;
 
 export function WidgetWrapper({
-  getShareUrl,
   children,
   title,
   toolbarChildren,
@@ -79,14 +76,18 @@ export function WidgetWrapper({
 
   const [shownEmbeddingCode, setShownEmbeddingCode] = useState<string>();
 
-  useEffect(() => {
-    const handle = exportManagerRef.current.register('Embed widget', async () => {
-      const embeddingCode = `<iframe src="${host}/embed/${await getShareUrl()}" width="800" height="500" frameborder="0"></iframe>`;
-      setShownEmbeddingCode(embeddingCode);
-    });
-
-    return handle.deregister;
-  }, [getShareUrl]);
+  // HACK(by Chaoran): The embed widget feature was used a few times but has not been as useful as I originally
+  // anticipated. It also has not been well-maintained for a while, and we don't have any tests for them. Thus, I'd like
+  // to avoid having new people using this feature. The only case where the feature will be useful for the foreseeable
+  // future is for the wastewater plots.
+  // useEffect(() => {
+  //   const handle = exportManagerRef.current.register('Embed widget', async () => {
+  //     const embeddingCode = `<iframe src="${host}/embed/${await getShareUrl()}" width="800" height="500" frameborder="0"></iframe>`;
+  //     setShownEmbeddingCode(embeddingCode);
+  //   });
+  //
+  //   return handle.deregister;
+  // }, [getShareUrl]);
 
   return (
     <>
