@@ -153,19 +153,21 @@ export const VariantTimeDistributionLineChartInner = React.memo(
         proportionCILow: proportionCI[0].toFixed(4),
         proportionCIHigh: proportionCI[1].toFixed(4),
       }));
-      const pprettyRequest: PprettyRequest | undefined = absoluteNumbers ? undefined : {
-        config: {
-          plotName: 'sequences-over-time',
-          plotType: 'line',
-        },
-        metadata: pprettyMetadata,
-        data: plotData.map(({ date, proportion, proportionCI }) => ({
-          date: dayjs(date).format('YYYY-MM-DD'),
-          proportion: proportion,
-          proportionCILow: proportionCI[0],
-          proportionCIHigh: proportionCI[1],
-        })),
-      };
+      const pprettyRequest: PprettyRequest | undefined = absoluteNumbers
+        ? undefined
+        : {
+            config: {
+              plotName: 'sequences-over-time',
+              plotType: 'line',
+            },
+            metadata: pprettyMetadata,
+            data: plotData.map(({ date, proportion, proportionCI }) => ({
+              date: dayjs(date).format('YYYY-MM-DD'),
+              proportion: proportion,
+              proportionCILow: proportionCI[0],
+              proportionCIHigh: proportionCI[1],
+            })),
+          };
       return { csvData, pprettyRequest };
     }, [plotData, pprettyMetadata, absoluteNumbers]);
 
