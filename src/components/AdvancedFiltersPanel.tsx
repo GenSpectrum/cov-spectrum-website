@@ -111,7 +111,7 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
             setSubmissionDateRangeSelector(new SpecialDateRangeSelector('AllTimes'));
           }}
         >
-          Reset filter
+          Clear filter
         </Button>
       </div>
       {/* Sequence quality */}

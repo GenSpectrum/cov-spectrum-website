@@ -179,9 +179,13 @@ export function addSubmittedDateRangeSelectorToUrlParams(
     const _specialDateRange: SpecialDateRange | null = isSpecialDateRange(specialDateRange)
       ? specialDateRange
       : null;
-    if (_specialDateRange && _specialDateRange !== 'AllTimes') {
-      params.set('dateSubmitted', _specialDateRange);
-      return;
+    if (_specialDateRange) {
+      if (_specialDateRange !== 'AllTimes') {
+        params.set('dateSubmitted', _specialDateRange);
+        return;
+      } else {
+        return;
+      }
     }
   }
   const _dateRange = selector.getDateRange();

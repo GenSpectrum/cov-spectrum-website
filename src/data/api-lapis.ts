@@ -228,7 +228,6 @@ export async function getLinkTo(
   omitHost = false,
   minProportion?: string
 ): Promise<string> {
-  console.log('GET LINK TO', endpoint, selector);
   const params = new URLSearchParams();
   _addOrderAndLimitToSearchParams(params, orderAndLimit);
   selector = await _mapCountryName(selector);
