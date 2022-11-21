@@ -4,7 +4,6 @@ import { fillAndFilterFromDailyMap } from '../helpers/fill-missing';
 import { ChartAndMetricsWrapper, ChartWrapper, Wrapper } from './common';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import React, { useState } from 'react';
-import chroma from 'chroma-js';
 import { getTicks } from '../helpers/ticks';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import { formatVariantDisplayName } from '../data/VariantSelector';
@@ -16,6 +15,7 @@ import { Checkbox, FormGroup } from '@mui/material';
 import { PprettyRequest } from '../data/ppretty/ppretty-request';
 import { encodeLocationSelectorToSingleString } from '../data/LocationSelector';
 import DownloadWrapper from './DownloadWrapper';
+import { mapLabelsToColors } from '../helpers/colors';
 
 function hexToRGB(hex: string, alpha: number) {
   let r = parseInt(hex.slice(1, 3), 16),
@@ -198,7 +198,7 @@ export const MultiVariantTimeDistributionLineChart = ({
     return max;
   }
 
-  const colors = variantSampleSets.map(() => chroma.random().darken().hex());
+  const colors = mapLabelsToColors(variantSampleSets.map(v => formatVariantDisplayName(v.selector.variant!)));
 
   const yMax: number = getYMax(plotData);
 

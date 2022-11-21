@@ -13,6 +13,7 @@ import { Button, ButtonVariant } from '../helpers/ui';
 import DownloadWrapper from './DownloadWrapper';
 import { PprettyRequest } from '../data/ppretty/ppretty-request';
 import { formatVariantDisplayName } from '../data/VariantSelector';
+import { mapLabelsToColors } from '../helpers/colors';
 const CHART_MARGIN_RIGHT = 15;
 const DEFAULT_SHOW = 5;
 
@@ -91,6 +92,14 @@ const getPlaceColor = (place: string): string => {
   return place === 'Switzerland' ? chroma('red').hex() : chroma.random().darken().hex();
 };
 
+function assignColorsToPlaceOptions<T extends { label: string }>(options: T[]): (T & { color: string })[] {
+  const colors = mapLabelsToColors(options.map(o => o.label));
+  return options.map((o, i) => ({
+    ...o,
+    color: colors[i],
+  }));
+}
+
 export type VariantInternationalComparisonChartProps = {
   preSelectedCountries: string[];
   logScale?: boolean;
@@ -104,7 +113,7 @@ export const VariantInternationalComparisonChart = ({
   wholeInternationalSampleSet,
 }: VariantInternationalComparisonChartProps) => {
   const [logScale, setLogScale] = useState<boolean>(false);
-  const [selectedPlaceOptions, setSelectedPlaceOptions] = useState<any>(
+  const [selectedPlaceOptions, setSelectedPlaceOptions] = useState(
     preSelectedCountries.map(c => ({
       value: c,
       label: c,
@@ -119,6 +128,7 @@ export const VariantInternationalComparisonChart = ({
     return map as Map<string, CountryDateCountSampleEntry[]>;
   }, [variantInternationalSampleSet]);
 
+  // Assigns initial places, includes the preSelectedCountries
   useEffect(() => {
     const initialPlaces = [...preSelectedCountries].concat(
       getCountriesMostVariantSamples(
@@ -133,7 +143,7 @@ export const VariantInternationalComparisonChart = ({
       color: getPlaceColor(place),
       isFixed: false,
     }));
-    setSelectedPlaceOptions(newOptions);
+    setSelectedPlaceOptions(assignColorsToPlaceOptions(newOptions));
   }, [preSelectedCountries, variantSamplesByCountry]);
 
   const placeOptions: PlaceOption[] = Array.from(variantSamplesByCountry.keys()).map(countryName => ({
@@ -239,7 +249,7 @@ export const VariantInternationalComparisonChart = ({
         value = selectedPlaceOptions.filter((c: PlaceOption) => c.isFixed);
         break;
     }
-    setSelectedPlaceOptions(value);
+    setSelectedPlaceOptions(assignColorsToPlaceOptions(value));
   };
 
   return (
