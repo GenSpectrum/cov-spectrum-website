@@ -7,12 +7,6 @@ import {
 } from './DateRangeSelector';
 import { globalDateCache } from '../helpers/date-cache';
 
-export function deleteSubmissionDateParams(params: URLSearchParams) {
-  params.delete('dateSubmittedFrom');
-  params.delete('dateSubmittedTo');
-  params.delete('dateSubmitted');
-}
-
 export type DateRangeUrlEncoded = SpecialDateRange | typeof specificDateRangePattern;
 
 export const specificDateRangePattern = `^from=\\d{4}-\\d{2}-\\d{2}&to=\\d{4}-\\d{2}-\\d{2}$`;

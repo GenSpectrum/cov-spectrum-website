@@ -16,19 +16,14 @@ import {
   DateRangeRaw,
   DateRangeSelector,
   isSpecialDateRange,
-  // isSpecialDateRange,
   readDateRangeRawFromUrlSearchParams,
   SpecialDateRange,
-  // SpecialDateRange,
-  // SpecialDateRangeSelector,
 } from '../data/DateRangeSelector';
 import {
   DateRangeUrlEncoded,
   dateRangeUrlFromSelector,
   dateRangeUrlToSelector,
-  // deleteSubmissionDateParams,
   isDateRangeEncoded,
-  //  submissionDateRangeUrlFromSelector,
 } from '../data/DateRangeUrlEncoded';
 import { decodeSamplingStrategy, SamplingStrategy } from '../data/SamplingStrategy';
 import { baseLocation } from '../index';
