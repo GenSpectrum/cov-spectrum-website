@@ -15,9 +15,7 @@ import {
   addSubmittedDateRangeSelectorToUrlParams,
   DateRangeRaw,
   DateRangeSelector,
-  isSpecialDateRange,
   readDateRangeRawFromUrlSearchParams,
-  SpecialDateRange,
 } from '../data/DateRangeSelector';
 import {
   DateRangeUrlEncoded,
@@ -76,6 +74,12 @@ export const defaultSamplingStrategy: SamplingStrategy = SamplingStrategy.AllSam
 export const defaultAnalysisMode: AnalysisMode = AnalysisMode.Single;
 
 export const defaultHost: HostSelector = [HUMAN];
+
+const deleteSubmissionDateParams = (params: URLSearchParams) => {
+  params.delete('dateSubmittedFrom');
+  params.delete('dateSubmittedTo');
+  params.delete('dateSubmitted');
+};
 
 export function useExploreUrl(): ExploreUrl | undefined {
   const history = useHistory();
@@ -196,9 +200,9 @@ export function useExploreUrl(): ExploreUrl | undefined {
     ) => {
       const newQueryParam = new URLSearchParams(queryString);
 
-      const _specialDateRange: SpecialDateRange | null = isSpecialDateRange(specialSubmissionDateRaw)
-        ? specialSubmissionDateRaw
-        : null;
+      if (!submissionDateRange && !specialSubmissionDateRaw) {
+        deleteSubmissionDateParams(newQueryParam);
+      }
 
       if (submissionDateRange) {
         addSubmittedDateRangeSelectorToUrlParams(
@@ -219,7 +223,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
         addQcSelectorToUrlSearchParams(qc, newQueryParam);
       }
 
-      const path = `${locationState.pathname}?${newQueryParam}`; // `${locationState.pathname}?${newQueryParam}&${submissionDatePaparms}`;
+      const path = `${locationState.pathname}?${newQueryParam}&`;
       history.push(path);
     },
     [history, locationState.pathname, queryString]

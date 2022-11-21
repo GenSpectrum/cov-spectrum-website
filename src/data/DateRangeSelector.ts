@@ -162,7 +162,7 @@ export function readDateRangeRawFromUrlSearchParams(params: URLSearchParams): Da
       drs[field] = params.get(field);
     }
   }
-  console.log('readDateRangeRawFromUrlSearchParams', drs);
+
   return drs;
 }
 
@@ -179,7 +179,7 @@ export function addSubmittedDateRangeSelectorToUrlParams(
     const _specialDateRange: SpecialDateRange | null = isSpecialDateRange(specialDateRange)
       ? specialDateRange
       : null;
-    if (_specialDateRange) {
+    if (_specialDateRange && _specialDateRange !== 'AllTimes') {
       params.set('dateSubmitted', _specialDateRange);
       return;
     }
@@ -214,5 +214,4 @@ export function addSubmittedDateRangeRawSelectorToUrlSearchParams(
       }
     }
   }
-  console.log('PARAMS', params);
 }

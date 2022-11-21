@@ -50,6 +50,9 @@ export const App = () => {
   const parseDateSubmitted = () => {
     if (dateSubmitted) {
       if (dateSubmitted.dateSubmitted) {
+        if (dateSubmitted.dateSubmitted === 'AllTimes') {
+          return null;
+        }
         return `Submission date: ${dateSubmitted.dateSubmitted}`;
       } else if (dateSubmitted.dateSubmittedFrom && dateSubmitted.dateSubmittedTo) {
         return `Submission date: from ${dateSubmitted.dateSubmittedFrom} to ${dateSubmitted.dateSubmittedTo}`;
