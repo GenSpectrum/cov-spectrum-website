@@ -246,8 +246,8 @@ export async function getLinkTo(
     addHostSelectorToUrlSearchParams(selector.host, params);
   }
 
-  if (selector.dateSubmittedRaw) {
-    addSubmittedDateRangeRawSelectorToUrlSearchParams(selector.dateSubmittedRaw, params);
+  if (selector.dateSubmitted) {
+    addSubmittedDateRangeRawSelectorToUrlSearchParams(selector.dateSubmitted, params);
   }
   addQcSelectorToUrlSearchParams(selector.qc, params);
   if (downloadAsFile) {

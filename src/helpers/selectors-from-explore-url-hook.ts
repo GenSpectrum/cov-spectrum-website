@@ -33,7 +33,7 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         variant: firstVariant,
         host: exploreUrl.host,
         qc: exploreUrl.qc,
-        dateSubmittedRaw: exploreUrl.dateSubmittedRaw,
+        dateSubmitted: exploreUrl.dateSubmitted,
       }),
       [
         exploreUrl.dateRange,
@@ -42,7 +42,7 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         firstVariant,
         exploreUrl.host,
         exploreUrl.qc,
-        exploreUrl.dateSubmittedRaw,
+        exploreUrl.dateSubmitted,
       ]
     ),
     ldsSelector: useDeepCompareMemo(
@@ -52,7 +52,7 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         samplingStrategy: exploreUrl.samplingStrategy!,
         host: exploreUrl.host,
         qc: exploreUrl.qc,
-        dateSubmittedRaw: exploreUrl.dateSubmittedRaw,
+        dateSubmitted: exploreUrl.dateSubmitted,
       }),
       [
         exploreUrl.dateRange,
@@ -60,7 +60,7 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         exploreUrl.samplingStrategy,
         exploreUrl.host,
         exploreUrl.qc,
-        exploreUrl.dateSubmittedRaw,
+        exploreUrl.dateSubmitted,
       ]
     ),
     lvsSelector: useDeepCompareMemo(
@@ -70,7 +70,7 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         variant: firstVariant,
         host: exploreUrl.host,
         qc: exploreUrl.qc,
-        dateSubmittedRaw: exploreUrl.dateSubmittedRaw,
+        dateSubmitted: exploreUrl.dateSubmitted,
       }),
       [
         exploreUrl.dateRange,
@@ -79,7 +79,7 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         firstVariant,
         exploreUrl.host,
         exploreUrl.qc,
-        exploreUrl.dateSubmittedRaw,
+        exploreUrl.dateSubmitted,
       ]
     ),
     lsSelector: useDeepCompareMemo(
@@ -88,14 +88,14 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         samplingStrategy: exploreUrl.samplingStrategy!,
         host: exploreUrl.host,
         qc: exploreUrl.qc,
-        dateSubmittedRaw: exploreUrl.dateSubmittedRaw,
+        dateSubmitted: exploreUrl.dateSubmitted,
       }),
       [
         exploreUrl.location,
         exploreUrl.samplingStrategy,
         exploreUrl.host,
         exploreUrl.qc,
-        exploreUrl.dateSubmittedRaw,
+        exploreUrl.dateSubmitted,
       ]
     ),
     dvsSelector: useDeepCompareMemo(
@@ -105,7 +105,7 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         samplingStrategy: exploreUrl.samplingStrategy!,
         host: exploreUrl.host,
         qc: exploreUrl.qc,
-        dateSubmittedRaw: exploreUrl.dateSubmittedRaw,
+        dateSubmitted: exploreUrl.dateSubmitted,
         variant: firstVariant,
       }),
       [
@@ -114,7 +114,7 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         firstVariant,
         exploreUrl.host,
         exploreUrl.qc,
-        exploreUrl.dateSubmittedRaw,
+        exploreUrl.dateSubmitted,
       ]
     ),
     dsSelector: useDeepCompareMemo(
@@ -124,14 +124,14 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         samplingStrategy: exploreUrl.samplingStrategy!,
         host: exploreUrl.host,
         qc: exploreUrl.qc,
-        dateSubmittedRaw: exploreUrl.dateSubmittedRaw,
+        dateSubmitted: exploreUrl.dateSubmitted,
       }),
       [
         exploreUrl.dateRange,
         exploreUrl.samplingStrategy,
         exploreUrl.host,
         exploreUrl.qc,
-        exploreUrl.dateSubmittedRaw,
+        exploreUrl.dateSubmitted,
       ]
     ),
     lSelector: useDeepCompareMemo(
@@ -144,9 +144,9 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
       () => ({
         host: exploreUrl.host,
         qc: exploreUrl.qc,
-        dateSubmittedRaw: exploreUrl.dateSubmittedRaw,
+        dateSubmitted: exploreUrl.dateSubmitted,
       }),
-      [exploreUrl.host, exploreUrl.qc, exploreUrl.dateSubmittedRaw]
+      [exploreUrl.host, exploreUrl.qc, exploreUrl.dateSubmitted]
     ),
   };
 }
@@ -164,6 +164,7 @@ export function useMultipleSelectorsFromExploreUrl(
           variant,
           host: exploreUrl.host,
           qc: exploreUrl.qc,
+          dateSubmitted: exploreUrl.dateSubmitted,
         })),
       [
         exploreUrl.dateRange,
@@ -172,6 +173,7 @@ export function useMultipleSelectorsFromExploreUrl(
         exploreUrl.variants,
         exploreUrl.host,
         exploreUrl.qc,
+        exploreUrl.dateSubmitted,
       ]
     ),
   };

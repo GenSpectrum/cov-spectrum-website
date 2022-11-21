@@ -15,6 +15,7 @@ interface Props {
   setDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
   setSubmissionDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
   setSpecialSubmissionDateRaw?: React.Dispatch<React.SetStateAction<string | null>>;
+  specialSubmissionDateRaw?: string | null;
 }
 
 const minimumDate: Date = new Date('2020-01-06'); // first day of first week of 2020
@@ -25,6 +26,7 @@ export const DateRangePicker = ({
   setDateRangeSelector,
   setSubmissionDateRangeSelector,
   setSpecialSubmissionDateRaw,
+  specialSubmissionDateRaw,
 }: Props) => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
 
@@ -104,6 +106,7 @@ export const DateRangePicker = ({
           setDateRangeSelector={setDateRangeSelector}
           setSubmissionDateRangeSelector={setSubmissionDateRangeSelector}
           setSpecialSubmissionDateRaw={setSpecialSubmissionDateRaw}
+          specialSubmissionDateRaw={specialSubmissionDateRaw}
         />
 
         <div className={`flex flex-row ${width && width < 480 ? 'flex-wrap mt-2 mb-2 ml-1' : 'ml-2'}`}>

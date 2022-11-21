@@ -45,14 +45,14 @@ export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
-  const { host, qc, setHostAndQc, dateSubmittedRaw } = useExploreUrl() ?? {};
+  const { host, qc, setHostAndQc, dateSubmitted } = useExploreUrl() ?? {};
 
   const parseDateSubmitted = () => {
-    if (dateSubmittedRaw) {
-      if (dateSubmittedRaw.dateSubmitted) {
-        return `Submission date: ${dateSubmittedRaw.dateSubmitted}`;
-      } else if (dateSubmittedRaw.dateSubmittedFrom && dateSubmittedRaw.dateSubmittedTo) {
-        return `Submission date: from ${dateSubmittedRaw.dateSubmittedFrom} to ${dateSubmittedRaw.dateSubmittedTo}`;
+    if (dateSubmitted) {
+      if (dateSubmitted.dateSubmitted) {
+        return `Submission date: ${dateSubmitted.dateSubmitted}`;
+      } else if (dateSubmitted.dateSubmittedFrom && dateSubmitted.dateSubmittedTo) {
+        return `Submission date: from ${dateSubmitted.dateSubmittedFrom} to ${dateSubmitted.dateSubmittedTo}`;
       }
     }
     return null;

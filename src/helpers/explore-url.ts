@@ -12,11 +12,13 @@ import {
   LocationSelector,
 } from '../data/LocationSelector';
 import {
-  addSubmittedDateRangeSelectorToUrlSearchParams,
+  addSubmittedDateRangeSelectorToUrlParams,
   DateRangeRaw,
   DateRangeSelector,
+  isSpecialDateRange,
   // isSpecialDateRange,
   readDateRangeRawFromUrlSearchParams,
+  SpecialDateRange,
   // SpecialDateRange,
   // SpecialDateRangeSelector,
 } from '../data/DateRangeSelector';
@@ -52,7 +54,7 @@ export interface ExploreUrl {
   analysisMode: AnalysisMode;
   host: HostSelector;
   qc: QcSelector;
-  dateSubmittedRaw?: DateRangeRaw;
+  dateSubmitted?: DateRangeRaw;
 
   setLocation: (location: LocationSelector) => void;
   setDateRange: (dateRange: DateRangeSelector) => void;
@@ -199,17 +201,17 @@ export function useExploreUrl(): ExploreUrl | undefined {
     ) => {
       const newQueryParam = new URLSearchParams(queryString);
 
-      // deleteSubmissionDateParams(newQueryParam);
+      const _specialDateRange: SpecialDateRange | null = isSpecialDateRange(specialSubmissionDateRaw)
+        ? specialSubmissionDateRaw
+        : null;
 
-      // const _specialDateRange: SpecialDateRange | null = isSpecialDateRange(specialSubmissionDateRaw)
-      //   ? specialSubmissionDateRaw
-      //   : null;
-
-      // const _selector = _specialDateRange
-      //   ? new SpecialDateRangeSelector(_specialDateRange)
-      //   : submissionDateRange;
-
-      //  const submissionDatePaparms = _selector ? submissionDateRangeUrlFromSelector(_selector) : '';
+      if (submissionDateRange) {
+        addSubmittedDateRangeSelectorToUrlParams(
+          submissionDateRange,
+          newQueryParam,
+          specialSubmissionDateRaw
+        );
+      }
 
       if (host) {
         if (isDefaultHostSelector(host)) {
@@ -220,10 +222,6 @@ export function useExploreUrl(): ExploreUrl | undefined {
       }
       if (qc) {
         addQcSelectorToUrlSearchParams(qc, newQueryParam);
-      }
-
-      if (submissionDateRange) {
-        addSubmittedDateRangeSelectorToUrlSearchParams(submissionDateRange, newQueryParam);
       }
 
       const path = `${locationState.pathname}?${newQueryParam}`; // `${locationState.pathname}?${newQueryParam}&${submissionDatePaparms}`;
@@ -253,13 +251,13 @@ export function useExploreUrl(): ExploreUrl | undefined {
   );
 
   // Parse from query params
-  const { variants, analysisMode, host, qc, dateSubmittedRaw } = useMemo(
+  const { variants, analysisMode, host, qc, dateSubmitted } = useMemo(
     () => ({
       variants: readVariantListFromUrlSearchParams(query),
       analysisMode: decodeAnalysisMode(query.get('analysisMode')) ?? defaultAnalysisMode,
       host: readHostSelectorFromUrlSearchParams(query),
       qc: readQcSelectorFromUrlSearchParams(query),
-      dateSubmittedRaw: readDateRangeRawFromUrlSearchParams(query),
+      dateSubmitted: readDateRangeRawFromUrlSearchParams(query),
     }),
     [query]
   );
@@ -316,7 +314,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     analysisMode,
     host,
     qc,
-    dateSubmittedRaw,
+    dateSubmitted,
     setLocation,
     setSamplingStrategy,
     setDateRange,

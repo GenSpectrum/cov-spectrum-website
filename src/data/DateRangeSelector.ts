@@ -166,12 +166,23 @@ export function readDateRangeRawFromUrlSearchParams(params: URLSearchParams): Da
   return drs;
 }
 
-export function addSubmittedDateRangeSelectorToUrlSearchParams(
+export function addSubmittedDateRangeSelectorToUrlParams(
   selector: DateRangeSelector,
-  params: URLSearchParams
+  params: URLSearchParams,
+  specialDateRange?: string | null
 ) {
-  for (const field of ['dateSubmittedFrom', 'dateSubmittedTo']) {
+  for (const field of fields) {
     params.delete(field);
+  }
+
+  if (specialDateRange != null) {
+    const _specialDateRange: SpecialDateRange | null = isSpecialDateRange(specialDateRange)
+      ? specialDateRange
+      : null;
+    if (_specialDateRange) {
+      params.set('dateSubmitted', _specialDateRange);
+      return;
+    }
   }
   const _dateRange = selector.getDateRange();
   _dateRange.dateFrom && params.set('dateSubmittedFrom', _dateRange.dateFrom.string);
@@ -182,11 +193,26 @@ export function addSubmittedDateRangeRawSelectorToUrlSearchParams(
   rawDateRangeSelector: DateRangeRaw,
   params: URLSearchParams
 ) {
-  for (const field of ['dateSubmittedFrom', 'dateSubmittedTo']) {
+  for (const field of fields) {
     params.delete(field);
   }
+
   if (rawDateRangeSelector.dateSubmittedFrom && rawDateRangeSelector.dateSubmittedTo) {
     params.set('dateSubmittedFrom', rawDateRangeSelector.dateSubmittedFrom);
     params.set('dateSubmittedTo', rawDateRangeSelector.dateSubmittedTo);
   }
+  if (rawDateRangeSelector.dateSubmitted) {
+    const _specialDateRange: SpecialDateRange | null = isSpecialDateRange(rawDateRangeSelector.dateSubmitted)
+      ? rawDateRangeSelector.dateSubmitted
+      : null;
+
+    if (_specialDateRange) {
+      const range = new SpecialDateRangeSelector(_specialDateRange).getDateRange();
+      if (range.dateFrom && range.dateTo) {
+        params.set('dateSubmittedFrom', range.dateFrom.string);
+        params.set('dateSubmittedTo', range.dateTo.string);
+      }
+    }
+  }
+  console.log('PARAMS', params);
 }

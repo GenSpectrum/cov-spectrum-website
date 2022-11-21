@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Form } from 'react-bootstrap';
 import { ExploreUrl } from '../helpers/explore-url';
 import { dateRangeUrlToSelector, isDateRangeEncoded } from '../data/DateRangeUrlEncoded';
@@ -14,6 +14,7 @@ interface Props {
   setDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
   setSubmissionDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
   setSpecialSubmissionDateRaw?: React.Dispatch<React.SetStateAction<string | null>>;
+  specialSubmissionDateRaw?: string | null;
 }
 
 export const HeaderDateRangeSelect = ({
@@ -21,8 +22,11 @@ export const HeaderDateRangeSelect = ({
   setDateRangeSelector,
   setSubmissionDateRangeSelector,
   setSpecialSubmissionDateRaw,
+  specialSubmissionDateRaw,
 }: Props) => {
-  const [dateRangeValue, setDateRangeValue] = useState<string>('Past6M');
+  const [dateRangeValue, setDateRangeValue] = useState<string>(
+    specialSubmissionDateRaw ? specialSubmissionDateRaw : 'Past6M'
+  );
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
     if (isDateRangeEncoded(event.target.value)) {
@@ -62,6 +66,13 @@ export const HeaderDateRangeSelect = ({
     'Past3M',
     'Past6M',
   ];
+
+  useEffect(() => {
+    if (specialSubmissionDateRaw) {
+      setDateRangeValue(specialSubmissionDateRaw);
+    }
+  }, [specialSubmissionDateRaw]);
+
   return (
     <Form>
       <Form.Control

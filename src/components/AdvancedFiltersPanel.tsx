@@ -27,9 +27,9 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
 
   // Date range
   const [submissionDateRangeSelector, setSubmissionDateRangeSelector] = useState<DateRangeSelector>(
-    new SpecialDateRangeSelector('Past6M')
+    new SpecialDateRangeSelector('AllTimes')
   );
-  const [specialSubmissionDateRaw, setSpecialSubmissionDateRaw] = useState<string | null>(null);
+  const [specialSubmissionDateRaw, setSpecialSubmissionDateRaw] = useState<string | null>('AllTimes');
 
   const { data: allHosts } = useQuery(
     () => HostService.allHosts.then(hs => hs.sort((a, b) => a.localeCompare(b))),
@@ -96,11 +96,23 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
         </div>
       )}
       <div className='mt-4 mb-4'>
+        <h2>Submission date</h2>
         <DateRangePicker
+          specialSubmissionDateRaw={specialSubmissionDateRaw}
           setSpecialSubmissionDateRaw={setSpecialSubmissionDateRaw}
           dateRangeSelector={submissionDateRangeSelector}
           setSubmissionDateRangeSelector={setSubmissionDateRangeSelector}
         />
+        <Button
+          variant={ButtonVariant.SECONDARY}
+          className='w-25 mt-4'
+          onClick={() => {
+            setSpecialSubmissionDateRaw('AllTimes');
+            setSubmissionDateRangeSelector(new SpecialDateRangeSelector('AllTimes'));
+          }}
+        >
+          Reset filter
+        </Button>
       </div>
       {/* Sequence quality */}
       <h2>Sequence quality</h2>
