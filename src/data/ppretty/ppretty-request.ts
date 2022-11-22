@@ -2,6 +2,7 @@ export type PprettyRequest = {
   config: {
     plotName: string;
     plotType: 'line' | 'bar';
+    dataSource?: string;
   };
   metadata: any;
   data: any;
