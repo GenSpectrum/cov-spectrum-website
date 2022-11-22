@@ -59,6 +59,63 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
             </button>
           </div>
         </div>
+        <div
+          className="MuiFormGroup-root css-dmmspl-MuiFormGroup-root"
+          style={
+            Object {
+              "visibility": "visible",
+            }
+          }
+        >
+          <label
+            className="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
+          >
+            <span
+              className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root"
+              onBlur={[Function]}
+              onContextMenu={[Function]}
+              onDragLeave={[Function]}
+              onFocus={[Function]}
+              onKeyDown={[Function]}
+              onKeyUp={[Function]}
+              onMouseDown={[Function]}
+              onMouseLeave={[Function]}
+              onMouseUp={[Function]}
+              onTouchEnd={[Function]}
+              onTouchMove={[Function]}
+              onTouchStart={[Function]}
+              tabIndex={null}
+            >
+              <input
+                checked={false}
+                className="PrivateSwitchBase-input css-1m9pwf3"
+                data-indeterminate={false}
+                defaultChecked={true}
+                onChange={[Function]}
+                type="checkbox"
+              />
+              <svg
+                aria-hidden={true}
+                className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-i4bv87-MuiSvgIcon-root"
+                data-testid="CheckBoxOutlineBlankIcon"
+                focusable="false"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
+                />
+              </svg>
+              <span
+                className="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
+            </span>
+            <span
+              className="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-ahj2mt-MuiTypography-root"
+            >
+              Log scale
+            </span>
+          </label>
+        </div>
       </div>
     </h3>
     <div

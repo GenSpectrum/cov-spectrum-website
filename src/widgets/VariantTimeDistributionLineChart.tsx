@@ -7,6 +7,8 @@ import {
   VariantTimeDistributionLineChartEntry,
   VariantTimeDistributionLineChartInner,
 } from './VariantTimeDistributionLineChartInner';
+import { formatVariantDisplayName } from '../data/VariantSelector';
+import { encodeLocationSelectorToSingleString } from '../data/LocationSelector';
 
 export const VariantTimeDistributionLineChart = React.memo(
   ({ wholeSampleSet, variantSampleSet }: VariantTimeDistributionChartProps): JSX.Element => {
@@ -31,7 +33,15 @@ export const VariantTimeDistributionLineChart = React.memo(
       }
       data.get(date)!.variantCount += count;
     }
-    return <VariantTimeDistributionLineChartInner data={new Array(...data.values())} />;
+    return (
+      <VariantTimeDistributionLineChartInner
+        data={new Array(...data.values())}
+        pprettyMetadata={{
+          variant: formatVariantDisplayName(variantSampleSet.selector.variant!),
+          location: encodeLocationSelectorToSingleString(variantSampleSet.selector.location),
+        }}
+      />
+    );
   }
 );
 

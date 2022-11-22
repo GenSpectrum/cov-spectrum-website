@@ -116,6 +116,18 @@ export async function fetchReferenceGenomeInfo(signal?: AbortSignal): Promise<Re
   return (await res.json()) as ReferenceGenomeInfo;
 }
 
+export async function fetchCollection(id: number, signal?: AbortSignal): Promise<Collection | null> {
+  const url = '/resource/collection/' + id;
+  const res = await get(url, signal);
+  if (res.status === 404) {
+    return null;
+  }
+  if (!res.ok) {
+    throw new Error('Error fetching collection');
+  }
+  return (await res.json()) as Collection;
+}
+
 export async function fetchCollections(signal?: AbortSignal): Promise<Collection[]> {
   const url = '/resource/collection';
   const res = await get(url, signal);

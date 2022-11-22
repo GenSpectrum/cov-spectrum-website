@@ -25,6 +25,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { SvgVennDiagram } from '../components/SvgVennDiagram';
 import { ErrorAlert } from '../components/ErrorAlert';
+import { WidgetWrapper } from '../components/WidgetWrapper';
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -175,20 +176,21 @@ export const FocusCompareEqualsPage = () => {
         <PackedGrid maxColumns={2}>
           {variantDateCounts.data && wholeDateCountWithDateFilter.data && (
             <GridCell minWidth={600}>
-              <NamedCard
-                title='Sequences over time'
-                toolbar={[
+              {/* HACK(by Chaoran): This is to add an "Export" button without actually implementing a Widget. */}
+              <WidgetWrapper
+                getShareUrl={async () => ''}
+                title={'Sequences over time'}
+                toolbarChildren={[
                   createDivisionBreakdownButton('SequencesOverTime', setShowVariantTimeDistributionDivGrid),
                 ]}
+                height={300}
               >
-                <div style={{ height: '300px' }}>
-                  <MultiVariantTimeDistributionLineChart
-                    variantSampleSets={variantDateCounts.data}
-                    wholeSampleSet={wholeDateCountWithDateFilter.data}
-                    analysisMode={AnalysisMode.CompareEquals}
-                  />
-                </div>
-              </NamedCard>
+                <MultiVariantTimeDistributionLineChart
+                  variantSampleSets={variantDateCounts.data}
+                  wholeSampleSet={wholeDateCountWithDateFilter.data}
+                  analysisMode={AnalysisMode.CompareEquals}
+                />
+              </WidgetWrapper>
 
               {ldvsSelectors.length === 2 ? (
                 <NamedCard title='Nucleotide mutations'>

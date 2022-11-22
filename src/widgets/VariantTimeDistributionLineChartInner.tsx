@@ -10,6 +10,8 @@ import DownloadWrapper from './DownloadWrapper';
 import { maxYAxis } from '../helpers/max-y-axis';
 import { ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
+import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
+import { PprettyRequest } from '../data/ppretty/ppretty-request';
 
 export type VariantTimeDistributionLineChartEntry = {
   date: UnifiedDay;
@@ -19,12 +21,18 @@ export type VariantTimeDistributionLineChartEntry = {
 
 export type VariantTimeDistributionLineChartProps = {
   data: VariantTimeDistributionLineChartEntry[];
+  pprettyMetadata?: {
+    location: string;
+    variant: string;
+  };
 };
 
 type PlotEntry = {
   date: Date;
   proportion: number;
   proportionCI: [number, number];
+  log?: number | undefined;
+  logCI?: [number | undefined, number | undefined];
 };
 
 export function formatDate(date: number) {
@@ -35,9 +43,10 @@ export function formatDate(date: number) {
 const CHART_MARGIN_RIGHT = 15;
 
 export const VariantTimeDistributionLineChartInner = React.memo(
-  ({ data }: VariantTimeDistributionLineChartProps): JSX.Element => {
+  ({ data, pprettyMetadata }: VariantTimeDistributionLineChartProps): JSX.Element => {
     const [active, setActive] = useState<PlotEntry | undefined>(undefined);
     const [absoluteNumbers, setAbsoluteNumbers] = useState<boolean>(false);
+    const [logScale, setLogScale] = useState<boolean>(false);
 
     const {
       plotData,
@@ -77,6 +86,8 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             date: date.dayjs.toDate(),
             proportion: NaN,
             proportionCI: [NaN, NaN],
+            log: NaN,
+            logCI: [NaN, NaN],
           });
           continue;
         }
@@ -86,17 +97,25 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             // If we don't have data, we carry over the last available value as our "best guess". The CI is from 0 to 1.
             proportion: lastProportion,
             proportionCI: [0, 1],
+            log: lastProportion !== 0 ? lastProportion : undefined,
+            logCI: [0.001, 1],
           });
           continue;
         }
         lastProportion = Math.max(variantCount / sequenced, 0);
         const wilsonInterval = calculateWilsonInterval(variantCount, sequenced);
         // Math.max(..., 0) compensates for numerical inaccuracies which can lead to negative values.
-        plotData.push({
+        let item: PlotEntry = {
           date: date.dayjs.toDate(),
           proportion: absoluteNumbers ? variantCount : Math.max(variantCount / sequenced, 0),
           proportionCI: [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)],
-        });
+          // select only those values which are greater than zero for the log scale
+          log: Math.max(variantCount / sequenced, 0) || undefined,
+        };
+        if (item['log']) {
+          item['logCI'] = item['proportionCI'];
+        }
+        plotData.push(item);
       }
 
       const ticks = getTicks(
@@ -127,14 +146,30 @@ export const VariantTimeDistributionLineChartInner = React.memo(
       setDefaultActive(plotData);
     }, [plotData]);
 
-    const csvData = useMemo(() => {
-      return plotData.map(({ date, proportion, proportionCI }) => ({
+    const { csvData, pprettyRequest } = useMemo(() => {
+      const csvData = plotData.map(({ date, proportion, proportionCI }) => ({
         date: dayjs(date).format('YYYY-MM-DD'),
-        estimatedCases: proportion.toFixed(4),
-        estimatedCasesCILower: proportionCI[0].toFixed(4),
-        estimatedCasesCIUpper: proportionCI[1].toFixed(4),
+        proportion: proportion.toFixed(4),
+        proportionCILow: proportionCI[0].toFixed(4),
+        proportionCIHigh: proportionCI[1].toFixed(4),
       }));
-    }, [plotData]);
+      const pprettyRequest: PprettyRequest | undefined = absoluteNumbers
+        ? undefined
+        : {
+            config: {
+              plotName: 'sequences-over-time',
+              plotType: 'line',
+            },
+            metadata: pprettyMetadata,
+            data: plotData.map(({ date, proportion, proportionCI }) => ({
+              date: dayjs(date).format('YYYY-MM-DD'),
+              proportion: proportion,
+              proportionCILow: proportionCI[0],
+              proportionCIHigh: proportionCI[1],
+            })),
+          };
+      return { csvData, pprettyRequest };
+    }, [plotData, pprettyMetadata, absoluteNumbers]);
 
     if (plotData.length === 0) {
       return <Alert variant={AlertVariant.INFO}>We do not have enough data for this plot.</Alert>;
@@ -152,8 +187,10 @@ export const VariantTimeDistributionLineChartInner = React.memo(
       }
     };
 
+    const toggleLogScale = () => setLogScale(logScale => !logScale);
+
     return (
-      <DownloadWrapper name='EstimatedCasesPlot' csvData={csvData}>
+      <DownloadWrapper name='VariantTimeDistributionPlot' csvData={csvData} pprettyRequest={pprettyRequest}>
         <Wrapper>
           <TitleWrapper>
             <div>{titleDetails()}</div>
@@ -182,6 +219,17 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                   Absolute
                 </Button>
               </ButtonGroup>
+
+              <FormGroup
+                style={{
+                  visibility: `${absoluteNumbers ? 'hidden' : 'visible'}`,
+                }}
+              >
+                <FormControlLabel
+                  control={<Checkbox defaultChecked checked={logScale} onChange={toggleLogScale} />}
+                  label='Log scale'
+                />
+              </FormGroup>
             </ButtonToolbar>
           </TitleWrapper>
           <ChartAndMetricsWrapper>
@@ -189,7 +237,12 @@ export const VariantTimeDistributionLineChartInner = React.memo(
               <ResponsiveContainer>
                 <ComposedChart
                   data={plotData}
-                  margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}
+                  margin={{
+                    top: 6,
+                    right: CHART_MARGIN_RIGHT,
+                    left: 5,
+                    bottom: 5,
+                  }}
                 >
                   <XAxis
                     dataKey='date'
@@ -206,17 +259,19 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     allowDecimals={true}
                     hide={false}
                     width={50}
-                    domain={[0, maxYAxis(yMax)]}
+                    scale={logScale && !absoluteNumbers ? 'log' : 'linear'}
+                    domain={logScale && !absoluteNumbers ? ['auto', 'auto'] : [0, maxYAxis(yMax)]}
                     allowDataOverflow={true}
-                    scale='linear'
                   />
                   <Tooltip
                     active={false}
                     content={e => {
                       if (e.active && e.payload !== undefined) {
-                        const newActive = e.payload[0].payload;
-                        if (active === undefined || active.date.getTime() !== newActive.date.getTime()) {
-                          setActive(newActive);
+                        if (e.payload[0] !== undefined && e.payload[0].payload !== undefined) {
+                          const newActive = e.payload[0].payload;
+                          if (active === undefined || active.date.getTime() !== newActive.date.getTime()) {
+                            setActive(newActive);
+                          }
                         }
                       }
                       return <></>;
@@ -225,7 +280,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                   {!absoluteNumbers && (
                     <Area
                       type='monotone'
-                      dataKey='proportionCI'
+                      dataKey={logScale && !absoluteNumbers ? 'logCI' : 'proportionCI'}
                       fill={colors.activeSecondary}
                       stroke='transparent'
                       isAnimationActive={false}
@@ -233,7 +288,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                   )}
                   <Line
                     type='monotone'
-                    dataKey='proportion'
+                    dataKey={logScale && !absoluteNumbers ? 'log' : 'proportion'}
                     stroke={colors.active}
                     strokeWidth={3}
                     dot={false}

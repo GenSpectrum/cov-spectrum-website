@@ -343,7 +343,7 @@ export const FocusSinglePage = () => {
                 {
                   <VariantTimeDistributionChartWidget.ShareableComponent
                     title='Sequences over time'
-                    height={300}
+                    height={350}
                     variantSampleSet={variantDateCount.data}
                     wholeSampleSet={wholeDateCountWithDateFilter.data}
                     toolbarChildren={[
