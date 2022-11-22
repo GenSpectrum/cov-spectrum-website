@@ -58,8 +58,11 @@ export function encodeLocationSelectorToSingleString({
   country,
   division,
 }: LocationSelector): string {
+  if (division && !country) {
+    throw new Error('Divisions are not unique and cannot encoded without a country.');
+  }
   if (division) {
-    throw new Error('There is no encoding for divisions.');
+    return `${division}, ${country}`;
   }
   if (!region && !country) {
     return 'World';
