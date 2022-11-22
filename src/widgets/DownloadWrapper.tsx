@@ -1,33 +1,39 @@
 import React, { useContext, useEffect, useRef } from 'react';
-import { exportComponentAsPNG } from 'react-component-export-image';
-import { ExportManagerContext } from '../components/CombinedExport/ExportManager';
+import { DeregistrationHandle, ExportManagerContext } from '../components/CombinedExport/ExportManager';
 import { csvStringify } from '../helpers/csvStringifyHelper';
 import download from 'downloadjs';
+import { pprettyFileFormats, PprettyRequest } from '../data/ppretty/ppretty-request';
+import { getPlotUrl } from '../data/ppretty/api-ppretty';
 
 interface Props {
   name: string;
   csvData?: { [key: string]: any }[];
+  pprettyRequest?: PprettyRequest;
   children: React.ReactNode;
 }
 
 // Adds items to "Export" dropdown to download the wrapped component as an image or CSV
-const DownloadWrapper = ({ name = 'plot', csvData, children }: Props) => {
+const DownloadWrapper = ({ name = 'plot', csvData, pprettyRequest, children }: Props) => {
   const componentRef = useRef(null);
 
   const exportManager = useContext(ExportManagerContext);
 
   useEffect(() => {
-    const handle = exportManager.register('Download PNG', () => {
-      exportComponentAsPNG(componentRef, {
-        fileName: name + '.png',
-        html2CanvasOptions: {
-          scale: 8,
-        },
-      });
-    });
+    if (pprettyRequest) {
+      const handles: DeregistrationHandle[] = [];
+      for (const format of pprettyFileFormats) {
+        const handle = exportManager.register('Download ' + format.toUpperCase(), async () => {
+          const pprettyUrl = await getPlotUrl(pprettyRequest, format);
+          window.open(pprettyUrl);
+        });
+        handles.push(handle);
+      }
 
-    return handle.deregister;
-  }, [componentRef, exportManager, name]);
+      return () => {
+        handles.forEach(handle => handle.deregister());
+      };
+    }
+  }, [componentRef, pprettyRequest, exportManager, name]);
 
   useEffect(() => {
     if (csvData) {

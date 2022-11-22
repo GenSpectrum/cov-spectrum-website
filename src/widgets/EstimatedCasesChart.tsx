@@ -5,6 +5,8 @@ import { fillAndFilterFromDailyMap } from '../helpers/fill-missing';
 import Loader from '../components/Loader';
 import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
 import { useMemo } from 'react';
+import { formatVariantDisplayName } from '../data/VariantSelector';
+import { encodeLocationSelectorToSingleString } from '../data/LocationSelector';
 
 export type EstimatedCasesChartProps = {
   wholeDateCounts: DateCountSampleDataset;
@@ -24,7 +26,15 @@ export const EstimatedCasesChart = ({
   if (!data) {
     return <Loader />;
   }
-  return <EstimatedCasesChartInner data={new Array(...data.values())} />;
+  return (
+    <EstimatedCasesChartInner
+      data={new Array(...data.values())}
+      pprettyMetadata={{
+        variant: formatVariantDisplayName(variantDateCounts.selector.variant!),
+        location: encodeLocationSelectorToSingleString(variantDateCounts.selector.location),
+      }}
+    />
+  );
 };
 
 export function prepareData(
