@@ -40,6 +40,44 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 
 From a technical point of view, CoV-Spectrum's frontend is a React app that shows a lot of plots based on read-only data. It depends on the [CoV-Spectrum server](https://github.com/cevo-public/cov-spectrum-server) for all but sequence data and on [LAPIS](https://github.com/cevo-public/LAPIS) for the sequence data. Please check out the corresponding repositories for instructions on how to set up the server applications. A short guide on how to get the frontend application running locally is in [./docs/building.md](./docs/building.md).
 
+```mermaid
+flowchart TB;
+    subgraph frontend["CoV-Spectrum frontend (React)"]
+        frontend_stuff["Plotting, data transformation, data fetching, UI, etc."]
+    end
+    
+    subgraph backend["CoV-Spectrum backend"]
+        direction TB
+        subgraph backend_app["Kotlin application"]
+            direction TB
+            collections[Collections API]
+            cases[Case data API]
+        end
+        backend_db[PostgreSQL]
+        backend_app --- backend_db
+    end
+    
+    subgraph lapis_server["LAPIS server"]
+        direction TB
+        subgraph lapis_app[Java application]
+            direction TB
+            lapis_api[REST-API]
+            lapis_engine["Query engine"]
+        end
+        lapis_db["Background storage (PostgreSQL)"]
+        lapis_app --- lapis_db
+    end
+    
+    subgraph lapis_proc["LAPIS pre-processing (batch job)"]
+        step1["Step 1: alignment, translations, cleaning, etc."]
+        step2["Step 2: LAPIS-specific"]
+    end
+    
+    frontend --- backend
+    frontend --- lapis_server
+    lapis_proc --> lapis_server
+```
+
 There is documentation about different technical aspects of this app in the [./docs](./docs) folder. These next few paragraphs link to parts of that documentation. If you don't want to read much doc, at least check the the list of gotchas ([./docs/gotchas.md](./docs/gotchas.md)).
 
 There is a loose logic to how the source code folder is structured. See [./docs/folders.md](./docs/folders.md) for a guide.
