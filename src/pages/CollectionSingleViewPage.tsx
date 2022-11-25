@@ -463,8 +463,8 @@ const TableTabContent = ({
         return <span className='break-words overflow-hidden'>{params.value}</span>;
       },
     },
-    { field: 'total', headerName: 'Number sequences', minWidth: 150 },
-    { field: 'newSequences', headerName: 'Submitted in past 10 days', minWidth: 200 },
+    { field: 'total', headerName: 'Number sequences', minWidth: 150, type: 'number' },
+    { field: 'newSequences', headerName: 'Submitted in past 10 days', minWidth: 200, type: 'number' },
     {
       field: 'advantage',
       headerName: 'Relative growth advantage',
