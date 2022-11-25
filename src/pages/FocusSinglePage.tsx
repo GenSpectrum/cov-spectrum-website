@@ -479,7 +479,7 @@ export const FocusSinglePage = () => {
                 <VariantTimeDistributionChartWidget.ShareableComponent
                   variantSampleSet={d.variant}
                   wholeSampleSet={d.whole}
-                  height={300}
+                  height={350}
                   title={division}
                 />
               )}

@@ -612,7 +612,7 @@ const SequencesOverTimeTabContent = ({
               <GridCell minWidth={600} key={i}>
                 <VariantTimeDistributionChartWidget.ShareableComponent
                   title={mode === 'Single' ? variant.name : `Comparing ${variant.name} to baseline`}
-                  height={300}
+                  height={350}
                   variantSampleSet={vdc.value}
                   wholeSampleSet={baselineDateCounts}
                 />
