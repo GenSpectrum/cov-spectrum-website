@@ -4,6 +4,7 @@ import { csvStringify } from '../helpers/csvStringifyHelper';
 import download from 'downloadjs';
 import { pprettyFileFormats, PprettyRequest } from '../data/ppretty/ppretty-request';
 import { getPlotUrl } from '../data/ppretty/api-ppretty';
+import { PprettyGridExportManagerContext } from '../components/CombinedExport/PprettyGridExportManager';
 
 interface Props {
   name: string;
@@ -17,6 +18,7 @@ const DownloadWrapper = ({ name = 'plot', csvData, pprettyRequest, children }: P
   const componentRef = useRef(null);
 
   const exportManager = useContext(ExportManagerContext);
+  const pprettyGridExportManager = useContext(PprettyGridExportManagerContext);
 
   useEffect(() => {
     if (pprettyRequest) {
@@ -29,11 +31,14 @@ const DownloadWrapper = ({ name = 'plot', csvData, pprettyRequest, children }: P
         handles.push(handle);
       }
 
+      const pprettyHandle = pprettyGridExportManager.register(pprettyRequest);
+
       return () => {
         handles.forEach(handle => handle.deregister());
+        pprettyHandle.deregister();
       };
     }
-  }, [componentRef, pprettyRequest, exportManager, name]);
+  }, [componentRef, pprettyRequest, exportManager, pprettyGridExportManager, name]);
 
   useEffect(() => {
     if (csvData) {

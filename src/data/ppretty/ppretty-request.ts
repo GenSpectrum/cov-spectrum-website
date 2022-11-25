@@ -3,6 +3,8 @@ export type PprettyRequest = {
     plotName: string;
     plotType: 'line' | 'bar';
     dataSource?: string;
+    sizeMultiplier?: number;
+    sizeRatio?: number;
   };
   metadata: any;
   data: any;
