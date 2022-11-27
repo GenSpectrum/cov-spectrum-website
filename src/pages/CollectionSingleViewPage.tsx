@@ -1,7 +1,7 @@
 import { useHistory, useLocation, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
 import { fetchCollection } from '../data/api';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Loader from '../components/Loader';
 import { Link } from 'react-router-dom';
 import { Button, ButtonVariant } from '../helpers/ui';
@@ -44,6 +44,12 @@ import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import download from 'downloadjs';
 import { csvStringify } from '../helpers/csvStringifyHelper';
 import { DateRangePicker } from '../components/DateRangePicker';
+import { PprettyGridExportButton } from '../components/CombinedExport/PprettyGridExportButton';
+import {
+  PprettyGridExportManager,
+  PprettyGridExportManagerContext,
+} from '../components/CombinedExport/PprettyGridExportManager';
+import { PprettyRequest } from '../data/ppretty/ppretty-request';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -312,6 +318,7 @@ export const CollectionSingleViewPage = () => {
           <TabPanel value={tab} index={1}>
             {variants && variantsDateCounts && baselineDateCounts && datasetsInSync ? (
               <SequencesOverTimeTabContent
+                collection={collection}
                 variants={variants}
                 variantsDateCounts={variantsDateCounts}
                 baselineDateCounts={baselineDateCounts}
@@ -575,6 +582,7 @@ const TableTabContent = ({
 };
 
 type SequencesOverTimeTabContentProps = {
+  collection: Collection;
   variants: { query: VariantSelector; name: string; description: string }[];
   variantsDateCounts: PromiseSettledResult<Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>>[];
   baselineDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>;
@@ -597,13 +605,58 @@ const sortRelativeGrowthAdvantageValues: GridComparatorFn<string> = (a, b) => {
 };
 
 const SequencesOverTimeTabContent = ({
+  collection,
   variants,
   variantsDateCounts,
   baselineDateCounts,
   mode,
 }: SequencesOverTimeTabContentProps) => {
+  const exportManagerRef = useRef(
+    new PprettyGridExportManager(requests => {
+      // TODO What happens if the arguments of SequencesOverTimeTabContent change? We probably need to update this
+      //   function as well?
+      const variantToDetailsMap = new Map<string, { name: string; description: string }>();
+      for (let { query, name, description } of collection.variants) {
+        const variantString = formatVariantDisplayName(JSON.parse(query));
+        variantToDetailsMap.set(variantString, { name, description });
+      }
+      const mergedRequest: PprettyRequest = {
+        config: {
+          plotName: 'sequences-over-time_collection',
+          plotType: 'line',
+          sizeMultiplier: Math.max(Math.ceil(Math.sqrt(collection.variants.length)) / 2, 1),
+        },
+        metadata: {
+          location: requests[0].metadata.location,
+          collection: {
+            id: collection.id,
+            title: collection.title,
+            maintainer: collection.maintainers,
+          },
+        },
+        data: [],
+      };
+      for (let request of requests) {
+        mergedRequest.data.push(
+          ...request.data.map((d: any) => {
+            const variant = request.metadata.variant;
+            const { name, description } = variantToDetailsMap.get(variant)!;
+            return {
+              ...d,
+              variant,
+              name,
+              description,
+            };
+          })
+        );
+      }
+      return mergedRequest;
+    })
+  );
+
   return (
-    <>
+    <PprettyGridExportManagerContext.Provider value={exportManagerRef.current}>
+      <PprettyGridExportButton />
       <PackedGrid maxColumns={3}>
         {variants.map((variant, i) => {
           const vdc = variantsDateCounts[i];
@@ -627,7 +680,7 @@ const SequencesOverTimeTabContent = ({
           }
         })}
       </PackedGrid>
-    </>
+    </PprettyGridExportManagerContext.Provider>
   );
 };
 
