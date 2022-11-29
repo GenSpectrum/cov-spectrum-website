@@ -47,17 +47,16 @@ export const App = () => {
 
   const { host, qc, setHostAndQc, dateSubmitted } = useExploreUrl() ?? {};
 
-  const parseDateSubmitted = () => {
-    if (dateSubmitted) {
-      if (dateSubmitted.dateSubmitted) {
-        if (dateSubmitted.dateSubmitted === 'AllTimes') {
-          return null;
-        }
-        return `Submission date: ${dateSubmitted.dateSubmitted}`;
-      } else if (dateSubmitted.dateSubmittedFrom && dateSubmitted.dateSubmittedTo) {
-        return `Submission date: from ${dateSubmitted.dateSubmittedFrom} to ${dateSubmitted.dateSubmittedTo}`;
+  const formatDateSubmittedAsString = () => {
+    if (dateSubmitted?.dateSubmitted) {
+      if (dateSubmitted.dateSubmitted === 'AllTimes') {
+        return null;
       }
+      return `${dateSubmitted.dateSubmitted}`;
+    } else if (dateSubmitted?.dateSubmittedFrom && dateSubmitted.dateSubmittedTo) {
+      return `from ${dateSubmitted.dateSubmittedFrom} to ${dateSubmitted.dateSubmittedTo}`;
     }
+
     return null;
   };
 
@@ -79,7 +78,7 @@ export const App = () => {
         {host &&
           qc &&
           setHostAndQc &&
-          (!isDefaultHostSelector(host) || !isDefaultQcSelector(qc) || parseDateSubmitted()) && (
+          (!isDefaultHostSelector(host) || !isDefaultQcSelector(qc) || formatDateSubmittedAsString()) && (
             <Alert variant={AlertVariant.WARNING}>
               <div className='flex flex-row'>
                 <FaFilter
@@ -90,7 +89,9 @@ export const App = () => {
                   <div className='font-weight-bold'>Advanced filters are active</div>
                   {!isDefaultHostSelector(host) && <div>Selected hosts: {host.join(', ')}</div>}
                   {!isDefaultQcSelector(qc) && <div>Sequence quality: {formatQcSelectorAsString(qc)}</div>}
-                  {parseDateSubmitted() && <div>{parseDateSubmitted()}</div>}
+                  {formatDateSubmittedAsString() && (
+                    <div>Submission date: {formatDateSubmittedAsString()}</div>
+                  )}
                   <div className='mt-4'>
                     <button
                       className='underline cursor-pointer'

@@ -36,8 +36,8 @@ export const DateRangePicker = ({
   const [endDate, setEndDate] = React.useState<Date | null>(null);
 
   const { dateFrom, dateTo } = submission
-    ? dateRangeSelector.getDateRange((submission = true))
-    : dateRangeSelector.getDateRange((submission = false));
+    ? dateRangeSelector.getDateRange(true)
+    : dateRangeSelector.getDateRange();
   const initialStartDate = dateFrom ? dateFrom.dayjs.toDate() : minimumDate;
   const initialEndDate = dateTo ? dateTo.dayjs.toDate() : today;
   const prevDateFrom = globalDateCache.getDayUsingDayjs(dayjs(initialStartDate));

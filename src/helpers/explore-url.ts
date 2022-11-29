@@ -16,6 +16,7 @@ import {
   DateRangeRaw,
   DateRangeSelector,
   readDateRangeRawFromUrlSearchParams,
+  deleteSubmissionDateParams,
 } from '../data/DateRangeSelector';
 import {
   DateRangeUrlEncoded,
@@ -74,12 +75,6 @@ export const defaultSamplingStrategy: SamplingStrategy = SamplingStrategy.AllSam
 export const defaultAnalysisMode: AnalysisMode = AnalysisMode.Single;
 
 export const defaultHost: HostSelector = [HUMAN];
-
-const deleteSubmissionDateParams = (params: URLSearchParams) => {
-  params.delete('dateSubmittedFrom');
-  params.delete('dateSubmittedTo');
-  params.delete('dateSubmitted');
-};
 
 export function useExploreUrl(): ExploreUrl | undefined {
   const history = useHistory();
@@ -149,8 +144,6 @@ export function useExploreUrl(): ExploreUrl | undefined {
     },
     [history, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
   );
-
-  // http://localhost:3000/explore/Switzerland/AllSamples/Y2020/variants?dateSubmittedFrom=2022-05-09&dateSubmittedTo=2022-11-03&dateSubmittedFrom=2020-01-06&dateSubmittedTo=2022-11-10&nextcladeQcOverallScoreTo=29&dateSubmittedFrom=2022-10-27&dateSubmittedTo=2022-11-03
 
   const setVariants = useCallback(
     (variants: VariantSelector[], analysisMode?: AnalysisMode) => {

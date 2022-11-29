@@ -154,11 +154,11 @@ export interface DateRangeRaw {
   [key: string]: string | null;
 }
 
-const fields = ['dateSubmittedFrom', 'dateSubmittedTo', 'dateSubmitted'] as const;
+const fields_submisison_date = ['dateSubmittedFrom', 'dateSubmittedTo', 'dateSubmitted'] as const;
 
 export function readDateRangeRawFromUrlSearchParams(params: URLSearchParams): DateRangeRaw {
   const drs: DateRangeRaw = {};
-  for (const field of fields) {
+  for (const field of fields_submisison_date) {
     if (params.has(field)) {
       drs[field] = params.get(field);
     }
@@ -172,7 +172,7 @@ export function addSubmittedDateRangeSelectorToUrlParams(
   params: URLSearchParams,
   specialDateRange?: string | null
 ) {
-  for (const field of fields) {
+  for (const field of fields_submisison_date) {
     params.delete(field);
   }
 
@@ -198,7 +198,7 @@ export function addSubmittedDateRangeRawSelectorToUrlSearchParams(
   rawDateRangeSelector: DateRangeRaw,
   params: URLSearchParams
 ) {
-  for (const field of fields) {
+  for (const field of fields_submisison_date) {
     params.delete(field);
   }
 
@@ -220,3 +220,9 @@ export function addSubmittedDateRangeRawSelectorToUrlSearchParams(
     }
   }
 }
+
+export const deleteSubmissionDateParams = (params: URLSearchParams) => {
+  params.delete('dateSubmittedFrom');
+  params.delete('dateSubmittedTo');
+  params.delete('dateSubmitted');
+};
