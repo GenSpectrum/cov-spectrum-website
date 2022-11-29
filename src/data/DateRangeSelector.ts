@@ -8,13 +8,13 @@ export const dateRangeStringRegex = /\d{4}-\d{2}-\d{2} - \d{4}-\d{2}-\d{2}$/;
 export const DateStringSchema = zod.string().regex(dateStringRegex);
 
 export interface DateRangeSelector {
-  getDateRange(): DateRange;
+  getDateRange(submission?: boolean): DateRange;
 }
 
 export class FixedDateRangeSelector implements DateRangeSelector {
   constructor(public dateRange: DateRange) {}
 
-  getDateRange(): DateRange {
+  getDateRange(submission: boolean = false): DateRange {
     return this.dateRange;
   }
 }
@@ -39,7 +39,8 @@ export function isSpecialDateRange(s: unknown): s is SpecialDateRange {
 export class SpecialDateRangeSelector implements DateRangeSelector {
   constructor(public mode: SpecialDateRange) {}
 
-  getDateRange(): DateRange {
+  getDateRange(submission: boolean = false): DateRange {
+    const numberDaysAgo = submission ? 0 : 7;
     const daysAgo = (n: number) => globalDateCache.getDayUsingDayjs(dayjs().subtract(n, 'days'));
     const monthsAgo = (n: number) =>
       globalDateCache.getDayUsingDayjs(dayjs().subtract(n, 'months').weekday(0));
@@ -63,15 +64,15 @@ export class SpecialDateRangeSelector implements DateRangeSelector {
           dateTo: globalDateCache.getDay('2023-01-01'),
         };
       case 'Past2W':
-        return { dateFrom: weeksAgo(2), dateTo: daysAgo(7) };
+        return { dateFrom: weeksAgo(2), dateTo: daysAgo(numberDaysAgo) };
       case 'Past1M':
-        return { dateFrom: monthsAgo(1), dateTo: daysAgo(7) };
+        return { dateFrom: monthsAgo(1), dateTo: daysAgo(numberDaysAgo) };
       case 'Past2M':
-        return { dateFrom: monthsAgo(2), dateTo: daysAgo(7) };
+        return { dateFrom: monthsAgo(2), dateTo: daysAgo(numberDaysAgo) };
       case 'Past3M':
-        return { dateFrom: monthsAgo(3), dateTo: daysAgo(7) };
+        return { dateFrom: monthsAgo(3), dateTo: daysAgo(numberDaysAgo) };
       case 'Past6M':
-        return { dateFrom: monthsAgo(6), dateTo: daysAgo(7) };
+        return { dateFrom: monthsAgo(6), dateTo: daysAgo(numberDaysAgo) };
     }
   }
 }
@@ -211,7 +212,7 @@ export function addSubmittedDateRangeRawSelectorToUrlSearchParams(
       : null;
 
     if (_specialDateRange) {
-      const range = new SpecialDateRangeSelector(_specialDateRange).getDateRange();
+      const range = new SpecialDateRangeSelector(_specialDateRange).getDateRange(true);
       if (range.dateFrom && range.dateTo) {
         params.set('dateSubmittedFrom', range.dateFrom.string);
         params.set('dateSubmittedTo', range.dateTo.string);

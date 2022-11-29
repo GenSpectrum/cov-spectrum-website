@@ -98,6 +98,7 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
       <div className='mt-4 mb-4'>
         <h2>Submission date</h2>
         <DateRangePicker
+          submission={true}
           specialSubmissionDateRaw={specialSubmissionDateRaw}
           setSpecialSubmissionDateRaw={setSpecialSubmissionDateRaw}
           dateRangeSelector={submissionDateRangeSelector}

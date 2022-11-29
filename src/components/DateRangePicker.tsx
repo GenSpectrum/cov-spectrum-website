@@ -11,6 +11,7 @@ import { globalDateCache } from '../helpers/date-cache';
 import { useResizeDetector } from 'react-resize-detector';
 
 interface Props {
+  submission?: boolean;
   dateRangeSelector: DateRangeSelector;
   setDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
   setSubmissionDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
@@ -22,6 +23,7 @@ const minimumDate: Date = new Date('2020-01-06'); // first day of first week of 
 const today = new Date();
 
 export const DateRangePicker = ({
+  submission,
   dateRangeSelector,
   setDateRangeSelector,
   setSubmissionDateRangeSelector,
@@ -33,7 +35,9 @@ export const DateRangePicker = ({
   const [startDate, setStartDate] = React.useState<Date | null>(null);
   const [endDate, setEndDate] = React.useState<Date | null>(null);
 
-  const { dateFrom, dateTo } = dateRangeSelector.getDateRange();
+  const { dateFrom, dateTo } = submission
+    ? dateRangeSelector.getDateRange((submission = true))
+    : dateRangeSelector.getDateRange((submission = false));
   const initialStartDate = dateFrom ? dateFrom.dayjs.toDate() : minimumDate;
   const initialEndDate = dateTo ? dateTo.dayjs.toDate() : today;
   const prevDateFrom = globalDateCache.getDayUsingDayjs(dayjs(initialStartDate));
