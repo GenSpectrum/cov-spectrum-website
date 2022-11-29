@@ -42,8 +42,6 @@ export const ManyPage = () => {
     return <Loader />;
   }
 
-  console.log(data);
-
   return (
     <>
       {/* TODO What to do about small screens? */}
