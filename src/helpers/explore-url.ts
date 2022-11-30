@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { useLocation, useMatch, useNavigate } from 'react-router';
+import { useLocation, useMatch, useNavigate } from 'react-router-dom';
 import {
   addVariantSelectorsToUrlSearchParams,
   readVariantListFromUrlSearchParams,
@@ -24,7 +24,7 @@ import {
   submissionDateRangeUrlToSelector,
 } from '../data/DateRangeUrlEncoded';
 import { decodeSamplingStrategy, SamplingStrategy } from '../data/SamplingStrategy';
-import { baseLocation } from '../index';
+import { baseLocation } from '../baseLocation';
 import { AnalysisMode, decodeAnalysisMode } from '../data/AnalysisMode';
 import {
   addHostSelectorToUrlSearchParams,

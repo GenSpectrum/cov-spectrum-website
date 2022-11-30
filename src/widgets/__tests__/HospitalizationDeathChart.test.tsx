@@ -10,6 +10,8 @@ import { useResizeDetector } from 'react-resize-detector';
 window.ResizeObserver = ResizeObserver;
 jest.mock('react-resize-detector');
 
+jest.mock('../../data/api');
+
 describe('<HospitalizationDeathChart>', () => {
   (['hospitalized', 'died'] as ('hospitalized' | 'died')[]).forEach(field =>
     it(`(${field} plot) dataset1 renders correctly`, async () => {

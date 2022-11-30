@@ -105,6 +105,8 @@ type FocusSinglePageContentProps = {
   setVariants?: (variants: VariantSelector[], analysisMode?: AnalysisMode) => void;
 };
 
+export const MUTATIONS_HASH_LINK = 'mutations';
+
 export const FocusSinglePageContent = ({
   selectors,
   deepFocusButtons,
@@ -510,7 +512,7 @@ export const FocusSinglePageContent = ({
               </Sentry.ErrorBoundary>
             </div>
 
-            <div className='m-4'>
+            <div className='m-4' id={MUTATIONS_HASH_LINK}>
               <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
                 {/* HACK(by Chaoran): This is to add an "Export" button without actually implementing a Widget. */}
                 <WidgetWrapper getShareUrl={async () => ''} title='Substitutions and deletions'>

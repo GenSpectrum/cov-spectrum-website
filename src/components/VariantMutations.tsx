@@ -259,7 +259,7 @@ export const VariantMutations = ({ selector }: Props) => {
 
   return (
     <>
-      <div className='mb-2'>
+      <div className='mb-8'>
         <div className='ml-0' ref={ref}>
           <PipeDividedOptionsButtons
             options={[
