@@ -7,8 +7,11 @@ import { FullSampleAggEntry } from '../data/sample/FullSampleAggEntry';
 import Loader from '../components/Loader';
 import { useMemo } from 'react';
 import { GridPlot } from '../components/GridPlot';
+import { useResizeDetector } from 'react-resize-detector';
 
 export const ManyPage = () => {
+  const { width, height, ref } = useResizeDetector<HTMLDivElement>();
+
   const selector: LapisSelector = {
     location: {},
     variant: {},
@@ -32,7 +35,7 @@ export const ManyPage = () => {
     }
     return datePangoLineageCountQuery.data.filter(
       d =>
-        d.nextcladePangoLineage?.startsWith('BA.5.') &&
+        d.nextcladePangoLineage?.startsWith('BA.2.') &&
         (d.nextcladePangoLineage?.match(/\./g) ?? []).length === 2 &&
         !!d.date
     );
@@ -55,8 +58,8 @@ export const ManyPage = () => {
         {/* The parent node */}
         <div style={{ width: 300, minWidth: 300 }} className='border-2 border-solid border-red-800'></div>
         {/* The main area */}
-        <div className='flex-grow border-2 border-solid border-blue-800 p-12'>
-          <GridPlot data={data} plotWidth={200} plotHeight={200} numberColumns={5} />
+        <div className='flex-grow border-2 border-solid border-blue-800 p-4' ref={ref}>
+          {width && height && <GridPlot data={data} width={width} height={height} />}
         </div>
       </div>
     </>

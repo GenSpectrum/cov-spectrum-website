@@ -22,12 +22,11 @@ type TmpEntry2 = {
 };
 type Props = {
   data: TmpEntry[];
-  plotWidth: number;
-  plotHeight: number;
-  numberColumns: number;
+  width: number;
+  height: number;
 };
 
-export const GridPlot = ({ data }: Props) => {
+export const GridPlot = ({ data, width, height }: Props) => {
   const [active, setActive] = useState<number | undefined>(undefined);
 
   const { plotData, dataMap, dateRange, dateRangeAsNumbers, countRange } = useMemo(() => {
@@ -88,17 +87,22 @@ export const GridPlot = ({ data }: Props) => {
     };
   }, [data]);
 
+  // Calculate the number of rows and columns and the size of the sub-plots
+  const { plotWidth, numberCols, numberRows } = useMemo(() => {
+    return calculateGridSizes(width - 100, height - 30, plotData.length);
+  }, [width, height, plotData.length]);
+
   // Hello, CSS-Grid!
   return (
     <>
       <div
         style={{
           display: 'grid',
-          gridTemplateRows: `repeat(2, 220px) 30px`,
-          gridTemplateColumns: `50px repeat(5, 200px)`,
+          gridTemplateRows: `repeat(${numberRows}, ${plotWidth + 20}px) 30px`,
+          gridTemplateColumns: `50px repeat(${numberCols}, ${plotWidth}px)`,
         }}
       >
-        {new Array(2).fill(undefined).map((_, i) => (
+        {new Array(numberRows).fill(undefined).map((_, i) => (
           <div
             style={{
               gridRowStart: i + 1,
@@ -113,10 +117,10 @@ export const GridPlot = ({ data }: Props) => {
           </div>
         ))}
 
-        {new Array(5).fill(undefined).map((_, i) => (
+        {new Array(numberCols).fill(undefined).map((_, i) => (
           <div
             style={{
-              gridRowStart: Math.ceil(plotData.length / 5) + 1,
+              gridRowStart: Math.ceil(plotData.length / numberCols) + 1,
               gridColumnStart: i + 2,
             }}
             className='flex flex-row text-sm px-1'
@@ -131,8 +135,8 @@ export const GridPlot = ({ data }: Props) => {
           <div
             className='border-2 border-solid border-black m-1 flex flex-column'
             style={{
-              gridRowStart: Math.floor(i / 5) + 1,
-              gridColumnStart: (i % 5) + 2,
+              gridRowStart: Math.floor(i / numberCols) + 1,
+              gridColumnStart: (i % numberCols) + 2,
             }}
           >
             <div className='bg-gray-200 border-b-2 border-solid border-black pl-2'>
@@ -185,4 +189,44 @@ export const GridPlot = ({ data }: Props) => {
       </div>
     </>
   );
+};
+
+const calculateGridSizes = (width: number, height: number, numberPlots: number) => {
+  // TODO Use a proper optimization method rather than this very stupid way of brute-forcing
+  const plotHeightPadding = 28;
+  const plotWidthPadding = 10;
+  let plotWidth = 0;
+  let best = {
+    plotWidth: 0,
+    waste: width * height,
+    numberCols: NaN,
+    numberRows: NaN,
+  };
+
+  while (true) {
+    plotWidth += 10;
+    const waste =
+      width * height - numberPlots * (plotWidth + plotWidthPadding) * (plotWidth + plotHeightPadding);
+    const numberCols = Math.floor(width / (plotWidth + plotWidthPadding));
+    const numberRows = Math.ceil(numberPlots / numberCols);
+    if (
+      waste < 0 ||
+      (plotWidth + plotWidthPadding) * numberCols > width ||
+      (plotWidth + plotHeightPadding) * numberRows > height
+    ) {
+      break;
+    }
+    if (waste < best.waste) {
+      best = { plotWidth, waste, numberCols, numberRows };
+    }
+    if (waste === 0) {
+      break;
+    }
+  }
+
+  return {
+    plotWidth: best.plotWidth,
+    numberCols: best.numberCols,
+    numberRows: best.numberRows,
+  };
 };
