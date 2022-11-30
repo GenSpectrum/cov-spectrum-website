@@ -62,14 +62,3 @@ export const ManyPage = () => {
     </>
   );
 };
-
-type PositionInGrid =
-  | 'top-left-corner'
-  | 'top-right-corner'
-  | 'bottom-left-corner'
-  | 'bottom-right-corner'
-  | 'left-edge'
-  | 'top-edge'
-  | 'right-edge'
-  | 'bottom-edge'
-  | 'center';
