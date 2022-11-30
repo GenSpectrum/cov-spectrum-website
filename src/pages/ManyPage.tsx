@@ -8,6 +8,12 @@ import Loader from '../components/Loader';
 import { useMemo } from 'react';
 import { GridPlot } from '../components/GridPlot';
 import { useResizeDetector } from 'react-resize-detector';
+import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
+import { UnifiedDay } from '../helpers/date-cache';
+
+type TmpEntry = Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>;
+type TmpEntry2 = TmpEntry & { nextcladePangoLineageFullName: string | null };
+type TmpEntry3 = { date: UnifiedDay; nextcladePangoLineage: string; count: number };
 
 export const ManyPage = () => {
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
@@ -23,9 +29,20 @@ export const ManyPage = () => {
 
   const datePangoLineageCountQuery = useQuery(
     signal =>
-      _fetchAggSamples(selector, ['date', 'nextcladePangoLineage'], signal) as Promise<
-        Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>[]
-      >,
+      (_fetchAggSamples(selector, ['date', 'nextcladePangoLineage'], signal) as Promise<TmpEntry[]>).then(
+        async data => {
+          const data2: TmpEntry2[] = [];
+          for (let d of data) {
+            data2.push({
+              ...d,
+              nextcladePangoLineageFullName: d.nextcladePangoLineage
+                ? (await PangoLineageAliasResolverService.findFullName(d.nextcladePangoLineage)) ?? null
+                : null,
+            });
+          }
+          return data2;
+        }
+      ),
     [selector]
   );
 
@@ -33,12 +50,39 @@ export const ManyPage = () => {
     if (!datePangoLineageCountQuery.data) {
       return undefined;
     }
-    return datePangoLineageCountQuery.data.filter(
-      d =>
-        d.nextcladePangoLineage?.startsWith('BA.2.') &&
-        (d.nextcladePangoLineage?.match(/\./g) ?? []).length === 2 &&
-        !!d.date
-    );
+    const lineageDateMap = new Map<string, Map<UnifiedDay, TmpEntry3>>();
+    for (let d of datePangoLineageCountQuery.data) {
+      if (!d.nextcladePangoLineage || !d.nextcladePangoLineageFullName || !d.date) {
+        continue;
+      }
+      const prefix = 'B.1.1.529.5.';
+      if (!d.nextcladePangoLineageFullName.startsWith(prefix)) {
+        continue;
+      }
+      const withoutPrefix = d.nextcladePangoLineageFullName.substring(prefix.length);
+      const firstSub =
+        withoutPrefix.indexOf('.') !== -1
+          ? withoutPrefix.substring(0, withoutPrefix.indexOf('.'))
+          : withoutPrefix;
+      if (!lineageDateMap.has(firstSub)) {
+        lineageDateMap.set(firstSub, new Map());
+      }
+      const dateMap = lineageDateMap.get(firstSub)!;
+      if (!dateMap.has(d.date)) {
+        dateMap.set(d.date, {
+          date: d.date,
+          nextcladePangoLineage: `${prefix}${firstSub}`, // TODO Get the proper, aliased pango lineage name
+          count: 0,
+        });
+      }
+      dateMap.get(d.date)!.count += d.count;
+    }
+    const groupedAndFiltered: TmpEntry3[] = [];
+    lineageDateMap.forEach(dateMap => {
+      dateMap.forEach(e => groupedAndFiltered.push(e));
+    });
+
+    return groupedAndFiltered;
   }, [datePangoLineageCountQuery]);
 
   if (!data) {
