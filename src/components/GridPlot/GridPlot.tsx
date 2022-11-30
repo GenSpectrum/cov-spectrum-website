@@ -1,5 +1,5 @@
-import { FullSampleAggEntry } from '../data/sample/FullSampleAggEntry';
-import { globalDateCache, UnifiedDay } from '../helpers/date-cache';
+import { FullSampleAggEntry } from '../../data/sample/FullSampleAggEntry';
+import { globalDateCache, UnifiedDay } from '../../helpers/date-cache';
 import React, { useMemo, useState } from 'react';
 import {
   ComposedChart,
@@ -11,7 +11,7 @@ import {
   XAxis,
   YAxis,
 } from 'recharts';
-import { colors } from '../widgets/common';
+import { colors } from '../../widgets/common';
 
 type TmpEntry = Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>;
 type TmpEntry2 = {

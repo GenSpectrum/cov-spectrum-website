@@ -6,7 +6,7 @@ import { _fetchAggSamples } from '../data/api-lapis';
 import { FullSampleAggEntry } from '../data/sample/FullSampleAggEntry';
 import Loader from '../components/Loader';
 import { useMemo } from 'react';
-import { GridPlot } from '../components/GridPlot';
+import { GridPlot } from '../components/GridPlot/GridPlot';
 import { useResizeDetector } from 'react-resize-detector';
 import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
 import { UnifiedDay } from '../helpers/date-cache';
@@ -71,7 +71,8 @@ export const ManyPage = () => {
       if (!dateMap.has(d.date)) {
         dateMap.set(d.date, {
           date: d.date,
-          nextcladePangoLineage: `${prefix}${firstSub}`, // TODO Get the proper, aliased pango lineage name
+          nextcladePangoLineage:
+            PangoLineageAliasResolverService.findAliasUnsafeSync(`${prefix}${firstSub}`) + '*',
           count: 0,
         });
       }
