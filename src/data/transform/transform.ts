@@ -99,7 +99,7 @@ export class GroupedData<E, K> {
     return this.mapEachGroup(e => e.filter(predicate));
   }
 
-  sort(compareFn?: (a: E, b: E) => number) {
+  sort(compareFn?: (a: E, b: E) => number): GroupedData<E, K> {
     return this.mapEachGroup(e => e.sort(compareFn));
   }
 
@@ -111,7 +111,7 @@ export class GroupedData<E, K> {
     return this.mapEachGroup((e, k) => e.fill(getKey, allRequiredKeys, (key: S) => filler(key, k)));
   }
 
-  rolling<S>(n: number, windowFn: (entries: E[]) => S) {
+  rolling<S>(n: number, windowFn: (entries: E[]) => S): GroupedData<S, K> {
     return this.mapEachGroup(e => e.rolling(n, windowFn));
   }
 

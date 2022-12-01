@@ -1,7 +1,7 @@
 import { LapisSelector } from '../data/LapisSelector';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 import { SpecialDateRangeSelector } from '../data/DateRangeSelector';
-import { useQuery } from '../helpers/query-hook';
+import { QueryStatus, useQuery } from '../helpers/query-hook';
 import { _fetchAggSamples } from '../data/api-lapis';
 import { FullSampleAggEntry } from '../data/sample/FullSampleAggEntry';
 import Loader from '../components/Loader';
@@ -9,12 +9,19 @@ import { useMemo } from 'react';
 import { GridPlot } from '../components/GridPlot/GridPlot';
 import { useResizeDetector } from 'react-resize-detector';
 import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
-import { UnifiedDay } from '../helpers/date-cache';
+import { globalDateCache, UnifiedDay } from '../helpers/date-cache';
 import { useHistory, useLocation } from 'react-router';
+import { SingleData } from '../data/transform/transform';
 
 type TmpEntry = Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>;
 type TmpEntry2 = TmpEntry & { nextcladePangoLineageFullName: string | null };
-type TmpEntry3 = { date: UnifiedDay; nextcladePangoLineage: string; count: number };
+type TmpEntry3 = {
+  date: UnifiedDay;
+  nextcladePangoLineage: string;
+  nextcladePangoLineageFullName: string;
+  count: number;
+};
+type TmpEntry4 = { date: UnifiedDay; nextcladePangoLineage: string; count: number };
 
 export const ManyPage = () => {
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
@@ -31,7 +38,7 @@ export const ManyPage = () => {
     qc: {},
   };
 
-  const datePangoLineageCountQuery = useQuery(
+  const datePangoLineageCountQuery: QueryStatus<TmpEntry3[]> = useQuery(
     signal =>
       (_fetchAggSamples(selector, ['date', 'nextcladePangoLineage'], signal) as Promise<TmpEntry[]>).then(
         async data => {
@@ -45,7 +52,7 @@ export const ManyPage = () => {
                 : null,
             });
           }
-          return data2;
+          return data2.filter(d => !!d.date && !!d.nextcladePangoLineage) as TmpEntry3[];
         }
       ),
     [selector]
@@ -55,58 +62,72 @@ export const ManyPage = () => {
     if (!datePangoLineageCountQuery.data) {
       return undefined;
     }
-    const lineageDateMap = new Map<string, Map<UnifiedDay, TmpEntry3>>();
-    for (let d of datePangoLineageCountQuery.data) {
-      if (!d.nextcladePangoLineage || !d.nextcladePangoLineageFullName || !d.date) {
-        continue;
-      }
-      if (d.nextcladePangoLineage === params.pangoLineage) {
-        // This is the exact lineage (without sub-lineages)
-        if (!lineageDateMap.has(params.pangoLineage)) {
-          lineageDateMap.set(params.pangoLineage, new Map());
+    const currentLineage = params.pangoLineage;
+    const currentLineageFullName =
+      PangoLineageAliasResolverService.findFullNameUnsafeSync(currentLineage) ?? params.pangoLineage;
+    const dateRangeInData = globalDateCache.rangeFromDays(datePangoLineageCountQuery.data.map(d => d.date));
+    const allDays = globalDateCache.daysFromRange(dateRangeInData);
+    const lineagesData = new SingleData(datePangoLineageCountQuery.data)
+      .filter(
+        d =>
+          d.nextcladePangoLineage === currentLineage ||
+          d.nextcladePangoLineageFullName.startsWith(currentLineageFullName + '.')
+      )
+      .map(d => {
+        let lineage;
+        if (d.nextcladePangoLineage === params.pangoLineage) {
+          lineage = params.pangoLineage;
+        } else {
+          // These are the sub-lineages
+          const withoutPrefix = d.nextcladePangoLineageFullName.substring(currentLineageFullName.length + 1);
+          const firstSub =
+            withoutPrefix.indexOf('.') !== -1
+              ? withoutPrefix.substring(0, withoutPrefix.indexOf('.'))
+              : withoutPrefix;
+          lineage =
+            PangoLineageAliasResolverService.findAliasUnsafeSync(`${currentLineageFullName}.${firstSub}`) +
+            '*';
         }
-        const dateMap = lineageDateMap.get(params.pangoLineage)!;
-        if (!dateMap.has(d.date)) {
-          dateMap.set(d.date, {
-            date: d.date,
-            nextcladePangoLineage: params.pangoLineage,
-            count: 0,
-          });
-        }
-        dateMap.get(d.date)!.count += d.count;
-      } else {
-        // These are the sub-lineages
-        const prefix =
-          (PangoLineageAliasResolverService.findFullNameUnsafeSync(params.pangoLineage) ??
-            params.pangoLineage) + '.';
-        if (!d.nextcladePangoLineageFullName.startsWith(prefix)) {
-          continue;
-        }
-        const withoutPrefix = d.nextcladePangoLineageFullName.substring(prefix.length);
-        const firstSub =
-          withoutPrefix.indexOf('.') !== -1
-            ? withoutPrefix.substring(0, withoutPrefix.indexOf('.'))
-            : withoutPrefix;
-        if (!lineageDateMap.has(firstSub)) {
-          lineageDateMap.set(firstSub, new Map());
-        }
-        const dateMap = lineageDateMap.get(firstSub)!;
-        if (!dateMap.has(d.date)) {
-          dateMap.set(d.date, {
-            date: d.date,
-            nextcladePangoLineage:
-              PangoLineageAliasResolverService.findAliasUnsafeSync(`${prefix}${firstSub}`) + '*',
-            count: 0,
-          });
-        }
-        dateMap.get(d.date)!.count += d.count;
-      }
-    }
-    const groupedAndFiltered: TmpEntry3[] = [];
-    lineageDateMap.forEach(dateMap => {
-      dateMap.forEach(e => groupedAndFiltered.push(e));
-    });
+        return {
+          date: d.date,
+          nextcladePangoLineage: lineage,
+          count: d.count,
+        };
+      })
+      .groupBy(e => e.nextcladePangoLineage)
+      .mapEachGroup((es, nextcladePangoLineage) => {
+        const dateData = es.groupBy(e => e.date);
+        const dateMap = new Map<UnifiedDay, number>();
+        dateData.data.forEach((ds, date) =>
+          dateMap.set(
+            date,
+            ds.data.reduce((prev, curr) => prev + curr.count, 0)
+          )
+        );
+        const reducedData: TmpEntry4[] = [];
+        dateMap.forEach((count, date) => reducedData.push({ nextcladePangoLineage, date, count }));
+        return new SingleData(reducedData);
+      })
+      .fill(
+        e => e.date,
+        allDays,
+        (date, nextcladePangoLineage) => ({
+          date,
+          nextcladePangoLineage,
+          count: 0,
+        })
+      )
+      .sort((a, b) => (a.date.dayjs.isBefore(b.date.dayjs) ? -1 : 1))
+      .rolling(7, entries => ({
+        date: entries[3].date,
+        nextcladePangoLineage: entries[3].nextcladePangoLineage,
+        count: entries.reduce((prev, curr) => prev + curr.count, 0),
+      }));
 
+    const groupedAndFiltered: TmpEntry4[] = [];
+    lineagesData.data.forEach(ds => {
+      ds.data.forEach(d => groupedAndFiltered.push(d));
+    });
     return groupedAndFiltered;
   }, [datePangoLineageCountQuery, params.pangoLineage]);
 
