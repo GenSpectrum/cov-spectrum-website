@@ -40,7 +40,8 @@ export const ManyPage = () => {
             data2.push({
               ...d,
               nextcladePangoLineageFullName: d.nextcladePangoLineage
-                ? (await PangoLineageAliasResolverService.findFullName(d.nextcladePangoLineage)) ?? d.nextcladePangoLineage
+                ? (await PangoLineageAliasResolverService.findFullName(d.nextcladePangoLineage)) ??
+                  d.nextcladePangoLineage
                 : null,
             });
           }
@@ -59,30 +60,47 @@ export const ManyPage = () => {
       if (!d.nextcladePangoLineage || !d.nextcladePangoLineageFullName || !d.date) {
         continue;
       }
-      const prefix =
-        (PangoLineageAliasResolverService.findFullNameUnsafeSync(params.pangoLineage) ??
-          params.pangoLineage) + '.';
-      if (!d.nextcladePangoLineageFullName.startsWith(prefix)) {
-        continue;
+      if (d.nextcladePangoLineage === params.pangoLineage) {
+        // This is the exact lineage (without sub-lineages)
+        if (!lineageDateMap.has(params.pangoLineage)) {
+          lineageDateMap.set(params.pangoLineage, new Map());
+        }
+        const dateMap = lineageDateMap.get(params.pangoLineage)!;
+        if (!dateMap.has(d.date)) {
+          dateMap.set(d.date, {
+            date: d.date,
+            nextcladePangoLineage: params.pangoLineage,
+            count: 0,
+          });
+        }
+        dateMap.get(d.date)!.count += d.count;
+      } else {
+        // These are the sub-lineages
+        const prefix =
+          (PangoLineageAliasResolverService.findFullNameUnsafeSync(params.pangoLineage) ??
+            params.pangoLineage) + '.';
+        if (!d.nextcladePangoLineageFullName.startsWith(prefix)) {
+          continue;
+        }
+        const withoutPrefix = d.nextcladePangoLineageFullName.substring(prefix.length);
+        const firstSub =
+          withoutPrefix.indexOf('.') !== -1
+            ? withoutPrefix.substring(0, withoutPrefix.indexOf('.'))
+            : withoutPrefix;
+        if (!lineageDateMap.has(firstSub)) {
+          lineageDateMap.set(firstSub, new Map());
+        }
+        const dateMap = lineageDateMap.get(firstSub)!;
+        if (!dateMap.has(d.date)) {
+          dateMap.set(d.date, {
+            date: d.date,
+            nextcladePangoLineage:
+              PangoLineageAliasResolverService.findAliasUnsafeSync(`${prefix}${firstSub}`) + '*',
+            count: 0,
+          });
+        }
+        dateMap.get(d.date)!.count += d.count;
       }
-      const withoutPrefix = d.nextcladePangoLineageFullName.substring(prefix.length);
-      const firstSub =
-        withoutPrefix.indexOf('.') !== -1
-          ? withoutPrefix.substring(0, withoutPrefix.indexOf('.'))
-          : withoutPrefix;
-      if (!lineageDateMap.has(firstSub)) {
-        lineageDateMap.set(firstSub, new Map());
-      }
-      const dateMap = lineageDateMap.get(firstSub)!;
-      if (!dateMap.has(d.date)) {
-        dateMap.set(d.date, {
-          date: d.date,
-          nextcladePangoLineage:
-            PangoLineageAliasResolverService.findAliasUnsafeSync(`${prefix}${firstSub}`) + '*',
-          count: 0,
-        });
-      }
-      dateMap.get(d.date)!.count += d.count;
     }
     const groupedAndFiltered: TmpEntry3[] = [];
     lineageDateMap.forEach(dateMap => {
@@ -110,18 +128,23 @@ export const ManyPage = () => {
         <div style={{ width: 300, minWidth: 300 }} className='border-2 border-solid border-red-800'></div>
         {/* The main area */}
         <div className='flex-grow border-2 border-solid border-blue-800 p-4' ref={ref}>
-          {data.length ? width && height && (
-            // TODO Define a better key? Goal is to refresh the grid plot whenever the data changes
-            <GridPlot
-              key={params.pangoLineage}
-              data={data}
-              width={width}
-              height={height}
-              setPangoLineage={pangoLineage =>
-                setParams(history, { ...params, pangoLineage: pangoLineage.replace('*', '') })
-              }
-            />
-          ) : <>No sub-lineages available</>}
+          {data.length ? (
+            width &&
+            height && (
+              // TODO Define a better key? Goal is to refresh the grid plot whenever the data changes
+              <GridPlot
+                key={params.pangoLineage}
+                data={data}
+                width={width}
+                height={height}
+                setPangoLineage={pangoLineage =>
+                  setParams(history, { ...params, pangoLineage: pangoLineage.replace('*', '') })
+                }
+              />
+            )
+          ) : (
+            <>No sub-lineages available</>
+          )}
         </div>
       </div>
     </>
