@@ -10,6 +10,7 @@ import { GridPlot } from '../components/GridPlot/GridPlot';
 import { useResizeDetector } from 'react-resize-detector';
 import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
 import { UnifiedDay } from '../helpers/date-cache';
+import { useHistory, useLocation } from 'react-router';
 
 type TmpEntry = Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>;
 type TmpEntry2 = TmpEntry & { nextcladePangoLineageFullName: string | null };
@@ -17,6 +18,9 @@ type TmpEntry3 = { date: UnifiedDay; nextcladePangoLineage: string; count: numbe
 
 export const ManyPage = () => {
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
+
+  const history = useHistory();
+  const params = useUrlParams();
 
   const selector: LapisSelector = {
     location: {},
@@ -36,7 +40,7 @@ export const ManyPage = () => {
             data2.push({
               ...d,
               nextcladePangoLineageFullName: d.nextcladePangoLineage
-                ? (await PangoLineageAliasResolverService.findFullName(d.nextcladePangoLineage)) ?? null
+                ? (await PangoLineageAliasResolverService.findFullName(d.nextcladePangoLineage)) ?? d.nextcladePangoLineage
                 : null,
             });
           }
@@ -55,7 +59,9 @@ export const ManyPage = () => {
       if (!d.nextcladePangoLineage || !d.nextcladePangoLineageFullName || !d.date) {
         continue;
       }
-      const prefix = 'B.1.1.529.5.';
+      const prefix =
+        (PangoLineageAliasResolverService.findFullNameUnsafeSync(params.pangoLineage) ??
+          params.pangoLineage) + '.';
       if (!d.nextcladePangoLineageFullName.startsWith(prefix)) {
         continue;
       }
@@ -84,7 +90,7 @@ export const ManyPage = () => {
     });
 
     return groupedAndFiltered;
-  }, [datePangoLineageCountQuery]);
+  }, [datePangoLineageCountQuery, params.pangoLineage]);
 
   if (!data) {
     return <Loader />;
@@ -104,9 +110,42 @@ export const ManyPage = () => {
         <div style={{ width: 300, minWidth: 300 }} className='border-2 border-solid border-red-800'></div>
         {/* The main area */}
         <div className='flex-grow border-2 border-solid border-blue-800 p-4' ref={ref}>
-          {width && height && <GridPlot data={data} width={width} height={height} />}
+          {data.length ? width && height && (
+            // TODO Define a better key? Goal is to refresh the grid plot whenever the data changes
+            <GridPlot
+              key={params.pangoLineage}
+              data={data}
+              width={width}
+              height={height}
+              setPangoLineage={pangoLineage =>
+                setParams(history, { ...params, pangoLineage: pangoLineage.replace('*', '') })
+              }
+            />
+          ) : <>No sub-lineages available</>}
         </div>
       </div>
     </>
   );
+};
+
+type UrlParams = {
+  pangoLineage: string;
+};
+
+const useUrlParams = (): UrlParams => {
+  const queryString = useLocation().search;
+  const query = useMemo(() => new URLSearchParams(queryString), [queryString]);
+
+  const params = useMemo(() => {
+    return {
+      pangoLineage: query.get('pangoLineage') ?? 'B',
+    };
+  }, [query]);
+
+  return params;
+};
+
+const setParams = (history: any, params: UrlParams) => {
+  // TODO properly type "history"
+  history.push(`/many?${new URLSearchParams(params).toString()}`);
 };

@@ -20,6 +20,20 @@ export class PangoLineageAliasResolverService {
     return undefined;
   }
 
+  static findFullNameUnsafeSync(pangoLineage: string): string | undefined {
+    const aliases = PangoLineageAliasResolverService.aliasesSync;
+    if (!aliases) {
+      return undefined;
+    }
+    pangoLineage = pangoLineage.toUpperCase();
+    for (let { alias, fullName } of aliases) {
+      if (pangoLineage.startsWith(alias + '.')) {
+        return fullName + pangoLineage.substr(alias.length);
+      }
+    }
+    return undefined;
+  }
+
   static findAliasUnsafeSync(fullName: string): string {
     if (!PangoLineageAliasResolverService.aliasesSync) {
       return fullName;

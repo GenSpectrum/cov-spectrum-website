@@ -24,9 +24,10 @@ type Props = {
   data: TmpEntry[];
   width: number;
   height: number;
+  setPangoLineage?: (pangoLineage: string) => void;
 };
 
-export const GridPlot = ({ data, width, height }: Props) => {
+export const GridPlot = ({ data, width, height, setPangoLineage }: Props) => {
   const [active, setActive] = useState<number | undefined>(undefined);
 
   const { plotData, dataMap, dateRange, dateRangeAsNumbers, countRange } = useMemo(() => {
@@ -92,7 +93,6 @@ export const GridPlot = ({ data, width, height }: Props) => {
     return calculateGridSizes(width - 100, height - 30, plotData.length);
   }, [width, height, plotData.length]);
 
-  // Hello, CSS-Grid!
   return (
     <>
       <div
@@ -139,7 +139,10 @@ export const GridPlot = ({ data, width, height }: Props) => {
               gridColumnStart: (i % numberCols) + 2,
             }}
           >
-            <div className='bg-gray-200 border-b-2 border-solid border-black pl-2'>
+            <div
+              className='bg-gray-200 hover:bg-blue-500 border-b-2 border-solid border-black pl-2 cursor-pointer'
+              onClick={() => setPangoLineage && setPangoLineage(d.nextcladePangoLineage)}
+            >
               {d.nextcladePangoLineage}
             </div>
 
