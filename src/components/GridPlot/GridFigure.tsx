@@ -45,7 +45,7 @@ export const GridFigure = ({ children, width, height }: Props) => {
 
   // Calculate the number of rows and columns and the size of the sub-plots
   const { plotWidth, numberCols, numberRows } = useMemo(() => {
-    return calculateGridSizes(width - 100, height - 30, contentElements.length);
+    return calculateGridSizes(width, height - 30, contentElements.length);
   }, [width, height, contentElements.length]);
 
   return (
@@ -55,6 +55,7 @@ export const GridFigure = ({ children, width, height }: Props) => {
           display: 'grid',
           gridTemplateRows: `repeat(${numberRows}, ${plotWidth + 20}px) 30px`,
           gridTemplateColumns: `50px repeat(${numberCols}, ${plotWidth}px)`,
+          justifyContent: 'center',
         }}
       >
         {/* X-Axis */}
@@ -141,7 +142,7 @@ const calculateGridSizes = (width: number, height: number, numberPlots: number) 
 
   return {
     plotWidth: best.plotWidth,
-    numberCols: best.numberCols,
+    numberCols: Math.min(best.numberCols, numberPlots),
     numberRows: best.numberRows,
   };
 };

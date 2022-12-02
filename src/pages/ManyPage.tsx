@@ -5,7 +5,7 @@ import { QueryStatus, useQuery } from '../helpers/query-hook';
 import { _fetchAggSamples, fetchDateCountSamples } from '../data/api-lapis';
 import { FullSampleAggEntry } from '../data/sample/FullSampleAggEntry';
 import Loader from '../components/Loader';
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
 import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
 import { globalDateCache, UnifiedDay } from '../helpers/date-cache';
@@ -19,6 +19,7 @@ import {
 } from '../data/transform/transform';
 import { SequencesOverTimeGrid } from '../components/GridPlot/SequencesOverTimeGrid';
 import { comparePangoLineages } from '../data/transform/common';
+import { Button } from 'react-bootstrap';
 
 type TmpEntry = Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>;
 type TmpEntry2 = TmpEntry & { nextcladePangoLineageFullName: string | null };
@@ -31,8 +32,10 @@ type TmpEntry3 = {
 type TmpEntry4 = { date: UnifiedDay; nextcladePangoLineage: string; count: number };
 type TmpEntry5 = { date: UnifiedDay; count: number };
 export type TmpEntry6 = TmpEntry4 & ProportionValues;
+type FigureType = 'prevalence' | 'mutations';
 
 export const ManyPage = () => {
+  const [figureType, setFigureType] = useState<FigureType>('prevalence');
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
 
   const history = useHistory();
@@ -47,6 +50,26 @@ export const ManyPage = () => {
     qc: {},
   };
 
+  // Keyboard shortcuts
+  const handleKeyPress = useCallback(event => {
+    switch (event.key) {
+      case 'p':
+        setFigureType('prevalence');
+        break;
+      case 'm':
+        setFigureType('mutations');
+        break;
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
+  // Data fetching
   const dataQuery: QueryStatus<[TmpEntry3[], TmpEntry5[]]> = useQuery(
     signal =>
       Promise.all([
@@ -70,6 +93,7 @@ export const ManyPage = () => {
     [selector]
   );
 
+  // Data transformation
   const data: GroupedData<TmpEntry6, string> | undefined = useMemo(() => {
     if (!dataQuery.data) {
       return undefined;
@@ -155,6 +179,7 @@ export const ManyPage = () => {
     return proportionData;
   }, [dataQuery, params.pangoLineage]);
 
+  // View
   if (!data) {
     return <Loader />;
   }
@@ -167,12 +192,32 @@ export const ManyPage = () => {
           // Subtracting the header  TODO It's not good to have these constants here
           height: 'calc(100vh - 72px - 2px)',
         }}
-        className='flex flex-row'
+        className='flex flex-column'
       >
-        {/* The parent node */}
-        <div style={{ width: 300, minWidth: 300 }} className='border-2 border-solid border-red-800'></div>
+        {/* The config bar */}
+        <div
+          style={{ height: 50 }}
+          className='border-b-2 border-solid border-gray-200 flex flex-row items-center px-4'
+        >
+          <Button
+            size='sm'
+            className='mx-2'
+            disabled={figureType === 'prevalence'}
+            onClick={() => setFigureType('prevalence')}
+          >
+            [P]revalence
+          </Button>
+          <Button
+            size='sm'
+            className='mx-2'
+            disabled={figureType === 'mutations'}
+            onClick={() => setFigureType('mutations')}
+          >
+            [M]utations
+          </Button>
+        </div>
         {/* The main area */}
-        <div className='flex-grow border-2 border-solid border-blue-800 p-4' ref={ref}>
+        <div className='flex-grow p-4' ref={ref}>
           {data.data.size ? (
             width &&
             height && (
