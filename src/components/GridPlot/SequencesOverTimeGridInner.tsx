@@ -31,7 +31,7 @@ type Props = {
   setPangoLineage?: (pangoLineage: string) => void;
 };
 
-export const SequencesOverTimeGrid = ({ data, width, height, setPangoLineage }: Props) => {
+export const SequencesOverTimeGridInner = ({ data, width, height, setPangoLineage }: Props) => {
   const [active, setActive] = useState<number | undefined>(undefined);
 
   const { plotData, dataMap, dateRange, dateRangeAsNumbers, proportionRange } = useMemo(() => {

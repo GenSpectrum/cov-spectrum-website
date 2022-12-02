@@ -17,7 +17,7 @@ import {
   SingleData,
   sortDateAsc,
 } from '../data/transform/transform';
-import { SequencesOverTimeGrid } from '../components/GridPlot/SequencesOverTimeGrid';
+import { SequencesOverTimeGridInner } from '../components/GridPlot/SequencesOverTimeGridInner';
 import { comparePangoLineages } from '../data/transform/common';
 import { Button } from 'react-bootstrap';
 
@@ -222,7 +222,7 @@ export const ManyPage = () => {
             width &&
             height && (
               // TODO Define a better key? Goal is to refresh the grid plot whenever the data changes
-              <SequencesOverTimeGrid
+              <SequencesOverTimeGridInner
                 key={params.pangoLineage}
                 data={data}
                 width={width}
