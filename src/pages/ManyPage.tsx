@@ -6,7 +6,6 @@ import { _fetchAggSamples, fetchDateCountSamples } from '../data/api-lapis';
 import { FullSampleAggEntry } from '../data/sample/FullSampleAggEntry';
 import Loader from '../components/Loader';
 import { useMemo } from 'react';
-import { GridPlot } from '../components/GridPlot/GridPlot';
 import { useResizeDetector } from 'react-resize-detector';
 import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
 import { globalDateCache, UnifiedDay } from '../helpers/date-cache';
@@ -18,6 +17,7 @@ import {
   SingleData,
   sortDateAsc,
 } from '../data/transform/transform';
+import { SequencesOverTimeGrid } from '../components/GridPlot/SequencesOverTimeGrid';
 
 type TmpEntry = Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>;
 type TmpEntry2 = TmpEntry & { nextcladePangoLineageFullName: string | null };
@@ -149,7 +149,6 @@ export const ManyPage = () => {
       e => e.count
     );
 
-    console.log(lineagesData, wholeData, proportionData);
     return proportionData;
   }, [dataQuery, params.pangoLineage]);
 
@@ -175,7 +174,7 @@ export const ManyPage = () => {
             width &&
             height && (
               // TODO Define a better key? Goal is to refresh the grid plot whenever the data changes
-              <GridPlot
+              <SequencesOverTimeGrid
                 key={params.pangoLineage}
                 data={data}
                 width={width}
