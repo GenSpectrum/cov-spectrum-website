@@ -88,7 +88,7 @@ export class SingleData<E> {
 export class GroupedData<E, K> {
   constructor(public data: Map<K, SingleData<E>>) {}
 
-  mapEachGroup<S>(func: (e: SingleData<E>, key: K) => SingleData<S>) {
+  mapGroups<S>(func: (e: SingleData<E>, key: K) => SingleData<S>) {
     const newData = new Map<K, SingleData<S>>();
     this.data.forEach((e, k) => {
       newData.set(k, func(e, k));
@@ -96,24 +96,32 @@ export class GroupedData<E, K> {
     return new GroupedData<S, K>(newData);
   }
 
+  sortGroups(compareFn?: (a: K, b: K) => number): GroupedData<E, K> {
+    const cmp = compareFn
+      ? (a: [K, SingleData<E>], b: [K, SingleData<E>]) => compareFn(a[0], b[0])
+      : (a: [K, SingleData<E>], b: [K, SingleData<E>]) =>
+          ((a[0] as any).toString() as string).localeCompare((b[0] as any).toString() as string);
+    return new GroupedData<E, K>(new Map([...this.data].sort(cmp)));
+  }
+
   filter(predicate: (e: E) => boolean): GroupedData<E, K> {
-    return this.mapEachGroup(e => e.filter(predicate));
+    return this.mapGroups(e => e.filter(predicate));
   }
 
   sort(compareFn?: (a: E, b: E) => number): GroupedData<E, K> {
-    return this.mapEachGroup(e => e.sort(compareFn));
+    return this.mapGroups(e => e.sort(compareFn));
   }
 
   map<S>(callbackfn: (value: E, index: number, array: E[]) => S): GroupedData<S, K> {
-    return this.mapEachGroup(e => e.map(callbackfn));
+    return this.mapGroups(e => e.map(callbackfn));
   }
 
   fill<S>(getKey: (e: E) => S, allRequiredKeys: S[], filler: (key: S, group: K) => E): GroupedData<E, K> {
-    return this.mapEachGroup((e, k) => e.fill(getKey, allRequiredKeys, (key: S) => filler(key, k)));
+    return this.mapGroups((e, k) => e.fill(getKey, allRequiredKeys, (key: S) => filler(key, k)));
   }
 
   rolling<S>(n: number, windowFn: (entries: E[]) => S): GroupedData<S, K> {
-    return this.mapEachGroup(e => e.rolling(n, windowFn));
+    return this.mapGroups(e => e.rolling(n, windowFn));
   }
 
   divideBy<S>(
@@ -121,7 +129,7 @@ export class GroupedData<E, K> {
     getKey: (e: E) => S,
     getCount: (e: E) => number
   ): GroupedData<E & ProportionValues, K> {
-    return this.mapEachGroup((e, k) =>
+    return this.mapGroups((e, k) =>
       e.divideBy(denominator.data.get(k) ?? new SingleData<E>([]), getKey, getCount)
     );
   }
@@ -131,7 +139,7 @@ export class GroupedData<E, K> {
     getKey: (e: E) => S,
     getCount: (e: E) => number
   ): GroupedData<E & ProportionValues, K> {
-    return this.mapEachGroup(e => e.divideBy(denominator, getKey, getCount));
+    return this.mapGroups(e => e.divideBy(denominator, getKey, getCount));
   }
 }
 

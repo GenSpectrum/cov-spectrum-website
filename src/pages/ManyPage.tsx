@@ -18,6 +18,7 @@ import {
   sortDateAsc,
 } from '../data/transform/transform';
 import { SequencesOverTimeGrid } from '../components/GridPlot/SequencesOverTimeGrid';
+import { comparePangoLineages } from '../data/transform/common';
 
 type TmpEntry = Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>;
 type TmpEntry2 = TmpEntry & { nextcladePangoLineageFullName: string | null };
@@ -107,7 +108,7 @@ export const ManyPage = () => {
         };
       })
       .groupBy(e => e.nextcladePangoLineage)
-      .mapEachGroup((es, nextcladePangoLineage) => {
+      .mapGroups((es, nextcladePangoLineage) => {
         const dateData = es.groupBy(e => e.date);
         const dateMap = new Map<UnifiedDay, number>();
         dateData.data.forEach((ds, date) =>
@@ -143,11 +144,13 @@ export const ManyPage = () => {
       .sort(sortDateAsc)
       .rolling(7, rolling7SumCountCentered);
     // TODO HACK(Chaoran) "as SingleData<TmpEntry4>" is wrong. Instead, the typing of divideBySingle should be improved.
-    const proportionData = lineagesData.divideBySingle(
-      wholeData as SingleData<TmpEntry4>,
-      e => e.date,
-      e => e.count
-    );
+    const proportionData = lineagesData
+      .divideBySingle(
+        wholeData as SingleData<TmpEntry4>,
+        e => e.date,
+        e => e.count
+      )
+      .sortGroups(comparePangoLineages);
 
     return proportionData;
   }, [dataQuery, params.pangoLineage]);
