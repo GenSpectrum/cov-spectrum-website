@@ -14,7 +14,7 @@ type Props = {
   setFullScreenMode: (fullscreen: boolean) => void;
 };
 
-export const ManyPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
+export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   const [figureType, setFigureType] = useState<FigureType>('prevalence');
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
 
@@ -82,6 +82,11 @@ export const ManyPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
           style={{ height: 50 }}
           className='border-b-2 border-solid border-gray-200 flex flex-row items-center px-4'
         >
+          {fullScreenMode && (
+            <div style={{ color: '#F18805', fontWeight: 'bold', fontSize: '1.75rem', marginRight: 10 }}>
+              CS
+            </div>
+          )}
           <Button
             size='sm'
             className='mx-2'
@@ -146,5 +151,5 @@ const useUrlParams = (): UrlParams => {
 
 const setParams = (history: any, params: UrlParams) => {
   // TODO properly type "history"
-  history.push(`/many?${new URLSearchParams(params).toString()}`);
+  history.push(`/focus?${new URLSearchParams(params).toString()}`);
 };

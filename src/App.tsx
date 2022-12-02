@@ -31,7 +31,7 @@ import { FaFilter } from 'react-icons/fa';
 import { CollectionOverviewPage } from './pages/CollectionOverviewPage';
 import { CollectionAddPage } from './pages/CollectionAddPage';
 import { CollectionSinglePage } from './pages/CollectionSinglePage';
-import { ManyPage } from './pages/ManyPage';
+import { NewFocusPage } from './pages/NewFocusPage';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -148,8 +148,8 @@ export const App = () => {
           <Route path='/collections/:collectionId'>
             <CollectionSinglePage />
           </Route>
-          <Route path='/many'>
-            <ManyPage fullScreenMode={hideHeaderAndFooter} setFullScreenMode={setHideHeaderAndFooter} />
+          <Route path='/focus'>
+            <NewFocusPage fullScreenMode={hideHeaderAndFooter} setFullScreenMode={setHideHeaderAndFooter} />
           </Route>
           <Route path='/about'>
             <AboutPage />
