@@ -1,4 +1,5 @@
 import { calculateWilsonInterval } from '../../helpers/wilson-interval';
+import { UnifiedDay } from '../../helpers/date-cache';
 
 export class SingleData<E> {
   constructor(public data: E[]) {}
@@ -103,7 +104,7 @@ export class GroupedData<E, K> {
     return this.mapEachGroup(e => e.sort(compareFn));
   }
 
-  map<S>(callbackfn: (value: E, index: number, array: E[]) => S) {
+  map<S>(callbackfn: (value: E, index: number, array: E[]) => S): GroupedData<S, K> {
     return this.mapEachGroup(e => e.map(callbackfn));
   }
 
@@ -124,6 +125,14 @@ export class GroupedData<E, K> {
       e.divideBy(denominator.data.get(k) ?? new SingleData<E>([]), getKey, getCount)
     );
   }
+
+  divideBySingle<S>(
+    denominator: SingleData<E>,
+    getKey: (e: E) => S,
+    getCount: (e: E) => number
+  ): GroupedData<E & ProportionValues, K> {
+    return this.mapEachGroup(e => e.divideBy(denominator, getKey, getCount));
+  }
 }
 
 export type ProportionValues = {
@@ -131,3 +140,16 @@ export type ProportionValues = {
   proportionCILow: number;
   proportionCIHigh: number;
 };
+
+export const sortDateAsc = (a: { date: UnifiedDay }, b: { date: UnifiedDay }) =>
+  a.date.dayjs.isBefore(b.date.dayjs) ? -1 : 1;
+
+export const rolling7SumCountCentered = <E extends { count: number }>(entries: E[]) => ({
+  ...entries[3],
+  count: entries.reduce((prev, curr) => prev + curr.count, 0),
+});
+
+export const rolling7AvgCountCentered = <E extends { count: number }>(entries: E[]) => ({
+  ...entries[3],
+  count: Math.round(entries.reduce((prev, curr) => prev + curr.count, 0) / 7),
+});

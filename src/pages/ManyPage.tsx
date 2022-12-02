@@ -2,7 +2,7 @@ import { LapisSelector } from '../data/LapisSelector';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 import { SpecialDateRangeSelector } from '../data/DateRangeSelector';
 import { QueryStatus, useQuery } from '../helpers/query-hook';
-import { _fetchAggSamples } from '../data/api-lapis';
+import { _fetchAggSamples, fetchDateCountSamples } from '../data/api-lapis';
 import { FullSampleAggEntry } from '../data/sample/FullSampleAggEntry';
 import Loader from '../components/Loader';
 import { useMemo } from 'react';
@@ -11,7 +11,13 @@ import { useResizeDetector } from 'react-resize-detector';
 import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
 import { globalDateCache, UnifiedDay } from '../helpers/date-cache';
 import { useHistory, useLocation } from 'react-router';
-import { SingleData } from '../data/transform/transform';
+import {
+  GroupedData,
+  ProportionValues,
+  rolling7SumCountCentered,
+  SingleData,
+  sortDateAsc,
+} from '../data/transform/transform';
 
 type TmpEntry = Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>;
 type TmpEntry2 = TmpEntry & { nextcladePangoLineageFullName: string | null };
@@ -22,6 +28,8 @@ type TmpEntry3 = {
   count: number;
 };
 type TmpEntry4 = { date: UnifiedDay; nextcladePangoLineage: string; count: number };
+type TmpEntry5 = { date: UnifiedDay; count: number };
+export type TmpEntry6 = TmpEntry4 & ProportionValues;
 
 export const ManyPage = () => {
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
@@ -38,36 +46,40 @@ export const ManyPage = () => {
     qc: {},
   };
 
-  const datePangoLineageCountQuery: QueryStatus<TmpEntry3[]> = useQuery(
+  const dataQuery: QueryStatus<[TmpEntry3[], TmpEntry5[]]> = useQuery(
     signal =>
-      (_fetchAggSamples(selector, ['date', 'nextcladePangoLineage'], signal) as Promise<TmpEntry[]>).then(
-        async data => {
-          const data2: TmpEntry2[] = [];
-          for (let d of data) {
-            data2.push({
-              ...d,
-              nextcladePangoLineageFullName: d.nextcladePangoLineage
-                ? (await PangoLineageAliasResolverService.findFullName(d.nextcladePangoLineage)) ??
-                  d.nextcladePangoLineage
-                : null,
-            });
+      Promise.all([
+        (_fetchAggSamples(selector, ['date', 'nextcladePangoLineage'], signal) as Promise<TmpEntry[]>).then(
+          async data => {
+            const data2: TmpEntry2[] = [];
+            for (let d of data) {
+              data2.push({
+                ...d,
+                nextcladePangoLineageFullName: d.nextcladePangoLineage
+                  ? (await PangoLineageAliasResolverService.findFullName(d.nextcladePangoLineage)) ??
+                    d.nextcladePangoLineage
+                  : null,
+              });
+            }
+            return data2.filter(d => !!d.date && !!d.nextcladePangoLineage) as TmpEntry3[];
           }
-          return data2.filter(d => !!d.date && !!d.nextcladePangoLineage) as TmpEntry3[];
-        }
-      ),
+        ),
+        fetchDateCountSamples(selector, signal).then(data => data.filter(d => !!d.date) as TmpEntry5[]),
+      ]),
     [selector]
   );
 
-  const data = useMemo(() => {
-    if (!datePangoLineageCountQuery.data) {
+  const data: GroupedData<TmpEntry6, string> | undefined = useMemo(() => {
+    if (!dataQuery.data) {
       return undefined;
     }
+    const [datePangoLineageCount, dateCount] = dataQuery.data;
     const currentLineage = params.pangoLineage;
     const currentLineageFullName =
       PangoLineageAliasResolverService.findFullNameUnsafeSync(currentLineage) ?? params.pangoLineage;
-    const dateRangeInData = globalDateCache.rangeFromDays(datePangoLineageCountQuery.data.map(d => d.date));
+    const dateRangeInData = globalDateCache.rangeFromDays(datePangoLineageCount.map(d => d.date));
     const allDays = globalDateCache.daysFromRange(dateRangeInData);
-    const lineagesData = new SingleData(datePangoLineageCountQuery.data)
+    const lineagesData = new SingleData(datePangoLineageCount)
       .filter(
         d =>
           d.nextcladePangoLineage === currentLineage ||
@@ -117,19 +129,29 @@ export const ManyPage = () => {
           count: 0,
         })
       )
-      .sort((a, b) => (a.date.dayjs.isBefore(b.date.dayjs) ? -1 : 1))
-      .rolling(7, entries => ({
-        date: entries[3].date,
-        nextcladePangoLineage: entries[3].nextcladePangoLineage,
-        count: entries.reduce((prev, curr) => prev + curr.count, 0),
-      }));
+      .sort(sortDateAsc)
+      .rolling(7, rolling7SumCountCentered);
+    const wholeData = new SingleData(dateCount)
+      .fill(
+        e => e.date,
+        allDays,
+        date => ({
+          date,
+          count: 0,
+        })
+      )
+      .sort(sortDateAsc)
+      .rolling(7, rolling7SumCountCentered);
+    // TODO HACK(Chaoran) "as SingleData<TmpEntry4>" is wrong. Instead, the typing of divideBySingle should be improved.
+    const proportionData = lineagesData.divideBySingle(
+      wholeData as SingleData<TmpEntry4>,
+      e => e.date,
+      e => e.count
+    );
 
-    const groupedAndFiltered: TmpEntry4[] = [];
-    lineagesData.data.forEach(ds => {
-      ds.data.forEach(d => groupedAndFiltered.push(d));
-    });
-    return groupedAndFiltered;
-  }, [datePangoLineageCountQuery, params.pangoLineage]);
+    console.log(lineagesData, wholeData, proportionData);
+    return proportionData;
+  }, [dataQuery, params.pangoLineage]);
 
   if (!data) {
     return <Loader />;
@@ -149,7 +171,7 @@ export const ManyPage = () => {
         <div style={{ width: 300, minWidth: 300 }} className='border-2 border-solid border-red-800'></div>
         {/* The main area */}
         <div className='flex-grow border-2 border-solid border-blue-800 p-4' ref={ref}>
-          {data.length ? (
+          {data.data.size ? (
             width &&
             height && (
               // TODO Define a better key? Goal is to refresh the grid plot whenever the data changes

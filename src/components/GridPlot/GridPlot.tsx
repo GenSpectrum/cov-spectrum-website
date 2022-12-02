@@ -1,5 +1,4 @@
-import { FullSampleAggEntry } from '../../data/sample/FullSampleAggEntry';
-import { globalDateCache, UnifiedDay } from '../../helpers/date-cache';
+import { UnifiedDay } from '../../helpers/date-cache';
 import React, { useMemo, useState } from 'react';
 import {
   ComposedChart,
@@ -12,16 +11,17 @@ import {
   YAxis,
 } from 'recharts';
 import { colors } from '../../widgets/common';
+import { TmpEntry6 } from '../../pages/ManyPage';
+import { GroupedData } from '../../data/transform/transform';
 
-type TmpEntry = Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>;
 type TmpEntry2 = {
   dateAsNumber: number;
   date: UnifiedDay;
   nextcladePangoLineage: string;
-  count: number;
+  proportion: number;
 };
 type Props = {
-  data: TmpEntry[];
+  data: GroupedData<TmpEntry6, string>;
   width: number;
   height: number;
   setPangoLineage?: (pangoLineage: string) => void;
@@ -30,51 +30,31 @@ type Props = {
 export const GridPlot = ({ data, width, height, setPangoLineage }: Props) => {
   const [active, setActive] = useState<number | undefined>(undefined);
 
-  const { plotData, dataMap, dateRange, dateRangeAsNumbers, countRange } = useMemo(() => {
-    let [minDate, maxDate] = [globalDateCache.getDay('2099-12-31'), globalDateCache.getDay('1900-01-01')];
-    let [minCount, maxCount] = [Infinity, -Infinity];
-    const topLevelMap = new Map<string, TmpEntry[]>();
-    for (let d of data) {
-      const { nextcladePangoLineage, date, count } = d;
-      if (date!.dayjs.isBefore(minDate.dayjs)) {
-        minDate = date!;
-      }
-      if (date!.dayjs.isAfter(maxDate.dayjs)) {
-        maxDate = date!;
-      }
-      if (count < minCount) {
-        minCount = count;
-      }
-      if (count > maxCount) {
-        maxCount = count;
-      }
-      if (!topLevelMap.has(nextcladePangoLineage!)) {
-        topLevelMap.set(nextcladePangoLineage!, []);
-      }
-      topLevelMap.get(nextcladePangoLineage!)!.push(d);
-    }
-    const plotData: { nextcladePangoLineage: string; entries: TmpEntry2[] }[] = [];
-    topLevelMap.forEach((entries, nextcladePangoLineage) => {
-      plotData.push({
-        nextcladePangoLineage,
-        entries: entries
-          .map(e => ({
-            nextcladePangoLineage: e.nextcladePangoLineage!,
-            dateAsNumber: e.date!.dayjs.toDate().getTime(),
-            date: e.date!,
-            count: e.count,
-          }))
-          .sort((a, b) => a.dateAsNumber - b.dateAsNumber),
-      });
-    });
+  const { plotData, dataMap, dateRange, dateRangeAsNumbers, proportionRange } = useMemo(() => {
+    const dataWithDateAsNumber = data.map(e => ({
+      ...e,
+      dateAsNumber: e.date.dayjs.toDate().getTime(),
+    }));
+    const dataAsArray = [...dataWithDateAsNumber.data];
+    const oneArbitraryLineageData = dataAsArray[0][1].data;
+    console.log(dataAsArray, oneArbitraryLineageData);
+    const [minDate, maxDate] = [
+      oneArbitraryLineageData[0].date,
+      oneArbitraryLineageData[oneArbitraryLineageData.length - 1].date,
+    ];
 
+    const proportions = [...data.map(e => e.proportion).data].map(d => d[1].data).flat();
+    let [minProportion, maxProportion] = [0, Math.max(...proportions)];
+
+    const plotData: { nextcladePangoLineage: string; entries: TmpEntry2[] }[] = [];
     const dataMap = new Map<string, Map<number, TmpEntry2>>();
-    for (let { nextcladePangoLineage, entries } of plotData) {
-      if (!dataMap.has(nextcladePangoLineage)) {
-        dataMap.set(nextcladePangoLineage, new Map());
+    for (const [lineage, d] of dataAsArray) {
+      plotData.push({ nextcladePangoLineage: lineage, entries: d.data });
+      if (!dataMap.has(lineage)) {
+        dataMap.set(lineage, new Map());
       }
-      const dataMap2 = dataMap.get(nextcladePangoLineage)!;
-      for (let e of entries) {
+      const dataMap2 = dataMap.get(lineage)!;
+      for (const e of d.data) {
         dataMap2.set(e.dateAsNumber, e);
       }
     }
@@ -84,7 +64,7 @@ export const GridPlot = ({ data, width, height, setPangoLineage }: Props) => {
       dataMap,
       dateRange: [minDate, maxDate],
       dateRangeAsNumbers: [minDate, maxDate].map(d => d.dayjs.toDate().getTime()),
-      countRange: [minCount, maxCount],
+      proportionRange: [minProportion, maxProportion],
     };
   }, [data]);
 
@@ -111,9 +91,9 @@ export const GridPlot = ({ data, width, height, setPangoLineage }: Props) => {
             }}
             className='flex flex-column text-right text-sm'
           >
-            <div>{countRange[1]}</div>
+            <div>{proportionRange[1].toFixed(2)}</div>
             <div className='flex-1'></div>
-            <div>{countRange[0]}</div>
+            <div>{proportionRange[0]}</div>
           </div>
         ))}
 
@@ -150,7 +130,7 @@ export const GridPlot = ({ data, width, height, setPangoLineage }: Props) => {
               <ResponsiveContainer>
                 <ComposedChart data={d.entries} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
                   <XAxis dataKey='dateAsNumber' hide={true} type='number' domain={dateRangeAsNumbers} />
-                  <YAxis domain={countRange} hide={true} />
+                  <YAxis domain={proportionRange} hide={true} />
                   <Tooltip
                     active={false}
                     cursor={false}
@@ -170,15 +150,15 @@ export const GridPlot = ({ data, width, height, setPangoLineage }: Props) => {
                       stroke='gray'
                       isFront={true}
                       label={
-                        <Label position='right'>
-                          {dataMap.get(d.nextcladePangoLineage)!.get(active)?.count}
+                        <Label position='left'>
+                          {dataMap.get(d.nextcladePangoLineage)!.get(active)?.proportion.toFixed(4)}
                         </Label>
                       }
                     />
                   )}
                   <Line
                     type='monotone'
-                    dataKey={'count'}
+                    dataKey={'proportion'}
                     stroke={colors.active}
                     strokeWidth={2}
                     dot={false}
