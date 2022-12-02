@@ -9,7 +9,12 @@ import { SequencesOverTimeGrid } from '../components/GridPlot/SequencesOverTimeG
 
 type FigureType = 'prevalence' | 'mutations';
 
-export const ManyPage = () => {
+type Props = {
+  fullScreenMode: boolean;
+  setFullScreenMode: (fullscreen: boolean) => void;
+};
+
+export const ManyPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   const [figureType, setFigureType] = useState<FigureType>('prevalence');
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
 
@@ -25,17 +30,33 @@ export const ManyPage = () => {
     qc: {},
   };
 
-  // Keyboard shortcuts
-  const handleKeyPress = useCallback(event => {
-    switch (event.key) {
-      case 'p':
-        setFigureType('prevalence');
-        break;
-      case 'm':
-        setFigureType('mutations');
-        break;
+  // Fullscreen
+  const toggleFullscreen = useCallback(() => {
+    setFullScreenMode(!fullScreenMode);
+    if (fullScreenMode) {
+      document.exitFullscreen();
+    } else {
+      document.documentElement.requestFullscreen();
     }
-  }, []);
+  }, [fullScreenMode, setFullScreenMode]);
+
+  // Keyboard shortcuts
+  const handleKeyPress = useCallback(
+    event => {
+      switch (event.key) {
+        case 'p':
+          setFigureType('prevalence');
+          break;
+        case 'm':
+          setFigureType('mutations');
+          break;
+        case 'f':
+          toggleFullscreen();
+          break;
+      }
+    },
+    [toggleFullscreen]
+  );
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyPress);
@@ -49,9 +70,10 @@ export const ManyPage = () => {
     <>
       {/* TODO What to do about small screens? */}
       <div
+        key={fullScreenMode.toString()}
         style={{
           // Subtracting the header  TODO It's not good to have these constants here
-          height: 'calc(100vh - 72px - 2px)',
+          height: fullScreenMode ? '100vh' : 'calc(100vh - 72px - 2px)',
         }}
         className='flex flex-column'
       >
@@ -75,6 +97,10 @@ export const ManyPage = () => {
             onClick={() => setFigureType('mutations')}
           >
             [M]utations
+          </Button>
+          <div className='flex-grow-1' />
+          <Button size='sm' className='mx-2' onClick={() => toggleFullscreen()}>
+            [F]ullscreen
           </Button>
         </div>
         {/* The main area */}
