@@ -11,12 +11,12 @@ import {
   YAxis,
 } from 'recharts';
 import { colors } from '../../widgets/common';
-import { TmpEntry6 } from '../../pages/ManyPage';
 import { GroupedData } from '../../data/transform/transform';
 import { GridFigure } from './GridFigure';
 import { GridContent } from './GridContent';
 import { GridXAxis, GridYAxis } from './GridAxis';
 import { TwoValuesXAxis, TwoValuesYAxis } from './common';
+import { TmpEntry6 } from './SequencesOverTimeGrid';
 
 type TmpEntry2 = {
   dateAsNumber: number;
