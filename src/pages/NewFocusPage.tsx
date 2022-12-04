@@ -4,10 +4,23 @@ import { SpecialDateRangeSelector } from '../data/DateRangeSelector';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
 import { useHistory, useLocation } from 'react-router';
+import { QueryStatus, useQuery } from '../helpers/query-hook';
+import { _fetchAggSamples } from '../data/api-lapis';
+import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
+import { SingleData } from '../data/transform/transform';
+import { comparePangoLineages } from '../data/transform/common';
+import Loader from '../components/Loader';
 import { Button } from 'react-bootstrap';
 import { SequencesOverTimeGrid } from '../components/GridPlot/SequencesOverTimeGrid';
+import { calculateGridSizes, GridFigure } from '../components/GridPlot/GridFigure';
+import { createHtmlPortalNode, HtmlPortalNode, InPortal, OutPortal } from 'react-reverse-portal';
+import { GridContent } from '../components/GridPlot/GridContent';
+import { AxisPortals } from '../components/GridPlot/common';
+import { GridXAxis, GridYAxis } from '../components/GridPlot/GridAxis';
 
 type FigureType = 'prevalence' | 'mutations';
+type TmpEntry = { nextcladePangoLineage: string | null; count: number };
+type TmpEntry2 = { nextcladePangoLineage: string; nextcladePangoLineageFullName: string; count: number };
 
 type Props = {
   fullScreenMode: boolean;
@@ -29,6 +42,76 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
     host: undefined,
     qc: {},
   };
+
+  // Find the (sub-)lineages that should be shown
+  const dataQuery: QueryStatus<TmpEntry2[]> = useQuery(
+    signal =>
+      (_fetchAggSamples(selector, ['nextcladePangoLineage'], signal) as Promise<TmpEntry[]>).then(
+        async data => {
+          const data2: TmpEntry2[] = [];
+          for (let d of data) {
+            if (d.nextcladePangoLineage) {
+              data2.push({
+                ...d,
+                nextcladePangoLineage: d.nextcladePangoLineage!!,
+                nextcladePangoLineageFullName:
+                  (await PangoLineageAliasResolverService.findFullName(d.nextcladePangoLineage)) ??
+                  d.nextcladePangoLineage,
+              });
+            }
+          }
+          return data2;
+        }
+      ),
+    [selector]
+  );
+
+  const { subLineages, portals } = useMemo(() => {
+    if (!dataQuery.data) {
+      return {};
+    }
+    const pangoLineageCount = dataQuery.data;
+    const currentLineage = params.pangoLineage;
+    const currentLineageFullName =
+      PangoLineageAliasResolverService.findFullNameUnsafeSync(currentLineage) ?? currentLineage;
+    const lineagesData = new SingleData(pangoLineageCount)
+      .filter(
+        d =>
+          d.nextcladePangoLineage === currentLineage ||
+          d.nextcladePangoLineageFullName.startsWith(currentLineageFullName + '.')
+      )
+      .map(d => {
+        let lineage;
+        if (d.nextcladePangoLineage === currentLineage) {
+          lineage = currentLineage;
+        } else {
+          // These are the sub-lineages
+          const withoutPrefix = d.nextcladePangoLineageFullName.substring(currentLineageFullName.length + 1);
+          const firstSub =
+            withoutPrefix.indexOf('.') !== -1
+              ? withoutPrefix.substring(0, withoutPrefix.indexOf('.'))
+              : withoutPrefix;
+          lineage =
+            PangoLineageAliasResolverService.findAliasUnsafeSync(`${currentLineageFullName}.${firstSub}`) +
+            '*';
+        }
+        return {
+          nextcladePangoLineage: lineage,
+          count: d.count,
+        };
+      });
+    const subLineages = [...new Set(lineagesData.data.map(d => d.nextcladePangoLineage))].sort(
+      comparePangoLineages
+    );
+
+    // Portals
+    const portals = new Map<string, HtmlPortalNode>();
+    for (const subLineage of subLineages) {
+      portals.set(subLineage, createHtmlPortalNode());
+    }
+
+    return { subLineages, portals };
+  }, [dataQuery, params.pangoLineage]);
 
   // Fullscreen
   const toggleFullscreen = useCallback(() => {
@@ -65,12 +148,28 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
     };
   }, [handleKeyPress]);
 
+  const { gridSizes, axisPortals } = useMemo(() => {
+    if (!width || !height || !subLineages?.length) {
+      return {};
+    }
+    const gridSizes = calculateGridSizes(width, height - 20, subLineages?.length);
+    const axisPortals: AxisPortals = {
+      x: new Array(gridSizes.numberCols).fill(undefined).map(_ => createHtmlPortalNode()),
+      y: new Array(gridSizes.numberRows).fill(undefined).map(_ => createHtmlPortalNode()),
+    };
+
+    return { gridSizes, axisPortals };
+  }, [width, height, subLineages?.length]);
+
   // View
+  if (!subLineages) {
+    return <Loader />;
+  }
+
   return (
-    <>
+    <div key={fullScreenMode.toString()}>
       {/* TODO What to do about small screens? */}
       <div
-        key={fullScreenMode.toString()}
         style={{
           // Subtracting the header  TODO It's not good to have these constants here
           height: fullScreenMode ? '100vh' : 'calc(100vh - 72px - 2px)',
@@ -110,25 +209,49 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
         </div>
         {/* The main area */}
         <div className='flex-grow p-4' ref={ref}>
-          {width && height && (
+          {gridSizes && (
             <>
-              {figureType === 'prevalence' && (
-                <SequencesOverTimeGrid
-                  selector={selector}
-                  pangoLineage={params.pangoLineage}
-                  width={width}
-                  height={height}
-                  setPangoLineage={pangoLineage =>
-                    setParams(history, { ...params, pangoLineage: pangoLineage.replace('*', '') })
-                  }
-                />
-              )}
-              {figureType === 'mutations' && <>missing</>}
+              <GridFigure
+                gridSizes={gridSizes}
+                labels={subLineages}
+                onLabelClick={pangoLineage =>
+                  setParams(history, { ...params, pangoLineage: pangoLineage.replace('*', '') })
+                }
+              >
+                {subLineages.map(subLineage => (
+                  <GridContent label={subLineage}>
+                    <OutPortal key={subLineage} node={portals.get(subLineage)!} />
+                  </GridContent>
+                ))}
+                <GridXAxis portals={axisPortals.x} />
+                <GridYAxis portals={axisPortals.y} />
+              </GridFigure>
             </>
           )}
         </div>
       </div>
-    </>
+      {figureType === 'prevalence' && gridSizes && (
+        <SequencesOverTimeGrid
+          selector={selector}
+          plotWidth={gridSizes.plotWidth - 12}
+          pangoLineage={params.pangoLineage}
+          portals={portals}
+          axisPortals={axisPortals}
+        />
+      )}
+      {figureType === 'mutations' &&
+        gridSizes &&
+        [...portals].map(([lineage, portal]) => (
+          <InPortal node={portal} key={lineage}>
+            <div
+              style={{ width: gridSizes.plotWidth - 12, height: gridSizes.plotWidth - 12 }}
+              className='text-center flex justify-center items-center'
+            >
+              Upcoming: the mutations of this lineage
+            </div>
+          </InPortal>
+        ))}
+    </div>
   );
 };
 

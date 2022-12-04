@@ -15,6 +15,8 @@ import { comparePangoLineages } from '../../data/transform/common';
 import { FullSampleAggEntry } from '../../data/sample/FullSampleAggEntry';
 import Loader from '../Loader';
 import { SequencesOverTimeGridInner } from './SequencesOverTimeGridInner';
+import { HtmlPortalNode, InPortal } from 'react-reverse-portal';
+import { AxisPortals } from './common';
 
 type TmpEntry = Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>;
 type TmpEntry2 = TmpEntry & { nextcladePangoLineageFullName: string | null };
@@ -30,13 +32,13 @@ export type TmpEntry6 = TmpEntry4 & ProportionValues;
 
 type Props = {
   selector: LapisSelector;
+  plotWidth: number;
   pangoLineage: string;
-  setPangoLineage?: (pangoLineage: string) => void;
-  width: number;
-  height: number;
+  portals: Map<string, HtmlPortalNode>;
+  axisPortals: AxisPortals;
 };
 
-export const SequencesOverTimeGrid = ({ selector, pangoLineage, setPangoLineage, width, height }: Props) => {
+export const SequencesOverTimeGrid = ({ selector, pangoLineage, portals, axisPortals, plotWidth }: Props) => {
   // Data fetching
   const dataQuery: QueryStatus<[TmpEntry3[], TmpEntry5[]]> = useQuery(
     signal =>
@@ -148,23 +150,25 @@ export const SequencesOverTimeGrid = ({ selector, pangoLineage, setPangoLineage,
   }, [dataQuery, pangoLineage]);
 
   // View
-  if (!data) {
-    return <Loader />;
-  }
-
   return (
     <>
-      {data.data.size ? (
+      {data?.data.size ? (
         // TODO Define a better key? Goal is to refresh the grid plot whenever the data changes
         <SequencesOverTimeGridInner
           key={pangoLineage}
           data={data}
-          width={width}
-          height={height}
-          setPangoLineage={setPangoLineage}
+          plotWidth={plotWidth}
+          portals={portals}
+          axisPortals={axisPortals}
         />
       ) : (
-        <>No sub-lineages available</>
+        [...portals].map(([subLineage, portal]) => (
+          <InPortal node={portal} key={subLineage}>
+            <div style={{ width: plotWidth, height: plotWidth }}>
+              <Loader />
+            </div>
+          </InPortal>
+        ))
       )}
     </>
   );

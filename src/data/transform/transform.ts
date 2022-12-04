@@ -12,7 +12,7 @@ export class SingleData<E> {
     return new SingleData([...this.data].sort(compareFn));
   }
 
-  map<S>(callbackfn: (value: E, index: number, array: E[]) => S) {
+  map<S>(callbackfn: (value: E, index: number, array: E[]) => S): SingleData<S> {
     return new SingleData(this.data.map(callbackfn));
   }
 

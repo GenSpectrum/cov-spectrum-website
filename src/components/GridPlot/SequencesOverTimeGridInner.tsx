@@ -1,22 +1,11 @@
 import { UnifiedDay } from '../../helpers/date-cache';
 import React, { useMemo, useState } from 'react';
-import {
-  ComposedChart,
-  Label,
-  Line,
-  ReferenceLine,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { ComposedChart, Label, Line, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
 import { colors } from '../../widgets/common';
 import { GroupedData } from '../../data/transform/transform';
-import { GridFigure } from './GridFigure';
-import { GridContent } from './GridContent';
-import { GridXAxis, GridYAxis } from './GridAxis';
-import { TwoValuesXAxis, TwoValuesYAxis } from './common';
 import { TmpEntry6 } from './SequencesOverTimeGrid';
+import { HtmlPortalNode, InPortal } from 'react-reverse-portal';
+import { AxisPortals, TwoValuesXAxis, TwoValuesYAxis } from './common';
 
 type TmpEntry2 = {
   dateAsNumber: number;
@@ -26,12 +15,12 @@ type TmpEntry2 = {
 };
 type Props = {
   data: GroupedData<TmpEntry6, string>;
-  width: number;
-  height: number;
-  setPangoLineage?: (pangoLineage: string) => void;
+  portals: Map<string, HtmlPortalNode>;
+  axisPortals: AxisPortals;
+  plotWidth: number;
 };
 
-export const SequencesOverTimeGridInner = ({ data, width, height, setPangoLineage }: Props) => {
+export const SequencesOverTimeGridInner = ({ data, portals, axisPortals, plotWidth }: Props) => {
   const [active, setActive] = useState<number | undefined>(undefined);
 
   const { plotData, dataMap, dateRange, dateRangeAsNumbers, proportionRange } = useMemo(() => {
@@ -73,60 +62,67 @@ export const SequencesOverTimeGridInner = ({ data, width, height, setPangoLineag
 
   return (
     <>
-      <GridFigure width={width} height={height}>
-        <GridXAxis>
-          <TwoValuesXAxis low={dateRange[0].string} high={dateRange[1].string} />
-        </GridXAxis>
-        <GridYAxis>
-          <TwoValuesYAxis low={proportionRange[0].toFixed(2)} high={proportionRange[1].toFixed(2)} />
-        </GridYAxis>
-        {plotData.map(d => (
-          <GridContent
-            label={d.nextcladePangoLineage}
-            onLabelClick={() => setPangoLineage && setPangoLineage(d.nextcladePangoLineage)}
+      {/*<GridXAxis>*/}
+      {axisPortals.x.map(portal => (
+        <InPortal node={portal}>
+          <TwoValuesXAxis low={dateRange[0].string} high={dateRange[1].string} size={plotWidth} />
+        </InPortal>
+      ))}
+      {axisPortals.y.map(portal => (
+        <InPortal node={portal}>
+          <TwoValuesYAxis
+            low={proportionRange[0].toFixed(2)}
+            high={proportionRange[1].toFixed(2)}
+            size={plotWidth}
+          />
+        </InPortal>
+      ))}
+      {plotData.map(d => (
+        <InPortal key={d.nextcladePangoLineage} node={portals.get(d.nextcladePangoLineage)!}>
+          <ComposedChart
+            data={d.entries}
+            margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+            width={plotWidth}
+            height={plotWidth}
           >
-            <ResponsiveContainer>
-              <ComposedChart data={d.entries} margin={{ top: 0, right: 0, bottom: 0, left: 0 }}>
-                <XAxis dataKey='dateAsNumber' hide={true} type='number' domain={dateRangeAsNumbers} />
-                <YAxis domain={proportionRange} hide={true} />
-                <Tooltip
-                  active={false}
-                  cursor={false}
-                  content={e => {
-                    if (e.active && e.payload !== undefined) {
-                      const newActive = e.payload[0].payload;
-                      if (active === undefined || active !== newActive.dateAsNumber) {
-                        setActive(newActive.dateAsNumber);
-                      }
-                    }
-                    return <></>;
-                  }}
-                />
-                {active && (
-                  <ReferenceLine
-                    x={active}
-                    stroke='gray'
-                    isFront={true}
-                    label={
-                      <Label position='left'>
-                        {dataMap.get(d.nextcladePangoLineage)!.get(active)?.proportion.toFixed(4)}
-                      </Label>
-                    }
-                  />
-                )}
-                <Line
-                  type='monotone'
-                  dataKey={'proportion'}
-                  stroke={colors.active}
-                  strokeWidth={2}
-                  dot={false}
-                  isAnimationActive={false}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </GridContent>
-        ))}
-      </GridFigure>
+            <XAxis dataKey='dateAsNumber' hide={true} type='number' domain={dateRangeAsNumbers} />
+            <YAxis domain={proportionRange} hide={true} />
+            <Tooltip
+              active={false}
+              cursor={false}
+              content={e => {
+                if (e.active && e.payload !== undefined) {
+                  const newActive = e.payload[0].payload;
+                  if (active === undefined || active !== newActive.dateAsNumber) {
+                    setActive(newActive.dateAsNumber);
+                  }
+                }
+                return <></>;
+              }}
+            />
+            {active && (
+              <ReferenceLine
+                x={active}
+                stroke='gray'
+                isFront={true}
+                label={
+                  <Label position='left'>
+                    {dataMap.get(d.nextcladePangoLineage)!.get(active)?.proportion.toFixed(4)}
+                  </Label>
+                }
+              />
+            )}
+            <Line
+              type='monotone'
+              dataKey={'proportion'}
+              stroke={colors.active}
+              strokeWidth={2}
+              dot={false}
+              isAnimationActive={false}
+            />
+          </ComposedChart>
+        </InPortal>
+      ))}
     </>
   );
 };

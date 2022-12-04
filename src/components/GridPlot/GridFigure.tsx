@@ -1,11 +1,13 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { GridContent, Props as GridContentProps } from './GridContent';
 import { GridXAxis, GridYAxis, Props as GridAxisProps } from './GridAxis';
+import { OutPortal } from 'react-reverse-portal';
 
 type Props = {
   children: React.ReactNode;
-  width: number;
-  height: number;
+  gridSizes: GridSizes;
+  labels: string[];
+  onLabelClick: (label: string) => void;
 };
 
 function childIsGridContent(
@@ -26,14 +28,14 @@ function childIsGridYAxis(
   return typeof child === 'object' && (child as any).type === GridYAxis;
 }
 
-export const GridFigure = ({ children, width, height }: Props) => {
+export const GridFigure = ({ children, gridSizes, labels, onLabelClick }: Props) => {
   const childrenAsArray: (React.ReactChild | {})[] = React.Children.toArray(children);
-  const contentElements: React.ReactElement<GridContentProps, typeof GridContent>[] = [];
+  const contentElements: Map<string, React.ReactElement<GridContentProps, typeof GridContent>> = new Map();
   let xAxisElement: React.ReactElement<GridAxisProps, typeof GridXAxis> | undefined = undefined;
   let yAxisElement: React.ReactElement<GridAxisProps, typeof GridYAxis> | undefined = undefined;
   for (const child of childrenAsArray) {
     if (childIsGridContent(child)) {
-      contentElements.push(child);
+      contentElements.set(child.props.label, child);
     } else if (childIsGridXAxis(child)) {
       xAxisElement = child;
     } else if (childIsGridYAxis(child)) {
@@ -43,17 +45,14 @@ export const GridFigure = ({ children, width, height }: Props) => {
     }
   }
 
-  // Calculate the number of rows and columns and the size of the sub-plots
-  const { plotWidth, numberCols, numberRows } = useMemo(() => {
-    return calculateGridSizes(width, height - 30, contentElements.length);
-  }, [width, height, contentElements.length]);
+  const { plotWidth, numberCols, numberRows } = gridSizes;
 
   return (
     <>
       <div
         style={{
           display: 'grid',
-          gridTemplateRows: `repeat(${numberRows}, ${plotWidth + 20}px) 30px`,
+          gridTemplateRows: `repeat(${numberRows}, ${plotWidth + 26}px) 30px`,
           gridTemplateColumns: `50px repeat(${numberCols}, ${plotWidth}px)`,
           justifyContent: 'center',
         }}
@@ -61,55 +60,67 @@ export const GridFigure = ({ children, width, height }: Props) => {
         {/* X-Axis */}
         {new Array(numberCols).fill(undefined).map((_, i) => (
           <div
+            key={`x-${i}`}
             style={{
-              gridRowStart: Math.ceil(contentElements.length / numberCols) + 1,
+              gridRowStart: Math.ceil(labels.length / numberCols) + 1,
               gridColumnStart: i + 2,
             }}
           >
-            {xAxisElement?.props.children}
+            {xAxisElement?.props.portals[i] && <OutPortal node={xAxisElement?.props.portals[i]} />}
           </div>
         ))}
 
         {/* Y-Axis */}
         {new Array(numberRows).fill(undefined).map((_, i) => (
           <div
+            key={`y-${i}`}
             style={{
               gridRowStart: i + 1,
               gridColumnStart: 1,
               paddingTop: 28,
             }}
           >
-            {yAxisElement?.props.children}
+            {yAxisElement?.props.portals[i] && <OutPortal node={yAxisElement?.props.portals[i]} />}
           </div>
         ))}
 
         {/* Content in the middle */}
-        {contentElements.map((el, i) => (
-          <div
-            className='border-2 border-solid border-black m-1 flex flex-column'
-            style={{
-              gridRowStart: Math.floor(i / numberCols) + 1,
-              gridColumnStart: (i % numberCols) + 2,
-            }}
-          >
+        {labels.map((label, i) => {
+          const el = contentElements.get(label);
+          return (
             <div
-              className='bg-gray-200 hover:bg-blue-500 border-b-2 border-solid border-black pl-2 cursor-pointer'
-              onClick={el.props.onLabelClick}
+              key={label}
+              className='border-2 border-solid border-black m-1 flex flex-column'
+              style={{
+                gridRowStart: Math.floor(i / numberCols) + 1,
+                gridColumnStart: (i % numberCols) + 2,
+              }}
             >
-              {el.props.label}
-            </div>
+              <div
+                className='bg-gray-200 hover:bg-blue-500 border-b-2 border-solid border-black pl-2 cursor-pointer'
+                onClick={() => onLabelClick(label)}
+              >
+                {label}
+              </div>
 
-            <div className='flex-1'>{el.props.children}</div>
-          </div>
-        ))}
+              <div className='flex-1'>{el && el.props.children}</div>
+            </div>
+          );
+        })}
       </div>
     </>
   );
 };
 
-const calculateGridSizes = (width: number, height: number, numberPlots: number) => {
+export type GridSizes = {
+  plotWidth: number;
+  numberCols: number;
+  numberRows: number;
+};
+
+export const calculateGridSizes = (width: number, height: number, numberPlots: number): GridSizes => {
   // TODO Use a proper optimization method rather than this very stupid way of brute-forcing
-  const plotHeightPadding = 28;
+  const plotHeightPadding = 32;
   const plotWidthPadding = 10;
   let plotWidth = 0;
   let best = {

@@ -1,7 +1,8 @@
 import React from 'react';
+import { HtmlPortalNode } from 'react-reverse-portal';
 
 export interface Props {
-  children: React.ReactChild | React.ReactChild[];
+  portals: HtmlPortalNode[];
 }
 
 export const GridXAxis: React.FC<Props> = () => {
