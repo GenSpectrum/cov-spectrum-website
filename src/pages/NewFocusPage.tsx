@@ -13,12 +13,14 @@ import Loader from '../components/Loader';
 import { Button } from 'react-bootstrap';
 import { SequencesOverTimeGrid } from '../components/GridPlot/SequencesOverTimeGrid';
 import { calculateGridSizes, GridFigure } from '../components/GridPlot/GridFigure';
-import { createHtmlPortalNode, HtmlPortalNode, InPortal, OutPortal } from 'react-reverse-portal';
+import { createHtmlPortalNode, HtmlPortalNode, OutPortal } from 'react-reverse-portal';
 import { GridContent } from '../components/GridPlot/GridContent';
 import { AxisPortals } from '../components/GridPlot/common';
 import { GridXAxis, GridYAxis } from '../components/GridPlot/GridAxis';
+import { MutationsGrid } from '../components/GridPlot/MutationsGrid';
+import { sequenceTypes } from '../data/SequenceType';
 
-type FigureType = 'prevalence' | 'mutations';
+type FigureType = 'prevalence' | 'aa-mutations' | 'nuc-mutations';
 type TmpEntry = { nextcladePangoLineage: string | null; count: number };
 type TmpEntry2 = { nextcladePangoLineage: string; nextcladePangoLineageFullName: string; count: number };
 
@@ -27,21 +29,21 @@ type Props = {
   setFullScreenMode: (fullscreen: boolean) => void;
 };
 
+const selector: LapisSelector = {
+  location: {},
+  variant: {},
+  dateRange: new SpecialDateRangeSelector('Past6M'),
+  samplingStrategy: SamplingStrategy.AllSamples,
+  host: undefined,
+  qc: {},
+};
+
 export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   const [figureType, setFigureType] = useState<FigureType>('prevalence');
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
 
   const history = useHistory();
   const params = useUrlParams();
-
-  const selector: LapisSelector = {
-    location: {},
-    variant: {},
-    dateRange: new SpecialDateRangeSelector('Past6M'),
-    samplingStrategy: SamplingStrategy.AllSamples,
-    host: undefined,
-    qc: {},
-  };
 
   // Find the (sub-)lineages that should be shown
   const dataQuery: QueryStatus<TmpEntry2[]> = useQuery(
@@ -130,8 +132,11 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
         case 'p':
           setFigureType('prevalence');
           break;
-        case 'm':
-          setFigureType('mutations');
+        case 'a':
+          setFigureType('aa-mutations');
+          break;
+        case 'n':
+          setFigureType('nuc-mutations');
           break;
         case 'f':
           toggleFullscreen();
@@ -197,10 +202,18 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
           <Button
             size='sm'
             className='mx-2'
-            disabled={figureType === 'mutations'}
-            onClick={() => setFigureType('mutations')}
+            disabled={figureType === 'aa-mutations'}
+            onClick={() => setFigureType('aa-mutations')}
           >
-            [M]utations
+            [A]A mutations
+          </Button>
+          <Button
+            size='sm'
+            className='mx-2'
+            disabled={figureType === 'nuc-mutations'}
+            onClick={() => setFigureType('nuc-mutations')}
+          >
+            [N]uc mutations
           </Button>
           <div className='flex-grow-1' />
           <Button size='sm' className='mx-2' onClick={() => toggleFullscreen()}>
@@ -239,18 +252,20 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
           axisPortals={axisPortals}
         />
       )}
-      {figureType === 'mutations' &&
-        gridSizes &&
-        [...portals].map(([lineage, portal]) => (
-          <InPortal node={portal} key={lineage}>
-            <div
-              style={{ width: gridSizes.plotWidth - 12, height: gridSizes.plotWidth - 12 }}
-              className='text-center flex justify-center items-center'
-            >
-              Upcoming: the mutations of this lineage
-            </div>
-          </InPortal>
-        ))}
+      {sequenceTypes.map(
+        sequenceType =>
+          figureType === `${sequenceType}-mutations` &&
+          gridSizes && (
+            <MutationsGrid
+              selector={selector}
+              pangoLineage={params.pangoLineage}
+              subLineages={subLineages}
+              plotWidth={gridSizes.plotWidth - 12}
+              portals={portals}
+              sequenceType={sequenceType}
+            />
+          )
+      )}
     </div>
   );
 };
