@@ -38,8 +38,18 @@ const selector: LapisSelector = {
   qc: {},
 };
 
+type Size = 'size1' | 'size2' | 'size3' | 'all';
+const sizes: { id: Size; label: string; approxNumberPlots: number }[] = [
+  { id: 'size1', label: 'Size-1', approxNumberPlots: 4 },
+  { id: 'size2', label: 'Size-2', approxNumberPlots: 8 },
+  { id: 'size3', label: 'Size-3', approxNumberPlots: 16 },
+  { id: 'all', label: 'All', approxNumberPlots: Infinity },
+];
+const sizeMap = new Map(sizes.map(s => [s.id, s]));
+
 export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   const [figureType, setFigureType] = useState<FigureType>('prevalence');
+  const [size, setSize] = useState<Size>('size2');
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
 
   const history = useHistory();
@@ -68,7 +78,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
     [selector]
   );
 
-  const { subLineages, portals } = useMemo(() => {
+  const { allSubLineages } = useMemo(() => {
     if (!dataQuery.data) {
       return {};
     }
@@ -101,19 +111,53 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
           nextcladePangoLineage: lineage,
           count: d.count,
         };
-      });
-    const subLineages = [...new Set(lineagesData.data.map(d => d.nextcladePangoLineage))].sort(
-      comparePangoLineages
-    );
+      })
+      .groupBy(e => e.nextcladePangoLineage);
+    const allSubLineages: { nextcladePangoLineage: string; count: number }[] = [];
+    for (const [nextcladePangoLineage, d] of lineagesData.data) {
+      const count = d.data.reduce((prev, curr) => prev + curr.count, 0);
+      allSubLineages.push({ nextcladePangoLineage, count });
+    }
+
+    return { allSubLineages };
+  }, [dataQuery, params.pangoLineage]);
+
+  // Calculate grid size
+  const { gridSizes, axisPortals } = useMemo(() => {
+    if (!width || !height || !allSubLineages?.length) {
+      return {};
+    }
+    const numberPlots = Math.min(allSubLineages.length, sizeMap.get(size)!.approxNumberPlots);
+    const gridSizes = calculateGridSizes(width, height - 20, numberPlots);
+    const axisPortals: AxisPortals = {
+      x: new Array(gridSizes.numberCols).fill(undefined).map(_ => createHtmlPortalNode()),
+      y: new Array(gridSizes.numberRows).fill(undefined).map(_ => createHtmlPortalNode()),
+    };
+
+    return { gridSizes, axisPortals };
+  }, [width, height, allSubLineages?.length, size]);
+
+  // Select lineages to display and create their portals
+  const { filteredSubLineages, portals } = useMemo(() => {
+    if (!gridSizes || !allSubLineages) {
+      return {};
+    }
+
+    const numberPlots = gridSizes.numberRows * gridSizes.numberCols;
+    const filteredSubLineages = allSubLineages
+      .sort((a, b) => b.count - a.count)
+      .slice(0, numberPlots)
+      .map(d => d.nextcladePangoLineage)
+      .sort(comparePangoLineages);
 
     // Portals
     const portals = new Map<string, HtmlPortalNode>();
-    for (const subLineage of subLineages) {
+    for (const subLineage of filteredSubLineages) {
       portals.set(subLineage, createHtmlPortalNode());
     }
 
-    return { subLineages, portals };
-  }, [dataQuery, params.pangoLineage]);
+    return { filteredSubLineages, portals };
+  }, [gridSizes, allSubLineages]);
 
   // Fullscreen
   const toggleFullscreen = useCallback(() => {
@@ -153,24 +197,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
     };
   }, [handleKeyPress]);
 
-  const { gridSizes, axisPortals } = useMemo(() => {
-    if (!width || !height || !subLineages?.length) {
-      return {};
-    }
-    const gridSizes = calculateGridSizes(width, height - 20, subLineages?.length);
-    const axisPortals: AxisPortals = {
-      x: new Array(gridSizes.numberCols).fill(undefined).map(_ => createHtmlPortalNode()),
-      y: new Array(gridSizes.numberRows).fill(undefined).map(_ => createHtmlPortalNode()),
-    };
-
-    return { gridSizes, axisPortals };
-  }, [width, height, subLineages?.length]);
-
   // View
-  if (!subLineages) {
-    return <Loader />;
-  }
-
   return (
     <div key={fullScreenMode.toString()}>
       {/* TODO What to do about small screens? */}
@@ -217,22 +244,33 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
             [N]uc mutations
           </Button>
           <div className='flex-grow-1' />
+          {sizes.map(s => (
+            <Button
+              size='sm'
+              variant='info'
+              className='mx-2'
+              disabled={size === s.id}
+              onClick={() => setSize(s.id)}
+            >
+              {s.label}
+            </Button>
+          ))}
           <Button size='sm' className='mx-2' onClick={() => toggleFullscreen()}>
             [F]ullscreen
           </Button>
         </div>
         {/* The main area */}
         <div className='flex-grow p-4' ref={ref}>
-          {gridSizes && (
+          {gridSizes && filteredSubLineages ? (
             <>
               <GridFigure
                 gridSizes={gridSizes}
-                labels={subLineages}
+                labels={filteredSubLineages}
                 onLabelClick={pangoLineage =>
                   setParams(history, { ...params, pangoLineage: pangoLineage.replace('*', '') })
                 }
               >
-                {subLineages.map(subLineage => (
+                {filteredSubLineages.map(subLineage => (
                   <GridContent label={subLineage}>
                     <OutPortal key={subLineage} node={portals.get(subLineage)!} />
                   </GridContent>
@@ -241,10 +279,12 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
                 <GridYAxis portals={axisPortals.y} />
               </GridFigure>
             </>
+          ) : (
+            <Loader />
           )}
         </div>
       </div>
-      {figureType === 'prevalence' && gridSizes && (
+      {figureType === 'prevalence' && gridSizes && filteredSubLineages && (
         <SequencesOverTimeGrid
           selector={selector}
           plotWidth={gridSizes.plotWidth - 12}
@@ -256,11 +296,12 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
       {sequenceTypes.map(
         sequenceType =>
           figureType === `${sequenceType}-mutations` &&
-          gridSizes && (
+          gridSizes &&
+          filteredSubLineages && (
             <MutationsGrid
               selector={selector}
               pangoLineage={params.pangoLineage}
-              subLineages={subLineages}
+              subLineages={filteredSubLineages}
               plotWidth={gridSizes.plotWidth - 12}
               portals={portals}
               sequenceType={sequenceType}

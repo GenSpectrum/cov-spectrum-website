@@ -77,52 +77,55 @@ export const SequencesOverTimeGridInner = ({ data, portals, axisPortals, plotWid
           />
         </InPortal>
       ))}
-      {plotData.map(d => (
-        <InPortal key={d.nextcladePangoLineage} node={portals.get(d.nextcladePangoLineage)!}>
-          <ComposedChart
-            data={d.entries}
-            margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
-            width={plotWidth}
-            height={plotWidth}
-          >
-            <XAxis dataKey='dateAsNumber' hide={true} type='number' domain={dateRangeAsNumbers} />
-            <YAxis domain={proportionRange} hide={true} />
-            <Tooltip
-              active={false}
-              cursor={false}
-              content={e => {
-                if (e.active && e.payload !== undefined) {
-                  const newActive = e.payload[0].payload;
-                  if (active === undefined || active !== newActive.dateAsNumber) {
-                    setActive(newActive.dateAsNumber);
-                  }
-                }
-                return <></>;
-              }}
-            />
-            {active && (
-              <ReferenceLine
-                x={active}
-                stroke='gray'
-                isFront={true}
-                label={
-                  <Label position='left'>
-                    {dataMap.get(d.nextcladePangoLineage)!.get(active)?.proportion.toFixed(4)}
-                  </Label>
-                }
-              />
-            )}
-            <Line
-              type='monotone'
-              dataKey={'proportion'}
-              stroke={colors.active}
-              strokeWidth={2}
-              dot={false}
-              isAnimationActive={false}
-            />
-          </ComposedChart>
-        </InPortal>
-      ))}
+      {plotData.map(
+        d =>
+          portals.get(d.nextcladePangoLineage) && (
+            <InPortal key={d.nextcladePangoLineage} node={portals.get(d.nextcladePangoLineage)!}>
+              <ComposedChart
+                data={d.entries}
+                margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+                width={plotWidth}
+                height={plotWidth}
+              >
+                <XAxis dataKey='dateAsNumber' hide={true} type='number' domain={dateRangeAsNumbers} />
+                <YAxis domain={proportionRange} hide={true} />
+                <Tooltip
+                  active={false}
+                  cursor={false}
+                  content={e => {
+                    if (e.active && e.payload !== undefined) {
+                      const newActive = e.payload[0].payload;
+                      if (active === undefined || active !== newActive.dateAsNumber) {
+                        setActive(newActive.dateAsNumber);
+                      }
+                    }
+                    return <></>;
+                  }}
+                />
+                {active && (
+                  <ReferenceLine
+                    x={active}
+                    stroke='gray'
+                    isFront={true}
+                    label={
+                      <Label position='left'>
+                        {dataMap.get(d.nextcladePangoLineage)!.get(active)?.proportion.toFixed(4)}
+                      </Label>
+                    }
+                  />
+                )}
+                <Line
+                  type='monotone'
+                  dataKey={'proportion'}
+                  stroke={colors.active}
+                  strokeWidth={2}
+                  dot={false}
+                  isAnimationActive={false}
+                />
+              </ComposedChart>
+            </InPortal>
+          )
+      )}
     </>
   );
 };
