@@ -187,8 +187,9 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
           className='border-b-2 border-solid border-gray-200 flex flex-row items-center px-4'
         >
           {fullScreenMode && (
-            <div style={{ color: '#F18805', fontWeight: 'bold', fontSize: '1.75rem', marginRight: 10 }}>
-              CS
+            <div style={{ fontWeight: 'bold', fontSize: '1.75rem', marginRight: 10 }}>
+              <span style={{ color: '#726b6b', marginRight: -5 }}>C</span>
+              <span style={{ color: '#F18805' }}>S</span>
             </div>
           )}
           <Button
