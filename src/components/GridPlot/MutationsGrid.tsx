@@ -100,8 +100,10 @@ export const MutationsGrid = ({
 
 const calculateFontSize = (text: string, plotWidth: number): number => {
   // A VERY naive way to obtain an EXTREMELY rough estimate for a suitable font size
+  const longestWordLength = Math.max(...text.split(' ').map(s => s.length));
+  const minLengthForLongestWord = (10 * plotWidth) / (7 * longestWordLength);
   const numberChars = text.length;
   const availableArea = plotWidth * plotWidth;
-  const estimatedFontSize = availableArea / 40 / numberChars;
-  return Math.min(40, Math.max(10, estimatedFontSize));
+  const estimatedFontSize = availableArea / 30 / numberChars;
+  return Math.min(40, Math.max(10, estimatedFontSize), minLengthForLongestWord);
 };
