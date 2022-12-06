@@ -97,7 +97,9 @@ export const GridFigure = ({ children, gridSizes, labels, onLabelClick }: Props)
               }}
             >
               <div
-                className='bg-gray-200 hover:bg-blue-500 border-b-2 border-solid border-black pl-2 cursor-pointer'
+                className={`${
+                  el?.props.highlighted ? 'bg-blue-500' : 'bg-gray-200'
+                } hover:bg-blue-500 border-b-2 border-solid border-black pl-2 cursor-pointer`}
                 onClick={() => onLabelClick(label)}
               >
                 {label}

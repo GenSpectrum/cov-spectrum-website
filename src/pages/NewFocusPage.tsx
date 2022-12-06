@@ -48,9 +48,15 @@ const sizes: { id: Size; label: string; approxNumberPlots: number }[] = [
 ];
 const sizeMap = new Map(sizes.map(s => [s.id, s]));
 
+type CursorStatus = {
+  row: number;
+  column: number;
+};
+
 export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   const [figureType, setFigureType] = useState<FigureType>('prevalence');
   const [size, setSize] = useState<Size>('size2');
+  const [cursor, setCursor] = useState<CursorStatus>({ row: 0, column: 0 });
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
 
   const history = useHistory();
@@ -170,34 +176,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
     }
   }, [fullScreenMode, setFullScreenMode]);
 
-  // Keyboard shortcuts
-  const handleKeyPress = useCallback(
-    event => {
-      switch (event.key) {
-        case 'p':
-          setFigureType('prevalence');
-          break;
-        case 'a':
-          setFigureType('aa-mutations');
-          break;
-        case 'n':
-          setFigureType('nuc-mutations');
-          break;
-        case 'f':
-          toggleFullscreen();
-          break;
-      }
-    },
-    [toggleFullscreen]
-  );
-
-  useEffect(() => {
-    document.addEventListener('keydown', handleKeyPress);
-    return () => {
-      document.removeEventListener('keydown', handleKeyPress);
-    };
-  }, [handleKeyPress]);
-
+  // Navigation
   const setPangoLineage = useCallback(
     (pangoLineage: string) => {
       setParams(history, { ...params, pangoLineage: pangoLineage.replace('*', '') });
@@ -217,6 +196,107 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
     const parent = PangoLineageAliasResolverService.findAliasUnsafeSync(parentFullName);
     setPangoLineage(parent);
   }, [params.pangoLineage, setPangoLineage]);
+
+  const setCursorInsideGrid = useCallback(
+    (newCursor: CursorStatus) => {
+      if (!gridSizes || !filteredSubLineages) {
+        return;
+      }
+      if (
+        newCursor.row < -1 ||
+        newCursor.row >= gridSizes.numberRows ||
+        newCursor.column < 0 ||
+        newCursor.column >= gridSizes.numberCols ||
+        newCursor.row * gridSizes.numberCols + newCursor.column >= filteredSubLineages.length
+      ) {
+        return;
+      }
+      setCursor(newCursor);
+    },
+    [gridSizes, filteredSubLineages, setCursor]
+  );
+
+  // Keyboard shortcuts
+  const handleKeyPress = useCallback(
+    event => {
+      switch (event.key) {
+        case 'p':
+          setFigureType('prevalence');
+          break;
+        case 'a':
+          setFigureType('aa-mutations');
+          break;
+        case 'n':
+          setFigureType('nuc-mutations');
+          break;
+        case 'f':
+          toggleFullscreen();
+          break;
+        case 'ArrowUp':
+          setCursorInsideGrid({ row: cursor.row - 1, column: cursor.column });
+          event.preventDefault();
+          break;
+        case 'ArrowDown':
+          setCursorInsideGrid({ row: cursor.row + 1, column: cursor.column });
+          event.preventDefault();
+          break;
+        case 'ArrowLeft':
+          setCursorInsideGrid({ row: cursor.row, column: cursor.column - 1 });
+          event.preventDefault();
+          break;
+        case 'ArrowRight':
+          setCursorInsideGrid({ row: cursor.row, column: cursor.column + 1 });
+          event.preventDefault();
+          break;
+        case 'Enter':
+          if (cursor.row === -1) {
+            goToParentLineage();
+          }
+          if (gridSizes) {
+            const index = cursor.row * gridSizes.numberCols + cursor.column;
+            const lineage = filteredSubLineages && filteredSubLineages[index];
+            if (lineage) {
+              setPangoLineage(lineage);
+            }
+          }
+          break;
+      }
+    },
+    [
+      toggleFullscreen,
+      cursor,
+      gridSizes,
+      goToParentLineage,
+      filteredSubLineages,
+      setPangoLineage,
+      setCursorInsideGrid,
+    ]
+  );
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyPress);
+    return () => {
+      document.removeEventListener('keydown', handleKeyPress);
+    };
+  }, [handleKeyPress]);
+
+  // Misc
+  const isCursorOnParent = cursor.row === -1;
+  const isCursorOnLineage = (index: number) => {
+    if (!gridSizes) {
+      return false;
+    }
+    const lineageRow = Math.floor(index / gridSizes.numberCols);
+    const lineageCol = index % gridSizes.numberCols;
+    return lineageRow === cursor.row && lineageCol === cursor.column;
+  };
+
+  useEffect(() => {
+    setCursor({
+      row: 0,
+      column: 0,
+    });
+  }, [params.pangoLineage]);
 
   // View
   return (
@@ -326,7 +406,9 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
         </div>
         {/* The main area */}
         <div
-          className='h-5 bg-gray-200 hover:bg-blue-500 cursor-pointer text-center'
+          className={`h-5 ${
+            isCursorOnParent ? 'bg-blue-500' : 'bg-gray-200'
+          } hover:bg-blue-500 cursor-pointer text-center`}
           style={{ width: 'calc(100% - 30px)', marginTop: 15, marginLeft: 15, marginRight: 15 }}
           onClick={() => goToParentLineage()}
         >
@@ -336,8 +418,8 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
           {gridSizes && filteredSubLineages ? (
             <>
               <GridFigure gridSizes={gridSizes} labels={filteredSubLineages} onLabelClick={setPangoLineage}>
-                {filteredSubLineages.map(subLineage => (
-                  <GridContent label={subLineage}>
+                {filteredSubLineages.map((subLineage, i) => (
+                  <GridContent label={subLineage} highlighted={isCursorOnLineage(i)}>
                     <OutPortal key={subLineage} node={portals.get(subLineage)!} />
                   </GridContent>
                 ))}
