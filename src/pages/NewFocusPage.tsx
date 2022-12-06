@@ -19,6 +19,7 @@ import { AxisPortals } from '../components/GridPlot/common';
 import { GridXAxis, GridYAxis } from '../components/GridPlot/GridAxis';
 import { MutationsGrid } from '../components/GridPlot/MutationsGrid';
 import { sequenceTypes } from '../data/SequenceType';
+import { MdLocationPin, MdCalendarToday } from 'react-icons/md';
 
 type FigureType = 'prevalence' | 'aa-mutations' | 'nuc-mutations';
 type TmpEntry = { nextcladePangoLineage: string | null; count: number };
@@ -243,6 +244,30 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
           >
             [N]uc mutations
           </Button>
+          <div className='flex items-center ml-8'>
+            <span className='inline-block rounded-full z-10 bg-red-500 text-white' style={{
+              padding: 5
+            }}><MdLocationPin /></span>
+            <span className='bg-red-300' style={{
+              paddingLeft: 15,
+              marginLeft: -12,
+              paddingRight: 12,
+              borderTopRightRadius: 12,
+              borderBottomRightRadius: 12
+            }}>World</span>
+          </div>
+          <div className='flex items-center ml-4'>
+            <span className='inline-block rounded-full z-10 bg-yellow-500 text-white' style={{
+              padding: 5
+            }}><MdCalendarToday /></span>
+            <span className='bg-yellow-300' style={{
+              paddingLeft: 15,
+              marginLeft: -12,
+              paddingRight: 12,
+              borderTopRightRadius: 12,
+              borderBottomRightRadius: 12
+            }}>Past 6 months</span>
+          </div>
           <div className='flex-grow-1' />
           {sizes.map(s => (
             <Button
