@@ -198,6 +198,26 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
     };
   }, [handleKeyPress]);
 
+  const setPangoLineage = useCallback(
+    (pangoLineage: string) => {
+      setParams(history, { ...params, pangoLineage: pangoLineage.replace('*', '') });
+    },
+    [history, params]
+  );
+
+  const goToParentLineage = useCallback(() => {
+    const fullName =
+      PangoLineageAliasResolverService.findFullNameUnsafeSync(params.pangoLineage) ?? params.pangoLineage;
+    if (!fullName.includes('.')) {
+      // We already reached the root
+      return;
+    }
+    const lastDotIndex = fullName.lastIndexOf('.');
+    const parentFullName = fullName.substring(0, lastDotIndex);
+    const parent = PangoLineageAliasResolverService.findAliasUnsafeSync(parentFullName);
+    setPangoLineage(parent);
+  }, [params.pangoLineage, setPangoLineage]);
+
   // View
   return (
     <div key={fullScreenMode.toString()}>
@@ -245,28 +265,48 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
             [N]uc mutations
           </Button>
           <div className='flex items-center ml-8'>
-            <span className='inline-block rounded-full z-10 bg-red-500 text-white' style={{
-              padding: 5
-            }}><MdLocationPin /></span>
-            <span className='bg-red-300' style={{
-              paddingLeft: 15,
-              marginLeft: -12,
-              paddingRight: 12,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 12
-            }}>World</span>
+            <span
+              className='inline-block rounded-full z-10 bg-red-500 text-white'
+              style={{
+                padding: 5,
+              }}
+            >
+              <MdLocationPin />
+            </span>
+            <span
+              className='bg-red-300'
+              style={{
+                paddingLeft: 15,
+                marginLeft: -12,
+                paddingRight: 12,
+                borderTopRightRadius: 12,
+                borderBottomRightRadius: 12,
+              }}
+            >
+              World
+            </span>
           </div>
           <div className='flex items-center ml-4'>
-            <span className='inline-block rounded-full z-10 bg-yellow-500 text-white' style={{
-              padding: 5
-            }}><MdCalendarToday /></span>
-            <span className='bg-yellow-300' style={{
-              paddingLeft: 15,
-              marginLeft: -12,
-              paddingRight: 12,
-              borderTopRightRadius: 12,
-              borderBottomRightRadius: 12
-            }}>Past 6 months</span>
+            <span
+              className='inline-block rounded-full z-10 bg-yellow-500 text-white'
+              style={{
+                padding: 5,
+              }}
+            >
+              <MdCalendarToday />
+            </span>
+            <span
+              className='bg-yellow-300'
+              style={{
+                paddingLeft: 15,
+                marginLeft: -12,
+                paddingRight: 12,
+                borderTopRightRadius: 12,
+                borderBottomRightRadius: 12,
+              }}
+            >
+              Past 6 months
+            </span>
           </div>
           <div className='flex-grow-1' />
           {sizes.map(s => (
@@ -285,16 +325,17 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
           </Button>
         </div>
         {/* The main area */}
+        <div
+          className='h-5 bg-gray-200 hover:bg-blue-500 cursor-pointer text-center'
+          style={{ width: 'calc(100% - 30px)', marginTop: 15, marginLeft: 15, marginRight: 15 }}
+          onClick={() => goToParentLineage()}
+        >
+          ^
+        </div>
         <div className='flex-grow p-4' ref={ref}>
           {gridSizes && filteredSubLineages ? (
             <>
-              <GridFigure
-                gridSizes={gridSizes}
-                labels={filteredSubLineages}
-                onLabelClick={pangoLineage =>
-                  setParams(history, { ...params, pangoLineage: pangoLineage.replace('*', '') })
-                }
-              >
+              <GridFigure gridSizes={gridSizes} labels={filteredSubLineages} onLabelClick={setPangoLineage}>
                 {filteredSubLineages.map(subLineage => (
                   <GridContent label={subLineage}>
                     <OutPortal key={subLineage} node={portals.get(subLineage)!} />
