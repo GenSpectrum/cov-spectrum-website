@@ -66,7 +66,15 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
     }
 
     onClose();
-  }, [host, qc, setHostAndQc, onClose, submissionDateRangeSelector, specialSubmissionDateRaw]);
+  }, [
+    host,
+    qc,
+    setHostAndQc,
+    onClose,
+    submissionDateRangeSelector,
+    specialSubmissionDateRaw,
+    submissionDateWasSelected,
+  ]);
 
   return (
     <>

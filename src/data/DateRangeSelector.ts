@@ -14,7 +14,7 @@ export interface DateRangeSelector {
 export class FixedDateRangeSelector implements DateRangeSelector {
   constructor(public dateRange: DateRange) {}
 
-  getDateRange(submission: boolean = false): DateRange {
+  getDateRange(): DateRange {
     return this.dateRange;
   }
 }
