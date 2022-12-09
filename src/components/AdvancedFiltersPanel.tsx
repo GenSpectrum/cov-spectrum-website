@@ -31,7 +31,7 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
 
   // Date range
   const [submissionDateRangeSelector, setSubmissionDateRangeSelector] = useState<DateRangeSelector>(
-    new SpecialDateRangeSelector('Past6M')
+    new SpecialDateRangeSelector('AllTimes')
   );
 
   const [specialSubmissionDateRaw, setSpecialSubmissionDateRaw] = useState<string | null>(null);
@@ -127,7 +127,7 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
           variant={ButtonVariant.SECONDARY}
           className='w-25 mt-4'
           onClick={() => {
-            setSpecialSubmissionDateRaw(null);
+            setSpecialSubmissionDateRaw('AllTimes');
             setSubmissionDateWasSelected(false);
           }}
         >

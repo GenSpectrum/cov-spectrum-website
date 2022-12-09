@@ -27,7 +27,7 @@ export const HeaderDateRangeSelect = ({
   setSubmissionDateWasSelected,
 }: Props) => {
   const [dateRangeValue, setDateRangeValue] = useState<string>(
-    specialSubmissionDateRaw ? specialSubmissionDateRaw : 'Past6M'
+    specialSubmissionDateRaw ? specialSubmissionDateRaw : 'AllTimes'
   );
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
