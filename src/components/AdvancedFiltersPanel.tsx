@@ -25,6 +25,10 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
   const [host, setHost] = useState<HostSelector>(initialHost ?? []);
   const [qc, setQc] = useState<QcSelector>(initialQc ?? {});
 
+  // checks if the submission date was explicitly set by user
+  // this prevents the submission date from being set immediately (such a behaviour is only needed when a ususl date is selected and not in the advanced filter)
+  const [submissionDateWasSelected, setSubmissionDateWasSelected] = useState<boolean>(false);
+
   // Date range
   const [submissionDateRangeSelector, setSubmissionDateRangeSelector] = useState<DateRangeSelector>(
     new SpecialDateRangeSelector('Past6M')
@@ -55,7 +59,11 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
     if (!setHostAndQc) {
       return;
     }
-    setHostAndQc(host, qc, submissionDateRangeSelector, specialSubmissionDateRaw);
+    if (submissionDateWasSelected) {
+      setHostAndQc(host, qc, submissionDateRangeSelector, specialSubmissionDateRaw);
+    } else {
+      setHostAndQc(host, qc);
+    }
 
     onClose();
   }, [host, qc, setHostAndQc, onClose, submissionDateRangeSelector, specialSubmissionDateRaw]);
@@ -98,19 +106,21 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
       )}
       <div className='mt-4 mb-4'>
         <h2>Submission date</h2>
+
         <DateRangePicker
           submission={true}
           specialSubmissionDateRaw={specialSubmissionDateRaw}
           setSpecialSubmissionDateRaw={setSpecialSubmissionDateRaw}
           dateRangeSelector={submissionDateRangeSelector}
           setSubmissionDateRangeSelector={setSubmissionDateRangeSelector}
+          setSubmissionDateWasSelected={setSubmissionDateWasSelected}
         />
         <Button
           variant={ButtonVariant.SECONDARY}
           className='w-25 mt-4'
           onClick={() => {
             setSpecialSubmissionDateRaw(null);
-            setSubmissionDateRangeSelector(new SpecialDateRangeSelector('Past6M'));
+            setSubmissionDateWasSelected(false);
           }}
         >
           Clear filter

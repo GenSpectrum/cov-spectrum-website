@@ -15,6 +15,7 @@ interface Props {
   setSubmissionDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
   setSpecialSubmissionDateRaw?: React.Dispatch<React.SetStateAction<string | null>>;
   specialSubmissionDateRaw?: string | null;
+  setSubmissionDateWasSelected?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const HeaderDateRangeSelect = ({
@@ -23,12 +24,16 @@ export const HeaderDateRangeSelect = ({
   setSubmissionDateRangeSelector,
   setSpecialSubmissionDateRaw,
   specialSubmissionDateRaw,
+  setSubmissionDateWasSelected,
 }: Props) => {
   const [dateRangeValue, setDateRangeValue] = useState<string>(
     specialSubmissionDateRaw ? specialSubmissionDateRaw : 'Past6M'
   );
 
   const handleChange = (event: React.ChangeEvent<{ value: unknown }>) => {
+    if (setSubmissionDateWasSelected) {
+      setSubmissionDateWasSelected(true);
+    }
     if (isDateRangeEncoded(event.target.value)) {
       if (setSubmissionDateRangeSelector) {
         setDateRangeValue(event.target.value);

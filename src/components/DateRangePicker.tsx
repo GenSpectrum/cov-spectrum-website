@@ -17,6 +17,7 @@ interface Props {
   setSubmissionDateRangeSelector?: React.Dispatch<React.SetStateAction<DateRangeSelector>>;
   setSpecialSubmissionDateRaw?: React.Dispatch<React.SetStateAction<string | null>>;
   specialSubmissionDateRaw?: string | null;
+  setSubmissionDateWasSelected?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const minimumDate: Date = new Date('2020-01-06'); // first day of first week of 2020
@@ -29,6 +30,7 @@ export const DateRangePicker = ({
   setSubmissionDateRangeSelector,
   setSpecialSubmissionDateRaw,
   specialSubmissionDateRaw,
+  setSubmissionDateWasSelected,
 }: Props) => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
 
@@ -60,13 +62,19 @@ export const DateRangePicker = ({
       const newDateFrom = globalDateCache.getDayUsingDayjs(dayjs(startDate));
       const newDateTo = globalDateCache.getDayUsingDayjs(dayjs(endDate));
 
-      if (setSubmissionDateRangeSelector) {
+      if (
+        setSubmissionDateRangeSelector &&
+        setSubmissionDateWasSelected &&
+        (prevDateFrom.string !== newDateFrom.string || prevDateTo.string !== newDateTo.string)
+      ) {
+        setSubmissionDateWasSelected(true);
         setSubmissionDateRangeSelector(
           new FixedDateRangeSelector({
             dateFrom: newDateFrom,
             dateTo: newDateTo,
           })
         );
+
         return;
       }
 
@@ -111,6 +119,7 @@ export const DateRangePicker = ({
           setSubmissionDateRangeSelector={setSubmissionDateRangeSelector}
           setSpecialSubmissionDateRaw={setSpecialSubmissionDateRaw}
           specialSubmissionDateRaw={specialSubmissionDateRaw}
+          setSubmissionDateWasSelected={setSubmissionDateWasSelected}
         />
 
         <div className={`flex flex-row ${width && width < 480 ? 'flex-wrap mt-2 mb-2 ml-1' : 'ml-2'}`}>

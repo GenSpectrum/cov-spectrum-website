@@ -52,7 +52,36 @@ export const App = () => {
       if (dateSubmitted.dateSubmitted === 'AllTimes') {
         return null;
       }
-      return `${dateSubmitted.dateSubmitted}`;
+
+      let dateString: string = '';
+
+      switch (dateSubmitted.dateSubmitted) {
+        case 'Past2W':
+          dateString = 'Past 2 weeks';
+          break;
+        case 'Past1M':
+          dateString = 'Past month';
+          break;
+        case 'Past2M':
+          dateString = 'Past 2 months';
+          break;
+        case 'Past3M':
+          dateString = 'Past 3 months';
+          break;
+        case 'Past6M':
+          dateString = 'Past 6 months';
+          break;
+        case 'Y2020':
+          dateString = '2020';
+          break;
+        case 'Y2021':
+          dateString = '2021';
+          break;
+        case 'Y2022':
+          dateString = '2022';
+      }
+
+      return `${dateString}`;
     } else if (dateSubmitted?.dateSubmittedFrom && dateSubmitted.dateSubmittedTo) {
       return `from ${dateSubmitted.dateSubmittedFrom} to ${dateSubmitted.dateSubmittedTo}`;
     }
