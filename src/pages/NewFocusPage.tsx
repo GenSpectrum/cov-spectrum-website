@@ -396,6 +396,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
               className='mx-2'
               disabled={size === s.id}
               onClick={() => setSize(s.id)}
+              key={s.id}
             >
               {s.label}
             </Button>
@@ -419,8 +420,8 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
             <>
               <GridFigure gridSizes={gridSizes} labels={filteredSubLineages} onLabelClick={setPangoLineage}>
                 {filteredSubLineages.map((subLineage, i) => (
-                  <GridContent label={subLineage} highlighted={isCursorOnLineage(i)}>
-                    <OutPortal key={subLineage} node={portals.get(subLineage)!} />
+                  <GridContent key={subLineage} label={subLineage} highlighted={isCursorOnLineage(i)}>
+                    <OutPortal node={portals.get(subLineage)!} />
                   </GridContent>
                 ))}
                 <GridXAxis portals={axisPortals.x} />
@@ -447,6 +448,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
           gridSizes &&
           filteredSubLineages && (
             <MutationsGrid
+              key={sequenceType}
               selector={selector}
               pangoLineage={params.pangoLineage}
               subLineages={filteredSubLineages}

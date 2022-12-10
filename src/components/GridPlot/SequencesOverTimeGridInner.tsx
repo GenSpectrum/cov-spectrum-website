@@ -63,13 +63,13 @@ export const SequencesOverTimeGridInner = ({ data, portals, axisPortals, plotWid
   return (
     <>
       {/*<GridXAxis>*/}
-      {axisPortals.x.map(portal => (
-        <InPortal node={portal}>
+      {axisPortals.x.map((portal, i) => (
+        <InPortal node={portal} key={i}>
           <TwoValuesXAxis low={dateRange[0].string} high={dateRange[1].string} size={plotWidth} />
         </InPortal>
       ))}
-      {axisPortals.y.map(portal => (
-        <InPortal node={portal}>
+      {axisPortals.y.map((portal, i) => (
+        <InPortal node={portal} key={i}>
           <TwoValuesYAxis
             low={proportionRange[0].toFixed(2)}
             high={proportionRange[1].toFixed(2)}
