@@ -86,6 +86,7 @@ export const SequencesOverTimeGridInner = ({ data, portals, axisPortals, plotWid
                 margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
                 width={plotWidth}
                 height={plotWidth}
+                onMouseLeave={() => setActive(undefined)}
               >
                 <XAxis dataKey='dateAsNumber' hide={true} type='number' domain={dateRangeAsNumbers} />
                 <YAxis domain={proportionRange} hide={true} />
