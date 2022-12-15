@@ -9,12 +9,13 @@ import { useQuery } from '../helpers/query-hook';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 import { InternalLink } from '../components/InternalLink';
-import { DateRangePicker } from '../components/DateRangePicker';
+//import { DateRangePicker } from '../components/DateRangePicker';
 import { VariantSearch } from '../components/VariantSearch';
 import { FocusCompareEqualsPage } from './FocusCompareEqualsPage';
 import { FocusCompareToBaselinePage } from './FocusCompareToBaselinePage';
 import { getLocation } from '../helpers/get-location';
 import { formatVariantDisplayName } from '../data/VariantSelector';
+import DateRangePickerNew from '../components/DateRangePickerNew';
 
 type Props = {
   isSmallScreen: boolean;
@@ -115,7 +116,8 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
             }  flex-wrap w-full`}
           >
             <div className='m-1'>
-              <DateRangePicker dateRangeSelector={exploreUrl.dateRange} />
+              {/* <DateRangePicker dateRangeSelector={exploreUrl.dateRange} /> */}
+              <DateRangePickerNew dateRangeSelector={exploreUrl.dateRange} />
             </div>
             <div className='flex-grow'>
               <VariantSearch
