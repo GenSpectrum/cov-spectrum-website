@@ -32,11 +32,7 @@ import { DateCountSampleEntry } from '../data/sample/DateCountSampleEntry';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { GridCell, PackedGrid } from '../components/PackedGrid';
 import { VariantTimeDistributionChartWidget } from '../widgets/VariantTimeDistributionChartWidget';
-import {
-  DateRangeSelector,
-  FixedDateRangeSelector,
-  SpecialDateRangeSelector,
-} from '../data/DateRangeSelector';
+import { DateRangeSelector, SpecialDateRangeSelector } from '../data/DateRangeSelector';
 import { Chen2021FitnessResponse, ValueWithCI } from '../models/chen2021Fitness/chen2021Fitness-types';
 import { PromiseQueue } from '../helpers/PromiseQueue';
 import { getModelData } from '../models/chen2021Fitness/loading';
@@ -47,7 +43,7 @@ import { Collection } from '../data/Collection';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import download from 'downloadjs';
 import { csvStringify } from '../helpers/csvStringifyHelper';
-import DateRangePickerNew from '../components/DateRangePicker';
+import DateRangePicker from '../components/DateRangePicker';
 import { PprettyGridExportButton } from '../components/CombinedExport/PprettyGridExportButton';
 import {
   PprettyGridExportManager,
@@ -214,7 +210,7 @@ export const CollectionSingleViewPage = () => {
     );
   }
 
-  const onChangeDate = (dateRangeSelector: FixedDateRangeSelector) => {
+  const onChangeDate = (dateRangeSelector: DateRangeSelector) => {
     setDateRangeSelector(dateRangeSelector);
   };
 
@@ -240,7 +236,7 @@ export const CollectionSingleViewPage = () => {
       {/* Baseline variant */}
 
       <div className='mt-8'>
-        <DateRangePickerNew dateRangeSelector={dateRangeSelector} onChangeDate={onChangeDate} />
+        <DateRangePicker dateRangeSelector={dateRangeSelector} onChangeDate={onChangeDate} />
       </div>
 
       <div className='mt-4'>

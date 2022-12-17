@@ -7,93 +7,78 @@ import { useResizeDetector } from 'react-resize-detector';
 import {
   DateRangeSelector,
   FixedDateRangeSelector,
-  SpecialDateRange,
+  isSpecialDateRange,
+  specialDateRanges,
   SpecialDateRangeSelector,
   specialDateRangeToString,
 } from '../data/DateRangeSelector';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { globalDateCache } from '../helpers/date-cache';
 import dayjs from 'dayjs';
 import { Form } from 'react-bootstrap';
-import { dateRangeUrlToSelector, isDateRangeEncoded } from '../data/DateRangeUrlEncoded';
-
-const minimumDate: Date = new Date('2020-01-06'); // first day of first week of 2020
-const today = new Date();
 
 interface Props {
   dateRangeSelector: DateRangeSelector;
-  onChangeDate?: Function;
+  onChangeDate?: (dateRange: DateRangeSelector) => void;
 }
 
-export default function BasicDatePicker({ dateRangeSelector, onChangeDate }: Props) {
+export default function DateRangePicker({ dateRangeSelector, onChangeDate }: Props) {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
 
-  const { dateFrom, dateTo } = dateRangeSelector.getDateRange();
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-  const [specialDate, setSpecialDate] = useState<string>('Past6M');
+  const [currentSelector, setCurrentSelector] = useState(dateRangeSelector);
 
   useEffect(() => {
-    if (dateRangeSelector instanceof SpecialDateRangeSelector) {
-      setSpecialDate(dateRangeSelector.mode);
-      const { dateFrom, dateTo } = dateRangeUrlToSelector(dateRangeSelector.mode).getDateRange();
-      if (dateFrom && dateTo) {
-        setStartDate(dateFrom.dayjs.toDate());
-        setEndDate(dateTo.dayjs.toDate());
-      }
-    } else {
-      const startDate = dateFrom ? dateFrom.dayjs.toDate() : minimumDate;
-      const endDate = dateTo ? dateTo.dayjs.toDate() : today;
-      setStartDate(startDate);
-      setEndDate(endDate);
-    }
-  }, [dateRangeSelector, dateFrom, dateTo]);
+    setCurrentSelector(dateRangeSelector);
+  }, [dateRangeSelector]);
 
-  const handleDateChange = (newValue: Date | null, domain: 'start' | 'end') => {
-    if (domain === 'start') {
-      setStartDate(newValue);
-    } else {
-      setEndDate(newValue);
-    }
-    if (startDate && endDate && startDate <= endDate) {
-      const newDateFrom = globalDateCache.getDayUsingDayjs(dayjs(startDate));
-      const newDateTo = globalDateCache.getDayUsingDayjs(dayjs(endDate));
-      if (onChangeDate) {
-        onChangeDate(
-          new FixedDateRangeSelector({
-            dateFrom: newDateFrom,
-            dateTo: newDateTo,
-          })
-        );
-      }
-    }
-  };
+  const { dateFromDate, dateToDate, specialDateRangeSelectValue } = useMemo(() => {
+    const dateRange = currentSelector.getDateRange();
+    return {
+      dateFromDate: dateRange.dateFrom?.dayjs.toDate(),
+      dateToDate: dateRange.dateTo?.dayjs.toDate(),
+      specialDateRangeSelectValue:
+        currentSelector instanceof SpecialDateRangeSelector ? currentSelector.mode : 'custom',
+    };
+  }, [currentSelector]);
 
-  const specialDateRanges: SpecialDateRange[] = [
-    'AllTimes',
-    'Y2020',
-    'Y2021',
-    'Y2022',
-    'Past2W',
-    'Past1M',
-    'Past2M',
-    'Past3M',
-    'Past6M',
-  ];
+  const handleDateChange = useCallback(
+    (newValue: Date | undefined | null, domain: 'dateFrom' | 'dateTo') => {
+      if (!newValue) {
+        return;
+      }
+      const newValueUnified = globalDateCache.getDayUsingDayjs(dayjs(newValue));
+      const newDateRange = {
+        ...currentSelector.getDateRange(),
+        [domain]: newValueUnified,
+      };
+      const newSelector = new FixedDateRangeSelector(newDateRange);
+      setCurrentSelector(newSelector);
+      if (
+        newDateRange.dateFrom &&
+        newDateRange.dateTo &&
+        newDateRange.dateFrom.dayjs.isBefore(newDateRange.dateTo.dayjs)
+      ) {
+        if (onChangeDate) {
+          onChangeDate(newSelector);
+        }
+      }
+    },
+    [currentSelector, onChangeDate]
+  );
 
-  const handleSpecialDateRangeChange = (event: React.ChangeEvent<{ value: unknown }>) => {
-    if (isDateRangeEncoded(event.target.value)) {
-      setSpecialDate(event.target.value);
-      const { dateFrom, dateTo } = dateRangeUrlToSelector(event.target.value).getDateRange();
-      if (dateFrom && dateTo) {
-        setStartDate(dateFrom.dayjs.toDate());
-        setEndDate(dateTo.dayjs.toDate());
+  const handleSpecialDateRangeChange = useCallback(
+    (event: React.ChangeEvent<{ value: unknown }>) => {
+      const value = event.target.value;
+      if (isSpecialDateRange(value)) {
+        const newSelector = new SpecialDateRangeSelector(value);
+        setCurrentSelector(newSelector);
+        if (onChangeDate) {
+          onChangeDate(newSelector);
+        }
       }
-      if (onChangeDate) {
-        onChangeDate(dateRangeUrlToSelector(event.target.value));
-      }
-    }
-  };
+    },
+    [onChangeDate]
+  );
 
   return (
     <div ref={ref} className='w-full flex flex-row items-center flex-wrap'>
@@ -101,11 +86,12 @@ export default function BasicDatePicker({ dateRangeSelector, onChangeDate }: Pro
         <Form.Control
           as='select'
           id='dateRangeSelect'
-          value={specialDate}
+          value={specialDateRangeSelectValue}
           onChange={handleSpecialDateRangeChange}
           className='rounded mt-1'
           style={{ height: '55px', marginRight: '5px' }}
         >
+          <option value='custom'>Custom</option>
           {specialDateRanges.map(d => (
             <option value={d} key={specialDateRangeToString(d)}>
               {specialDateRangeToString(d)}
@@ -118,9 +104,9 @@ export default function BasicDatePicker({ dateRangeSelector, onChangeDate }: Pro
           <DatePicker
             inputFormat='yyyy-MM-dd'
             label='from'
-            value={startDate}
+            value={dateFromDate}
             onChange={newValue => {
-              handleDateChange(newValue, 'start');
+              handleDateChange(newValue, 'dateFrom');
             }}
             renderInput={params => (
               <TextField
@@ -135,9 +121,9 @@ export default function BasicDatePicker({ dateRangeSelector, onChangeDate }: Pro
             className={`${width && width < 330 ? 'mt-10' : ''}`}
             inputFormat='yyyy-MM-dd'
             label='to'
-            value={endDate}
+            value={dateToDate}
             onChange={newValue => {
-              handleDateChange(newValue, 'end');
+              handleDateChange(newValue, 'dateTo');
             }}
             renderInput={params => (
               <TextField

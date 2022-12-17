@@ -14,8 +14,8 @@ import { FocusCompareEqualsPage } from './FocusCompareEqualsPage';
 import { FocusCompareToBaselinePage } from './FocusCompareToBaselinePage';
 import { getLocation } from '../helpers/get-location';
 import { formatVariantDisplayName } from '../data/VariantSelector';
-import DateRangePickerNew from '../components/DateRangePicker';
-import { FixedDateRangeSelector } from '../data/DateRangeSelector';
+import DateRangePicker from '../components/DateRangePicker';
+import { DateRangeSelector } from '../data/DateRangeSelector';
 
 type Props = {
   isSmallScreen: boolean;
@@ -53,7 +53,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
     document.title = `${variant} - ${place} - covSPECTRUM`;
   });
 
-  const onChangeDate = (dateRangeSelector: FixedDateRangeSelector) => {
+  const onChangeDate = (dateRangeSelector: DateRangeSelector) => {
     exploreUrl?.setDateRange(dateRangeSelector);
   };
 
@@ -120,7 +120,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
             }  flex-wrap w-full`}
           >
             <div className='m-1'>
-              <DateRangePickerNew dateRangeSelector={exploreUrl.dateRange} onChangeDate={onChangeDate} />
+              <DateRangePicker dateRangeSelector={exploreUrl.dateRange} onChangeDate={onChangeDate} />
             </div>
             <div className='flex-grow'>
               <VariantSearch
