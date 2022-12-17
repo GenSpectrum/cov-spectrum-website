@@ -43,7 +43,7 @@ import { Collection } from '../data/Collection';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import download from 'downloadjs';
 import { csvStringify } from '../helpers/csvStringifyHelper';
-import { DateRangePicker } from '../components/DateRangePicker';
+import DateRangePicker from '../components/DateRangePicker';
 import { PprettyGridExportButton } from '../components/CombinedExport/PprettyGridExportButton';
 import {
   PprettyGridExportManager,
@@ -210,6 +210,10 @@ export const CollectionSingleViewPage = () => {
     );
   }
 
+  const onChangeDate = (dateRangeSelector: DateRangeSelector) => {
+    setDateRangeSelector(dateRangeSelector);
+  };
+
   return (
     <>
       <CollectionSinglePageTitle collection={collection} />
@@ -232,7 +236,7 @@ export const CollectionSingleViewPage = () => {
       {/* Baseline variant */}
 
       <div className='mt-8'>
-        <DateRangePicker dateRangeSelector={dateRangeSelector} setDateRangeSelector={setDateRangeSelector} />
+        <DateRangePicker dateRangeSelector={dateRangeSelector} onChangeDate={onChangeDate} />
       </div>
 
       <div className='mt-4'>

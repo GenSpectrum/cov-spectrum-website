@@ -9,12 +9,13 @@ import { useQuery } from '../helpers/query-hook';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 import { InternalLink } from '../components/InternalLink';
-import { DateRangePicker } from '../components/DateRangePicker';
 import { VariantSearch } from '../components/VariantSearch';
 import { FocusCompareEqualsPage } from './FocusCompareEqualsPage';
 import { FocusCompareToBaselinePage } from './FocusCompareToBaselinePage';
 import { getLocation } from '../helpers/get-location';
 import { formatVariantDisplayName } from '../data/VariantSelector';
+import DateRangePicker from '../components/DateRangePicker';
+import { DateRangeSelector } from '../data/DateRangeSelector';
 
 type Props = {
   isSmallScreen: boolean;
@@ -51,6 +52,10 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
     let place: string = getLocation(exploreUrl);
     document.title = `${variant} - ${place} - covSPECTRUM`;
   });
+
+  const onChangeDate = (dateRangeSelector: DateRangeSelector) => {
+    exploreUrl?.setDateRange(dateRangeSelector);
+  };
 
   return (
     <>
@@ -115,7 +120,7 @@ export const FocusPage = ({ isSmallScreen }: Props) => {
             }  flex-wrap w-full`}
           >
             <div className='m-1'>
-              <DateRangePicker dateRangeSelector={exploreUrl.dateRange} />
+              <DateRangePicker dateRangeSelector={exploreUrl.dateRange} onChangeDate={onChangeDate} />
             </div>
             <div className='flex-grow'>
               <VariantSearch

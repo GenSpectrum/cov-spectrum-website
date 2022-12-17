@@ -18,22 +18,20 @@ export class FixedDateRangeSelector implements DateRangeSelector {
     return this.dateRange;
   }
 }
-
-export type SpecialDateRange =
-  | 'AllTimes'
-  | 'Y2020'
-  | 'Y2021'
-  | 'Y2022'
-  | 'Past2W'
-  | 'Past1M'
-  | 'Past2M'
-  | 'Past3M'
-  | 'Past6M';
+export const specialDateRanges = [
+  'AllTimes',
+  'Y2020',
+  'Y2021',
+  'Y2022',
+  'Past2W',
+  'Past1M',
+  'Past2M',
+  'Past3M',
+  'Past6M',
+] as const;
+export type SpecialDateRange = typeof specialDateRanges[number];
 export function isSpecialDateRange(s: unknown): s is SpecialDateRange {
-  return (
-    typeof s === 'string' &&
-    ['AllTimes', 'Y2020', 'Y2021', 'Y2022', 'Past2W', 'Past1M', 'Past2M', 'Past3M', 'Past6M'].includes(s)
-  );
+  return typeof s === 'string' && (specialDateRanges as readonly string[]).includes(s);
 }
 
 export class SpecialDateRangeSelector implements DateRangeSelector {
@@ -46,7 +44,7 @@ export class SpecialDateRangeSelector implements DateRangeSelector {
     const weeksAgo = (n: number) => globalDateCache.getDayUsingDayjs(dayjs().subtract(n, 'weeks'));
     switch (this.mode) {
       case 'AllTimes':
-        return { dateFrom: globalDateCache.getDay('2020-01-06') };
+        return { dateFrom: globalDateCache.getDay('2020-01-06'), dateTo: daysAgo(7) };
       case 'Y2020':
         return {
           dateFrom: globalDateCache.getDay('2020-01-06'),
@@ -84,7 +82,7 @@ export const FixedDateRangeSelectorEncodedSchema = zod.object({
 });
 
 export const SpecialDateRangeSelectorEncodedSchema = zod.object({
-  mode: zod.enum(['AllTimes', 'Y2020', 'Y2021', 'Y2022', 'Past2W', 'Past1M', 'Past2M', 'Past3M', 'Past6M']),
+  mode: zod.enum(specialDateRanges),
 });
 
 export const DateRangeSelectorEncodedSchema = zod.union([
