@@ -241,6 +241,7 @@ export async function getLinkTo(
   if (selector.host) {
     addHostSelectorToUrlSearchParams(selector.host, params);
   }
+
   addQcSelectorToUrlSearchParams(selector.qc, params);
   if (downloadAsFile) {
     params.set('downloadAsFile', 'true');

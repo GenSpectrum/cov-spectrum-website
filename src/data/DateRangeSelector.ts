@@ -124,6 +124,44 @@ export function addDateRangeSelectorToUrlSearchParams(selector: DateRangeSelecto
   }
 }
 
+const fields_submisison_date = ['dateSubmittedFrom', 'dateSubmittedTo', 'dateSubmitted'] as const;
+
+export function addSubmittedDateRangeSelectorToUrlParams(
+  params: URLSearchParams,
+  selector?: DateRangeSelector
+) {
+  for (const field of fields_submisison_date) {
+    params.delete(field);
+  }
+
+  if (selector) {
+    if (selector instanceof SpecialDateRangeSelector) {
+      if (selector.mode !== 'AllTimes') {
+        params.set('dateSubmitted', selector.mode);
+        return;
+      }
+    } else {
+      const dateRange = selector.getDateRange();
+      dateRange.dateFrom && params.set('dateSubmittedFrom', dateRange.dateFrom.string);
+      dateRange.dateTo && params.set('dateSubmittedTo', dateRange.dateTo.string);
+    }
+  }
+}
+
+export function readSubmissionDateRangeFromUrlSearchParams(params: URLSearchParams): string {
+  let res: string = '';
+  if (params.has('dateSubmitted')) {
+    res = `dateSubmitted=${params.get('dateSubmitted')}`;
+  } else if (params.has('dateSubmittedFrom') && params.has('dateSubmittedTo')) {
+    res = `dateSubmittedFrom=${params.get('dateSubmittedFrom')}&dateSubmittedTo=${params.get(
+      'dateSubmittedTo'
+    )}`;
+  }
+  // ^dateSubmittedFrom=\\d{4}-\\d{2}-\\d{2}&dateSubmittedTo=\\d{4}-\\d{2}-\\d{2}$
+
+  return res;
+}
+
 export function specialDateRangeToString(dateRange: SpecialDateRange): string {
   switch (dateRange) {
     case 'AllTimes':

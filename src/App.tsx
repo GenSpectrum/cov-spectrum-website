@@ -31,6 +31,7 @@ import { FaFilter } from 'react-icons/fa';
 import { CollectionOverviewPage } from './pages/CollectionOverviewPage';
 import { CollectionAddPage } from './pages/CollectionAddPage';
 import { CollectionSinglePage } from './pages/CollectionSinglePage';
+import { SpecialDateRangeSelector, specialDateRangeToString } from './data/DateRangeSelector';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -45,7 +46,17 @@ export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
-  const { host, qc, setHostAndQc } = useExploreUrl() ?? {};
+  const { host, qc, setHostAndQc, submissionDate } = useExploreUrl() ?? {};
+
+  const formatDateSubmittedAsString = () => {
+    console.log('submissionDate', submissionDate);
+    if (submissionDate instanceof SpecialDateRangeSelector) {
+      return submissionDate.mode !== 'AllTimes' ? specialDateRangeToString(submissionDate.mode) : '';
+    } else if (submissionDate) {
+      const date = submissionDate.getDateRange();
+      return `from ${date.dateFrom?.string} to ${date.dateTo?.string}`;
+    }
+  };
 
   return (
     <div className='w-full'>
@@ -62,26 +73,36 @@ export const App = () => {
           </Alert>
         )}
         {/* Warning - if advanced filters are active */}
-        {host && qc && setHostAndQc && (!isDefaultHostSelector(host) || !isDefaultQcSelector(qc)) && (
-          <Alert variant={AlertVariant.WARNING}>
-            <div className='flex flex-row'>
-              <FaFilter
-                className='m-1'
-                style={{ width: '30px', minWidth: '30px', height: '30px', minHeight: '30px' }}
-              />
-              <div className='ml-4 flex-grow-1'>
-                <div className='font-weight-bold'>Advanced filters are active</div>
-                {!isDefaultHostSelector(host) && <div>Selected hosts: {host.join(', ')}</div>}
-                {!isDefaultQcSelector(qc) && <div>Sequence quality: {formatQcSelectorAsString(qc)}</div>}
-                <div className='mt-4'>
-                  <button className='underline cursor-pointer' onClick={() => setHostAndQc(defaultHost, {})}>
-                    Remove filters
-                  </button>
+        {host &&
+          qc &&
+          setHostAndQc &&
+          (!isDefaultHostSelector(host) || !isDefaultQcSelector(qc) || formatDateSubmittedAsString()) && (
+            <Alert variant={AlertVariant.WARNING}>
+              <div className='flex flex-row'>
+                <FaFilter
+                  className='m-1'
+                  style={{ width: '30px', minWidth: '30px', height: '30px', minHeight: '30px' }}
+                />
+                <div className='ml-4 flex-grow-1'>
+                  <div className='font-weight-bold'>Advanced filters are active</div>
+                  {!isDefaultHostSelector(host) && <div>Selected hosts: {host.join(', ')}</div>}
+                  {!isDefaultQcSelector(qc) && <div>Sequence quality: {formatQcSelectorAsString(qc)}</div>}
+                  {formatDateSubmittedAsString() && (
+                    <div>Submission date: {formatDateSubmittedAsString()}</div>
+                  )}
+
+                  <div className='mt-4'>
+                    <button
+                      className='underline cursor-pointer'
+                      onClick={() => setHostAndQc(defaultHost, {})}
+                    >
+                      Remove filters
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Alert>
-        )}
+            </Alert>
+          )}
         {/*Main content*/}
         <Switch>
           <Route exact path='/'>

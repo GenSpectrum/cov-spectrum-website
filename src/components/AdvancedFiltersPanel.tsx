@@ -10,6 +10,8 @@ import { HostService } from '../services/HostService';
 import { useQuery } from '../helpers/query-hook';
 import Loader from './Loader';
 import { HUMAN } from '../data/api-lapis';
+import DateRangePicker from '../components/DateRangePicker';
+import { DateRangeSelector, SpecialDateRangeSelector } from '../data/DateRangeSelector';
 
 type Props = {
   onClose: () => void;
@@ -21,6 +23,10 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
   const { setHostAndQc, host: initialHost, qc: initialQc } = useExploreUrl() ?? {};
   const [host, setHost] = useState<HostSelector>(initialHost ?? []);
   const [qc, setQc] = useState<QcSelector>(initialQc ?? {});
+
+  const [submissionDateRangeSelector, setSubmissionDateRangeSelector] = useState<DateRangeSelector>(
+    new SpecialDateRangeSelector('AllTimes')
+  );
 
   const { data: allHosts } = useQuery(
     () => HostService.allHosts.then(hs => hs.sort((a, b) => a.localeCompare(b))),
@@ -45,9 +51,14 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
     if (!setHostAndQc) {
       return;
     }
-    setHostAndQc(host, qc);
+    setHostAndQc(host, qc, submissionDateRangeSelector);
+
     onClose();
-  }, [host, qc, setHostAndQc, onClose]);
+  }, [host, qc, setHostAndQc, onClose, submissionDateRangeSelector]);
+
+  const onChangeDate = (dateRangeSelector: DateRangeSelector) => {
+    setSubmissionDateRangeSelector(dateRangeSelector);
+  };
 
   return (
     <>
@@ -85,6 +96,18 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
           <Loader />
         </div>
       )}
+      <div className='mt-4 mb-4'>
+        <h2>Submission date</h2>
+
+        <DateRangePicker dateRangeSelector={submissionDateRangeSelector} onChangeDate={onChangeDate} />
+        <Button
+          variant={ButtonVariant.SECONDARY}
+          className='w-25 mt-4'
+          onClick={() => setSubmissionDateRangeSelector(new SpecialDateRangeSelector('AllTimes'))}
+        >
+          Clear filter
+        </Button>
+      </div>
       {/* Sequence quality */}
       <h2>Sequence quality</h2>
       Here, you can filter the sequences by the QC (quality control) metrics calculated by{' '}
