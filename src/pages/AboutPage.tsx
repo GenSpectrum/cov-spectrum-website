@@ -86,6 +86,23 @@ export const AboutPage = () => {
         available and can be used for other projects (
         <ExternalLink url='https://lapis-docs.readthedocs.io/'>API documentation</ExternalLink>).
       </Question>
+      <Question title='How do you determine the Pango lineages?' id='faq-pango-lineage-classifiers'>
+        <p>
+          There are several classifiers to determine the Pango lineage of a sequence. CoV-Spectrum uses two
+          different classifiers:{' '}
+          <ExternalLink url='https://cov-lineages.org/resources/pangolin.html'>pangolin</ExternalLink> and{' '}
+          <ExternalLink url='https://clades.nextstrain.org/'>Nextclade</ExternalLink>. The default is
+          pangolin: that means that the search query "BA.5" finds sequences that pangolin has classified as
+          "BA.5". Nextclade classifications are explicitly labelled: e.g. as "BA.5 (Nextclade)".
+        </p>
+        <p>
+          <b>
+            At the moment, we recommend the usage of Nextclade because (due to technical reasons) we update
+            the Nextclade classifier more regularly. Especially newly designated lineages are often first
+            available in the Nextclade mode.
+          </b>
+        </p>
+      </Question>
       <Question title='How can I search a variant?' id='faq-search-variants'>
         <p>
           CoV-Spectrum supports a wide range of search queries. The following sections presents search options
@@ -216,10 +233,10 @@ export const AboutPage = () => {
           ins_S:214:EPE? & !BA.1*
         </p>
       </Question>
-      <Question title='Can I use the plots on my own website?' id='faq-embed-widget'>
-        Yes! You can embed all the interactive plots of CoV-Spectrum on your own website. Just click on the
-        "Export" and then on the "Embed widget" button and copy and paste the code to your page. The plot will
-        then be embedded as an iframe. It will be automatically updated whenever new data arrives.
+      <Question title='Can I get "publication-ready" figures?' id='faq-publication-ready-figures'>
+        Yes - at least for some plots! Click on the "Export" button and then on "Download PDF/PNG/SVG". This
+        will produce a ggplot2-generated plot with title and legends. This features is not available for every
+        plot, yet, but we plan to support more.
       </Question>
       <Question title='Can I download the numbers behind the plots?' id='faq-download-data'>
         Click on the "Export" button next to the plots and then on "Download CSV" to get the data as a CSV
