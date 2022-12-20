@@ -49,7 +49,6 @@ export const App = () => {
   const { host, qc, setHostAndQc, submissionDate } = useExploreUrl() ?? {};
 
   const formatDateSubmittedAsString = () => {
-    console.log('submissionDate', submissionDate);
     if (submissionDate instanceof SpecialDateRangeSelector) {
       return submissionDate.mode !== 'AllTimes' ? specialDateRangeToString(submissionDate.mode) : '';
     } else if (submissionDate) {

@@ -54,8 +54,6 @@ export function submissionDateRangeUrlToSelector(
     }
   }
 
-  console.log('url to selector', dateRangeEncoded);
-
   const from = dateRangeEncoded.match(/dateSubmittedFrom=(.*)&/);
   const to = dateRangeEncoded.match(/dateSubmittedTo=(.*)$/);
   return new FixedDateRangeSelector({

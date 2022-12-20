@@ -229,7 +229,6 @@ export function useExploreUrl(): ExploreUrl | undefined {
   // Parse from query params
   const { variants, analysisMode, host, qc, submissionDate } = useMemo(() => {
     const submissionDate = readSubmissionDateRangeFromUrlSearchParams(query);
-    console.log('$$$', submissionDate, isSubmissionDateRangeEncoded(submissionDate));
 
     return {
       variants: readVariantListFromUrlSearchParams(query),
