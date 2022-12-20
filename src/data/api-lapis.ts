@@ -3,7 +3,10 @@ import { DateCountSampleEntry } from './sample/DateCountSampleEntry';
 import { AgeCountSampleEntry } from './sample/AgeCountSampleEntry';
 import { DivisionCountSampleEntry } from './sample/DivisionCountSampleEntry';
 import { addLocationSelectorToUrlSearchParams, LocationSelector } from './LocationSelector';
-import { addDateRangeSelectorToUrlSearchParams } from './DateRangeSelector';
+import {
+  addDateRangeSelectorToUrlSearchParams,
+  addSubmittedDateRangeSelectorToUrlParams,
+} from './DateRangeSelector';
 import { addVariantSelectorToUrlSearchParams } from './VariantSelector';
 import { CountryDateCountSampleEntry } from './sample/CountryDateCountSampleEntry';
 import { PangoCountSampleEntry } from './sample/PangoCountSampleEntry';
@@ -240,6 +243,9 @@ export async function getLinkTo(
   }
   if (selector.host) {
     addHostSelectorToUrlSearchParams(selector.host, params);
+  }
+  if (selector.submissionDate) {
+    addSubmittedDateRangeSelectorToUrlParams(params, selector.submissionDate, true);
   }
 
   addQcSelectorToUrlSearchParams(selector.qc, params);

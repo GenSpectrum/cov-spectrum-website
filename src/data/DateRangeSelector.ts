@@ -126,24 +126,31 @@ export function addDateRangeSelectorToUrlSearchParams(selector: DateRangeSelecto
 
 const fields_submisison_date = ['dateSubmittedFrom', 'dateSubmittedTo', 'dateSubmitted'] as const;
 
+const setSubmissionDateUrlParams = (selector: DateRangeSelector, params: URLSearchParams) => {
+  const dateRange = selector.getDateRange();
+  dateRange.dateFrom && params.set('dateSubmittedFrom', dateRange.dateFrom.string);
+  dateRange.dateTo && params.set('dateSubmittedTo', dateRange.dateTo.string);
+};
+
 export function addSubmittedDateRangeSelectorToUrlParams(
   params: URLSearchParams,
-  selector?: DateRangeSelector
+  selector?: DateRangeSelector,
+  translate?: boolean
 ) {
   for (const field of fields_submisison_date) {
     params.delete(field);
   }
 
   if (selector) {
-    if (selector instanceof SpecialDateRangeSelector) {
-      if (selector.mode !== 'AllTimes') {
+    if (selector instanceof SpecialDateRangeSelector && selector.mode !== 'AllTimes') {
+      if (!translate) {
         params.set('dateSubmitted', selector.mode);
         return;
+      } else {
+        setSubmissionDateUrlParams(selector, params);
       }
     } else {
-      const dateRange = selector.getDateRange();
-      dateRange.dateFrom && params.set('dateSubmittedFrom', dateRange.dateFrom.string);
-      dateRange.dateTo && params.set('dateSubmittedTo', dateRange.dateTo.string);
+      setSubmissionDateUrlParams(selector, params);
     }
   }
 }

@@ -3,6 +3,7 @@ import { useDeepCompareMemo } from './deep-compare-hooks';
 import { LocationDateSelector } from '../data/LocationDateSelector';
 import { LapisSelector } from '../data/LapisSelector';
 import { HostAndQcSelector } from '../data/HostAndQcSelector';
+//import { DateRangeSelector } from '../data/DateRangeSelector';
 
 export type SingleSelectorsFromExploreUrlHook = {
   ldvsSelector: LapisSelector;
@@ -33,6 +34,7 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         variant: firstVariant,
         host: exploreUrl.host,
         qc: exploreUrl.qc,
+        submissionDate: exploreUrl.submissionDate,
       }),
       [
         exploreUrl.dateRange,
@@ -41,6 +43,7 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         firstVariant,
         exploreUrl.host,
         exploreUrl.qc,
+        exploreUrl.submissionDate,
       ]
     ),
     ldsSelector: useDeepCompareMemo(
@@ -50,8 +53,16 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         samplingStrategy: exploreUrl.samplingStrategy!,
         host: exploreUrl.host,
         qc: exploreUrl.qc,
+        submissionDate: exploreUrl.submissionDate,
       }),
-      [exploreUrl.dateRange, exploreUrl.location, exploreUrl.samplingStrategy, exploreUrl.host, exploreUrl.qc]
+      [
+        exploreUrl.dateRange,
+        exploreUrl.location,
+        exploreUrl.samplingStrategy,
+        exploreUrl.host,
+        exploreUrl.qc,
+        exploreUrl.submissionDate,
+      ]
     ),
     lvsSelector: useDeepCompareMemo(
       () => ({
@@ -60,6 +71,7 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         variant: firstVariant,
         host: exploreUrl.host,
         qc: exploreUrl.qc,
+        submissionDate: exploreUrl.submissionDate,
       }),
       [
         exploreUrl.dateRange,
@@ -68,6 +80,7 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         firstVariant,
         exploreUrl.host,
         exploreUrl.qc,
+        exploreUrl.submissionDate,
       ]
     ),
     lsSelector: useDeepCompareMemo(
@@ -76,8 +89,15 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         samplingStrategy: exploreUrl.samplingStrategy!,
         host: exploreUrl.host,
         qc: exploreUrl.qc,
+        submissionDate: exploreUrl.submissionDate,
       }),
-      [exploreUrl.location, exploreUrl.samplingStrategy, exploreUrl.host, exploreUrl.qc]
+      [
+        exploreUrl.location,
+        exploreUrl.samplingStrategy,
+        exploreUrl.host,
+        exploreUrl.qc,
+        exploreUrl.submissionDate,
+      ]
     ),
     dvsSelector: useDeepCompareMemo(
       () => ({
@@ -87,8 +107,16 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         host: exploreUrl.host,
         qc: exploreUrl.qc,
         variant: firstVariant,
+        submissionDate: exploreUrl.submissionDate,
       }),
-      [exploreUrl.dateRange, exploreUrl.samplingStrategy, firstVariant, exploreUrl.host, exploreUrl.qc]
+      [
+        exploreUrl.dateRange,
+        exploreUrl.samplingStrategy,
+        firstVariant,
+        exploreUrl.host,
+        exploreUrl.qc,
+        exploreUrl.submissionDate,
+      ]
     ),
     dsSelector: useDeepCompareMemo(
       () => ({
@@ -97,8 +125,15 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
         samplingStrategy: exploreUrl.samplingStrategy!,
         host: exploreUrl.host,
         qc: exploreUrl.qc,
+        submissionDate: exploreUrl.submissionDate,
       }),
-      [exploreUrl.dateRange, exploreUrl.samplingStrategy, exploreUrl.host, exploreUrl.qc]
+      [
+        exploreUrl.dateRange,
+        exploreUrl.samplingStrategy,
+        exploreUrl.host,
+        exploreUrl.qc,
+        exploreUrl.submissionDate,
+      ]
     ),
     lSelector: useDeepCompareMemo(
       () => ({
@@ -110,8 +145,9 @@ export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): Single
       () => ({
         host: exploreUrl.host,
         qc: exploreUrl.qc,
+        submissionDate: exploreUrl.submissionDate,
       }),
-      [exploreUrl.host, exploreUrl.qc]
+      [exploreUrl.host, exploreUrl.qc, exploreUrl.submissionDate]
     ),
   };
 }
@@ -129,6 +165,7 @@ export function useMultipleSelectorsFromExploreUrl(
           variant,
           host: exploreUrl.host,
           qc: exploreUrl.qc,
+          submissionDate: exploreUrl.submissionDate,
         })),
       [
         exploreUrl.dateRange,
