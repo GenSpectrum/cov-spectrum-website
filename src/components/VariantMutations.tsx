@@ -18,6 +18,8 @@ import { PipeDividedOptionsButtons } from '../helpers/ui';
 import { DeregistrationHandle, ExportManagerContext } from './CombinedExport/ExportManager';
 import download from 'downloadjs';
 import { csvStringify } from '../helpers/csvStringifyHelper';
+import { getConsensusSequenceFromMutations } from '../helpers/variant-consensus-sequence';
+import { decodeNucMutation } from '../helpers/nuc-mutation';
 
 export interface Props {
   selector: LapisSelector;
@@ -198,6 +200,22 @@ export const VariantMutations = ({ selector }: Props) => {
         }),
         exportManager.register('Download AA mutations', async () => {
           download(transform(data.aa), 'aa-mutations.csv', 'text/csv');
+        }),
+        exportManager.register('Download nucleotide consensus sequence (ignoring deletions)', async () => {
+          const reference = (await ReferenceGenomeService.data).nucSeq;
+          const mutations = data.nuc.map(e => {
+            const decoded = decodeNucMutation(e.mutation);
+            return {
+              position: decoded.position,
+              mutatedBase: decoded.mutatedBase!,
+              proportion: e.proportion,
+            };
+          });
+          download(
+            '>variant nucleotide consensus\n' + getConsensusSequenceFromMutations(reference, mutations),
+            'nucleotide-consensus.fasta',
+            'text/x-fasta'
+          );
         }),
       ];
 
