@@ -3,7 +3,6 @@ import { useDeepCompareMemo } from './deep-compare-hooks';
 import { LocationDateSelector } from '../data/LocationDateSelector';
 import { LapisSelector } from '../data/LapisSelector';
 import { HostAndQcSelector } from '../data/HostAndQcSelector';
-//import { DateRangeSelector } from '../data/DateRangeSelector';
 
 export type SingleSelectorsFromExploreUrlHook = {
   ldvsSelector: LapisSelector;

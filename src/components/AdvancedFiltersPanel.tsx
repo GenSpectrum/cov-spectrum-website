@@ -11,7 +11,11 @@ import { useQuery } from '../helpers/query-hook';
 import Loader from './Loader';
 import { HUMAN } from '../data/api-lapis';
 import DateRangePicker from '../components/DateRangePicker';
-import { DateRangeSelector, SpecialDateRangeSelector } from '../data/DateRangeSelector';
+import {
+  DateRangeSelector,
+  defaultSubmissionDateRangeSelector,
+  SpecialDateRangeSelector,
+} from '../data/DateRangeSelector';
 
 type Props = {
   onClose: () => void;
@@ -103,7 +107,7 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
         <Button
           variant={ButtonVariant.SECONDARY}
           className='w-25 mt-4'
-          onClick={() => setSubmissionDateRangeSelector(new SpecialDateRangeSelector('AllTimes'))}
+          onClick={() => setSubmissionDateRangeSelector(defaultSubmissionDateRangeSelector)}
         >
           Clear filter
         </Button>

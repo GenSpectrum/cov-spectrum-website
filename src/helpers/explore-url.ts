@@ -15,6 +15,7 @@ import {
   DateRangeSelector,
   addSubmittedDateRangeSelectorToUrlParams,
   readSubmissionDateRangeFromUrlSearchParams,
+  defaultSubmissionDateRangeSelector,
 } from '../data/DateRangeSelector';
 import {
   DateRangeUrlEncoded,
@@ -48,7 +49,7 @@ export interface ExploreUrl {
   analysisMode: AnalysisMode;
   host: HostSelector;
   qc: QcSelector;
-  submissionDate?: DateRangeSelector | null;
+  submissionDate: DateRangeSelector;
 
   setLocation: (location: LocationSelector) => void;
   setDateRange: (dateRange: DateRangeSelector) => void;
@@ -237,7 +238,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
       qc: readQcSelectorFromUrlSearchParams(query),
       submissionDate: isSubmissionDateRangeEncoded(submissionDate)
         ? submissionDateRangeUrlToSelector(submissionDate)
-        : null,
+        : defaultSubmissionDateRangeSelector,
     };
   }, [query]);
 

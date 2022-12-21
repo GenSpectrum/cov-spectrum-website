@@ -83,6 +83,7 @@ export const VariantMutations = ({ selector }: Props) => {
         host: selector.host,
         samplingStrategy: selector.samplingStrategy,
         qc: selector.qc,
+        submissionDate: selector.submissionDate,
       };
       return Promise.all([
         MutationProportionData.fromApi(overallSelector, 'aa', signal, 0),
@@ -98,7 +99,14 @@ export const VariantMutations = ({ selector }: Props) => {
         return { aa, nuc };
       });
     },
-    [selector.location, selector.dateRange, selector.host, selector.samplingStrategy, selector.qc]
+    [
+      selector.location,
+      selector.dateRange,
+      selector.host,
+      selector.samplingStrategy,
+      selector.qc,
+      selector.submissionDate,
+    ]
   );
 
   const queryStatus = useQuery(

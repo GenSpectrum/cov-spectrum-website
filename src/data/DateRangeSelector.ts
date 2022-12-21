@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import * as zod from 'zod';
 
 export const dateStringRegex = /\d{4}-\d{2}-\d{2}$/;
-export const dateRangeStringRegex = /\d{4}-\d{2}-\d{2} - \d{4}-\d{2}-\d{2}$/;
 export const DateStringSchema = zod.string().regex(dateStringRegex);
 
 export interface DateRangeSelector {
@@ -124,7 +123,22 @@ export function addDateRangeSelectorToUrlSearchParams(selector: DateRangeSelecto
   }
 }
 
-const fields_submisison_date = ['dateSubmittedFrom', 'dateSubmittedTo', 'dateSubmitted'] as const;
+export function formatDateRangeSelector(selector: DateRangeSelector) {
+  if (selector instanceof SpecialDateRangeSelector) {
+    return specialDateRangeToString(selector.mode);
+  } else if (selector) {
+    const date = selector.getDateRange();
+    return `from ${date.dateFrom?.string} to ${date.dateTo?.string}`;
+  }
+}
+
+const submissionDateFields = ['dateSubmittedFrom', 'dateSubmittedTo', 'dateSubmitted'] as const;
+
+export const defaultSubmissionDateRangeSelector = new SpecialDateRangeSelector('AllTimes');
+
+export function isDefaultSubmissionDateRangeSelector(selector: DateRangeSelector) {
+  return selector instanceof SpecialDateRangeSelector && selector.mode === 'AllTimes';
+}
 
 const setSubmissionDateUrlParams = (selector: DateRangeSelector, params: URLSearchParams) => {
   const dateRange = selector.getDateRange();
@@ -137,18 +151,13 @@ export function addSubmittedDateRangeSelectorToUrlParams(
   selector?: DateRangeSelector,
   translate?: boolean
 ) {
-  for (const field of fields_submisison_date) {
+  for (const field of submissionDateFields) {
     params.delete(field);
   }
 
-  if (selector) {
-    if (selector instanceof SpecialDateRangeSelector && selector.mode !== 'AllTimes') {
-      if (!translate) {
-        params.set('dateSubmitted', selector.mode);
-        return;
-      } else {
-        setSubmissionDateUrlParams(selector, params);
-      }
+  if (selector && !isDefaultSubmissionDateRangeSelector(selector)) {
+    if (selector instanceof SpecialDateRangeSelector && !translate) {
+      params.set('dateSubmitted', selector.mode);
     } else {
       setSubmissionDateUrlParams(selector, params);
     }
@@ -164,8 +173,6 @@ export function readSubmissionDateRangeFromUrlSearchParams(params: URLSearchPara
       'dateSubmittedTo'
     )}`;
   }
-  // ^dateSubmittedFrom=\\d{4}-\\d{2}-\\d{2}&dateSubmittedTo=\\d{4}-\\d{2}-\\d{2}$
-
   return res;
 }
 
