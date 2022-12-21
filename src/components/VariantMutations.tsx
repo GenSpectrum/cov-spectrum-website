@@ -20,6 +20,7 @@ import download from 'downloadjs';
 import { csvStringify } from '../helpers/csvStringifyHelper';
 import { getConsensusSequenceFromMutations } from '../helpers/variant-consensus-sequence';
 import { decodeNucMutation } from '../helpers/nuc-mutation';
+import JSZip from 'jszip';
 
 export interface Props {
   selector: LapisSelector;
@@ -212,10 +213,35 @@ export const VariantMutations = ({ selector }: Props) => {
             };
           });
           download(
-            '>variant nucleotide consensus\n' + getConsensusSequenceFromMutations(reference, mutations),
+            '>variant nucleotide consensus\n' +
+              getConsensusSequenceFromMutations(reference, mutations) +
+              '\n',
             'nucleotide-consensus.fasta',
             'text/x-fasta'
           );
+        }),
+        exportManager.register('Download AA consensus sequences (ignoring deletions)', async () => {
+          const referencesByGene = new Map<string, string>();
+          const mutationsByGene = new Map<
+            string,
+            { position: number; mutatedBase: string; proportion: number }[]
+          >();
+          for (const { name, aaSeq } of (await ReferenceGenomeService.data).genes) {
+            referencesByGene.set(name, aaSeq);
+            mutationsByGene.set(name, []);
+          }
+          for (const { mutation, proportion } of data.aa) {
+            const { gene, position, mutatedBase } = decodeAAMutation(mutation);
+            mutationsByGene.get(gene)!.push({ position, mutatedBase: mutatedBase!, proportion });
+          }
+          const zipFile = new JSZip();
+          for (const [gene, mutations] of mutationsByGene) {
+            const consensus = getConsensusSequenceFromMutations(referencesByGene.get(gene)!, mutations);
+            const fastaText = `> variant ${gene}-gene consensus\n${consensus}\n`;
+            zipFile.file(`${gene}-consensus.fasta`, fastaText);
+          }
+          const zipBlob = await zipFile.generateAsync({ type: 'blob' });
+          download(zipBlob, 'aa-consensus.zip', 'application/zip');
         }),
       ];
 
