@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { MutationName } from './MutationName';
 import { decodeAAMutation, sortListByAAMutation } from '../helpers/aa-mutation';
@@ -14,8 +14,10 @@ import { useResizeDetector } from 'react-resize-detector';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { NamedCard } from './NamedCard';
 import { PipeDividedOptionsButtons } from '../helpers/ui';
+import { DeregistrationHandle, ExportManagerContext } from './CombinedExport/ExportManager';
+import download from 'downloadjs';
+import { csvStringify } from '../helpers/csvStringifyHelper';
 
 export interface Props {
   selector: LapisSelector;
@@ -172,13 +174,47 @@ export const VariantMutations = ({ selector }: Props) => {
     [selector, overallMutationCounts]
   );
 
+  // Data export
+  const exportManager = useContext(ExportManagerContext);
+  useEffect(() => {
+    if (queryStatus.data) {
+      // Small helper
+      const transform = (entries: MutationProportionEntryWithUniqueness[]) => {
+        return csvStringify(
+          entries.map(e => ({
+            mutation: e.mutation,
+            proportion: e.proportion,
+            count: e.count,
+            jaccard: e.uniqueness,
+          }))
+        );
+      };
+
+      // Register export handles
+      const data = queryStatus.data;
+      const handles: DeregistrationHandle[] = [
+        exportManager.register('Download nucleotide mutations', async () => {
+          download(transform(data.nuc), 'nucleotide-mutations.csv', 'text/csv');
+        }),
+        exportManager.register('Download AA mutations', async () => {
+          download(transform(data.aa), 'aa-mutations.csv', 'text/csv');
+        }),
+      ];
+
+      return () => {
+        handles.forEach(handle => handle.deregister());
+      };
+    }
+  }, [exportManager, queryStatus]);
+
+  // View
   if (queryStatus.isLoading || !queryStatus.data) {
     return <Loader />;
   }
   const data = queryStatus.data;
 
   return (
-    <NamedCard title='Subsitutions and deletions'>
+    <>
       <div className='mb-8'>
         <div className='ml-0' ref={ref}>
           <PipeDividedOptionsButtons
@@ -348,7 +384,7 @@ export const VariantMutations = ({ selector }: Props) => {
           </MutationList>
         </>
       )}
-    </NamedCard>
+    </>
   );
 };
 
