@@ -50,6 +50,7 @@ import {
   PprettyGridExportManagerContext,
 } from '../components/CombinedExport/PprettyGridExportManager';
 import { PprettyRequest } from '../data/ppretty/ppretty-request';
+import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -100,14 +101,12 @@ export const CollectionSingleViewPage = () => {
       const [baselineDateCounts, ...variantsDateCounts] = await Promise.allSettled(
         [{ query: baselineVariant }, ...variants].map(variant =>
           DateCountSampleData.fromApi(
-            {
-              host: undefined,
-              qc: {},
+            addDefaultHostAndQc({
               location: locationSelector,
               variant: variant.query,
               samplingStrategy: SamplingStrategy.AllSamples,
               dateRange: dateRangeSelector,
-            },
+            }),
             signal
           )
         )
@@ -145,14 +144,12 @@ export const CollectionSingleViewPage = () => {
                 variantQuery: `(${variantVariantQuery})  | (${baselineVariantQuery})`,
               };
           return DateCountSampleData.fromApi(
-            {
-              host: undefined,
-              qc: {},
+            addDefaultHostAndQc({
               location: locationSelector,
               variant: variantSelector,
               samplingStrategy: SamplingStrategy.AllSamples,
               dateRange: dateRangeSelector,
-            },
+            }),
             signal
           );
         })
@@ -170,13 +167,11 @@ export const CollectionSingleViewPage = () => {
       return Promise.allSettled(
         variants.map(variant =>
           fetchNumberSubmittedSamplesInPastTenDays(
-            {
-              host: undefined,
-              qc: {},
+            addDefaultHostAndQc({
               location: locationSelector,
               variant: variant.query,
               samplingStrategy: SamplingStrategy.AllSamples,
-            },
+            }),
             signal
           )
         )

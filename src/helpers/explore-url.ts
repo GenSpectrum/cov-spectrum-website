@@ -11,12 +11,19 @@ import {
   encodeLocationSelectorToSingleString,
   LocationSelector,
 } from '../data/LocationSelector';
-import { DateRangeSelector } from '../data/DateRangeSelector';
+import {
+  DateRangeSelector,
+  addSubmittedDateRangeSelectorToUrlParams,
+  readSubmissionDateRangeFromUrlSearchParams,
+  defaultSubmissionDateRangeSelector,
+} from '../data/DateRangeSelector';
 import {
   DateRangeUrlEncoded,
   dateRangeUrlFromSelector,
   dateRangeUrlToSelector,
   isDateRangeEncoded,
+  isSubmissionDateRangeEncoded,
+  submissionDateRangeUrlToSelector,
 } from '../data/DateRangeUrlEncoded';
 import { decodeSamplingStrategy, SamplingStrategy } from '../data/SamplingStrategy';
 import { baseLocation } from '../index';
@@ -42,13 +49,18 @@ export interface ExploreUrl {
   analysisMode: AnalysisMode;
   host: HostSelector;
   qc: QcSelector;
+  submissionDate: DateRangeSelector;
 
   setLocation: (location: LocationSelector) => void;
   setDateRange: (dateRange: DateRangeSelector) => void;
   setVariants: (variants: VariantSelector[], analysisMode?: AnalysisMode) => void;
   setAnalysisMode: (analysisMode: AnalysisMode) => void;
   setSamplingStrategy: (samplingStrategy: SamplingStrategy) => void;
-  setHostAndQc: (host?: HostSelector, qc?: QcSelector) => void;
+  setHostAndQc: (
+    host?: HostSelector,
+    qc?: QcSelector,
+    submissionDateRangeSelector?: DateRangeSelector
+  ) => void;
   getOverviewPageUrl: () => string;
   getExplorePageUrl: () => string;
   getDeepExplorePageUrl: (pagePath: string) => string;
@@ -172,7 +184,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     [history, locationState.pathname, locationState.search, queryString, routeMatches.locationSamplingDate]
   );
   const setHostAndQc = useCallback(
-    (host?: HostSelector, qc?: QcSelector) => {
+    (host?: HostSelector, qc?: QcSelector, submissionDateRange?: DateRangeSelector) => {
       const newQueryParam = new URLSearchParams(queryString);
       if (host) {
         if (isDefaultHostSelector(host)) {
@@ -184,6 +196,11 @@ export function useExploreUrl(): ExploreUrl | undefined {
       if (qc) {
         addQcSelectorToUrlSearchParams(qc, newQueryParam);
       }
+
+      if (submissionDateRange) {
+        addSubmittedDateRangeSelectorToUrlParams(newQueryParam, submissionDateRange);
+      }
+
       const path = `${locationState.pathname}?${newQueryParam}&`;
       history.push(path);
     },
@@ -211,15 +228,19 @@ export function useExploreUrl(): ExploreUrl | undefined {
   );
 
   // Parse from query params
-  const { variants, analysisMode, host, qc } = useMemo(
-    () => ({
+  const { variants, analysisMode, host, qc, submissionDate } = useMemo(() => {
+    const submissionDate = readSubmissionDateRangeFromUrlSearchParams(query);
+
+    return {
       variants: readVariantListFromUrlSearchParams(query),
       analysisMode: decodeAnalysisMode(query.get('analysisMode')) ?? defaultAnalysisMode,
       host: readHostSelectorFromUrlSearchParams(query),
       qc: readQcSelectorFromUrlSearchParams(query),
-    }),
-    [query]
-  );
+      submissionDate: isSubmissionDateRangeEncoded(submissionDate)
+        ? submissionDateRangeUrlToSelector(submissionDate)
+        : defaultSubmissionDateRangeSelector,
+    };
+  }, [query]);
 
   // Parse from path params
   const encoded = {
@@ -273,6 +294,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     analysisMode,
     host,
     qc,
+    submissionDate,
 
     setLocation,
     setSamplingStrategy,

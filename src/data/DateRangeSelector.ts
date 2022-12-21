@@ -4,7 +4,6 @@ import dayjs from 'dayjs';
 import * as zod from 'zod';
 
 export const dateStringRegex = /\d{4}-\d{2}-\d{2}$/;
-export const dateRangeStringRegex = /\d{4}-\d{2}-\d{2} - \d{4}-\d{2}-\d{2}$/;
 export const DateStringSchema = zod.string().regex(dateStringRegex);
 
 export interface DateRangeSelector {
@@ -122,6 +121,59 @@ export function addDateRangeSelectorToUrlSearchParams(selector: DateRangeSelecto
   if (dateTo) {
     params.set('dateTo', dateTo.string);
   }
+}
+
+export function formatDateRangeSelector(selector: DateRangeSelector) {
+  if (selector instanceof SpecialDateRangeSelector) {
+    return specialDateRangeToString(selector.mode);
+  } else if (selector) {
+    const date = selector.getDateRange();
+    return `from ${date.dateFrom?.string} to ${date.dateTo?.string}`;
+  }
+}
+
+const submissionDateFields = ['dateSubmittedFrom', 'dateSubmittedTo', 'dateSubmitted'] as const;
+
+export const defaultSubmissionDateRangeSelector = new SpecialDateRangeSelector('AllTimes');
+
+export function isDefaultSubmissionDateRangeSelector(selector: DateRangeSelector) {
+  return selector instanceof SpecialDateRangeSelector && selector.mode === 'AllTimes';
+}
+
+const setSubmissionDateUrlParams = (selector: DateRangeSelector, params: URLSearchParams) => {
+  const dateRange = selector.getDateRange();
+  dateRange.dateFrom && params.set('dateSubmittedFrom', dateRange.dateFrom.string);
+  dateRange.dateTo && params.set('dateSubmittedTo', dateRange.dateTo.string);
+};
+
+export function addSubmittedDateRangeSelectorToUrlParams(
+  params: URLSearchParams,
+  selector?: DateRangeSelector,
+  translate?: boolean
+) {
+  for (const field of submissionDateFields) {
+    params.delete(field);
+  }
+
+  if (selector && !isDefaultSubmissionDateRangeSelector(selector)) {
+    if (selector instanceof SpecialDateRangeSelector && !translate) {
+      params.set('dateSubmitted', selector.mode);
+    } else {
+      setSubmissionDateUrlParams(selector, params);
+    }
+  }
+}
+
+export function readSubmissionDateRangeFromUrlSearchParams(params: URLSearchParams): string {
+  let res: string = '';
+  if (params.has('dateSubmitted')) {
+    res = `dateSubmitted=${params.get('dateSubmitted')}`;
+  } else if (params.has('dateSubmittedFrom') && params.has('dateSubmittedTo')) {
+    res = `dateSubmittedFrom=${params.get('dateSubmittedFrom')}&dateSubmittedTo=${params.get(
+      'dateSubmittedTo'
+    )}`;
+  }
+  return res;
 }
 
 export function specialDateRangeToString(dateRange: SpecialDateRange): string {
