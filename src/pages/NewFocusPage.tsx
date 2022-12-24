@@ -24,8 +24,9 @@ import { VscListTree } from 'react-icons/vsc';
 import { IoReturnDownBackOutline } from 'react-icons/io5';
 import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 import { NewFocusPageCommandPanelModal } from '../components/NewFocusPageCommandPanel';
+import { GrowthAdvantageGrid } from '../components/GridPlot/GrowthAdvantageGrid';
 
-type FigureType = 'prevalence' | 'aa-mutations' | 'nuc-mutations';
+type FigureType = 'prevalence' | 'aa-mutations' | 'nuc-mutations' | 'growth-advantage';
 type TmpEntry = { nextcladePangoLineage: string | null; count: number };
 type TmpEntry2 = { nextcladePangoLineage: string; nextcladePangoLineageFullName: string; count: number };
 
@@ -43,9 +44,9 @@ const selector: LapisSelector = addDefaultHostAndQc({
 
 type Size = 'size1' | 'size2' | 'size3' | 'all';
 const sizes: { id: Size; label: string; approxNumberPlots: number }[] = [
-  { id: 'size1', label: 'Size-1', approxNumberPlots: 4 },
-  { id: 'size2', label: 'Size-2', approxNumberPlots: 8 },
-  { id: 'size3', label: 'Size-3', approxNumberPlots: 16 },
+  { id: 'size1', label: 'S', approxNumberPlots: 4 },
+  { id: 'size2', label: 'M', approxNumberPlots: 8 },
+  { id: 'size3', label: 'L', approxNumberPlots: 16 },
   { id: 'all', label: 'All', approxNumberPlots: Infinity },
 ];
 const sizeMap = new Map(sizes.map(s => [s.id, s]));
@@ -243,6 +244,9 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
           case 'n':
             setFigureType('nuc-mutations');
             break;
+          case 'r':
+            setFigureType('growth-advantage');
+            break;
           case 'f':
             toggleFullscreen();
             break;
@@ -362,6 +366,14 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
             >
               [N]uc mutations
             </Button>
+            <Button
+              size='sm'
+              className='mx-2'
+              disabled={figureType === 'growth-advantage'}
+              onClick={() => setFigureType('growth-advantage')}
+            >
+              G[r]owth advantage
+            </Button>
             <div className='flex items-center ml-8'>
               <span
                 className='inline-block rounded-full z-10 bg-red-500 text-white'
@@ -433,7 +445,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
               <Button
                 size='sm'
                 variant='info'
-                className='mx-2'
+                className='mx-1'
                 disabled={size === s.id}
                 onClick={() => setSize(s.id)}
                 key={s.id}
@@ -497,6 +509,15 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
                 sequenceType={sequenceType}
               />
             )
+        )}
+        {figureType === 'growth-advantage' && gridSizes && filteredSubLineages && (
+          <GrowthAdvantageGrid
+            selector={selector}
+            pangoLineage={params.pangoLineage}
+            subLineages={filteredSubLineages}
+            plotWidth={gridSizes.plotWidth - 12}
+            portals={portals}
+          />
         )}
       </div>
       <NewFocusPageCommandPanelModal

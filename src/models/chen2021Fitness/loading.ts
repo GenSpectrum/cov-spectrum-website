@@ -57,6 +57,46 @@ export const transformToRequestData = (
   return { request: data, t0 };
 };
 
+export const transformToRequestDataNew = (
+  variantDateCounts: { date: UnifiedDay; count: number }[],
+  wholeDateCounts: { date: UnifiedDay; count: number }[]
+): { request: Chen2021FitnessRequestData; t0: UnifiedDay } => {
+  // Make sure that there is at least one data point
+  if (wholeDateCounts.length === 0) {
+    return {
+      request: {
+        t: [],
+        n: [],
+        k: [],
+      },
+      t0: globalDateCache.getDayUsingDayjs(dayjs(new Date())), // It does not really matter what we set here
+    };
+  }
+  // Find out the date that will be mapped to t=0
+  const dateRangeInData = globalDateCache.rangeFromDays(wholeDateCounts.map(d => d.date));
+  const t0 = dateRangeInData!.min;
+  // Transform dates to integers and create data object for the request
+  const variantDateCountMap = new Map<UnifiedDay, number>();
+  for (let { date, count } of variantDateCounts) {
+    variantDateCountMap.set(date, count);
+  }
+  const data: Chen2021FitnessRequestData = {
+    t: [],
+    n: [],
+    k: [],
+  };
+  for (let { date, count: wholeCount } of wholeDateCounts) {
+    if (date) {
+      const variantCount = variantDateCountMap.get(date) ?? 0;
+      const t = date.dayjs.diff(t0.dayjs, 'day');
+      data.t.push(t);
+      data.n.push(wholeCount);
+      data.k.push(variantCount);
+    }
+  }
+  return { request: data, t0 };
+};
+
 export const fillRequestWithDefaults = (
   data: Chen2021FitnessRequestData,
   config?: Chen2021FitnessRequestConfigPartial
@@ -200,8 +240,34 @@ export const getModelData = async (
   request: Chen2021FitnessRequest;
   t0: UnifiedDay;
 }> => {
-  // Create request
   const data = transformToRequestData(variantDateCounts, wholeDateCounts);
+  return getModelDataFromRequestData(data, config, signal);
+};
+
+export const getModelDataNew = async (
+  variantDateCounts: { date: UnifiedDay; count: number }[],
+  wholeDateCounts: { date: UnifiedDay; count: number }[],
+  config?: Chen2021FitnessRequestConfigPartial,
+  signal?: AbortSignal
+): Promise<{
+  response: Chen2021FitnessResponse | undefined;
+  request: Chen2021FitnessRequest;
+  t0: UnifiedDay;
+}> => {
+  const data = transformToRequestDataNew(variantDateCounts, wholeDateCounts);
+  return getModelDataFromRequestData(data, config, signal);
+};
+
+const getModelDataFromRequestData = async (
+  data: { request: Chen2021FitnessRequestData; t0: UnifiedDay },
+  config?: Chen2021FitnessRequestConfigPartial,
+  signal?: AbortSignal
+): Promise<{
+  response: Chen2021FitnessResponse | undefined;
+  request: Chen2021FitnessRequest;
+  t0: UnifiedDay;
+}> => {
+  // Create request
   const request = fillRequestWithDefaults(data.request, config);
   const t0 = data.t0;
 
