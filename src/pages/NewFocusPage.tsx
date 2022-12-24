@@ -20,6 +20,7 @@ import { GridXAxis, GridYAxis } from '../components/GridPlot/GridAxis';
 import { MutationsGrid } from '../components/GridPlot/MutationsGrid';
 import { sequenceTypes } from '../data/SequenceType';
 import { MdLocationPin, MdCalendarToday } from 'react-icons/md';
+import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 
 type FigureType = 'prevalence' | 'aa-mutations' | 'nuc-mutations';
 type TmpEntry = { nextcladePangoLineage: string | null; count: number };
@@ -30,14 +31,12 @@ type Props = {
   setFullScreenMode: (fullscreen: boolean) => void;
 };
 
-const selector: LapisSelector = {
+const selector: LapisSelector = addDefaultHostAndQc({
   location: {},
   variant: {},
   dateRange: new SpecialDateRangeSelector('Past6M'),
   samplingStrategy: SamplingStrategy.AllSamples,
-  host: undefined,
-  qc: {},
-};
+});
 
 type Size = 'size1' | 'size2' | 'size3' | 'all';
 const sizes: { id: Size; label: string; approxNumberPlots: number }[] = [

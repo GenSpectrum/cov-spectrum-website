@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { MutationName } from './MutationName';
 import { decodeAAMutation, sortListByAAMutation } from '../helpers/aa-mutation';
@@ -14,8 +14,13 @@ import { useResizeDetector } from 'react-resize-detector';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { NamedCard } from './NamedCard';
 import { PipeDividedOptionsButtons } from '../helpers/ui';
+import { DeregistrationHandle, ExportManagerContext } from './CombinedExport/ExportManager';
+import download from 'downloadjs';
+import { csvStringify } from '../helpers/csvStringifyHelper';
+import { getConsensusSequenceFromMutations } from '../helpers/variant-consensus-sequence';
+import { decodeNucMutation } from '../helpers/nuc-mutation';
+import JSZip from 'jszip';
 
 export interface Props {
   selector: LapisSelector;
@@ -83,6 +88,7 @@ export const VariantMutations = ({ selector }: Props) => {
         host: selector.host,
         samplingStrategy: selector.samplingStrategy,
         qc: selector.qc,
+        submissionDate: selector.submissionDate,
       };
       return Promise.all([
         MutationProportionData.fromApi(overallSelector, 'aa', signal, 0),
@@ -98,7 +104,14 @@ export const VariantMutations = ({ selector }: Props) => {
         return { aa, nuc };
       });
     },
-    [selector.location, selector.dateRange, selector.host, selector.samplingStrategy, selector.qc]
+    [
+      selector.location,
+      selector.dateRange,
+      selector.host,
+      selector.samplingStrategy,
+      selector.qc,
+      selector.submissionDate,
+    ]
   );
 
   const queryStatus = useQuery(
@@ -164,13 +177,88 @@ export const VariantMutations = ({ selector }: Props) => {
     [selector, overallMutationCounts]
   );
 
+  // Data export
+  const exportManager = useContext(ExportManagerContext);
+  useEffect(() => {
+    if (queryStatus.data) {
+      // Small helper
+      const transform = (entries: MutationProportionEntryWithUniqueness[]) => {
+        return csvStringify(
+          entries.map(e => ({
+            mutation: e.mutation,
+            proportion: e.proportion,
+            count: e.count,
+            jaccard: e.uniqueness,
+          }))
+        );
+      };
+
+      // Register export handles
+      const data = queryStatus.data;
+      const handles: DeregistrationHandle[] = [
+        exportManager.register('Download nucleotide mutations', async () => {
+          download(transform(data.nuc), 'nucleotide-mutations.csv', 'text/csv');
+        }),
+        exportManager.register('Download AA mutations', async () => {
+          download(transform(data.aa), 'aa-mutations.csv', 'text/csv');
+        }),
+        exportManager.register('Download nucleotide consensus sequence (ignoring deletions)', async () => {
+          const reference = (await ReferenceGenomeService.data).nucSeq;
+          const mutations = data.nuc.map(e => {
+            const decoded = decodeNucMutation(e.mutation);
+            return {
+              position: decoded.position,
+              mutatedBase: decoded.mutatedBase!,
+              proportion: e.proportion,
+            };
+          });
+          download(
+            '>variant nucleotide consensus\n' +
+              getConsensusSequenceFromMutations(reference, mutations) +
+              '\n',
+            'nucleotide-consensus.fasta',
+            'text/x-fasta'
+          );
+        }),
+        exportManager.register('Download AA consensus sequences (ignoring deletions)', async () => {
+          const referencesByGene = new Map<string, string>();
+          const mutationsByGene = new Map<
+            string,
+            { position: number; mutatedBase: string; proportion: number }[]
+          >();
+          for (const { name, aaSeq } of (await ReferenceGenomeService.data).genes) {
+            referencesByGene.set(name, aaSeq);
+            mutationsByGene.set(name, []);
+          }
+          for (const { mutation, proportion } of data.aa) {
+            const { gene, position, mutatedBase } = decodeAAMutation(mutation);
+            mutationsByGene.get(gene)!.push({ position, mutatedBase: mutatedBase!, proportion });
+          }
+          const zipFile = new JSZip();
+          for (const [gene, mutations] of mutationsByGene) {
+            const consensus = getConsensusSequenceFromMutations(referencesByGene.get(gene)!, mutations);
+            const fastaText = `> variant ${gene}-gene consensus\n${consensus}\n`;
+            zipFile.file(`${gene}-consensus.fasta`, fastaText);
+          }
+          const zipBlob = await zipFile.generateAsync({ type: 'blob' });
+          download(zipBlob, 'aa-consensus.zip', 'application/zip');
+        }),
+      ];
+
+      return () => {
+        handles.forEach(handle => handle.deregister());
+      };
+    }
+  }, [exportManager, queryStatus]);
+
+  // View
   if (queryStatus.isLoading || !queryStatus.data) {
     return <Loader />;
   }
   const data = queryStatus.data;
 
   return (
-    <NamedCard title='Subsitutions and deletions'>
+    <>
       <div className='mb-8'>
         <div className='ml-0' ref={ref}>
           <PipeDividedOptionsButtons
@@ -340,7 +428,7 @@ export const VariantMutations = ({ selector }: Props) => {
           </MutationList>
         </>
       )}
-    </NamedCard>
+    </>
   );
 };
 
