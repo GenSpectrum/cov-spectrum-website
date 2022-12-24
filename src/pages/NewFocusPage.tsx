@@ -20,6 +20,7 @@ import { GridXAxis, GridYAxis } from '../components/GridPlot/GridAxis';
 import { MutationsGrid } from '../components/GridPlot/MutationsGrid';
 import { sequenceTypes } from '../data/SequenceType';
 import { MdLocationPin, MdCalendarToday } from 'react-icons/md';
+import { IoReturnDownBackOutline } from 'react-icons/io5';
 import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 
 type FigureType = 'prevalence' | 'aa-mutations' | 'nuc-mutations';
@@ -406,13 +407,13 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
         </div>
         {/* The main area */}
         <div
-          className={`h-5 ${
+          className={`h-6 ${
             isCursorOnParent ? 'bg-blue-500' : 'bg-gray-200'
-          } hover:bg-blue-500 cursor-pointer text-center`}
+          } hover:bg-blue-500 cursor-pointer flex justify-center text-2xl`}
           style={{ width: 'calc(100% - 30px)', marginTop: 15, marginLeft: 15, marginRight: 15 }}
           onClick={() => goToParentLineage()}
         >
-          ^
+          <IoReturnDownBackOutline />
         </div>
         <div className='flex-grow p-4' ref={ref}>
           {gridSizes && filteredSubLineages ? (
