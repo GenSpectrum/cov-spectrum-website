@@ -20,8 +20,10 @@ import { GridXAxis, GridYAxis } from '../components/GridPlot/GridAxis';
 import { MutationsGrid } from '../components/GridPlot/MutationsGrid';
 import { sequenceTypes } from '../data/SequenceType';
 import { MdLocationPin, MdCalendarToday } from 'react-icons/md';
+import { VscListTree } from 'react-icons/vsc';
 import { IoReturnDownBackOutline } from 'react-icons/io5';
 import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
+import { NewFocusPageCommandPanelModal } from '../components/NewFocusPageCommandPanel';
 
 type FigureType = 'prevalence' | 'aa-mutations' | 'nuc-mutations';
 type TmpEntry = { nextcladePangoLineage: string | null; count: number };
@@ -57,6 +59,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   const [figureType, setFigureType] = useState<FigureType>('prevalence');
   const [size, setSize] = useState<Size>('size2');
   const [cursor, setCursor] = useState<CursorStatus>({ row: 0, column: 0 });
+  const [showCommandPanel, setShowCommandPanel] = useState(false);
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
 
   const history = useHistory();
@@ -179,9 +182,10 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   // Navigation
   const setPangoLineage = useCallback(
     (pangoLineage: string) => {
+      setShowCommandPanel(false);
       setParams(history, { ...params, pangoLineage: pangoLineage.replace('*', '') });
     },
-    [history, params]
+    [history, params, setShowCommandPanel]
   );
 
   const goToParentLineage = useCallback(() => {
@@ -219,47 +223,58 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   // Keyboard shortcuts
   const handleKeyPress = useCallback(
     event => {
-      switch (event.key) {
-        case 'p':
-          setFigureType('prevalence');
-          break;
-        case 'a':
-          setFigureType('aa-mutations');
-          break;
-        case 'n':
-          setFigureType('nuc-mutations');
-          break;
-        case 'f':
-          toggleFullscreen();
-          break;
-        case 'ArrowUp':
-          setCursorInsideGrid({ row: cursor.row - 1, column: cursor.column });
-          event.preventDefault();
-          break;
-        case 'ArrowDown':
-          setCursorInsideGrid({ row: cursor.row + 1, column: cursor.column });
-          event.preventDefault();
-          break;
-        case 'ArrowLeft':
-          setCursorInsideGrid({ row: cursor.row, column: cursor.column - 1 });
-          event.preventDefault();
-          break;
-        case 'ArrowRight':
-          setCursorInsideGrid({ row: cursor.row, column: cursor.column + 1 });
-          event.preventDefault();
-          break;
-        case 'Enter':
-          if (cursor.row === -1) {
-            goToParentLineage();
-          }
-          if (gridSizes) {
-            const index = cursor.row * gridSizes.numberCols + cursor.column;
-            const lineage = filteredSubLineages && filteredSubLineages[index];
-            if (lineage) {
-              setPangoLineage(lineage);
+      if (showCommandPanel) {
+        return;
+      }
+      if (event.metaKey || event.ctrlKey) {
+        switch (event.key) {
+          case 'k':
+            setShowCommandPanel(true);
+            break;
+        }
+      } else {
+        switch (event.key) {
+          case 'p':
+            setFigureType('prevalence');
+            break;
+          case 'a':
+            setFigureType('aa-mutations');
+            break;
+          case 'n':
+            setFigureType('nuc-mutations');
+            break;
+          case 'f':
+            toggleFullscreen();
+            break;
+          case 'ArrowUp':
+            setCursorInsideGrid({ row: cursor.row - 1, column: cursor.column });
+            event.preventDefault();
+            break;
+          case 'ArrowDown':
+            setCursorInsideGrid({ row: cursor.row + 1, column: cursor.column });
+            event.preventDefault();
+            break;
+          case 'ArrowLeft':
+            setCursorInsideGrid({ row: cursor.row, column: cursor.column - 1 });
+            event.preventDefault();
+            break;
+          case 'ArrowRight':
+            setCursorInsideGrid({ row: cursor.row, column: cursor.column + 1 });
+            event.preventDefault();
+            break;
+          case 'Enter':
+            if (cursor.row === -1) {
+              goToParentLineage();
             }
-          }
-          break;
+            if (gridSizes) {
+              const index = cursor.row * gridSizes.numberCols + cursor.column;
+              const lineage = filteredSubLineages && filteredSubLineages[index];
+              if (lineage) {
+                setPangoLineage(lineage);
+              }
+            }
+            break;
+        }
       }
     },
     [
@@ -270,6 +285,8 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
       filteredSubLineages,
       setPangoLineage,
       setCursorInsideGrid,
+      showCommandPanel,
+      setShowCommandPanel,
     ]
   );
 
@@ -300,165 +317,195 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
 
   // View
   return (
-    <div key={fullScreenMode.toString()}>
-      {/* TODO What to do about small screens? */}
-      <div
-        style={{
-          // Subtracting the header  TODO It's not good to have these constants here
-          height: fullScreenMode ? '100vh' : 'calc(100vh - 72px - 2px)',
-        }}
-        className='flex flex-column'
-      >
-        {/* The config bar */}
+    <>
+      <div key={fullScreenMode.toString()}>
+        {/* TODO What to do about small screens? */}
         <div
-          style={{ height: 50 }}
-          className='border-b-2 border-solid border-gray-200 flex flex-row items-center px-4'
+          style={{
+            // Subtracting the header  TODO It's not good to have these constants here
+            height: fullScreenMode ? '100vh' : 'calc(100vh - 72px - 2px)',
+          }}
+          className='flex flex-column'
         >
-          {fullScreenMode && (
-            <div style={{ fontWeight: 'bold', fontSize: '1.75rem', marginRight: 10 }}>
-              <span style={{ color: '#726b6b', marginRight: -5 }}>C</span>
-              <span style={{ color: '#F18805' }}>S</span>
-            </div>
-          )}
-          <Button
-            size='sm'
-            className='mx-2'
-            disabled={figureType === 'prevalence'}
-            onClick={() => setFigureType('prevalence')}
+          {/* The config bar */}
+          <div
+            style={{ height: 50 }}
+            className='border-b-2 border-solid border-gray-200 flex flex-row items-center px-4'
           >
-            [P]revalence
-          </Button>
-          <Button
-            size='sm'
-            className='mx-2'
-            disabled={figureType === 'aa-mutations'}
-            onClick={() => setFigureType('aa-mutations')}
-          >
-            [A]A mutations
-          </Button>
-          <Button
-            size='sm'
-            className='mx-2'
-            disabled={figureType === 'nuc-mutations'}
-            onClick={() => setFigureType('nuc-mutations')}
-          >
-            [N]uc mutations
-          </Button>
-          <div className='flex items-center ml-8'>
-            <span
-              className='inline-block rounded-full z-10 bg-red-500 text-white'
-              style={{
-                padding: 5,
-              }}
-            >
-              <MdLocationPin />
-            </span>
-            <span
-              className='bg-red-300'
-              style={{
-                paddingLeft: 15,
-                marginLeft: -12,
-                paddingRight: 12,
-                borderTopRightRadius: 12,
-                borderBottomRightRadius: 12,
-              }}
-            >
-              World
-            </span>
-          </div>
-          <div className='flex items-center ml-4'>
-            <span
-              className='inline-block rounded-full z-10 bg-yellow-500 text-white'
-              style={{
-                padding: 5,
-              }}
-            >
-              <MdCalendarToday />
-            </span>
-            <span
-              className='bg-yellow-300'
-              style={{
-                paddingLeft: 15,
-                marginLeft: -12,
-                paddingRight: 12,
-                borderTopRightRadius: 12,
-                borderBottomRightRadius: 12,
-              }}
-            >
-              Past 6 months
-            </span>
-          </div>
-          <div className='flex-grow-1' />
-          {sizes.map(s => (
+            {fullScreenMode && (
+              <div style={{ fontWeight: 'bold', fontSize: '1.75rem', marginRight: 10 }}>
+                <span style={{ color: '#726b6b', marginRight: -5 }}>C</span>
+                <span style={{ color: '#F18805' }}>S</span>
+              </div>
+            )}
             <Button
               size='sm'
-              variant='info'
               className='mx-2'
-              disabled={size === s.id}
-              onClick={() => setSize(s.id)}
-              key={s.id}
+              disabled={figureType === 'prevalence'}
+              onClick={() => setFigureType('prevalence')}
             >
-              {s.label}
+              [P]revalence
             </Button>
-          ))}
-          <Button size='sm' className='mx-2' onClick={() => toggleFullscreen()}>
-            [F]ullscreen
-          </Button>
+            <Button
+              size='sm'
+              className='mx-2'
+              disabled={figureType === 'aa-mutations'}
+              onClick={() => setFigureType('aa-mutations')}
+            >
+              [A]A mutations
+            </Button>
+            <Button
+              size='sm'
+              className='mx-2'
+              disabled={figureType === 'nuc-mutations'}
+              onClick={() => setFigureType('nuc-mutations')}
+            >
+              [N]uc mutations
+            </Button>
+            <div className='flex items-center ml-8'>
+              <span
+                className='inline-block rounded-full z-10 bg-red-500 text-white'
+                style={{
+                  padding: 5,
+                }}
+              >
+                <MdLocationPin />
+              </span>
+              <span
+                className='bg-red-300'
+                style={{
+                  paddingLeft: 15,
+                  marginLeft: -12,
+                  paddingRight: 12,
+                  borderTopRightRadius: 12,
+                  borderBottomRightRadius: 12,
+                }}
+              >
+                World
+              </span>
+            </div>
+            <div className='flex items-center ml-4'>
+              <span
+                className='inline-block rounded-full z-10 bg-yellow-500 text-white'
+                style={{
+                  padding: 5,
+                }}
+              >
+                <MdCalendarToday />
+              </span>
+              <span
+                className='bg-yellow-300'
+                style={{
+                  paddingLeft: 15,
+                  marginLeft: -12,
+                  paddingRight: 12,
+                  borderTopRightRadius: 12,
+                  borderBottomRightRadius: 12,
+                }}
+              >
+                Past 6 months
+              </span>
+            </div>
+            <div className='flex items-center ml-8 cursor-pointer' onClick={() => setShowCommandPanel(true)}>
+              <span
+                className='inline-block rounded-full z-10 bg-indigo-500 text-white'
+                style={{
+                  padding: 5,
+                }}
+              >
+                <VscListTree />
+              </span>
+              <span
+                className='bg-indigo-300'
+                style={{
+                  paddingLeft: 15,
+                  marginLeft: -12,
+                  paddingRight: 12,
+                  borderTopRightRadius: 12,
+                  borderBottomRightRadius: 12,
+                }}
+              >
+                {params.pangoLineage}
+              </span>
+            </div>
+            <div className='flex-grow-1' />
+            {sizes.map(s => (
+              <Button
+                size='sm'
+                variant='info'
+                className='mx-2'
+                disabled={size === s.id}
+                onClick={() => setSize(s.id)}
+                key={s.id}
+              >
+                {s.label}
+              </Button>
+            ))}
+            <Button size='sm' className='mx-2' onClick={() => toggleFullscreen()}>
+              [F]ullscreen
+            </Button>
+          </div>
+          {/* The main area */}
+          <div
+            className={`h-6 ${
+              isCursorOnParent ? 'bg-blue-500' : 'bg-gray-200'
+            } hover:bg-blue-500 cursor-pointer flex justify-center text-2xl`}
+            style={{ width: 'calc(100% - 30px)', marginTop: 15, marginLeft: 15, marginRight: 15 }}
+            onClick={() => goToParentLineage()}
+          >
+            <IoReturnDownBackOutline />
+          </div>
+          <div className='flex-grow p-4' ref={ref}>
+            {gridSizes && filteredSubLineages ? (
+              <>
+                <GridFigure gridSizes={gridSizes} labels={filteredSubLineages} onLabelClick={setPangoLineage}>
+                  {filteredSubLineages.map((subLineage, i) => (
+                    <GridContent key={subLineage} label={subLineage} highlighted={isCursorOnLineage(i)}>
+                      <OutPortal node={portals.get(subLineage)!} />
+                    </GridContent>
+                  ))}
+                  <GridXAxis portals={axisPortals.x} />
+                  <GridYAxis portals={axisPortals.y} />
+                </GridFigure>
+              </>
+            ) : (
+              <Loader />
+            )}
+          </div>
         </div>
-        {/* The main area */}
-        <div
-          className={`h-6 ${
-            isCursorOnParent ? 'bg-blue-500' : 'bg-gray-200'
-          } hover:bg-blue-500 cursor-pointer flex justify-center text-2xl`}
-          style={{ width: 'calc(100% - 30px)', marginTop: 15, marginLeft: 15, marginRight: 15 }}
-          onClick={() => goToParentLineage()}
-        >
-          <IoReturnDownBackOutline />
-        </div>
-        <div className='flex-grow p-4' ref={ref}>
-          {gridSizes && filteredSubLineages ? (
-            <>
-              <GridFigure gridSizes={gridSizes} labels={filteredSubLineages} onLabelClick={setPangoLineage}>
-                {filteredSubLineages.map((subLineage, i) => (
-                  <GridContent key={subLineage} label={subLineage} highlighted={isCursorOnLineage(i)}>
-                    <OutPortal node={portals.get(subLineage)!} />
-                  </GridContent>
-                ))}
-                <GridXAxis portals={axisPortals.x} />
-                <GridYAxis portals={axisPortals.y} />
-              </GridFigure>
-            </>
-          ) : (
-            <Loader />
-          )}
-        </div>
+        {figureType === 'prevalence' && gridSizes && filteredSubLineages && (
+          <SequencesOverTimeGrid
+            selector={selector}
+            plotWidth={gridSizes.plotWidth - 12}
+            pangoLineage={params.pangoLineage}
+            portals={portals}
+            axisPortals={axisPortals}
+          />
+        )}
+        {sequenceTypes.map(
+          sequenceType =>
+            figureType === `${sequenceType}-mutations` &&
+            gridSizes &&
+            filteredSubLineages && (
+              <MutationsGrid
+                key={sequenceType}
+                selector={selector}
+                pangoLineage={params.pangoLineage}
+                subLineages={filteredSubLineages}
+                plotWidth={gridSizes.plotWidth - 12}
+                portals={portals}
+                sequenceType={sequenceType}
+              />
+            )
+        )}
       </div>
-      {figureType === 'prevalence' && gridSizes && filteredSubLineages && (
-        <SequencesOverTimeGrid
-          selector={selector}
-          plotWidth={gridSizes.plotWidth - 12}
-          pangoLineage={params.pangoLineage}
-          portals={portals}
-          axisPortals={axisPortals}
-        />
-      )}
-      {sequenceTypes.map(
-        sequenceType =>
-          figureType === `${sequenceType}-mutations` &&
-          gridSizes &&
-          filteredSubLineages && (
-            <MutationsGrid
-              key={sequenceType}
-              selector={selector}
-              pangoLineage={params.pangoLineage}
-              subLineages={filteredSubLineages}
-              plotWidth={gridSizes.plotWidth - 12}
-              portals={portals}
-              sequenceType={sequenceType}
-            />
-          )
-      )}
-    </div>
+      <NewFocusPageCommandPanelModal
+        show={showCommandPanel}
+        handleClose={() => setShowCommandPanel(false)}
+        pangoLineage={params.pangoLineage}
+        setPangoLineage={setPangoLineage}
+      />
+    </>
   );
 };
 
