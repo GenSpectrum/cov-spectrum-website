@@ -1,3 +1,7 @@
+export type Rename<T, K extends keyof T, N extends string> = Pick<T, Exclude<keyof T, K>> & {
+  [P in N]: T[K];
+};
+
 /**
  * Desired order: B.1.2, B.1.2*, B.1.2.7, B.1.10, C.1, BA.1
  */

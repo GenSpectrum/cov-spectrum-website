@@ -1,5 +1,6 @@
 import { calculateWilsonInterval } from '../../helpers/wilson-interval';
 import { UnifiedDay } from '../../helpers/date-cache';
+import { Rename } from './common';
 
 export class SingleData<E> {
   constructor(public data: E[]) {}
@@ -10,6 +11,22 @@ export class SingleData<E> {
 
   sort(compareFn?: (a: E, b: E) => number) {
     return new SingleData([...this.data].sort(compareFn));
+  }
+
+  renameField<Old extends keyof E, New extends string>(
+    oldName: Old,
+    newName: New
+  ): SingleData<Rename<E, Old, New>> {
+    return new SingleData(
+      this.data.map(oldObj => {
+        let newObj = {
+          ...oldObj,
+          [newName]: oldObj[oldName],
+        };
+        delete newObj[oldName];
+        return newObj as any;
+      })
+    );
   }
 
   map<S>(callbackfn: (value: E, index: number, array: E[]) => S): SingleData<S> {
