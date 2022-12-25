@@ -1,6 +1,10 @@
 import { LapisSelector } from '../data/LapisSelector';
 import { SamplingStrategy } from '../data/SamplingStrategy';
-import { SpecialDateRangeSelector } from '../data/DateRangeSelector';
+import {
+  DateRangeSelector,
+  formatDateRangeSelector,
+  SpecialDateRangeSelector,
+} from '../data/DateRangeSelector';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
 import { useHistory, useLocation } from 'react-router';
@@ -28,6 +32,10 @@ import { GrowthAdvantageGrid } from '../components/GridPlot/GrowthAdvantageGrid'
 import { AlmostFullscreenModal } from '../components/AlmostFullscreenModal';
 import { FocusSinglePageContent } from './FocusSinglePage';
 import { useSingleSelectorsFromLapisSelector } from '../helpers/selectors-from-explore-url-hook';
+import { OverlayTrigger, Popover } from 'react-bootstrap';
+import DateRangePicker from '../components/DateRangePicker';
+import { PlaceSelect } from '../components/PlaceSelect';
+import { encodeLocationSelectorToSingleString, LocationSelector } from '../data/LocationSelector';
 
 type FigureType = 'prevalence' | 'aa-mutations' | 'nuc-mutations' | 'growth-advantage';
 type TmpEntry = { nextcladePangoLineage: string | null; count: number };
@@ -37,13 +45,6 @@ type Props = {
   fullScreenMode: boolean;
   setFullScreenMode: (fullscreen: boolean) => void;
 };
-
-const selector: LapisSelector = addDefaultHostAndQc({
-  location: {},
-  variant: {},
-  dateRange: new SpecialDateRangeSelector('Past6M'),
-  samplingStrategy: SamplingStrategy.AllSamples,
-});
 
 type Size = 'size1' | 'size2' | 'size3' | 'all';
 const sizes: { id: Size; label: string; approxNumberPlots: number }[] = [
@@ -63,12 +64,28 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   const [figureType, setFigureType] = useState<FigureType>('prevalence');
   const [size, setSize] = useState<Size>('size2');
   const [cursor, setCursor] = useState<CursorStatus>({ row: 0, column: 0 });
+  const [showLocationSelect, setShowLocationSelect] = useState(false);
   const [showCommandPanel, setShowCommandPanel] = useState(false);
   const [showVariantDetailsModal, setShowVariantDetailsModal] = useState(false);
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
+  const [locationSelector, setLocationSelector] = useState<LocationSelector>({});
+  const [dateRangeSelector, setDateRangeSelector] = useState<DateRangeSelector>(
+    new SpecialDateRangeSelector('Past6M')
+  );
 
   const history = useHistory();
   const params = useUrlParams();
+
+  const selector: LapisSelector = useMemo(
+    () =>
+      addDefaultHostAndQc({
+        location: locationSelector,
+        variant: {},
+        dateRange: dateRangeSelector,
+        samplingStrategy: SamplingStrategy.AllSamples,
+      }),
+    [dateRangeSelector, locationSelector]
+  );
 
   // Find the (sub-)lineages that should be shown
   const dataQuery: QueryStatus<TmpEntry2[]> = useQuery(
@@ -238,7 +255,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   // Keyboard shortcuts
   const handleKeyPress = useCallback(
     event => {
-      if (showCommandPanel || showVariantDetailsModal) {
+      if (showLocationSelect || showCommandPanel || showVariantDetailsModal) {
         return;
       }
       if (event.metaKey || event.ctrlKey) {
@@ -304,6 +321,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
       lineageOfCursor,
       setPangoLineage,
       setCursorInsideGrid,
+      showLocationSelect,
       showCommandPanel,
       setShowCommandPanel,
       showVariantDetailsModal,
@@ -320,14 +338,17 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
 
   // Misc
   const isCursorOnParent = cursor.row === -1;
-  const isCursorOnLineage = (index: number) => {
-    if (!gridSizes) {
-      return false;
-    }
-    const lineageRow = Math.floor(index / gridSizes.numberCols);
-    const lineageCol = index % gridSizes.numberCols;
-    return lineageRow === cursor.row && lineageCol === cursor.column;
-  };
+  const isCursorOnLineage = useCallback(
+    (index: number) => {
+      if (!gridSizes) {
+        return false;
+      }
+      const lineageRow = Math.floor(index / gridSizes.numberCols);
+      const lineageCol = index % gridSizes.numberCols;
+      return lineageRow === cursor.row && lineageCol === cursor.column;
+    },
+    [cursor.column, cursor.row, gridSizes]
+  );
 
   useEffect(() => {
     setCursor({
@@ -391,50 +412,85 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
             >
               G[r]owth advantage
             </Button>
-            <div className='flex items-center ml-8'>
-              <span
-                className='inline-block rounded-full z-10 bg-red-500 text-white'
-                style={{
-                  padding: 5,
-                }}
-              >
-                <MdLocationPin />
-              </span>
-              <span
-                className='bg-red-300'
-                style={{
-                  paddingLeft: 15,
-                  marginLeft: -12,
-                  paddingRight: 12,
-                  borderTopRightRadius: 12,
-                  borderBottomRightRadius: 12,
-                }}
-              >
-                World
-              </span>
-            </div>
-            <div className='flex items-center ml-4'>
-              <span
-                className='inline-block rounded-full z-10 bg-yellow-500 text-white'
-                style={{
-                  padding: 5,
-                }}
-              >
-                <MdCalendarToday />
-              </span>
-              <span
-                className='bg-yellow-300'
-                style={{
-                  paddingLeft: 15,
-                  marginLeft: -12,
-                  paddingRight: 12,
-                  borderTopRightRadius: 12,
-                  borderBottomRightRadius: 12,
-                }}
-              >
-                Past 6 months
-              </span>
-            </div>
+            <OverlayTrigger
+              trigger='click'
+              rootClose={true}
+              placement='bottom'
+              show={showLocationSelect}
+              onToggle={show => setShowLocationSelect(show)}
+              overlay={
+                <Popover style={{ maxWidth: 500 }}>
+                  <Popover.Body>
+                    <div className='bg-white p-3' style={{ width: 400 }}>
+                      <PlaceSelect selected={locationSelector} onSelect={setLocationSelector} />
+                    </div>
+                  </Popover.Body>
+                </Popover>
+              }
+            >
+              <div className='flex items-center ml-8 cursor-pointer'>
+                <span
+                  className='inline-block rounded-full z-10 bg-red-500 text-white'
+                  style={{
+                    padding: 5,
+                  }}
+                >
+                  <MdLocationPin />
+                </span>
+                <span
+                  className='bg-red-300'
+                  style={{
+                    paddingLeft: 15,
+                    marginLeft: -12,
+                    paddingRight: 12,
+                    borderTopRightRadius: 12,
+                    borderBottomRightRadius: 12,
+                  }}
+                >
+                  {encodeLocationSelectorToSingleString(locationSelector)}
+                </span>
+              </div>
+            </OverlayTrigger>
+            <OverlayTrigger
+              trigger='click'
+              rootClose={true}
+              placement='bottom'
+              overlay={
+                <Popover style={{ maxWidth: 600 }}>
+                  <Popover.Body>
+                    <div className='bg-white p-3' style={{ width: 500 }}>
+                      <DateRangePicker
+                        dateRangeSelector={dateRangeSelector}
+                        onChangeDate={setDateRangeSelector}
+                      />
+                    </div>
+                  </Popover.Body>
+                </Popover>
+              }
+            >
+              <div className='flex items-center ml-4 cursor-pointer'>
+                <span
+                  className='inline-block rounded-full z-10 bg-yellow-500 text-white'
+                  style={{
+                    padding: 5,
+                  }}
+                >
+                  <MdCalendarToday />
+                </span>
+                <span
+                  className='bg-yellow-300'
+                  style={{
+                    paddingLeft: 15,
+                    marginLeft: -12,
+                    paddingRight: 12,
+                    borderTopRightRadius: 12,
+                    borderBottomRightRadius: 12,
+                  }}
+                >
+                  {formatDateRangeSelector(dateRangeSelector)}
+                </span>
+              </div>
+            </OverlayTrigger>
             <div className='flex items-center ml-8 cursor-pointer' onClick={() => setShowCommandPanel(true)}>
               <span
                 className='inline-block rounded-full z-10 bg-indigo-500 text-white'
