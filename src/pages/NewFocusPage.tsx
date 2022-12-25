@@ -25,6 +25,9 @@ import { IoReturnDownBackOutline } from 'react-icons/io5';
 import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 import { NewFocusPageCommandPanelModal } from '../components/NewFocusPageCommandPanel';
 import { GrowthAdvantageGrid } from '../components/GridPlot/GrowthAdvantageGrid';
+import { AlmostFullscreenModal } from '../components/AlmostFullscreenModal';
+import { FocusSinglePageContent } from './FocusSinglePage';
+import { useSingleSelectorsFromLapisSelector } from '../helpers/selectors-from-explore-url-hook';
 
 type FigureType = 'prevalence' | 'aa-mutations' | 'nuc-mutations' | 'growth-advantage';
 type TmpEntry = { nextcladePangoLineage: string | null; count: number };
@@ -61,6 +64,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   const [size, setSize] = useState<Size>('size2');
   const [cursor, setCursor] = useState<CursorStatus>({ row: 0, column: 0 });
   const [showCommandPanel, setShowCommandPanel] = useState(false);
+  const [showVariantDetailsModal, setShowVariantDetailsModal] = useState(false);
   const { width, height, ref } = useResizeDetector<HTMLDivElement>();
 
   const history = useHistory();
@@ -221,10 +225,20 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
     [gridSizes, filteredSubLineages, setCursor]
   );
 
+  let lineageOfCursor: string | undefined = undefined;
+  if (cursor.row >= 0 && gridSizes) {
+    const index = cursor.row * gridSizes.numberCols + cursor.column;
+    lineageOfCursor = filteredSubLineages && filteredSubLineages[index];
+  }
+  const selectorsOfCursor = useSingleSelectorsFromLapisSelector({
+    ...selector,
+    variant: { nextcladePangoLineage: lineageOfCursor },
+  });
+
   // Keyboard shortcuts
   const handleKeyPress = useCallback(
     event => {
-      if (showCommandPanel) {
+      if (showCommandPanel || showVariantDetailsModal) {
         return;
       }
       if (event.metaKey || event.ctrlKey) {
@@ -270,13 +284,15 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
             if (cursor.row === -1) {
               goToParentLineage();
             }
-            if (gridSizes) {
-              const index = cursor.row * gridSizes.numberCols + cursor.column;
-              const lineage = filteredSubLineages && filteredSubLineages[index];
-              if (lineage) {
-                setPangoLineage(lineage);
-              }
+            if (lineageOfCursor) {
+              setPangoLineage(lineageOfCursor);
             }
+            break;
+          case ' ':
+            if (lineageOfCursor) {
+              setShowVariantDetailsModal(true);
+            }
+            event.preventDefault();
             break;
         }
       }
@@ -284,13 +300,14 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
     [
       toggleFullscreen,
       cursor,
-      gridSizes,
       goToParentLineage,
-      filteredSubLineages,
+      lineageOfCursor,
       setPangoLineage,
       setCursorInsideGrid,
       showCommandPanel,
       setShowCommandPanel,
+      showVariantDetailsModal,
+      setShowVariantDetailsModal,
     ]
   );
 
@@ -526,6 +543,12 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
         pangoLineage={params.pangoLineage}
         setPangoLineage={setPangoLineage}
       />
+      <AlmostFullscreenModal
+        show={showVariantDetailsModal}
+        handleClose={() => setShowVariantDetailsModal(false)}
+      >
+        {selectorsOfCursor && <FocusSinglePageContent selectors={selectorsOfCursor} />}
+      </AlmostFullscreenModal>
     </>
   );
 };

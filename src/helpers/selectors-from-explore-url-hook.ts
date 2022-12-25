@@ -24,129 +24,131 @@ export type MultipleSelectorsFromExploreUrlHook = {
  */
 export function useSingleSelectorsFromExploreUrl(exploreUrl: ExploreUrl): SingleSelectorsFromExploreUrlHook {
   const firstVariant = exploreUrl.variants ? exploreUrl.variants[0] : undefined;
+  return useSingleSelectorsFromLapisSelector({
+    location: exploreUrl.location!,
+    dateRange: exploreUrl.dateRange,
+    samplingStrategy: exploreUrl.samplingStrategy!,
+    variant: firstVariant,
+    host: exploreUrl.host,
+    qc: exploreUrl.qc,
+    submissionDate: exploreUrl.submissionDate,
+  });
+}
+
+export function useSingleSelectorsFromLapisSelector(
+  selector: LapisSelector
+): SingleSelectorsFromExploreUrlHook {
   return {
     ldvsSelector: useDeepCompareMemo(
       () => ({
-        location: exploreUrl.location!,
-        dateRange: exploreUrl.dateRange,
-        samplingStrategy: exploreUrl.samplingStrategy!,
-        variant: firstVariant,
-        host: exploreUrl.host,
-        qc: exploreUrl.qc,
-        submissionDate: exploreUrl.submissionDate,
+        location: selector.location,
+        dateRange: selector.dateRange,
+        samplingStrategy: selector.samplingStrategy!,
+        variant: selector.variant,
+        host: selector.host,
+        qc: selector.qc,
+        submissionDate: selector.submissionDate,
       }),
       [
-        exploreUrl.dateRange,
-        exploreUrl.location,
-        exploreUrl.samplingStrategy,
-        firstVariant,
-        exploreUrl.host,
-        exploreUrl.qc,
-        exploreUrl.submissionDate,
+        selector.dateRange,
+        selector.location,
+        selector.samplingStrategy,
+        selector.variant,
+        selector.host,
+        selector.qc,
+        selector.submissionDate,
       ]
     ),
     ldsSelector: useDeepCompareMemo(
       () => ({
-        location: exploreUrl.location!,
-        dateRange: exploreUrl.dateRange,
-        samplingStrategy: exploreUrl.samplingStrategy!,
-        host: exploreUrl.host,
-        qc: exploreUrl.qc,
-        submissionDate: exploreUrl.submissionDate,
+        location: selector.location!,
+        dateRange: selector.dateRange,
+        samplingStrategy: selector.samplingStrategy!,
+        host: selector.host,
+        qc: selector.qc,
+        submissionDate: selector.submissionDate,
       }),
       [
-        exploreUrl.dateRange,
-        exploreUrl.location,
-        exploreUrl.samplingStrategy,
-        exploreUrl.host,
-        exploreUrl.qc,
-        exploreUrl.submissionDate,
+        selector.dateRange,
+        selector.location,
+        selector.samplingStrategy,
+        selector.host,
+        selector.qc,
+        selector.submissionDate,
       ]
     ),
     lvsSelector: useDeepCompareMemo(
       () => ({
-        location: exploreUrl.location!,
-        samplingStrategy: exploreUrl.samplingStrategy!,
-        variant: firstVariant,
-        host: exploreUrl.host,
-        qc: exploreUrl.qc,
-        submissionDate: exploreUrl.submissionDate,
+        location: selector.location!,
+        samplingStrategy: selector.samplingStrategy!,
+        variant: selector.variant,
+        host: selector.host,
+        qc: selector.qc,
+        submissionDate: selector.submissionDate,
       }),
       [
-        exploreUrl.dateRange,
-        exploreUrl.location,
-        exploreUrl.samplingStrategy,
-        firstVariant,
-        exploreUrl.host,
-        exploreUrl.qc,
-        exploreUrl.submissionDate,
+        selector.dateRange,
+        selector.location,
+        selector.samplingStrategy,
+        selector.variant,
+        selector.host,
+        selector.qc,
+        selector.submissionDate,
       ]
     ),
     lsSelector: useDeepCompareMemo(
       () => ({
-        location: exploreUrl.location!,
-        samplingStrategy: exploreUrl.samplingStrategy!,
-        host: exploreUrl.host,
-        qc: exploreUrl.qc,
-        submissionDate: exploreUrl.submissionDate,
+        location: selector.location!,
+        samplingStrategy: selector.samplingStrategy!,
+        host: selector.host,
+        qc: selector.qc,
+        submissionDate: selector.submissionDate,
       }),
-      [
-        exploreUrl.location,
-        exploreUrl.samplingStrategy,
-        exploreUrl.host,
-        exploreUrl.qc,
-        exploreUrl.submissionDate,
-      ]
+      [selector.location, selector.samplingStrategy, selector.host, selector.qc, selector.submissionDate]
     ),
     dvsSelector: useDeepCompareMemo(
       () => ({
         location: {},
-        dateRange: exploreUrl.dateRange,
-        samplingStrategy: exploreUrl.samplingStrategy!,
-        host: exploreUrl.host,
-        qc: exploreUrl.qc,
-        variant: firstVariant,
-        submissionDate: exploreUrl.submissionDate,
+        dateRange: selector.dateRange,
+        samplingStrategy: selector.samplingStrategy!,
+        host: selector.host,
+        qc: selector.qc,
+        variant: selector.variant,
+        submissionDate: selector.submissionDate,
       }),
       [
-        exploreUrl.dateRange,
-        exploreUrl.samplingStrategy,
-        firstVariant,
-        exploreUrl.host,
-        exploreUrl.qc,
-        exploreUrl.submissionDate,
+        selector.dateRange,
+        selector.samplingStrategy,
+        selector.variant,
+        selector.host,
+        selector.qc,
+        selector.submissionDate,
       ]
     ),
     dsSelector: useDeepCompareMemo(
       () => ({
         location: {},
-        dateRange: exploreUrl.dateRange,
-        samplingStrategy: exploreUrl.samplingStrategy!,
-        host: exploreUrl.host,
-        qc: exploreUrl.qc,
-        submissionDate: exploreUrl.submissionDate,
+        dateRange: selector.dateRange,
+        samplingStrategy: selector.samplingStrategy!,
+        host: selector.host,
+        qc: selector.qc,
+        submissionDate: selector.submissionDate,
       }),
-      [
-        exploreUrl.dateRange,
-        exploreUrl.samplingStrategy,
-        exploreUrl.host,
-        exploreUrl.qc,
-        exploreUrl.submissionDate,
-      ]
+      [selector.dateRange, selector.samplingStrategy, selector.host, selector.qc, selector.submissionDate]
     ),
     lSelector: useDeepCompareMemo(
       () => ({
-        location: exploreUrl.location!,
+        location: selector.location!,
       }),
-      [exploreUrl.location]
+      [selector.location]
     ),
     hostAndQc: useDeepCompareMemo(
       () => ({
-        host: exploreUrl.host,
-        qc: exploreUrl.qc,
-        submissionDate: exploreUrl.submissionDate,
+        host: selector.host,
+        qc: selector.qc,
+        submissionDate: selector.submissionDate,
       }),
-      [exploreUrl.host, exploreUrl.qc, exploreUrl.submissionDate]
+      [selector.host, selector.qc, selector.submissionDate]
     ),
   };
 }
