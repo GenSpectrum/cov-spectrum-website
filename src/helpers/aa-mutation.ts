@@ -37,10 +37,13 @@ export function sortListByAAMutation<T>(list: T[], mutationExtractorFunc: (x: T)
       return { x, mutationDecoded };
     })
     .sort((a, b) => {
-      if (a.mutationDecoded.gene !== b.mutationDecoded.gene) {
+      if (a.mutationDecoded.position > b.mutationDecoded.position) {
+        return 1;
+      } else if (a.mutationDecoded.position < b.mutationDecoded.position) {
+        return -1;
+      } else {
         return a.mutationDecoded.gene.localeCompare(b.mutationDecoded.gene);
       }
-      return a.mutationDecoded.position - b.mutationDecoded.position;
     })
     .map(m => m.x);
 }
