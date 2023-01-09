@@ -47,7 +47,7 @@ import { VariantInsertions } from '../components/VariantInsertions';
 import * as lodashAlternatives from '../helpers/lodash_alternatives';
 import { VariantMutationsTimelines } from '../components/VariantMutationsTimelines';
 import { wastewaterVariantColors } from '../models/wasteWater/constants';
-
+import { WidgetWrapper } from '../components/WidgetWrapper';
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
 
@@ -465,7 +465,10 @@ export const FocusSinglePage = () => {
 
             <div className='m-4'>
               <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
-                <VariantMutations selector={ldvsSelector} />
+                {/* HACK(by Chaoran): This is to add an "Export" button without actually implementing a Widget. */}
+                <WidgetWrapper getShareUrl={async () => ''} title='Substitutions and deletions'>
+                  <VariantMutations selector={ldvsSelector} />
+                </WidgetWrapper>
               </Sentry.ErrorBoundary>
             </div>
           </div>
@@ -479,7 +482,7 @@ export const FocusSinglePage = () => {
                 <VariantTimeDistributionChartWidget.ShareableComponent
                   variantSampleSet={d.variant}
                   wholeSampleSet={d.whole}
-                  height={300}
+                  height={350}
                   title={division}
                 />
               )}

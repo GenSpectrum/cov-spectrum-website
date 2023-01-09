@@ -29,6 +29,39 @@ export function dateRangeUrlToSelector(dateRangeEncoded: DateRangeUrlEncoded): D
   });
 }
 
+export type SubmissionDateRangeUrlEncoded =
+  | typeof specialSubmissionDateRangePattern
+  | typeof specificDateRangePattern;
+
+export const specificSubmissionDateRangePattern = `^dateSubmittedFrom=\\d{4}-\\d{2}-\\d{2}&dateSubmittedTo=\\d{4}-\\d{2}-\\d{2}$`;
+export const specificSubmissionDateRangeRegEx: RegExp = new RegExp(specificSubmissionDateRangePattern);
+
+export const specialSubmissionDateRangePattern = `^dateSubmitted=.*$`;
+export const specialSubmissionDateRangeRegEx: RegExp = new RegExp(specialSubmissionDateRangePattern);
+
+export function isSubmissionDateRangeEncoded(s: unknown): s is SubmissionDateRangeUrlEncoded {
+  const _s = s as SubmissionDateRangeUrlEncoded;
+  return specialSubmissionDateRangeRegEx.test(_s) || specificSubmissionDateRangeRegEx.test(_s);
+}
+
+export function submissionDateRangeUrlToSelector(
+  dateRangeEncoded: SubmissionDateRangeUrlEncoded
+): DateRangeSelector {
+  if (dateRangeEncoded.match(/dateSubmitted=(.*)/)) {
+    const _specialDateRange = dateRangeEncoded.split('=')[1];
+    if (isSpecialDateRange(_specialDateRange)) {
+      return new SpecialDateRangeSelector(_specialDateRange);
+    }
+  }
+
+  const from = dateRangeEncoded.match(/dateSubmittedFrom=(.*)&/);
+  const to = dateRangeEncoded.match(/dateSubmittedTo=(.*)$/);
+  return new FixedDateRangeSelector({
+    dateFrom: from ? globalDateCache.getDay(from[1]) : undefined,
+    dateTo: to ? globalDateCache.getDay(to[1]) : undefined,
+  });
+}
+
 export function dateRangeUrlFromSelector(selector: DateRangeSelector): DateRangeUrlEncoded {
   if (selector instanceof FixedDateRangeSelector) {
     const { dateFrom, dateTo } = selector.getDateRange();

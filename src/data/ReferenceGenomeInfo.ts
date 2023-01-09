@@ -7,5 +7,5 @@ export type ReferenceGenomeGeneInfo = {
   name: string;
   startPosition: number;
   endPosition: number;
-  aaSeq: number;
+  aaSeq: string;
 };

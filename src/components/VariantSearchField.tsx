@@ -16,6 +16,7 @@ import { isValidAAInsertion } from '../helpers/aa-insertion';
 import { isValidNucInsertion } from '../helpers/nuc-insertion';
 import { _fetchAggSamples } from '../data/api-lapis';
 import { useDrop } from 'react-dnd';
+import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 
 type SearchType =
   | 'aa-mutation'
@@ -163,7 +164,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const pangoLineages = useQuery(
     signal =>
       PangoCountSampleData.fromApi(
-        { location: {}, samplingStrategy: SamplingStrategy.AllSamples, host: undefined, qc: {} },
+        addDefaultHostAndQc({ location: {}, samplingStrategy: SamplingStrategy.AllSamples }),
         signal
       ).then(dataset => dataset.payload.filter(e => e.pangoLineage).map(e => e.pangoLineage!)),
     []
@@ -172,7 +173,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   const nextstrainCladesSet = useQuery(
     signal =>
       _fetchAggSamples(
-        { location: {}, samplingStrategy: SamplingStrategy.AllSamples, host: undefined, qc: {} },
+        addDefaultHostAndQc({ location: {}, samplingStrategy: SamplingStrategy.AllSamples }),
         ['nextstrainClade'],
         signal
       ).then(dataset => new Set(dataset.filter(e => e.nextstrainClade).map(e => e.nextstrainClade!))),

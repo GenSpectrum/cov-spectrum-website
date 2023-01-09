@@ -7,7 +7,7 @@ on:
     - cron: '0 7 */2 * *'
 
 env:
-  IMAGE_NAME: ghcr.io/cevo-public/cov-spectrum-website
+  IMAGE_NAME: ghcr.io/genspectrum/cov-spectrum-website
 
 jobs:
   docker:

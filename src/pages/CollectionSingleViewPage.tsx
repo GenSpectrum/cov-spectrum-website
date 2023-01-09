@@ -1,7 +1,7 @@
 import { useHistory, useLocation, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
 import { fetchCollection } from '../data/api';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Loader from '../components/Loader';
 import { Link } from 'react-router-dom';
 import { Button, ButtonVariant } from '../helpers/ui';
@@ -43,7 +43,14 @@ import { Collection } from '../data/Collection';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 import download from 'downloadjs';
 import { csvStringify } from '../helpers/csvStringifyHelper';
-import { DateRangePicker } from '../components/DateRangePicker';
+import DateRangePicker from '../components/DateRangePicker';
+import { PprettyGridExportButton } from '../components/CombinedExport/PprettyGridExportButton';
+import {
+  PprettyGridExportManager,
+  PprettyGridExportManagerContext,
+} from '../components/CombinedExport/PprettyGridExportManager';
+import { PprettyRequest } from '../data/ppretty/ppretty-request';
+import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
@@ -94,14 +101,12 @@ export const CollectionSingleViewPage = () => {
       const [baselineDateCounts, ...variantsDateCounts] = await Promise.allSettled(
         [{ query: baselineVariant }, ...variants].map(variant =>
           DateCountSampleData.fromApi(
-            {
-              host: undefined,
-              qc: {},
+            addDefaultHostAndQc({
               location: locationSelector,
               variant: variant.query,
               samplingStrategy: SamplingStrategy.AllSamples,
               dateRange: dateRangeSelector,
-            },
+            }),
             signal
           )
         )
@@ -139,14 +144,12 @@ export const CollectionSingleViewPage = () => {
                 variantQuery: `(${variantVariantQuery})  | (${baselineVariantQuery})`,
               };
           return DateCountSampleData.fromApi(
-            {
-              host: undefined,
-              qc: {},
+            addDefaultHostAndQc({
               location: locationSelector,
               variant: variantSelector,
               samplingStrategy: SamplingStrategy.AllSamples,
               dateRange: dateRangeSelector,
-            },
+            }),
             signal
           );
         })
@@ -164,13 +167,11 @@ export const CollectionSingleViewPage = () => {
       return Promise.allSettled(
         variants.map(variant =>
           fetchNumberSubmittedSamplesInPastTenDays(
-            {
-              host: undefined,
-              qc: {},
+            addDefaultHostAndQc({
               location: locationSelector,
               variant: variant.query,
               samplingStrategy: SamplingStrategy.AllSamples,
-            },
+            }),
             signal
           )
         )
@@ -204,6 +205,10 @@ export const CollectionSingleViewPage = () => {
     );
   }
 
+  const onChangeDate = (dateRangeSelector: DateRangeSelector) => {
+    setDateRangeSelector(dateRangeSelector);
+  };
+
   return (
     <>
       <CollectionSinglePageTitle collection={collection} />
@@ -226,7 +231,7 @@ export const CollectionSingleViewPage = () => {
       {/* Baseline variant */}
 
       <div className='mt-8'>
-        <DateRangePicker dateRangeSelector={dateRangeSelector} setDateRangeSelector={setDateRangeSelector} />
+        <DateRangePicker dateRangeSelector={dateRangeSelector} onChangeDate={onChangeDate} />
       </div>
 
       <div className='mt-4'>
@@ -312,6 +317,7 @@ export const CollectionSingleViewPage = () => {
           <TabPanel value={tab} index={1}>
             {variants && variantsDateCounts && baselineDateCounts && datasetsInSync ? (
               <SequencesOverTimeTabContent
+                collection={collection}
                 variants={variants}
                 variantsDateCounts={variantsDateCounts}
                 baselineDateCounts={baselineDateCounts}
@@ -463,8 +469,8 @@ const TableTabContent = ({
         return <span className='break-words overflow-hidden'>{params.value}</span>;
       },
     },
-    { field: 'total', headerName: 'Number sequences', minWidth: 150 },
-    { field: 'newSequences', headerName: 'Submitted in past 10 days', minWidth: 200 },
+    { field: 'total', headerName: 'Number sequences', minWidth: 150, type: 'number' },
+    { field: 'newSequences', headerName: 'Submitted in past 10 days', minWidth: 200, type: 'number' },
     {
       field: 'advantage',
       headerName: 'Relative growth advantage',
@@ -575,6 +581,7 @@ const TableTabContent = ({
 };
 
 type SequencesOverTimeTabContentProps = {
+  collection: Collection;
   variants: { query: VariantSelector; name: string; description: string }[];
   variantsDateCounts: PromiseSettledResult<Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>>[];
   baselineDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>;
@@ -597,13 +604,58 @@ const sortRelativeGrowthAdvantageValues: GridComparatorFn<string> = (a, b) => {
 };
 
 const SequencesOverTimeTabContent = ({
+  collection,
   variants,
   variantsDateCounts,
   baselineDateCounts,
   mode,
 }: SequencesOverTimeTabContentProps) => {
+  const exportManagerRef = useRef(
+    new PprettyGridExportManager(requests => {
+      // TODO What happens if the arguments of SequencesOverTimeTabContent change? We probably need to update this
+      //   function as well?
+      const variantToDetailsMap = new Map<string, { name: string; description: string }>();
+      for (let { query, name, description } of collection.variants) {
+        const variantString = formatVariantDisplayName(JSON.parse(query));
+        variantToDetailsMap.set(variantString, { name, description });
+      }
+      const mergedRequest: PprettyRequest = {
+        config: {
+          plotName: 'sequences-over-time_collection',
+          plotType: 'line',
+          sizeMultiplier: Math.max(Math.ceil(Math.sqrt(collection.variants.length)) / 2, 1),
+        },
+        metadata: {
+          location: requests[0].metadata.location,
+          collection: {
+            id: collection.id,
+            title: collection.title,
+            maintainer: collection.maintainers,
+          },
+        },
+        data: [],
+      };
+      for (let request of requests) {
+        mergedRequest.data.push(
+          ...request.data.map((d: any) => {
+            const variant = request.metadata.variant;
+            const { name, description } = variantToDetailsMap.get(variant)!;
+            return {
+              ...d,
+              variant,
+              name,
+              description,
+            };
+          })
+        );
+      }
+      return mergedRequest;
+    })
+  );
+
   return (
-    <>
+    <PprettyGridExportManagerContext.Provider value={exportManagerRef.current}>
+      <PprettyGridExportButton />
       <PackedGrid maxColumns={3}>
         {variants.map((variant, i) => {
           const vdc = variantsDateCounts[i];
@@ -612,7 +664,7 @@ const SequencesOverTimeTabContent = ({
               <GridCell minWidth={600} key={i}>
                 <VariantTimeDistributionChartWidget.ShareableComponent
                   title={mode === 'Single' ? variant.name : `Comparing ${variant.name} to baseline`}
-                  height={300}
+                  height={350}
                   variantSampleSet={vdc.value}
                   wholeSampleSet={baselineDateCounts}
                 />
@@ -627,7 +679,7 @@ const SequencesOverTimeTabContent = ({
           }
         })}
       </PackedGrid>
-    </>
+    </PprettyGridExportManagerContext.Provider>
   );
 };
 

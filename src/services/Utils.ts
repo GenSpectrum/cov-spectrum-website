@@ -88,4 +88,8 @@ export class Utils {
       setTimeout(() => resolve(), milliseconds);
     });
   }
+
+  static isLetter(x: string): boolean {
+    return /[a-zA-Z*-]/.test(x);
+  }
 }
