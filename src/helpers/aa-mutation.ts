@@ -3,14 +3,23 @@ import { decodeNucMutation } from './nuc-mutation';
 
 import jsonRefData from '../data/refData.json';
 
+interface RefStartPosition {
+  name: string;
+  startPosition: number;
+}
+
 const loadRefData = () => {
   // getting a 'clean' copy: https://stackoverflow.com/a/51681510
   const geneData = JSON.parse(JSON.stringify(jsonRefData));
-  const startPositionsByGene = new Map<string, number>();
+  const res: RefStartPosition[] = [];
   for (const item of geneData.genes) {
-    startPositionsByGene.set(item.name, item.startPosition);
+    res.push({ name: item.name, startPosition: item.startPosition });
   }
-  return startPositionsByGene;
+  return res;
+};
+
+const filterRefData = (geneData: RefStartPosition[], geneName: string) => {
+  return geneData.filter((gene: RefStartPosition) => gene.name === geneName)[0];
 };
 
 export type DecodedAAMutation = {
@@ -52,16 +61,13 @@ export function sortListByAAMutation<T>(list: T[], mutationExtractorFunc: (x: T)
       return { x, mutationDecoded };
     })
     .sort((a, b) => {
-      const startPositionA = refData.has(a.mutationDecoded.gene) ? refData.get(a.mutationDecoded.gene) : 0;
-      const startPositionB = refData.has(b.mutationDecoded.gene) ? refData.get(a.mutationDecoded.gene) : 0;
-      if (startPositionA && startPositionB) {
-        if (startPositionA > startPositionB) {
-          return 1;
-        } else if (startPositionA < startPositionB) {
-          return -1;
-        } else {
-          return 0;
-        }
+      const startPositionA = filterRefData(refData, a.mutationDecoded.gene).startPosition;
+      const startPositionB = filterRefData(refData, b.mutationDecoded.gene).startPosition;
+
+      if (startPositionA > startPositionB) {
+        return 1;
+      } else if (startPositionA < startPositionB) {
+        return -1;
       } else {
         return 0;
       }
