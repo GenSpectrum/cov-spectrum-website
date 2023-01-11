@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Redirect, Route, Switch } from 'react-router-dom';
 import Header from './Header';
 import { LoginWrapper } from './helpers/app-layout';
@@ -36,6 +36,7 @@ import {
   formatDateRangeSelector,
   isDefaultSubmissionDateRangeSelector,
 } from './data/DateRangeSelector';
+import { NewFocusPage } from './pages/NewFocusPage';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -47,6 +48,7 @@ const Footer = styled.footer`
 `;
 
 export const App = () => {
+  const [hideHeaderAndFooter, setHideHeaderAndFooter] = useState(false);
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
@@ -55,7 +57,7 @@ export const App = () => {
   return (
     <div className='w-full'>
       {/* Header */}
-      <Header />
+      {!hideHeaderAndFooter && <Header />}
       <div ref={ref} className='w-full'>
         {/* Preview warning */}
         {isPreview && (
@@ -164,34 +166,39 @@ export const App = () => {
           <Route path='/collections/:collectionId'>
             <CollectionSinglePage />
           </Route>
+          <Route path='/focus'>
+            <NewFocusPage fullScreenMode={hideHeaderAndFooter} setFullScreenMode={setHideHeaderAndFooter} />
+          </Route>
           <Route path='/about'>
             <AboutPage />
           </Route>
         </Switch>
       </div>
-      <Footer className='text-center'>
-        <div>The sequence data was updated: {dayjs(getCurrentLapisDataVersionDate()).calendar()}</div>
-        {sequenceDataSource === 'gisaid' && (
-          <div>
-            Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
-            <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
+      {!hideHeaderAndFooter && (
+        <Footer className='text-center'>
+          <div>The sequence data was updated: {dayjs(getCurrentLapisDataVersionDate()).calendar()}</div>
+          {sequenceDataSource === 'gisaid' && (
+            <div>
+              Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
+              <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
+            </div>
+          )}
+          <div className='flex flex-wrap justify-center items-center gap-x-8 gap-y-4 my-4 mt-8 px-2'>
+            <ExternalLink url='https://ethz.ch'>
+              <img className='h-5' alt='ETH Zurich' src='/img/ethz.png' />
+            </ExternalLink>
+            <ExternalLink url='https://bsse.ethz.ch/cevo'>
+              <img className='h-7' alt='Computational Evolution Group' src='/img/cEvo.png' />
+            </ExternalLink>
+            <ExternalLink url='https://www.sib.swiss/'>
+              <img className='h-7' alt='SIB Swiss Institute of Bioinformatics' src='/img/sib.svg' />
+            </ExternalLink>
+            <ExternalLink url='https://vercel.com/?utm_source=cov-spectrum&utm_campaign=oss'>
+              <img className='h-6' alt='Powered by Vercel' src='/img/powered-by-vercel.svg' />
+            </ExternalLink>
           </div>
-        )}
-        <div className='flex flex-wrap justify-center items-center gap-x-8 gap-y-4 my-4 mt-8 px-2'>
-          <ExternalLink url='https://ethz.ch'>
-            <img className='h-5' alt='ETH Zurich' src='/img/ethz.png' />
-          </ExternalLink>
-          <ExternalLink url='https://bsse.ethz.ch/cevo'>
-            <img className='h-7' alt='Computational Evolution Group' src='/img/cEvo.png' />
-          </ExternalLink>
-          <ExternalLink url='https://www.sib.swiss/'>
-            <img className='h-7' alt='SIB Swiss Institute of Bioinformatics' src='/img/sib.svg' />
-          </ExternalLink>
-          <ExternalLink url='https://vercel.com/?utm_source=cov-spectrum&utm_campaign=oss'>
-            <img className='h-6' alt='Powered by Vercel' src='/img/powered-by-vercel.svg' />
-          </ExternalLink>
-        </div>
-      </Footer>
+        </Footer>
+      )}
     </div>
   );
 };

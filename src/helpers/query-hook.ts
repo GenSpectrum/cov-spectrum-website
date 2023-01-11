@@ -1,4 +1,4 @@
-import { DependencyList, useState } from 'react';
+import { DependencyList, useMemo, useState } from 'react';
 import { useDeepCompareEffect } from './deep-compare-hooks';
 
 export type QueryStatus<T> = {
@@ -53,5 +53,8 @@ export function useQuery<T>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, dependencies);
 
-  return { isLoading, isSuccess, isError, data, error };
+  return useMemo(
+    () => ({ isLoading, isSuccess, isError, data, error }),
+    [isLoading, isSuccess, isError, data, error]
+  );
 }

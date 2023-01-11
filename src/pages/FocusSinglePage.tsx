@@ -36,7 +36,10 @@ import { filter, getData } from '../models/wasteWater/loading';
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
 import { HospDiedAgeSampleData } from '../data/sample/HospDiedAgeSampleDataset';
 import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
-import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
+import {
+  SingleSelectorsFromExploreUrlHook,
+  useSingleSelectorsFromExploreUrl,
+} from '../helpers/selectors-from-explore-url-hook';
 import { ErrorBoundaryFallback } from '../components/ErrorBoundaryFallback';
 import * as Sentry from '@sentry/react';
 import { isDefaultHostSelector } from '../data/HostSelector';
@@ -48,19 +51,16 @@ import * as lodashAlternatives from '../helpers/lodash_alternatives';
 import { VariantMutationsTimelines } from '../components/VariantMutationsTimelines';
 import { wastewaterVariantColors } from '../models/wasteWater/constants';
 import { WidgetWrapper } from '../components/WidgetWrapper';
+import { VariantSelector } from '../data/VariantSelector';
+import { AnalysisMode } from '../data/AnalysisMode';
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
 
 export const FocusSinglePage = () => {
   const exploreUrl = useExploreUrl();
-  const [lineageDistributionIndex, setLineageDistributionIndex] = useState(1);
-  const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
-  const [showEstimatedCasesDivGrid, setShowEstimatedCasesDivGrid] = useState(false);
-  const [showVariantAgeDistributionDivGrid, setShowVariantAgeDistributionDivGrid] = useState(false);
-  const [showChen2021FitnessDivGrid, setShowChen2021FitnessDivGrid] = useState(false);
 
   // Deep focus buttons
-  const deepFocusButtons = useMemo(
+  const deepFocusButtons: { [p: string]: JSX.Element } = useMemo(
     () =>
       lodashAlternatives.mapValues(deepFocusPaths, (suffix: string) => (
         <ShowMoreButton key={suffix} to={exploreUrl?.getDeepFocusPageUrl(suffix) ?? '#'} />
@@ -68,10 +68,56 @@ export const FocusSinglePage = () => {
     [exploreUrl]
   );
 
-  // --- Fetch data ---
-  const { ldvsSelector, ldsSelector, dvsSelector, dsSelector, lSelector } = useSingleSelectorsFromExploreUrl(
-    exploreUrl!
+  const selectors = useSingleSelectorsFromExploreUrl(exploreUrl!);
+
+  return (
+    <FocusSinglePageContent
+      selectors={selectors}
+      deepFocusButtons={deepFocusButtons}
+      setVariants={exploreUrl?.setVariants}
+    />
   );
+};
+
+export const createDivisionBreakdownButton = (key: string, setter: (show: boolean) => void) => (
+  <Button
+    key={key}
+    className='mt-1 ml-2 w-max'
+    variant={ButtonVariant.PRIMARY}
+    onClick={() => {
+      setter(true);
+    }}
+  >
+    Show regions
+  </Button>
+);
+
+const deepFocusPaths = {
+  internationalComparison: '/international-comparison',
+  chen2021Fitness: '/chen-2021-fitness',
+  hospitalizationAndDeath: '/hospitalization-death',
+  wasteWater: '/waste-water',
+};
+
+type FocusSinglePageContentProps = {
+  selectors: SingleSelectorsFromExploreUrlHook;
+  deepFocusButtons?: { [p: string]: JSX.Element };
+  setVariants?: (variants: VariantSelector[], analysisMode?: AnalysisMode) => void;
+};
+
+export const FocusSinglePageContent = ({
+  selectors,
+  deepFocusButtons,
+  setVariants,
+}: FocusSinglePageContentProps) => {
+  const { ldvsSelector, ldsSelector, dvsSelector, dsSelector, lSelector } = selectors;
+
+  const [lineageDistributionIndex, setLineageDistributionIndex] = useState(1);
+  const [showVariantTimeDistributionDivGrid, setShowVariantTimeDistributionDivGrid] = useState(false);
+  const [showEstimatedCasesDivGrid, setShowEstimatedCasesDivGrid] = useState(false);
+  const [showVariantAgeDistributionDivGrid, setShowVariantAgeDistributionDivGrid] = useState(false);
+  const [showChen2021FitnessDivGrid, setShowChen2021FitnessDivGrid] = useState(false);
+
   // Date counts
   const variantDateCount = useQuery(
     signal => DateCountSampleData.fromApi(ldvsSelector, signal),
@@ -126,10 +172,10 @@ export const FocusSinglePage = () => {
 
   // Wastewater
   const [wasteWaterData, setWasteWaterData] = useState<WasteWaterDataset | undefined>(undefined);
-  const pangoLineageWithoutAsterisk = exploreUrl?.variants![0].pangoLineage?.replace('*', '');
+  const pangoLineageWithoutAsterisk = ldvsSelector.variant?.pangoLineage?.replace('*', '');
   useEffect(() => {
     let isMounted = true;
-    const country = exploreUrl?.location.country;
+    const country = ldvsSelector.location.country;
     if (!pangoLineageWithoutAsterisk || !country) {
       return;
     }
@@ -140,12 +186,12 @@ export const FocusSinglePage = () => {
     return () => {
       isMounted = false;
     };
-  }, [exploreUrl?.location.country, pangoLineageWithoutAsterisk]);
+  }, [ldvsSelector.location.country, pangoLineageWithoutAsterisk]);
 
   // --- Prepare data for sub-division plots ---
   // If this is not a country page, the sub-plots will be split by countries. Otherwise, they should be split by
   // divisions.
-  const splitField = !exploreUrl?.location.country ? 'country' : 'division';
+  const splitField = !ldvsSelector.location.country ? 'country' : 'division';
   // Split case data
   const caseCountDatasetSplit = useMemo(() => {
     if (!caseCountDataset.payload) {
@@ -230,11 +276,11 @@ export const FocusSinglePage = () => {
 
   // --- Rendering ---
 
-  if (!exploreUrl || !exploreUrl.variants) {
+  if (!ldvsSelector.variant) {
     return null;
   }
-  const { country } = exploreUrl.location;
-  const host = exploreUrl.host;
+  const { country } = ldvsSelector.location;
+  const host = ldvsSelector.host!;
 
   // Error handling
   const allErrors = [
@@ -272,14 +318,14 @@ export const FocusSinglePage = () => {
               data: data.timeseriesSummary,
             }))}
             height={300}
-            toolbarChildren={deepFocusButtons.wasteWater}
+            toolbarChildren={deepFocusButtons?.wasteWater}
           />
         </GridCell>
       );
     } else {
       wasteWaterSummaryPlot = (
         <GridCell minWidth={600}>
-          <NamedCard title='Wastewater prevalence' toolbar={deepFocusButtons.wasteWater}>
+          <NamedCard title='Wastewater prevalence' toolbar={deepFocusButtons?.wasteWater}>
             <div style={{ height: 300, width: '100%' }}>
               <Loader />
             </div>
@@ -294,8 +340,8 @@ export const FocusSinglePage = () => {
   return (
     <>
       <VariantHeader
-        dateRange={exploreUrl.dateRange}
-        variant={exploreUrl.variants[0]}
+        dateRange={ldvsSelector.dateRange!}
+        variant={ldvsSelector.variant}
         controls={<FocusVariantHeaderControls selector={ldvsSelector} />}
       />
       {variantDateCount.data &&
@@ -328,7 +374,7 @@ export const FocusSinglePage = () => {
               }}
             >
               <VariantLineages
-                onVariantSelect={exploreUrl.setVariants}
+                onVariantSelect={setVariants ?? (() => {})}
                 selector={ldvsSelector}
                 type={
                   (['pangoLineage', 'nextcladePangoLineage', 'nextstrainClade'] as const)[
@@ -376,7 +422,7 @@ export const FocusSinglePage = () => {
                   preSelectedCountries={country ? [country] : []}
                   height={300}
                   title='International comparison'
-                  toolbarChildren={deepFocusButtons.internationalComparison}
+                  toolbarChildren={deepFocusButtons?.internationalComparison}
                   variantInternationalSampleSet={variantInternationalDateCount.data}
                   wholeInternationalSampleSet={wholeInternationalDateCount.data}
                   logScale={false}
@@ -392,10 +438,12 @@ export const FocusSinglePage = () => {
               <GridCell minWidth={600}>
                 <NamedCard
                   title='Relative growth advantage'
-                  toolbar={[
-                    deepFocusButtons.chen2021Fitness,
-                    createDivisionBreakdownButton('Chen2021Fitness', setShowChen2021FitnessDivGrid),
-                  ]}
+                  toolbar={
+                    [
+                      deepFocusButtons?.chen2021Fitness,
+                      createDivisionBreakdownButton('Chen2021Fitness', setShowChen2021FitnessDivGrid),
+                    ].filter(x => !!x) as JSX.Element[]
+                  }
                 >
                   <Chen2021FitnessExplanation />
                   <div style={{ height: window.innerWidth < 640 ? 600 : 400 }}>
@@ -443,10 +491,10 @@ export const FocusSinglePage = () => {
                     field='hospitalized'
                     variantSampleSet={variantHospDeathAgeCount.data}
                     wholeSampleSet={wholeHospDeathAgeCount.data}
-                    variantName={exploreUrl.variants[0].pangoLineage ?? 'unnamed variant'}
+                    variantName={ldvsSelector.variant.pangoLineage ?? 'unnamed variant'}
                     title='Hospitalization probabilities'
                     height={300}
-                    toolbarChildren={deepFocusButtons.hospitalizationAndDeath}
+                    toolbarChildren={deepFocusButtons?.hospitalizationAndDeath}
                   />
                 </GridCell>
               )}
@@ -539,7 +587,7 @@ export const FocusSinglePage = () => {
               getData={splitSequencesOverTime.getData}
               splitData={splitSequencesOverTime.splitData}
               generate={(division, d) => (
-                <NamedCard title={division} toolbar={deepFocusButtons.chen2021Fitness}>
+                <NamedCard title={division} toolbar={deepFocusButtons?.chen2021Fitness}>
                   <Chen2021FitnessExplanation />
                   <div style={{ height: 350 }}>
                     <Chen2021FitnessPreview variantDateCounts={d.variant} wholeDateCounts={d.whole} />
@@ -557,24 +605,4 @@ export const FocusSinglePage = () => {
       )}
     </>
   );
-};
-
-export const createDivisionBreakdownButton = (key: string, setter: (show: boolean) => void) => (
-  <Button
-    key={key}
-    className='mt-1 ml-2 w-max'
-    variant={ButtonVariant.PRIMARY}
-    onClick={() => {
-      setter(true);
-    }}
-  >
-    Show regions
-  </Button>
-);
-
-const deepFocusPaths = {
-  internationalComparison: '/international-comparison',
-  chen2021Fitness: '/chen-2021-fitness',
-  hospitalizationAndDeath: '/hospitalization-death',
-  wasteWater: '/waste-water',
 };
