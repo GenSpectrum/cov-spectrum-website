@@ -1,4 +1,10 @@
 import { decodeNucMutation } from './nuc-mutation';
+import jsonRefData from '../data/refData.json';
+import { ReferenceGenomeGeneInfo, ReferenceGenomeInfo } from '../data/ReferenceGenomeInfo';
+
+const filterRefData = (geneData: readonly ReferenceGenomeGeneInfo[], geneName: string) => {
+  return geneData.filter((gene: ReferenceGenomeGeneInfo) => gene.name === geneName)[0];
+};
 
 export type DecodedAAMutation = {
   gene: string;
@@ -30,6 +36,8 @@ export function sortAAMutationList(mutations: string[]): string[] {
 }
 
 export function sortListByAAMutation<T>(list: T[], mutationExtractorFunc: (x: T) => string) {
+  const refData: readonly ReferenceGenomeGeneInfo[] = (jsonRefData as ReferenceGenomeInfo).genes;
+
   return list
     .map(x => {
       const mutation = mutationExtractorFunc(x);
@@ -38,7 +46,9 @@ export function sortListByAAMutation<T>(list: T[], mutationExtractorFunc: (x: T)
     })
     .sort((a, b) => {
       if (a.mutationDecoded.gene !== b.mutationDecoded.gene) {
-        return a.mutationDecoded.gene.localeCompare(b.mutationDecoded.gene);
+        const startPositionA = filterRefData(refData, a.mutationDecoded.gene).startPosition;
+        const startPositionB = filterRefData(refData, b.mutationDecoded.gene).startPosition;
+        return startPositionA - startPositionB;
       }
       return a.mutationDecoded.position - b.mutationDecoded.position;
     })
