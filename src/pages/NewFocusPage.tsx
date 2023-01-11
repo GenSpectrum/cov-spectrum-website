@@ -38,8 +38,12 @@ import { PlaceSelect } from '../components/PlaceSelect';
 import { encodeLocationSelectorToSingleString, LocationSelector } from '../data/LocationSelector';
 
 type FigureType = 'prevalence' | 'aa-mutations' | 'nuc-mutations' | 'growth-advantage';
-type TmpEntry = { nextcladePangoLineage: string | null; count: number };
-type TmpEntry2 = { nextcladePangoLineage: string; nextcladePangoLineageFullName: string; count: number };
+type LineageCountNullable = { nextcladePangoLineage: string | null; count: number };
+type LineageCountWithFullName = {
+  nextcladePangoLineage: string;
+  nextcladePangoLineageFullName: string;
+  count: number;
+};
 
 type Props = {
   fullScreenMode: boolean;
@@ -88,11 +92,11 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   );
 
   // Find the (sub-)lineages that should be shown
-  const dataQuery: QueryStatus<TmpEntry2[]> = useQuery(
+  const dataQuery: QueryStatus<LineageCountWithFullName[]> = useQuery(
     signal =>
-      (_fetchAggSamples(selector, ['nextcladePangoLineage'], signal) as Promise<TmpEntry[]>).then(
+      (_fetchAggSamples(selector, ['nextcladePangoLineage'], signal) as Promise<LineageCountNullable[]>).then(
         async data => {
-          const data2: TmpEntry2[] = [];
+          const data2: LineageCountWithFullName[] = [];
           for (let d of data) {
             if (d.nextcladePangoLineage) {
               data2.push({

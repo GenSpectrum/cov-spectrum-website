@@ -3,18 +3,18 @@ import React, { useMemo, useState } from 'react';
 import { ComposedChart, Label, Line, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
 import { colors } from '../../widgets/common';
 import { GroupedData } from '../../data/transform/transform';
-import { TmpEntry6 } from './SequencesOverTimeGrid';
+import { EntryDateCountWithProportions } from './SequencesOverTimeGrid';
 import { HtmlPortalNode, InPortal } from 'react-reverse-portal';
 import { AxisPortals, TwoValuesXAxis, TwoValuesYAxis } from './common';
 
-type TmpEntry2 = {
+type PlotEntry = {
   dateAsNumber: number;
   date: UnifiedDay;
   nextcladePangoLineage: string;
   proportion: number;
 };
 type Props = {
-  data: GroupedData<TmpEntry6, string>;
+  data: GroupedData<EntryDateCountWithProportions, string>;
   portals: Map<string, HtmlPortalNode>;
   axisPortals: AxisPortals;
   plotWidth: number;
@@ -38,8 +38,8 @@ export const SequencesOverTimeGridInner = ({ data, portals, axisPortals, plotWid
     const proportions = [...data.map(e => e.proportion).data].map(d => d[1].data).flat();
     let [minProportion, maxProportion] = [0, Math.max(...proportions)];
 
-    const plotData: { nextcladePangoLineage: string; entries: TmpEntry2[] }[] = [];
-    const dataMap = new Map<string, Map<number, TmpEntry2>>();
+    const plotData: { nextcladePangoLineage: string; entries: PlotEntry[] }[] = [];
+    const dataMap = new Map<string, Map<number, PlotEntry>>();
     for (const [lineage, d] of dataAsArray) {
       plotData.push({ nextcladePangoLineage: lineage, entries: d.data });
       if (!dataMap.has(lineage)) {

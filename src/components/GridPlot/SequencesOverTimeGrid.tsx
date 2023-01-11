@@ -18,17 +18,16 @@ import { SequencesOverTimeGridInner } from './SequencesOverTimeGridInner';
 import { HtmlPortalNode, InPortal } from 'react-reverse-portal';
 import { AxisPortals } from './common';
 
-type TmpEntry = Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>;
-type TmpEntry2 = TmpEntry & { nextcladePangoLineageFullName: string | null };
-type TmpEntry3 = {
-  date: UnifiedDay;
-  nextcladePangoLineage: string;
-  nextcladePangoLineageFullName: string;
-  count: number;
-};
-type TmpEntry4 = { date: UnifiedDay; nextcladePangoLineage: string; count: number };
-type TmpEntry5 = { date: UnifiedDay; count: number };
-export type TmpEntry6 = TmpEntry4 & ProportionValues;
+// A utility type that forces all properties of T to be non-nullable.
+type RequiredAndNonNullable<T> = { [K in keyof T]: NonNullable<T[K]> };
+
+type WithPangoLineageFullName = { nextcladePangoLineageFullName: string | null };
+type EntryNullable = Pick<FullSampleAggEntry, 'date' | 'nextcladePangoLineage' | 'count'>;
+type EntryNullableWithFullName = EntryNullable & WithPangoLineageFullName;
+type Entry = RequiredAndNonNullable<EntryNullable>;
+type EntryWithFullName = RequiredAndNonNullable<EntryNullableWithFullName>;
+type EntryDateCount = { date: UnifiedDay; count: number };
+export type EntryDateCountWithProportions = Entry & ProportionValues;
 
 type Props = {
   selector: LapisSelector;
@@ -43,7 +42,7 @@ export const SequencesOverTimeGrid = ({ selector, pangoLineage, portals, axisPor
   const dataQuery = useQuery(signal => fetchDatePangoLineageCount(selector, signal), [selector]);
 
   // Data transformation
-  const data: GroupedData<TmpEntry6, string> | undefined = useMemo(() => {
+  const data: GroupedData<EntryDateCountWithProportions, string> | undefined = useMemo(() => {
     if (!dataQuery.data) {
       return undefined;
     }
@@ -78,11 +77,11 @@ export const SequencesOverTimeGrid = ({ selector, pangoLineage, portals, axisPor
 export const fetchDatePangoLineageCount = async (
   selector: LapisSelector,
   signal: AbortSignal
-): Promise<{ datePangoLineageCount: TmpEntry3[]; dateCount: TmpEntry5[] }> => {
+): Promise<{ datePangoLineageCount: EntryWithFullName[]; dateCount: EntryDateCount[] }> => {
   const [datePangoLineageCount, dateCount] = await Promise.all([
-    (_fetchAggSamples(selector, ['date', 'nextcladePangoLineage'], signal) as Promise<TmpEntry[]>).then(
+    (_fetchAggSamples(selector, ['date', 'nextcladePangoLineage'], signal) as Promise<EntryNullable[]>).then(
       async data => {
-        const data2: TmpEntry2[] = [];
+        const data2: EntryNullableWithFullName[] = [];
         for (let d of data) {
           data2.push({
             ...d,
@@ -92,10 +91,10 @@ export const fetchDatePangoLineageCount = async (
               : null,
           });
         }
-        return data2.filter(d => !!d.date && !!d.nextcladePangoLineage) as TmpEntry3[];
+        return data2.filter(d => !!d.date && !!d.nextcladePangoLineage) as EntryWithFullName[];
       }
     ),
-    fetchDateCountSamples(selector, signal).then(data => data.filter(d => !!d.date) as TmpEntry5[]),
+    fetchDateCountSamples(selector, signal).then(data => data.filter(d => !!d.date) as EntryDateCount[]),
   ]);
   return { datePangoLineageCount, dateCount };
 };
@@ -105,8 +104,8 @@ export const groupBySubLineage = ({
   datePangoLineageCount,
 }: {
   currentLineage: string;
-  datePangoLineageCount: TmpEntry3[];
-}): GroupedData<TmpEntry4, string> => {
+  datePangoLineageCount: EntryWithFullName[];
+}): GroupedData<Entry, string> => {
   const currentLineageFullName =
     PangoLineageAliasResolverService.findFullNameUnsafeSync(currentLineage) ?? currentLineage;
   const dateRangeInData = globalDateCache.rangeFromDays(datePangoLineageCount.map(d => d.date));
@@ -147,7 +146,7 @@ export const groupBySubLineage = ({
           ds.data.reduce((prev, curr) => prev + curr.count, 0)
         )
       );
-      const reducedData: TmpEntry4[] = [];
+      const reducedData: Entry[] = [];
       dateMap.forEach((count, date) => reducedData.push({ nextcladePangoLineage, date, count }));
       return new SingleData(reducedData);
     })
@@ -170,10 +169,10 @@ export const calculateProportionPerPangoLineage = ({
   performSmoothing = true,
 }: {
   currentLineage: string;
-  datePangoLineageCount: TmpEntry3[];
-  dateCount: TmpEntry5[];
+  datePangoLineageCount: EntryWithFullName[];
+  dateCount: EntryDateCount[];
   performSmoothing?: boolean;
-}): GroupedData<TmpEntry6, string> => {
+}): GroupedData<EntryDateCountWithProportions, string> => {
   const dateRangeInData = globalDateCache.rangeFromDays(datePangoLineageCount.map(d => d.date));
   const allDays = globalDateCache.daysFromRange(dateRangeInData);
   let lineagesData = groupBySubLineage({ currentLineage, datePangoLineageCount });
@@ -191,10 +190,10 @@ export const calculateProportionPerPangoLineage = ({
     lineagesData = lineagesData.rolling(7, rolling7SumCountCentered);
     wholeData = wholeData.rolling(7, rolling7SumCountCentered);
   }
-  // TODO HACK(Chaoran) "as SingleData<TmpEntry4>" is wrong. Instead, the typing of divideBySingle should be improved.
+  // TODO HACK(Chaoran) "as SingleData<Entry>" is wrong. Instead, the typing of divideBySingle should be improved.
   return lineagesData
     .divideBySingle(
-      wholeData as SingleData<TmpEntry4>,
+      wholeData as SingleData<Entry>,
       e => e.date,
       e => e.count
     )
