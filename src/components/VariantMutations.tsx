@@ -122,8 +122,8 @@ export const VariantMutations = ({ selector }: Props) => {
 
       return Promise.all([
         fetchSamplesCount(selector, signal),
-        MutationProportionData.fromApi(selector, 'aa', signal),
-        MutationProportionData.fromApi(selector, 'nuc', signal),
+        MutationProportionData.fromApi(selector, 'aa', signal, 0),
+        MutationProportionData.fromApi(selector, 'nuc', signal, 0),
       ]).then(async ([variantCount, aaMutationDataset, nucMutationDataset]) => {
         const aa: MutationProportionEntryWithUniqueness[] = aaMutationDataset.payload.map(m => ({
           ...m,
