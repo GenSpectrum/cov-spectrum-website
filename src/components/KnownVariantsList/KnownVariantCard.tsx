@@ -5,6 +5,9 @@ import styled from 'styled-components';
 import { mean } from '../../helpers/lodash_alternatives';
 import { colors } from '../../widgets/common';
 import { CollectionVariant } from '../../data/Collection';
+import { useDrag } from 'react-dnd';
+import { usePreview } from 'react-dnd-preview';
+import { isTouchscreenDevice } from '../../helpers/ui';
 
 const TREND_START = 9;
 const TREND_END = 3;
@@ -81,17 +84,43 @@ const SimpleAreaPlot = React.memo(
 );
 
 export const KnownVariantCard = ({ variant, chartData, recentProportion, onClick, selected }: Props) => {
-  const startDrag = (ev: React.DragEvent<HTMLDivElement>) => {
-    ev.dataTransfer.setData('drag-item', variant.query);
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: 'div',
+    item: { query: variant.query, variant: variant.name },
+    collect: monitor => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
+
+  const VariantDnDPreview = () => {
+    const preview = usePreview<{ variant: string }, HTMLDivElement>();
+    if (!preview.display) {
+      return null;
+    }
+    const { style, item } = preview;
+    return (
+      <div
+        style={{
+          border: '1px solid #333',
+          padding: '10px',
+          zIndex: 999,
+          backgroundColor: 'rgba(255,255,255,0.5)',
+          ...style,
+        }}
+      >
+        {item.variant}
+      </div>
+    );
   };
 
   return (
-    <div draggable onDragStart={startDrag} title={variant.description}>
+    <div title={variant.description} ref={drag}>
       <Card
         as={StyledCard}
         className={`shadow-md border-0 m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl w-full`}
         onClick={onClick}
         selected={selected}
+        style={{ opacity: `${isDragging ? '0.5' : '1'}` }}
       >
         <div
           id='variant-title'
@@ -110,6 +139,7 @@ export const KnownVariantCard = ({ variant, chartData, recentProportion, onClick
           <SimpleAreaPlot data={chartData} selected={selected ? selected : false} />
         </div>
       </Card>
+      {isTouchscreenDevice ? <VariantDnDPreview /> : <></>}
     </div>
   );
 };

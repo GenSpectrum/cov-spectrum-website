@@ -159,3 +159,10 @@ export const PipeDividedOptionsButtons = <T extends unknown>({
     </div>
   );
 };
+
+// window.matchMedia("(any-pointer: coarse)").matches returns true on
+// mobile devices (touch screen only) and false on desktops
+// window.matchMedia may not be available in the test suite
+export const isTouchscreenDevice = window.matchMedia
+  ? window.matchMedia('(any-pointer: coarse)').matches
+  : undefined;
