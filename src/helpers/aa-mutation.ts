@@ -1,25 +1,9 @@
 import { decodeNucMutation } from './nuc-mutation';
-//import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
-
 import jsonRefData from '../data/refData.json';
+import { ReferenceGenomeGeneInfo, ReferenceGenomeInfo } from '../data/ReferenceGenomeInfo';
 
-interface RefStartPosition {
-  name: string;
-  startPosition: number;
-}
-
-const loadRefData = () => {
-  // getting a 'clean' copy: https://stackoverflow.com/a/51681510
-  const geneData = JSON.parse(JSON.stringify(jsonRefData));
-  const res: RefStartPosition[] = [];
-  for (const item of geneData.genes) {
-    res.push({ name: item.name, startPosition: item.startPosition });
-  }
-  return res;
-};
-
-const filterRefData = (geneData: RefStartPosition[], geneName: string) => {
-  return geneData.filter((gene: RefStartPosition) => gene.name === geneName)[0];
+const filterRefData = (geneData: readonly ReferenceGenomeGeneInfo[], geneName: string) => {
+  return geneData.filter((gene: ReferenceGenomeGeneInfo) => gene.name === geneName)[0];
 };
 
 export type DecodedAAMutation = {
@@ -52,7 +36,7 @@ export function sortAAMutationList(mutations: string[]): string[] {
 }
 
 export function sortListByAAMutation<T>(list: T[], mutationExtractorFunc: (x: T) => string) {
-  const refData = loadRefData();
+  const refData: readonly ReferenceGenomeGeneInfo[] = (jsonRefData as ReferenceGenomeInfo).genes;
 
   return list
     .map(x => {
@@ -61,16 +45,12 @@ export function sortListByAAMutation<T>(list: T[], mutationExtractorFunc: (x: T)
       return { x, mutationDecoded };
     })
     .sort((a, b) => {
-      const startPositionA = filterRefData(refData, a.mutationDecoded.gene).startPosition;
-      const startPositionB = filterRefData(refData, b.mutationDecoded.gene).startPosition;
-
-      if (startPositionA > startPositionB) {
-        return 1;
-      } else if (startPositionA < startPositionB) {
-        return -1;
-      } else {
-        return 0;
+      if (a.mutationDecoded.gene !== b.mutationDecoded.gene) {
+        const startPositionA = filterRefData(refData, a.mutationDecoded.gene).startPosition;
+        const startPositionB = filterRefData(refData, b.mutationDecoded.gene).startPosition;
+        return startPositionA - startPositionB;
       }
+      return a.mutationDecoded.position - b.mutationDecoded.position;
     })
     .map(m => m.x);
 }

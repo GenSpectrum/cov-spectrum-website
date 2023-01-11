@@ -204,7 +204,6 @@ export const VariantMutations = ({ selector }: Props) => {
         }),
         exportManager.register('Download nucleotide consensus sequence (ignoring deletions)', async () => {
           const reference = (await ReferenceGenomeService.data).nucSeq;
-
           const mutations = data.nuc.map(e => {
             const decoded = decodeNucMutation(e.mutation);
             return {
