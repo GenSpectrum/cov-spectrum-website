@@ -6,12 +6,10 @@ import jsonRefData from '../data/refData.json';
 const loadRefData = () => {
   // getting a 'clean' copy: https://stackoverflow.com/a/51681510
   const geneData = JSON.parse(JSON.stringify(jsonRefData));
-  console.log(geneData);
   const startPositionsByGene = new Map<string, number>();
   for (const item of geneData.genes) {
     startPositionsByGene.set(item.name, item.startPosition);
   }
-  console.log(startPositionsByGene);
   return startPositionsByGene;
 };
 
