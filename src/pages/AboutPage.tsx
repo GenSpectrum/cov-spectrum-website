@@ -5,7 +5,7 @@ import { InternalLink } from '../components/InternalLink';
 
 const Question = ({ title, id, children }: { title: string; id?: string; children: React.ReactNode }) => {
   return (
-    <div id={id} className='w-full bg-yellow-100 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-800'>
+    <div id={id} className='w-full bg-yellow-100 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-200'>
       <h2 className='font-bold mb-2 mt-0'>{title}</h2>
       <p>{children}</p>
     </div>

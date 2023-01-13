@@ -1,6 +1,7 @@
 import React from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { useHistory } from 'react-router-dom';
+import './helpers.css';
 
 export enum AlertVariant {
   DANGER = 'danger',
@@ -99,7 +100,10 @@ const narrowDropdownClassName = 'custom-narrow-dropdown';
 
 export const DropdownButton = ({ onToggle, className, children, ...restProps }: DropdownButtonProps) => {
   return (
-    <Dropdown onToggle={onToggle} className={`${className} ${narrowDropdownClassName}`}>
+    <Dropdown
+      onToggle={onToggle}
+      className={`${className ? className : 'dropDownButton'}  ${narrowDropdownClassName}`}
+    >
       <Dropdown.Toggle as={RawButton} {...restProps}>
         Export
       </Dropdown.Toggle>
@@ -112,7 +116,7 @@ export const ShowMoreButton = ({ to }: { to: string }) => {
   const history = useHistory();
   return (
     <Button
-      className='mt-1 ml-2 w-max'
+      className='mt-1 ml-4 w-max'
       variant={ButtonVariant.PRIMARY}
       onClick={() => {
         history.push(to);
