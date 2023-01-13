@@ -123,7 +123,7 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
         </div>
         <Button
           variant={ButtonVariant.PRIMARY}
-          className='w-full sm:w-40 sm:mt-3'
+          className='w-80 sm:w-40 sm:mt-3 mx-auto'
           onClick={() => submitSearch()}
         >
           Search

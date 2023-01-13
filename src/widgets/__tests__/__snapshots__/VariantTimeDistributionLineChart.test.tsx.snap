@@ -48,7 +48,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
             </button>
           </div>
           <div
-            className="mt-1 ml-2"
+            className="mt-1 ml-4"
           >
             <button
               className="undefined bg-gray-400 hover:bg-gray-500 focus:ring-gray-500 focus:ring-offset-gray-200 px-2 text-white w-full transition ease-in duration-100 scale-110 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg "
@@ -170,7 +170,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
               id="metric-title"
             >
               <p
-                className="w-auto overflow-clip"
+                className="w-auto text-clip"
               >
                 Proportion 
               </p>
@@ -321,7 +321,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
               id="metric-title"
             >
               <p
-                className="w-auto overflow-clip"
+                className="w-auto text-clip"
               >
                 Confidence int. 
               </p>

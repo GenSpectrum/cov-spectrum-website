@@ -184,14 +184,14 @@ const OffcanvasNav = ({ show, onClose, setShowAdvancedFilteringModal }: Offcanva
       {/* Gray and transparent layer */}
       {show && (
         <div
-          className={`h-full fixed bg-black bg-opacity-60 w-screen`}
+          className={`h-full fixed bg-black/60 w-screen`}
           style={{ zIndex: 1000, top: 0, left: 0 }}
           onClick={() => onClose()}
         ></div>
       )}
       {/* The actual menu */}
       <div
-        className={`h-full bg-white bg-opacity-100 fixed`}
+        className={`h-full bg-white/100 fixed`}
         style={{ zIndex: 1001, top: 0, left: !show ? '-100vw' : 0, width: '80vw', transition: 'left 0.6s' }}
         onClick={e => e.stopPropagation()}
       >

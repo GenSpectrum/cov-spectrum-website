@@ -27,7 +27,7 @@ export const PprettyGridExportButton = () => {
 
   return (
     <>
-      <DropdownButton variant={ButtonVariant.PRIMARY}>
+      <DropdownButton variant={ButtonVariant.PRIMARY} className='mt-2 mb-4'>
         {pprettyFileFormats.map(format => (
           <Dropdown.Item
             key={format}

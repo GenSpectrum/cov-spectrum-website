@@ -69,7 +69,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
               id="metric-title"
             >
               <p
-                className="w-auto overflow-clip"
+                className="w-auto text-clip"
               >
                 Est. cases 
               </p>
@@ -220,7 +220,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
               id="metric-title"
             >
               <p
-                className="w-auto overflow-clip"
+                className="w-auto text-clip"
               >
                 Confidence int. 
               </p>

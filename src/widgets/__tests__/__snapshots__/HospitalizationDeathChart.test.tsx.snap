@@ -175,7 +175,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   id="metric-title"
                 >
                   <p
-                    className="w-auto overflow-clip"
+                    className="w-auto text-clip"
                   >
                     Dead 
                   </p>
@@ -326,7 +326,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   id="metric-title"
                 >
                   <p
-                    className="w-auto overflow-clip"
+                    className="w-auto text-clip"
                   >
                     Not dead 
                   </p>
@@ -630,7 +630,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   id="metric-title"
                 >
                   <p
-                    className="w-auto overflow-clip"
+                    className="w-auto text-clip"
                   >
                     Hospitalized 
                   </p>
@@ -781,7 +781,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   id="metric-title"
                 >
                   <p
-                    className="w-auto overflow-clip"
+                    className="w-auto text-clip"
                   >
                     Not hosp. 
                   </p>

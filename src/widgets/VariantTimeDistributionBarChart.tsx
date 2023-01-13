@@ -134,7 +134,7 @@ export const VariantTimeDistributionBarChart = React.memo(
         </Button>
         <Button
           key='lineChartAbsoluteButton'
-          className='mt-1 ml-2'
+          className='mt-1 ml-4'
           variant={absoluteNumbers ? ButtonVariant.PRIMARY : ButtonVariant.SECONDARY}
           onClick={() => {
             setAbsoluteNumbers(true);

@@ -31,7 +31,7 @@ exports[`<Metric> renders correctly 1`] = `
       id="metric-title"
     >
       <p
-        className="w-auto overflow-clip"
+        className="w-auto text-clip"
       >
         Proportion 
       </p>

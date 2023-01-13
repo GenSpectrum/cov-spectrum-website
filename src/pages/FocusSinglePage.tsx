@@ -82,7 +82,7 @@ export const FocusSinglePage = () => {
 export const createDivisionBreakdownButton = (key: string, setter: (show: boolean) => void) => (
   <Button
     key={key}
-    className='mt-1 ml-2 w-max'
+    className='mt-1 ml-4 w-max'
     variant={ButtonVariant.PRIMARY}
     onClick={() => {
       setter(true);
