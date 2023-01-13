@@ -96,7 +96,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
               id="metric-title"
             >
               <p
-                className="w-auto overflow-clip"
+                className="w-auto text-clip"
               >
                 Proportion 
               </p>
@@ -247,7 +247,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
               id="metric-title"
             >
               <p
-                className="w-auto overflow-clip"
+                className="w-auto text-clip"
               >
                 Samples 
               </p>
