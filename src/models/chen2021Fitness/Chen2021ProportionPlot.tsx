@@ -123,9 +123,12 @@ export const Chen2021ProportionPlot = ({
           xaxis: {
             hoverformat: '%d.%m.%Y',
           },
+          yaxis: {
+            tickformat: ',.0%',
+          },
           showlegend: showLegend,
           margin: {
-            l: 30,
+            l: 40,
             r: 10,
             b: 30,
             t: 0,
