@@ -181,7 +181,7 @@ export const FocusCompareToBaselinePage = () => {
                 title='Relative growth advantage'
                 toolbar={[createDivisionBreakdownButton('Chen2021Fitness', setShowChen2021FitnessDivGrid)]}
               >
-                <Chen2021FitnessExplanation />
+                <Chen2021FitnessExplanation compareToBaseLineMode={true} />
                 <div style={{ height: 400 }}>
                   <Chen2021FitnessPreview
                     variantDateCounts={variantDateCounts.data[1]}
@@ -230,7 +230,7 @@ export const FocusCompareToBaselinePage = () => {
           splitData={splitSequencesOverTime.splitData}
           generate={(division, d) => (
             <NamedCard title={division}>
-              <Chen2021FitnessExplanation />
+              <Chen2021FitnessExplanation compareToBaseLineMode={true} />
               <div style={{ height: 400 }}>
                 <Chen2021FitnessPreview variantDateCounts={d.variant[1]} wholeDateCounts={d.whole} />
               </div>
