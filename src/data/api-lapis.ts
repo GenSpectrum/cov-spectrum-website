@@ -29,6 +29,7 @@ import { addQcSelectorToUrlSearchParams } from './QcSelector';
 import { HostCountSampleEntry } from './sample/HostCountSampleEntry';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { InsertionCountEntry } from './InsertionCountEntry';
+import { NextcladeDatasetInfo } from './NextcladeDatasetInfo';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
@@ -37,9 +38,9 @@ export const HUMAN = sequenceDataSource === 'gisaid' ? 'Human' : 'Homo sapiens';
 
 let currentLapisDataVersion: number | undefined = undefined;
 
-export const get = async (endpoint: string, signal?: AbortSignal) => {
+export const get = async (endpoint: string, signal?: AbortSignal, omitDataVersion = false) => {
   let url = HOST + endpoint;
-  if (currentLapisDataVersion !== undefined) {
+  if (currentLapisDataVersion !== undefined && !omitDataVersion) {
     url += '&dataVersion=' + currentLapisDataVersion;
   }
   const res = await fetch(url, {
@@ -67,6 +68,15 @@ export async function fetchLapisDataVersionDate(signal?: AbortSignal) {
 
 export function getCurrentLapisDataVersionDate(): Date | undefined {
   return currentLapisDataVersion !== undefined ? dayjs.unix(currentLapisDataVersion).toDate() : undefined;
+}
+
+export async function fetchNextcladeDatasetInfo(signal?: AbortSignal): Promise<NextcladeDatasetInfo> {
+  let url = '/info/nextclade-dataset';
+  const res = await get(url, signal, true);
+  if (!res.ok) {
+    throw new Error('Error fetching Nextclade dataset info');
+  }
+  return (await res.json()) as NextcladeDatasetInfo;
 }
 
 export async function fetchAllHosts(): Promise<string[]> {

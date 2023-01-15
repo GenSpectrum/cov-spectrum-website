@@ -14,7 +14,7 @@ import StoriesOverview from './stories/StoriesOverview';
 import StoryRouter from './stories/StoryRouter';
 import { defaultDateRange, defaultHost, defaultSamplingStrategy, useExploreUrl } from './helpers/explore-url';
 import dayjs from 'dayjs';
-import { getCurrentLapisDataVersionDate } from './data/api-lapis';
+import { fetchNextcladeDatasetInfo, getCurrentLapisDataVersionDate } from './data/api-lapis';
 import { sequenceDataSource } from './helpers/sequence-data-source';
 import { ExternalLink } from './components/ExternalLink';
 import styled from 'styled-components';
@@ -37,6 +37,7 @@ import {
   isDefaultSubmissionDateRangeSelector,
 } from './data/DateRangeSelector';
 import { NewFocusPage } from './pages/NewFocusPage';
+import { useQuery } from './helpers/query-hook';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -53,6 +54,7 @@ export const App = () => {
   const isSmallScreen = width !== undefined && width < 768;
 
   const { host, qc, setHostAndQc, submissionDate } = useExploreUrl() ?? {};
+  const { data: nextcladeDatasetInfo } = useQuery(() => fetchNextcladeDatasetInfo(), []);
 
   return (
     <div className='w-full'>
@@ -177,6 +179,7 @@ export const App = () => {
       {!hideHeaderAndFooter && (
         <Footer className='text-center'>
           <div>The sequence data was updated: {dayjs(getCurrentLapisDataVersionDate()).calendar()}</div>
+          {nextcladeDatasetInfo?.tag && <div>Nextclade dataset version: {nextcladeDatasetInfo.tag}</div>}
           {sequenceDataSource === 'gisaid' && (
             <div>
               Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
