@@ -135,6 +135,24 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "fengelniederhammer",
+      "name": "Fabian Engelniederhammer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/92720311?v=4",
+      "profile": "https://github.com/fengelniederhammer",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "JonasKellerer",
+      "name": "Jonas Kellerer",
+      "avatar_url": "https://avatars.githubusercontent.com/u/122305307?v=4",
+      "profile": "https://github.com/JonasKellerer",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
