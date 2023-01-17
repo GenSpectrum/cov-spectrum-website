@@ -81,13 +81,13 @@ export function useExploreUrl(): ExploreUrl | undefined {
   const locationState = useLocation();
 
   const routeMatches = {
-    explore: useMatch({ path: `/explore/`, end: true }),
-    country: useMatch({ path: `/explore/:location`, end: true }),
-    locationSampling: useMatch({ path: `/explore/:location/:samplingStrategy`, end: true }),
-    locationSamplingDate: useMatch({ path: `/explore/:location/:samplingStrategy/:dateRange`, end: true }),
+    explore: useMatch({ path: `/explore/`, end: false }),
+    country: useMatch({ path: `/explore/:location`, end: false }),
+    locationSampling: useMatch({ path: `/explore/:location/:samplingStrategy`, end: false }),
+    locationSamplingDate: useMatch({ path: `/explore/:location/:samplingStrategy/:dateRange`, end: false }),
     locationSamplingDateVariant: useMatch({
       path: `/explore/:location/:samplingStrategy/:dateRange/variants`,
-      end: true,
+      end: false,
     }),
   };
   let queryString = useLocation().search;
