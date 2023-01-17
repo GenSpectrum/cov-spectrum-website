@@ -40,6 +40,7 @@ import {
   readQcSelectorFromUrlSearchParams,
 } from '../data/QcSelector';
 import { HUMAN } from '../data/api-lapis';
+import { sequenceDataSource } from './sequence-data-source';
 
 export interface ExploreUrl {
   location: LocationSelector;
@@ -74,7 +75,8 @@ export const defaultSamplingStrategy: SamplingStrategy = SamplingStrategy.AllSam
 
 export const defaultAnalysisMode: AnalysisMode = AnalysisMode.Single;
 
-export const defaultHost: HostSelector = [HUMAN];
+// TODO Temporary fix (see https://github.com/GenSpectrum/cov-spectrum-website/issues/674)
+export const defaultHost: HostSelector = sequenceDataSource === 'open' ? [] : [HUMAN];
 
 export function useExploreUrl(): ExploreUrl | undefined {
   const history = useHistory();
