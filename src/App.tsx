@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import Header from './Header';
 import { LoginWrapper } from './helpers/app-layout';
 import { AboutPage } from './pages/AboutPage';
@@ -105,46 +105,43 @@ export const App = () => {
             </Alert>
           )}
         {/*Main content*/}
-        <Switch>
-          <Route exact path='/'>
-            <Redirect to={`/explore/${baseLocation}/${defaultSamplingStrategy}/${defaultDateRange}`} />
+        <Routes>
+          <Route path='/'>
+            <Navigate to={`/explore/${baseLocation}/${defaultSamplingStrategy}/${defaultDateRange}`} />
           </Route>
           <Route path='/login'>
             <LoginWrapper>
               <LoginPage />
             </LoginWrapper>
           </Route>
-          <Route exact path='/explore/:country/:samplingStrategy/:dateRange'>
+          <Route path='/explore/:country/:samplingStrategy/:dateRange'>
             <ExplorePage isSmallScreen={isSmallScreen} />
           </Route>
-          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/sequencing-coverage'>
+          <Route path='/explore/:country/:samplingStrategy/:dateRange/sequencing-coverage'>
             <DeepSequencingCoveragePage />
           </Route>
-          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants'>
+          <Route path='/explore/:country/:samplingStrategy/:dateRange/variants'>
             <FocusPage isSmallScreen={isSmallScreen} />
           </Route>
-          <Route
-            exact
-            path='/explore/:country/:samplingStrategy/:dateRange/variants/international-comparison'
-          >
+          <Route path='/explore/:country/:samplingStrategy/:dateRange/variants/international-comparison'>
             <DeepInternationalComparisonPage />
           </Route>
-          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants/hospitalization-death'>
+          <Route path='/explore/:country/:samplingStrategy/:dateRange/variants/hospitalization-death'>
             <DeepHospitalizationDeathPage />
           </Route>
-          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants/waste-water'>
+          <Route path='/explore/:country/:samplingStrategy/:dateRange/variants/waste-water'>
             <DeepWastewaterPage />
           </Route>
-          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants/chen-2021-fitness'>
+          <Route path='/explore/:country/:samplingStrategy/:dateRange/variants/chen-2021-fitness'>
             <DeepChen2021FitnessPage />
           </Route>
-          <Route exact path='/story'>
+          <Route path='/story'>
             <StoryOverviewPage />
           </Route>
-          <Route exact path='/story/wastewater-in-switzerland'>
+          <Route path='/story/wastewater-in-switzerland'>
             <WasteWaterStoryPage />
           </Route>
-          <Route exact path='/stories/wastewater-in-switzerland'>
+          <Route path='/stories/wastewater-in-switzerland'>
             <WasteWaterStoryPage />
           </Route>
           <Route path='/story/wastewater-in-switzerland/location/:location'>
@@ -153,16 +150,16 @@ export const App = () => {
           <Route path='/stories/wastewater-in-switzerland/location/:location'>
             <WasteWaterLocationPage />
           </Route>
-          <Route exact path='/stories'>
+          <Route path='/stories'>
             <StoriesOverview />
           </Route>
           <Route path='/stories/:storyId'>
             <StoryRouter />
           </Route>
-          <Route exact path='/collections'>
+          <Route path='/collections'>
             <CollectionOverviewPage />
           </Route>
-          <Route exact path='/collections/add'>
+          <Route path='/collections/add'>
             <CollectionAddPage />
           </Route>
           <Route path='/collections/:collectionId'>
@@ -174,7 +171,7 @@ export const App = () => {
           <Route path='/about'>
             <AboutPage />
           </Route>
-        </Switch>
+        </Routes>
       </div>
       {!hideHeaderAndFooter && (
         <Footer className='text-center'>

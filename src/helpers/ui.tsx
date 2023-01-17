@@ -1,6 +1,6 @@
 import React from 'react';
 import { Dropdown } from 'react-bootstrap';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export enum AlertVariant {
   DANGER = 'danger',
@@ -109,13 +109,13 @@ export const DropdownButton = ({ onToggle, className, children, ...restProps }: 
 };
 
 export const ShowMoreButton = ({ to }: { to: string }) => {
-  const history = useHistory();
+  const navigate = useNavigate();
   return (
     <Button
       className='mt-1 ml-4 w-max'
       variant={ButtonVariant.PRIMARY}
       onClick={() => {
-        history.push(to);
+        navigate(to);
       }}
     >
       Show more

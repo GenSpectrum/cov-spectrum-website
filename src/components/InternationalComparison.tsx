@@ -1,4 +1,3 @@
-import React, { useState } from 'react';
 import { InternationalComparisonTable } from './InternationalComparisonTable';
 import { MinimalWidgetLayout } from './MinimalWidgetLayout';
 import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
@@ -14,7 +13,7 @@ export const InternationalComparison = ({
   wholeInternationalDateCountDataset,
   locationSelector,
 }: Props) => {
-  const [logScale, setLogScale] = useState<boolean>(false);
+  const logScale = false;
   console.log('values are');
   console.log(wholeInternationalDateCountDataset);
   console.log(variantInternationalDateCountDataset);

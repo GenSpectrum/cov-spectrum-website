@@ -1,6 +1,6 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { App } from './App';
 import { EmbedPage } from './pages/EmbedPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -82,10 +82,12 @@ async function main() {
     }
   } catch (_) {}
 
-  ReactDOM.render(
+  const container = document.getElementById('root');
+  const root = createRoot(container!);
+  root.render(
     <React.StrictMode>
       <BrowserRouter>
-        <Switch>
+        <Routes>
           <Route path='/embed/:widget'>
             <EmbedPage />
           </Route>
@@ -94,10 +96,9 @@ async function main() {
               <App />
             </DndProvider>
           </Route>
-        </Switch>
+        </Routes>
       </BrowserRouter>
-    </React.StrictMode>,
-    document.getElementById('root')
+    </React.StrictMode>
   );
 }
 

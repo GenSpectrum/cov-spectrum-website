@@ -1,8 +1,8 @@
 import React, { useMemo, useState, useEffect } from 'react';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import Select, { Styles } from 'react-select';
+import Select, { CSSObjectWithLabel, StylesConfig } from 'react-select';
 import chroma from 'chroma-js';
-import styled, { CSSPseudos } from 'styled-components';
+import styled from 'styled-components';
 import { Wrapper } from './common';
 import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSampleDataset';
 import { Utils } from '../services/Utils';
@@ -32,20 +32,20 @@ interface ProportionCountry {
   }[];
 }
 
-const colorStyles: Partial<Styles<any, true, any>> = {
-  control: (styles: CSSPseudos) => ({ ...styles, backgroundColor: 'white' }),
-  multiValue: (styles: CSSPseudos, { data }: { data: PlaceOption }) => {
+const colorStyles: Partial<StylesConfig<any, true, any>> = {
+  control: (styles: CSSObjectWithLabel) => ({ ...styles, backgroundColor: 'white' }),
+  multiValue: (styles: CSSObjectWithLabel, { data }: { data: PlaceOption }) => {
     const color = chroma(data.color);
     return {
       ...styles,
       backgroundColor: color.alpha(0.1).css(),
     };
   },
-  multiValueLabel: (styles: CSSPseudos, { data }: { data: PlaceOption }) => ({
+  multiValueLabel: (styles: CSSObjectWithLabel, { data }: { data: PlaceOption }) => ({
     ...styles,
     color: data.color,
   }),
-  multiValueRemove: (styles: CSSPseudos, { data }: { data: PlaceOption }) => {
+  multiValueRemove: (styles: CSSObjectWithLabel, { data }: { data: PlaceOption }) => {
     return data.isFixed
       ? { ...styles, display: 'none' }
       : {

@@ -1,6 +1,6 @@
 ## Build app ##
 
-FROM node:14-buster AS builder
+FROM node:18-buster AS builder
 WORKDIR /build
 ARG REACT_APP_LAPIS_ACCESS_KEY
 

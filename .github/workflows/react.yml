@@ -15,7 +15,7 @@ jobs:
       REACT_APP_SERVER_HOST: https://cov-spectrum.org/api/v2
     strategy:
       matrix:
-        node-version: [15.x]
+        node-version: [18.x]
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
