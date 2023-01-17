@@ -63,8 +63,8 @@ export class Widget<
           }
           componentLabels={componentLabels}
         >
-          {componentList.map(Com => (
-            <Com {...componentProps} />
+          {componentList.map((Com, index) => (
+            <Com {...componentProps} key={Com.name + index} />
           ))}
         </WidgetWrapper>
       );

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { Dropdown } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 
@@ -141,7 +141,7 @@ export const PipeDividedOptionsButtons = <T extends unknown>({
   return (
     <div>
       {options.map(({ label, value }, index) => (
-        <>
+        <Fragment key={'frag-' + index}>
           {index > 0 && (
             <span key={'sep-' + index} className='mx-2'>
               |
@@ -154,7 +154,7 @@ export const PipeDividedOptionsButtons = <T extends unknown>({
           >
             {label}
           </span>
-        </>
+        </Fragment>
       ))}
     </div>
   );
