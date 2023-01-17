@@ -1,7 +1,7 @@
 import { HostSelector } from './HostSelector';
 import { QcSelector } from './QcSelector';
-import { defaultHost } from '../helpers/explore-url';
 import { DateRangeSelector, defaultSubmissionDateRangeSelector } from './DateRangeSelector';
+import { defaultHost } from './default-selectors';
 
 export type HostAndQcSelector = {
   host: HostSelector | undefined;

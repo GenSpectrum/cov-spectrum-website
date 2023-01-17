@@ -1,5 +1,5 @@
-import { defaultHost } from '../helpers/explore-url';
 import { isEqual } from '../helpers/lodash_alternatives';
+import { defaultHost } from './default-selectors';
 
 export type HostSelector = string[];
 
