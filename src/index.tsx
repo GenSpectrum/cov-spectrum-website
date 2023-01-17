@@ -88,14 +88,15 @@ async function main() {
     <React.StrictMode>
       <BrowserRouter>
         <Routes>
-          <Route path='/embed/:widget'>
-            <EmbedPage />
-          </Route>
-          <Route path='/'>
-            <DndProvider options={HTML5toTouch}>
-              <App />
-            </DndProvider>
-          </Route>
+          <Route path='/embed/:widget' element={<EmbedPage />} />
+          <Route
+            path='*'
+            element={
+              <DndProvider options={HTML5toTouch}>
+                <App />
+              </DndProvider>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>
