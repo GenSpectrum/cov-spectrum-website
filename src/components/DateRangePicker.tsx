@@ -46,7 +46,12 @@ export default function DateRangePicker({ dateRangeSelector, onChangeDate }: Pro
       if (!newValue) {
         return;
       }
-      const newValueUnified = globalDateCache.getDayUsingDayjs(dayjs(newValue));
+
+      const dayjsDay = dayjs(newValue);
+      if (!dayjsDay.isValid()) {
+        return;
+      }
+      const newValueUnified = globalDateCache.getDayUsingDayjs(dayjsDay);
       const newDateRange = {
         ...currentSelector.getDateRange(),
         [domain]: newValueUnified,
