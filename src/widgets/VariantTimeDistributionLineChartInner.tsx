@@ -226,7 +226,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                 }}
               >
                 <FormControlLabel
-                  control={<Checkbox defaultChecked checked={logScale} onChange={toggleLogScale} />}
+                  control={<Checkbox checked={logScale} onChange={toggleLogScale} />}
                   label='Log scale'
                 />
               </FormGroup>
