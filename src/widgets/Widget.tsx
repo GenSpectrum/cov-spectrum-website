@@ -19,6 +19,8 @@ const sharedWidgetPropsEncoder = new AsyncZodQueryEncoder(
   'sharedWidgetJson'
 );
 
+type LabelledComponent<C> = { label: string; component: C };
+
 export class Widget<
   E extends AsyncQueryEncoder<any>,
   P extends E['_decodedType'],
@@ -34,7 +36,7 @@ export class Widget<
 
   constructor(
     public readonly specificPropsEncoder: E,
-    public readonly Component: C | { label: string; component: C }[],
+    public readonly Component: C | LabelledComponent<C>[],
     public readonly urlName: string
   ) {
     this.mergedPropsEncoder = new MergedAsyncQueryEncoder({
@@ -42,13 +44,13 @@ export class Widget<
       shared: sharedWidgetPropsEncoder,
     });
     this.DefaultComponent = Array.isArray(Component) ? Component[0].component : Component;
-    const componentList: C[] = [];
+    const componentList: LabelledComponent<C>[] = [];
     let componentLabels: string[] | undefined = undefined;
     if (Array.isArray(Component)) {
-      componentList.push(...Component.map(c => c.component));
+      componentList.push(...Component);
       componentLabels = Component.map(c => c.label);
     } else {
-      componentList.push(Component);
+      componentList.push({ label: 'singleComponent', component: Component });
     }
     this.ShareableComponent = props => {
       const { external: wrapperProps, remaining: componentProps } = pickExternalProps<P>(props);
@@ -63,8 +65,8 @@ export class Widget<
           }
           componentLabels={componentLabels}
         >
-          {componentList.map(Com => (
-            <Com {...componentProps} />
+          {componentList.map(labelledComponent => (
+            <labelledComponent.component key={labelledComponent.label} {...componentProps} />
           ))}
         </WidgetWrapper>
       );
