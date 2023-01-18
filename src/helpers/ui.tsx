@@ -141,7 +141,7 @@ export const PipeDividedOptionsButtons = <T extends unknown>({
   return (
     <div>
       {options.map(({ label, value }, index) => (
-        <>
+        <React.Fragment key={index}>
           {index > 0 && (
             <span key={'sep-' + index} className='mx-2'>
               |
@@ -154,7 +154,7 @@ export const PipeDividedOptionsButtons = <T extends unknown>({
           >
             {label}
           </span>
-        </>
+        </React.Fragment>
       ))}
     </div>
   );
