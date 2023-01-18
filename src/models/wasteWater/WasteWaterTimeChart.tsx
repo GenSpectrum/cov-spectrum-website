@@ -4,6 +4,7 @@ import Metric, { MetricsWrapper } from '../../widgets/Metrics';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { WasteWaterTimeEntry, WasteWaterTimeseriesSummaryDataset } from './types';
 import { getTicks } from '../../helpers/ticks';
+import { TooltipSideEffect } from '../../widgets/Tooltip';
 
 export function formatDate(date: number) {
   const d = new Date(date);
@@ -55,17 +56,23 @@ export const WasteWaterTimeChart = React.memo(({ data }: Props): JSX.Element => 
               <YAxis />
               <Tooltip
                 active={false}
-                content={e => {
-                  if (e.active && e.payload !== undefined) {
-                    const newActive = e.payload[0].payload;
-                    if (active === undefined || active.date !== newActive.date) {
-                      setActive(newActive);
-                    }
-                  }
-                  if (!e.active) {
-                    setActive(undefined);
-                  }
-                  return <></>;
+                content={tooltipProps => {
+                  return (
+                    <TooltipSideEffect
+                      tooltipProps={tooltipProps}
+                      sideEffect={tooltipProps => {
+                        if (tooltipProps.active && tooltipProps.payload !== undefined) {
+                          const newActive = tooltipProps.payload[0].payload;
+                          if (active === undefined || active.date !== newActive.date) {
+                            setActive(newActive);
+                          }
+                        }
+                        if (!tooltipProps.active) {
+                          setActive(undefined);
+                        }
+                      }}
+                    />
+                  );
                 }}
               />
               <Area

@@ -1,12 +1,13 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ChartAndMetrics } from './Metrics';
-import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { colors } from './common';
 import { AgeCountSampleData, AgeCountSampleDataset } from '../data/sample/AgeCountSampleDataset';
 import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { useResizeDetector } from 'react-resize-detector';
 import DownloadWrapper from './DownloadWrapper';
 import { maxYAxis } from '../helpers/max-y-axis';
+import { SetCurrentDataSideEffect } from './Tooltip';
 
 const CHART_MARGIN_RIGHT = 15;
 
@@ -177,11 +178,10 @@ export const VariantAgeDistributionChart = React.memo(
                 <Tooltip
                   active={false}
                   cursor={false}
-                  content={(e: any) => {
-                    if (e?.payload.length > 0) {
-                      setCurrentData(e.payload[0].payload);
-                    }
-                    return <></>;
+                  content={tooltipProps => {
+                    return (
+                      <SetCurrentDataSideEffect tooltipProps={tooltipProps} setCurrentData={setCurrentData} />
+                    );
                   }}
                 />
               </BarChart>

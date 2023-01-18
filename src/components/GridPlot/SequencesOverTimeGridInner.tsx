@@ -6,6 +6,7 @@ import { GroupedData } from '../../data/transform/transform';
 import { EntryDateCountWithProportions } from './SequencesOverTimeGrid';
 import { HtmlPortalNode, InPortal } from 'react-reverse-portal';
 import { AxisPortals, TwoValuesXAxis, TwoValuesYAxis } from './common';
+import { TooltipSideEffect } from '../../widgets/Tooltip';
 
 type PlotEntry = {
   dateAsNumber: number;
@@ -93,14 +94,20 @@ export const SequencesOverTimeGridInner = ({ data, portals, axisPortals, plotWid
                 <Tooltip
                   active={false}
                   cursor={false}
-                  content={e => {
-                    if (e.active && e.payload !== undefined) {
-                      const newActive = e.payload[0].payload;
-                      if (active === undefined || active !== newActive.dateAsNumber) {
-                        setActive(newActive.dateAsNumber);
-                      }
-                    }
-                    return <></>;
+                  content={tooltipProps => {
+                    return (
+                      <TooltipSideEffect
+                        tooltipProps={tooltipProps}
+                        sideEffect={tooltipProps => {
+                          if (tooltipProps.active && tooltipProps.payload !== undefined) {
+                            const newActive = tooltipProps.payload[0].payload;
+                            if (active === undefined || active !== newActive.dateAsNumber) {
+                              setActive(newActive.dateAsNumber);
+                            }
+                          }
+                        }}
+                      />
+                    );
                   }}
                 />
                 {active && (

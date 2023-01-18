@@ -15,6 +15,7 @@ import React, { useMemo, useState } from 'react';
 import { formatDate } from '../../widgets/VariantTimeDistributionLineChartInner';
 import { maxYAxis } from '../../helpers/max-y-axis';
 import { getTicks } from '../../helpers/ticks';
+import { TooltipSideEffect } from '../../widgets/Tooltip';
 
 type Props = {
   data: HuismanScire2021ReResult;
@@ -73,14 +74,20 @@ export const HuismanScire2021ReChart = ({ data }: Props) => {
               />
               <Tooltip
                 active={false}
-                content={e => {
-                  if (e.active && e.payload !== undefined) {
-                    const newActive = e.payload[0].payload;
-                    if (active === undefined || active.date.getTime() !== newActive.date.getTime()) {
-                      setActive(newActive);
-                    }
-                  }
-                  return <></>;
+                content={tooltipProps => {
+                  return (
+                    <TooltipSideEffect
+                      tooltipProps={tooltipProps}
+                      sideEffect={tooltipProps => {
+                        if (tooltipProps.active && tooltipProps.payload !== undefined) {
+                          const newActive = tooltipProps.payload[0].payload;
+                          if (active === undefined || active.date.getTime() !== newActive.date.getTime()) {
+                            setActive(newActive);
+                          }
+                        }
+                      }}
+                    />
+                  );
                 }}
               />
               <Area
