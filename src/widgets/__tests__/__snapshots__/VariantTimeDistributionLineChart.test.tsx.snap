@@ -90,7 +90,6 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
                 checked={false}
                 className="PrivateSwitchBase-input css-1m9pwf3"
                 data-indeterminate={false}
-                defaultChecked={true}
                 onChange={[Function]}
                 type="checkbox"
               />

@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { ChartAndMetrics } from './Metrics';
-import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { colors, TimeTick } from './common';
 import { kFormat } from '../helpers/number';
+import { SetCurrentDataSideEffect } from './Tooltip';
 
 const CHART_MARGIN_RIGHT = 30;
 const CHART_MARGIN_BOTTOM = 0;
@@ -120,11 +121,10 @@ export const SequencingIntensityChartInner = React.memo(
             <Tooltip
               active={false}
               cursor={false}
-              content={(e: any) => {
-                if (e?.payload.length > 0) {
-                  setCurrentData(e.payload[0].payload);
-                }
-                return <></>;
+              content={tooltipProps => {
+                return (
+                  <SetCurrentDataSideEffect tooltipProps={tooltipProps} setCurrentData={setCurrentData} />
+                );
               }}
             />
           </BarChart>

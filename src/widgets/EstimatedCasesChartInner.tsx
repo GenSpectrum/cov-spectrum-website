@@ -10,6 +10,7 @@ import DownloadWrapper from './DownloadWrapper';
 import { Alert, AlertVariant } from '../helpers/ui';
 import { maxYAxis } from '../helpers/max-y-axis';
 import { PprettyRequest } from '../data/ppretty/ppretty-request';
+import { TooltipSideEffect } from './Tooltip';
 
 export type EstimatedCasesTimeEntry = {
   date: UnifiedDay;
@@ -122,14 +123,23 @@ export const EstimatedCasesChartInner = React.memo(
                   <YAxis domain={[0, maxYAxis(yMax, yMax, 5)]} allowDataOverflow={true} scale='linear' />
                   <Tooltip
                     active={false}
-                    content={e => {
-                      if (e.active && e.payload !== undefined) {
-                        const newActive = e.payload[0].payload;
-                        if (active === undefined || active.date.getTime() !== newActive.date.getTime()) {
-                          setActive(newActive);
-                        }
-                      }
-                      return <></>;
+                    content={tooltipProps => {
+                      return (
+                        <TooltipSideEffect
+                          tooltipProps={tooltipProps}
+                          sideEffect={tooltipProps => {
+                            if (tooltipProps.active && tooltipProps.payload !== undefined) {
+                              const newActive = tooltipProps.payload[0].payload;
+                              if (
+                                active === undefined ||
+                                active.date.getTime() !== newActive.date.getTime()
+                              ) {
+                                setActive(newActive);
+                              }
+                            }
+                          }}
+                        />
+                      );
                     }}
                   />
                   <Area

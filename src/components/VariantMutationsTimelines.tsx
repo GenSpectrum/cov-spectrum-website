@@ -315,7 +315,7 @@ const Plot = ({ data, logitScale, colorScale }: PlotProps) => {
         }}
       >
         {data.mutations.map(({ mutation, proportions, counts }, i) => (
-          <>
+          <React.Fragment key={mutation}>
             <div
               className='text-right pr-4'
               key={mutation}
@@ -340,7 +340,7 @@ const Plot = ({ data, logitScale, colorScale }: PlotProps) => {
                 />
               </div>
             ))}
-          </>
+          </React.Fragment>
         ))}
       </div>
       <div className='flex justify-between'>
@@ -406,7 +406,7 @@ const ProportionBox = ({
   }
 
   const popover = (
-    <Popover id='popover-basic' style={{ maxWidth: '600px' }}>
+    <Popover id='popover-basic' style={{ maxWidth: '600px', margin: 'unset' }}>
       <Popover.Body>
         <div className='font-bold'>
           Week {week.isoWeek}, {week.isoYear} ({week.firstDay.string})

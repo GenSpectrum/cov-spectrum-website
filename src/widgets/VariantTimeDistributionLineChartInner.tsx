@@ -12,6 +12,7 @@ import { ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import { PprettyRequest } from '../data/ppretty/ppretty-request';
+import { TooltipSideEffect } from './Tooltip';
 
 export type VariantTimeDistributionLineChartEntry = {
   date: UnifiedDay;
@@ -226,7 +227,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                 }}
               >
                 <FormControlLabel
-                  control={<Checkbox defaultChecked checked={logScale} onChange={toggleLogScale} />}
+                  control={<Checkbox checked={logScale} onChange={toggleLogScale} />}
                   label='Log scale'
                 />
               </FormGroup>
@@ -265,16 +266,28 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                   />
                   <Tooltip
                     active={false}
-                    content={e => {
-                      if (e.active && e.payload !== undefined) {
-                        if (e.payload[0] !== undefined && e.payload[0].payload !== undefined) {
-                          const newActive = e.payload[0].payload;
-                          if (active === undefined || active.date.getTime() !== newActive.date.getTime()) {
-                            setActive(newActive);
-                          }
-                        }
-                      }
-                      return <></>;
+                    content={tooltipProps => {
+                      return (
+                        <TooltipSideEffect
+                          tooltipProps={tooltipProps}
+                          sideEffect={tooltipProps => {
+                            if (tooltipProps.active && tooltipProps.payload !== undefined) {
+                              if (
+                                tooltipProps.payload[0] !== undefined &&
+                                tooltipProps.payload[0].payload !== undefined
+                              ) {
+                                const newActive = tooltipProps.payload[0].payload;
+                                if (
+                                  active === undefined ||
+                                  active.date.getTime() !== newActive.date.getTime()
+                                ) {
+                                  setActive(newActive);
+                                }
+                              }
+                            }
+                          }}
+                        />
+                      );
                     }}
                   />
                   {!absoluteNumbers && (
