@@ -1,4 +1,3 @@
-import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { App } from './App';
@@ -85,21 +84,19 @@ async function main() {
   const container = document.getElementById('root');
   const root = createRoot(container!);
   root.render(
-    <React.StrictMode>
-      <BrowserRouter>
-        <Routes>
-          <Route path='/embed/:widget' element={<EmbedPage />} />
-          <Route
-            path='*'
-            element={
-              <DndProvider options={HTML5toTouch}>
-                <App />
-              </DndProvider>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </React.StrictMode>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/embed/:widget' element={<EmbedPage />} />
+        <Route
+          path='*'
+          element={
+            <DndProvider options={HTML5toTouch}>
+              <App />
+            </DndProvider>
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
