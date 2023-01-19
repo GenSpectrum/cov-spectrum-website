@@ -38,7 +38,7 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
   );
 
   const setQcValue = useCallback(
-    (field, type: QcFieldType, valueString?: string) => {
+    (field: any, type: QcFieldType, valueString?: string) => {
       setQc(prev => ({
         ...prev,
         [field]: type === 'integer' ? Utils.safeParseInt(valueString) : Utils.safeParseFloat(valueString),

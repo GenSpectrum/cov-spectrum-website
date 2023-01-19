@@ -6,8 +6,8 @@ import { DateRangeSelector } from '../data/DateRangeSelector';
 export interface Props {
   dateRange: DateRangeSelector;
   variant: VariantSelector;
-  titleSuffix?: React.ReactChild | React.ReactChild[];
-  controls?: React.ReactChild | React.ReactChild[];
+  titleSuffix?: React.ReactNode | React.ReactNode[];
+  controls?: React.ReactNode | React.ReactNode[];
 }
 
 export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {

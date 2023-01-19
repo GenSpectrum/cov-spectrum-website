@@ -24,6 +24,7 @@ const getBaseHeaders = (): Headers => {
 
 export const get = (endpoint: string, signal?: AbortSignal) => {
   const url = HOST + endpoint;
+  console.log('url', url);
   return fetch(url, {
     method: 'GET',
     headers: getBaseHeaders(),
@@ -81,12 +82,21 @@ export async function fetchCaseCounts(
     addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
   }
 
-  const res = await get(`/resource/case?${params.toString()}`, signal);
-  if (!res.ok) {
+  console.log('fetchCaseCounts', `/resource/case?${params.toString()}`);
+  try {
+    const res = await get(`/resource/case?${params.toString()}`, signal);
+    console.error('Response', res);
+    if (!res.ok) {
+      throw new Error('Error fetching new case data');
+    }
+
+    const body = (await res.json()) as CaseCountEntryRaw[];
+    console.log('body', body);
+    return body.map(raw => parseCaseCountEntry(raw));
+  } catch (err) {
+    console.error('fetchCaseCounts', err);
     throw new Error('Error fetching new case data');
   }
-  const body = (await res.json()) as CaseCountEntryRaw[];
-  return body.map(raw => parseCaseCountEntry(raw));
 }
 
 export async function fetchPangoLineageAliases(signal?: AbortSignal): Promise<PangoLineageAlias[]> {

@@ -258,7 +258,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
 
   // Keyboard shortcuts
   const handleKeyPress = useCallback(
-    event => {
+    (event: any) => {
       if (showLocationSelect || showCommandPanel || showVariantDetailsModal) {
         return;
       }

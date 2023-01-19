@@ -1,7 +1,7 @@
 import React from 'react';
 
 export interface Props {
-  children: React.ReactChild | React.ReactChild[];
+  children: React.ReactNode | React.ReactNode[];
   label: string;
   highlighted?: boolean;
 }

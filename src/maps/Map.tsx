@@ -42,6 +42,8 @@ export interface VectorMapProps {
   checkedLayers?: string[];
   /** Layer IDs to 'select' with the 'aria-current' attribute. */
   currentLayers?: string[];
+  /** Added to support react 18 */
+  children?: React.ReactNode;
 }
 
 const VectorMap: React.FC<VectorMapProps> = ({

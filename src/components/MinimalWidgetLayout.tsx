@@ -2,8 +2,8 @@ import React from 'react';
 
 interface Props {
   title: string;
-  toolbar?: React.ReactChild | React.ReactChild[];
-  children: React.ReactChild | React.ReactChild[];
+  toolbar?: React.ReactNode | React.ReactNode[];
+  children: React.ReactNode | React.ReactNode[];
 }
 
 export const MinimalWidgetLayout = ({ toolbar, children }: Props) => {
