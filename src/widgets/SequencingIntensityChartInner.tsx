@@ -26,8 +26,6 @@ export const SequencingIntensityChartInner = React.memo(
   ({ data, onClickHandler }: SequencingIntensityChartInnerProps): JSX.Element => {
     const [currentData, setCurrentData] = useState<SequencingIntensityChartPlotEntry>(data[data.length - 1]);
 
-    console.log('currentData', currentData);
-
     const resetDefault = useCallback(() => {
       setCurrentData(data[data.length - 1]);
     }, [data]);

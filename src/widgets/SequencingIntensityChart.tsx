@@ -80,7 +80,6 @@ export const SequencingIntensityChart = ({ sequencingCounts, caseCounts }: Seque
   const sequencingIntensityEntries: SequencingIntensityEntry[] = [...sequencingIntensityMap.values()];
 
   const data = processData(sequencingIntensityEntries);
-  console.log('data', data);
   const csvData = data.map(({ month, intense, total }) => ({
     month,
     sequenced: intense,
