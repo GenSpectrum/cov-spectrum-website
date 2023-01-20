@@ -26,7 +26,7 @@ export const variantFields = [
   'nucInsertions',
   'variantQuery',
 ] as const;
-export type VariantField = typeof variantFields[number];
+export type VariantField = (typeof variantFields)[number];
 const variantStringFields = [
   'pangoLineage',
   'nextcladePangoLineage',

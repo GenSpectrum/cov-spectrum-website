@@ -53,7 +53,7 @@ const sortOptionLabels = {
   uniqueness: 'Jaccard similarity',
 };
 
-type SortOptions = typeof sortOptions[number];
+type SortOptions = (typeof sortOptions)[number];
 
 type MergedAAAndNucEntry = {
   aa: MutationProportionEntryWithUniqueness;
