@@ -39,7 +39,8 @@ export function useQuery<T>(
         setIsSuccess(true);
       })
       .catch(_error => {
-        console.error(_error);
+        // TODO: Think about it if it would be a good idea to log such errors??
+        // console.error(_error);
         if (!isSubscribed) {
           return;
         }
@@ -49,7 +50,6 @@ export function useQuery<T>(
       });
     return () => {
       isSubscribed = false;
-      console.debug('controller abort');
       controller.abort();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
