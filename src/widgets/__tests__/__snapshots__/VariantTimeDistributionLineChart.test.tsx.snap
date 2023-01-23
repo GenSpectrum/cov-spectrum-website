@@ -5,23 +5,12 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
   className="relative h-full"
 >
   <div
-    className="sc-gsnTZi daqjRC"
+    className="sc-gswNZR gUgvgR"
   >
     <h3
       className="my-0 pr-10 pt-0 text-gray-500"
     >
-      <div>
-        Proportion of all samples
-         from 
-        <b>
-          2021-12-26
-        </b>
-         to
-         
-        <b>
-          2022-01-01
-        </b>
-      </div>
+      <div />
       <div
         className="mb-1 btn-toolbar"
         role="toolbar"
@@ -71,7 +60,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
             className="MuiFormControlLabel-root MuiFormControlLabel-labelPlacementEnd css-j204z7-MuiFormControlLabel-root"
           >
             <span
-              className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root"
+              className="MuiButtonBase-root MuiCheckbox-root MuiCheckbox-colorPrimary PrivateSwitchBase-root MuiCheckbox-root MuiCheckbox-colorPrimary MuiCheckbox-root MuiCheckbox-colorPrimary css-12wnr2w-MuiButtonBase-root-MuiCheckbox-root"
               onBlur={[Function]}
               onContextMenu={[Function]}
               onDragLeave={[Function]}
@@ -90,7 +79,6 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
                 checked={false}
                 className="PrivateSwitchBase-input css-1m9pwf3"
                 data-indeterminate={false}
-                defaultChecked={true}
                 onChange={[Function]}
                 type="checkbox"
               />
@@ -105,9 +93,6 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
                   d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
                 />
               </svg>
-              <span
-                className="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
-              />
             </span>
             <span
               className="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-ahj2mt-MuiTypography-root"
@@ -119,10 +104,10 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
       </div>
     </h3>
     <div
-      className="sc-dkzDqf hwEbCi"
+      className="sc-dkrFOg nodVI"
     >
       <div
-        className="sc-hKMtZM gTBTTF"
+        className="sc-hLBbgP frZUFI"
       >
         <div
           className="recharts-responsive-container"
@@ -159,10 +144,10 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
                   }
                 }
               >
-                0.0%
+                NA
               </div>
               <div
-                className="sc-bczRLJ dWCPvX self-end"
+                className="sc-bcXHqe bjCFoe self-end"
               />
             </div>
             <div
@@ -203,91 +188,14 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
             </div>
           </div>
           <div
-            className="__react_component_tooltip t***masked*** place-top type-dark"
-            data-id="tooltip"
+            className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
             id="metric-tooltip-Proportion"
+            role="tooltip"
+            style={Object {}}
           >
-            <style
-              aria-hidden="true"
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "
-  	.t***masked*** {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t***masked***.place-top {
-        margin-top: -10px;
-    }
-    .t***masked***.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t***masked***.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t***masked***.place-bottom {
-        margin-top: 10px;
-    }
-    .t***masked***.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t***masked***.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t***masked***.place-left {
-        margin-left: -10px;
-    }
-    .t***masked***.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t***masked***.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t***masked***.place-right {
-        margin-left: 10px;
-    }
-    .t***masked***.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t***masked***.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  ",
-                }
-              }
+            <div
+              className="react-tooltip-arrow styles-module_arrow__K0L3T"
+              style={Object {}}
             />
           </div>
         </div>
@@ -310,10 +218,10 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
                   }
                 }
               >
-                0.0-100.0%
+                NA
               </div>
               <div
-                className="sc-bczRLJ dWCPvX self-end"
+                className="sc-bcXHqe bjCFoe self-end"
               />
             </div>
             <div
@@ -354,91 +262,14 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
             </div>
           </div>
           <div
-            className="__react_component_tooltip t***masked*** place-top type-dark"
-            data-id="tooltip"
+            className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
             id="metric-tooltip-Confidence int."
+            role="tooltip"
+            style={Object {}}
           >
-            <style
-              aria-hidden="true"
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "
-  	.t***masked*** {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t***masked***.place-top {
-        margin-top: -10px;
-    }
-    .t***masked***.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t***masked***.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t***masked***.place-bottom {
-        margin-top: 10px;
-    }
-    .t***masked***.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t***masked***.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t***masked***.place-left {
-        margin-left: -10px;
-    }
-    .t***masked***.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t***masked***.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t***masked***.place-right {
-        margin-left: 10px;
-    }
-    .t***masked***.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t***masked***.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  ",
-                }
-              }
+            <div
+              className="react-tooltip-arrow styles-module_arrow__K0L3T"
+              style={Object {}}
             />
           </div>
         </div>

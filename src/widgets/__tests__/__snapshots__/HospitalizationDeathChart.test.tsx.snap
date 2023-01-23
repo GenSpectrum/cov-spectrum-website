@@ -16,7 +16,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
       className="h-full"
     >
       <div
-        className="sc-bczRLJ FSYQs"
+        className="sc-bcXHqe idcAl"
       >
         <h3
           className="my-0 pr-10 pt-0 text-gray-500"
@@ -24,10 +24,10 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
           Estimated probability of death by age group
         </h3>
         <div
-          className="sc-gsnTZi ehOUsR"
+          className="sc-gswNZR jVvoKy"
         >
           <div
-            className="sc-dkzDqf jHWsVm"
+            className="sc-dkrFOg kGkFVY"
           >
             <div
               className="recharts-responsive-container"
@@ -47,7 +47,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
           >
             <div>
               <div
-                className="sc-eCYdqJ NUQUw"
+                className="sc-eDvSVe dekPos"
               >
                 <svg
                   height={30}
@@ -83,7 +83,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   />
                 </svg>
                 <div
-                  className="sc-jSMfEi bFDDWb"
+                  className="sc-jSUZER dEFcBr"
                   style={
                     Object {
                       "color": "#1F407A",
@@ -94,7 +94,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                 </div>
               </div>
               <div
-                className="sc-eCYdqJ NUQUw"
+                className="sc-eDvSVe dekPos"
               >
                 <svg
                   height={30}
@@ -134,7 +134,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   </g>
                 </svg>
                 <div
-                  className="sc-jSMfEi bFDDWb"
+                  className="sc-jSUZER dEFcBr"
                   style={
                     Object {
                       "color": "#7f8c8d",
@@ -167,7 +167,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                     0
                   </div>
                   <div
-                    className="sc-hKMtZM dKrOdR self-end"
+                    className="sc-hLBbgP dYEqmk self-end"
                   />
                 </div>
                 <div
@@ -208,91 +208,14 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                 </div>
               </div>
               <div
-                className="__react_component_tooltip t***masked*** place-top type-dark"
-                data-id="tooltip"
+                className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
                 id="metric-tooltip-Dead"
+                role="tooltip"
+                style={Object {}}
               >
-                <style
-                  aria-hidden="true"
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "
-  	.t***masked*** {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t***masked***.place-top {
-        margin-top: -10px;
-    }
-    .t***masked***.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t***masked***.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t***masked***.place-bottom {
-        margin-top: 10px;
-    }
-    .t***masked***.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t***masked***.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t***masked***.place-left {
-        margin-left: -10px;
-    }
-    .t***masked***.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t***masked***.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t***masked***.place-right {
-        margin-left: 10px;
-    }
-    .t***masked***.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t***masked***.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  ",
-                    }
-                  }
+                <div
+                  className="react-tooltip-arrow styles-module_arrow__K0L3T"
+                  style={Object {}}
                 />
               </div>
             </div>
@@ -318,7 +241,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                     110
                   </div>
                   <div
-                    className="sc-hKMtZM dKrOdR self-end"
+                    className="sc-hLBbgP dYEqmk self-end"
                   />
                 </div>
                 <div
@@ -359,91 +282,14 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                 </div>
               </div>
               <div
-                className="__react_component_tooltip t***masked*** place-top type-dark"
-                data-id="tooltip"
+                className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
                 id="metric-tooltip-Not dead"
+                role="tooltip"
+                style={Object {}}
               >
-                <style
-                  aria-hidden="true"
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "
-  	.t***masked*** {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t***masked***.place-top {
-        margin-top: -10px;
-    }
-    .t***masked***.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t***masked***.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t***masked***.place-bottom {
-        margin-top: 10px;
-    }
-    .t***masked***.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t***masked***.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t***masked***.place-left {
-        margin-left: -10px;
-    }
-    .t***masked***.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t***masked***.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t***masked***.place-right {
-        margin-left: 10px;
-    }
-    .t***masked***.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t***masked***.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  ",
-                    }
-                  }
+                <div
+                  className="react-tooltip-arrow styles-module_arrow__K0L3T"
+                  style={Object {}}
                 />
               </div>
             </div>
@@ -471,7 +317,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
       className="h-full"
     >
       <div
-        className="sc-bczRLJ FSYQs"
+        className="sc-bcXHqe idcAl"
       >
         <h3
           className="my-0 pr-10 pt-0 text-gray-500"
@@ -479,10 +325,10 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
           Estimated probability of hospitalization by age group
         </h3>
         <div
-          className="sc-gsnTZi ehOUsR"
+          className="sc-gswNZR jVvoKy"
         >
           <div
-            className="sc-dkzDqf jHWsVm"
+            className="sc-dkrFOg kGkFVY"
           >
             <div
               className="recharts-responsive-container"
@@ -502,7 +348,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
           >
             <div>
               <div
-                className="sc-eCYdqJ NUQUw"
+                className="sc-eDvSVe dekPos"
               >
                 <svg
                   height={30}
@@ -538,7 +384,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   />
                 </svg>
                 <div
-                  className="sc-jSMfEi bFDDWb"
+                  className="sc-jSUZER dEFcBr"
                   style={
                     Object {
                       "color": "#1F407A",
@@ -549,7 +395,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                 </div>
               </div>
               <div
-                className="sc-eCYdqJ NUQUw"
+                className="sc-eDvSVe dekPos"
               >
                 <svg
                   height={30}
@@ -589,7 +435,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   </g>
                 </svg>
                 <div
-                  className="sc-jSMfEi bFDDWb"
+                  className="sc-jSUZER dEFcBr"
                   style={
                     Object {
                       "color": "#7f8c8d",
@@ -622,7 +468,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                     2
                   </div>
                   <div
-                    className="sc-hKMtZM dKrOdR self-end"
+                    className="sc-hLBbgP dYEqmk self-end"
                   />
                 </div>
                 <div
@@ -663,91 +509,14 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                 </div>
               </div>
               <div
-                className="__react_component_tooltip t***masked*** place-top type-dark"
-                data-id="tooltip"
+                className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
                 id="metric-tooltip-Hospitalized"
+                role="tooltip"
+                style={Object {}}
               >
-                <style
-                  aria-hidden="true"
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "
-  	.t***masked*** {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t***masked***.place-top {
-        margin-top: -10px;
-    }
-    .t***masked***.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t***masked***.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t***masked***.place-bottom {
-        margin-top: 10px;
-    }
-    .t***masked***.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t***masked***.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t***masked***.place-left {
-        margin-left: -10px;
-    }
-    .t***masked***.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t***masked***.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t***masked***.place-right {
-        margin-left: 10px;
-    }
-    .t***masked***.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t***masked***.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  ",
-                    }
-                  }
+                <div
+                  className="react-tooltip-arrow styles-module_arrow__K0L3T"
+                  style={Object {}}
                 />
               </div>
             </div>
@@ -773,7 +542,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                     108
                   </div>
                   <div
-                    className="sc-hKMtZM dKrOdR self-end"
+                    className="sc-hLBbgP dYEqmk self-end"
                   />
                 </div>
                 <div
@@ -814,91 +583,14 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                 </div>
               </div>
               <div
-                className="__react_component_tooltip t***masked*** place-top type-dark"
-                data-id="tooltip"
+                className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
                 id="metric-tooltip-Not hosp."
+                role="tooltip"
+                style={Object {}}
               >
-                <style
-                  aria-hidden="true"
-                  dangerouslySetInnerHTML={
-                    Object {
-                      "__html": "
-  	.t***masked*** {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t***masked***.place-top {
-        margin-top: -10px;
-    }
-    .t***masked***.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t***masked***.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t***masked***.place-bottom {
-        margin-top: 10px;
-    }
-    .t***masked***.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t***masked***.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t***masked***.place-left {
-        margin-left: -10px;
-    }
-    .t***masked***.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t***masked***.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t***masked***.place-right {
-        margin-left: 10px;
-    }
-    .t***masked***.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t***masked***.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  ",
-                    }
-                  }
+                <div
+                  className="react-tooltip-arrow styles-module_arrow__K0L3T"
+                  style={Object {}}
                 />
               </div>
             </div>
