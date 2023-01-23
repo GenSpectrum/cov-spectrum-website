@@ -1,5 +1,4 @@
 import { HostSelector } from './HostSelector';
-import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { HUMAN } from './api-lapis';
 import { SamplingStrategy } from './SamplingStrategy';
 import { DateRangeUrlEncoded } from './DateRangeUrlEncoded';
@@ -11,5 +10,4 @@ export const defaultSamplingStrategy: SamplingStrategy = SamplingStrategy.AllSam
 
 export const defaultAnalysisMode: AnalysisMode = AnalysisMode.Single;
 
-// TODO Temporary fix (see https://github.com/GenSpectrum/cov-spectrum-website/issues/674)
-export const defaultHost: HostSelector = sequenceDataSource === 'open' ? [] : [HUMAN];
+export const defaultHost: HostSelector = [HUMAN];
