@@ -340,7 +340,6 @@ export const FocusSinglePageContent = ({
   return (
     <>
       <VariantHeader
-        dateRange={ldvsSelector.dateRange!}
         variant={ldvsSelector.variant}
         controls={<FocusVariantHeaderControls selector={ldvsSelector} />}
       />

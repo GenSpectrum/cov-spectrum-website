@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
 import { formatVariantDisplayName, VariantSelector } from '../data/VariantSelector';
-import { DateRangeSelector } from '../data/DateRangeSelector';
 
 export interface Props {
-  dateRange: DateRangeSelector;
   variant: VariantSelector;
   titleSuffix?: React.ReactChild | React.ReactChild[];
   controls?: React.ReactChild | React.ReactChild[];
 }
 
-export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
+function useFullName(variant: VariantSelector) {
   const [resolvedFullName, setResolvedFullName] = useState<string | undefined>();
 
   useEffect(() => {
@@ -33,6 +31,12 @@ export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
       isSubscribed = false;
     };
   }, [variant.pangoLineage, variant.nextcladePangoLineage]);
+
+  return resolvedFullName;
+}
+
+export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
+  const resolvedFullName = useFullName(variant);
 
   return (
     <div className='pt-10 lg:pt-0 ml-1 md:ml-3 w-full relative'>
