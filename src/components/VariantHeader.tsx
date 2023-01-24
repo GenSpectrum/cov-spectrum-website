@@ -1,6 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
-import { formatVariantDisplayName, VariantSelector } from '../data/VariantSelector';
+import React, { useMemo } from 'react';
+import { formatVariantDisplayName, getPangoLineage, VariantSelector } from '../data/VariantSelector';
+import { fetchPangoLineageRecombinant } from '../data/api';
+import { usePangoLineageFullName } from '../services/pangoLineageAlias';
+import { useQuery } from '../helpers/query-hook';
 
 export interface Props {
   variant: VariantSelector;
@@ -8,35 +10,52 @@ export interface Props {
   controls?: React.ReactChild | React.ReactChild[];
 }
 
-function useFullName(variant: VariantSelector) {
-  const [resolvedFullName, setResolvedFullName] = useState<string | undefined>();
+function useLineageDescriptionText(variant: VariantSelector) {
+  const lineageAliasText = useAliasText(variant);
+  const recombinationText = useRecombinantText(variant);
 
-  useEffect(() => {
-    let isSubscribed = true;
-    if (variant.pangoLineage === undefined && variant.nextcladePangoLineage === undefined) {
-      setResolvedFullName(undefined);
-      return;
-    }
-    const pangoLineage: string = variant.pangoLineage
-      ? variant.pangoLineage
-      : variant.nextcladePangoLineage
-      ? variant.nextcladePangoLineage
-      : '';
-    PangoLineageAliasResolverService.findFullName(pangoLineage).then(name => {
-      if (isSubscribed) {
-        setResolvedFullName(name);
+  if (lineageAliasText !== undefined) {
+    return lineageAliasText;
+  }
+  return recombinationText;
+}
+
+function useAliasText(variant: VariantSelector) {
+  const pangoLineage = getPangoLineage(variant);
+  const pangoLineageFullName = usePangoLineageFullName(pangoLineage);
+  if (pangoLineageFullName === undefined) {
+    return undefined;
+  }
+  return 'Alias for ' + pangoLineageFullName;
+}
+
+function useRecombinantText(variant: VariantSelector) {
+  const { data } = useQuery(fetchPangoLineageRecombinant, []);
+  return useMemo(() => {
+    if (data) {
+      const pangoLineage = getPangoLineage(variant);
+      const baseLineage = extractBaseLineage(pangoLineage);
+
+      const recombinant = data.find(pangoLineageRecombinant => {
+        return pangoLineageRecombinant.name === baseLineage;
+      });
+
+      if (recombinant) {
+        const recombinantTextPrefix =
+          baseLineage === pangoLineage ? 'Recombinant of ' : 'Child of recombinant of ';
+        return recombinantTextPrefix + [...new Set(recombinant.parents)].join(', ');
       }
-    });
-    return () => {
-      isSubscribed = false;
-    };
-  }, [variant.pangoLineage, variant.nextcladePangoLineage]);
+    }
+    return undefined;
+  }, [data, variant]);
+}
 
-  return resolvedFullName;
+function extractBaseLineage(variantName: String) {
+  return variantName.split('.')[0];
 }
 
 export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
-  const resolvedFullName = useFullName(variant);
+  const lineageDescriptionText = useLineageDescriptionText(variant);
 
   return (
     <div className='pt-10 lg:pt-0 ml-1 md:ml-3 w-full relative'>
@@ -50,7 +69,7 @@ export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {
           </h1>
         </div>
       </div>
-      {resolvedFullName && <h3 className=' text-gray-500'>Alias for {resolvedFullName}</h3>}
+      {lineageDescriptionText && <h3 className=' text-gray-500'>{lineageDescriptionText}</h3>}
     </div>
   );
 };
