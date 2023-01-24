@@ -77,11 +77,11 @@ export const WasteWaterLocationTimeChart = React.memo(({ variants }: Props): JSX
               />
               <YAxis domain={['dataMin', 'auto']} />
               <Tooltip
-                formatter={(props: any) => {
-                  const escapedName = props.name.replace('values.', '');
+                formatter={(value: string, name: string, props: any) => {
+                  const escapedName = name.replace('values.', '');
                   const [ciLower, ciUpper] = props.payload.cis[escapedName];
                   return [
-                    (props.value * 100).toFixed(2) +
+                    (Number(value) * 100).toFixed(2) +
                       '% [' +
                       (ciLower * 100).toFixed(2) +
                       '-' +

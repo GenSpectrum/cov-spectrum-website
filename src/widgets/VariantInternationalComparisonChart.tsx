@@ -283,7 +283,7 @@ export const VariantInternationalComparisonChart = ({
               domain={logScale ? ['auto', 'auto'] : [0, 'auto']}
             />
             <Tooltip
-              formatter={(props: any) => (props.value * 100).toFixed(2) + '%'}
+              formatter={(value: string) => (Number(value) * 100).toFixed(2) + '%'}
               labelFormatter={label => {
                 return 'Date: ' + label;
               }}

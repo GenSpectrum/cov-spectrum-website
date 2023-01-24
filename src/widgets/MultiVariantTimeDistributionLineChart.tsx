@@ -245,11 +245,11 @@ export const MultiVariantTimeDistributionLineChart = ({
                   />
 
                   <Tooltip
-                    formatter={(props: any) => {
+                    formatter={(value: string, name: string, props: any) => {
                       const payload = props.payload;
 
-                      if (!props.name.includes('Log')) {
-                        const index = Number.parseInt(props.name.replaceAll('variantProportion', ''));
+                      if (!name.includes('Log')) {
+                        const index = Number.parseInt(name.replaceAll('variantProportion', ''));
                         const proportionString =
                           (payload[`variantProportion${index}`] * 100).toFixed(2) + '%';
                         const proportionCiString =
@@ -267,7 +267,7 @@ export const MultiVariantTimeDistributionLineChart = ({
                           payload[`variantName${index}`],
                         ];
                       } else {
-                        const index = Number.parseInt(props.name.replaceAll('variantProportionLog', ''));
+                        const index = Number.parseInt(name.replaceAll('variantProportionLog', ''));
                         let logString =
                           payload[`variantProportionLog${index}`] !== undefined &&
                           (payload[`variantProportionLog${index}`] * 100).toFixed(2) + '%';
