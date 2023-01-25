@@ -39,7 +39,8 @@ import {
 import { NewFocusPage } from './pages/NewFocusPage';
 import { useQuery } from './helpers/query-hook';
 import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/default-selectors';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
+import { queryClient } from './services/QueryClient';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -59,7 +60,7 @@ export const App = () => {
   const { data: nextcladeDatasetInfo } = useQuery(() => fetchNextcladeDatasetInfo(), []);
 
   return (
-    <QueryClientProvider client={new QueryClient({})}>
+    <QueryClientProvider client={queryClient}>
       <div className='w-full'>
         {/* Header */}
         {!hideHeaderAndFooter && <Header />}
