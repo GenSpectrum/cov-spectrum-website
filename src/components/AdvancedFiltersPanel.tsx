@@ -50,18 +50,17 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
       <Host setHost={setHost} host={host} />
       <div className='mt-4 mb-4'>
         <h2>Submission date</h2>
-
         <DateRangePicker dateRangeSelector={submissionDateRangeSelector} onChangeDate={onChangeDate} />
         <Button
           variant={ButtonVariant.SECONDARY}
-          className='w-25 mt-4'
+          className='w-fit mt-4 ml-2'
           onClick={() => setSubmissionDateRangeSelector(defaultSubmissionDateRangeSelector)}
         >
-          Clear filter
+          Clear date filter
         </Button>
       </div>
       <SequenceQuality setQcSelector={setQcSelector} qcSelector={qcSelector} />
-      <Button variant={ButtonVariant.SECONDARY} className='w-full mt-2' onClick={save}>
+      <Button variant={ButtonVariant.PRIMARY} className='w-1/4 mt-2 mx-auto' onClick={save}>
         Save
       </Button>
     </>
@@ -74,9 +73,12 @@ function Host(props: { setHost: (host: string[]) => void; host: string[] }) {
     []
   );
 
-  const changeHostSelect = useCallback((selected: ReadonlyArray<{ label: string; value: string }>) => {
-    props.setHost(selected.map(option => option.value));
-  }, []);
+  const changeHostSelect = useCallback(
+    (selected: ReadonlyArray<{ label: string; value: string }>) => {
+      props.setHost(selected.map(option => option.value));
+    },
+    [props.setHost]
+  );
 
   if (!allHosts) {
     return (
