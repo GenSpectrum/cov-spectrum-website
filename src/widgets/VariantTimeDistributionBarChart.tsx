@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { ChartAndMetrics } from './Metrics';
-import { BarChart, XAxis, YAxis, Bar, Cell, ResponsiveContainer, CartesianGrid, Tooltip } from 'recharts';
+import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { colors, TimeTick } from './common';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { fillAndFilterFromWeeklyMap } from '../helpers/fill-missing';
@@ -9,6 +9,7 @@ import { VariantTimeDistributionChartProps } from './VariantTimeDistributionChar
 import { maxYAxis } from '../helpers/max-y-axis';
 import { ButtonToolbar } from 'react-bootstrap';
 import { Button, ButtonVariant } from '../helpers/ui';
+import { SetCurrentDataSideEffect } from './Tooltip';
 
 const CHART_MARGIN_RIGHT = 30;
 const CHART_MARGIN_BOTTOM = 10;
@@ -192,11 +193,10 @@ export const VariantTimeDistributionBarChart = React.memo(
               <Tooltip
                 active={false}
                 cursor={false}
-                content={(e: any) => {
-                  if (e?.payload.length > 0) {
-                    setCurrentData(e.payload[0].payload);
-                  }
-                  return <></>;
+                content={tooltipProps => {
+                  return (
+                    <SetCurrentDataSideEffect tooltipProps={tooltipProps} setCurrentData={setCurrentData} />
+                  );
                 }}
               />
             </BarChart>

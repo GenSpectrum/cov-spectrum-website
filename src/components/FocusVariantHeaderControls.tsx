@@ -145,7 +145,7 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
           open={openSequence}
           onClose={() => handleClose(true)}
         >
-          <MenuItem disableRipple>
+          <MenuItem disableRipple key='sequenceList'>
             <DownloadIcon />
             <ExternalLink url={listLink ?? ''}>Sequence list</ExternalLink>
           </MenuItem>
@@ -153,18 +153,18 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
           <Divider sx={{ my: 0.5 }} />
 
           {sequenceDataSource === 'gisaid' && (
-            <MenuItem disableRipple>
+            <MenuItem disableRipple key='gisaid'>
               <ExternalLink url={listLink2 ?? ''}>GISAID list</ExternalLink>
             </MenuItem>
           )}
 
           {sequenceDataSource === 'open' && (
             <>
-              <MenuItem disableRipple>
+              <MenuItem disableRipple key='fasta'>
                 <ExternalLink url={fastaLink ?? ''}>FASTA</ExternalLink>
               </MenuItem>
 
-              <MenuItem disableRipple>
+              <MenuItem disableRipple key='fastaAligned'>
                 <ExternalLink url={alignedFastaLink ?? ''}>FASTA (aligned)</ExternalLink>
               </MenuItem>
             </>
@@ -194,7 +194,6 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
             integration =>
               integration.isAvailable(selector) && (
                 <MenuItem onClick={() => integration.open(selector)} key={integration.name}>
-                  {' '}
                   {integration.name}
                 </MenuItem>
               )

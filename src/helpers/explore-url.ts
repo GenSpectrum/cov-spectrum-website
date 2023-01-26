@@ -2,8 +2,8 @@ import assert from 'assert';
 import { useCallback, useMemo } from 'react';
 import { useNavigate, useLocation, useMatch } from 'react-router';
 import {
-  readVariantListFromUrlSearchParams,
   addVariantSelectorsToUrlSearchParams,
+  readVariantListFromUrlSearchParams,
   VariantSelector,
 } from '../data/VariantSelector';
 import {
@@ -12,13 +12,12 @@ import {
   LocationSelector,
 } from '../data/LocationSelector';
 import {
-  DateRangeSelector,
   addSubmittedDateRangeSelectorToUrlParams,
-  readSubmissionDateRangeFromUrlSearchParams,
+  DateRangeSelector,
   defaultSubmissionDateRangeSelector,
+  readSubmissionDateRangeFromUrlSearchParams,
 } from '../data/DateRangeSelector';
 import {
-  DateRangeUrlEncoded,
   dateRangeUrlFromSelector,
   dateRangeUrlToSelector,
   isDateRangeEncoded,
@@ -39,7 +38,7 @@ import {
   QcSelector,
   readQcSelectorFromUrlSearchParams,
 } from '../data/QcSelector';
-import { HUMAN } from '../data/api-lapis';
+import { defaultAnalysisMode, defaultDateRange, defaultSamplingStrategy } from '../data/default-selectors';
 
 export interface ExploreUrl {
   location: LocationSelector;
@@ -67,14 +66,6 @@ export interface ExploreUrl {
   getDeepFocusPageUrl: (pagePath: string) => string;
   focusKey: string;
 }
-
-export const defaultDateRange: DateRangeUrlEncoded = 'Past6M';
-
-export const defaultSamplingStrategy: SamplingStrategy = SamplingStrategy.AllSamples;
-
-export const defaultAnalysisMode: AnalysisMode = AnalysisMode.Single;
-
-export const defaultHost: HostSelector = [HUMAN];
 
 export function useExploreUrl(): ExploreUrl | undefined {
   const navigate = useNavigate();

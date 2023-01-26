@@ -12,7 +12,7 @@ import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLoca
 import { baseLocation } from './index';
 import StoriesOverview from './stories/StoriesOverview';
 import StoryRouter from './stories/StoryRouter';
-import { defaultDateRange, defaultHost, defaultSamplingStrategy, useExploreUrl } from './helpers/explore-url';
+import { useExploreUrl } from './helpers/explore-url';
 import dayjs from 'dayjs';
 import { fetchNextcladeDatasetInfo, getCurrentLapisDataVersionDate } from './data/api-lapis';
 import { sequenceDataSource } from './helpers/sequence-data-source';
@@ -38,6 +38,7 @@ import {
 } from './data/DateRangeSelector';
 import { NewFocusPage } from './pages/NewFocusPage';
 import { useQuery } from './helpers/query-hook';
+import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/default-selectors';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 

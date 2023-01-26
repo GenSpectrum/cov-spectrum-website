@@ -4,6 +4,7 @@ import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 
 import Metrics, { MetricsWrapper } from './Metrics';
 import { kFormat } from '../helpers/number';
 import { DatelessCountrylessCountSampleDataset } from '../data/sample/DatelessCountrylessCountSampleDataset';
+import { TooltipSideEffect } from './Tooltip';
 
 export type MetadataAvailabilityChartProps = {
   sampleSet: DatelessCountrylessCountSampleDataset;
@@ -81,17 +82,23 @@ export const MetadataAvailabilityChart = ({ sampleSet }: MetadataAvailabilityCha
                 <Tooltip
                   active={false}
                   cursor={false}
-                  content={e => {
-                    if (e.active && e.payload !== undefined) {
-                      const newActive = e.payload[0].payload;
-                      if (active?.attributeLabel !== newActive.attributeLabel) {
-                        setActive(newActive);
-                      }
-                    }
-                    if (!e.active) {
-                      setActive(undefined);
-                    }
-                    return <></>;
+                  content={tooltipProps => {
+                    return (
+                      <TooltipSideEffect
+                        tooltipProps={tooltipProps}
+                        sideEffect={tooltipProps => {
+                          if (tooltipProps.active && tooltipProps.payload !== undefined) {
+                            const newActive = tooltipProps.payload[0].payload;
+                            if (active?.attributeLabel !== newActive.attributeLabel) {
+                              setActive(newActive);
+                            }
+                          }
+                          if (!tooltipProps.active) {
+                            setActive(undefined);
+                          }
+                        }}
+                      />
+                    );
                   }}
                 />
               </BarChart>

@@ -10,6 +10,7 @@ import Loader from '../components/Loader';
 import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
 import { DatelessCountrylessCountSampleDataset } from '../data/sample/DatelessCountrylessCountSampleDataset';
 import { DatelessCountrylessCountSampleEntry } from '../data/sample/DatelessCountrylessCountSampleEntry';
+import { TooltipSideEffect } from './Tooltip';
 
 export type SequencingRepresentativenessChartProps = {
   caseDataset: CaseCountAsyncDataset;
@@ -164,17 +165,23 @@ export const SequencingRepresentativenessChart = React.memo(
                         <Tooltip
                           active={false}
                           cursor={false}
-                          content={e => {
-                            if (e.active && e.payload !== undefined) {
-                              const newActive = e.payload[0].payload;
-                              if (active?.key !== newActive.key) {
-                                setActive(newActive);
-                              }
-                            }
-                            if (!e.active) {
-                              setActive(undefined);
-                            }
-                            return <></>;
+                          content={tooltipProps => {
+                            return (
+                              <TooltipSideEffect
+                                tooltipProps={tooltipProps}
+                                sideEffect={tooltipProps => {
+                                  if (tooltipProps.active && tooltipProps.payload !== undefined) {
+                                    const newActive = tooltipProps.payload[0].payload;
+                                    if (active?.key !== newActive.key) {
+                                      setActive(newActive);
+                                    }
+                                  }
+                                  if (!tooltipProps.active) {
+                                    setActive(undefined);
+                                  }
+                                }}
+                              />
+                            );
                           }}
                         />
                       </BarChart>

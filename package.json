@@ -87,7 +87,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
+    "test": "cross-env REACT_APP_IS_TESTING=true react-scripts test",
     "eject": "react-scripts eject",
     "format": "prettier --write . && npx eslint . --fix",
     "check-format": "prettier --check .",
@@ -178,6 +178,7 @@
     "@types/react-router-hash-link": "^2.4.5",
     "all-contributors-cli": "^6.24.0",
     "autoprefixer": "^10.4.13",
+    "cross-env": "^7.0.3",
     "eslint": "^8.32.0",
     "eslint-plugin-unused-imports": "^2.0.0",
     "jest-canvas-mock": "^2.4.0",
