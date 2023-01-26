@@ -14,10 +14,7 @@ function useLineageDescriptionText(variant: VariantSelector) {
   const lineageAliasText = useAliasText(variant);
   const recombinationText = useRecombinantText(variant);
 
-  if (lineageAliasText !== undefined) {
-    return lineageAliasText;
-  }
-  return recombinationText;
+  return lineageAliasText ?? recombinationText;
 }
 
 function useAliasText(variant: VariantSelector) {
@@ -41,8 +38,9 @@ function useRecombinantText(variant: VariantSelector) {
       });
 
       if (recombinant) {
-        const recombinantTextPrefix =
-          baseLineage === pangoLineage ? 'Recombinant of ' : 'Child of recombinant of ';
+        const recombinantTextPrefix = pangoLineage.startsWith(baseLineage + '.')
+          ? 'Child of recombinant of '
+          : 'Recombinant of ';
         return recombinantTextPrefix + [...new Set(recombinant.parents)].join(', ');
       }
     }
@@ -51,7 +49,7 @@ function useRecombinantText(variant: VariantSelector) {
 }
 
 function extractBaseLineage(variantName: String) {
-  return variantName.split('.')[0];
+  return variantName.split('.')[0].split('*')[0];
 }
 
 export const VariantHeader = ({ variant, titleSuffix, controls }: Props) => {

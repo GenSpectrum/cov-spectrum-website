@@ -46,7 +46,7 @@ describe('VariantHeader', () => {
     expect(usePangoLineageFullNameMock).toHaveBeenCalledWith('SOMEALIAS');
   });
 
-  test('should display recombination alias', async () => {
+  test.each([['XAA'], ['XAA*']])('should display recombination alias for %s', async pangoLineage => {
     useQueryMock.mockReturnValue({
       data: [
         {
@@ -56,7 +56,7 @@ describe('VariantHeader', () => {
       ],
     });
 
-    render(<VariantHeader variant={{ pangoLineage: 'XAA' }} />);
+    render(<VariantHeader variant={{ pangoLineage }} />);
 
     expect(await screen.findByText('Recombinant of BA.1*, BA.2*')).toBeInTheDocument();
   });
