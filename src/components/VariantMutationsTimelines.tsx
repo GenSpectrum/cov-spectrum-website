@@ -4,7 +4,7 @@ import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
 import { transformToVariantQuery } from '../data/VariantSelector';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
-import React, { useMemo, useState, Fragment } from 'react';
+import React, { useMemo, useState } from 'react';
 import { globalDateCache, UnifiedDay, UnifiedIsoWeek } from '../helpers/date-cache';
 import { NamedCard } from './NamedCard';
 import { sortListByNucMutation } from '../helpers/nuc-mutation';
