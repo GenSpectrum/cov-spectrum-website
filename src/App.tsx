@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Link, Redirect, Route, Switch } from 'react-router-dom';
 import Header from './Header';
 import { LoginWrapper } from './helpers/app-layout';
 import { AboutPage } from './pages/AboutPage';
@@ -41,6 +41,7 @@ import { useQuery } from './helpers/query-hook';
 import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/default-selectors';
 import { QueryClientProvider } from 'react-query';
 import { queryClient } from './services/QueryClient';
+import { TestComponent } from './TestComponent';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -177,6 +178,15 @@ export const App = () => {
             </Route>
             <Route path='/about'>
               <AboutPage />
+            </Route>
+            <Route path='/about'>
+              <AboutPage />
+            </Route>
+            <Route path='/test1'>
+              <TestComponent link='test2' />
+            </Route>
+            <Route path='/test2'>
+              <Link to='test1'>test1</Link>
             </Route>
           </Switch>
         </div>
