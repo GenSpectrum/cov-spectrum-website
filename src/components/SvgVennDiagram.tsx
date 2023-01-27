@@ -304,6 +304,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
     <g>
       {vennGeneralData.map(({ path }, index) => (
         <path
+          key={'p-' + index}
           className={`st0 ${variantIndex === index ? 'hoveredCircle' : ''}`}
           d={path}
           onMouseEnter={() => setVariantIndex(index)}
@@ -459,6 +460,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
 
           {vennGeneralData.map(({ svgTransform, mutations }, index) => (
             <text
+              key={'t-' + index}
               onClick={() => {
                 let sorted: string[] =
                   domain === 'aa' ? sortAAMutationList(mutations) : sortNucMutationList(mutations);
