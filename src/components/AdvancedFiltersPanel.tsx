@@ -127,7 +127,7 @@ function SequenceQuality(props: {
   qcSelector: QcSelector;
 }) {
   const setQcValue = useCallback(
-    (field, type: QcFieldType, valueString?: string) => {
+    (field: any, type: QcFieldType, valueString?: string) => {
       props.setQcSelector(prev => ({
         ...prev,
         [field]: type === 'integer' ? Utils.safeParseInt(valueString) : Utils.safeParseFloat(valueString),
