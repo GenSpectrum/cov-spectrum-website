@@ -8,6 +8,7 @@ import { AccountService } from '../services/AccountService';
 import { ReferenceGenomeInfo } from './ReferenceGenomeInfo';
 import { UserCountry } from './UserCountry';
 import { AddCollectionResponse, Collection } from './Collection';
+import { PangoLineageRecombinant } from './PangoLineageRecombinant';
 
 const HOST = process.env.REACT_APP_SERVER_HOST;
 
@@ -101,6 +102,15 @@ export async function fetchPangoLineageAliases(signal?: AbortSignal): Promise<Pa
     throw new Error('Error fetching pango lineage aliases');
   }
   return (await res.json()) as PangoLineageAlias[];
+}
+
+export async function fetchPangoLineageRecombinant(signal?: AbortSignal): Promise<PangoLineageRecombinant[]> {
+  const url = '/resource/pango-lineage-recombinant';
+  const res = await get(url, signal);
+  if (!res.ok) {
+    throw new Error('Error fetching pango lineage recombinants');
+  }
+  return (await res.json()) as PangoLineageRecombinant[];
 }
 
 export async function fetchCountryMapping(signal?: AbortSignal): Promise<CountryMapping[]> {
