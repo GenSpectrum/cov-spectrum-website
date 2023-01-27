@@ -80,3 +80,18 @@ code {
 .custom-date-filter-input:hover {
   cursor: pointer;
 }
+
+/* TODO Emergency HACK(Chaoran): @tailwind base; is resetting the background colors of buttons of react-bootstrap */
+/* See #681 */
+.btn-primary {
+  background-color: #007bff;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+}
+
+.btn-info {
+  background-color: #17a2b8;
+}
+/* HACK END */
