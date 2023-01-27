@@ -1,5 +1,5 @@
 import { ExternalLink } from './ExternalLink';
-import { useCallback, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { qcFieldsAndLabels, QcFieldType, QcSelector } from '../data/QcSelector';
 import { Utils } from '../services/Utils';
 import { Button, ButtonVariant } from '../helpers/ui';
@@ -26,39 +26,20 @@ const toSelectOption = (s: string) => ({ label: s, value: s });
 export const AdvancedFiltersPanel = ({ onClose }: Props) => {
   const { setHostAndQc, host: initialHost, qc: initialQc } = useExploreUrl() ?? {};
   const [host, setHost] = useState<HostSelector>(initialHost ?? []);
-  const [qc, setQc] = useState<QcSelector>(initialQc ?? {});
+  const [qcSelector, setQcSelector] = useState<QcSelector>(initialQc ?? {});
 
   const [submissionDateRangeSelector, setSubmissionDateRangeSelector] = useState<DateRangeSelector>(
     new SpecialDateRangeSelector('AllTimes')
   );
 
-  const { data: allHosts } = useQuery(
-    () => HostService.allHosts.then(hs => hs.sort((a, b) => a.localeCompare(b))),
-    []
-  );
-
-  const setQcValue = useCallback(
-    (field, type: QcFieldType, valueString?: string) => {
-      setQc(prev => ({
-        ...prev,
-        [field]: type === 'integer' ? Utils.safeParseInt(valueString) : Utils.safeParseFloat(valueString),
-      }));
-    },
-    [setQc]
-  );
-
-  const changeHostSelect = useCallback((selected: ReadonlyArray<{ label: string; value: string }>) => {
-    setHost(selected.map(option => option.value));
-  }, []);
-
   const save = useCallback(() => {
     if (!setHostAndQc) {
       return;
     }
-    setHostAndQc(host, qc, submissionDateRangeSelector);
+    setHostAndQc(host, qcSelector, submissionDateRangeSelector);
 
     onClose();
-  }, [host, qc, setHostAndQc, onClose, submissionDateRangeSelector]);
+  }, [host, qcSelector, setHostAndQc, onClose, submissionDateRangeSelector]);
 
   const onChangeDate = (dateRangeSelector: DateRangeSelector) => {
     setSubmissionDateRangeSelector(dateRangeSelector);
@@ -66,53 +47,97 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
 
   return (
     <>
-      {/* Hosts */}
-      <h2>Hosts</h2>
-      {allHosts ? (
-        <>
-          <button className='underline cursor-pointer mr-2' onClick={() => setHost(allHosts)}>
-            Select all
-          </button>
-          {' | '}
-          <button className='underline cursor-pointer ml-2' onClick={() => setHost([HUMAN])}>
-            Select human
-          </button>
-          {' | '}
-          <button
-            className='underline cursor-pointer ml-2'
-            onClick={() => setHost(allHosts.filter(h => h !== HUMAN))}
-          >
-            Select non-human
-          </button>
-          <Select
-            isMulti
-            closeMenuOnSelect={false}
-            options={allHosts.map(toSelectOption)}
-            value={host.map(toSelectOption)}
-            placeholder='Select hosts...'
-            onChange={changeHostSelect}
-            className='mt-2'
-          />
-          <div className='mt-2'>By default, only sequences obtained from human hosts are used.</div>
-        </>
-      ) : (
-        <div style={{ height: 200 }}>
-          <Loader />
-        </div>
-      )}
+      <Host setHost={setHost} host={host} />
       <div className='mt-4 mb-4'>
         <h2>Submission date</h2>
-
         <DateRangePicker dateRangeSelector={submissionDateRangeSelector} onChangeDate={onChangeDate} />
         <Button
           variant={ButtonVariant.SECONDARY}
-          className='w-25 mt-4'
+          className='w-fit mt-4 ml-2'
           onClick={() => setSubmissionDateRangeSelector(defaultSubmissionDateRangeSelector)}
         >
-          Clear filter
+          Clear date filter
         </Button>
       </div>
-      {/* Sequence quality */}
+      <SequenceQuality setQcSelector={setQcSelector} qcSelector={qcSelector} />
+      <Button variant={ButtonVariant.PRIMARY} className='w-1/4 mt-2 mx-auto' onClick={save}>
+        Save
+      </Button>
+    </>
+  );
+};
+
+function Host(props: { setHost: (host: string[]) => void; host: string[] }) {
+  const { data: allHosts } = useQuery(
+    () => HostService.allHosts.then(hs => hs.sort((a, b) => a.localeCompare(b))),
+    []
+  );
+
+  const changeHostSelect = useCallback(
+    (selected: ReadonlyArray<{ label: string; value: string }>) => {
+      props.setHost(selected.map(option => option.value));
+    },
+    [props.setHost]
+  );
+
+  if (!allHosts) {
+    return (
+      <>
+        <h2>Hosts</h2>
+        <div style={{ height: 200 }}>
+          <Loader />
+        </div>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <h2>Hosts</h2>
+      <button className='underline cursor-pointer mr-2' onClick={() => props.setHost(allHosts)}>
+        Select all
+      </button>
+      {' | '}
+      <button className='underline cursor-pointer ml-2' onClick={() => props.setHost([HUMAN])}>
+        Select human
+      </button>
+      {' | '}
+      <button
+        className='underline cursor-pointer ml-2'
+        onClick={() => props.setHost(allHosts.filter(h => h !== HUMAN))}
+      >
+        Select non-human
+      </button>
+      <Select
+        isMulti
+        closeMenuOnSelect={false}
+        options={allHosts.map(toSelectOption)}
+        value={props.host.map(toSelectOption)}
+        placeholder='Select hosts...'
+        onChange={changeHostSelect}
+        className='mt-2'
+      />
+      <div className='mt-2'>By default, only sequences obtained from human hosts are used.</div>
+    </>
+  );
+}
+
+function SequenceQuality(props: {
+  setQcSelector: React.Dispatch<React.SetStateAction<QcSelector>>;
+  qcSelector: QcSelector;
+}) {
+  const setQcValue = useCallback(
+    (field, type: QcFieldType, valueString?: string) => {
+      props.setQcSelector(prev => ({
+        ...prev,
+        [field]: type === 'integer' ? Utils.safeParseInt(valueString) : Utils.safeParseFloat(valueString),
+      }));
+    },
+    [props.setQcSelector]
+  );
+
+  return (
+    <>
       <h2>Sequence quality</h2>
       Here, you can filter the sequences by the QC (quality control) metrics calculated by{' '}
       <ExternalLink url='https://clades.nextstrain.org/'>Nextclade</ExternalLink>. In general, 0 to 29 is
@@ -122,27 +147,27 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
       </ExternalLink>
       .
       <div>
-        <button className='underline cursor-pointer mr-2' onClick={() => setQc({})}>
+        <button className='underline cursor-pointer mr-2' onClick={() => props.setQcSelector({})}>
           Select all
         </button>
         {' | '}
         <button
           className='underline cursor-pointer mr-2'
-          onClick={() => setQc({ nextcladeQcOverallScoreTo: 29 })}
+          onClick={() => props.setQcSelector({ nextcladeQcOverallScoreTo: 29 })}
         >
           Select good
         </button>
         {' | '}
         <button
           className='underline cursor-pointer mr-2'
-          onClick={() => setQc({ nextcladeQcOverallScoreTo: 99 })}
+          onClick={() => props.setQcSelector({ nextcladeQcOverallScoreTo: 99 })}
         >
           Select good and mediocre
         </button>
         {' | '}
         <button
           className='underline cursor-pointer mr-2'
-          onClick={() => setQc({ nextcladeQcOverallScoreFrom: 100 })}
+          onClick={() => props.setQcSelector({ nextcladeQcOverallScoreFrom: 100 })}
         >
           Select only bad
         </button>
@@ -153,22 +178,18 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
           <input
             className='border w-24'
             type='number'
-            value={qc[fromField] ?? ''}
+            value={props.qcSelector[fromField] ?? ''}
             onChange={e => setQcValue(fromField, type, e.target.value)}
           />{' '}
           -{' '}
           <input
             className='border w-24'
             type='number'
-            value={qc[toField] ?? ''}
+            value={props.qcSelector[toField] ?? ''}
             onChange={e => setQcValue(toField, type, e.target.value)}
           />
         </div>
       ))}
-      {/* Save */}
-      <Button variant={ButtonVariant.SECONDARY} className='w-full mt-2' onClick={save}>
-        Save
-      </Button>
     </>
   );
-};
+}
