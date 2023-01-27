@@ -275,3 +275,11 @@ export function transformToVariantQuery(selector: VariantSelector): string {
   }
   return components.join(' & ');
 }
+
+export function getPangoLineage(variant: VariantSelector) {
+  return variant.pangoLineage
+    ? variant.pangoLineage
+    : variant.nextcladePangoLineage
+    ? variant.nextcladePangoLineage
+    : '';
+}

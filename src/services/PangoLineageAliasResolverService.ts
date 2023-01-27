@@ -11,13 +11,7 @@ export class PangoLineageAliasResolverService {
 
   static async findFullName(pangoLineage: string): Promise<string | undefined> {
     const aliases = await PangoLineageAliasResolverService.aliases;
-    pangoLineage = pangoLineage.toUpperCase();
-    for (let { alias, fullName } of aliases) {
-      if (pangoLineage.startsWith(alias + '.')) {
-        return fullName + pangoLineage.substr(alias.length);
-      }
-    }
-    return undefined;
+    return this.findFullNameInAliases(pangoLineage, aliases);
   }
 
   static findFullNameUnsafeSync(pangoLineage: string): string | undefined {
@@ -25,6 +19,10 @@ export class PangoLineageAliasResolverService {
     if (!aliases) {
       return undefined;
     }
+    return this.findFullNameInAliases(pangoLineage, aliases);
+  }
+
+  private static findFullNameInAliases(pangoLineage: string, aliases: PangoLineageAlias[]) {
     pangoLineage = pangoLineage.toUpperCase();
     for (let { alias, fullName } of aliases) {
       if (pangoLineage.startsWith(alias + '.')) {

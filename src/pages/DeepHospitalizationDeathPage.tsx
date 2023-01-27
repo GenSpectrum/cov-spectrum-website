@@ -29,7 +29,6 @@ export const DeepHospitalizationDeathPage = () => {
 
   return makeLayout(
     <VariantHeader
-      dateRange={exploreUrl.dateRange}
       variant={exploreUrl.variants![0]}
       controls={
         <Link to={exploreUrl.getOverviewPageUrl()}>
