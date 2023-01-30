@@ -19,6 +19,7 @@ import {
 } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 export let baseLocation = 'Europe';
 
@@ -91,7 +92,16 @@ async function main() {
           </Route>
           <Route path='/'>
             <DndProvider options={HTML5toTouch}>
-              <App />
+              <QueryClientProvider
+                client={
+                  new QueryClient({
+                    defaultOptions: { queries: { staleTime: Infinity, refetchOnWindowFocus: false } },
+                  })
+                }
+              >
+                {' '}
+                <App />
+              </QueryClientProvider>
             </DndProvider>
           </Route>
         </Switch>

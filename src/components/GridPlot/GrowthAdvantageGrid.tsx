@@ -17,13 +17,10 @@ export const GrowthAdvantageGrid = ({ selector, pangoLineage, subLineages, plotW
   const advantages = useQuery(
     async signal => {
       // Fetch the variant date counts and whole date counts
-      const counts = await fetchDatePangoLineageCount(
-        {
-          ...selector,
-          variant: { nextcladePangoLineage: pangoLineage + '*' },
-        },
-        signal
-      );
+      const counts = await fetchDatePangoLineageCount({
+        ...selector,
+        variant: { nextcladePangoLineage: pangoLineage + '*' },
+      });
       const variantDateCountsPerPangoLineage = groupBySubLineage({
         currentLineage: pangoLineage,
         datePangoLineageCount: counts.datePangoLineageCount,

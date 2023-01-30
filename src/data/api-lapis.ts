@@ -70,9 +70,9 @@ export function getCurrentLapisDataVersionDate(): Date | undefined {
   return currentLapisDataVersion !== undefined ? dayjs.unix(currentLapisDataVersion).toDate() : undefined;
 }
 
-export async function fetchNextcladeDatasetInfo(signal?: AbortSignal): Promise<NextcladeDatasetInfo> {
+export async function fetchNextcladeDatasetInfo(): Promise<NextcladeDatasetInfo> {
   let url = '/info/nextclade-dataset';
-  const res = await get(url, signal, true);
+  const res = await get(url, undefined, true);
   if (!res.ok) {
     throw new Error('Error fetching Nextclade dataset info');
   }

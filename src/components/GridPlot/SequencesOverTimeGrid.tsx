@@ -1,5 +1,5 @@
 import { LapisSelector } from '../../data/LapisSelector';
-import { useQuery } from '../../helpers/query-hook';
+import { useQuery } from 'react-query';
 import { _fetchAggSamples, fetchDateCountSamples } from '../../data/api-lapis';
 import { PangoLineageAliasResolverService } from '../../services/PangoLineageAliasResolverService';
 import {
@@ -39,7 +39,9 @@ type Props = {
 
 export const SequencesOverTimeGrid = ({ selector, pangoLineage, portals, axisPortals, plotWidth }: Props) => {
   // Data fetching
-  const dataQuery = useQuery(signal => fetchDatePangoLineageCount(selector, signal), [selector]);
+  const dataQuery = useQuery(['fetchDatePangoLineageCount', selector], () =>
+    fetchDatePangoLineageCount(selector)
+  );
 
   // Data transformation
   const data: GroupedData<EntryDateCountWithProportions, string> | undefined = useMemo(() => {
@@ -75,11 +77,10 @@ export const SequencesOverTimeGrid = ({ selector, pangoLineage, portals, axisPor
 };
 
 export const fetchDatePangoLineageCount = async (
-  selector: LapisSelector,
-  signal: AbortSignal
+  selector: LapisSelector
 ): Promise<{ datePangoLineageCount: EntryWithFullName[]; dateCount: EntryDateCount[] }> => {
   const [datePangoLineageCount, dateCount] = await Promise.all([
-    (_fetchAggSamples(selector, ['date', 'nextcladePangoLineage'], signal) as Promise<EntryNullable[]>).then(
+    (_fetchAggSamples(selector, ['date', 'nextcladePangoLineage']) as Promise<EntryNullable[]>).then(
       async data => {
         const data2: EntryNullableWithFullName[] = [];
         for (let d of data) {
@@ -94,7 +95,7 @@ export const fetchDatePangoLineageCount = async (
         return data2.filter(d => !!d.date && !!d.nextcladePangoLineage) as EntryWithFullName[];
       }
     ),
-    fetchDateCountSamples(selector, signal).then(data => data.filter(d => !!d.date) as EntryDateCount[]),
+    fetchDateCountSamples(selector).then(data => data.filter(d => !!d.date) as EntryDateCount[]),
   ]);
   return { datePangoLineageCount, dateCount };
 };

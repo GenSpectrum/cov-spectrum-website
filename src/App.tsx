@@ -37,7 +37,7 @@ import {
   isDefaultSubmissionDateRangeSelector,
 } from './data/DateRangeSelector';
 import { NewFocusPage } from './pages/NewFocusPage';
-import { useQuery } from './helpers/query-hook';
+import { useQuery } from 'react-query';
 import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/default-selectors';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
@@ -55,7 +55,9 @@ export const App = () => {
   const isSmallScreen = width !== undefined && width < 768;
 
   const { host, qc, setHostAndQc, submissionDate } = useExploreUrl() ?? {};
-  const { data: nextcladeDatasetInfo } = useQuery(() => fetchNextcladeDatasetInfo(), []);
+  const { data: nextcladeDatasetInfo } = useQuery('fetchNextcladeDatasetInfo', () =>
+    fetchNextcladeDatasetInfo()
+  );
 
   return (
     <div className='w-full'>

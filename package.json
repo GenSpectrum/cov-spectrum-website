@@ -62,6 +62,7 @@
     "react-icons": "^4.7.1",
     "react-numeric-input": "^2.2.3",
     "react-plotly.js": "^2.5.1",
+    "react-query": "^3.39.3",
     "react-resize-detector": "^6.6.0",
     "react-reverse-portal": "^2.1.0",
     "react-router-dom": "^5.2.0",

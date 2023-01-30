@@ -7,7 +7,7 @@ import { formatValueWithCI } from './format-value';
 import { getData } from './loading';
 import { GridCell, PackedGrid } from '../../components/PackedGrid';
 import { NamedCard } from '../../components/NamedCard';
-import { useQuery } from '../../helpers/query-hook';
+import { useQuery } from 'react-query';
 import { UnifiedDay } from '../../helpers/date-cache';
 import { DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';
 import { CaseCountDataset } from '../../data/CaseCountDataset';
@@ -40,14 +40,14 @@ export const Chen2021FitnessResults = ({
   caseCounts,
   changePoints,
 }: ResultsProps) => {
-  const { data: mainData, isLoading: mainIsLoading } = useQuery(
-    signal => getData(request, t0, signal),
-    [request]
+  const { data: mainData, isLoading: mainIsLoading } = useQuery(['getData', request], () =>
+    getData(request, t0)
   );
 
   // Calculate fitness advantage values for change points
   const { data: changePointsData, isLoading: changePointsIsLoading } = useQuery(
-    signal => {
+    ['getData2', changePoints, request, t0],
+    () => {
       const _changePoints = changePoints;
       const _requests: Chen2021FitnessRequest[] = _changePoints.map(cp => ({
         data: request.data,
@@ -56,7 +56,7 @@ export const Chen2021FitnessResults = ({
           reproductionNumberWildtype: cp.reproductionNumberWildtype,
         },
       }));
-      return Promise.all(_requests.map(req => getData(req, t0, signal))).then(_responses => {
+      return Promise.all(_requests.map(req => getData(req, t0))).then(_responses => {
         const _changePointsResults: ChangePointWithFc[] = [];
         for (let i = 0; i < _responses.length; i++) {
           const _response = _responses[i];
@@ -70,8 +70,7 @@ export const Chen2021FitnessResults = ({
         }
         return _changePointsResults;
       });
-    },
-    [changePoints, request, t0]
+    }
   );
 
   // Calculate the number of (estimated) cases from sequence data

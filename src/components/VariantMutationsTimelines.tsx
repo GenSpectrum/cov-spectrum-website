@@ -1,5 +1,5 @@
 import { LapisSelector } from '../data/LapisSelector';
-import { useQuery } from '../helpers/query-hook';
+import { useQuery } from 'react-query';
 import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
 import { transformToVariantQuery } from '../data/VariantSelector';
@@ -167,20 +167,29 @@ const useData = (
 ): undefined | 'empty' | 'too-big' | Data => {
   // Fetch the date distribution and mutations of the variant
   const basicVariantDataQuery = useQuery(
-    async signal => ({
+    ['DateCountSampleDataAndMutationProportionData', selector, sequenceType],
+    async () => ({
       sequenceType,
       result: await Promise.all([
-        DateCountSampleData.fromApi(selector, signal),
-        MutationProportionData.fromApi(selector, sequenceType, signal),
+        DateCountSampleData.fromApi(selector),
+        MutationProportionData.fromApi(selector, sequenceType),
       ]),
-    }),
-    [selector, sequenceType]
+    })
   );
   const [variantDateCounts, variantMutations] = basicVariantDataQuery.data?.result ?? [undefined, undefined];
 
   // Fetch the date distributions of the "variant+mutation"s
   const mutationsTimesQuery = useQuery(
-    async signal => {
+    [
+      'allDateCountSampleData',
+      variantMutations,
+      basicVariantDataQuery.data?.sequenceType,
+      minProportion,
+      maxProportion,
+      gene,
+      deletionFilter,
+    ],
+    async () => {
       const sequenceType = basicVariantDataQuery.data?.sequenceType;
       if (!variantMutations || !sequenceType) {
         return undefined;
@@ -210,22 +219,14 @@ const useData = (
         sequenceType,
         result: await Promise.all(
           selectorsWithMutation.map((s, i) =>
-            DateCountSampleData.fromApi(s, signal).then(data => ({
+            DateCountSampleData.fromApi(s).then(data => ({
               mutation: filteredMutations[i].mutation,
               data,
             }))
           )
         ),
       };
-    },
-    [
-      variantMutations,
-      basicVariantDataQuery.data?.sequenceType,
-      minProportion,
-      maxProportion,
-      gene,
-      deletionFilter,
-    ]
+    }
   );
 
   // Transform the data: calculate weekly proportions

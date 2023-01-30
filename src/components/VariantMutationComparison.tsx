@@ -1,7 +1,7 @@
-import { useQuery } from '../helpers/query-hook';
+import { useQuery } from 'react-query';
 import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import Table from 'react-bootstrap/Table';
 import { formatVariantDisplayName } from '../data/VariantSelector';
@@ -19,10 +19,8 @@ export interface Props {
 export const VariantMutationComparison = ({ selectors }: Props) => {
   const [minProportion, setMinProportion] = useState(0.5);
 
-  const res = useQuery(
-    signal => Promise.all(selectors.map(selector => MutationProportionData.fromApi(selector, 'aa', signal))),
-    [selectors],
-    useEffect
+  const res = useQuery(['allMutationProportionData', selectors], () =>
+    Promise.all(selectors.map(selector => MutationProportionData.fromApi(selector, 'aa')))
   );
 
   const data = useMemo(() => {

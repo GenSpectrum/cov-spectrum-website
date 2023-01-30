@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import { LoaderSmall } from './Loader';
 import { VariantSelector } from '../data/VariantSelector';
 import { LapisSelector } from '../data/LapisSelector';
-import { useQuery } from '../helpers/query-hook';
+import { useQuery } from 'react-query';
 import { _fetchAggSamples } from '../data/api-lapis';
 
 export interface Props {
@@ -18,7 +18,7 @@ const LineageEntry = styled.li`
 `;
 
 export const VariantLineages = ({ selector, onVariantSelect, type }: Props) => {
-  const { data } = useQuery(signal => _fetchAggSamples(selector, [type], signal), [selector, type]);
+  const { data } = useQuery(['_fetchAggSamples', selector, type], () => _fetchAggSamples(selector, [type]));
 
   const distribution:
     | {
