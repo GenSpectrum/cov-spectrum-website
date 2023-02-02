@@ -47,6 +47,7 @@ const Footer = styled.footer`
 `;
 
 export const App = () => {
+  dayjs.locale('en');
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
