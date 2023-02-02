@@ -50,6 +50,7 @@ const Footer = styled.footer`
 `;
 
 export const App = () => {
+  dayjs.locale('en');
   const [hideHeaderAndFooter, setHideHeaderAndFooter] = useState(false);
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
