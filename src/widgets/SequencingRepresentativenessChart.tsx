@@ -10,7 +10,7 @@ import Loader from '../components/Loader';
 import { CaseCountAsyncDataset } from '../data/CaseCountDataset';
 import { DatelessCountrylessCountSampleDataset } from '../data/sample/DatelessCountrylessCountSampleDataset';
 import { DatelessCountrylessCountSampleEntry } from '../data/sample/DatelessCountrylessCountSampleEntry';
-import { TooltipSideEffect } from './Tooltip';
+import { TooltipSideEffect } from '../components/RechartsTooltip';
 
 export type SequencingRepresentativenessChartProps = {
   caseDataset: CaseCountAsyncDataset;

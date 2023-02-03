@@ -6,7 +6,7 @@ import { GroupedData } from '../../data/transform/transform';
 import { EntryDateCountWithProportions } from './SequencesOverTimeGrid';
 import { HtmlPortalNode, InPortal } from 'react-reverse-portal';
 import { AxisPortals, TwoValuesXAxis, TwoValuesYAxis } from './common';
-import { TooltipSideEffect } from '../../widgets/Tooltip';
+import { TooltipSideEffect } from '../RechartsTooltip';
 
 type PlotEntry = {
   dateAsNumber: number;

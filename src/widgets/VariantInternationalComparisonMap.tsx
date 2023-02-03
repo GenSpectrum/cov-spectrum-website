@@ -4,11 +4,11 @@ import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSa
 import { Utils } from '../services/Utils';
 import { CountryDateCountSampleEntry } from '../data/sample/CountryDateCountSampleEntry';
 import RegionMap from '../maps/RegionMap';
-import Slider from 'rc-slider';
-import 'rc-slider/assets/index.css';
 import { UnifiedDay } from '../helpers/date-cache';
 import { FaPause, FaPlay } from 'react-icons/fa';
 import useInterval from '../helpers/interval';
+import { Slider } from '@mui/material';
+import { styled } from '@mui/material/styles';
 
 const TOTAL_ANIMATION_DURATION = 10 * 1000;
 
@@ -18,21 +18,7 @@ export type VariantInternationalComparisonMapProps = {
   withTimeline?: boolean;
 };
 
-const getMarks = (avilableDates: UnifiedDay[], selectedRange: number[]) => {
-  const MARK_CLASSES = 'w-20 md:w-32 bg-white hover:z-10 h-4 mt-0.5 pb-2';
-  const marks = {
-    [selectedRange[0]]:
-      selectedRange[1] - selectedRange[0] > 2 ? (
-        <p className={MARK_CLASSES}>{avilableDates[selectedRange[0]].string}</p>
-      ) : (
-        ''
-      ),
-    [selectedRange[1]]: (
-      <p className={MARK_CLASSES + 'font-bold'}>{avilableDates[selectedRange[1]].string}</p>
-    ),
-  };
-  return marks;
-};
+const MARK_CLASSES = 'hover:z-10 h-4 mt-0.5 pb-2';
 
 export const VariantInternationalComparisonMap = ({
   variantInternationalSampleSet,
@@ -69,11 +55,8 @@ export const VariantInternationalComparisonMap = ({
       .filter(e => e.value > 0);
   }, [variantSamplesByCountry, selectedDates]);
 
-  const handleRangeChange = (value: number | number[]) => {
-    if (typeof value === 'number') {
-      value = [value];
-    }
-    setSelectedRange(value);
+  const handleRangeChange = (_: Event, value: number | number[]) => {
+    setSelectedRange(value as number[]);
     setAnimationInterval(null);
   };
 
@@ -90,7 +73,7 @@ export const VariantInternationalComparisonMap = ({
       </ChartAndMetricsWrapper>
       <div
         id='slider-wrapper'
-        className='pb-5 px-12 md:pb-8 md:px-16 transform -translate-y-2 flex flex-row items-center'
+        className='pt-5 px-12 md:pt-8 md:px-16 transform -translate-y-2 flex flex-row items-center'
       >
         <button
           className='mr-6 fill-current transform '
@@ -105,20 +88,27 @@ export const VariantInternationalComparisonMap = ({
         >
           {animationInterval === null ? <FaPlay /> : <FaPause />}
         </button>
-        <Slider
-          range
+        <ColoredSlider
           min={0}
           max={availableDates.length - 1}
-          marks={getMarks(availableDates as UnifiedDay[], selectedRange)}
+          valueLabelDisplay='on'
+          valueLabelFormat={value => <p className={MARK_CLASSES}>{availableDates[value]?.string}</p>}
           value={selectedRange}
           onChange={handleRangeChange}
-          trackStyle={[{ backgroundColor: 'red' }]}
-          handleStyle={[
-            { backgroundColor: 'red', border: 'red' },
-            { backgroundColor: 'red', border: 'red', boxShadow: 'black' },
-          ]}
         />
       </div>
     </Wrapper>
   );
 };
+
+const ColoredSlider = styled(Slider)({
+  'color': 'red',
+  '& .MuiSlider-valueLabel': {
+    backgroundColor: 'transparent',
+  },
+  '& .MuiSlider-thumb': {
+    '&:focus, &:hover, &.Mui-active, &.Mui-focusVisible': {
+      boxShadow: 'inherit',
+    },
+  },
+});

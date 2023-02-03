@@ -3,7 +3,7 @@ import { ChartAndMetrics } from './Metrics';
 import { Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { colors, TimeTick } from './common';
 import { kFormat } from '../helpers/number';
-import { SetCurrentDataSideEffect } from './Tooltip';
+import { SetCurrentDataSideEffect } from '../components/RechartsTooltip';
 
 const CHART_MARGIN_RIGHT = 30;
 const CHART_MARGIN_BOTTOM = 0;

@@ -1,8 +1,7 @@
 import { Althaus2021GrowthParameters, Althaus2021GrowthParametersAttribute } from './althaus2021Growth-types';
 import { useCallback, useState } from 'react';
 import { useDeepCompareEffect } from '../../helpers/deep-compare-hooks';
-import Slider from 'rc-slider';
-import 'rc-slider/assets/index.css';
+import { Slider } from '@mui/material';
 import { Form } from 'react-bootstrap';
 import { althaus2021GrowthMath, MathVariables } from './althaus2021Growth-math';
 import { ValueWithCI } from '../chen2021Fitness/chen2021Fitness-types';
@@ -252,9 +251,10 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
                 min={p.softMin}
                 max={p.softMax}
                 step={p.step}
-                onChange={value => change(p.attribute, value as number)}
+                onChange={(_, value) => change(p.attribute, value as number)}
                 disabled={estimateAttribute === p.attribute}
                 style={{ minWidth: '100px' }}
+                size='small'
               />
               <Form.Control
                 type='text'

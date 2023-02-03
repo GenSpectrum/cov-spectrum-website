@@ -15,7 +15,7 @@ import React, { useMemo, useState } from 'react';
 import { formatDate } from '../../widgets/VariantTimeDistributionLineChartInner';
 import { maxYAxis } from '../../helpers/max-y-axis';
 import { getTicks } from '../../helpers/ticks';
-import { TooltipSideEffect } from '../../widgets/Tooltip';
+import { TooltipSideEffect } from '../../components/RechartsTooltip';
 
 type Props = {
   data: HuismanScire2021ReResult;

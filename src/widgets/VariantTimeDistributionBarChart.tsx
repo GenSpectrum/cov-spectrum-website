@@ -9,7 +9,7 @@ import { VariantTimeDistributionChartProps } from './VariantTimeDistributionChar
 import { maxYAxis } from '../helpers/max-y-axis';
 import { ButtonToolbar } from 'react-bootstrap';
 import { Button, ButtonVariant } from '../helpers/ui';
-import { SetCurrentDataSideEffect } from './Tooltip';
+import { SetCurrentDataSideEffect } from '../components/RechartsTooltip';
 
 const CHART_MARGIN_RIGHT = 30;
 const CHART_MARGIN_BOTTOM = 10;

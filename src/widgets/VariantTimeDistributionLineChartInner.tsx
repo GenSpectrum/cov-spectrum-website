@@ -12,7 +12,7 @@ import { ButtonToolbar, ButtonGroup } from 'react-bootstrap';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material';
 import { PprettyRequest } from '../data/ppretty/ppretty-request';
-import { TooltipSideEffect } from './Tooltip';
+import { TooltipSideEffect } from '../components/RechartsTooltip';
 
 export type VariantTimeDistributionLineChartEntry = {
   date: UnifiedDay;

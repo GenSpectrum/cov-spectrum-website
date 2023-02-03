@@ -10,7 +10,7 @@ import DownloadWrapper from './DownloadWrapper';
 import { Alert, AlertVariant } from '../helpers/ui';
 import { maxYAxis } from '../helpers/max-y-axis';
 import { PprettyRequest } from '../data/ppretty/ppretty-request';
-import { TooltipSideEffect } from './Tooltip';
+import { TooltipSideEffect } from '../components/RechartsTooltip';
 import { Checkbox, FormControlLabel } from '@mui/material';
 import FormGroup from '@mui/material/FormGroup';
 

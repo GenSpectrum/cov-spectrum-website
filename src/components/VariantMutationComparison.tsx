@@ -5,12 +5,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import Table from 'react-bootstrap/Table';
 import { formatVariantDisplayName } from '../data/VariantSelector';
-import { Tooltip as ReactTooltip } from 'react-tooltip';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
-import Slider from 'rc-slider';
+import ReactTooltip from 'react-tooltip';
 import { sortAAMutationList } from '../helpers/aa-mutation';
 import { LapisSelector } from '../data/LapisSelector';
 import { pullAll } from '../helpers/lodash_alternatives';
+import { PercentageValueWithOverlaySlider } from './PercentageValueWithOverlaySlider';
 
 export interface Props {
   selectors: LapisSelector[];
@@ -85,29 +84,10 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
     <>
       <div>
         A mutation is considered as belonging to a variant if at least{' '}
-        <OverlayTrigger
-          trigger='click'
-          overlay={
-            <Tooltip id='mutationMinProportion'>
-              <div>
-                <Slider
-                  value={Math.round(minProportion * 100)}
-                  min={5}
-                  max={100}
-                  step={5}
-                  onChange={value => setMinProportion((value as number) / 100)}
-                  style={{ width: '100px' }}
-                />
-              </div>
-            </Tooltip>
-          }
-          rootClose={true}
-          placement='bottom'
-        >
-          <span className='cursor-pointer px-3 rounded bg-gray-100 hover:bg-gray-300 font-bold'>
-            {(minProportion * 100).toFixed(0)}%
-          </span>
-        </OverlayTrigger>{' '}
+        <PercentageValueWithOverlaySlider
+          percentageValue={minProportion}
+          setPercentageValue={setMinProportion}
+        />{' '}
         of the samples of the variant have the mutation.
       </div>
 
