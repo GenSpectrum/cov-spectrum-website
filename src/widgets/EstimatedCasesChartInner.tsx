@@ -11,6 +11,8 @@ import { Alert, AlertVariant } from '../helpers/ui';
 import { maxYAxis } from '../helpers/max-y-axis';
 import { PprettyRequest } from '../data/ppretty/ppretty-request';
 import { TooltipSideEffect } from './Tooltip';
+import { Checkbox, FormControlLabel } from '@mui/material';
+import FormGroup from '@mui/material/FormGroup';
 
 export type EstimatedCasesTimeEntry = {
   date: UnifiedDay;
@@ -31,6 +33,8 @@ export type EstimatedCasesPlotEntry = {
   date: Date;
   estimatedCases: number;
   estimatedCasesCI: [number, number];
+  estimatedCasesForLogScale?: number;
+  estimatedCasesCIForLogScale?: [number | undefined, number | undefined];
   estimatedWildtypeCases: number;
 };
 
@@ -44,6 +48,7 @@ const CHART_MARGIN_RIGHT = 15;
 export const EstimatedCasesChartInner = React.memo(
   ({ data, pprettyMetadata }: EstimatedCasesChartProps): JSX.Element => {
     const [active, setActive] = useState<EstimatedCasesPlotEntry | undefined>(undefined);
+    const [logScale, setLogScale] = useState<boolean>(false);
 
     const {
       plotData,
@@ -104,6 +109,12 @@ export const EstimatedCasesChartInner = React.memo(
                 on <b>{formatDate(active.date.getTime())}</b>
               </>
             )}
+            <FormGroup>
+              <FormControlLabel
+                control={<Checkbox checked={logScale} onChange={() => setLogScale(logScale => !logScale)} />}
+                label='Log scale'
+              />
+            </FormGroup>
           </TitleWrapper>
           <ChartAndMetricsWrapper>
             <ChartWrapper>
@@ -120,7 +131,13 @@ export const EstimatedCasesChartInner = React.memo(
                     domain={[(dataMin: any) => dataMin, () => plotData[plotData.length - 1].date.getTime()]}
                     ticks={ticks}
                   />
-                  <YAxis domain={[0, maxYAxis(yMax, yMax, 5)]} allowDataOverflow={true} scale='linear' />
+                  <YAxis
+                    allowDataOverflow={true}
+                    domain={logScale ? ['auto', 'auto'] : [0, maxYAxis(yMax)]}
+                    scale={logScale ? 'log' : 'linear'}
+                    hide={false}
+                    width={50}
+                  />
                   <Tooltip
                     active={false}
                     content={tooltipProps => {
@@ -129,12 +146,17 @@ export const EstimatedCasesChartInner = React.memo(
                           tooltipProps={tooltipProps}
                           sideEffect={tooltipProps => {
                             if (tooltipProps.active && tooltipProps.payload !== undefined) {
-                              const newActive = tooltipProps.payload[0].payload;
                               if (
-                                active === undefined ||
-                                active.date.getTime() !== newActive.date.getTime()
+                                tooltipProps.payload[0] !== undefined &&
+                                tooltipProps.payload[0].payload !== undefined
                               ) {
-                                setActive(newActive);
+                                const newActive = tooltipProps.payload[0].payload;
+                                if (
+                                  active === undefined ||
+                                  active.date.getTime() !== newActive.date.getTime()
+                                ) {
+                                  setActive(newActive);
+                                }
                               }
                             }
                           }}
@@ -144,14 +166,14 @@ export const EstimatedCasesChartInner = React.memo(
                   />
                   <Area
                     type='monotone'
-                    dataKey='estimatedCasesCI'
+                    dataKey={logScale ? 'estimatedCasesCIForLogScale' : 'estimatedCasesCI'}
                     fill={colors.activeSecondary}
                     stroke='transparent'
                     isAnimationActive={false}
                   />
                   <Line
                     type='monotone'
-                    dataKey='estimatedCases'
+                    dataKey={logScale ? 'estimatedCasesForLogScale' : 'estimatedCases'}
                     stroke={colors.active}
                     strokeWidth={3}
                     dot={false}
@@ -216,19 +238,27 @@ export function calculatePlotData(data: EstimatedCasesTimeEntry[]) {
         date: date.dayjs.toDate(),
         estimatedCases: NaN,
         estimatedCasesCI: [NaN, NaN],
+        estimatedCasesForLogScale: NaN,
+        estimatedCasesCIForLogScale: [NaN, NaN],
         estimatedWildtypeCases: NaN,
       });
+      continue;
     }
     const wilsonInterval = calculateWilsonInterval(variantCount, sequenced);
     // Math.max(..., 0) compensates for numerical inaccuracies which can lead to negative values.
     const estimatedCases = Math.round(Math.max(variantCount / sequenced, 0) * cases);
+
+    const estimatedCasesCI: [number, number] = [
+      Math.round(Math.max(wilsonInterval[0], 0) * cases),
+      Math.round(Math.max(wilsonInterval[1], 0) * cases),
+    ];
+
     plotData.push({
       date: date.dayjs.toDate(),
       estimatedCases,
-      estimatedCasesCI: [
-        Math.round(Math.max(wilsonInterval[0], 0) * cases),
-        Math.round(Math.max(wilsonInterval[1], 0) * cases),
-      ],
+      estimatedCasesCI: estimatedCasesCI,
+      estimatedCasesForLogScale: estimatedCases || undefined,
+      estimatedCasesCIForLogScale: getEstimatedCasesCIForLogScale(estimatedCases, estimatedCasesCI),
       estimatedWildtypeCases: Math.round(cases - estimatedCases),
     });
   }
@@ -244,6 +274,14 @@ export function calculatePlotData(data: EstimatedCasesTimeEntry[]) {
     Math.max(...plotData.filter(d => !isNaN(d.estimatedCases)).map(d => d.estimatedCases * 1.5)),
     Math.max(...plotData.filter(d => !isNaN(d.estimatedCasesCI[1])).map(d => d.estimatedCasesCI[1]))
   );
-
   return { plotData, ticks, yMax };
+}
+
+const SMALL_NUMBER_TO_PREVENT_LOG_OF_0 = 0.1;
+
+function getEstimatedCasesCIForLogScale(estimatedCases: number, [lowerBound, upperBound]: [number, number]) {
+  if (!estimatedCases) {
+    return undefined;
+  }
+  return [Math.max(lowerBound, SMALL_NUMBER_TO_PREVENT_LOG_OF_0), upperBound] as [number, number];
 }
