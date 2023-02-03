@@ -25,8 +25,6 @@ jobs:
         run: |
           docker tag new_image ${{ env.IMAGE_NAME }}:br-${{ env.BRANCH }}-open
           docker push ${{ env.IMAGE_NAME }}:br-${{ env.BRANCH }}-open
-          docker tag new_image ${{ env.IMAGE_NAME }}:latest
-          docker push ${{ env.IMAGE_NAME }}:latest
       - name: Add "develop" tag and push
         if: env.BRANCH == 'develop'
         run: |
