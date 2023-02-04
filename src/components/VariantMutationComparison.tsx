@@ -5,7 +5,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import Table from 'react-bootstrap/Table';
 import { formatVariantDisplayName } from '../data/VariantSelector';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import Slider from 'rc-slider';
 import { sortAAMutationList } from '../helpers/aa-mutation';
@@ -95,7 +95,7 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
                   min={5}
                   max={100}
                   step={5}
-                  onChange={value => setMinProportion(value / 100)}
+                  onChange={value => setMinProportion((value as number) / 100)}
                   style={{ width: '100px' }}
                 />
               </div>

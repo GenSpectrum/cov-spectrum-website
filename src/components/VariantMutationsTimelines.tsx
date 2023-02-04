@@ -337,6 +337,7 @@ const Plot = ({ data, logitScale, colorScale }: PlotProps) => {
                   showText={showText}
                   logitScale={logitScale}
                   colorScale={colorScale}
+                  key={'pb' + mutation + j}
                 />
               </div>
             ))}

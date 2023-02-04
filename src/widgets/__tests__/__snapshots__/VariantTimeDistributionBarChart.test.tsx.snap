@@ -88,7 +88,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
                 %
               </div>
               <div
-                className="sc-bczRLJ dWCPvX self-end"
+                className="sc-bcXHqe bjCFoe self-end"
               />
             </div>
             <div
@@ -129,91 +129,14 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
             </div>
           </div>
           <div
-            className="__react_component_tooltip t***masked*** place-top type-dark"
-            data-id="tooltip"
+            className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
             id="metric-tooltip-Proportion"
+            role="tooltip"
+            style={Object {}}
           >
-            <style
-              aria-hidden="true"
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "
-  	.t***masked*** {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t***masked***.place-top {
-        margin-top: -10px;
-    }
-    .t***masked***.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t***masked***.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t***masked***.place-bottom {
-        margin-top: 10px;
-    }
-    .t***masked***.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t***masked***.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t***masked***.place-left {
-        margin-left: -10px;
-    }
-    .t***masked***.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t***masked***.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t***masked***.place-right {
-        margin-left: 10px;
-    }
-    .t***masked***.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t***masked***.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  ",
-                }
-              }
+            <div
+              className="react-tooltip-arrow styles-module_arrow__K0L3T"
+              style={Object {}}
             />
           </div>
         </div>
@@ -239,7 +162,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
                 0
               </div>
               <div
-                className="sc-bczRLJ dWCPvX self-end"
+                className="sc-bcXHqe bjCFoe self-end"
               />
             </div>
             <div
@@ -280,91 +203,14 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
             </div>
           </div>
           <div
-            className="__react_component_tooltip t***masked*** place-top type-dark"
-            data-id="tooltip"
+            className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
             id="metric-tooltip-Samples"
+            role="tooltip"
+            style={Object {}}
           >
-            <style
-              aria-hidden="true"
-              dangerouslySetInnerHTML={
-                Object {
-                  "__html": "
-  	.t***masked*** {
-	    color: #fff;
-	    background: #222;
-	    border: 1px solid transparent;
-  	}
-
-  	.t***masked***.place-top {
-        margin-top: -10px;
-    }
-    .t***masked***.place-top::before {
-        border-top: 8px solid transparent;
-    }
-    .t***masked***.place-top::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        bottom: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-top-color: #222;
-        border-top-style: solid;
-        border-top-width: 6px;
-    }
-
-    .t***masked***.place-bottom {
-        margin-top: 10px;
-    }
-    .t***masked***.place-bottom::before {
-        border-bottom: 8px solid transparent;
-    }
-    .t***masked***.place-bottom::after {
-        border-left: 8px solid transparent;
-        border-right: 8px solid transparent;
-        top: -6px;
-        left: 50%;
-        margin-left: -8px;
-        border-bottom-color: #222;
-        border-bottom-style: solid;
-        border-bottom-width: 6px;
-    }
-
-    .t***masked***.place-left {
-        margin-left: -10px;
-    }
-    .t***masked***.place-left::before {
-        border-left: 8px solid transparent;
-    }
-    .t***masked***.place-left::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        right: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-left-color: #222;
-        border-left-style: solid;
-        border-left-width: 6px;
-    }
-
-    .t***masked***.place-right {
-        margin-left: 10px;
-    }
-    .t***masked***.place-right::before {
-        border-right: 8px solid transparent;
-    }
-    .t***masked***.place-right::after {
-        border-top: 5px solid transparent;
-        border-bottom: 5px solid transparent;
-        left: -6px;
-        top: 50%;
-        margin-top: -4px;
-        border-right-color: #222;
-        border-right-style: solid;
-        border-right-width: 6px;
-    }
-  ",
-                }
-              }
+            <div
+              className="react-tooltip-arrow styles-module_arrow__K0L3T"
+              style={Object {}}
             />
           </div>
         </div>

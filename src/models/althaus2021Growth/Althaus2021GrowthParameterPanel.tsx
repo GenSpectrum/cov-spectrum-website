@@ -252,7 +252,7 @@ export const Althaus2021GrowthParameterPanel = ({ growthRate, defaultParams }: P
                 min={p.softMin}
                 max={p.softMax}
                 step={p.step}
-                onChange={value => change(p.attribute, value)}
+                onChange={value => change(p.attribute, value as number)}
                 disabled={estimateAttribute === p.attribute}
                 style={{ minWidth: '100px' }}
               />

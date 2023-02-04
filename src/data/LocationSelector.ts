@@ -9,7 +9,7 @@ export const LocationSelectorEncodedSchema = zod.object({
 export type LocationSelector = zod.infer<typeof LocationSelectorEncodedSchema>;
 
 export const locationFields = ['region', 'country', 'division'] as const;
-export type LocationField = typeof locationFields[number];
+export type LocationField = (typeof locationFields)[number];
 
 export function encodeLocationSelector(selector: LocationSelector): LocationSelector {
   return selector;

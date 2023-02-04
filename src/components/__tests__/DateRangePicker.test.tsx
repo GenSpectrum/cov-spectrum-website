@@ -49,34 +49,34 @@ describe('DateRangePicker', () => {
     expect(predefinedRangesDropdown()).toBeInTheDocument();
   });
 
-  test('should set dates from predefined date ranges', () => {
+  test('should set dates from predefined date ranges', async () => {
     renderDateRangePicker();
 
-    userEvent.selectOptions(predefinedRangesDropdown(), '2020');
+    await userEvent.selectOptions(predefinedRangesDropdown(), '2020');
 
     expect(fromPicker()).toHaveValue('2020-01-06');
     expect(toPicker()).toHaveValue('2021-01-03');
     expect(onChangeDateMock).toHaveBeenCalledWith({ mode: 'Y2020' });
   });
 
-  test('should display invalid date entered by user', () => {
+  test('should display invalid date entered by user', async () => {
     renderDateRangePicker();
 
-    userEvent.clear(fromPicker());
-    userEvent.type(fromPicker(), '1');
+    await userEvent.clear(fromPicker());
+    await userEvent.type(fromPicker(), '1');
 
     expect(fromPicker()).toHaveValue('1');
     expect(onChangeDateMock).not.toHaveBeenCalled();
   });
 
-  test('should set correct date on user input', () => {
+  test('should set correct date on user input', async () => {
     renderDateRangePicker();
 
-    userEvent.clear(fromPicker());
-    userEvent.type(fromPicker(), '2020-01-06');
+    await userEvent.clear(fromPicker());
+    await userEvent.type(fromPicker(), '2020-01-06');
 
-    userEvent.clear(toPicker());
-    userEvent.type(toPicker(), '2021-01-06');
+    await userEvent.clear(toPicker());
+    await userEvent.type(toPicker(), '2021-01-06');
 
     expect(fromPicker()).toHaveValue('2020-01-06');
     expect(toPicker()).toHaveValue('2021-01-06');

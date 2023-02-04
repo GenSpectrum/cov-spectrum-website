@@ -5,10 +5,10 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
   className="relative h-full"
 >
   <div
-    className="sc-bczRLJ FSYQs"
+    className="sc-bcXHqe idcAl"
   >
     <div
-      className="sc-hKMtZM hYabjo"
+      className="sc-hLBbgP kiIjgh"
     >
       <div
         className="mt-2 mb-4 w-40"
@@ -25,6 +25,10 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
         onKeyDown={[Function]}
       >
         <span
+          className="***masked***-a11yText-A11yText"
+          id="react-select-2-live-region"
+        />
+        <span
           aria-atomic="false"
           aria-live="polite"
           aria-relevant="additions text"
@@ -39,18 +43,20 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
             className=" ***masked***-Component"
           >
             <div
-              className="***masked***-multiValue"
+              className=" ***masked***-multiValue"
             >
               <div
-                className="***masked***"
+                className=" ***masked***-Component"
               >
                 Germany
               </div>
               <div
-                className="***masked***"
+                aria-label="Remove Germany"
+                className=" ***masked***-Component"
                 onClick={[Function]}
                 onMouseDown={[Function]}
                 onTouchEnd={[Function]}
+                role="button"
               >
                 <svg
                   aria-hidden="true"
@@ -67,18 +73,20 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
               </div>
             </div>
             <div
-              className="***masked***-multiValue"
+              className=" ***masked***-multiValue"
             >
               <div
-                className="***masked***"
+                className=" ***masked***-Component"
               >
                 United Kingdom
               </div>
               <div
-                className="***masked***"
+                aria-label="Remove United Kingdom"
+                className=" ***masked***-Component"
                 onClick={[Function]}
                 onMouseDown={[Function]}
                 onTouchEnd={[Function]}
+                role="button"
               >
                 <svg
                   aria-hidden="true"
@@ -95,18 +103,20 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
               </div>
             </div>
             <div
-              className="***masked***-multiValue"
+              className=" ***masked***-multiValue"
             >
               <div
-                className="***masked***"
+                className=" ***masked***-Component"
               >
                 United States
               </div>
               <div
-                className="***masked***"
+                aria-label="Remove United States"
+                className=" ***masked***-Component"
                 onClick={[Function]}
                 onMouseDown={[Function]}
                 onTouchEnd={[Function]}
+                role="button"
               >
                 <svg
                   aria-hidden="true"
@@ -123,18 +133,20 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
               </div>
             </div>
             <div
-              className="***masked***-multiValue"
+              className=" ***masked***-multiValue"
             >
               <div
-                className="***masked***"
+                className=" ***masked***-Component"
               >
                 Denmark
               </div>
               <div
-                className="***masked***"
+                aria-label="Remove Denmark"
+                className=" ***masked***-Component"
                 onClick={[Function]}
                 onMouseDown={[Function]}
                 onTouchEnd={[Function]}
+                role="button"
               >
                 <svg
                   aria-hidden="true"
@@ -151,18 +163,20 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
               </div>
             </div>
             <div
-              className="***masked***-multiValue"
+              className=" ***masked***-multiValue"
             >
               <div
-                className="***masked***"
+                className=" ***masked***-Component"
               >
                 South Africa
               </div>
               <div
-                className="***masked***"
+                aria-label="Remove South Africa"
+                className=" ***masked***-Component"
                 onClick={[Function]}
                 onMouseDown={[Function]}
                 onTouchEnd={[Function]}
+                role="button"
               >
                 <svg
                   aria-hidden="true"
@@ -179,61 +193,44 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
               </div>
             </div>
             <div
-              className="***masked***-Component"
+              className=" ***masked***-Component"
+              data-value=""
             >
-              <div
+              <input
+                aria-autocomplete="list"
+                aria-expanded={false}
+                aria-haspopup={true}
+                autoCapitalize="none"
+                autoComplete="off"
+                autoCorrect="off"
                 className=""
+                disabled={false}
+                id="react-select-2-input"
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                role="combobox"
+                spellCheck="false"
                 style={
                   Object {
-                    "display": "inline-block",
+                    "background": 0,
+                    "border": 0,
+                    "color": "inherit",
+                    "font": "inherit",
+                    "gridArea": "1 / 2",
+                    "label": "input",
+                    "margin": 0,
+                    "minWidth": "2px",
+                    "opacity": 1,
+                    "outline": 0,
+                    "padding": 0,
+                    "width": "100%",
                   }
                 }
-              >
-                <input
-                  aria-autocomplete="list"
-                  autoCapitalize="none"
-                  autoComplete="off"
-                  autoCorrect="off"
-                  disabled={false}
-                  id="react-select-2-input"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  onFocus={[Function]}
-                  spellCheck="false"
-                  style={
-                    Object {
-                      "background": 0,
-                      "border": 0,
-                      "boxSizing": "content-box",
-                      "color": "inherit",
-                      "fontSize": "inherit",
-                      "label": "input",
-                      "opacity": 1,
-                      "outline": 0,
-                      "padding": 0,
-                      "width": "1px",
-                    }
-                  }
-                  tabIndex="0"
-                  type="text"
-                  value=""
-                />
-                <div
-                  style={
-                    Object {
-                      "height": 0,
-                      "left": 0,
-                      "overflow": "scroll",
-                      "position": "absolute",
-                      "top": 0,
-                      "visibility": "hidden",
-                      "whiteSpace": "pre",
-                    }
-                  }
-                >
-                  
-                </div>
-              </div>
+                tabIndex={0}
+                type="text"
+                value=""
+              />
             </div>
           </div>
           <div

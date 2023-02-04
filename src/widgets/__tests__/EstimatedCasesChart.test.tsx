@@ -22,6 +22,7 @@ describe('<EstimatedCasesChart>', () => {
       />
     );
     await act(async () => {});
+    await act(async () => {});
     const snapshot = tree.toJSON();
     maskUuid(snapshot);
     expect(snapshot).toMatchSnapshot();

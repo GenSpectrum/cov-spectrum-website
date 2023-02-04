@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Redirect, Route, Switch } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import Header from './Header';
 import { LoginWrapper } from './helpers/app-layout';
 import { AboutPage } from './pages/AboutPage';
@@ -106,76 +106,76 @@ export const App = () => {
             </Alert>
           )}
         {/*Main content*/}
-        <Switch>
-          <Route exact path='/'>
-            <Redirect to={`/explore/${baseLocation}/${defaultSamplingStrategy}/${defaultDateRange}`} />
-          </Route>
-          <Route path='/login'>
-            <LoginWrapper>
-              <LoginPage />
-            </LoginWrapper>
-          </Route>
-          <Route exact path='/explore/:country/:samplingStrategy/:dateRange'>
-            <ExplorePage isSmallScreen={isSmallScreen} />
-          </Route>
-          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/sequencing-coverage'>
-            <DeepSequencingCoveragePage />
-          </Route>
-          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants'>
-            <FocusPage isSmallScreen={isSmallScreen} />
-          </Route>
+        <Routes>
           <Route
-            exact
+            path='/'
+            element={
+              <Navigate
+                replace
+                to={`/explore/${baseLocation}/${defaultSamplingStrategy}/${defaultDateRange}`}
+              />
+            }
+          />
+          <Route
+            path='/login'
+            element={
+              <LoginWrapper>
+                <LoginPage />
+              </LoginWrapper>
+            }
+          />
+          <Route
+            path='/explore/:country/:samplingStrategy/:dateRange'
+            element={<ExplorePage isSmallScreen={isSmallScreen} />}
+          />
+          <Route
+            path='/explore/:country/:samplingStrategy/:dateRange/sequencing-coverage'
+            element={<DeepSequencingCoveragePage />}
+          />
+          <Route
+            path='/explore/:country/:samplingStrategy/:dateRange/variants'
+            element={<FocusPage isSmallScreen={isSmallScreen} />}
+          />
+          <Route
             path='/explore/:country/:samplingStrategy/:dateRange/variants/international-comparison'
-          >
-            <DeepInternationalComparisonPage />
-          </Route>
-          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants/hospitalization-death'>
-            <DeepHospitalizationDeathPage />
-          </Route>
-          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants/waste-water'>
-            <DeepWastewaterPage />
-          </Route>
-          <Route exact path='/explore/:country/:samplingStrategy/:dateRange/variants/chen-2021-fitness'>
-            <DeepChen2021FitnessPage />
-          </Route>
-          <Route exact path='/story'>
-            <StoryOverviewPage />
-          </Route>
-          <Route exact path='/story/wastewater-in-switzerland'>
-            <WasteWaterStoryPage />
-          </Route>
-          <Route exact path='/stories/wastewater-in-switzerland'>
-            <WasteWaterStoryPage />
-          </Route>
-          <Route path='/story/wastewater-in-switzerland/location/:location'>
-            <WasteWaterLocationPage />
-          </Route>
-          <Route path='/stories/wastewater-in-switzerland/location/:location'>
-            <WasteWaterLocationPage />
-          </Route>
-          <Route exact path='/stories'>
-            <StoriesOverview />
-          </Route>
-          <Route path='/stories/:storyId'>
-            <StoryRouter />
-          </Route>
-          <Route exact path='/collections'>
-            <CollectionOverviewPage />
-          </Route>
-          <Route exact path='/collections/add'>
-            <CollectionAddPage />
-          </Route>
-          <Route path='/collections/:collectionId'>
-            <CollectionSinglePage />
-          </Route>
-          <Route path='/focus'>
-            <NewFocusPage fullScreenMode={hideHeaderAndFooter} setFullScreenMode={setHideHeaderAndFooter} />
-          </Route>
-          <Route path='/about'>
-            <AboutPage />
-          </Route>
-        </Switch>
+            element={<DeepInternationalComparisonPage />}
+          />
+          <Route
+            path='/explore/:country/:samplingStrategy/:dateRange/variants/hospitalization-death'
+            element={<DeepHospitalizationDeathPage />}
+          />
+          <Route
+            path='/explore/:country/:samplingStrategy/:dateRange/variants/waste-water'
+            element={<DeepWastewaterPage />}
+          />
+          <Route
+            path='/explore/:country/:samplingStrategy/:dateRange/variants/chen-2021-fitness'
+            element={<DeepChen2021FitnessPage />}
+          />
+          <Route path='/story' element={<StoryOverviewPage />} />
+          <Route path='/story/wastewater-in-switzerland' element={<WasteWaterStoryPage />} />
+          <Route path='/stories/wastewater-in-switzerland' element={<WasteWaterStoryPage />} />
+          <Route
+            path='/story/wastewater-in-switzerland/location/:location'
+            element={<WasteWaterLocationPage />}
+          />
+          <Route
+            path='/stories/wastewater-in-switzerland/location/:location'
+            element={<WasteWaterLocationPage />}
+          />
+          <Route path='/stories' element={<StoriesOverview />} />
+          <Route path='/stories/:storyId' element={<StoryRouter />} />
+          <Route path='/collections' element={<CollectionOverviewPage />} />
+          <Route path='/collections/add' element={<CollectionAddPage />} />
+          <Route path='/collections/:collectionId' element={<CollectionSinglePage />} />
+          <Route
+            path='/focus'
+            element={
+              <NewFocusPage fullScreenMode={hideHeaderAndFooter} setFullScreenMode={setHideHeaderAndFooter} />
+            }
+          />
+          <Route path='/about' element={<AboutPage />} />
+        </Routes>
       </div>
       {!hideHeaderAndFooter && (
         <Footer className='text-center'>

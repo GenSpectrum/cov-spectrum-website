@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AsyncSelect from 'react-select/async';
-import { components, InputActionMeta, Styles } from 'react-select';
+import { components, CSSObjectWithLabel, InputActionMeta, StylesConfig } from 'react-select';
 import { isValidAAMutation, isValidABNotation, isValidNspNotation } from '../helpers/aa-mutation';
-import { CSSPseudos } from 'styled-components';
 import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
 import { isValidPangoLineageQuery, transformToVariantQuery, VariantSelector } from '../data/VariantSelector';
 import { isValidNucMutation } from '../helpers/nuc-mutation';
@@ -133,9 +132,9 @@ function optionsToVariantSelector(options: SearchOption[]): VariantSelector {
   return selector;
 }
 
-const colorStyles: Partial<Styles<any, true, any>> = {
-  control: (styles: CSSPseudos) => ({ ...styles, backgroundColor: 'white' }),
-  multiValue: (styles: CSSPseudos, { data }: { data: SearchOption }) => {
+const colorStyles: Partial<StylesConfig<any, true, any>> = {
+  control: (styles: CSSObjectWithLabel) => ({ ...styles, backgroundColor: 'white' }),
+  multiValue: (styles: CSSObjectWithLabel, { data }: { data: SearchOption }) => {
     return {
       ...styles,
       backgroundColor: backgroundColor[data.type],
@@ -439,7 +438,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
             loadOptions={promiseOptions}
             onChange={(_, change) => {
               if (change.action === 'select-option') {
-                setSelectedOptions([...selectedOptions, change.option]);
+                setSelectedOptions([...selectedOptions!, change.option!]);
                 setInputValue('');
                 setMenuIsOpen(false);
               } else if (change.action === 'remove-value' || change.action === 'pop-value') {

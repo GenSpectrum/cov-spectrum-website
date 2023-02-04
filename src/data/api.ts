@@ -81,13 +81,18 @@ export async function fetchCaseCounts(
   if (selector.dateRange) {
     addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
   }
+  try {
+    const res = await get(`/resource/case?${params.toString()}`, signal);
+    if (!res.ok) {
+      throw new Error('Error fetching new case data');
+    }
 
-  const res = await get(`/resource/case?${params.toString()}`, signal);
-  if (!res.ok) {
+    const body = (await res.json()) as CaseCountEntryRaw[];
+    return body.map(raw => parseCaseCountEntry(raw));
+  } catch (err) {
+    console.error('fetchCaseCounts', err);
     throw new Error('Error fetching new case data');
   }
-  const body = (await res.json()) as CaseCountEntryRaw[];
-  return body.map(raw => parseCaseCountEntry(raw));
 }
 
 export async function fetchPangoLineageAliases(signal?: AbortSignal): Promise<PangoLineageAlias[]> {

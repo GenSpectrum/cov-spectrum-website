@@ -4,7 +4,7 @@ import { scaleLinear } from 'd3-scale';
 import { ComposableMap, Geographies, Geography, Sphere, Graticule, ZoomableGroup } from 'react-simple-maps';
 import { default as world } from './world.json';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
-import ReactTooltip from 'react-tooltip';
+import { Tooltip as ReactTooltip } from 'react-tooltip';
 
 export enum REGION {
   WORLD = 'world',

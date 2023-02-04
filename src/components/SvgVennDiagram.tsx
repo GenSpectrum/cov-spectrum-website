@@ -304,6 +304,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
     <g>
       {vennGeneralData.map(({ path }, index) => (
         <path
+          key={'p-' + index}
           className={`st0 ${variantIndex === index ? 'hoveredCircle' : ''}`}
           d={path}
           onMouseEnter={() => setVariantIndex(index)}
@@ -383,7 +384,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
                   min={5}
                   max={100}
                   step={5}
-                  onChange={value => setMinProportion(value / 100)}
+                  onChange={(value: number | number[]) => setMinProportion((value as number) / 100)}
                   style={{ width: '100px' }}
                 />
               </div>
@@ -459,6 +460,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
 
           {vennGeneralData.map(({ svgTransform, mutations }, index) => (
             <text
+              key={'t-' + index}
               onClick={() => {
                 let sorted: string[] =
                   domain === 'aa' ? sortAAMutationList(mutations) : sortNucMutationList(mutations);

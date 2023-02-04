@@ -1,5 +1,5 @@
 import { TooltipProps } from 'recharts';
-import { NameType, ValueType } from 'recharts/src/component/DefaultTooltipContent';
+import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import React, { useEffect } from 'react';
 import { Payload } from 'recharts/types/component/DefaultTooltipContent';
 

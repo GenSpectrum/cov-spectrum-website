@@ -6,8 +6,8 @@ import { useQuery } from '../helpers/query-hook';
 
 export interface Props {
   variant: VariantSelector;
-  titleSuffix?: React.ReactChild | React.ReactChild[];
-  controls?: React.ReactChild | React.ReactChild[];
+  titleSuffix?: React.ReactNode | React.ReactNode[];
+  controls?: React.ReactNode | React.ReactNode[];
 }
 
 function useLineageDescriptionText(variant: VariantSelector) {

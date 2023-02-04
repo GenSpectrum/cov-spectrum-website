@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useRouteMatch } from 'react-router';
+import { useMatch } from 'react-router';
 import { WasteWaterDataset } from '../types';
 import { filter, getData } from '../loading';
 import { GridCell, PackedGrid } from '../../../components/PackedGrid';
@@ -9,9 +9,7 @@ import Loader from '../../../components/Loader';
 import { sortBy } from '../../../helpers/lodash_alternatives';
 
 export const WasteWaterLocationPage = () => {
-  const routeMatch = useRouteMatch<{ location: string }>(
-    `/story/wastewater-in-switzerland/location/:location`
-  );
+  const routeMatch = useMatch(`/story/wastewater-in-switzerland/location/:location`);
   const location = routeMatch?.params.location;
   const country = 'Switzerland';
 

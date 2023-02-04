@@ -11,25 +11,25 @@ type Props = {
 };
 
 function childIsGridContent(
-  child: React.ReactChild | {}
+  child: React.ReactNode | {}
 ): child is React.ReactElement<GridContentProps, typeof GridContent> {
   return typeof child === 'object' && (child as any).type === GridContent;
 }
 
 function childIsGridXAxis(
-  child: React.ReactChild | {}
+  child: React.ReactNode | {}
 ): child is React.ReactElement<GridAxisProps, typeof GridXAxis> {
   return typeof child === 'object' && (child as any).type === GridXAxis;
 }
 
 function childIsGridYAxis(
-  child: React.ReactChild | {}
+  child: React.ReactNode | {}
 ): child is React.ReactElement<GridAxisProps, typeof GridYAxis> {
   return typeof child === 'object' && (child as any).type === GridYAxis;
 }
 
 export const GridFigure = ({ children, gridSizes, labels, onLabelClick }: Props) => {
-  const childrenAsArray: (React.ReactChild | {})[] = React.Children.toArray(children);
+  const childrenAsArray: (React.ReactNode | {})[] = React.Children.toArray(children);
   const contentElements: Map<string, React.ReactElement<GridContentProps, typeof GridContent>> = new Map();
   let xAxisElement: React.ReactElement<GridAxisProps, typeof GridXAxis> | undefined = undefined;
   let yAxisElement: React.ReactElement<GridAxisProps, typeof GridYAxis> | undefined = undefined;

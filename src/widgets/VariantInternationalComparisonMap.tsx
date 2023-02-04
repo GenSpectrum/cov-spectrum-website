@@ -4,7 +4,7 @@ import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSa
 import { Utils } from '../services/Utils';
 import { CountryDateCountSampleEntry } from '../data/sample/CountryDateCountSampleEntry';
 import RegionMap from '../maps/RegionMap';
-import Range from 'rc-slider/lib/Range';
+import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { UnifiedDay } from '../helpers/date-cache';
 import { FaPause, FaPlay } from 'react-icons/fa';
@@ -69,7 +69,10 @@ export const VariantInternationalComparisonMap = ({
       .filter(e => e.value > 0);
   }, [variantSamplesByCountry, selectedDates]);
 
-  const handleRangeChange = (value: number[]) => {
+  const handleRangeChange = (value: number | number[]) => {
+    if (typeof value === 'number') {
+      value = [value];
+    }
     setSelectedRange(value);
     setAnimationInterval(null);
   };
@@ -102,7 +105,8 @@ export const VariantInternationalComparisonMap = ({
         >
           {animationInterval === null ? <FaPlay /> : <FaPause />}
         </button>
-        <Range
+        <Slider
+          range
           min={0}
           max={availableDates.length - 1}
           marks={getMarks(availableDates as UnifiedDay[], selectedRange)}

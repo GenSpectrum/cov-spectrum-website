@@ -7,22 +7,22 @@ import { NamedCard, TabConfig } from './NamedCard';
 // InternalProps are passed by Widget
 export interface InternalProps {
   getShareUrl: () => Promise<string>;
-  children: React.ReactChild | React.ReactChild[];
+  children: React.ReactNode | React.ReactNode[];
   componentLabels?: string[];
 }
 
 // LayoutProps as passed by WidgetWrapper to the component responsible for Layout
 export interface LayoutProps {
   title: string;
-  toolbar?: React.ReactChild | React.ReactChild[];
-  children: React.ReactChild | React.ReactChild[];
+  toolbar?: React.ReactNode | React.ReactNode[];
+  children: React.ReactNode | React.ReactNode[];
   tabs?: TabConfig;
 }
 
 // ExternalProps are passed by users of Widget.ShareableComponent
 export interface ExternalProps {
   title: string;
-  toolbarChildren?: React.ReactChild | React.ReactChild[];
+  toolbarChildren?: React.ReactNode | React.ReactNode[];
   showExport?: boolean;
   height?: number;
   widgetLayout?: React.ComponentType<LayoutProps>;
@@ -65,7 +65,7 @@ export function WidgetWrapper({
   const exportManagerRef = useRef(new ExportManager());
   const [activeTabIndex, setActiveTabIndex] = useState(0);
 
-  const childrenAsArray: (React.ReactChild | {})[] = React.Children.toArray(children);
+  const childrenAsArray: React.ReactNode[] = React.Children.toArray(children);
   const tabs: TabConfig | undefined = componentLabels
     ? {
         activeTabIndex,

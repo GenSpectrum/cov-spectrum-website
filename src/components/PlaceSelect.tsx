@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { LocationService } from '../services/LocationService';
 import { useQuery } from '../helpers/query-hook';
 import { Autocomplete, Box, TextField } from '@mui/material';

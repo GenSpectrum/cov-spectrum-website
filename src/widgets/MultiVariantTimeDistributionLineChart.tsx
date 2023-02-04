@@ -208,11 +208,11 @@ export const MultiVariantTimeDistributionLineChart = ({
         <div className='flex-wrap mb-3 mt-2'>
           {analysisMode !== AnalysisMode.CompareToBaseline && (
             <>
-              <Checkbox defaultChecked checked={showCI} onChange={() => setShowCI(!showCI)} size='small' />
+              <Checkbox checked={showCI} onChange={() => setShowCI(!showCI)} size='small' />
               <span>Show CI</span>
             </>
           )}
-          <Checkbox defaultChecked checked={log} onChange={() => setLog(!log)} size='small' />
+          <Checkbox checked={log} onChange={() => setLog(!log)} size='small' />
           <span>Log Scale</span>
         </div>
       </FormGroup>
@@ -245,7 +245,7 @@ export const MultiVariantTimeDistributionLineChart = ({
                   />
 
                   <Tooltip
-                    formatter={(value: number, name: string, props: any) => {
+                    formatter={(value: string, name: string, props: any) => {
                       const payload = props.payload;
 
                       if (!name.includes('Log')) {

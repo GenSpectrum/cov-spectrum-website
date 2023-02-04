@@ -1,4 +1,4 @@
-import { useHistory, useLocation, useParams } from 'react-router';
+import { useNavigate, useLocation, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
 import { deleteCollection, fetchCollection, updateCollection, validateCollectionAdminKey } from '../data/api';
 import React, { useMemo, useState } from 'react';
@@ -21,8 +21,8 @@ import { CollectionSinglePageTitle } from './CollectionSingleViewPage';
 import { AiOutlineStar, AiFillStar } from 'react-icons/ai';
 
 export const CollectionSingleAdminPage = () => {
-  const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
-  const collectionId = Number.parseInt(collectionIdStr);
+  const { collectionId: collectionIdStr } = useParams();
+  const collectionId = Number.parseInt(collectionIdStr!);
   let queryParamsString = useLocation().search;
   const queryParam = useMemo(() => new URLSearchParams(queryParamsString), [queryParamsString]);
   // We expect the admin page component only being loaded when an admin key is provided.
@@ -110,7 +110,7 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
   // We assign an ID to every variant for the sole purpose of having a "key" for rendering.
   const [variants, setVariants] = useState(collection.variants.map(v => ({ ...v, tmpId: Math.random() })));
   const [deletionDialogOpen, setDeletionDialogOpen] = React.useState(false);
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const variantsParsed = useMemo(
     () =>
@@ -186,7 +186,7 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
   const abortCollectionDeletion = () => setDeletionDialogOpen(false);
   const confirmCollectionDeletion = async () => {
     await deleteCollection(collection.id!, adminKey);
-    history.push('/collections');
+    navigate('/collections');
   };
 
   return (

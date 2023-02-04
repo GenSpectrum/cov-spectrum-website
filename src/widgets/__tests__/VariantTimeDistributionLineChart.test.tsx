@@ -18,6 +18,7 @@ describe('<VariantTimeDistributionLineChart>', () => {
       <VariantTimeDistributionLineChart variantSampleSet={variantDateCount} wholeSampleSet={wholeDateCount} />
     );
     await act(async () => {});
+    await act(async () => {});
     const snapshot = tree.toJSON();
     maskUuid(snapshot);
     expect(snapshot).toMatchSnapshot();

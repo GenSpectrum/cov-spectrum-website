@@ -28,7 +28,7 @@ export const specialDateRanges = [
   'Past3M',
   'Past6M',
 ] as const;
-export type SpecialDateRange = typeof specialDateRanges[number];
+export type SpecialDateRange = (typeof specialDateRanges)[number];
 export function isSpecialDateRange(s: unknown): s is SpecialDateRange {
   return typeof s === 'string' && (specialDateRanges as readonly string[]).includes(s);
 }

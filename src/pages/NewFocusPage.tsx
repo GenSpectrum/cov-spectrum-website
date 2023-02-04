@@ -7,7 +7,7 @@ import {
 } from '../data/DateRangeSelector';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
-import { useHistory, useLocation } from 'react-router';
+import { useNavigate, useLocation } from 'react-router';
 import { QueryStatus, useQuery } from '../helpers/query-hook';
 import { _fetchAggSamples } from '../data/api-lapis';
 import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
@@ -77,7 +77,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
     new SpecialDateRangeSelector('Past6M')
   );
 
-  const history = useHistory();
+  const navigate = useNavigate();
   const params = useUrlParams();
 
   const selector: LapisSelector = useMemo(
@@ -209,9 +209,9 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
   const setPangoLineage = useCallback(
     (pangoLineage: string) => {
       setShowCommandPanel(false);
-      setParams(history, { ...params, pangoLineage: pangoLineage.replace('*', '') });
+      setParams(navigate, { ...params, pangoLineage: pangoLineage.replace('*', '') });
     },
-    [history, params, setShowCommandPanel]
+    [navigate, params, setShowCommandPanel]
   );
 
   const goToParentLineage = useCallback(() => {
@@ -258,7 +258,7 @@ export const NewFocusPage = ({ fullScreenMode, setFullScreenMode }: Props) => {
 
   // Keyboard shortcuts
   const handleKeyPress = useCallback(
-    event => {
+    (event: any) => {
       if (showLocationSelect || showCommandPanel || showVariantDetailsModal) {
         return;
       }

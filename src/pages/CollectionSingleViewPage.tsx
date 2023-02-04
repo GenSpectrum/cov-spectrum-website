@@ -1,4 +1,4 @@
-import { useHistory, useLocation, useParams } from 'react-router';
+import { useNavigate, useLocation, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
 import { fetchCollection } from '../data/api';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
@@ -53,12 +53,12 @@ import { PprettyRequest } from '../data/ppretty/ppretty-request';
 import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
 
 export const CollectionSingleViewPage = () => {
-  const { collectionId: collectionIdStr }: { collectionId: string } = useParams();
-  const collectionId = Number.parseInt(collectionIdStr);
+  const { collectionId: collectionIdStr } = useParams();
+  const collectionId = Number.parseInt(collectionIdStr!);
   const [baselineVariant, setBaselineVariant] = useState<VariantSelector>({});
   // The following variable stores the visual value in the input field which is not necessarily already the applied
   const [baselineVariantInput, setBaselineVariantInput] = useState<VariantSelector>({});
-  const history = useHistory();
+  const navigate = useNavigate();
   const locationState = useLocation();
   const [tab, setTab] = useState(0);
 
@@ -222,7 +222,7 @@ export const CollectionSingleViewPage = () => {
             const queryParams = new URLSearchParams(queryString);
             removeLocationSelectorToUrlSearchParams(queryParams);
             addLocationSelectorToUrlSearchParams(selector, queryParams);
-            history.push(locationState.pathname + '?' + queryParams.toString());
+            navigate(locationState.pathname + '?' + queryParams.toString());
           }}
           selected={locationSelector}
         />
@@ -268,7 +268,7 @@ export const CollectionSingleViewPage = () => {
           onClick={() => {
             const queryParams = new URLSearchParams(queryString);
             queryParams.delete('highlightedOnly');
-            history.push(locationState.pathname + '?' + queryParams.toString());
+            navigate(locationState.pathname + '?' + queryParams.toString());
           }}
         >
           <AiFillStar size='1.5em' className='text-yellow-400 inline' /> only
@@ -281,7 +281,7 @@ export const CollectionSingleViewPage = () => {
             const queryParams = new URLSearchParams(queryString);
             queryParams.delete('highlightedOnly');
             queryParams.set('highlightedOnly', 'true');
-            history.push(locationState.pathname + '?' + queryParams.toString());
+            navigate(locationState.pathname + '?' + queryParams.toString());
           }}
         >
           <AiOutlineStar size='1.5em' className='inline' /> only
@@ -352,7 +352,7 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => {
     >
       {value === index && (
         <Box sx={{ p: 3 }}>
-          <Typography>{children}</Typography>
+          <Typography component='span'>{children}</Typography>
         </Box>
       )}
     </div>

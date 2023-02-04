@@ -16,7 +16,7 @@ interface CountrySummary {
 }
 
 const sortOptions = ['country', 'total', 'first', 'last'] as const;
-type SortOptions = typeof sortOptions[number];
+type SortOptions = (typeof sortOptions)[number];
 
 const sortInternationalComparison = (
   entries: CountrySummary[],

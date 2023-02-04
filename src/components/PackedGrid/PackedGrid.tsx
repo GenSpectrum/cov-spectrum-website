@@ -11,7 +11,7 @@ interface Props {
 }
 
 function childIsGridCell(
-  child: React.ReactChild | {}
+  child: React.ReactNode | {}
 ): child is React.ReactElement<GridCellProps, typeof GridCell> {
   return typeof child === 'object' && (child as any).type === GridCell;
 }
@@ -22,7 +22,7 @@ const Row = styled.div`
 `;
 
 export const PackedGrid = ({ children, maxColumns }: Props) => {
-  const childrenAsArray: (React.ReactChild | {})[] = React.Children.toArray(children);
+  const childrenAsArray: (React.ReactNode | {})[] = React.Children.toArray(children);
   const gridCellChildren = childrenAsArray
     .map(c => (childIsGridCell(c) ? c : undefined))
     .filter(v => v)

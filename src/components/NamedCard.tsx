@@ -19,8 +19,8 @@ export type TabConfig = {
 
 interface Props {
   title: string;
-  toolbar?: React.ReactChild | React.ReactChild[];
-  children: React.ReactChild | React.ReactChild[];
+  toolbar?: React.ReactNode | React.ReactNode[];
+  children: React.ReactNode | React.ReactNode[];
   style?: NamedCardStyle;
   description?: string;
   tabs?: TabConfig;

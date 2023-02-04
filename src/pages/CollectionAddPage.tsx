@@ -2,14 +2,14 @@ import { TextField } from '@mui/material';
 import { Button, ButtonVariant } from '../helpers/ui';
 import { useState } from 'react';
 import { addCollection } from '../data/api';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router';
 
 export const CollectionAddPage = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [maintainers, setMaintainers] = useState('');
   const [email, setEmail] = useState('');
-  const history = useHistory();
+  const navigate = useNavigate();
 
   const submit = async () => {
     if (title.length === 0) {
@@ -23,7 +23,7 @@ export const CollectionAddPage = () => {
       email,
       variants: [],
     });
-    history.push(`/collections/${response.id}?adminKey=${response.adminKey}`);
+    navigate(`/collections/${response.id}?adminKey=${response.adminKey}`);
   };
 
   return (

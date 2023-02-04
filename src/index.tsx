@@ -1,6 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { App } from './App';
 import { EmbedPage } from './pages/EmbedPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -82,22 +81,22 @@ async function main() {
     }
   } catch (_) {}
 
-  ReactDOM.render(
-    <React.StrictMode>
-      <BrowserRouter>
-        <Switch>
-          <Route path='/embed/:widget'>
-            <EmbedPage />
-          </Route>
-          <Route path='/'>
+  const container = document.getElementById('root');
+  const root = createRoot(container!);
+  root.render(
+    <BrowserRouter>
+      <Routes>
+        <Route path='/embed/:widget' element={<EmbedPage />} />
+        <Route
+          path='*'
+          element={
             <DndProvider options={HTML5toTouch}>
               <App />
             </DndProvider>
-          </Route>
-        </Switch>
-      </BrowserRouter>
-    </React.StrictMode>,
-    document.getElementById('root')
+          }
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
