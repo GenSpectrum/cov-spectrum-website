@@ -11,6 +11,11 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
       className="my-0 pr-10 pt-0 text-gray-500"
     >
       Estimated absolute number of cases
+       
+      on 
+      <b>
+        2021-12-29
+      </b>
     </h3>
     <div
       className="sc-gswNZR jVvoKy"
@@ -53,7 +58,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
                   }
                 }
               >
-                NA
+                NaN
               </div>
               <div
                 className="sc-hLBbgP dYEqmk self-end"
@@ -127,7 +132,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
                   }
                 }
               >
-                NA
+                NaN-NaN
               </div>
               <div
                 className="sc-hLBbgP dYEqmk self-end"

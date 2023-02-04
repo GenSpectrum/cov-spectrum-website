@@ -10,7 +10,18 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
     <h3
       className="my-0 pr-10 pt-0 text-gray-500"
     >
-      <div />
+      <div>
+        Proportion of all samples
+         from 
+        <b>
+          2021-12-26
+        </b>
+         to
+         
+        <b>
+          2022-01-01
+        </b>
+      </div>
       <div
         className="mb-1 btn-toolbar"
         role="toolbar"
@@ -93,6 +104,9 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
                   d="M19 5v14H5V5h14m0-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"
                 />
               </svg>
+              <span
+                className="MuiTouchRipple-root css-8je8zh-MuiTouchRipple-root"
+              />
             </span>
             <span
               className="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-ahj2mt-MuiTypography-root"
@@ -144,7 +158,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
                   }
                 }
               >
-                NA
+                0.0%
               </div>
               <div
                 className="sc-bcXHqe bjCFoe self-end"
@@ -218,7 +232,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
                   }
                 }
               >
-                NA
+                0.0-100.0%
               </div>
               <div
                 className="sc-bcXHqe bjCFoe self-end"
