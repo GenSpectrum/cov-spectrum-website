@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import { components, CSSObjectWithLabel, InputActionMeta, StylesConfig } from 'react-select';
 import { isValidAAMutation, isValidABNotation, isValidNspNotation } from '../helpers/aa-mutation';
-// import { CSSPseudos } from 'styled-components';
 import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
 import { isValidPangoLineageQuery, transformToVariantQuery, VariantSelector } from '../data/VariantSelector';
 import { isValidNucMutation } from '../helpers/nuc-mutation';

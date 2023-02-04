@@ -384,7 +384,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
                   min={5}
                   max={100}
                   step={5}
-                  onChange={value => setMinProportion((value as number) / 100)}
+                  onChange={(value: number | number[]) => setMinProportion((value as number) / 100)}
                   style={{ width: '100px' }}
                 />
               </div>

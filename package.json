@@ -32,7 +32,6 @@
     "@types/react-router-dom": "^5.3.3",
     "@types/react-simple-maps": "^3.0.0",
     "@types/react-test-renderer": "^18.0.0",
-    "@types/recharts": "^1.8.24",
     "@types/styled-components": "^5.1.26",
     "assert": "^2.0.0",
     "bootstrap": "^5.2.3",
