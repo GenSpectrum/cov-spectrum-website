@@ -9,7 +9,7 @@
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.6",
     "@mui/x-data-grid": "^5.17.21",
-    "@mui/x-date-pickers": "^5.0.16",
+    "@mui/x-date-pickers": "^5.0.17",
     "@sentry/react": "^7.34.0",
     "@sentry/tracing": "^7.34.0",
     "@testing-library/jest-dom": "^5.16.5",
