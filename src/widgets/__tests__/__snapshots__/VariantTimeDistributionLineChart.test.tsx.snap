@@ -91,6 +91,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
                 className="PrivateSwitchBase-input css-1m9pwf3"
                 data-indeterminate={false}
                 onChange={[Function]}
+                required={false}
                 type="checkbox"
               />
               <svg
