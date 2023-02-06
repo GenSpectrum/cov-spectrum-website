@@ -92,7 +92,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
       }
       const oldPrefix = `/explore/${routeMatches.locationSamplingDate.params.location}/`;
       const currentPath = locationState.pathname + locationState.search;
-      assert(currentPath.startsWith(oldPrefix));
+      assert(decodeURIComponent(currentPath).startsWith(oldPrefix));
       const suffix = currentPath.slice(oldPrefix.length);
       const locationEncoded = encodeLocationSelectorToSingleString(location);
       navigate(`/explore/${locationEncoded}/${suffix}`);
@@ -106,7 +106,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
       }
       const oldPrefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/`;
       const currentPath = locationState.pathname + locationState.search;
-      assert(currentPath.startsWith(oldPrefix));
+      assert(decodeURIComponent(currentPath).startsWith(oldPrefix));
       const suffix = currentPath.slice(oldPrefix.length);
       navigate(`/explore/${routeMatches.locationSamplingDate.params.location}/${samplingStrategy}/${suffix}`);
     },
@@ -119,7 +119,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
       }
       const oldPrefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
       const currentPath = locationState.pathname + locationState.search;
-      assert(currentPath.startsWith(oldPrefix));
+      assert(decodeURIComponent(currentPath).startsWith(oldPrefix));
       const suffix = currentPath.slice(oldPrefix.length);
       const dateRangeEncoded = dateRangeUrlFromSelector(dateRange);
       navigate(
@@ -143,7 +143,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
         }
       }
       const currentPath = locationState.pathname + locationState.search;
-      assert(currentPath.startsWith(prefix));
+      assert(decodeURIComponent(currentPath).startsWith(prefix));
       const path = `${prefix}/variants?${newQueryParam}&`;
       navigate(path);
     },
@@ -161,7 +161,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
         newQueryParam.set('analysisMode', analysisMode);
       }
       const currentPath = locationState.pathname + locationState.search;
-      assert(currentPath.startsWith(prefix));
+      assert(decodeURIComponent(currentPath).startsWith(prefix));
       let path = `${prefix}/variants?${newQueryParam}&`;
       navigate(path);
     },
