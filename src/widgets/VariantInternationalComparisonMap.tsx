@@ -4,7 +4,6 @@ import { CountryDateCountSampleDataset } from '../data/sample/CountryDateCountSa
 import { Utils } from '../services/Utils';
 import { CountryDateCountSampleEntry } from '../data/sample/CountryDateCountSampleEntry';
 import RegionMap from '../maps/RegionMap';
-import { UnifiedDay } from '../helpers/date-cache';
 import { FaPause, FaPlay } from 'react-icons/fa';
 import useInterval from '../helpers/interval';
 import { Slider } from '@mui/material';

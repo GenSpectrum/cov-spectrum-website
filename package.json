@@ -56,7 +56,6 @@
     "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-icons": "^4.7.1",
-    "react-numeric-input": "^2.2.3",
     "react-plotly.js": "^2.6.0",
     "react-resize-detector": "^8.0.3",
     "react-reverse-portal": "^2.1.1",

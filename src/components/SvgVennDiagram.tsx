@@ -372,7 +372,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
   return (
     <>
       <div>
-        A mutation is considered as belonging to a variant if at least{' '}<OverlayTrigger
+        A mutation is considered as belonging to a variant if at least{' '}
         <PercentageValueWithOverlaySlider
           percentageValue={minProportion}
           setPercentageValue={setMinProportion}

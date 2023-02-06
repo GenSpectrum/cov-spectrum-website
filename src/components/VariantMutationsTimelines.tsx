@@ -12,11 +12,11 @@ import { scaleLinear } from 'd3-scale';
 import { sortListByAAMutation } from '../helpers/aa-mutation';
 import { useResizeDetector } from 'react-resize-detector';
 import { SequenceType } from '../data/SequenceType';
-import NumericInput from 'react-numeric-input';
 import { Form, OverlayTrigger, Popover } from 'react-bootstrap';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import { ColorScale, ColorScaleInput } from './ColorScaleInput';
 import { PipeDividedOptionsButtons } from '../helpers/ui';
+import { ProportionSelector } from './ProportionsSelector';
 
 type Data = {
   weeks: UnifiedIsoWeek[];
@@ -83,31 +83,14 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
           </Form.Control>
         </div>
       )}
-      {/* Proportions */}
-      <div className='mb-2'>
-        Proportions:{' '}
-        <NumericInput
-          precision={1}
-          step={0.1}
-          min={0.1}
-          max={99}
-          style={{ input: { width: '85px', textAlign: 'right' } }}
-          format={value => `${value}%`}
-          value={(minProportion * 100).toFixed(1)}
-          onChange={value => setMinProportion(value! / 100)}
-        />
-        {' - '}
-        <NumericInput
-          precision={1}
-          step={0.1}
-          min={0.2}
-          max={100}
-          style={{ input: { width: '85px', textAlign: 'right' } }}
-          format={value => `${value}%`}
-          value={(maxProportion * 100).toFixed(1)}
-          onChange={value => setMaxProportion(value! / 100)}
-        />
-      </div>
+      <ProportionSelector
+        minProportion={minProportion}
+        maxProportion={maxProportion}
+        setMinProportion={setMinProportion}
+        setMaxProportion={setMaxProportion}
+        title={'Proportions'}
+        tooltipTitle={'Percentage of sequences with mutation'}
+      />
       {/* Deletions */}
       <div className='mb-2'>
         <PipeDividedOptionsButtons

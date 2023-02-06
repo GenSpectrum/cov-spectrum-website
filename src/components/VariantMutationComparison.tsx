@@ -5,11 +5,11 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import Table from 'react-bootstrap/Table';
 import { formatVariantDisplayName } from '../data/VariantSelector';
-import ReactTooltip from 'react-tooltip';
 import { sortAAMutationList } from '../helpers/aa-mutation';
 import { LapisSelector } from '../data/LapisSelector';
 import { pullAll } from '../helpers/lodash_alternatives';
 import { PercentageValueWithOverlaySlider } from './PercentageValueWithOverlaySlider';
+import { Tooltip } from 'react-tooltip';
 
 export interface Props {
   selectors: LapisSelector[];
@@ -121,15 +121,15 @@ export const VariantMutationComparison = ({ selectors }: Props) => {
 
         {data.map(({ gene, onlyVariant1, onlyVariant2, shared }) => (
           <>
-            <ReactTooltip id={`${gene}-variant1`} key={`${gene}-variant1`}>
+            <Tooltip id={`${gene}-variant1`} key={`${gene}-variant1`}>
               {simpleMutationListFormat(onlyVariant1)}
-            </ReactTooltip>
-            <ReactTooltip id={`${gene}-shared`} key={`${gene}-shared`}>
+            </Tooltip>
+            <Tooltip id={`${gene}-shared`} key={`${gene}-shared`}>
               {simpleMutationListFormat(shared)}
-            </ReactTooltip>
-            <ReactTooltip id={`${gene}-variant2`} key={`${gene}-variant2`}>
+            </Tooltip>
+            <Tooltip id={`${gene}-variant2`} key={`${gene}-variant2`}>
               {simpleMutationListFormat(onlyVariant2)}
-            </ReactTooltip>
+            </Tooltip>
           </>
         ))}
       </div>
