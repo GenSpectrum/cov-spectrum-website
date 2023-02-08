@@ -90,11 +90,12 @@ export function useExploreUrl(): ExploreUrl | undefined {
       if (!routeMatches.locationSamplingDate) {
         return;
       }
-      const oldPrefix = `/explore/${routeMatches.locationSamplingDate.params.location}/`;
+      const oldPrefix =
+        '/explore/' + encodeURIComponent(routeMatches.locationSamplingDate.params.location || '') + '/';
       const currentPath = locationState.pathname + locationState.search;
-      assert(decodeURIComponent(currentPath).startsWith(oldPrefix));
+      assert(currentPath.startsWith(oldPrefix));
       const suffix = currentPath.slice(oldPrefix.length);
-      const locationEncoded = encodeLocationSelectorToSingleString(location);
+      const locationEncoded = encodeURIComponent(encodeLocationSelectorToSingleString(location));
       navigate(`/explore/${locationEncoded}/${suffix}`);
     },
     [navigate, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
