@@ -81,7 +81,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
       end: false,
     }),
   };
-  let queryString = useLocation().search;
+  let queryString = locationState.search;
   let query = useMemo(() => new URLSearchParams(queryString), [queryString]);
 
   // Navigation functions
