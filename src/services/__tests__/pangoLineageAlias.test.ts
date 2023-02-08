@@ -1,5 +1,5 @@
 import { useQuery } from '../../helpers/query-hook';
-import { renderHook } from '@testing-library/react-hooks';
+import { renderHook } from '@testing-library/react';
 import { usePangoLineageFullName, usePangoLineageWithAlias } from '../pangoLineageAlias';
 
 jest.mock('../../helpers/query-hook');
