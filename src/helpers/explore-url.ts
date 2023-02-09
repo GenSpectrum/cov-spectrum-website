@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { useCallback, useMemo } from 'react';
-import { useNavigate, useLocation, useMatch } from 'react-router';
+import { useLocation, useMatch, useNavigate } from 'react-router';
 import {
   addVariantSelectorsToUrlSearchParams,
   readVariantListFromUrlSearchParams,
@@ -91,12 +91,12 @@ export function useExploreUrl(): ExploreUrl | undefined {
         return;
       }
       const oldPrefix =
-        '/explore/' + encodeURIComponent(routeMatches.locationSamplingDate.params.location || '') + '/';
+        createUriFromParts('explore', routeMatches.locationSamplingDate.params.location) + '/';
       const currentPath = locationState.pathname + locationState.search;
       assert(currentPath.startsWith(oldPrefix));
       const suffix = currentPath.slice(oldPrefix.length);
-      const locationEncoded = encodeURIComponent(encodeLocationSelectorToSingleString(location));
-      navigate(`/explore/${locationEncoded}/${suffix}`);
+      const locationEncoded = encodeLocationSelectorToSingleString(location);
+      navigate(createUriFromParts('explore', locationEncoded) + '/' + suffix);
     },
     [navigate, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
   );
@@ -105,11 +105,20 @@ export function useExploreUrl(): ExploreUrl | undefined {
       if (!routeMatches.locationSamplingDate) {
         return;
       }
-      const oldPrefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/`;
+      const oldPrefix =
+        createUriFromParts(
+          'explore',
+          routeMatches.locationSamplingDate.params.location,
+          routeMatches.locationSamplingDate.params.samplingStrategy
+        ) + '/';
       const currentPath = locationState.pathname + locationState.search;
-      assert(decodeURIComponent(currentPath).startsWith(oldPrefix));
+      assert(currentPath.startsWith(oldPrefix));
       const suffix = currentPath.slice(oldPrefix.length);
-      navigate(`/explore/${routeMatches.locationSamplingDate.params.location}/${samplingStrategy}/${suffix}`);
+      navigate(
+        createUriFromParts('explore', routeMatches.locationSamplingDate.params.location, samplingStrategy) +
+          '/' +
+          suffix
+      );
     },
     [navigate, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
   );
@@ -118,13 +127,23 @@ export function useExploreUrl(): ExploreUrl | undefined {
       if (!routeMatches.locationSamplingDate) {
         return;
       }
-      const oldPrefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
+      const oldPrefix = createUriFromParts(
+        'explore',
+        routeMatches.locationSamplingDate.params.location,
+        routeMatches.locationSamplingDate.params.samplingStrategy,
+        routeMatches.locationSamplingDate.params.dateRange
+      );
       const currentPath = locationState.pathname + locationState.search;
-      assert(decodeURIComponent(currentPath).startsWith(oldPrefix));
+      assert(currentPath.startsWith(oldPrefix));
       const suffix = currentPath.slice(oldPrefix.length);
       const dateRangeEncoded = dateRangeUrlFromSelector(dateRange);
       navigate(
-        `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${dateRangeEncoded}${suffix}`
+        createUriFromParts(
+          'explore',
+          routeMatches.locationSamplingDate.params.location,
+          routeMatches.locationSamplingDate.params.samplingStrategy,
+          dateRangeEncoded
+        ) + suffix
       );
     },
     [navigate, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
@@ -134,7 +153,12 @@ export function useExploreUrl(): ExploreUrl | undefined {
       if (!routeMatches.locationSamplingDate) {
         return;
       }
-      const prefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
+      const prefix = createUriFromParts(
+        'explore',
+        routeMatches.locationSamplingDate.params.location,
+        routeMatches.locationSamplingDate.params.samplingStrategy,
+        routeMatches.locationSamplingDate.params.dateRange
+      );
       const newQueryParam = new URLSearchParams(queryString);
       addVariantSelectorsToUrlSearchParams(variants, newQueryParam);
       if (analysisMode) {
@@ -144,7 +168,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
         }
       }
       const currentPath = locationState.pathname + locationState.search;
-      assert(decodeURIComponent(currentPath).startsWith(prefix));
+      assert(currentPath.startsWith(prefix));
       const path = `${prefix}/variants?${newQueryParam}&`;
       navigate(path);
     },
@@ -155,14 +179,19 @@ export function useExploreUrl(): ExploreUrl | undefined {
       if (!routeMatches.locationSamplingDate) {
         return;
       }
-      const prefix = `/explore/${routeMatches.locationSamplingDate.params.location}/${routeMatches.locationSamplingDate.params.samplingStrategy}/${routeMatches.locationSamplingDate.params.dateRange}`;
+      const prefix = createUriFromParts(
+        'explore',
+        routeMatches.locationSamplingDate.params.location,
+        routeMatches.locationSamplingDate.params.samplingStrategy,
+        routeMatches.locationSamplingDate.params.dateRange
+      );
       const newQueryParam = new URLSearchParams(queryString);
       newQueryParam.delete('analysisMode');
       if (analysisMode !== defaultAnalysisMode) {
         newQueryParam.set('analysisMode', analysisMode);
       }
       const currentPath = locationState.pathname + locationState.search;
-      assert(decodeURIComponent(currentPath).startsWith(prefix));
+      assert(currentPath.startsWith(prefix));
       let path = `${prefix}/variants?${newQueryParam}&`;
       navigate(path);
     },
@@ -248,12 +277,12 @@ export function useExploreUrl(): ExploreUrl | undefined {
   if (!routeMatches.locationSamplingDate || !pathParams) {
     if (routeMatches.locationSampling) {
       const { location, samplingStrategy } = routeMatches.locationSampling.params;
-      navigate(`/explore/${location}/${samplingStrategy}/`);
+      navigate(createUriFromParts('explore', location, samplingStrategy) + '/');
     } else if (routeMatches.country) {
       const { location } = routeMatches.country.params;
-      navigate(`/explore/${location}/${defaultSamplingStrategy}/${defaultDateRange}`);
+      navigate(createUriFromParts('explore', location, defaultSamplingStrategy, defaultDateRange));
     } else if (routeMatches.explore) {
-      navigate(`/explore/${baseLocation}/${defaultSamplingStrategy}/${defaultDateRange}`);
+      navigate(createUriFromParts('explore', baseLocation, defaultSamplingStrategy, defaultDateRange));
     }
     // Don't redirect/do anything if /explore/ is not matched.
     return undefined;
@@ -262,12 +291,12 @@ export function useExploreUrl(): ExploreUrl | undefined {
   // Redirect if something is not alright with the params
   if (pathParams.samplingStrategy === null) {
     // Redirecting because of an invalid sampling strategy
-    navigate(`/explore/${encoded.location}/${defaultSamplingStrategy}/${encoded.dateRange}`);
+    navigate(createUriFromParts('explore', encoded.location, defaultSamplingStrategy, encoded.dateRange));
     return undefined;
   }
   if (pathParams.dateRange === null) {
     // Redirecting because of an invalid date range
-    navigate(`/explore/${encoded.location}/${encoded.samplingStrategy}/${defaultDateRange}`);
+    navigate(createUriFromParts('explore', encoded.location, encoded.samplingStrategy, defaultDateRange));
     return undefined;
   }
 
@@ -293,4 +322,8 @@ export function useExploreUrl(): ExploreUrl | undefined {
     getDeepFocusPageUrl,
     focusKey: locationState.pathname + locationState.search,
   };
+}
+
+function createUriFromParts(...parts: (string | undefined)[]) {
+  return '/' + parts.map(part => encodeURIComponent(part || '')).join('/');
 }
