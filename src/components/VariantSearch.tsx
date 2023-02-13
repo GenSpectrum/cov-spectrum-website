@@ -115,7 +115,6 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
         <div className='flex-grow'>
           <VariantSearchField
             key={selections[0].id}
-            isSimple={false}
             currentSelection={selections[0].selector}
             onVariantSelect={newSelection => changeSelection(newSelection, 0)}
             triggerSearch={submitSearch}
@@ -149,7 +148,6 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
                 <div className='flex-grow'>
                   <VariantSearchField
                     key={selection.id}
-                    isSimple={false}
                     currentSelection={selection.selector}
                     onVariantSelect={newSelection => changeSelection(newSelection, index)}
                     triggerSearch={submitSearch}
@@ -178,7 +176,6 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
           <div className='m-0'>
             <VariantSearchField
               key={selections[0].id}
-              isSimple={false}
               currentSelection={selections[0].selector}
               onVariantSelect={newSelection => changeSelection(newSelection, 0)}
               triggerSearch={submitSearch}
@@ -208,7 +205,6 @@ export const VariantSearch = ({ currentSelection, onVariantSelect, analysisMode 
                 <div className='flex-grow'>
                   <VariantSearchField
                     key={selection.id}
-                    isSimple={false}
                     currentSelection={selection.selector}
                     onVariantSelect={newSelection => changeSelection(newSelection, index + 1)}
                     triggerSearch={submitSearch}

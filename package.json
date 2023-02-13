@@ -52,6 +52,7 @@
     "react-dnd": "^16.0.1",
     "react-dnd-multi-backend": "^8.0.0",
     "react-dnd-preview": "^8.0.0",
+    "react-dnd-test-backend": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
     "react-dom": "^18.2.0",
     "react-icons": "^4.7.1",

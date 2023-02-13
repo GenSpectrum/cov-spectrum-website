@@ -145,7 +145,6 @@ const colorStyles: Partial<StylesConfig<any, true, any>> = {
 type Props = {
   currentSelection?: VariantSelector;
   onVariantSelect: (selection: VariantSelector) => void;
-  isSimple: boolean;
   triggerSearch: () => void;
 };
 
@@ -200,16 +199,16 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   };
 
   const suggestOptions = (query: string): SearchOption[] => {
-    const onePLAlreadySelected =
+    const onePangoLineageAlreadySelected =
       selectedOptions.filter(
         option => option.type === 'pango-lineage' || option.type === 'nextclade-pango-lineage'
       ).length > 0;
-    const oneNCAlreadySelected =
+    const oneNextstrainCladeAlreadySelected =
       selectedOptions.filter(option => option.type === 'nextstrain-clade').length > 0;
     const suggestions: SearchOption[] = [];
 
     const queryWithoutNextcladeLabel = query.replace('(Nextclade)', '').trim();
-    if (!onePLAlreadySelected && isValidPangoLineageQuery(queryWithoutNextcladeLabel)) {
+    if (!onePangoLineageAlreadySelected && isValidPangoLineageQuery(queryWithoutNextcladeLabel)) {
       suggestions.push(mapOption(queryWithoutNextcladeLabel, 'nextclade-pango-lineage'));
       if (!query.includes('*')) {
         suggestions.push(mapOption(queryWithoutNextcladeLabel + '*', 'nextclade-pango-lineage'));
@@ -225,17 +224,20 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       suggestions.push(mapOption(query, 'aa-insertion'));
     } else if (isValidNucInsertion(query)) {
       suggestions.push(mapOption(query, 'nuc-insertion'));
-    } else if (!onePLAlreadySelected && isValidPangoLineageQuery(query)) {
+    } else if (!onePangoLineageAlreadySelected && isValidPangoLineageQuery(query)) {
       suggestions.push(mapOption(query, 'pango-lineage'));
       if (!query.endsWith('*')) {
         suggestions.push(mapOption(query + '*', 'pango-lineage'));
       }
     }
     const queryWithoutNextstrainLabel = query.replace('(Nextstrain clade)', '').trim();
-    if (!oneNCAlreadySelected && nextstrainCladesSet.data?.has(queryWithoutNextstrainLabel.toUpperCase())) {
+    if (
+      !oneNextstrainCladeAlreadySelected &&
+      nextstrainCladesSet.data?.has(queryWithoutNextstrainLabel.toUpperCase())
+    ) {
       suggestions.push(mapOption(queryWithoutNextstrainLabel, 'nextstrain-clade'));
     }
-    if (!onePLAlreadySelected) {
+    if (!onePangoLineageAlreadySelected) {
       suggestions.push(...suggestPangolinLineages(query).map(pl => mapOption(pl, 'pango-lineage')));
     }
     return suggestions.slice(0, 20);
@@ -333,12 +335,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
   };
 
   const promiseOptions = (inputValue: string) => {
-    // resets the options to default (where input value is '') when menu is closed
-    if (!menuIsOpen) {
-      inputValue = '';
-      setInputValue(inputValue);
-    }
-
     return Promise.resolve(suggestOptions(inputValue));
   };
 

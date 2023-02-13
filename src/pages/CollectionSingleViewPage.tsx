@@ -247,7 +247,6 @@ export const CollectionSingleViewPage = () => {
           </strong>
         </p>
         <VariantSearchField
-          isSimple={false}
           onVariantSelect={setBaselineVariantInput}
           triggerSearch={() => setBaselineVariant(baselineVariantInput)}
         />
