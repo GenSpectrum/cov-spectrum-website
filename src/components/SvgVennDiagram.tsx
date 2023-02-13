@@ -1,6 +1,5 @@
 import { Checkbox, InputLabel, ListItemText, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
-import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { useResizeDetector } from 'react-resize-detector';
 import { LapisSelector } from '../data/LapisSelector';
 import { MutationProportionData } from '../data/MutationProportionDataset';
@@ -11,13 +10,13 @@ import { useQuery } from '../helpers/query-hook';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import { Utils } from '../services/Utils';
 import MenuItem from '@mui/material/MenuItem';
-import Slider from 'rc-slider';
 import FormControl from '@mui/material/FormControl';
 import { formatVariantDisplayName, VariantSelector } from '../data/VariantSelector';
 import './style/svgPlots.css';
 import { sortAAMutationList } from '../helpers/aa-mutation';
 import { sortNucMutationList } from '../helpers/nuc-mutation';
 import Loader from './Loader';
+import { PercentageValueWithOverlaySlider } from './PercentageValueWithOverlaySlider';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -374,30 +373,11 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
     <>
       <div>
         A mutation is considered as belonging to a variant if at least{' '}
-        <OverlayTrigger
-          trigger='click'
-          overlay={
-            <Tooltip id='mutationMinProportion'>
-              <div>
-                <Slider
-                  value={Math.round(minProportion * 100)}
-                  min={5}
-                  max={100}
-                  step={5}
-                  onChange={(value: number | number[]) => setMinProportion((value as number) / 100)}
-                  style={{ width: '100px' }}
-                />
-              </div>
-            </Tooltip>
-          }
-          rootClose={true}
-          placement='bottom'
-        >
-          <span className='cursor-pointer px-3 rounded bg-gray-100 hover:bg-gray-300 font-bold'>
-            {(minProportion * 100).toFixed(0)}%
-          </span>
-        </OverlayTrigger>{' '}
-        of the samples of the variant have the mutation.{' '}
+        <PercentageValueWithOverlaySlider
+          percentageValue={minProportion}
+          setPercentageValue={setMinProportion}
+        />{' '}
+        of the samples of the variant have the mutation.
         <b>Click on the number of the mutations inside the diagram to copy the mutations to clipboard.</b>
       </div>
 

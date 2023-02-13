@@ -8,7 +8,6 @@ import { useQuery } from '../helpers/query-hook';
 import { MutationProportionEntry } from '../data/MutationProportionEntry';
 import { fetchSamplesCount } from '../data/api-lapis';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
-import NumericInput from 'react-numeric-input';
 import { LapisSelector } from '../data/LapisSelector';
 import { useResizeDetector } from 'react-resize-detector';
 import Checkbox from '@mui/material/Checkbox';
@@ -21,6 +20,7 @@ import { csvStringify } from '../helpers/csvStringifyHelper';
 import { getConsensusSequenceFromMutations } from '../helpers/variant-consensus-sequence';
 import { decodeNucMutation } from '../helpers/nuc-mutation';
 import JSZip from 'jszip';
+import { ProportionSelector } from './ProportionsSelector';
 
 export interface Props {
   selector: LapisSelector;
@@ -259,7 +259,7 @@ export const VariantMutations = ({ selector }: Props) => {
 
   return (
     <>
-      <div className='mb-8'>
+      <div className='mb-2'>
         <div className='ml-0' ref={ref}>
           <PipeDividedOptionsButtons
             options={[
@@ -270,31 +270,16 @@ export const VariantMutations = ({ selector }: Props) => {
             onSelect={setShowMergedList}
           />
         </div>
-        <div className='ml-0'>
-          The following amino acid mutations are present in between{' '}
-          <NumericInput
-            precision={1}
-            step={0.1}
-            min={0.1}
-            max={99}
-            style={{ input: { width: '85px', textAlign: 'right' } }}
-            format={value => `${value}%`}
-            value={(minProportion * 100).toFixed(1)}
-            onChange={value => setMinProportion(value! / 100)}
-          />{' '}
-          <NumericInput
-            precision={1}
-            step={0.1}
-            min={0.2}
-            max={100}
-            style={{ input: { width: '85px', textAlign: 'right' } }}
-            format={value => `${value}%`}
-            value={(maxProportion * 100).toFixed(1)}
-            onChange={value => setMaxProportion(value! / 100)}
-          />{' '}
-          of the sequences of this variant.
-        </div>
       </div>
+
+      <ProportionSelector
+        minProportion={minProportion}
+        maxProportion={maxProportion}
+        setMinProportion={setMinProportion}
+        setMaxProportion={setMaxProportion}
+        title={'Filter by proportion'}
+        tooltipTitle={'Percentage of sequences with mutation'}
+      />
 
       <div>
         {' '}

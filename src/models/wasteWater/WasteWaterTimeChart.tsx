@@ -4,7 +4,7 @@ import Metric, { MetricsWrapper } from '../../widgets/Metrics';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { WasteWaterTimeEntry, WasteWaterTimeseriesSummaryDataset } from './types';
 import { getTicks } from '../../helpers/ticks';
-import { TooltipSideEffect } from '../../widgets/Tooltip';
+import { TooltipSideEffect } from '../../components/RechartsTooltip';
 
 export function formatDate(date: number) {
   const d = new Date(date);

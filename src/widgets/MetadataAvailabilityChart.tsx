@@ -4,7 +4,7 @@ import { Bar, BarChart, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis } from 
 import Metrics, { MetricsWrapper } from './Metrics';
 import { kFormat } from '../helpers/number';
 import { DatelessCountrylessCountSampleDataset } from '../data/sample/DatelessCountrylessCountSampleDataset';
-import { TooltipSideEffect } from './Tooltip';
+import { TooltipSideEffect } from '../components/RechartsTooltip';
 
 export type MetadataAvailabilityChartProps = {
   sampleSet: DatelessCountrylessCountSampleDataset;

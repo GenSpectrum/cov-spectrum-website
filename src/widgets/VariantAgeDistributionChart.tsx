@@ -7,7 +7,7 @@ import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
 import { useResizeDetector } from 'react-resize-detector';
 import DownloadWrapper from './DownloadWrapper';
 import { maxYAxis } from '../helpers/max-y-axis';
-import { SetCurrentDataSideEffect } from './Tooltip';
+import { SetCurrentDataSideEffect } from '../components/RechartsTooltip';
 
 const CHART_MARGIN_RIGHT = 15;
 
