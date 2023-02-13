@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import { components, CSSObjectWithLabel, InputActionMeta, StylesConfig } from 'react-select';
 import { isValidAAMutation, isValidABNotation, isValidNspNotation } from '../helpers/aa-mutation';
@@ -153,11 +153,129 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     currentSelection ? variantSelectorToOptions(currentSelection) : []
   );
   const [inputValue, setInputValue] = useState<string>('');
-  const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
   const [variantQuery, setVariantQuery] = useState(currentSelection?.variantQuery ?? inputValue);
   const [advancedSearch, setAdvancedSearch] = useState(currentSelection?.variantQuery !== undefined);
   // dragEnter increases the depth by one and dragLeave decreases it. The two functions is being called every time when
   // the mouse enters or leaves the object or one of the children.
+
+  const applySelector = (selector: VariantSelector) => {
+    if (selector.variantQuery !== undefined) {
+      setAdvancedSearch(true);
+      setVariantQuery(selector.variantQuery);
+    } else {
+      setAdvancedSearch(false);
+      setSelectedOptions(variantSelectorToOptions(selector));
+    }
+  };
+
+  useDeepCompareEffect(() => {
+    if (currentSelection) {
+      applySelector(currentSelection);
+    }
+  }, [currentSelection]);
+
+  function handleCheckboxChange() {
+    let newQuery: string = '';
+    if (selectedOptions.length > 0) {
+      const selector = optionsToVariantSelector(selectedOptions);
+      newQuery = transformToVariantQuery(selector);
+    } else if (inputValue) {
+      newQuery = inputValue;
+    }
+    setAdvancedSearch(!advancedSearch);
+    setVariantQuery(newQuery);
+  }
+
+  // --- Drag&drop ---
+
+  const changeAdvancedSearch = (value: boolean) => {
+    setAdvancedSearch(value);
+  };
+
+  const dropToField = (query: any) => {
+    if (query) {
+      const selector = JSON.parse(query) as VariantSelector;
+      if (selector.variantQuery) {
+        changeAdvancedSearch(true);
+        setSelectedOptions([]);
+      } else {
+        setVariantQuery('');
+        changeAdvancedSearch(false);
+      }
+
+      applySelector(selector);
+    }
+  };
+
+  const [{ isOver }, drop] = useDrop(() => ({
+    accept: 'div',
+    drop: (item: any) => dropToField(item.query),
+    collect: monitor => ({
+      isOver: monitor.isOver(),
+    }),
+  }));
+
+  // --- Rendering ---
+
+  return (
+    <div
+      ref={drop}
+      className={'m-1 p-1 border-2 border-dashed ' + (isOver ? 'border-black' : 'border-transparent')}
+    >
+      <form
+        className='w-full flex flex-row items-center'
+        onSubmit={e => {
+          e.preventDefault();
+          triggerSearch();
+        }}
+      >
+        {!advancedSearch ? (
+          <SimpleVariantSearchField
+            selectedOptions={selectedOptions}
+            setSelectedOptions={newSelectedOptions => {
+              setSelectedOptions(newSelectedOptions);
+              onVariantSelect(optionsToVariantSelector(newSelectedOptions));
+            }}
+            inputValue={inputValue}
+            setInputValue={setInputValue}
+          />
+        ) : (
+          <AdvancedVariantSearchField
+            variantQuery={variantQuery}
+            setVariantQuery={(newValue: string) => {
+              setVariantQuery(newValue);
+              onVariantSelect({ variantQuery: newValue });
+            }}
+          />
+        )}
+      </form>
+      <div>
+        <Form.Check
+          type='checkbox'
+          label='Advanced search'
+          checked={advancedSearch}
+          onChange={_ => handleCheckboxChange()}
+          className='mb-3'
+        />
+      </div>
+    </div>
+  );
+};
+
+type SimpleVariantSearchFieldProps = {
+  selectedOptions: SearchOption[];
+  setSelectedOptions: (newOptions: SearchOption[]) => void;
+  inputValue: string;
+  setInputValue: (newValue: string) => void;
+};
+
+function SimpleVariantSearchField({
+  selectedOptions,
+  setSelectedOptions,
+  inputValue,
+  setInputValue,
+}: SimpleVariantSearchFieldProps) {
+  const [menuIsOpen, setMenuIsOpen] = useState<boolean>(false);
 
   const pangoLineages = useQuery(
     signal =>
@@ -177,22 +295,6 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       ).then(dataset => new Set(dataset.filter(e => e.nextstrainClade).map(e => e.nextstrainClade!))),
     []
   );
-
-  const applySelector = (selector: VariantSelector) => {
-    if (selector.variantQuery !== undefined) {
-      setAdvancedSearch(true);
-      setVariantQuery(selector.variantQuery);
-    } else {
-      setAdvancedSearch(false);
-      setSelectedOptions(variantSelectorToOptions(selector));
-    }
-  };
-
-  useDeepCompareEffect(() => {
-    if (currentSelection) {
-      applySelector(currentSelection);
-    }
-  }, [currentSelection]);
 
   const suggestPangolinLineages = (query: string): string[] => {
     return (pangoLineages.data ?? []).filter(pl => pl.toUpperCase().startsWith(query.toUpperCase()));
@@ -358,117 +460,48 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     );
   };
 
-  useEffect(() => {
-    const submitVariant = () => {
-      if (!advancedSearch) {
-        onVariantSelect(optionsToVariantSelector(selectedOptions));
-      } else {
-        onVariantSelect({ variantQuery });
-      }
-    };
-    submitVariant();
-  }, [selectedOptions, variantQuery, advancedSearch, onVariantSelect]);
-
-  function handleCheckboxChange() {
-    let newQuery: string = '';
-    if (selectedOptions.length > 0) {
-      const selector = optionsToVariantSelector(selectedOptions);
-      newQuery = transformToVariantQuery(selector);
-    } else if (inputValue) {
-      newQuery = inputValue;
-    }
-    setAdvancedSearch(!advancedSearch);
-    setVariantQuery(newQuery);
-  }
-
-  // --- Drag&drop ---
-
-  const changeAdvancedSearch = (value: boolean) => {
-    setAdvancedSearch(value);
-  };
-
-  const dropToField = (query: any) => {
-    if (query) {
-      const selector = JSON.parse(query) as VariantSelector;
-      if (selector.variantQuery) {
-        changeAdvancedSearch(true);
-        setSelectedOptions([]);
-      } else {
-        setVariantQuery('');
-        changeAdvancedSearch(false);
-      }
-
-      applySelector(selector);
-    }
-  };
-
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: 'div',
-    drop: (item: any) => dropToField(item.query),
-    collect: monitor => ({
-      isOver: !!monitor.isOver(),
-    }),
-  }));
-
-  // --- Rendering ---
-
   return (
-    <div
-      ref={drop}
-      className={'m-1 p-1 border-2 border-dashed ' + (isOver ? 'border-black' : 'border-transparent')}
-    >
-      <form
-        className='w-full flex flex-row items-center'
-        onSubmit={e => {
-          e.preventDefault();
-          triggerSearch();
-        }}
-      >
-        {!advancedSearch ? (
-          <AsyncSelect
-            className='w-full mr-2'
-            components={{ DropdownIndicator }}
-            placeholder='ins_S:214:EPE, ins_22204:?GAG?GAA?, B.1.1.7, S:484K, C913'
-            isMulti
-            defaultOptions={suggestOptions('')}
-            loadOptions={promiseOptions}
-            onChange={(_, change) => {
-              if (change.action === 'select-option') {
-                setSelectedOptions([...selectedOptions!, change.option!]);
-                setInputValue('');
-                setMenuIsOpen(false);
-              } else if (change.action === 'remove-value' || change.action === 'pop-value') {
-                setSelectedOptions(selectedOptions.filter(o => o.value !== change.removedValue.value));
-              } else if (change.action === 'clear') {
-                setSelectedOptions([]);
-                setInputValue('');
-              }
-            }}
-            styles={colorStyles}
-            onInputChange={handleInputChange}
-            value={selectedOptions}
-            inputValue={inputValue}
-            menuIsOpen={menuIsOpen}
-          />
-        ) : (
-          <Form.Control
-            type='text'
-            placeholder='(B.1.1.529* | S:67V) & !C913T'
-            className='w-full mr-2'
-            value={variantQuery}
-            onChange={e => setVariantQuery(e.target.value)}
-          />
-        )}
-      </form>
-      <div>
-        <Form.Check
-          type='checkbox'
-          label='Advanced search'
-          checked={advancedSearch}
-          onChange={_ => handleCheckboxChange()}
-          className='mb-3'
-        />
-      </div>
-    </div>
+    <AsyncSelect
+      className='w-full mr-2'
+      components={{ DropdownIndicator }}
+      placeholder='ins_S:214:EPE, ins_22204:?GAG?GAA?, B.1.1.7, S:484K, C913'
+      isMulti
+      defaultOptions={suggestOptions('')}
+      loadOptions={promiseOptions}
+      onChange={(_, change) => {
+        if (change.action === 'select-option') {
+          setSelectedOptions([...selectedOptions!, change.option!]);
+          setInputValue('');
+          setMenuIsOpen(false);
+        } else if (change.action === 'remove-value' || change.action === 'pop-value') {
+          setSelectedOptions(selectedOptions.filter(o => o.value !== change.removedValue.value));
+        } else if (change.action === 'clear') {
+          setSelectedOptions([]);
+          setInputValue('');
+        }
+      }}
+      styles={colorStyles}
+      onInputChange={handleInputChange}
+      value={selectedOptions}
+      inputValue={inputValue}
+      menuIsOpen={menuIsOpen}
+    />
   );
+}
+
+type AdvancedSearchFieldProps = {
+  variantQuery: string;
+  setVariantQuery: (newValue: string) => void;
 };
+
+function AdvancedVariantSearchField({ variantQuery, setVariantQuery }: AdvancedSearchFieldProps) {
+  return (
+    <Form.Control
+      type='text'
+      placeholder='(B.1.1.529* | S:67V) & !C913T'
+      className='w-full mr-2'
+      value={variantQuery}
+      onChange={e => setVariantQuery(e.target.value)}
+    />
+  );
+}

@@ -8,6 +8,16 @@ import { PangoCountSampleData } from '../../data/sample/PangoCountSampleDataset'
 import { _fetchAggSamples } from '../../data/api-lapis';
 import { isValidPangoLineageQuery } from '../../data/VariantSelector';
 
+jest.mock('../../data/sample/PangoCountSampleDataset');
+const fromApiMock = jest.fn();
+PangoCountSampleData.fromApi = fromApiMock;
+
+jest.mock('../../data/api-lapis');
+const fetchAggSamplesMock = _fetchAggSamples as jest.Mock;
+
+const onVariantSelectMock = jest.fn();
+const triggerSearchMock = jest.fn();
+
 function getSearchTextField() {
   return screen.getByRole('combobox');
 }
@@ -16,89 +26,156 @@ async function renderVariantSearchField() {
   await act(() => {
     render(
       <DndProvider backend={TestBackend}>
-        <VariantSearchField onVariantSelect={() => {}} triggerSearch={() => {}} />
+        <VariantSearchField onVariantSelect={onVariantSelectMock} triggerSearch={triggerSearchMock} />
       </DndProvider>
     );
   });
 }
 
-jest.mock('../../data/sample/PangoCountSampleDataset');
-const fromApiMock = jest.fn();
-PangoCountSampleData.fromApi = fromApiMock;
-
-jest.mock('../../data/api-lapis');
-const _fetchAggSamplesMock = _fetchAggSamples as jest.Mock;
-
 describe('VariantSearchField', () => {
   beforeEach(() => {
-    fromApiMock.mockReset();
+    jest.resetAllMocks();
     fromApiMock.mockResolvedValue({ payload: [] });
-
-    _fetchAggSamplesMock.mockReset();
-    _fetchAggSamplesMock.mockResolvedValue([]);
+    fetchAggSamplesMock.mockResolvedValue([]);
   });
 
-  test('should display input field with placeholder', async () => {
-    await renderVariantSearchField();
+  describe('the simple search field', () => {
+    function getSearchValueThatLooksLikeAPangoLineage() {
+      const pangoLineageSearchKey = 'A';
+      expect(isValidPangoLineageQuery(pangoLineageSearchKey)).toBe(true);
+      return pangoLineageSearchKey;
+    }
 
-    const placeholder = 'ins_S:214:EPE, ins_22204:?GAG?GAA?, B.1.1.7, S:484K, C913';
-    expect(screen.getByText(placeholder)).toBeInTheDocument();
-    expect(getSearchTextField()).toBeInTheDocument();
+    test('should display input field with placeholder', async () => {
+      await renderVariantSearchField();
+
+      const placeholder = 'ins_S:214:EPE, ins_22204:?GAG?GAA?, B.1.1.7, S:484K, C913';
+      expect(screen.getByText(placeholder)).toBeInTheDocument();
+      expect(getSearchTextField()).toBeInTheDocument();
+    });
+
+    test('should display search key in input field', async () => {
+      await renderVariantSearchField();
+
+      await userEvent.type(getSearchTextField(), 'TestStrain');
+
+      expect(getSearchTextField()).toHaveValue('TestStrain');
+    });
+
+    test('should open dropdown menu on input', async () => {
+      await renderVariantSearchField();
+      expect(screen.queryByText('No options')).not.toBeInTheDocument();
+
+      await userEvent.type(getSearchTextField(), 'NotAPangoLineage');
+
+      expect(screen.getByText('No options')).toBeInTheDocument();
+    });
+
+    test('should display default autocomplete suggestions for pangoLineage input', async () => {
+      await renderVariantSearchField();
+
+      const pangoLineageSearchKey = getSearchValueThatLooksLikeAPangoLineage();
+
+      await userEvent.type(getSearchTextField(), pangoLineageSearchKey);
+
+      expect(screen.getByText(pangoLineageSearchKey)).toBeInTheDocument();
+      expect(screen.getByText(pangoLineageSearchKey + '*')).toBeInTheDocument();
+      expect(screen.getByText(pangoLineageSearchKey + ' (Nextclade)')).toBeInTheDocument();
+      expect(screen.getByText(pangoLineageSearchKey + '* (Nextclade)')).toBeInTheDocument();
+    });
+
+    test('should display autocomplete pangoLineage suggestions for pangoLineage input', async () => {
+      const pangoLineageSearchKey = getSearchValueThatLooksLikeAPangoLineage();
+
+      const suggestedPangoLineage = pangoLineageSearchKey + 'SUGGESTION';
+      fromApiMock.mockResolvedValue({ payload: [{ pangoLineage: suggestedPangoLineage }] });
+
+      await renderVariantSearchField();
+
+      await userEvent.type(getSearchTextField(), pangoLineageSearchKey);
+
+      expect(screen.getByText(suggestedPangoLineage)).toBeInTheDocument();
+    });
+
+    test('should display autocomplete nextstrainClade suggestions for nexstrainClade input', async () => {
+      const pangoLineageSearchKey = 'SOMEKEY';
+      fetchAggSamplesMock.mockResolvedValue([{ nextstrainClade: pangoLineageSearchKey }]);
+
+      await renderVariantSearchField();
+
+      await userEvent.type(getSearchTextField(), pangoLineageSearchKey);
+
+      expect(screen.getByText(pangoLineageSearchKey + ' (Nextstrain clade)')).toBeInTheDocument();
+    });
+
+    test('should trigger onVariantSelect callback when accepting suggestion', async () => {
+      await renderVariantSearchField();
+
+      await userEvent.type(getSearchTextField(), getSearchValueThatLooksLikeAPangoLineage() + '{enter}');
+
+      expect(getSearchTextField()).toHaveValue('');
+      expect(onVariantSelectMock).toHaveBeenCalledWith({
+        aaInsertions: [],
+        aaMutations: [],
+        nextcladePangoLineage: 'A',
+        nucInsertions: [],
+        nucMutations: [],
+      });
+    });
+
+    test('should trigger search when pressing enter after accepting suggestion', async () => {
+      await renderVariantSearchField();
+
+      await userEvent.type(getSearchTextField(), getSearchValueThatLooksLikeAPangoLineage() + '{enter}');
+      await userEvent.type(getSearchTextField(), '{enter}');
+
+      expect(triggerSearchMock).toHaveBeenCalled();
+    });
   });
 
-  test('should display search key in input field', async () => {
-    await renderVariantSearchField();
+  describe('the advanced search field', () => {
+    function getAdvancedSearchField() {
+      return screen.getByRole('textbox');
+    }
 
-    await userEvent.type(getSearchTextField(), 'TestStrain');
+    function getAdvancedSearchCheckbobx() {
+      return screen.getByRole('checkbox');
+    }
 
-    expect(getSearchTextField()).toHaveValue('TestStrain');
-  });
+    test('should be disabled by default', async () => {
+      await renderVariantSearchField();
 
-  test('should open dropdown menu on input', async () => {
-    await renderVariantSearchField();
-    expect(screen.queryByText('No options')).not.toBeInTheDocument();
+      expect(getAdvancedSearchCheckbobx()).not.toBeChecked();
+    });
 
-    await userEvent.type(getSearchTextField(), 'NotAPangoLineage');
+    test('should inherit the value from the simple search field when changing', async () => {
+      await renderVariantSearchField();
 
-    expect(screen.getByText('No options')).toBeInTheDocument();
-  });
+      await userEvent.type(getSearchTextField(), 'user input');
+      expect(getSearchTextField()).toHaveValue('user input');
 
-  test('should display default autocomplete suggestions for pangoLineage input', async () => {
-    await renderVariantSearchField();
+      await userEvent.click(getAdvancedSearchCheckbobx());
 
-    const pangoLineageSearchKey = 'A';
-    expect(isValidPangoLineageQuery(pangoLineageSearchKey)).toBe(true);
+      expect(getAdvancedSearchField()).toHaveValue('user input');
+    });
 
-    await userEvent.type(getSearchTextField(), pangoLineageSearchKey);
+    test('should trigger onVariantSelect callback when entering query', async () => {
+      await renderVariantSearchField();
+      await userEvent.click(getAdvancedSearchCheckbobx());
 
-    expect(screen.getByText(pangoLineageSearchKey)).toBeInTheDocument();
-    expect(screen.getByText(pangoLineageSearchKey + '*')).toBeInTheDocument();
-    expect(screen.getByText(pangoLineageSearchKey + ' (Nextclade)')).toBeInTheDocument();
-    expect(screen.getByText(pangoLineageSearchKey + '* (Nextclade)')).toBeInTheDocument();
-  });
+      await userEvent.type(getAdvancedSearchField(), 'my query');
 
-  test('should display autocomplete pangoLineage suggestions for pangoLineage input', async () => {
-    const pangoLineageSearchKey = 'A';
-    expect(isValidPangoLineageQuery(pangoLineageSearchKey)).toBe(true);
+      expect(getAdvancedSearchField()).toHaveValue('my query');
+      expect(onVariantSelectMock).toHaveBeenCalledWith({ variantQuery: 'my query' });
+    });
 
-    const suggestedPangoLineage = pangoLineageSearchKey + 'SUGGESTION';
-    fromApiMock.mockResolvedValue({ payload: [{ pangoLineage: suggestedPangoLineage }] });
+    test('should trigger search when pressing enter', async () => {
+      await renderVariantSearchField();
+      await userEvent.click(getAdvancedSearchCheckbobx());
 
-    await renderVariantSearchField();
+      await userEvent.type(getAdvancedSearchField(), 'my query{enter}');
 
-    await userEvent.type(getSearchTextField(), pangoLineageSearchKey);
-
-    expect(screen.getByText(suggestedPangoLineage)).toBeInTheDocument();
-  });
-
-  test('should display autocomplete nextstrainClade suggestions for nexstrainClade input', async () => {
-    const pangoLineageSearchKey = 'SOMEKEY';
-    _fetchAggSamplesMock.mockResolvedValue([{ nextstrainClade: pangoLineageSearchKey }]);
-
-    await renderVariantSearchField();
-
-    await userEvent.type(getSearchTextField(), pangoLineageSearchKey);
-
-    expect(screen.getByText(pangoLineageSearchKey + ' (Nextstrain clade)')).toBeInTheDocument();
+      expect(triggerSearchMock).toHaveBeenCalled();
+    });
   });
 });
