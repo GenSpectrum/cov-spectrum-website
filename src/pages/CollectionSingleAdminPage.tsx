@@ -249,7 +249,6 @@ const AdminPanel = ({ collection, adminKey }: AdminPanelProps) => {
               onChange={e => changeVariant('description', e.target.value, i)}
             />
             <VariantSearchField
-              isSimple={false}
               currentSelection={variant.selector}
               onVariantSelect={newSelection => changeVariant('query', JSON.stringify(newSelection), i)}
               triggerSearch={() => {}}
