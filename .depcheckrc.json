@@ -1,0 +1,3 @@
+{
+  "ignores": ["all-contributors-cli", "@types/d3"]
+}
