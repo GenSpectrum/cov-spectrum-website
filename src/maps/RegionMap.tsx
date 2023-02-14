@@ -1,27 +1,20 @@
 import React, { useState } from 'react';
-// import { csv } from 'd3-fetch';
 import { scaleLinear } from 'd3-scale';
 import { ComposableMap, Geographies, Geography, Sphere, Graticule, ZoomableGroup } from 'react-simple-maps';
 import { default as world } from './world.json';
 import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
 import { Tooltip as ReactTooltip } from 'react-tooltip';
 
-export enum REGION {
-  WORLD = 'world',
-  EUROPE = 'europe',
-  AFRICA = 'africa',
-  AMERICA = 'america',
-  ASIA = 'asia',
-  OCEANIA = 'oceania',
-}
+const DEFAULT_TOOLTIP_TEXT = 'Hover a country...';
 
 const HEIGHT = 400;
 interface Props {
   selector?: LocationDateVariantSelector;
   data: { country: string; value: number }[];
 }
+
 const RegionMap = ({ data }: Props) => {
-  const [tooltipContent, setTooltipContent] = useState('help');
+  const [tooltipContent, setTooltipContent] = useState(DEFAULT_TOOLTIP_TEXT);
   const values: number[] = data.map(s => s.value);
   const colorScale = scaleLinear<String, string>()
     .domain([0, Math.max(...values)])
@@ -56,7 +49,7 @@ const RegionMap = ({ data }: Props) => {
                         );
                       }}
                       onMouseLeave={() => {
-                        setTooltipContent('');
+                        setTooltipContent(DEFAULT_TOOLTIP_TEXT);
                       }}
                       key={geo.rsmKey}
                       geography={geo}
@@ -74,7 +67,7 @@ const RegionMap = ({ data }: Props) => {
           }
         </ZoomableGroup>
       </ComposableMap>
-      <ReactTooltip className='bg-black shadow-xl' id={randomTooltipId}>
+      <ReactTooltip id={randomTooltipId} className='mx-2'>
         {tooltipContent}
       </ReactTooltip>
     </>

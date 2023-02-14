@@ -91,7 +91,9 @@ export const VariantInternationalComparisonMap = ({
           min={0}
           max={availableDates.length - 1}
           valueLabelDisplay='on'
-          valueLabelFormat={value => <p className={MARK_CLASSES}>{availableDates[value]?.string}</p>}
+          valueLabelFormat={(value: number) => (
+            <p className={MARK_CLASSES}>{availableDates[value]?.string}</p>
+          )}
           value={selectedRange}
           onChange={handleRangeChange}
         />
