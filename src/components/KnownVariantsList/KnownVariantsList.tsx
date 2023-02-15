@@ -5,7 +5,6 @@ import { DateCountSampleData, DateCountSampleDataset } from '../../data/sample/D
 import { SpecialDateRangeSelector } from '../../data/DateRangeSelector';
 import { formatVariantDisplayName, VariantSelector } from '../../data/VariantSelector';
 import { globalDateCache } from '../../helpers/date-cache';
-import assert from 'assert';
 import dayjs from 'dayjs';
 import { useQuery } from '../../helpers/query-hook';
 import { AnalysisMode } from '../../data/AnalysisMode';
@@ -13,6 +12,7 @@ import { HostAndQcSelector } from '../../data/HostAndQcSelector';
 import { LapisSelector } from '../../data/LapisSelector';
 import { fetchCollections } from '../../data/api';
 import { Collection, CollectionVariant } from '../../data/Collection';
+import { assert } from '../../helpers/assert';
 
 const getLoadVariantCardLoaders = (numberCards: number) => {
   let loaders = [];

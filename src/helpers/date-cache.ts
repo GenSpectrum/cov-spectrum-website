@@ -1,10 +1,10 @@
-import assert from 'assert';
 import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import utc from 'dayjs/plugin/utc';
 import minMax from 'dayjs/plugin/minMax';
 import weekday from 'dayjs/plugin/weekday';
 import calendar from 'dayjs/plugin/calendar';
+import { assert } from './assert';
 
 require('dayjs/locale/de');
 dayjs.locale('de');
@@ -115,7 +115,7 @@ class DateCache {
         max = day;
       }
     }
-    assert.strictEqual(min === undefined, max === undefined);
+    assert((min === undefined) === (max === undefined));
     return min && max && { min, max };
   }
 
@@ -154,7 +154,7 @@ class DateCache {
         max = week;
       }
     }
-    assert.strictEqual(min === undefined, max === undefined);
+    assert((min === undefined) === (max === undefined));
     return min && max && { min, max };
   }
 

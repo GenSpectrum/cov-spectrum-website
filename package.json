@@ -32,7 +32,6 @@
     "@types/react-simple-maps": "^3.0.0",
     "@types/react-test-renderer": "^18.0.0",
     "@types/styled-components": "^5.1.26",
-    "assert": "^2.0.0",
     "bootstrap": "^5.2.3",
     "chroma-js": "^2.4.2",
     "d3": "^7.8.2",

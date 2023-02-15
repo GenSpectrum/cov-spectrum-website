@@ -1,4 +1,3 @@
-import assert from 'assert';
 import { useCallback, useMemo } from 'react';
 import { useLocation, useMatch, useNavigate } from 'react-router';
 import {
@@ -39,6 +38,7 @@ import {
   readQcSelectorFromUrlSearchParams,
 } from '../data/QcSelector';
 import { defaultAnalysisMode, defaultDateRange, defaultSamplingStrategy } from '../data/default-selectors';
+import { assert } from './assert';
 
 export interface ExploreUrl {
   location: LocationSelector;
