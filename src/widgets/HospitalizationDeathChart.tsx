@@ -1,23 +1,23 @@
 import {
-  HospitalizationDeathChartInner,
   GroupValue,
+  HospitalizationDeathChartInner,
+  PerTrueFalse,
   SubgroupTexts,
   SubgroupValue,
   TopLevelTexts,
   ValueWithConfidence,
-  PerTrueFalse,
 } from './HospitalizationDeathChartInner';
 import { capitalize } from '../helpers/lodash_alternatives';
 import { calculateWilsonInterval } from '../helpers/wilson-interval';
 import { useResizeDetector } from 'react-resize-detector';
 import React, { useMemo } from 'react';
 import { fillFromPrimitiveMap, possibleAgeKeys } from '../helpers/fill-missing';
-import assert from 'assert';
 import { approximateBinomialRatioConfidence } from '../helpers/binomial-ratio-confidence';
 import DownloadWrapper from './DownloadWrapper';
 import { Utils } from '../services/Utils';
 import { AgeCountSampleData } from '../data/sample/AgeCountSampleDataset';
 import { HospDiedAgeSampleDataset } from '../data/sample/HospDiedAgeSampleDataset';
+import { assert } from '../helpers/assert';
 
 export type HospitalizationDeathChartProps = {
   variantSampleSet: HospDiedAgeSampleDataset;

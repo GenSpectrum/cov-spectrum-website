@@ -1,4 +1,4 @@
-import assert from 'assert';
+import { assert } from '../../helpers/assert';
 
 export interface GridCellRequest {
   minWidth?: number;

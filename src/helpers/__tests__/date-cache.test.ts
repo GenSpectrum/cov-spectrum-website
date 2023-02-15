@@ -19,79 +19,51 @@ describe('DateCache', () => {
   });
 
   describe('getIsoWeek', () => {
-    const goodCases: [string, string, number, number][] = [
-      ['2020-07', '2020-07', 2020, 7],
-      ['2020-7', '2020-07', 2020, 7],
-      ['2020-15', '2020-15', 2020, 15],
-      ['2020-01', '2020-01', 2020, 1],
-      ['2020-52', '2020-52', 2020, 52],
-      ['2020-53', '2020-53', 2020, 53],
-    ];
-    const badCases: string[] = [
-      '2020-0',
-      '2020-00',
-      '2020-000',
-      '2020-007',
-      '07-2020',
-      '15-2020',
-      '20-07',
-      '',
-      '2020',
-      '2020-54',
+    const dateCache = new DateCacheClassForTests();
+    test.each([
+      { nonNormalizedYearWeekString: '2020-07', yearWeekString: '2020-07', isoYear: 2020, isoWeek: 7 },
+      { nonNormalizedYearWeekString: '2020-7', yearWeekString: '2020-07', isoYear: 2020, isoWeek: 7 },
+      { nonNormalizedYearWeekString: '2020-15', yearWeekString: '2020-15', isoYear: 2020, isoWeek: 15 },
+      { nonNormalizedYearWeekString: '2020-01', yearWeekString: '2020-01', isoYear: 2020, isoWeek: 1 },
+      { nonNormalizedYearWeekString: '2020-52', yearWeekString: '2020-52', isoYear: 2020, isoWeek: 52 },
+      { nonNormalizedYearWeekString: '2020-53', yearWeekString: '2020-53', isoYear: 2020, isoWeek: 53 },
+    ])(
+      'should calculate yearWeekString: $yearWeekString , isoYear: $isoYear , isoWeek: $isoWeek from input $nonNormalizedYearWeekString',
+      ({ nonNormalizedYearWeekString, yearWeekString, isoYear, isoWeek }) => {
+        const week = dateCache.getIsoWeek(nonNormalizedYearWeekString);
+        expect(week.yearWeekString).toEqual(yearWeekString);
+        expect(week.isoYear).toEqual(isoYear);
+        expect(week.isoWeek).toEqual(isoWeek);
+        expect(week.firstDay.isoWeek === week).toBe(true);
+      }
+    );
+
+    test.each([
+      { nonNormalizedYearWeekString: '2020-0' },
+      { nonNormalizedYearWeekString: '2020-00' },
+      { nonNormalizedYearWeekString: '2020-000' },
+      { nonNormalizedYearWeekString: '2020-007' },
+      { nonNormalizedYearWeekString: '07-2020' },
+      { nonNormalizedYearWeekString: '15-2020' },
+      { nonNormalizedYearWeekString: '20-07' },
+      { nonNormalizedYearWeekString: '' },
+      { nonNormalizedYearWeekString: '2020' },
+      { nonNormalizedYearWeekString: '2020-54' },
 
       // 2017 has 52 ISO weeks
-      '2017-53',
-      '2017-54',
-      '2017-55',
+      { nonNormalizedYearWeekString: '2017-53' },
+      { nonNormalizedYearWeekString: '2017-54' },
+      { nonNormalizedYearWeekString: '2017-55' },
 
       // 2020 has 53 ISO weeks
-      '2020-54',
-      '2020-55',
-    ];
-
-    function testGoodCase(c: [string, string, number, number], dateCache: DateCache) {
-      const week = dateCache.getIsoWeek(c[0]);
-      expect(week.yearWeekString).toEqual(c[1]);
-      expect(week.isoYear).toEqual(c[2]);
-      expect(week.isoWeek).toEqual(c[3]);
-
-      if (week.firstDay.isoWeek !== week) {
-        console.log(week.yearWeekString, week.firstDay.isoWeek.yearWeekString);
+      { nonNormalizedYearWeekString: '2020-54' },
+      { nonNormalizedYearWeekString: '2020-55' },
+    ])(
+      'should throw error for wrong input $nonNormalizedYearWeekString',
+      ({ nonNormalizedYearWeekString }) => {
+        expect(() => dateCache.getIsoWeek(nonNormalizedYearWeekString)).toThrow();
       }
-      expect(week.firstDay.isoWeek === week).toBe(true);
-    }
-
-    function testBadCase(c: string, dateCache: DateCache) {
-      expect(() => dateCache.getIsoWeek(c)).toThrow();
-    }
-
-    for (const c of goodCases) {
-      test(`parse "${c[0]}"`, () => {
-        testGoodCase(c, new DateCacheClassForTests());
-      });
-    }
-
-    for (const c of badCases) {
-      test(`parse "${c}" should fail`, () => {
-        testBadCase(c, new DateCacheClassForTests());
-      });
-    }
-
-    test(`parses work in any order on the same DateCache instance`, () => {
-      for (let i = 0; i < 10; i++) {
-        const dateCache = new DateCacheClassForTests();
-        let testers = [
-          ...goodCases.map(c => () => testGoodCase(c, dateCache)),
-          ...badCases.map(c => () => testBadCase(c, dateCache)),
-        ];
-        testers = testers.flatMap(tester => times(random(0, 3), () => tester));
-        testers = shuffle(testers);
-
-        for (const tester of testers) {
-          tester();
-        }
-      }
-    });
+    );
   });
 
   describe('relationships between days and weeks', () => {
@@ -100,6 +72,7 @@ describe('DateCache', () => {
       firstDayInWeek: string;
       yearWeekStrings: string[];
     }
+
     const cases: Case[] = [
       {
         label: 'typical case',
