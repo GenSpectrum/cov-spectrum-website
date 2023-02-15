@@ -1,18 +1,6 @@
 import dayjs, { Dayjs } from 'dayjs';
-import isoWeek from 'dayjs/plugin/isoWeek';
-import utc from 'dayjs/plugin/utc';
-import minMax from 'dayjs/plugin/minMax';
-import weekday from 'dayjs/plugin/weekday';
-import calendar from 'dayjs/plugin/calendar';
+import isoWeek from 'dayjs/plugin/isoWeek'; // eslint-disable-line -- tell the type system that Dayjs::isoWeekYear is available
 import { assert } from './assert';
-
-require('dayjs/locale/de');
-dayjs.locale('de');
-dayjs.extend(isoWeek);
-dayjs.extend(utc);
-dayjs.extend(minMax);
-dayjs.extend(weekday);
-dayjs.extend(calendar);
 
 export interface UnifiedDay {
   string: string;
