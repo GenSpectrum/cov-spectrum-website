@@ -179,7 +179,9 @@ export const App = () => {
       </div>
       {!hideHeaderAndFooter && (
         <Footer className='text-center'>
-          <div>The sequence data was updated: {dayjs(getCurrentLapisDataVersionDate()).calendar()}</div>
+          <div>
+            The sequence data was updated: {dayjs(getCurrentLapisDataVersionDate()).locale('en').calendar()}
+          </div>
           {nextcladeDatasetInfo?.tag && <div>Nextclade dataset version: {nextcladeDatasetInfo.tag}</div>}
           {sequenceDataSource === 'gisaid' && (
             <div>

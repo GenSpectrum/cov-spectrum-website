@@ -18,6 +18,7 @@ import {
 } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
+import setupDayjs from './helpers/dayjsSetup';
 
 export let baseLocation = 'Europe';
 
@@ -39,8 +40,6 @@ const HTML5toTouch: MultiBackendOptions = {
     },
   ],
 };
-
-//{ id: string; backend: BackendFactory; transition: Transition; options?: undefined; preview?: undefined; }
 
 async function main() {
   // Initialize Sentry
@@ -80,6 +79,8 @@ async function main() {
       baseLocation = currentUserCountry.region;
     }
   } catch (_) {}
+
+  setupDayjs();
 
   const container = document.getElementById('root');
   const root = createRoot(container!);
