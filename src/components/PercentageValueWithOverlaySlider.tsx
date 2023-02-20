@@ -7,6 +7,8 @@ export function PercentageValueWithOverlaySlider({
   percentageValue,
   setPercentageValue,
 }: ToolOverlaySliderProps) {
+  const percentDisplayValue = `${(percentageValue * 100).toFixed(0)}%`;
+
   return (
     <OverlayTrigger
       trigger='click'
@@ -21,7 +23,7 @@ export function PercentageValueWithOverlaySlider({
       placement='bottom'
     >
       <span className='cursor-pointer px-3 rounded bg-gray-100 hover:bg-gray-300 font-bold'>
-        {(percentageValue * 100).toFixed(0)}%
+        {percentDisplayValue}
       </span>
     </OverlayTrigger>
   );

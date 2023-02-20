@@ -262,39 +262,46 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
           id="metric-with-tooltip"
         >
           <div
-            data-for="metric-tooltip-Prevalence range"
-            data-tip="Proportion relative to all samples collected from this age group."
+            className="flex w-full"
           >
             <div
-              className="flex w-full"
-            >
-              <div
-                className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
-                style={
-                  Object {
-                    "color": "#1F407A",
-                  }
+              className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+              style={
+                Object {
+                  "color": "#1F407A",
                 }
-              >
-                0.03-0
-                %
-              </div>
-              <div
-                className="***masked*** self-end"
-              />
+              }
+            >
+              0.03-0%
             </div>
             <div
-              className="flex text-base text-gray-400 h-7 justify-start"
-              id="metric-title"
+              className="***masked*** self-end"
+            />
+          </div>
+          <div
+            className="flex text-base text-gray-400 h-7 justify-start"
+            id="metric-title"
+          >
+            <p
+              className="w-auto text-clip"
             >
-              <p
-                className="w-auto text-clip"
-              >
-                Prevalence range 
-              </p>
+              Prevalence range 
+            </p>
+            <div
+              className="flex items-center pl-1 grow fill-current text-gray-600"
+              id="info-wrapper"
+            >
               <div
-                className="flex items-center pl-1 grow fill-current text-gray-600"
-                id="info-wrapper"
+                aria-label="Proportion relative to all samples collected from this age group."
+                aria-labelledby={null}
+                className=""
+                data-mui-internal-clone-element={true}
+                onBlur={[Function]}
+                onFocus={[Function]}
+                onMouseLeave={[Function]}
+                onMouseOver={[Function]}
+                onTouchEnd={[Function]}
+                onTouchStart={[Function]}
               >
                 <svg
                   fill="currentColor"
@@ -319,17 +326,6 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
                 </svg>
               </div>
             </div>
-          </div>
-          <div
-            className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
-            id="metric-tooltip-Prevalence range"
-            role="tooltip"
-            style={Object {}}
-          >
-            <div
-              className="react-tooltip-arrow styles-module_arrow__K0L3T"
-              style={Object {}}
-            />
           </div>
         </div>
         <div
@@ -337,38 +333,46 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
           id="metric-with-tooltip"
         >
           <div
-            data-for="metric-tooltip-Divisions"
-            data-tip="Number of divisions with prevalence data. Some divisions may not be visible."
+            className="flex w-full"
           >
             <div
-              className="flex w-full"
-            >
-              <div
-                className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
-                style={
-                  Object {
-                    "color": "#7f8c8d",
-                  }
+              className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+              style={
+                Object {
+                  "color": "#7f8c8d",
                 }
-              >
-                16
-              </div>
-              <div
-                className="***masked*** self-end"
-              />
+              }
+            >
+              16
             </div>
             <div
-              className="flex text-base text-gray-400 h-7 justify-start"
-              id="metric-title"
+              className="***masked*** self-end"
+            />
+          </div>
+          <div
+            className="flex text-base text-gray-400 h-7 justify-start"
+            id="metric-title"
+          >
+            <p
+              className="w-auto text-clip"
             >
-              <p
-                className="w-auto text-clip"
-              >
-                Divisions 
-              </p>
+              Divisions 
+            </p>
+            <div
+              className="flex items-center pl-1 grow fill-current text-gray-600"
+              id="info-wrapper"
+            >
               <div
-                className="flex items-center pl-1 grow fill-current text-gray-600"
-                id="info-wrapper"
+                aria-label="Number of divisions with prevalence data. Some divisions may not be visible."
+                aria-labelledby={null}
+                className=""
+                data-mui-internal-clone-element={true}
+                onBlur={[Function]}
+                onFocus={[Function]}
+                onMouseLeave={[Function]}
+                onMouseOver={[Function]}
+                onTouchEnd={[Function]}
+                onTouchStart={[Function]}
               >
                 <svg
                   fill="currentColor"
@@ -393,17 +397,6 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
                 </svg>
               </div>
             </div>
-          </div>
-          <div
-            className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
-            id="metric-tooltip-Divisions"
-            role="tooltip"
-            style={Object {}}
-          >
-            <div
-              className="react-tooltip-arrow styles-module_arrow__K0L3T"
-              style={Object {}}
-            />
           </div>
         </div>
       </div>

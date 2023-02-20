@@ -1,11 +1,9 @@
 import React from 'react';
-import { Tooltip as ReactTooltip } from 'react-tooltip';
 import { BiHelpCircle } from 'react-icons/bi';
 import styled from 'styled-components';
+import { Tooltip } from '@mui/material';
 
-export const METRIC_RIGHT_PADDING_PX = 16;
-export const METRIC_WIDTH_PX = 160;
-const TOOLTIP_DALAY = 500;
+const TOOLTIP_DELAY = 300;
 
 export const MetricsWrapper = ({
   id,
@@ -138,25 +136,24 @@ const Metric = ({
   helpText,
   showPercent,
 }: MetricProps): JSX.Element => {
-  const tooltipId = 'metric-tooltip-' + title;
+  const displayValue = value.toString() + (percent ? '%' : '');
+
   return (
     <MetricWrapper id='metric-with-tooltip'>
-      <div data-for={tooltipId} data-tip={helpText}>
-        <div className='flex w-full'>
-          <ValueWrapper color={color}>
-            {value}
-            {percent && '%'}
-          </ValueWrapper>
-          <PercentWrapper className='self-end'>{showPercent && '' + showPercent + '%'}</PercentWrapper>
-        </div>
-        <MetricTitleWrapper id='metric-title'>
-          <p className='w-auto text-clip'>{title + ' '}</p>
-          <IconWrapper id='info-wrapper'>
-            <BiHelpCircle />
-          </IconWrapper>
-        </MetricTitleWrapper>
+      <div className='flex w-full'>
+        <ValueWrapper color={color}>{displayValue}</ValueWrapper>
+        <PercentWrapper className='self-end'>{showPercent && '' + showPercent + '%'}</PercentWrapper>
       </div>
-      <ReactTooltip id={tooltipId} delayShow={TOOLTIP_DALAY} />
+      <MetricTitleWrapper id='metric-title'>
+        <p className='w-auto text-clip'>{title + ' '}</p>
+        <IconWrapper id={'info-wrapper'}>
+          <Tooltip title={helpText} enterDelay={TOOLTIP_DELAY} arrow>
+            <div>
+              <BiHelpCircle />
+            </div>
+          </Tooltip>
+        </IconWrapper>
+      </MetricTitleWrapper>
     </MetricWrapper>
   );
 };
