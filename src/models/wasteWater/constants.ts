@@ -12,5 +12,6 @@ export const wastewaterVariantColors: {
   'BA.5': '#595EF6',
   'BA.2.75': '#DE9ADB',
   'BQ.1.1': '#8fe000', // improv, not in sync with covariants.org
+  'XBB': '#dd6bff',
   'undetermined': '#999696',
 };
