@@ -150,38 +150,46 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
               id="metric-with-tooltip"
             >
               <div
-                data-for="metric-tooltip-Dead"
-                data-tip="Number of samples taken from patients who eventually died (A random name)"
+                className="flex w-full"
               >
                 <div
-                  className="flex w-full"
-                >
-                  <div
-                    className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
-                    style={
-                      Object {
-                        "color": "#1F407A",
-                      }
+                  className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                  style={
+                    Object {
+                      "color": "#1F407A",
                     }
-                  >
-                    0
-                  </div>
-                  <div
-                    className="sc-hLBbgP dYEqmk self-end"
-                  />
+                  }
+                >
+                  0
                 </div>
                 <div
-                  className="flex text-base text-gray-400 h-7 justify-start"
-                  id="metric-title"
+                  className="sc-hLBbgP dYEqmk self-end"
+                />
+              </div>
+              <div
+                className="flex text-base text-gray-400 h-7 justify-start"
+                id="metric-title"
+              >
+                <p
+                  className="w-auto text-clip"
                 >
-                  <p
-                    className="w-auto text-clip"
-                  >
-                    Dead 
-                  </p>
+                  Dead 
+                </p>
+                <div
+                  className="flex items-center pl-1 grow fill-current text-gray-600"
+                  id="info-wrapper"
+                >
                   <div
-                    className="flex items-center pl-1 grow fill-current text-gray-600"
-                    id="info-wrapper"
+                    aria-label="Number of samples taken from patients who eventually died (A random name)"
+                    aria-labelledby={null}
+                    className=""
+                    data-mui-internal-clone-element={true}
+                    onBlur={[Function]}
+                    onFocus={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseOver={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchStart={[Function]}
                   >
                     <svg
                       fill="currentColor"
@@ -206,17 +214,6 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                     </svg>
                   </div>
                 </div>
-              </div>
-              <div
-                className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
-                id="metric-tooltip-Dead"
-                role="tooltip"
-                style={Object {}}
-              >
-                <div
-                  className="react-tooltip-arrow styles-module_arrow__K0L3T"
-                  style={Object {}}
-                />
               </div>
             </div>
             <div
@@ -224,38 +221,46 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
               id="metric-with-tooltip"
             >
               <div
-                data-for="metric-tooltip-Not dead"
-                data-tip="Number of samples taken from patients who did not eventually die (A random name)"
+                className="flex w-full"
               >
                 <div
-                  className="flex w-full"
-                >
-                  <div
-                    className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
-                    style={
-                      Object {
-                        "color": "#1F407A",
-                      }
+                  className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                  style={
+                    Object {
+                      "color": "#1F407A",
                     }
-                  >
-                    110
-                  </div>
-                  <div
-                    className="sc-hLBbgP dYEqmk self-end"
-                  />
+                  }
+                >
+                  110
                 </div>
                 <div
-                  className="flex text-base text-gray-400 h-7 justify-start"
-                  id="metric-title"
+                  className="sc-hLBbgP dYEqmk self-end"
+                />
+              </div>
+              <div
+                className="flex text-base text-gray-400 h-7 justify-start"
+                id="metric-title"
+              >
+                <p
+                  className="w-auto text-clip"
                 >
-                  <p
-                    className="w-auto text-clip"
-                  >
-                    Not dead 
-                  </p>
+                  Not dead 
+                </p>
+                <div
+                  className="flex items-center pl-1 grow fill-current text-gray-600"
+                  id="info-wrapper"
+                >
                   <div
-                    className="flex items-center pl-1 grow fill-current text-gray-600"
-                    id="info-wrapper"
+                    aria-label="Number of samples taken from patients who did not eventually die (A random name)"
+                    aria-labelledby={null}
+                    className=""
+                    data-mui-internal-clone-element={true}
+                    onBlur={[Function]}
+                    onFocus={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseOver={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchStart={[Function]}
                   >
                     <svg
                       fill="currentColor"
@@ -280,17 +285,6 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                     </svg>
                   </div>
                 </div>
-              </div>
-              <div
-                className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
-                id="metric-tooltip-Not dead"
-                role="tooltip"
-                style={Object {}}
-              >
-                <div
-                  className="react-tooltip-arrow styles-module_arrow__K0L3T"
-                  style={Object {}}
-                />
               </div>
             </div>
           </div>
@@ -451,38 +445,46 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
               id="metric-with-tooltip"
             >
               <div
-                data-for="metric-tooltip-Hospitalized"
-                data-tip="Number of samples taken from patients who were eventually hospitalized (A random name)"
+                className="flex w-full"
               >
                 <div
-                  className="flex w-full"
-                >
-                  <div
-                    className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
-                    style={
-                      Object {
-                        "color": "#1F407A",
-                      }
+                  className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                  style={
+                    Object {
+                      "color": "#1F407A",
                     }
-                  >
-                    2
-                  </div>
-                  <div
-                    className="sc-hLBbgP dYEqmk self-end"
-                  />
+                  }
+                >
+                  2
                 </div>
                 <div
-                  className="flex text-base text-gray-400 h-7 justify-start"
-                  id="metric-title"
+                  className="sc-hLBbgP dYEqmk self-end"
+                />
+              </div>
+              <div
+                className="flex text-base text-gray-400 h-7 justify-start"
+                id="metric-title"
+              >
+                <p
+                  className="w-auto text-clip"
                 >
-                  <p
-                    className="w-auto text-clip"
-                  >
-                    Hospitalized 
-                  </p>
+                  Hospitalized 
+                </p>
+                <div
+                  className="flex items-center pl-1 grow fill-current text-gray-600"
+                  id="info-wrapper"
+                >
                   <div
-                    className="flex items-center pl-1 grow fill-current text-gray-600"
-                    id="info-wrapper"
+                    aria-label="Number of samples taken from patients who were eventually hospitalized (A random name)"
+                    aria-labelledby={null}
+                    className=""
+                    data-mui-internal-clone-element={true}
+                    onBlur={[Function]}
+                    onFocus={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseOver={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchStart={[Function]}
                   >
                     <svg
                       fill="currentColor"
@@ -507,17 +509,6 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                     </svg>
                   </div>
                 </div>
-              </div>
-              <div
-                className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
-                id="metric-tooltip-Hospitalized"
-                role="tooltip"
-                style={Object {}}
-              >
-                <div
-                  className="react-tooltip-arrow styles-module_arrow__K0L3T"
-                  style={Object {}}
-                />
               </div>
             </div>
             <div
@@ -525,38 +516,46 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
               id="metric-with-tooltip"
             >
               <div
-                data-for="metric-tooltip-Not hosp."
-                data-tip="Number of samples taken from patients who were not eventually hospitalized (A random name)"
+                className="flex w-full"
               >
                 <div
-                  className="flex w-full"
-                >
-                  <div
-                    className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
-                    style={
-                      Object {
-                        "color": "#1F407A",
-                      }
+                  className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+                  style={
+                    Object {
+                      "color": "#1F407A",
                     }
-                  >
-                    108
-                  </div>
-                  <div
-                    className="sc-hLBbgP dYEqmk self-end"
-                  />
+                  }
+                >
+                  108
                 </div>
                 <div
-                  className="flex text-base text-gray-400 h-7 justify-start"
-                  id="metric-title"
+                  className="sc-hLBbgP dYEqmk self-end"
+                />
+              </div>
+              <div
+                className="flex text-base text-gray-400 h-7 justify-start"
+                id="metric-title"
+              >
+                <p
+                  className="w-auto text-clip"
                 >
-                  <p
-                    className="w-auto text-clip"
-                  >
-                    Not hosp. 
-                  </p>
+                  Not hosp. 
+                </p>
+                <div
+                  className="flex items-center pl-1 grow fill-current text-gray-600"
+                  id="info-wrapper"
+                >
                   <div
-                    className="flex items-center pl-1 grow fill-current text-gray-600"
-                    id="info-wrapper"
+                    aria-label="Number of samples taken from patients who were not eventually hospitalized (A random name)"
+                    aria-labelledby={null}
+                    className=""
+                    data-mui-internal-clone-element={true}
+                    onBlur={[Function]}
+                    onFocus={[Function]}
+                    onMouseLeave={[Function]}
+                    onMouseOver={[Function]}
+                    onTouchEnd={[Function]}
+                    onTouchStart={[Function]}
                   >
                     <svg
                       fill="currentColor"
@@ -581,17 +580,6 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                     </svg>
                   </div>
                 </div>
-              </div>
-              <div
-                className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
-                id="metric-tooltip-Not hosp."
-                role="tooltip"
-                style={Object {}}
-              >
-                <div
-                  className="react-tooltip-arrow styles-module_arrow__K0L3T"
-                  style={Object {}}
-                />
               </div>
             </div>
           </div>

@@ -70,39 +70,46 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
           id="metric-with-tooltip"
         >
           <div
-            data-for="metric-tooltip-Proportion"
-            data-tip="Proportion relative to all samples collected"
+            className="flex w-full"
           >
             <div
-              className="flex w-full"
-            >
-              <div
-                className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
-                style={
-                  Object {
-                    "color": "#1F407A",
-                  }
+              className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+              style={
+                Object {
+                  "color": "#1F407A",
                 }
-              >
-                0
-                %
-              </div>
-              <div
-                className="sc-bcXHqe bjCFoe self-end"
-              />
+              }
+            >
+              0%
             </div>
             <div
-              className="flex text-base text-gray-400 h-7 justify-start"
-              id="metric-title"
+              className="sc-bcXHqe bjCFoe self-end"
+            />
+          </div>
+          <div
+            className="flex text-base text-gray-400 h-7 justify-start"
+            id="metric-title"
+          >
+            <p
+              className="w-auto text-clip"
             >
-              <p
-                className="w-auto text-clip"
-              >
-                Proportion 
-              </p>
+              Proportion 
+            </p>
+            <div
+              className="flex items-center pl-1 grow fill-current text-gray-600"
+              id="info-wrapper"
+            >
               <div
-                className="flex items-center pl-1 grow fill-current text-gray-600"
-                id="info-wrapper"
+                aria-label="Proportion relative to all samples collected"
+                aria-labelledby={null}
+                className=""
+                data-mui-internal-clone-element={true}
+                onBlur={[Function]}
+                onFocus={[Function]}
+                onMouseLeave={[Function]}
+                onMouseOver={[Function]}
+                onTouchEnd={[Function]}
+                onTouchStart={[Function]}
               >
                 <svg
                   fill="currentColor"
@@ -127,17 +134,6 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
                 </svg>
               </div>
             </div>
-          </div>
-          <div
-            className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
-            id="metric-tooltip-Proportion"
-            role="tooltip"
-            style={Object {}}
-          >
-            <div
-              className="react-tooltip-arrow styles-module_arrow__K0L3T"
-              style={Object {}}
-            />
           </div>
         </div>
         <div
@@ -145,38 +141,46 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
           id="metric-with-tooltip"
         >
           <div
-            data-for="metric-tooltip-Samples"
-            data-tip="Number of samples of the variant collected in this time frame"
+            className="flex w-full"
           >
             <div
-              className="flex w-full"
-            >
-              <div
-                className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
-                style={
-                  Object {
-                    "color": "#7f8c8d",
-                  }
+              className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+              style={
+                Object {
+                  "color": "#7f8c8d",
                 }
-              >
-                0
-              </div>
-              <div
-                className="sc-bcXHqe bjCFoe self-end"
-              />
+              }
+            >
+              0
             </div>
             <div
-              className="flex text-base text-gray-400 h-7 justify-start"
-              id="metric-title"
+              className="sc-bcXHqe bjCFoe self-end"
+            />
+          </div>
+          <div
+            className="flex text-base text-gray-400 h-7 justify-start"
+            id="metric-title"
+          >
+            <p
+              className="w-auto text-clip"
             >
-              <p
-                className="w-auto text-clip"
-              >
-                Samples 
-              </p>
+              Samples 
+            </p>
+            <div
+              className="flex items-center pl-1 grow fill-current text-gray-600"
+              id="info-wrapper"
+            >
               <div
-                className="flex items-center pl-1 grow fill-current text-gray-600"
-                id="info-wrapper"
+                aria-label="Number of samples of the variant collected in this time frame"
+                aria-labelledby={null}
+                className=""
+                data-mui-internal-clone-element={true}
+                onBlur={[Function]}
+                onFocus={[Function]}
+                onMouseLeave={[Function]}
+                onMouseOver={[Function]}
+                onTouchEnd={[Function]}
+                onTouchStart={[Function]}
               >
                 <svg
                   fill="currentColor"
@@ -201,17 +205,6 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
                 </svg>
               </div>
             </div>
-          </div>
-          <div
-            className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
-            id="metric-tooltip-Samples"
-            role="tooltip"
-            style={Object {}}
-          >
-            <div
-              className="react-tooltip-arrow styles-module_arrow__K0L3T"
-              style={Object {}}
-            />
           </div>
         </div>
       </div>

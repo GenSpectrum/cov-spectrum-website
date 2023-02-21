@@ -6,38 +6,46 @@ exports[`<Metric> renders correctly 1`] = `
   id="metric-with-tooltip"
 >
   <div
-    data-for="metric-tooltip-Proportion"
-    data-tip="This is the proportion of something."
+    className="flex w-full"
   >
     <div
-      className="flex w-full"
-    >
-      <div
-        className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
-        style={
-          Object {
-            "color": undefined,
-          }
+      className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
+      style={
+        Object {
+          "color": undefined,
         }
-      >
-        0.59
-      </div>
-      <div
-        className="sc-bcXHqe bjCFoe self-end"
-      />
+      }
+    >
+      0.59
     </div>
     <div
-      className="flex text-base text-gray-400 h-7 justify-start"
-      id="metric-title"
+      className="sc-bcXHqe bjCFoe self-end"
+    />
+  </div>
+  <div
+    className="flex text-base text-gray-400 h-7 justify-start"
+    id="metric-title"
+  >
+    <p
+      className="w-auto text-clip"
     >
-      <p
-        className="w-auto text-clip"
-      >
-        Proportion 
-      </p>
+      Proportion 
+    </p>
+    <div
+      className="flex items-center pl-1 grow fill-current text-gray-600"
+      id="info-wrapper"
+    >
       <div
-        className="flex items-center pl-1 grow fill-current text-gray-600"
-        id="info-wrapper"
+        aria-label="This is the proportion of something."
+        aria-labelledby={null}
+        className=""
+        data-mui-internal-clone-element={true}
+        onBlur={[Function]}
+        onFocus={[Function]}
+        onMouseLeave={[Function]}
+        onMouseOver={[Function]}
+        onTouchEnd={[Function]}
+        onTouchStart={[Function]}
       >
         <svg
           fill="currentColor"
@@ -62,17 +70,6 @@ exports[`<Metric> renders correctly 1`] = `
         </svg>
       </div>
     </div>
-  </div>
-  <div
-    className="react-tooltip styles-module_tooltip__mnnfp styles-module_dark__xNqje"
-    id="metric-tooltip-Proportion"
-    role="tooltip"
-    style={Object {}}
-  >
-    <div
-      className="react-tooltip-arrow styles-module_arrow__K0L3T"
-      style={Object {}}
-    />
   </div>
 </div>
 `;
