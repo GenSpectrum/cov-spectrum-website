@@ -5,7 +5,7 @@
   "dependencies": {
     "@date-io/date-fns": "^2.16.0",
     "@emotion/react": "^11.10.5",
-    "@emotion/styled": "^11.10.5",
+    "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.8",
     "@mui/x-data-grid": "^5.17.21",
