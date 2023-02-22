@@ -26,14 +26,6 @@ const StoryPreviewWrapper = ({
 
 const StoriesOverview = () => (
   <div className='max-w-4xl mx-auto px-4 md:px-8'>
-    <StoryPreviewWrapper title='Tracking Omicron (B.1.1.529)' id='omicron'>
-      <p>
-        Omicron was declared as a variant of concern (VOC) by the WHO on 26 November 2021. Not much about this
-        variant is known yet. The many mutations of the variant raise the concern that it may be more
-        contagious and escape vaccines and previous infections more likely than the currently dominant Delta
-        variant.
-      </p>
-    </StoryPreviewWrapper>
     <StoryPreviewWrapper title='Wastewater in Switzerland' id='wastewater-in-switzerland'>
       <div className='italic'>
         by{' '}
