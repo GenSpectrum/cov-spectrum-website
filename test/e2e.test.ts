@@ -1,10 +1,10 @@
 // Starting point for end to end tests
 
-import puppeteer from 'puppeteer';
+import puppeteer, { Page } from 'puppeteer';
 
 describe('Test', () => {
   let browser;
-  let page;
+  let page: Page;
 
   beforeAll(async () => {
     browser = await puppeteer.launch();
