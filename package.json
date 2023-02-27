@@ -48,7 +48,7 @@
     "react-dom": "^18.2.0",
     "react-icons": "^4.7.1",
     "react-plotly.js": "^2.6.0",
-    "react-resize-detector": "^8.0.3",
+    "react-resize-detector": "^8.0.4",
     "react-reverse-portal": "^2.1.1",
     "react-router-dom": "^6.8.0",
     "react-router-hash-link": "^2.4.3",
