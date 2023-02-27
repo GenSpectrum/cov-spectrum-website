@@ -1,5 +1,5 @@
 import { HostSelector } from './HostSelector';
-import { HUMAN } from './api-lapis';
+import { HUMAN } from '../helpers/sequence-data-source';
 import { SamplingStrategy } from './SamplingStrategy';
 import { DateRangeUrlEncoded } from './DateRangeUrlEncoded';
 import { AnalysisMode } from './AnalysisMode';

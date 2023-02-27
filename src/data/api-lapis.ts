@@ -27,14 +27,11 @@ import { LapisSelector } from './LapisSelector';
 import { addHostSelectorToUrlSearchParams } from './HostSelector';
 import { addQcSelectorToUrlSearchParams } from './QcSelector';
 import { HostCountSampleEntry } from './sample/HostCountSampleEntry';
-import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { InsertionCountEntry } from './InsertionCountEntry';
 import { NextcladeDatasetInfo } from './NextcladeDatasetInfo';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
-
-export const HUMAN = sequenceDataSource === 'gisaid' ? 'Human' : 'Homo sapiens';
 
 let currentLapisDataVersion: number | undefined = undefined;
 

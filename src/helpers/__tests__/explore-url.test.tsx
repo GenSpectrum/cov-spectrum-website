@@ -1,12 +1,15 @@
-import { act, renderHook, screen } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { useExploreUrl } from '../explore-url';
-import { MemoryRouter, useLocation } from 'react-router';
+import { MemoryRouter } from 'react-router-dom';
 import { ReactNode } from 'react';
 import { FixedDateRangeSelector, SpecialDateRangeSelector } from '../../data/DateRangeSelector';
 import { globalDateCache } from '../date-cache';
 import dayjs from 'dayjs';
 import { SamplingStrategy } from '../../data/SamplingStrategy';
 import { AnalysisMode } from '../../data/AnalysisMode';
+import { getLocationDisplay, LocationDisplay } from '../testing/LocationDisplay';
+
+jest.mock('../../data/api');
 
 describe('useExploreUrl', () => {
   test.each([
@@ -233,17 +236,6 @@ function memoryRouterWithCurrentLocation(location: string) {
       <LocationDisplay />
     </MemoryRouter>
   );
-}
-
-const LOCATION_DISPLAY_ID = 'location-display';
-
-function LocationDisplay() {
-  const currentLocation = useLocation();
-  return <div data-testid={LOCATION_DISPLAY_ID}>{currentLocation.pathname + currentLocation.search}</div>;
-}
-
-function getLocationDisplay() {
-  return screen.getByTestId(LOCATION_DISPLAY_ID);
 }
 
 function dateRange(from: string, to: string) {

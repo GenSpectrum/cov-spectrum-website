@@ -12,7 +12,9 @@ jest.mock('../../data/sample/PangoCountSampleDataset');
 const fromApiMock = jest.fn();
 PangoCountSampleData.fromApi = fromApiMock;
 
-jest.mock('../../data/api-lapis');
+jest.mock('../../data/api-lapis', () => ({
+  _fetchAggSamples: jest.fn(),
+}));
 const fetchAggSamplesMock = _fetchAggSamples as jest.Mock;
 
 const onVariantSelectMock = jest.fn();

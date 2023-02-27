@@ -1,0 +1,25 @@
+table {
+  border-collapse: collapse;
+}
+table td {
+  padding: 15px;
+}
+table thead td {
+  font-weight: bold;
+  font-size: 13px;
+  text-align: center;
+  border: 1px solid #dddfe1;
+  width: 350px;
+}
+
+table tbody td {
+  color: #636363;
+  border: 1px solid #dddfe1;
+  width: 350px;
+}
+table tbody tr {
+  background-color: #f9fafb;
+}
+table tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}

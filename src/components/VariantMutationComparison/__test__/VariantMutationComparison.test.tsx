@@ -8,6 +8,8 @@ import React from 'react';
 import { formatVariantDisplayName } from '../../../data/VariantSelector';
 import userEvent from '@testing-library/user-event';
 
+jest.mock('../../../data/api');
+
 jest.mock('../VariantMutationComparisonHook');
 const useOverlappingDataMock = useOverlappingData as jest.Mock;
 

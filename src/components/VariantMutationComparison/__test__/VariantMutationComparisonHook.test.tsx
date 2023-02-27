@@ -6,6 +6,8 @@ import { renderHook } from '@testing-library/react';
 import { useQuery } from '../../../helpers/query-hook';
 import { ReferenceGenomeService } from '../../../services/ReferenceGenomeService';
 
+jest.mock('../../../data/api');
+
 jest.mock('../../../helpers/query-hook');
 const useQueryMock = useQuery as jest.Mock;
 

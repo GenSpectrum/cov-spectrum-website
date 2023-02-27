@@ -1,56 +1,42 @@
-import { useNavigate, useLocation, useParams } from 'react-router';
+import { useLocation, useNavigate, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
 import { fetchCollection } from '../data/api';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import Loader from '../components/Loader';
-import { Link } from 'react-router-dom';
+import { HashLink as Link } from 'react-router-hash-link';
 import { Button, ButtonVariant } from '../helpers/ui';
 import {
-  addVariantSelectorToUrlSearchParams,
   formatVariantDisplayName,
   transformToVariantQuery,
   variantIsAllLineages,
   VariantSelector,
 } from '../data/VariantSelector';
-import { DataGrid, GridColDef, GridComparatorFn, GridRenderCellParams } from '@mui/x-data-grid';
+
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { SamplingStrategy } from '../data/SamplingStrategy';
 import { PlaceSelect } from '../components/PlaceSelect';
 import {
   addLocationSelectorToUrlSearchParams,
-  encodeLocationSelectorToSingleString,
   getLocationSelectorFromUrlSearchParams,
-  LocationSelector,
   removeLocationSelectorToUrlSearchParams,
 } from '../data/LocationSelector';
-import { Box } from '@mui/material';
+import { Box, FormControl, FormControlLabel, Radio, RadioGroup } from '@mui/material';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
-import { Dataset } from '../data/Dataset';
-import { DateCountSampleEntry } from '../data/sample/DateCountSampleEntry';
-import { LocationDateVariantSelector } from '../data/LocationDateVariantSelector';
-import { GridCell, PackedGrid } from '../components/PackedGrid';
-import { VariantTimeDistributionChartWidget } from '../widgets/VariantTimeDistributionChartWidget';
 import { DateRangeSelector, SpecialDateRangeSelector } from '../data/DateRangeSelector';
-import { Chen2021FitnessResponse, ValueWithCI } from '../models/chen2021Fitness/chen2021Fitness-types';
-import { PromiseQueue } from '../helpers/PromiseQueue';
-import { getModelData } from '../models/chen2021Fitness/loading';
 import { VariantSearchField } from '../components/VariantSearchField';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { fetchNumberSubmittedSamplesInPastTenDays } from '../data/api-lapis';
 import { Collection } from '../data/Collection';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
-import download from 'downloadjs';
-import { csvStringify } from '../helpers/csvStringifyHelper';
 import DateRangePicker from '../components/DateRangePicker';
-import { PprettyGridExportButton } from '../components/CombinedExport/PprettyGridExportButton';
-import {
-  PprettyGridExportManager,
-  PprettyGridExportManagerContext,
-} from '../components/CombinedExport/PprettyGridExportManager';
-import { PprettyRequest } from '../data/ppretty/ppretty-request';
 import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
+import './style.css';
+import MutationTableTabContent from '../components/MutationOverviewTable/MutationTableTabContent';
+import TableTabContent from '../components/TableTabContent';
+import SequencesOverTimeTabContent from '../components/SequencesOverTimeTabContent';
+import { SequenceType } from '../data/SequenceType';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr } = useParams();
@@ -61,6 +47,7 @@ export const CollectionSingleViewPage = () => {
   const navigate = useNavigate();
   const locationState = useLocation();
   const [tab, setTab] = useState(0);
+  const [mutationType, setMutationType] = useState<SequenceType>('aa');
 
   // Parse filters from URL
   const queryString = locationState.search;
@@ -126,11 +113,13 @@ export const CollectionSingleViewPage = () => {
   // variants in the collection is just that. If a baseline is selected, the wholeDateCounts for a variant is the union
   // of the baseline variant and the focal variant.
   // In following, we fetch the wholeDateCounts if necessary.
+
   const { data: allWholeDateCounts } = useQuery(
     async signal => {
       if (!variants || !baselineDateCounts) {
         return undefined;
       }
+
       return Promise.allSettled(
         variants.map(variant => {
           if (variantIsAllLineages(baselineVariant)) {
@@ -207,6 +196,10 @@ export const CollectionSingleViewPage = () => {
 
   const onChangeDate = (dateRangeSelector: DateRangeSelector) => {
     setDateRangeSelector(dateRangeSelector);
+  };
+
+  const handleMutationTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setMutationType((event.target as HTMLInputElement).value as SequenceType);
   };
 
   return (
@@ -293,6 +286,7 @@ export const CollectionSingleViewPage = () => {
             <Tabs value={tab} onChange={(_, i) => setTab(i)}>
               <Tab label='Table' id='collection-tab-0' />
               <Tab label='Sequences over time' id='collection-tab-1' />
+              <Tab label='Mutations' id='collection-tab-2' />
             </Tabs>
           </Box>
           <TabPanel value={tab} index={0}>
@@ -308,6 +302,7 @@ export const CollectionSingleViewPage = () => {
                 variantsDateCounts={variantsDateCounts}
                 variantsNumberNewSequences={variantsNumberNewSequences}
                 allWholeDateCounts={allWholeDateCounts}
+                dateRangeSelector={dateRangeSelector}
               />
             ) : (
               <Loader />
@@ -321,6 +316,27 @@ export const CollectionSingleViewPage = () => {
                 variantsDateCounts={variantsDateCounts}
                 baselineDateCounts={baselineDateCounts}
                 mode={variantIsAllLineages(baselineVariant) ? 'Single' : 'CompareToBaseline'}
+              />
+            ) : (
+              <Loader />
+            )}
+          </TabPanel>
+          <TabPanel value={tab} index={2}>
+            <FormControl>
+              <RadioGroup value={mutationType} onChange={handleMutationTypeChange}>
+                <FormControlLabel value='aa' control={<Radio />} label='Amino acid mutations' />
+                <FormControlLabel value='nuc' control={<Radio />} label='Nucleotid mutations' />
+              </RadioGroup>
+            </FormControl>
+
+            {variants ? (
+              <MutationTableTabContent
+                mode={variantIsAllLineages(baselineVariant) ? 'Single' : 'CompareToBaseline'}
+                dateRangeSelector={dateRangeSelector}
+                mutationType={mutationType}
+                locationSelector={locationSelector}
+                variants={variants}
+                baselineVariant={baselineVariant}
               />
             ) : (
               <Loader />
@@ -355,330 +371,6 @@ const TabPanel = ({ children, value, index, ...other }: TabPanelProps) => {
         </Box>
       )}
     </div>
-  );
-};
-
-type TableTabContentProps = {
-  collectionId: number;
-  locationSelector: LocationSelector;
-  variants: { query: VariantSelector; name: string; description: string }[];
-  variantsDateCounts: PromiseSettledResult<Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>>[];
-  variantsNumberNewSequences: PromiseSettledResult<number>[];
-  allWholeDateCounts: PromiseSettledResult<Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>>[];
-};
-
-const TableTabContent = ({
-  collectionId,
-  locationSelector,
-  variants,
-  variantsDateCounts,
-  variantsNumberNewSequences,
-  allWholeDateCounts,
-}: TableTabContentProps) => {
-  // Fetch relative growth advantage
-  const [relativeAdvantages, setRelativeAdvantages] = useState<
-    (Chen2021FitnessResponse | undefined | 'failed')[]
-  >([]);
-  useEffect(() => {
-    const fetchQueue = new PromiseQueue(10);
-    for (let i = 0; i < variantsDateCounts.length; i++) {
-      const variantDateCountsStatus = variantsDateCounts[i];
-      const allWholeDateCountsStatus = allWholeDateCounts[i];
-      const setFailedFunc = (prev: (Chen2021FitnessResponse | undefined | 'failed')[]) => {
-        const newArr = [...prev];
-        newArr[i] = 'failed';
-        return newArr;
-      };
-      if (variantDateCountsStatus.status === 'rejected' || allWholeDateCountsStatus.status === 'rejected') {
-        fetchQueue.addTask(() => {
-          return new Promise<void>(resolve => {
-            setRelativeAdvantages(setFailedFunc);
-            resolve();
-          });
-        });
-        continue;
-      }
-      const variantDateCounts = variantDateCountsStatus.value;
-      const wholeDateCounts = allWholeDateCountsStatus.value;
-      const totalSequences = variantDateCounts.payload.reduce((prev, curr) => prev + curr.count, 0);
-      fetchQueue.addTask(() => {
-        if (totalSequences > 0) {
-          return getModelData(variantDateCounts, wholeDateCounts, { generationTime: 7 }).then(
-            ({ response }) => {
-              if (response === undefined) {
-                setRelativeAdvantages(setFailedFunc);
-              } else {
-                setRelativeAdvantages(prev => {
-                  const newArr = [...prev];
-                  newArr[i] = response;
-                  return newArr;
-                });
-              }
-            }
-          );
-        } else {
-          // No need to calculate the advantage if there is no available sequence
-          return new Promise<void>(resolve => {
-            setRelativeAdvantages(setFailedFunc);
-            resolve();
-          });
-        }
-      });
-    }
-  }, [variantsDateCounts, allWholeDateCounts, setRelativeAdvantages]);
-
-  // Table definition and data
-  const tableColumns: GridColDef[] = [
-    {
-      field: 'highlighted',
-      headerName: '',
-      width: 40,
-      minWidth: 40,
-      renderCell: (params: GridRenderCellParams<string>) => {
-        const highlighted = params.row.highlighted;
-        return highlighted ? <AiFillStar size='1.5em' className='text-yellow-400' /> : <></>;
-      },
-    },
-    {
-      field: 'name',
-      headerName: 'Name',
-      minWidth: 200,
-      renderCell: (params: GridRenderCellParams<string>) => {
-        const query = params.row.query;
-        const urlParams = new URLSearchParams();
-        addVariantSelectorToUrlSearchParams(query, urlParams);
-        const placeString = encodeLocationSelectorToSingleString(locationSelector);
-        return params.value ? (
-          <Link
-            to={`/explore/${placeString}/AllSamples/Past6M/variants?${urlParams.toString()}`}
-            className='overflow-hidden'
-          >
-            <button className='underline break-words overflow-hidden w-full'>{params.value}</button>
-          </Link>
-        ) : (
-          <></>
-        );
-      },
-    },
-    {
-      field: 'queryFormatted',
-      headerName: 'Query',
-      minWidth: 300,
-      renderCell: (params: GridRenderCellParams<string>) => {
-        return <span className='break-words overflow-hidden'>{params.value}</span>;
-      },
-    },
-    { field: 'total', headerName: 'Number sequences', minWidth: 150, type: 'number' },
-    { field: 'newSequences', headerName: 'Submitted in past 10 days', minWidth: 200, type: 'number' },
-    {
-      field: 'advantage',
-      headerName: 'Relative growth advantage',
-      minWidth: 200,
-      sortComparator: sortRelativeGrowthAdvantageValues,
-    },
-    {
-      field: 'advantageCiLower',
-      headerName: 'CI (low)',
-      minWidth: 100,
-      sortComparator: sortRelativeGrowthAdvantageValues,
-    },
-    {
-      field: 'advantageCiUpper',
-      headerName: 'CI (high)',
-      minWidth: 100,
-      sortComparator: sortRelativeGrowthAdvantageValues,
-    },
-    { field: 'description', headerName: 'Description', minWidth: 450 },
-  ];
-
-  const variantTableData = useMemo(() => {
-    return variants.map((variant, i) => {
-      let advantage = undefined;
-      let errorMessage: string | undefined = undefined;
-      const relativeAdvantage = relativeAdvantages[i];
-      if (relativeAdvantage === 'failed') {
-        errorMessage = "Can't be calculated";
-      } else if (relativeAdvantage === undefined) {
-        errorMessage = 'Calculating...';
-      } else {
-        advantage = relativeAdvantage.params.fd;
-      }
-      const vcd = variantsDateCounts[i];
-      const vnns = variantsNumberNewSequences[i];
-      if (vcd.status === 'fulfilled') {
-        if (vnns.status !== 'fulfilled') {
-          // Strange that one request was successful but the other one wasn't
-          throw new Error('Unexpected error');
-        }
-        return {
-          id: i,
-          ...variant,
-          name: variant.name.length > 0 ? variant.name : formatVariantDisplayName(variant.query),
-          queryFormatted: formatVariantDisplayName(variant.query),
-          total: vcd.value.payload.reduce((prev, curr) => prev + curr.count, 0),
-          newSequences: vnns.value,
-          advantage: errorMessage ?? ((advantage as ValueWithCI).value * 100).toFixed(2) + '%',
-          advantageCiLower: errorMessage
-            ? '...'
-            : ((advantage as ValueWithCI).ciLower * 100).toFixed(2) + '%',
-          advantageCiUpper: errorMessage
-            ? '...'
-            : ((advantage as ValueWithCI).ciUpper * 100).toFixed(2) + '%',
-        };
-      } else {
-        return {
-          id: i,
-          ...variant,
-          name: variant.name.length > 0 ? variant.name : formatVariantDisplayName(variant.query),
-          queryFormatted: formatVariantDisplayName(variant.query),
-          total: vcd.reason,
-          newSequences: '-',
-          advantage: '-',
-          advantageCiLower: '-',
-          advantageCiUpper: '-',
-        };
-      }
-    });
-  }, [variants, variantsDateCounts, variantsNumberNewSequences, relativeAdvantages]);
-
-  const downloadAsCsv = () => {
-    const csvData = variantTableData.map(x => ({
-      name: x.name,
-      query: x.queryFormatted,
-      number_sequences: x.total,
-      submitted_past_10_days: x.newSequences,
-      relative_growth_advantage: x.advantage,
-      relative_growth_advantage_low: x.advantageCiLower,
-      relative_growth_advantage_high: x.advantageCiUpper,
-      description: x.description,
-    }));
-    download(csvStringify(csvData), `collection-${collectionId}.csv`, 'text/csv');
-  };
-
-  return (
-    <>
-      {variantTableData ? (
-        <>
-          <Button variant={ButtonVariant.PRIMARY} className='w-40' onClick={downloadAsCsv}>
-            Download CSV
-          </Button>
-          <div className='mt-4'>
-            <DataGrid
-              columns={tableColumns}
-              rows={variantTableData}
-              autoHeight={true}
-              getRowHeight={() => 'auto'}
-              density={'compact'}
-            />
-          </div>
-        </>
-      ) : (
-        <Loader />
-      )}
-    </>
-  );
-};
-
-type SequencesOverTimeTabContentProps = {
-  collection: Collection;
-  variants: { query: VariantSelector; name: string; description: string }[];
-  variantsDateCounts: PromiseSettledResult<Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>>[];
-  baselineDateCounts: Dataset<LocationDateVariantSelector, DateCountSampleEntry[]>;
-  mode: 'Single' | 'CompareToBaseline';
-};
-
-const sortRelativeGrowthAdvantageValues: GridComparatorFn<string> = (a, b) => {
-  if (!a.endsWith('%') && !b.endsWith('%')) {
-    return 0;
-  }
-  if (!a.endsWith('%')) {
-    return -1;
-  }
-  if (!b.endsWith('%')) {
-    return 1;
-  }
-  const aNumber = Number.parseFloat(a.substr(0, a.length - 1));
-  const bNumber = Number.parseFloat(b.substr(0, a.length - 1));
-  return aNumber - bNumber;
-};
-
-const SequencesOverTimeTabContent = ({
-  collection,
-  variants,
-  variantsDateCounts,
-  baselineDateCounts,
-  mode,
-}: SequencesOverTimeTabContentProps) => {
-  const exportManagerRef = useRef(
-    new PprettyGridExportManager(requests => {
-      // TODO What happens if the arguments of SequencesOverTimeTabContent change? We probably need to update this
-      //   function as well?
-      const variantToDetailsMap = new Map<string, { name: string; description: string }>();
-      for (let { query, name, description } of collection.variants) {
-        const variantString = formatVariantDisplayName(JSON.parse(query));
-        variantToDetailsMap.set(variantString, { name, description });
-      }
-      const mergedRequest: PprettyRequest = {
-        config: {
-          plotName: 'sequences-over-time_collection',
-          plotType: 'line',
-          sizeMultiplier: Math.max(Math.ceil(Math.sqrt(collection.variants.length)) / 2, 1),
-        },
-        metadata: {
-          location: requests[0].metadata.location,
-          collection: {
-            id: collection.id,
-            title: collection.title,
-            maintainer: collection.maintainers,
-          },
-        },
-        data: [],
-      };
-      for (let request of requests) {
-        mergedRequest.data.push(
-          ...request.data.map((d: any) => {
-            const variant = request.metadata.variant;
-            const { name, description } = variantToDetailsMap.get(variant)!;
-            return {
-              ...d,
-              variant,
-              name,
-              description,
-            };
-          })
-        );
-      }
-      return mergedRequest;
-    })
-  );
-
-  return (
-    <PprettyGridExportManagerContext.Provider value={exportManagerRef.current}>
-      <PprettyGridExportButton />
-      <PackedGrid maxColumns={3}>
-        {variants.map((variant, i) => {
-          const vdc = variantsDateCounts[i];
-          if (vdc.status === 'fulfilled') {
-            return (
-              <GridCell minWidth={600} key={i}>
-                <VariantTimeDistributionChartWidget.ShareableComponent
-                  title={mode === 'Single' ? variant.name : `Comparing ${variant.name} to baseline`}
-                  height={350}
-                  variantSampleSet={vdc.value}
-                  wholeSampleSet={baselineDateCounts}
-                />
-              </GridCell>
-            );
-          } else {
-            return (
-              <GridCell minWidth={600} key={i}>
-                <ErrorAlert messages={[vdc.reason.message]} />
-              </GridCell>
-            );
-          }
-        })}
-      </PackedGrid>
-    </PprettyGridExportManagerContext.Provider>
   );
 };
 

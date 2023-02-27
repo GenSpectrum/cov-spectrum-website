@@ -9,7 +9,7 @@ import { HostSelector } from '../data/HostSelector';
 import { HostService } from '../services/HostService';
 import { useQuery } from '../helpers/query-hook';
 import Loader from './Loader';
-import { HUMAN } from '../data/api-lapis';
+import { HUMAN } from '../helpers/sequence-data-source';
 import DateRangePicker from '../components/DateRangePicker';
 import {
   DateRangeSelector,

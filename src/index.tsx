@@ -4,23 +4,18 @@ import { App } from './App';
 import { EmbedPage } from './pages/EmbedPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
-import { fetchCurrentUserCountry } from './data/api';
-import { LocationService } from './services/LocationService';
-import { fetchLapisDataVersionDate } from './data/api-lapis';
 import * as Sentry from '@sentry/react';
 import { Integrations } from '@sentry/tracing';
 import { env } from './env';
 import {
   DndProvider,
-  TouchTransition,
-  PointerTransition,
   MultiBackendOptions,
+  PointerTransition,
+  TouchTransition,
 } from 'react-dnd-multi-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { TouchBackend } from 'react-dnd-touch-backend';
 import setupDayjs from './helpers/dayjsSetup';
-
-export let baseLocation = 'Europe';
 
 const HTML5toTouch: MultiBackendOptions = {
   backends: [
@@ -63,22 +58,6 @@ async function main() {
       },
     });
   }
-
-  try {
-    // Fetch current data version of LAPIS
-    await fetchLapisDataVersionDate();
-
-    // Find out the country/region of the user
-    const [currentUserCountry, allLocationNames] = await Promise.all([
-      fetchCurrentUserCountry(),
-      LocationService.getAllLocationNames(),
-    ]);
-    if (currentUserCountry.country && allLocationNames.includes(currentUserCountry.country)) {
-      baseLocation = currentUserCountry.country;
-    } else if (currentUserCountry.region && allLocationNames.includes(currentUserCountry.region)) {
-      baseLocation = currentUserCountry.region;
-    }
-  } catch (_) {}
 
   setupDayjs();
 
