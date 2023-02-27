@@ -10,7 +10,7 @@
     "@mui/x-data-grid": "^5.17.21",
     "@mui/x-date-pickers": "^5.0.17",
     "@sentry/react": "^7.36.0",
-    "@sentry/tracing": "^7.36.0",
+    "@sentry/tracing": "^7.39.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^14.4.3",
