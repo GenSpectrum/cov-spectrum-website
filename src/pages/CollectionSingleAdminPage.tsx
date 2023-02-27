@@ -1,4 +1,4 @@
-import { useNavigate, useLocation, useParams } from 'react-router';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { useQuery } from '../helpers/query-hook';
 import { deleteCollection, fetchCollection, updateCollection, validateCollectionAdminKey } from '../data/api';
 import React, { useMemo, useState } from 'react';

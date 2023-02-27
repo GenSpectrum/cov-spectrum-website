@@ -1,5 +1,5 @@
 import React from 'react';
-import { Navigate, useParams } from 'react-router';
+import { Navigate, useParams } from 'react-router-dom';
 
 const StoryRouter = () => {
   let { storyId } = useParams();

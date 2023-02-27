@@ -7,7 +7,7 @@ import {
 } from '../data/DateRangeSelector';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
-import { useNavigate, useLocation } from 'react-router';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { QueryStatus, useQuery } from '../helpers/query-hook';
 import { _fetchAggSamples } from '../data/api-lapis';
 import { PangoLineageAliasResolverService } from '../services/PangoLineageAliasResolverService';
