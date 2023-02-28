@@ -53,6 +53,7 @@ import { wastewaterVariantColors } from '../models/wasteWater/constants';
 import { WidgetWrapper } from '../components/WidgetWrapper';
 import { VariantSelector } from '../data/VariantSelector';
 import { AnalysisMode } from '../data/AnalysisMode';
+import { NucleotideDiversity } from '../components/NucleotideDiversity';
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
 
@@ -504,6 +505,10 @@ export const FocusSinglePageContent = ({
 
             <div className='m-4'>
               <VariantMutationsTimelines selector={ldvsSelector} />
+            </div>
+
+            <div className='m-4'>
+              <NucleotideDiversity selector={ldvsSelector} />
             </div>
 
             <div className='m-4'>
