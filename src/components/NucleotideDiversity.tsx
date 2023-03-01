@@ -31,6 +31,11 @@ interface NucelotideDiversityProps{
 
 }
 
+type PositionProportions = {
+    Position: number,
+    Proportions: number[]
+}
+
 export const NucleotideDiversity = ({ selector }: Props) => {
     const [checked, setChecked] = useState<boolean>(false);
 
@@ -64,12 +69,18 @@ export const NucleotideDiversity = ({ selector }: Props) => {
 
     const data = queryStatus.data;
     console.log(data);
-    
+
     return (
         <>
             <NamedCard title="Nucleotide Diversity">
-                <p> { data.variantCount }</p>
+                
             </NamedCard>
         </>
     );
 };
+
+const CalculateNucEntropy = (
+    nucs: MutationProportionEntry[]
+) => {
+    let positionProportions = nucs.map(nuc => { position: parseInt(nuc.mutation.slice(1, -1)); proportion: nuc.proportion})
+}
