@@ -97,6 +97,7 @@ const CalculateNucEntropy = (
       //let p: PositionProportion = {mutation, proportion}
       if (mutation != '-') {positionProps[position].push(proportion)};
     });
+    console.log(positionProps);
 
     //calculate remaining original nucleotide proportion
     positionProps.forEach(pos => {
@@ -104,30 +105,34 @@ const CalculateNucEntropy = (
           return accumVariable + curValue
         }, 0);
       let remainder = 1 - propSum;
-      pos.push(remainder);
+      if (remainder != 0){
+        pos.push(remainder);
+      }
     })
     console.log(positionProps);
 
     //convert proportions to entropy
-    let positionLogs = positionProps.map(p => {
+    let positionEntropy = positionProps.map(p => {
       let sum = 0;
       p.forEach(proportion => sum += proportion*Math.log(proportion));
-      return -sum;
+      sum = -sum;
+      return sum;
     })
 
-    return positionLogs;
+    console.log(positionEntropy);
+    return positionEntropy;
 }
 
 const MeanNucleotideEntropy = (
   nucs: MutationProportionEntry[]
 ): number => {
-  let logs = CalculateNucEntropy(nucs);
+  let entropy = CalculateNucEntropy(nucs);
 
-  const sum = logs.reduce((a, b) => a + b, 0);
-  const avg = (sum / logs.length) || 0;
+  const sum = entropy.reduce((a, b) => a + b, 0);
+  const avg = (sum / entropy.length) || 0;
 
   console.log(sum);
-  console.log(logs.length)
+  console.log(entropy.length)
 
   return avg;
 }
