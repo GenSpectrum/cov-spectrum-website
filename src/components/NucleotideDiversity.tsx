@@ -22,6 +22,7 @@ import { LapisSelector } from '../data/LapisSelector';
 //import JSZip from 'jszip';
 //import { ProportionSelector } from './ProportionsSelector';
 import { NamedCard } from './NamedCard';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush } from 'recharts';
 
 export interface Props {
     selector: LapisSelector;
@@ -32,8 +33,13 @@ interface NucelotideDiversityProps{
 }
 
 type PositionProportion = {
-    mutation: string,
-    proportion: number
+    position: number,
+    proportions: number[]
+}
+
+type PositionEntropy = {
+  position: number,
+  entropy: number
 }
 
 export const NucleotideDiversity = ({ selector }: Props) => {
@@ -68,17 +74,32 @@ export const NucleotideDiversity = ({ selector }: Props) => {
     }
 
     const data = queryStatus.data;
-    console.log(data)
 
     return (
         <>
             <NamedCard title="Nucleotide Diversity">
               <h3>Mean nucleotide entropy of all samples: <b>{MeanNucleotideEntropy(data.nuc).toFixed(6)}</b></h3>
-                {/* { CalculateNucEntropy(data.nuc).map(posProp =>
-                  <div>
-                    <p>{posProp}</p>
-                  </div>
-                )} */}
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  width={500}
+                  height={500}
+                  data={CalculateNucEntropy(data.nuc).filter(p => p.entropy > 0.005)}
+                  margin={{
+                    top: 30,
+                    right: 20,
+                    left: 20,
+                    bottom: 5,
+                  }}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="position" />
+                  <YAxis domain={[0, 1]} />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="entropy" fill="#000000" legendType="none"/> 
+                  <Brush dataKey="name" height={20} stroke="#000000" travellerWidth={10} />
+                </BarChart>
+              </ResponsiveContainer>
             </NamedCard>
         </>
     );
@@ -86,37 +107,42 @@ export const NucleotideDiversity = ({ selector }: Props) => {
 
 const CalculateNucEntropy = (
     nucs: MutationProportionEntry[]
-) => {
+): PositionEntropy[] => {
+    let positionProps = Array.apply(null, Array<PositionProportion>(29903)).map(function (x, i) { 
+      let p: PositionProportion = {position: i, proportions: []}
+      return p;
+    })
 
     //sort proportions to their positions
-    let positionProps = Array(29903).fill(null).map(() => new Array);
     nucs.forEach(nuc => {
       let position = parseInt(nuc.mutation.slice(1, -1));
       let proportion = nuc.proportion;
       let mutation = nuc.mutation.slice(-1);
-      //let p: PositionProportion = {mutation, proportion}
-      if (mutation != '-') {positionProps[position].push(proportion)};
+      if (mutation != '-') {
+        positionProps[position].position = position;
+        positionProps[position].proportions.push(proportion);
+      };
     });
-    console.log(positionProps);
 
     //calculate remaining original nucleotide proportion
     positionProps.forEach(pos => {
-      let propSum = pos.reduce(function (accumVariable, curValue) {
-          return accumVariable + curValue
-        }, 0);
+      let propSum = pos.proportions.reduce((partialSum, a) => partialSum + a, 0);
       let remainder = 1 - propSum;
       if (remainder != 0){
-        pos.push(remainder);
+        pos.proportions.push(remainder);
       }
     })
-    console.log(positionProps);
 
     //convert proportions to entropy
-    let positionEntropy = positionProps.map(p => {
+    let positionEntropy = Array.apply(null, Array<PositionEntropy>(29903)).map(function (x, i) { 
+      let p: PositionEntropy = {position: i, entropy: 0}
+      return p;
+    })
+
+    positionProps.map(p => {
       let sum = 0;
-      p.forEach(proportion => sum += proportion*Math.log(proportion));
-      sum = -sum;
-      return sum;
+      p.proportions.forEach(proportion => sum += proportion*Math.log(proportion));
+      positionEntropy[p.position].entropy = -sum;
     })
 
     console.log(positionEntropy);
@@ -128,11 +154,9 @@ const MeanNucleotideEntropy = (
 ): number => {
   let entropy = CalculateNucEntropy(nucs);
 
-  const sum = entropy.reduce((a, b) => a + b, 0);
+  let sum = 0;
+  entropy.forEach(e => sum += e.entropy);
   const avg = (sum / entropy.length) || 0;
-
-  console.log(sum);
-  console.log(entropy.length)
 
   return avg;
 }
