@@ -22,9 +22,9 @@ import { PipeDividedOptionsButtons } from '../helpers/ui';
 //import JSZip from 'jszip';
 import { PercentageInput } from './PercentageInput';
 import { NamedCard } from './NamedCard';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush } from 'recharts' ;
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush, TooltipProps } from 'recharts' ;
 import { SequenceType } from '../data/SequenceType';
-//import { Tooltip } from '@mui/material';
+import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 
 export interface Props {
     selector: LapisSelector;
@@ -35,13 +35,14 @@ interface NucelotideDiversityProps{
 }
 
 type PositionProportion = {
-    position: number,
-    proportions: number[]
+  mutation: string,
+  proportion: number
 }
 
-type PositionEntropy = {
-  position: number,
-  entropy: number
+type PositionProportions = {
+    position: number,
+    proportions: PositionProportion[],
+    entropy: number
 }
 
 export const NucleotideDiversity = ({ selector }: Props) => {
@@ -152,12 +153,13 @@ export const NucleotideDiversity = ({ selector }: Props) => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="position" />
                   <YAxis domain={[0, 1]} />
-                  <Tooltip
+                  {/* <Tooltip
                     formatter={(value: string) => [Number(value).toFixed(4), "Entropy"]}
                     labelFormatter={label => {
                       return 'Position: ' + label;
                     }}
-                  />
+                  /> */}
+                  <Tooltip content={<CustomTooltip />}  allowEscapeViewBox={{ x: true, y: true}} />
                   <Legend />
                   <Bar dataKey="entropy" fill="#000000" legendType="none"/> 
                   <Brush dataKey="name" height={20} stroke="#000000" travellerWidth={10} />
@@ -170,9 +172,9 @@ export const NucleotideDiversity = ({ selector }: Props) => {
 
 const CalculateNucEntropy = (
     nucs: MutationProportionEntry[]
-): PositionEntropy[] => {
-    let positionProps = Array.apply(null, Array<PositionProportion>(29903)).map(function (x, i) { 
-      let p: PositionProportion = {position: i, proportions: []}
+): PositionProportions[] => {
+    let positionProps = Array.apply(null, Array<PositionProportions>(29903)).map(function (x, i) { 
+      let p: PositionProportions = {position: i, proportions: [], entropy: 0}
       return p;
     })
 
@@ -181,35 +183,32 @@ const CalculateNucEntropy = (
       let position = parseInt(nuc.mutation.slice(1, -1));
       let proportion = nuc.proportion;
       let mutation = nuc.mutation.slice(-1);
+      let reference = nuc.mutation.slice(1);
       if (mutation != '-') {
-        positionProps[position-1].position = position;
-        positionProps[position-1].proportions.push(proportion);
+        let pp: PositionProportion = {mutation: mutation, proportion: proportion}
+        positionProps[position-1].proportions.push(pp);
       };
     });
 
     //calculate remaining original nucleotide proportion
     positionProps.forEach(pos => {
-      let propSum = pos.proportions.reduce((partialSum, a) => partialSum + a, 0);
+      let propSum = 0;
+      pos.proportions.forEach(p => propSum += p.proportion)
       let remainder = 1 - propSum;
       if (remainder != 0){
-        pos.proportions.push(remainder);
+        let pp: PositionProportion = {mutation: "ref", proportion: remainder} //set reference flag as mutation, so it can later be displayed correctly
+        pos.proportions.push(pp);
       }
-    })
-
-    //convert proportions to entropy
-    let positionEntropy = Array.apply(null, Array<PositionEntropy>(29903)).map(function (x, i) { 
-      let p: PositionEntropy = {position: i+1, entropy: 0}
-      return p;
     })
 
     positionProps.map(p => {
       let sum = 0;
-      p.proportions.forEach(proportion => sum += proportion*Math.log(proportion));
-      positionEntropy[p.position-1].entropy = -sum;
+      p.proportions.forEach(pp => sum += pp.proportion*Math.log(pp.proportion));
+      p.entropy = -sum;
     })
 
-    console.log(positionEntropy);
-    return positionEntropy;
+    console.log(positionProps);
+    return positionProps;
 }
 
 const MeanNucleotideEntropy = (
@@ -223,3 +222,27 @@ const MeanNucleotideEntropy = (
 
   return avg;
 }
+
+const CustomTooltip = ({
+  active,
+  payload,
+  label,
+}: TooltipProps<ValueType, NameType>) => {
+  console.log(payload)
+  if (active) {
+    return (
+      <div className="recharts-tooltip-wrapper custom-tooltip">
+        <p className="label"><b>{`Position: ${label}`}</b></p>
+        <p className="label"><b>{`Entropy: ${payload?.[0].value}`}</b></p>
+        
+        <p className="desc">Nucleotide proportions:</p>
+        <p className="desc">{`${payload?.[0].payload?.proportions[0]?.mutation} : ${payload?.[0].payload?.proportions[0]?.proportion}`}</p>
+        <p className="desc">{`${payload?.[0].payload?.proportions[1]?.mutation} : ${payload?.[0].payload?.proportions[1]?.proportion}`}</p>
+        <p className="desc">{`${payload?.[0].payload?.proportions[2]?.mutation} : ${payload?.[0].payload?.proportions[2]?.proportion}`}</p>
+        <p className="desc">{`${payload?.[0].payload?.proportions[3]?.mutation} : ${payload?.[0].payload?.proportions[3]?.proportion}`}</p>
+      </div>
+    );
+  }
+
+  return null;
+};
