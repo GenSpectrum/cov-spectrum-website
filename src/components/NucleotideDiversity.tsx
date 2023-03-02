@@ -78,7 +78,7 @@ export const NucleotideDiversity = ({ selector }: Props) => {
     return (
         <>
             <NamedCard title="Nucleotide Diversity">
-              <h3>Mean nucleotide entropy of all samples: <b>{MeanNucleotideEntropy(data.nuc).toFixed(6)}</b></h3>
+              <h3>Mean nucleotide entropy of all sequences: <b>{MeanNucleotideEntropy(data.nuc).toFixed(6)}</b></h3>
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   width={500}
@@ -94,7 +94,12 @@ export const NucleotideDiversity = ({ selector }: Props) => {
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="position" />
                   <YAxis domain={[0, 1]} />
-                  <Tooltip />
+                  <Tooltip
+                    formatter={(value: string) => [Number(value).toFixed(4), "Entropy"]}
+                    labelFormatter={label => {
+                      return 'Position: ' + label;
+                    }}
+                  />
                   <Legend />
                   <Bar dataKey="entropy" fill="#000000" legendType="none"/> 
                   <Brush dataKey="name" height={20} stroke="#000000" travellerWidth={10} />
