@@ -2,7 +2,7 @@ import React from 'react';
 import { WasteWaterTimeseriesSummaryDataset } from './types';
 import { UnifiedDay } from '../../helpers/date-cache';
 import { getTicks } from '../../helpers/ticks';
-import { ChartAndMetricsWrapper, ChartWrapper, TitleWrapper, Wrapper } from '../../widgets/common';
+import { TitleWrapper, Wrapper } from '../../widgets/common';
 import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { formatDate } from './WasteWaterTimeChart';
 import { wastewaterVariantColors } from './constants';
@@ -63,52 +63,48 @@ export const WasteWaterLocationTimeChart = React.memo(({ variants }: Props): JSX
   return (
     <Wrapper>
       <TitleWrapper>Estimated prevalence in wastewater samples</TitleWrapper>
-      <ChartAndMetricsWrapper>
-        <ChartWrapper>
-          <ResponsiveContainer>
-            <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
-              <XAxis
-                dataKey='date'
-                scale='time'
-                type='number'
-                tickFormatter={formatDate}
-                domain={[(dataMin: any) => dataMin, () => today]}
-                ticks={ticks}
-              />
-              <YAxis domain={['dataMin', 'auto']} />
-              <Tooltip
-                formatter={(value: string, name: string, props: any) => {
-                  const escapedName = name.replace('values.', '');
-                  const [ciLower, ciUpper] = props.payload.cis[escapedName];
-                  return [
-                    (Number(value) * 100).toFixed(2) +
-                      '% [' +
-                      (ciLower * 100).toFixed(2) +
-                      '-' +
-                      (ciUpper * 100).toFixed(2) +
-                      '%]',
-                    deEscapeValueName(escapedName),
-                  ];
-                }}
-                labelFormatter={label => {
-                  return 'Date: ' + formatDate(label);
-                }}
-              />
-              {variantNames.map(variant => (
-                <Line
-                  type='monotone'
-                  dataKey={'values.' + variant}
-                  strokeWidth={3}
-                  stroke={wastewaterVariantColors[deEscapeValueName(variant)] ?? Utils.getRandomColorCode()}
-                  dot={false}
-                  isAnimationActive={false}
-                  key={variant}
-                />
-              ))}
-            </ComposedChart>
-          </ResponsiveContainer>
-        </ChartWrapper>
-      </ChartAndMetricsWrapper>
+      <ResponsiveContainer>
+        <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
+          <XAxis
+            dataKey='date'
+            scale='time'
+            type='number'
+            tickFormatter={formatDate}
+            domain={[(dataMin: any) => dataMin, () => today]}
+            ticks={ticks}
+          />
+          <YAxis domain={['dataMin', 'auto']} />
+          <Tooltip
+            formatter={(value: string, name: string, props: any) => {
+              const escapedName = name.replace('values.', '');
+              const [ciLower, ciUpper] = props.payload.cis[escapedName];
+              return [
+                (Number(value) * 100).toFixed(2) +
+                  '% [' +
+                  (ciLower * 100).toFixed(2) +
+                  '-' +
+                  (ciUpper * 100).toFixed(2) +
+                  '%]',
+                deEscapeValueName(escapedName),
+              ];
+            }}
+            labelFormatter={label => {
+              return 'Date: ' + formatDate(label);
+            }}
+          />
+          {variantNames.map(variant => (
+            <Line
+              type='monotone'
+              dataKey={'values.' + variant}
+              strokeWidth={3}
+              stroke={wastewaterVariantColors[deEscapeValueName(variant)] ?? Utils.getRandomColorCode()}
+              dot={false}
+              isAnimationActive={false}
+              key={variant}
+            />
+          ))}
+        </ComposedChart>
+      </ResponsiveContainer>
     </Wrapper>
   );
 });
