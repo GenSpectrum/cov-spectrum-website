@@ -13,16 +13,18 @@ import { LapisSelector } from '../data/LapisSelector';
 //import Checkbox from '@mui/material/Checkbox';
 //import FormGroup from '@mui/material/FormGroup';
 //import FormControlLabel from '@mui/material/FormControlLabel';
-//import { PipeDividedOptionsButtons } from '../helpers/ui';
+import { PipeDividedOptionsButtons } from '../helpers/ui';
 //import { DeregistrationHandle, ExportManagerContext } from './CombinedExport/ExportManager';
 //import download from 'downloadjs';
 //import { csvStringify } from '../helpers/csvStringifyHelper';
 //import { getConsensusSequenceFromMutations } from '../helpers/variant-consensus-sequence';
 //import { decodeNucMutation } from '../helpers/nuc-mutation';
 //import JSZip from 'jszip';
-//import { ProportionSelector } from './ProportionsSelector';
+import { PercentageInput } from './PercentageInput';
 import { NamedCard } from './NamedCard';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush } from 'recharts' ;
+import { SequenceType } from '../data/SequenceType';
+//import { Tooltip } from '@mui/material';
 
 export interface Props {
     selector: LapisSelector;
@@ -44,6 +46,9 @@ type PositionEntropy = {
 
 export const NucleotideDiversity = ({ selector }: Props) => {
     const [checked, setChecked] = useState<boolean>(false);
+    const [plotType, setPlotType] = useState<string>('pos');
+    const [sequenceType, setSequenceType] = useState<SequenceType>('nuc');
+    const [ratio, setRatio] = useState(0.005);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChecked(event.target.checked);
@@ -75,15 +80,68 @@ export const NucleotideDiversity = ({ selector }: Props) => {
 
     const data = queryStatus.data;
 
+    const controls = (
+      <div className='mb-4'>
+        {/*PLot type*/}
+        <div className='mb-2 flex'>
+          <PipeDividedOptionsButtons
+            options={[
+              { label: 'Entropy per position', value: 'pos' },
+              { label: 'Entropy over time', value: 'time' },
+            ]}
+            selected={plotType}
+            onSelect={setPlotType}
+          />
+        </div>
+        {/* AA vs. nucs */}
+        <div className='mb-2 flex'>
+          <PipeDividedOptionsButtons
+            options={[
+              { label: 'NUC', value: 'nuc' },
+              { label: 'AA', value: 'aa' },
+            ]}
+            selected={sequenceType}
+            onSelect={setSequenceType}
+          />
+        </div>
+        {/* Genes */}
+       {/*  {sequenceType === 'aa' && (
+          <div className='w-72 flex mb-2'>
+            <div className='mr-2'>Gene:</div>
+            <Form.Control
+              as='select'
+              value={gene}
+              onChange={ev => setGene(ev.target.value)}
+              className='flex-grow'
+              size='sm'
+            >
+              <option value='all'>All</option>
+              {ReferenceGenomeService.genes.map(g => (
+                <option value={g} key={g}>
+                  {g}
+                </option>
+              ))}
+            </Form.Control>
+          </div>
+        )} */}
+        <PercentageInput
+          ratio={ratio}
+          setRatio={setRatio}
+          className='mr-2'
+        />
+      </div>
+    );
+
     return (
         <>
             <NamedCard title="Nucleotide Diversity">
               <h3>Mean nucleotide entropy of all sequences: <b>{MeanNucleotideEntropy(data.nuc).toFixed(6)}</b></h3>
+              {controls}
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart
                   width={500}
                   height={500}
-                  data={CalculateNucEntropy(data.nuc).filter(p => p.entropy > 0.005)}
+                  data={CalculateNucEntropy(data.nuc).filter(p => p.entropy > ratio)}
                   margin={{
                     top: 30,
                     right: 20,
