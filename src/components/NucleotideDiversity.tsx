@@ -119,8 +119,8 @@ const CalculateNucEntropy = (
       let proportion = nuc.proportion;
       let mutation = nuc.mutation.slice(-1);
       if (mutation != '-') {
-        positionProps[position].position = position;
-        positionProps[position].proportions.push(proportion);
+        positionProps[position-1].position = position;
+        positionProps[position-1].proportions.push(proportion);
       };
     });
 
@@ -135,14 +135,14 @@ const CalculateNucEntropy = (
 
     //convert proportions to entropy
     let positionEntropy = Array.apply(null, Array<PositionEntropy>(29903)).map(function (x, i) { 
-      let p: PositionEntropy = {position: i, entropy: 0}
+      let p: PositionEntropy = {position: i+1, entropy: 0}
       return p;
     })
 
     positionProps.map(p => {
       let sum = 0;
       p.proportions.forEach(proportion => sum += proportion*Math.log(proportion));
-      positionEntropy[p.position].entropy = -sum;
+      positionEntropy[p.position-1].entropy = -sum;
     })
 
     console.log(positionEntropy);
