@@ -53,8 +53,8 @@ import { wastewaterVariantColors } from '../models/wasteWater/constants';
 import { WidgetWrapper } from '../components/WidgetWrapper';
 import { VariantSelector } from '../data/VariantSelector';
 import { AnalysisMode } from '../data/AnalysisMode';
-// Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
-const SWISS_SPECIALTIES_ACTIVATED = false;
+
+const SWISS_SPECIALTIES_ACTIVATED = true;
 
 export const FocusSinglePage = () => {
   const exploreUrl = useExploreUrl();
@@ -492,7 +492,7 @@ export const FocusSinglePageContent = ({
                     field='hospitalized'
                     variantSampleSet={variantHospDeathAgeCount.data}
                     wholeSampleSet={wholeHospDeathAgeCount.data}
-                    variantName={ldvsSelector.variant.pangoLineage ?? 'unnamed variant'}
+                    variantName={'selected variant'}
                     title='Hospitalization probabilities'
                     height={300}
                     toolbarChildren={deepFocusButtons?.hospitalizationAndDeath}
