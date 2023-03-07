@@ -25,6 +25,8 @@ import { NamedCard } from './NamedCard';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Brush, TooltipProps } from 'recharts' ;
 import { SequenceType } from '../data/SequenceType';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
+import { Form } from 'react-bootstrap';
+import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 
 export interface Props {
     selector: LapisSelector;
@@ -45,11 +47,17 @@ type PositionProportions = {
     entropy: number
 }
 
+const toolTipStyle = {
+  backgroundColor: 'white',
+  zIndex: 1
+}
+
 export const NucleotideDiversity = ({ selector }: Props) => {
     const [checked, setChecked] = useState<boolean>(false);
     const [plotType, setPlotType] = useState<string>('pos');
     const [sequenceType, setSequenceType] = useState<SequenceType>('nuc');
-    const [ratio, setRatio] = useState(0.005);
+    const [threshold, setThreshold] = useState(0.01);
+    const [gene, setGene] = useState<string>('all');
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setChecked(event.target.checked);
@@ -106,30 +114,32 @@ export const NucleotideDiversity = ({ selector }: Props) => {
           />
         </div>
         {/* Genes */}
-       {/*  {sequenceType === 'aa' && (
-          <div className='w-72 flex mb-2'>
-            <div className='mr-2'>Gene:</div>
-            <Form.Control
-              as='select'
-              value={gene}
-              onChange={ev => setGene(ev.target.value)}
-              className='flex-grow'
-              size='sm'
-            >
-              <option value='all'>All</option>
-              {ReferenceGenomeService.genes.map(g => (
-                <option value={g} key={g}>
-                  {g}
-                </option>
-              ))}
-            </Form.Control>
-          </div>
-        )} */}
-        <PercentageInput
-          ratio={ratio}
-          setRatio={setRatio}
-          className='mr-2'
-        />
+        <div className=' w-72 flex mb-2'>
+          <div className='mr-2'>Gene:</div>
+          <Form.Control
+            as='select'
+            value={gene}
+            onChange={ev => setGene(ev.target.value)}
+            className='flex-grow'
+            size='sm'
+          >
+            <option value='all'>All</option>
+            {ReferenceGenomeService.genes.map(g => (
+              <option value={g} key={g}>
+                {g}
+              </option>
+            ))}
+          </Form.Control>
+        </div>
+        {/*Minimum entropy treshold to display*/}
+        <div className='flex mb-2'>
+        <div className='mr-2'>Entropy display threshold: </div>
+          <PercentageInput
+            ratio={threshold}
+            setRatio={setThreshold}
+            className='mr-2'
+          />
+        </div>
       </div>
     );
 
@@ -142,7 +152,7 @@ export const NucleotideDiversity = ({ selector }: Props) => {
                 <BarChart
                   width={500}
                   height={500}
-                  data={CalculateNucEntropy(data.nuc).filter(p => p.entropy > ratio)}
+                  data={CalculateNucEntropy(data.nuc).filter(p => p.entropy > threshold)}
                   margin={{
                     top: 30,
                     right: 20,
@@ -151,7 +161,7 @@ export const NucleotideDiversity = ({ selector }: Props) => {
                   }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="position" />
+                  <XAxis dataKey="position"/>
                   <YAxis domain={[0, 1]} />
                   {/* <Tooltip
                     formatter={(value: string) => [Number(value).toFixed(4), "Entropy"]}
@@ -159,10 +169,10 @@ export const NucleotideDiversity = ({ selector }: Props) => {
                       return 'Position: ' + label;
                     }}
                   /> */}
-                  <Tooltip content={<CustomTooltip />}  allowEscapeViewBox={{ x: true, y: true}} />
+                  <Tooltip content={<CustomTooltip />} allowEscapeViewBox={{ y: true}} wrapperStyle={toolTipStyle} /> 
                   <Legend />
                   <Bar dataKey="entropy" fill="#000000" legendType="none"/> 
-                  <Brush dataKey="name" height={20} stroke="#000000" travellerWidth={10} />
+                  <Brush dataKey="name" height={20} stroke="#000000" travellerWidth={10} gap={10}/>
                 </BarChart>
               </ResponsiveContainer>
             </NamedCard>
@@ -201,6 +211,7 @@ const CalculateNucEntropy = (
       }
     })
 
+    //convert nucleotide proportion to entropy
     positionProps.map(p => {
       let sum = 0;
       p.proportions.forEach(pp => sum += pp.proportion*Math.log(pp.proportion));
@@ -231,15 +242,16 @@ const CustomTooltip = ({
   console.log(payload)
   if (active) {
     return (
-      <div className="recharts-tooltip-wrapper custom-tooltip">
-        <p className="label"><b>{`Position: ${label}`}</b></p>
-        <p className="label"><b>{`Entropy: ${payload?.[0].value}`}</b></p>
-        
-        <p className="desc">Nucleotide proportions:</p>
-        <p className="desc">{`${payload?.[0].payload?.proportions[0]?.mutation} : ${payload?.[0].payload?.proportions[0]?.proportion}`}</p>
-        <p className="desc">{`${payload?.[0].payload?.proportions[1]?.mutation} : ${payload?.[0].payload?.proportions[1]?.proportion}`}</p>
-        <p className="desc">{`${payload?.[0].payload?.proportions[2]?.mutation} : ${payload?.[0].payload?.proportions[2]?.proportion}`}</p>
-        <p className="desc">{`${payload?.[0].payload?.proportions[3]?.mutation} : ${payload?.[0].payload?.proportions[3]?.proportion}`}</p>
+      <div className="recharts-tooltip-wrapper recharts-tooltip-wrapper-left recharts-tooltip-wrapper-top custom-tooltip">
+        <p style={{paddingLeft: 10}} className="label">Position: <b>{label}</b></p>
+        <p style={{paddingLeft: 10}}>Entropy: <b>{Number(payload?.[0].value).toFixed(3)}</b></p>
+
+        <p style={{paddingLeft: 10, paddingRight: 10}}>Nucleotide proportions:</p>
+        {payload?.[0].payload?.proportions.map((pld: any) => (
+            <div style={{ display: "inline-block", paddingLeft: 10, paddingRight: 10, paddingBottom: 10}}>
+              <div><b>{pld.mutation}</b> : {pld.proportion.toFixed(3)}</div>
+            </div>
+          ))}
       </div>
     );
   }
