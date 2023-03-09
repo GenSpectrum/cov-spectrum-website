@@ -1,8 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 //import styled from 'styled-components';
 //import { MutationName } from './MutationName';
 //import { decodeAAMutation } from '../helpers/aa-mutation';
-import { transformToVariantQuery } from '../data/VariantSelector';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
@@ -39,7 +38,7 @@ import { SequenceType } from '../data/SequenceType';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { Form } from 'react-bootstrap';
 import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
-import { globalDateCache, UnifiedIsoWeek } from '../helpers/date-cache';
+import { globalDateCache } from '../helpers/date-cache';
 import { FixedDateRangeSelector } from '../data/DateRangeSelector';
 import { DateRange } from '../data/DateRange';
 
@@ -51,12 +50,9 @@ export interface Props {
 interface NucelotideDiversityProps {}
 
 type Data = {
-  weeks: UnifiedIsoWeek[];
-  mutations: {
-    mutation: string;
-    proportions: number[];
-    counts: number[];
-  }[];
+  variantCount: number[];
+  aa: MutationProportionEntry[];
+  nuc: MutationProportionEntry[];
 };
 
 type PositionProportion = {
@@ -110,59 +106,76 @@ export const NucleotideDiversity = ({ selector }: Props) => {
     selector: LapisSelector,
     sequenceType: SequenceType,
     gene: string
-  ): undefined | 'empty' | 'too-big' | Data => {
-    //TODO clean up data fetching here, copy-pasted together, surely I get stuff double and redundant...
-
-    const wholeRangeProportions = mutationProportionEntriesQuery
+  ) => {
 
     // Fetch the date distribution of the variant
     const basicVariantDataQuery = useQuery(
       async signal => ({
         sequenceType,
         result: await Promise.all([
-          DateCountSampleData.fromApi(selector, signal)
+          DateCountSampleData.fromApi(selector, signal),
         ]),
       }),
       [selector, sequenceType]
-    ); 
-    
+    );
+
     const [variantDateCounts] = basicVariantDataQuery.data?.result ?? [undefined];
 
-    if (!variantDateCounts) {
-      return undefined;
-    }
-    if (variantDateCounts.payload.length === 0) {
-      return 'empty';
-    }
-    if (!sequenceType) {
-      return undefined;
-    }
+    //fetch the proportions per position in weekly segments
+    const weeklyMutationProportionQuery = useQuery(
+      async signal => {
+        if (!variantDateCounts) {
+          return undefined;
+        }
 
-    const dayRange = globalDateCache.rangeFromDays(
-      variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
-    )!;
-    const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
-    const weekToIndexMap: Map<UnifiedIsoWeek, number> = new Map();
-    weeks.forEach((w, i) => weekToIndexMap.set(w, i));
-    const weekRange = globalDateCache.rangeFromWeeks(weeks)!
+        //calculate weeks
+        const dayRange = globalDateCache.rangeFromDays(
+          variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
+        )!;
+        const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
+        const weekDateRanges = [];
+        for (let i = 0; i < weeks.length; i++) {
+          let dateRange: DateRange = {dateFrom: weeks[i].firstDay, dateTo: weeks[i].firstDay};
+          weekDateRanges[i] = dateRange;
+        };
+      
+        const weekSelectors: LapisSelector[] = weekDateRanges.map(w => ({
+          ...selector,
+          dateRange: new FixedDateRangeSelector(w),
+        }));
 
-    const weekSelectors: LapisSelector[] = weeks.map(w => ({
-      ...selector,
-      dateRange: new FixedDateRangeSelector(const range: DateRange = {})
-    }));
-  };
+        return weekSelectors.map(w => 
+           Promise.all([
+                fetchSamplesCount(w, signal),
+                MutationProportionData.fromApi(w, 'aa', signal, 0),
+                MutationProportionData.fromApi(w, 'nuc', signal, 0),
+              ]).then(async ([variantCount, aaMutationDataset, nucMutationDataset]) => {
+                const aa: MutationProportionEntry[] = aaMutationDataset.payload.map(m => m);
+                const nuc: MutationProportionEntry[] = nucMutationDataset.payload.map(m => m);
+                return {
+                  variantCount,
+                  aa,
+                  nuc,
+                };
+              })
+          );
+      },
+      [selector, variantDateCounts]
+    );
+    
+    return weeklyMutationProportionQuery;
+  }
 
-  const data = useData(selector, sequenceType, gene)
+  const weekData = useData(selector, sequenceType, gene);
+  console.log(weekData);
 
   // View
   if (mutationProportionEntriesQuery.isLoading || !mutationProportionEntriesQuery.data) {
     return <Loader />;
   }
-  
-  const positionData = mutationProportionEntriesQuery.data
 
-  console.log(positionData)
-  console.log(data)
+
+  const positionData = mutationProportionEntriesQuery.data
   
   const controls = (
     <div className='mb-4'>
