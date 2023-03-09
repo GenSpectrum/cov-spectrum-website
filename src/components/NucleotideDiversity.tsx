@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 //import styled from 'styled-components';
 //import { MutationName } from './MutationName';
-//import { decodeAAMutation } from '../helpers/aa-mutation';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
@@ -17,7 +16,6 @@ import { PipeDividedOptionsButtons } from '../helpers/ui';
 //import download from 'downloadjs';
 //import { csvStringify } from '../helpers/csvStringifyHelper';
 //import { getConsensusSequenceFromMutations } from '../helpers/variant-consensus-sequence';
-//import { decodeNucMutation } from '../helpers/nuc-mutation';
 //import JSZip from 'jszip';
 import { PercentageInput } from './PercentageInput';
 import { NamedCard } from './NamedCard';
@@ -42,6 +40,8 @@ import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import { globalDateCache } from '../helpers/date-cache';
 import { FixedDateRangeSelector } from '../data/DateRangeSelector';
 import { DateRange } from '../data/DateRange';
+import { DecodedNucMuation, decodeNucMutation } from '../helpers/nuc-mutation';
+import { decodeAAMutation, DecodedAAMutation } from '../helpers/aa-mutation';
 
 
 export interface Props {
@@ -51,7 +51,7 @@ export interface Props {
 interface NucelotideDiversityProps {}
 
 type PositionProportion = {
-  mutation: string;
+  mutation: string | undefined ;
   proportion: number;
 };
 
@@ -72,25 +72,24 @@ const toolTipStyle = {
 };
 
 export const NucleotideDiversity = ({ selector }: Props) => {
-  const [checked, setChecked] = useState<boolean>(false);
   const [plotType, setPlotType] = useState<string>('pos');
-  const [sequenceType, setSequenceType] = useState<SequenceType>('nuc');
+  const [sequenceType, setSequenceType] = useState<SequenceType>('aa');
   const [threshold, setThreshold] = useState(0.01);
   const [gene, setGene] = useState<string>('all');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setChecked(event.target.checked);
   };
 
+  console.log(sequenceType);
   //fetch the proportions per position over the whole date range
   const mutationProportionEntriesQuery = useQuery(
     signal => {
       return Promise.all([
         MutationProportionData.fromApi(selector, sequenceType, signal, 0)
       ]).then(async ([data]) => {
-        const mut: MutationProportionEntry[] = data.payload.map(m => m);
+        const proportions: MutationProportionEntry[] = data.payload.map(m => m);
         return {
-          mut
+          proportions
         };
       });
     },
@@ -104,8 +103,9 @@ export const NucleotideDiversity = ({ selector }: Props) => {
     return <Loader />;
   }
 
-  const proportionEntries = mutationProportionEntriesQuery.data.mut;
-  
+  const proportionEntries = mutationProportionEntriesQuery.data.proportions;
+  console.log(proportionEntries);
+
   const controls = (
     <div className='mb-4'>
       {/*PLot type*/}
@@ -157,13 +157,13 @@ export const NucleotideDiversity = ({ selector }: Props) => {
   );
 
   let plotArea; 
-  plotArea = <Plot threshold={threshold} proportionEntries={proportionEntries} timeData={timeData} plotType={plotType} />;
+  plotArea = <Plot threshold={threshold} proportionEntries={proportionEntries} timeData={timeData} plotType={plotType} sequenceType={sequenceType}/>;
 
   return (
     <>
       <NamedCard title='Nucleotide Diversity'>
         <h3>
-          Mean nucleotide entropy of all sequences: <b>{MeanNucleotideEntropy(proportionEntries).toFixed(6)}</b>
+          Mean nucleotide entropy of all sequences: <b>{MeanNucleotideEntropy(proportionEntries, sequenceType).toFixed(6)}</b>
         </h3>
         {controls}
         {plotArea}
@@ -216,10 +216,10 @@ const useData = (
       return Promise.all(
           weekSelectors.map((w, i) =>
           MutationProportionData.fromApi(w, sequenceType, signal, 0).then(data => {
-            const mut: MutationProportionEntry[] = data.payload.map(m => m);
+            const proportions: MutationProportionEntry[] = data.payload.map(m => m);
             let date = weekDateRanges[i]
             return {
-              mut,
+              proportions,
               date
             }
             })
@@ -229,7 +229,7 @@ const useData = (
     [selector, variantDateCounts]
   );
 
-  const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data);
+  const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType);
 
   return timeData;
 }
@@ -238,10 +238,11 @@ type PlotProps = {
   threshold: number,
   proportionEntries: MutationProportionEntry[],
   timeData: WeekEntropy[],
-  plotType: string
+  plotType: string,
+  sequenceType: SequenceType
 }
 
-const Plot = ({ threshold, proportionEntries,  timeData, plotType }: PlotProps) => {
+const Plot = ({ threshold, proportionEntries,  timeData, plotType, sequenceType }: PlotProps) => {
   if(plotType == "pos"){
     return (
       <>
@@ -249,7 +250,7 @@ const Plot = ({ threshold, proportionEntries,  timeData, plotType }: PlotProps) 
           <BarChart
             width={500}
             height={500}
-            data={CalculateNucEntropy(proportionEntries).filter(p => p.entropy > threshold)}
+            data={CalculateNucEntropy(proportionEntries, sequenceType).filter(p => p.entropy > threshold)}
             margin={{
               top: 30,
               right: 20,
@@ -279,7 +280,7 @@ const Plot = ({ threshold, proportionEntries,  timeData, plotType }: PlotProps) 
     </>
     );
   } else {
-    let plotData = timeData.filter(t => t.meanEntropy > 0).map(({week, meanEntropy}) => { return {day: week.dateFrom?.string, entropy: meanEntropy.toFixed(7)}});
+    let plotData = timeData.filter(t => t.meanEntropy > 0).map(({week, meanEntropy}) => { return {day: week.dateFrom?.string, entropy: meanEntropy}});
     return (
       <>
         <ResponsiveContainer width='100%' height='100%'>
@@ -297,7 +298,12 @@ const Plot = ({ threshold, proportionEntries,  timeData, plotType }: PlotProps) 
             <CartesianGrid strokeDasharray='3 3' />
             <XAxis dataKey="day"/>
             <YAxis type="number" domain={[0, 'dataMax']}/>
-            <Tooltip />
+            <Tooltip
+                    formatter={(value: string) => [Number(value).toFixed(6), "Mean entropy"]}
+                    labelFormatter={label => {
+                      return 'Week starting on: ' + label;
+                    }}
+                  />
             <Legend />
             <Line type="monotone" dataKey="entropy" stroke="#000000" legendType='none'/>
           </LineChart>
@@ -307,7 +313,7 @@ const Plot = ({ threshold, proportionEntries,  timeData, plotType }: PlotProps) 
   }
 }
 
-const CalculateNucEntropy = (nucs: MutationProportionEntry[]): PositionProportions[] => {
+const CalculateNucEntropy = (nucs: MutationProportionEntry[], sequenceType: SequenceType): PositionProportions[] => {
   let positionProps = Array.apply(null, Array<PositionProportions>(29903)).map(function (x, i) {
     let p: PositionProportions = { position: i, proportions: [], entropy: 0 };
     return p;
@@ -315,10 +321,11 @@ const CalculateNucEntropy = (nucs: MutationProportionEntry[]): PositionProportio
 
   //sort proportions to their positions
   nucs.forEach(nuc => {
-    let position = parseInt(nuc.mutation.slice(1, -1));
+    let decoded = decodeMutation(nuc.mutation, sequenceType);
+    let position = decoded.position;
+    let mutation = decoded.mutatedBase
+    let reference = decoded.originalBase;
     let proportion = nuc.proportion;
-    let mutation = nuc.mutation.slice(-1);
-    let reference = nuc.mutation.slice(1);
     if (mutation != '-') {
       let pp: PositionProportion = { mutation: mutation, proportion: proportion };
       positionProps[position - 1].proportions.push(pp);
@@ -346,8 +353,8 @@ const CalculateNucEntropy = (nucs: MutationProportionEntry[]): PositionProportio
   return positionProps;
 };
 
-const MeanNucleotideEntropy = (nucs: MutationProportionEntry[]): number => {
-  let entropy = CalculateNucEntropy(nucs);
+const MeanNucleotideEntropy = (nucs: MutationProportionEntry[], sequenceType: SequenceType): number => {
+  let entropy = CalculateNucEntropy(nucs, sequenceType);
 
   let sum = 0;
   entropy.forEach(e => (sum += e.entropy));
@@ -356,12 +363,19 @@ const MeanNucleotideEntropy = (nucs: MutationProportionEntry[]): number => {
   return avg;
 };
 
-const WeeklyMeanEntropy = (weeks: { mut: MutationProportionEntry[]; date: DateRange; }[] | undefined): WeekEntropy[] => {
+const WeeklyMeanEntropy = (weeks: { proportions: MutationProportionEntry[]; date: DateRange; }[] | undefined, sequenceType: SequenceType): WeekEntropy[] => {
   let means = new Array<WeekEntropy>;
-  weeks?.forEach(w => means.push({week: w.date, meanEntropy: MeanNucleotideEntropy(w.mut)}));
+  weeks?.forEach(w => means.push({week: w.date, meanEntropy: MeanNucleotideEntropy(w.proportions, sequenceType)}));
   return means;
 }
 
+const decodeMutation = (mutation: string, sequenceType: SequenceType): DecodedNucMuation | DecodedAAMutation => {
+  if (sequenceType == "nuc"){
+    return decodeNucMutation(mutation);
+  } else {
+    return decodeAAMutation(mutation);
+  }
+}
 const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
   if (active) {
     return (
