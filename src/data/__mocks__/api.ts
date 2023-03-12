@@ -1,7 +1,6 @@
 import { CountryMapping } from '../CountryMapping';
 import { PangoLineageAlias } from '../PangoLineageAlias';
 import { ReferenceGenomeInfo } from '../ReferenceGenomeInfo';
-import { get } from '../api';
 
 export async function fetchCountryMapping(): Promise<CountryMapping[]> {
   return Promise.resolve([
