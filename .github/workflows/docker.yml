@@ -18,7 +18,7 @@ jobs:
         run: |
           echo "BRANCH=$(eval 'echo $GITHUB_REF | sed s/refs\\/heads\\/// | sed s/\\//__/g ')" >> $GITHUB_ENV
       - name: Build image
-        run: docker build --build-arg REACT_APP_LAPIS_ACCESS_KEY=${{ secrets.REACT_APP_LAPIS_ACCESS_KEY }} -t new_image .
+        run: docker build -t new_image .
       - name: Login to Github Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       - name: Add tags and push
@@ -26,13 +26,3 @@ jobs:
         run: |
           docker tag new_image ${{ env.IMAGE_NAME }}:br-${{ env.BRANCH }}
           docker push ${{ env.IMAGE_NAME }}:br-${{ env.BRANCH }}
-      - name: Add "develop" tag and push
-        if: env.BRANCH == 'develop'
-        run: |
-          docker tag new_image ${{ env.IMAGE_NAME }}:develop
-          docker push ${{ env.IMAGE_NAME }}:develop
-      - name: Add "public" tag and push
-        if: env.BRANCH == 'public'
-        run: |
-          docker tag new_image ${{ env.IMAGE_NAME }}:public
-          docker push ${{ env.IMAGE_NAME }}:public

@@ -26,4 +26,4 @@ Many new features and the majority of the open issues can be implemented by only
 
 ## For production
 
-Production builds are done automatically in CI (see [.github/workflows/gisaid_docker.yml](/.github/workflows/gisaid_docker.yml)).
+Production builds are done automatically in CI (see [.github/workflows/gisaid_docker.yml](/.github/workflows/docker.yml)).
