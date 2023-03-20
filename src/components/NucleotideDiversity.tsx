@@ -48,12 +48,13 @@ type Props = {
 };
 
 type PositionProportion = {
+  position: number | string;
   mutation: string | undefined;
   proportion: number;
 };
 
 type PositionEntropy = {
-  position: number;
+  position: number | string;
   proportions: PositionProportion[];
   entropy: number;
 };
@@ -85,8 +86,6 @@ export const NucleotideDiversity = ({ selector }: Props) => {
   const [sequenceType, setSequenceType] = useState<SequenceType>('nuc');
   const [threshold, setThreshold] = useState(0.01);
   const [gene, setGene] = useState<string>('all');
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {};
 
   const data = useData(selector, sequenceType);
 
@@ -164,7 +163,7 @@ export const NucleotideDiversity = ({ selector }: Props) => {
       <NamedCard title='Nucleotide Diversity'>
         <h3>
           Mean nucleotide entropy of all sequences:{' '}
-          <b>{MeanEntropy(data.positionEntropy).toFixed(6)}</b>
+          <b>{MeanEntropy(data.positionEntropy, sequenceType).toFixed(6)}</b>
         </h3>
         {controls}
         {plotArea}
@@ -298,7 +297,6 @@ const Plot = ({ threshold, plotData, plotType, sequenceType, gene }: PlotProps) 
       .map(({ week, meanEntropy }) => {
         return { day: week.dateFrom?.string, entropy: meanEntropy };
       });
-    //console.log(transformedData);
     return (
       <>
         <ResponsiveContainer width='100%' height='100%'>
@@ -335,70 +333,69 @@ const CalculateEntropy = (
   muts: MutationProportionEntry[] | undefined,
   sequenceType: SequenceType
 ): PositionEntropy[] => {
-  let positionProps = Array.apply(null, Array<PositionEntropy>(29903)).map(function (x, i) {
-    let p: PositionEntropy = { position: i, proportions: [], entropy: 0 };
-    return p;
-  });
+  let positionProps = new Array<PositionProportion>;
 
-  //sort proportions to their positions
-  muts?.forEach(mut => {
-    let decoded = decodeMutation(mut.mutation, sequenceType);
-    if (decoded.mutatedBase != '-') {
-      let pp: PositionProportion = { mutation: decoded.mutatedBase, proportion: mut.proportion };
-      positionProps[decoded.position - 1].proportions.push(pp);
+  muts?.forEach(mut => {    
+    if (mut.mutation.includes(":")){
+      let decoded = decodeAAMutation(mut.mutation)
+      if (decoded.mutatedBase != '-') {
+        let pp: PositionProportion = {position: mut.mutation, mutation: decoded.mutatedBase, proportion: mut.proportion };
+        positionProps.push(pp);
+      }
+    } else {
+      let decoded = decodeNucMutation(mut.mutation)
+      if (decoded.mutatedBase != '-') {
+        let pp: PositionProportion = {position: decoded.position, mutation: decoded.mutatedBase, proportion: mut.proportion };
+        positionProps.push(pp);
+      }
+  }});
+
+  const positionGroups = Object.entries(groupBy(positionProps, p => p.position)).map(p => {
+    return {
+      position: p[0], 
+      proportions: p[1],
+      entropy: 0
     }
   });
 
-  //calculate remaining original nucleotide proportion
-  positionProps.forEach(pos => {
+  //calculate remaining original proportion for each position
+  positionGroups.forEach(pos => {
     let propSum = 0;
     pos.proportions.forEach(p => (propSum += p.proportion));
     let remainder = 1 - propSum;
     if (remainder != 0) {
-      let pp: PositionProportion = { mutation: 'ref', proportion: remainder }; //set reference flag as mutation, so it can later be displayed correctly
+      let pp: PositionProportion = { position: pos.position, mutation: 'ref', proportion: remainder }; //set reference flag as mutation, so it can later be displayed correctly
       pos.proportions.push(pp);
     }
   });
 
-  //convert nucleotide proportion to entropy
-  positionProps.map(p => {
+  //convert proportion to entropy
+  positionGroups.map(p => {
     let sum = 0;
     p.proportions.forEach(pp => (sum += pp.proportion * Math.log(pp.proportion)));
     p.entropy = -sum;
   });
 
-  console.log(positionProps)
-  return positionProps;
+  return positionGroups;
 };
 
-const MeanEntropy = (posEntropy: PositionEntropy[]): number => {
+const MeanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType): number => {
   let sum = 0;
   posEntropy?.forEach(e => (sum += e.entropy));
-  return sum / posEntropy?.length || 0;
+  const positionCount = sequenceType == "nuc" ? 29903 : 10000
+  return sum / positionCount;
 };
 
 const WeeklyMeanEntropy = (
   weeks: { proportions: MutationProportionEntry[]; date: DateRange }[] | undefined,
   sequenceType: SequenceType
 ): WeekEntropy[] => {
-  console.log(weeks);
   let means = new Array<WeekEntropy>();
   weeks?.forEach(w =>
-    means.push({ week: w.date, meanEntropy: MeanEntropy(CalculateEntropy(w.proportions, sequenceType)) })
+    means.push({ week: w.date, meanEntropy: MeanEntropy(CalculateEntropy(w.proportions, sequenceType), sequenceType) })
   );
   
   return means;
-};
-
-const decodeMutation = (
-  mutation: string,
-  sequenceType: SequenceType
-): DecodedNucMuation | DecodedAAMutation => {
-  if (mutation.includes(":")) { //TODO: not nice, but fixes the nuc/aa change bug
-    return decodeAAMutation(mutation);
-  } else {
-    return decodeNucMutation(mutation);
-  }
 };
 
 const getBrushStartIndex = (geneStartPosition: number | undefined, plotData: PositionEntropy[]): number => {
@@ -408,6 +405,12 @@ const getBrushStartIndex = (geneStartPosition: number | undefined, plotData: Pos
 const getBrushEndIndex = (geneEndPosition: number | undefined, plotData: PositionEntropy[]): number => {
   return geneEndPosition != undefined ? plotData.findIndex(p => p.position > geneEndPosition) : (plotData.length-1)
 };
+
+const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
+  arr.reduce((groups, item) => {
+    (groups[key(item)] ||= []).push(item);
+    return groups;
+  }, {} as Record<K, T[]>);
 
 const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
   if (active) {
