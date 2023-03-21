@@ -289,7 +289,7 @@ const Plot = ({ threshold, plotData, plotType, sequenceType, gene }: PlotProps) 
             />
             <Legend />
             <Bar dataKey='entropy' fill='#000000' legendType='none'/>
-            <Brush dataKey='name' height={20} stroke='#000000' travellerWidth={10} gap={10} startIndex={getBrushStartIndex(gene?.startPosition, transformedData)} endIndex={getBrushEndIndex(gene?.endPosition, transformedData)}/>
+            <Brush dataKey='name' height={20} stroke='#000000' travellerWidth={10} gap={10} startIndex={getBrushStartIndex(gene, transformedData)} endIndex={getBrushEndIndex(gene, transformedData)}/>
           </BarChart>
         </ResponsiveContainer>
       </>
@@ -342,7 +342,7 @@ const CalculateEntropy = (
     if (mut.mutation.includes(":")){
       let decoded = decodeAAMutation(mut.mutation)
       if (decoded.mutatedBase != '-') {
-        let pp: PositionProportion = {position: mut.mutation, mutation: decoded.mutatedBase, proportion: mut.proportion };
+        let pp: PositionProportion = {position: decoded.gene + ":" + decoded.originalBase + decoded.position, mutation: decoded.mutatedBase, proportion: mut.proportion };
         positionProps.push(pp);
       }
     } else {
@@ -385,7 +385,7 @@ const CalculateEntropy = (
 const MeanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType): number => {
   let sum = 0;
   posEntropy?.forEach(e => (sum += e.entropy));
-  const positionCount = sequenceType == "nuc" ? 29903 : 10000
+  const positionCount = sequenceType == "nuc" ? jsonRefData.nucSeq.length : jsonRefData.genes.map(g => g.aaSeq.length).reduce((x, a) => x + a, 0) 
   return sum / positionCount;
 };
 
@@ -399,14 +399,6 @@ const WeeklyMeanEntropy = (
   );
   
   return means;
-};
-
-const getBrushStartIndex = (geneStartPosition: number | undefined, plotData: PositionEntropy[]): number => {
-  return geneStartPosition != undefined ? plotData.findIndex(p => parseInt(p.position) > geneStartPosition) : 0
-};
-
-const getBrushEndIndex = (geneEndPosition: number | undefined, plotData: PositionEntropy[]): number => {
-  return geneEndPosition != undefined ? plotData.findIndex(p => parseInt(p.position) > geneEndPosition) : (plotData.length-1)
 };
 
 const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
@@ -437,8 +429,25 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
       </div>
     );
   }
-
   return null;
+};
+
+const getBrushStartIndex = (gene: Gene | undefined, plotData: PositionEntropy[]): number => {
+  if (plotData[0]?.position.includes(":")){
+    let names = plotData.map(p => decodeAAMutation(p.position).gene);
+    return (gene?.name != "All" && gene?.name != undefined) ? names.indexOf(gene.name) : 0
+  } else {
+    return gene?.startPosition != undefined ? plotData.findIndex(p => parseInt(p.position) > gene.startPosition) : 0
+  }
+};
+
+const getBrushEndIndex = (gene: Gene | undefined, plotData: PositionEntropy[]): number => {
+  if (plotData[0]?.position.includes(":")){
+    let names = plotData.map(p => decodeAAMutation(p.position).gene);
+    return (gene?.name != "All" && gene?.name != undefined) ? names.lastIndexOf(gene.name) : (plotData.length-1)
+  } else {
+    return gene?.endPosition != undefined ? plotData.findIndex(p => parseInt(p.position) > gene.endPosition) : (plotData.length-1)
+  }
 };
 
 function formatXAxis(value: any) {
