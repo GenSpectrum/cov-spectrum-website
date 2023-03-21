@@ -39,8 +39,8 @@ import { Form } from 'react-bootstrap';
 import { globalDateCache } from '../helpers/date-cache';
 import { FixedDateRangeSelector } from '../data/DateRangeSelector';
 import { DateRange } from '../data/DateRange';
-import { DecodedNucMuation, decodeNucMutation } from '../helpers/nuc-mutation';
-import { decodeAAMutation, DecodedAAMutation } from '../helpers/aa-mutation';
+import { decodeNucMutation } from '../helpers/nuc-mutation';
+import { decodeAAMutation, sortListByAAMutation } from '../helpers/aa-mutation';
 import jsonRefData from '../data/refData.json';
 
 type Props = {
@@ -48,13 +48,13 @@ type Props = {
 };
 
 type PositionProportion = {
-  position: number | string;
+  position: string;
   mutation: string | undefined;
   proportion: number;
 };
 
 type PositionEntropy = {
-  position: number | string;
+  position: string;
   proportions: PositionProportion[];
   entropy: number;
 };
@@ -241,10 +241,13 @@ const useData = (selector: LapisSelector, sequenceType: SequenceType) => {
     [selector, sequenceType, variantDateCounts]
   );
 
-  const positionEntropy = CalculateEntropy(proportionEntries, sequenceType)
+  let positionEntropy = CalculateEntropy(proportionEntries, sequenceType)
+  const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType);
 
-  const weeklyData = weeklyMutationProportionQuery.data
-  const timeData = WeeklyMeanEntropy(weeklyData, sequenceType);
+  if (positionEntropy[0]?.position.includes(":")){
+    const sorted = sortListByAAMutation(positionEntropy, m => m.position);
+    positionEntropy = sorted;
+  }
 
   const data: Data = {positionEntropy: positionEntropy, timeData: timeData}
   return data;
@@ -277,7 +280,7 @@ const Plot = ({ threshold, plotData, plotType, sequenceType, gene }: PlotProps) 
               bottom: 5,
             }}
           >
-            <XAxis dataKey='position'/>
+            <XAxis dataKey='position' tickFormatter={formatXAxis}/>
             <YAxis ticks={[0, 0.5, 1]} />
             <Tooltip
               content={<CustomTooltip />}
@@ -345,7 +348,7 @@ const CalculateEntropy = (
     } else {
       let decoded = decodeNucMutation(mut.mutation)
       if (decoded.mutatedBase != '-') {
-        let pp: PositionProportion = {position: decoded.position, mutation: decoded.mutatedBase, proportion: mut.proportion };
+        let pp: PositionProportion = {position: decoded.position.toString(), mutation: decoded.mutatedBase, proportion: mut.proportion };
         positionProps.push(pp);
       }
   }});
@@ -399,11 +402,11 @@ const WeeklyMeanEntropy = (
 };
 
 const getBrushStartIndex = (geneStartPosition: number | undefined, plotData: PositionEntropy[]): number => {
-  return geneStartPosition != undefined ? plotData.findIndex(p => p.position > geneStartPosition) : 0
+  return geneStartPosition != undefined ? plotData.findIndex(p => parseInt(p.position) > geneStartPosition) : 0
 };
 
 const getBrushEndIndex = (geneEndPosition: number | undefined, plotData: PositionEntropy[]): number => {
-  return geneEndPosition != undefined ? plotData.findIndex(p => p.position > geneEndPosition) : (plotData.length-1)
+  return geneEndPosition != undefined ? plotData.findIndex(p => parseInt(p.position) > geneEndPosition) : (plotData.length-1)
 };
 
 const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
@@ -437,3 +440,7 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
 
   return null;
 };
+
+function formatXAxis(value: any) {
+  return value.toString().includes(":") ? decodeAAMutation(value).gene : value;
+}
