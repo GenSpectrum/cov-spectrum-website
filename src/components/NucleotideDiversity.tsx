@@ -24,7 +24,6 @@ import {
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Legend,
   ResponsiveContainer,
@@ -42,6 +41,7 @@ import { DateRange } from '../data/DateRange';
 import { decodeNucMutation } from '../helpers/nuc-mutation';
 import { decodeAAMutation, sortListByAAMutation } from '../helpers/aa-mutation';
 import jsonRefData from '../data/refData.json';
+import { colors } from '../widgets/common';
 
 type Props = {
   selector: LapisSelector;
@@ -50,6 +50,7 @@ type Props = {
 type PositionProportion = {
   position: string;
   mutation: string | undefined;
+  original: string | undefined;
   proportion: number;
 };
 
@@ -64,9 +65,14 @@ type WeekEntropy = {
   meanEntropy: number;
 };
 
+type plotWeekEntropy = {
+  day: string | undefined;
+  entropy: number;
+}
+
 type Data = {
   positionEntropy: PositionEntropy[];
-  timeData: WeekEntropy[];
+  timeData: plotWeekEntropy[];
 };
 
 type Gene = {
@@ -245,14 +251,18 @@ const useData = (selector: LapisSelector, sequenceType: SequenceType) => {
     [selector, sequenceType, variantDateCounts]
   );
 
-  let positionEntropy = CalculateEntropy(proportionEntries, sequenceType);
+  const positionEntropy = CalculateEntropy(proportionEntries, sequenceType);
   const sortedEntropy = positionEntropy[0]?.position.includes(':')
     ? sortListByAAMutation(positionEntropy, m => m.position)
     : positionEntropy;
 
   const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType);
+  const transformedTime = timeData
+      .slice(0, timeData.length - 1).map(({ week, meanEntropy }) => {
+        return { day: week.dateFrom?.string, entropy: meanEntropy };
+      });
 
-  const data: Data = { positionEntropy: sortedEntropy, timeData: timeData };
+  const data: Data = { positionEntropy: sortedEntropy, timeData: transformedTime };
   return data;
 };
 
@@ -267,7 +277,7 @@ type PlotProps = {
 
 const Plot = ({ threshold, plotData, plotType, sequenceType, gene, genes }: PlotProps) => {
   if (plotType === 'pos') {
-    let transformedData = plotData.positionEntropy.filter(p => p.entropy >= threshold);
+    //let transformedData = plotData.positionEntropy.filter(p => p.entropy >= threshold)
     return (
       <>
         <ResponsiveContainer width='100%' height='100%'>
@@ -292,33 +302,28 @@ const Plot = ({ threshold, plotData, plotType, sequenceType, gene, genes }: Plot
               wrapperStyle={toolTipStyle}
             />
             <Legend />
-            <Bar dataKey='entropy' fill='#000000' legendType='none' />
+            <Bar dataKey='entropy' fill={colors.active} legendType='none' />
             <Brush
               dataKey='name'
               height={10}
-              stroke='#000000'
+              stroke={colors.active}
               travellerWidth={10}
               gap={10}
-              startIndex={getBrushIndex(gene, transformedData).startIndex}
-              endIndex={getBrushIndex(gene, transformedData).stopIndex}
+              startIndex={getBrushIndex(gene, plotData.positionEntropy).startIndex}
+              endIndex={getBrushIndex(gene, plotData.positionEntropy).stopIndex}
             />
           </BarChart>
         </ResponsiveContainer>
       </>
     );
   } else {
-    let transformedData = plotData.timeData
-      .filter(t => t.meanEntropy > 0)
-      .map(({ week, meanEntropy }) => {
-        return { day: week.dateFrom?.string, entropy: meanEntropy };
-      });
     return (
       <>
         <ResponsiveContainer width='100%' height='100%'>
           <LineChart
             width={500}
             height={500}
-            data={transformedData}
+            data={plotData.timeData}
             margin={{
               top: 30,
               right: 20,
@@ -326,7 +331,6 @@ const Plot = ({ threshold, plotData, plotType, sequenceType, gene, genes }: Plot
               bottom: 5,
             }}
           >
-            <CartesianGrid strokeDasharray='3 3' />
             <XAxis dataKey='day' />
             <YAxis ticks={[0, 0.001, 0.002, 0.003]} />
             <Tooltip
@@ -336,7 +340,7 @@ const Plot = ({ threshold, plotData, plotType, sequenceType, gene, genes }: Plot
               }}
             />
             <Legend />
-            <Line type='monotone' dataKey='entropy' stroke='#000000' legendType='none' />
+            <Line type='monotone' dataKey='entropy' legendType='none' isAnimationActive={false} dot={false} stroke={colors.active} strokeWidth={3}/>
           </LineChart>
         </ResponsiveContainer>
       </>
@@ -357,6 +361,7 @@ const CalculateEntropy = (
         let pp: PositionProportion = {
           position: decoded.gene + ':' + decoded.originalBase + decoded.position,
           mutation: decoded.mutatedBase,
+          original: decoded.originalBase,
           proportion: mut.proportion,
         };
         positionProps.push(pp);
@@ -367,6 +372,7 @@ const CalculateEntropy = (
         let pp: PositionProportion = {
           position: decoded.position.toString(),
           mutation: decoded.mutatedBase,
+          original: decoded.originalBase,
           proportion: mut.proportion,
         };
         positionProps.push(pp);
@@ -377,6 +383,7 @@ const CalculateEntropy = (
   const positionGroups = Object.entries(groupBy(positionProps, p => p.position)).map(p => {
     return {
       position: p[0],
+      original: p[1][0].original,
       proportions: p[1],
       entropy: 0,
     };
@@ -386,7 +393,7 @@ const CalculateEntropy = (
   positionGroups.forEach(pos => {
     const remainder = 1 - pos.proportions.map(p => p.proportion).reduce((x, a) => x + a, 0);
     if (remainder !== 0) {
-      pos.proportions.push({ position: pos.position, mutation: 'ref', proportion: remainder });
+      pos.proportions.push({ position: pos.position, mutation: pos.original + " (ref)", original: pos.original, proportion: remainder });
     }
   });
 
