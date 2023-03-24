@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 //import styled from 'styled-components';
 //import { MutationName } from './MutationName';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
@@ -73,6 +73,7 @@ type plotWeekEntropy = {
 type Data = {
   positionEntropy: PositionEntropy[];
   timeData: plotWeekEntropy[];
+  sequenceType: SequenceType;
 };
 
 type Gene = {
@@ -165,7 +166,6 @@ export const NucleotideDiversity = ({ selector }: Props) => {
         threshold={threshold}
         plotData={data}
         plotType={plotType}
-        sequenceType={sequenceType}
         gene={geneRange}
         genes={jsonRefData.genes}
       />
@@ -182,12 +182,15 @@ export const NucleotideDiversity = ({ selector }: Props) => {
   );
 };
 
-const useData = (selector: LapisSelector, sequenceType: SequenceType) => {
+const useData = (
+  selector: LapisSelector, 
+  sequenceType: SequenceType
+  ): Data | undefined => {
   //fetch the proportions per position over the whole date range
   const mutationProportionEntriesQuery = useQuery(
     async signal => {
       return {
-        sequencyType: sequenceType,
+        sequenceType: sequenceType,
         result: await Promise.all([MutationProportionData.fromApi(selector, sequenceType, signal)]).then(
           async ([data]) => {
             const proportions: MutationProportionEntry[] = data.payload.map(m => m);
@@ -200,7 +203,6 @@ const useData = (selector: LapisSelector, sequenceType: SequenceType) => {
     },
     [selector, sequenceType]
   );
-  const proportionEntries = mutationProportionEntriesQuery.data?.result.proportions ?? undefined;
 
   // Fetch the date distribution of the variant
   const basicVariantDataQuery = useQuery(
@@ -251,18 +253,30 @@ const useData = (selector: LapisSelector, sequenceType: SequenceType) => {
     [selector, sequenceType, variantDateCounts]
   );
 
-  const positionEntropy = CalculateEntropy(proportionEntries, sequenceType);
-  const sortedEntropy = positionEntropy[0]?.position.includes(':')
-    ? sortListByAAMutation(positionEntropy, m => m.position)
-    : positionEntropy;
+  const data = useMemo(() => {
+    if (!mutationProportionEntriesQuery.data || !weeklyMutationProportionQuery.data) {
+      return undefined;
+    }
+    const sequenceType = mutationProportionEntriesQuery.data?.sequenceType;
+    if (!sequenceType) {
+      return undefined;
+    }
 
-  const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType);
-  const transformedTime = timeData
-      .slice(0, timeData.length - 1).map(({ week, meanEntropy }) => {
-        return { day: week.dateFrom?.string, entropy: meanEntropy };
-      });
+    const positionEntropy = CalculateEntropy(mutationProportionEntriesQuery.data.result.proportions, sequenceType);
+    const sortedEntropy = sequenceType === "aa"
+      ? sortListByAAMutation(positionEntropy, m => m.position)
+      : positionEntropy;
+  
+    const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType);
+    const transformedTime = timeData
+        .slice(0, timeData.length - 1).map(({ week, meanEntropy }) => {
+          return { day: week.dateFrom?.string, entropy: meanEntropy };
+        });
+  
+    return { positionEntropy: sortedEntropy, timeData: transformedTime, sequenceType: sequenceType};
+  },
+  [mutationProportionEntriesQuery, weeklyMutationProportionQuery]);
 
-  const data: Data = { positionEntropy: sortedEntropy, timeData: transformedTime };
   return data;
 };
 
@@ -270,12 +284,11 @@ type PlotProps = {
   threshold: number;
   plotData: Data;
   plotType: string;
-  sequenceType: SequenceType;
   gene: Gene | undefined;
   genes: Gene[];
 };
 
-const Plot = ({ threshold, plotData, plotType, sequenceType, gene, genes }: PlotProps) => {
+const Plot = ({ threshold, plotData, plotType, gene, genes}: PlotProps) => {
   if (plotType === 'pos') {
     //let transformedData = plotData.positionEntropy.filter(p => p.entropy >= threshold)
     return (
@@ -309,8 +322,8 @@ const Plot = ({ threshold, plotData, plotType, sequenceType, gene, genes }: Plot
               stroke={colors.active}
               travellerWidth={10}
               gap={10}
-              startIndex={getBrushIndex(gene, plotData.positionEntropy).startIndex}
-              endIndex={getBrushIndex(gene, plotData.positionEntropy).stopIndex}
+              startIndex={getBrushIndex(gene, plotData.positionEntropy, plotData.sequenceType).startIndex}
+              endIndex={getBrushIndex(gene, plotData.positionEntropy, plotData.sequenceType).stopIndex}
             />
           </BarChart>
         </ResponsiveContainer>
@@ -355,7 +368,7 @@ const CalculateEntropy = (
   let positionProps = new Array<PositionProportion>();
 
   muts?.forEach(mut => {
-    if (mut.mutation.includes(':')) {
+    if (sequenceType === 'aa') {
       let decoded = decodeAAMutation(mut.mutation);
       if (decoded.mutatedBase !== '-') {
         let pp: PositionProportion = {
@@ -464,11 +477,12 @@ const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameT
 
 const getBrushIndex = (
   gene: Gene | undefined,
-  plotData: PositionEntropy[]
+  plotData: PositionEntropy[],
+  sequenceType: SequenceType
 ): { startIndex: number; stopIndex: number } => {
   let startIndex;
   let stopIndex;
-  if (plotData[0]?.position.includes(':')) {
+  if (sequenceType === "aa") {
     let names = plotData.map(p => decodeAAMutation(p.position).gene);
     startIndex = gene?.name !== 'All' && gene?.name !== undefined ? names.indexOf(gene.name) : 0;
     stopIndex =
