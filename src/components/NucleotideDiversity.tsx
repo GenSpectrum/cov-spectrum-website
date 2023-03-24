@@ -104,17 +104,6 @@ export const NucleotideDiversity = ({ selector }: Props) => {
 
   const controls = (
     <div className='mb-4'>
-      {/*Plot type*/}
-      <div className='mb-2 flex'>
-        <PipeDividedOptionsButtons
-          options={[
-            { label: 'Entropy per position', value: 'pos' },
-            { label: 'Entropy over time', value: 'time' },
-          ]}
-          selected={plotType}
-          onSelect={setPlotType}
-        />
-      </div>
       {/* AA vs. nucs */}
       <div className='mb-2 flex'>
         <PipeDividedOptionsButtons
@@ -124,6 +113,17 @@ export const NucleotideDiversity = ({ selector }: Props) => {
           ]}
           selected={sequenceType}
           onSelect={setSequenceType}
+        />
+      </div>
+      {/*Plot type*/}
+      <div className='mb-2 flex'>
+        <PipeDividedOptionsButtons
+          options={[
+            { label: 'Entropy per position', value: 'pos' },
+            { label: 'Entropy over time', value: 'time' },
+          ]}
+          selected={plotType}
+          onSelect={setPlotType}
         />
       </div>
       {/* Genes */}
@@ -168,6 +168,8 @@ export const NucleotideDiversity = ({ selector }: Props) => {
         plotType={plotType}
         gene={geneRange}
         genes={jsonRefData.genes}
+        startIndex={getBrushIndex(geneRange, data.positionEntropy, data.sequenceType).startIndex}
+        stopIndex={getBrushIndex(geneRange, data.positionEntropy, data.sequenceType).stopIndex}
       />
     );
   }
@@ -286,15 +288,18 @@ type PlotProps = {
   plotType: string;
   gene: Gene | undefined;
   genes: Gene[];
+  startIndex: number;
+  stopIndex: number;
 };
 
-const Plot = ({ threshold, plotData, plotType, gene, genes}: PlotProps) => {
+const Plot = ({ threshold, plotData, plotType, gene, genes, startIndex, stopIndex}: PlotProps) => {
   if (plotType === 'pos') {
     //let transformedData = plotData.positionEntropy.filter(p => p.entropy >= threshold)
     return (
       <>
         <ResponsiveContainer width='100%' height='100%'>
           <BarChart
+            key={(startIndex || 0) + (stopIndex || 0)} //This fixes a weird bug where the plot doesn't redraw when the brush indexes are changed
             width={500}
             height={500}
             data={plotData.positionEntropy}
@@ -322,8 +327,8 @@ const Plot = ({ threshold, plotData, plotType, gene, genes}: PlotProps) => {
               stroke={colors.active}
               travellerWidth={10}
               gap={10}
-              startIndex={getBrushIndex(gene, plotData.positionEntropy, plotData.sequenceType).startIndex}
-              endIndex={getBrushIndex(gene, plotData.positionEntropy, plotData.sequenceType).stopIndex}
+              startIndex={startIndex}
+              endIndex={stopIndex}
             />
           </BarChart>
         </ResponsiveContainer>
