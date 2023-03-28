@@ -57,9 +57,9 @@ type WeekEntropy = {
 };
 
 type TransformedTime = {
-    [x: string]: string | number | undefined;
-    day: string | undefined;
-}[]
+  [x: string]: string | number | undefined;
+  day: string | undefined;
+}[];
 
 type Data = {
   positionEntropy: PositionEntropy[];
@@ -74,12 +74,6 @@ type Gene = {
   aaSeq: string;
 };
 
-type plotGeneBar = {
-  type: string;
-  name: string;
-  position: number[];
-};
-
 const toolTipStyle = {
   backgroundColor: 'white',
   zIndex: 1,
@@ -90,23 +84,26 @@ export const NucleotideDiversity = ({ selector }: Props) => {
   const [sequenceType, setSequenceType] = useState<SequenceType>('nuc');
   const [threshold, setThreshold] = useState(0.0);
   const [gene, setGene] = useState<string>('all');
-  const [selectedGeneOptions, setSelectedGenes] = useState(
-    [{
-      value: "All",
-      label: "All"
-    }]
-  );
+  const [selectedGeneOptions, setSelectedGenes] = useState([
+    {
+      value: 'All',
+      label: 'All',
+    },
+  ]);
 
   let genes = jsonRefData.genes;
-  !genes.map(o => o.name).includes("All") && genes.push({name: "All", startPosition: 0, endPosition: 29903, aaSeq: ""});
+  !genes.map(o => o.name).includes('All') &&
+    genes.push({ name: 'All', startPosition: 0, endPosition: 29903, aaSeq: '' });
   let selectedGenes = genes.filter(g => selectedGeneOptions.map(o => o.value).includes(g.name));
 
   const data = useData(selector, sequenceType, selectedGenes);
 
-  const options = jsonRefData.genes.map(g =>{return {
-    value: g.name,
-    label: g.name
-  }})
+  const options = jsonRefData.genes.map(g => {
+    return {
+      value: g.name,
+      label: g.name,
+    };
+  });
 
   const onChange = (value: any, { action, removedValue }: any) => {
     switch (action) {
@@ -117,7 +114,7 @@ export const NucleotideDiversity = ({ selector }: Props) => {
         }
         break;
       case 'clear':
-        value = [{value: "All", label: "All"}];
+        value = [{ value: 'All', label: 'All' }];
         break;
     }
     setSelectedGenes(value);
@@ -171,17 +168,17 @@ export const NucleotideDiversity = ({ selector }: Props) => {
         <div className='flex mb-2'>
           <div className='mr-2'>Genes:</div>
           <Select
-              closeMenuOnSelect={false}
-              placeholder='Select genes...'
-              isMulti
-              options={options}
-              //styles={colorStyles}
-              onChange={onChange}
-              value={selectedGeneOptions}
+            closeMenuOnSelect={false}
+            placeholder='Select genes...'
+            isMulti
+            options={options}
+            //styles={colorStyles}
+            onChange={onChange}
+            value={selectedGeneOptions}
           />
         </div>
       )}
-      
+
       {/* {/*Minimum entropy treshold to display}
       {plotType === 'pos' && (
       <div className='flex mb-2'>
@@ -202,7 +199,6 @@ export const NucleotideDiversity = ({ selector }: Props) => {
         threshold={threshold}
         plotData={data}
         plotType={plotType}
-        gene={geneRange}
         selectedGenes={selectedGenes}
         startIndex={getBrushIndex(geneRange, data.positionEntropy, data.sequenceType).startIndex}
         stopIndex={getBrushIndex(geneRange, data.positionEntropy, data.sequenceType).stopIndex}
@@ -221,10 +217,10 @@ export const NucleotideDiversity = ({ selector }: Props) => {
 };
 
 const useData = (
-  selector: LapisSelector, 
+  selector: LapisSelector,
   sequenceType: SequenceType,
   selectedGenes: Gene[]
-  ): Data | undefined => {
+): Data | undefined => {
   //fetch the proportions per position over the whole date range
   const mutationProportionEntriesQuery = useQuery(
     async signal => {
@@ -300,40 +296,43 @@ const useData = (
     if (!sequenceType) {
       return undefined;
     }
-    if(!selectedGenes){
+    if (!selectedGenes) {
       return undefined;
     }
 
     //transform data for entropy-per-position plot
-    const positionEntropy = CalculateEntropy(mutationProportionEntriesQuery.data.result.proportions, sequenceType);
-    const sortedEntropy = sequenceType === "aa"
-      ? sortListByAAMutation(positionEntropy, m => m.position)
-      : positionEntropy;
-  
+    const positionEntropy = CalculateEntropy(
+      mutationProportionEntriesQuery.data.result.proportions,
+      sequenceType
+    );
+    const sortedEntropy =
+      sequenceType === 'aa' ? sortListByAAMutation(positionEntropy, m => m.position) : positionEntropy;
+
     //transform data for entropy-over-time plot
     const weekEntropies: TransformedTime[] = [];
     selectedGenes.forEach(selectedGene => {
-      const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType, selectedGene).slice(0, -1).map(({ week, meanEntropy }) => {
-            return { day: week.dateFrom?.string, [selectedGene.name]: meanEntropy };
-          });
+      const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType, selectedGene)
+        .slice(0, -1)
+        .map(({ week, meanEntropy }) => {
+          return { day: week.dateFrom?.string, [selectedGene.name]: meanEntropy };
+        });
       weekEntropies.push(timeData);
-    })
+    });
     const timeArr: any = [];
     const timeMap = new Map();
     weekEntropies.forEach(w => {
       w.forEach(obj => {
         if (timeMap.has(obj.day)) {
-          timeMap.set(obj.day, {...timeMap.get(obj.day), ...obj});
+          timeMap.set(obj.day, { ...timeMap.get(obj.day), ...obj });
         } else {
-          timeMap.set(obj.day, {...obj});
+          timeMap.set(obj.day, { ...obj });
         }
       });
-    })
+    });
     timeMap.forEach(obj => timeArr.push(obj));
 
-    return { positionEntropy: sortedEntropy, timeData: timeArr, sequenceType: sequenceType};
-  },
-  [mutationProportionEntriesQuery, weeklyMutationProportionQuery, selectedGenes]);
+    return { positionEntropy: sortedEntropy, timeData: timeArr, sequenceType: sequenceType };
+  }, [mutationProportionEntriesQuery, weeklyMutationProportionQuery, selectedGenes]);
 
   return data;
 };
@@ -342,13 +341,12 @@ type PlotProps = {
   threshold: number;
   plotData: Data;
   plotType: string;
-  gene: Gene | undefined;
   selectedGenes: Gene[];
   startIndex: number;
   stopIndex: number;
 };
 
-const Plot = ({ threshold, plotData, plotType, gene, selectedGenes, startIndex, stopIndex}: PlotProps) => {
+const Plot = ({ threshold, plotData, plotType, selectedGenes, startIndex, stopIndex }: PlotProps) => {
   if (plotType === 'pos') {
     //let transformedData = plotData.positionEntropy.filter(p => p.entropy >= threshold)
     return (
@@ -478,7 +476,12 @@ const CalculateEntropy = (
   positionGroups.forEach(pos => {
     const remainder = 1 - pos.proportions.map(p => p.proportion).reduce((x, a) => x + a, 0);
     if (remainder !== 0) {
-      pos.proportions.push({ position: pos.position, mutation: pos.original + " (ref)", original: pos.original, proportion: remainder });
+      pos.proportions.push({
+        position: pos.position,
+        mutation: pos.original + ' (ref)',
+        original: pos.original,
+        proportion: remainder,
+      });
     }
   });
 
@@ -492,12 +495,22 @@ const CalculateEntropy = (
   return positionGroups;
 };
 
-const MeanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType, minPosition: number, maxPosition: number): number => {
-  const sum = posEntropy.filter(g => minPosition <= parseInt(g.position) && parseInt(g.position) <= maxPosition).map(g => g.entropy).reduce((x, a) => x + a, 0); //TODO filter min/max index here for selected gene to calc only entropy for that gene
+const MeanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType, gene: Gene): number => {
+  const filteredPos =
+    sequenceType === 'nuc'
+      ? posEntropy.filter(
+          g => gene.startPosition <= parseInt(g.position) && parseInt(g.position) <= gene.endPosition
+        )
+      : gene.name === 'All'
+      ? posEntropy
+      : posEntropy.filter(g => g.position.includes(gene.name));
+  const sum = filteredPos.map(f => f.entropy).reduce((x, a) => x + a, 0);
   const count =
     sequenceType === 'nuc'
-      ? (maxPosition - minPosition)
-      : jsonRefData.genes.map(g => g.aaSeq.length).reduce((x, a) => x + a, 0);
+      ? gene.endPosition - gene.startPosition
+      : (gene.name === 'All' ? jsonRefData.genes : jsonRefData.genes.filter(g => g.name.includes(gene.name)))
+          .map(g => g.aaSeq.length)
+          .reduce((x, a) => x + a, 0);
   return sum / count;
 };
 
@@ -510,7 +523,7 @@ const WeeklyMeanEntropy = (
   weeks?.forEach(w =>
     means.push({
       week: w.date,
-      meanEntropy: MeanEntropy(CalculateEntropy(w.proportions, sequenceType), sequenceType, selectedGene.startPosition, selectedGene.endPosition), //TODO pass min and max index of selected gene here to calculate entropy only for this gene
+      meanEntropy: MeanEntropy(CalculateEntropy(w.proportions, sequenceType), sequenceType, selectedGene),
     })
   );
 
@@ -555,7 +568,7 @@ const getBrushIndex = (
 ): { startIndex: number; stopIndex: number } => {
   let startIndex;
   let stopIndex;
-  if (sequenceType === "aa") {
+  if (sequenceType === 'aa') {
     let names = plotData.map(p => decodeAAMutation(p.position).gene);
     startIndex = gene?.name !== 'All' && gene?.name !== undefined ? names.indexOf(gene.name) : 0;
     stopIndex =
@@ -573,29 +586,19 @@ const getBrushIndex = (
   return { startIndex: startIndex, stopIndex: stopIndex };
 };
 
-const geneBars = (genes: Gene[]): plotGeneBar[] => {
-  return genes.map(({ name, startPosition, endPosition, aaSeq }, i) => {
-    return {
-      type: 'gene',
-      name: name,
-      position: [startPosition, endPosition],
-    };
-  });
-};
-
 function formatXAxis(value: any) {
   return value.toString().includes(':') ? decodeAAMutation(value).gene : value;
 }
 
-var stringToColour = function(str: string) {
+var stringToColour = function (str: string) {
   var hash = 0;
   for (var i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + ((hash << 5) - hash);
   }
   var colour = '#';
   for (var i = 0; i < 3; i++) {
-    var value = (hash >> (i * 8)) & 0xFF;
+    var value = (hash >> (i * 8)) & 0xff;
     colour += ('00' + value.toString(16)).substr(-2);
   }
   return colour;
-}
+};
