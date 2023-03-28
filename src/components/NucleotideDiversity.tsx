@@ -42,6 +42,7 @@ import { decodeNucMutation } from '../helpers/nuc-mutation';
 import { decodeAAMutation, sortListByAAMutation } from '../helpers/aa-mutation';
 import jsonRefData from '../data/refData.json';
 import { colors } from '../widgets/common';
+import Select from 'react-select';
 
 type Props = {
   selector: LapisSelector;
@@ -95,12 +96,40 @@ const toolTipStyle = {
 };
 
 export const NucleotideDiversity = ({ selector }: Props) => {
-  const [plotType, setPlotType] = useState<string>('pos');
+  const [plotType, setPlotType] = useState<string>('time');
   const [sequenceType, setSequenceType] = useState<SequenceType>('nuc');
   const [threshold, setThreshold] = useState(0.0);
   const [gene, setGene] = useState<string>('all');
+  const [selectedGeneOptions, setSelectedGenes] = useState(
+    [{
+      value: "all",
+      label: "All"
+    }]
+  );
 
-  const data = useData(selector, sequenceType);
+  let selectedGenes = jsonRefData.genes.filter(g => selectedGeneOptions.map(o => o.value).includes(g.name));
+
+  const data = useData(selector, sequenceType, selectedGenes);
+
+  const options = jsonRefData.genes.map(g =>{return {
+    value: g.name,
+    label: g.name
+  }})
+
+  const onChange = (value: any, { action, removedValue }: any) => {
+    switch (action) {
+      case 'remove-value':
+      case 'pop-value':
+        if (removedValue.isFixed) {
+          return;
+        }
+        break;
+      case 'clear':
+        value = {value: "all", label: "All"};
+        break;
+    }
+    setSelectedGenes(value);
+  };
 
   const controls = (
     <div className='mb-4'>
@@ -146,6 +175,21 @@ export const NucleotideDiversity = ({ selector }: Props) => {
           </Form.Control>
         </div>
       )}
+      {plotType === 'time' && (
+        <div className='flex mb-2'>
+          <div className='mr-2'>Genes:</div>
+          <Select
+              closeMenuOnSelect={false}
+              placeholder='Select genes...'
+              isMulti
+              options={options}
+              //styles={colorStyles}
+              onChange={onChange}
+              value={selectedGeneOptions}
+          />
+        </div>
+      )}
+      
       {/* {/*Minimum entropy treshold to display}
       {plotType === 'pos' && (
       <div className='flex mb-2'>
@@ -186,7 +230,8 @@ export const NucleotideDiversity = ({ selector }: Props) => {
 
 const useData = (
   selector: LapisSelector, 
-  sequenceType: SequenceType
+  sequenceType: SequenceType,
+  selectedGenes: Gene[]
   ): Data | undefined => {
   //fetch the proportions per position over the whole date range
   const mutationProportionEntriesQuery = useQuery(
@@ -269,7 +314,8 @@ const useData = (
       ? sortListByAAMutation(positionEntropy, m => m.position)
       : positionEntropy;
   
-    const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType);
+    //TODO get weeklyMeanEntropy for each "selectedGene from the multiselect and pass the min/max index"
+    const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType, selectedGenes[0]);
     const transformedTime = timeData
         .slice(0, timeData.length - 1).map(({ week, meanEntropy }) => {
           return { day: week.dateFrom?.string, entropy: meanEntropy };
@@ -277,7 +323,7 @@ const useData = (
   
     return { positionEntropy: sortedEntropy, timeData: transformedTime, sequenceType: sequenceType};
   },
-  [mutationProportionEntriesQuery, weeklyMutationProportionQuery]);
+  [mutationProportionEntriesQuery, weeklyMutationProportionQuery, selectedGenes]);
 
   return data;
 };
@@ -425,8 +471,8 @@ const CalculateEntropy = (
   return positionGroups;
 };
 
-const MeanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType): number => {
-  const sum = posEntropy.map(g => g.entropy).reduce((x, a) => x + a, 0);
+const MeanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType, minPosition: number, maxPosition: number): number => {
+  const sum = posEntropy.filter(g => minPosition <= parseInt(g.position) && parseInt(g.position) <= maxPosition).map(g => g.entropy).reduce((x, a) => x + a, 0); //TODO filter min/max index here for selected gene to calc only entropy for that gene
   const count =
     sequenceType === 'nuc'
       ? jsonRefData.nucSeq.length
@@ -436,13 +482,14 @@ const MeanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType):
 
 const WeeklyMeanEntropy = (
   weeks: { proportions: MutationProportionEntry[]; date: DateRange }[] | undefined,
-  sequenceType: SequenceType
+  sequenceType: SequenceType,
+  selectedGene: Gene
 ): WeekEntropy[] => {
   let means = new Array<WeekEntropy>();
   weeks?.forEach(w =>
     means.push({
       week: w.date,
-      meanEntropy: MeanEntropy(CalculateEntropy(w.proportions, sequenceType), sequenceType),
+      meanEntropy: MeanEntropy(CalculateEntropy(w.proportions, sequenceType), sequenceType, selectedGene.startPosition, selectedGene.endPosition), //TODO pass min and max index of selected gene here to calculate entropy only for this gene
     })
   );
 
