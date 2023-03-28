@@ -7,17 +7,7 @@ import Loader from './Loader';
 import { useQuery } from '../helpers/query-hook';
 import { MutationProportionEntry } from '../data/MutationProportionEntry';
 import { LapisSelector } from '../data/LapisSelector';
-//import { useResizeDetector } from 'react-resize-detector';
-//import Checkbox from '@mui/material/Checkbox';
-//import FormGroup from '@mui/material/FormGroup';
-//import FormControlLabel from '@mui/material/FormControlLabel';
 import { PipeDividedOptionsButtons } from '../helpers/ui';
-//import { DeregistrationHandle, ExportManagerContext } from './CombinedExport/ExportManager';
-//import download from 'downloadjs';
-//import { csvStringify } from '../helpers/csvStringifyHelper';
-//import { getConsensusSequenceFromMutations } from '../helpers/variant-consensus-sequence';
-//import JSZip from 'jszip';
-//import { PercentageInput } from './PercentageInput';
 import { NamedCard } from './NamedCard';
 import {
   BarChart,
@@ -66,14 +56,14 @@ type WeekEntropy = {
   meanEntropy: number;
 };
 
-type plotWeekEntropy = {
-  day: string | undefined;
-  entropy: number;
-}
+type TransformedTime = {
+    [x: string]: string | number | undefined;
+    day: string | undefined;
+}[]
 
 type Data = {
   positionEntropy: PositionEntropy[];
-  timeData: plotWeekEntropy[];
+  timeData: any;
   sequenceType: SequenceType;
 };
 
@@ -102,12 +92,14 @@ export const NucleotideDiversity = ({ selector }: Props) => {
   const [gene, setGene] = useState<string>('all');
   const [selectedGeneOptions, setSelectedGenes] = useState(
     [{
-      value: "all",
+      value: "All",
       label: "All"
     }]
   );
 
-  let selectedGenes = jsonRefData.genes.filter(g => selectedGeneOptions.map(o => o.value).includes(g.name));
+  let genes = jsonRefData.genes;
+  !genes.map(o => o.name).includes("All") && genes.push({name: "All", startPosition: 0, endPosition: 29903, aaSeq: ""});
+  let selectedGenes = genes.filter(g => selectedGeneOptions.map(o => o.value).includes(g.name));
 
   const data = useData(selector, sequenceType, selectedGenes);
 
@@ -125,7 +117,7 @@ export const NucleotideDiversity = ({ selector }: Props) => {
         }
         break;
       case 'clear':
-        value = {value: "all", label: "All"};
+        value = [{value: "All", label: "All"}];
         break;
     }
     setSelectedGenes(value);
@@ -211,7 +203,7 @@ export const NucleotideDiversity = ({ selector }: Props) => {
         plotData={data}
         plotType={plotType}
         gene={geneRange}
-        genes={jsonRefData.genes}
+        selectedGenes={selectedGenes}
         startIndex={getBrushIndex(geneRange, data.positionEntropy, data.sequenceType).startIndex}
         stopIndex={getBrushIndex(geneRange, data.positionEntropy, data.sequenceType).stopIndex}
       />
@@ -308,20 +300,38 @@ const useData = (
     if (!sequenceType) {
       return undefined;
     }
+    if(!selectedGenes){
+      return undefined;
+    }
 
+    //transform data for entropy-per-position plot
     const positionEntropy = CalculateEntropy(mutationProportionEntriesQuery.data.result.proportions, sequenceType);
     const sortedEntropy = sequenceType === "aa"
       ? sortListByAAMutation(positionEntropy, m => m.position)
       : positionEntropy;
   
-    //TODO get weeklyMeanEntropy for each "selectedGene from the multiselect and pass the min/max index"
-    const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType, selectedGenes[0]);
-    const transformedTime = timeData
-        .slice(0, timeData.length - 1).map(({ week, meanEntropy }) => {
-          return { day: week.dateFrom?.string, entropy: meanEntropy };
-        });
-  
-    return { positionEntropy: sortedEntropy, timeData: transformedTime, sequenceType: sequenceType};
+    //transform data for entropy-over-time plot
+    const weekEntropies: TransformedTime[] = [];
+    selectedGenes.forEach(selectedGene => {
+      const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType, selectedGene).slice(0, -1).map(({ week, meanEntropy }) => {
+            return { day: week.dateFrom?.string, [selectedGene.name]: meanEntropy };
+          });
+      weekEntropies.push(timeData);
+    })
+    const timeArr: any = [];
+    const timeMap = new Map();
+    weekEntropies.forEach(w => {
+      w.forEach(obj => {
+        if (timeMap.has(obj.day)) {
+          timeMap.set(obj.day, {...timeMap.get(obj.day), ...obj});
+        } else {
+          timeMap.set(obj.day, {...obj});
+        }
+      });
+    })
+    timeMap.forEach(obj => timeArr.push(obj));
+
+    return { positionEntropy: sortedEntropy, timeData: timeArr, sequenceType: sequenceType};
   },
   [mutationProportionEntriesQuery, weeklyMutationProportionQuery, selectedGenes]);
 
@@ -333,12 +343,12 @@ type PlotProps = {
   plotData: Data;
   plotType: string;
   gene: Gene | undefined;
-  genes: Gene[];
+  selectedGenes: Gene[];
   startIndex: number;
   stopIndex: number;
 };
 
-const Plot = ({ threshold, plotData, plotType, gene, genes, startIndex, stopIndex}: PlotProps) => {
+const Plot = ({ threshold, plotData, plotType, gene, selectedGenes, startIndex, stopIndex}: PlotProps) => {
   if (plotType === 'pos') {
     //let transformedData = plotData.positionEntropy.filter(p => p.entropy >= threshold)
     return (
@@ -398,13 +408,24 @@ const Plot = ({ threshold, plotData, plotType, gene, genes, startIndex, stopInde
             <XAxis dataKey='day' />
             <YAxis ticks={[0, 0.001, 0.002, 0.003]} />
             <Tooltip
-              formatter={(value: string) => [Number(value).toFixed(6), 'Mean entropy']}
+              formatter={(value: string) => Number(value).toFixed(6)}
               labelFormatter={label => {
                 return 'Week starting on: ' + label;
               }}
             />
             <Legend />
-            <Line type='monotone' dataKey='entropy' legendType='none' isAnimationActive={false} dot={false} stroke={colors.active} strokeWidth={3}/>
+            {selectedGenes.map((gene: Gene) => (
+              <Line
+                type='monotone'
+                dataKey={gene.name}
+                strokeWidth={3}
+                dot={false}
+                stroke={stringToColour(gene.name)}
+                isAnimationActive={false}
+                key={gene.name}
+                legendType='none'
+              />
+            ))}
           </LineChart>
         </ResponsiveContainer>
       </>
@@ -475,7 +496,7 @@ const MeanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType, 
   const sum = posEntropy.filter(g => minPosition <= parseInt(g.position) && parseInt(g.position) <= maxPosition).map(g => g.entropy).reduce((x, a) => x + a, 0); //TODO filter min/max index here for selected gene to calc only entropy for that gene
   const count =
     sequenceType === 'nuc'
-      ? jsonRefData.nucSeq.length
+      ? (maxPosition - minPosition)
       : jsonRefData.genes.map(g => g.aaSeq.length).reduce((x, a) => x + a, 0);
   return sum / count;
 };
@@ -564,4 +585,17 @@ const geneBars = (genes: Gene[]): plotGeneBar[] => {
 
 function formatXAxis(value: any) {
   return value.toString().includes(':') ? decodeAAMutation(value).gene : value;
+}
+
+var stringToColour = function(str: string) {
+  var hash = 0;
+  for (var i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  var colour = '#';
+  for (var i = 0; i < 3; i++) {
+    var value = (hash >> (i * 8)) & 0xFF;
+    colour += ('00' + value.toString(16)).substr(-2);
+  }
+  return colour;
 }
