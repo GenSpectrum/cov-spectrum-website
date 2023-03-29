@@ -20,7 +20,7 @@ import jsonRefData from '../data/refData.json';
 import { colors } from '../widgets/common';
 import { mapLabelsToColors } from '../helpers/colors';
 import chroma from 'chroma-js';
-import Select from 'react-select';
+import Select, { CSSObjectWithLabel, StylesConfig } from 'react-select';
 
 type Props = {
   selector: LapisSelector;
@@ -76,6 +76,32 @@ const toolTipStyle = {
   zIndex: 1,
 };
 
+const colorStyles: Partial<StylesConfig<any, true, any>> = {
+  control: (styles: CSSObjectWithLabel) => ({ ...styles, backgroundColor: 'white' }),
+  multiValue: (styles: CSSObjectWithLabel, { data }: { data: GeneOption }) => {
+    const color = chroma(data.color);
+    return {
+      ...styles,
+      backgroundColor: color.alpha(0.1).css(),
+    };
+  },
+  multiValueLabel: (styles: CSSObjectWithLabel, { data }: { data: GeneOption }) => ({
+    ...styles,
+    color: data.color,
+  }),
+  multiValueRemove: (styles: CSSObjectWithLabel, { data }: { data: GeneOption }) => {
+    return {
+          ...styles,
+          'color': data.color,
+          ':hover': {
+            backgroundColor: data.color,
+            color: 'white',
+            cursor: 'pointer',
+          },
+        };
+  },
+};
+
 function assignColorsToGeneOptions<T extends { label: string }>(options: T[]): (T & { color: string })[] {
   const colors = mapLabelsToColors(options.map(o => o.label));
   return options.map((o, i) => ({
@@ -89,7 +115,6 @@ const genes = jsonRefData.genes;
   genes.push({ name: 'All', startPosition: 0, endPosition: 29903, aaSeq: ''});
 
 const options: GeneOption[] = assignColorsToGeneOptions(genes.map(g => {
-  console.log("mapping!")
   return {
     value: g.name,
     label: g.name,
@@ -110,11 +135,12 @@ export const NucleotideDiversity = ({ selector }: Props) => {
     {
       value: 'All',
       label: 'All',
+      color: '#353B89'
     },
   ]);
   
   let selectedGenes = options.filter(g => selectedGeneOptions.map(o => o.value).includes(g.value));
-  
+
   const data = useData(selector, sequenceType, selectedGenes);
 
   const onChange = (value: any, { action, removedValue }: any) => {
@@ -126,7 +152,7 @@ export const NucleotideDiversity = ({ selector }: Props) => {
         }
         break;
       case 'clear':
-        value = [{ value: 'All', label: 'All' }];
+        value = [{ value: 'All', label: 'All', color: '#353B89' }];
         break;
     }
     setSelectedGenes(value);
@@ -184,7 +210,7 @@ export const NucleotideDiversity = ({ selector }: Props) => {
             placeholder='Select genes...'
             isMulti
             options={options}
-            //styles={colorStyles}
+            styles={colorStyles}
             onChange={onChange}
             value={selectedGeneOptions}
           />
