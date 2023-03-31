@@ -132,7 +132,7 @@ const useData = (
     sequenceType: SequenceType
 ): TransformedTime | undefined => {
 
-    // Fetch the date distribution of the variant
+  // Fetch the date distribution of the variant
   const basicVariantDataQuery = useQuery(
     async signal => ({
       sequenceType,
@@ -210,7 +210,19 @@ const useData = (
     const timeData: TransformedTime = WeeklyMeanEntropy(weeklyVariantMutationProportionQuery.data.result, sequenceType, selectedGene[0]).map(({ week, meanEntropy }, i) => {
       return { day: week.dateFrom?.string, [variants[Math.floor(i/weekNumber)].variant]: meanEntropy };
     });
-    return timeData;
+    const dayMap = new Map();
+    timeData.forEach(tt => {
+      const day = tt.day;
+      if (dayMap.has(day)) {
+        const dayGroup = dayMap.get(day);
+        dayMap.set(day, {...dayGroup, ...tt});
+      } else {
+        dayMap.set(day, tt);
+      }
+    });
+    const dayArray = Array.from(dayMap.values());
+    
+    return dayArray
 
   },[basicVariantDataQuery, weeklyVariantMutationProportionQuery, selectedGene, variants]);
     
