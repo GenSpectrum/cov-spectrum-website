@@ -1,5 +1,4 @@
 import React, { useState, useMemo } from 'react';
-import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
 import { useQuery } from '../helpers/query-hook';
@@ -11,7 +10,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Brus
 import { SequenceType } from '../data/SequenceType';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { Form } from 'react-bootstrap';
-import { globalDateCache } from '../helpers/date-cache';
+import { globalDateCache, UnifiedDay } from '../helpers/date-cache';
 import { FixedDateRangeSelector } from '../data/DateRangeSelector';
 import { DateRange } from '../data/DateRange';
 import { decodeNucMutation } from '../helpers/nuc-mutation';
@@ -277,27 +276,12 @@ const useData = (
     [selector, sequenceType]
   );
 
-  // Fetch the date distribution of the variant
-  const basicVariantDataQuery = useQuery(
-    async signal => ({
-      sequenceType,
-      result: await Promise.all([DateCountSampleData.fromApi(selector, signal)]),
-    }),
-    [selector, sequenceType]
-  );
-  const [variantDateCounts] = basicVariantDataQuery.data?.result ?? [undefined];
-
   //fetch the proportions per position in weekly segments
   const weeklyMutationProportionQuery = useQuery(
     async signal => {
-      if (!variantDateCounts) {
-        return undefined;
-      }
-
       //calculate weeks
-      const dayRange = globalDateCache.rangeFromDays(
-        variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
-      )!;
+      const dayArray: UnifiedDay[] = [selector.dateRange?.getDateRange().dateFrom!, selector.dateRange?.getDateRange().dateTo!];
+      const dayRange = globalDateCache.rangeFromDays(dayArray)!;
       const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
       const weekDateRanges = new Array<DateRange>();
       for (let i = 0; i < weeks.length; i++) {
@@ -323,7 +307,7 @@ const useData = (
         )
       );
     },
-    [selector, sequenceType, variantDateCounts]
+    [selector, sequenceType]
   );
 
   const data = useMemo(() => {
