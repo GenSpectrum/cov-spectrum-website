@@ -1,17 +1,16 @@
 import React, { useState, useMemo } from 'react';
-import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
 import { useQuery } from '../helpers/query-hook';
 import { MutationProportionEntry } from '../data/MutationProportionEntry';
 import { LapisSelector } from '../data/LapisSelector';
 import { PipeDividedOptionsButtons } from '../helpers/ui';
-import { NamedCard } from './NamedCard';
+//import { NamedCard } from './NamedCard';
 import { XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, LineChart, Line, } from 'recharts';
 import { SequenceType } from '../data/SequenceType';
 // import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { Form } from 'react-bootstrap';
-import { globalDateCache } from '../helpers/date-cache';
+import { globalDateCache, UnifiedDay } from '../helpers/date-cache';
 import { FixedDateRangeSelector } from '../data/DateRangeSelector';
 import { DateRange } from '../data/DateRange';
 // import { decodeNucMutation } from '../helpers/nuc-mutation';
@@ -38,7 +37,7 @@ const genes = jsonRefData.genes;
   genes.push({ name: 'All', startPosition: 0, endPosition: 29903, aaSeq: ''});
 
 function nonNullValues(obj: any) {
-  return Object.entries(obj).filter(([key, value]) => value !== undefined).map(([key, value]) => { return {variant: String(value)}})[0]
+  return Object.entries(obj).filter(([key, value]) => value !== undefined).map(([key, value]) => value).toString();
 }
 
 export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
@@ -46,8 +45,7 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
     const [gene, setGene] = useState<string>('All');
 
     const exploreUrl = useExploreUrl()!;
-    const variants: Variant[] | undefined = exploreUrl.variants?.map(nonNullValues);
-
+    const variants = exploreUrl.variants?.map(nonNullValues);
 
     let selectedGene: GeneOption[] = genes.filter(g => g.name === gene).map(g => {
         return {
@@ -98,16 +96,15 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
     );
 
     let plotArea;
-    if (!data) {
-        plotArea = <Loader />;
-    } else if (!variants) {
-      plotArea = <NamedCard title=''><p>Select one or multiple lineages</p></NamedCard>
-    }
-    else {
+    if (variants![0].length == 0) {
+      plotArea = <p>Select one or more lineages to compare.</p>
+    } else if (!data) {
+      plotArea = <Loader />;
+    } else {
         plotArea = (
         <Plot
             plotData={data}
-            variants={variants}
+            variants={variants!}
         />
         );
     }
@@ -122,7 +119,7 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
 
 type PlotProps = {
     plotData: TransformedTime;
-    variants: Variant[];
+    variants: string[];
 };
 
 const useData = (
@@ -131,28 +128,12 @@ const useData = (
     variants: any,
     sequenceType: SequenceType
 ): TransformedTime | undefined => {
-
-  // Fetch the date distribution of the variant
-  const basicVariantDataQuery = useQuery(
-    async signal => ({
-      sequenceType,
-      result: await Promise.all([DateCountSampleData.fromApi(selectors[0], signal)]),
-    }),
-    [selectors[0], sequenceType]
-  );
-  const [variantDateCounts] = basicVariantDataQuery.data?.result ?? [undefined];
-
   //fetch the proportions per position in weekly segments
   const weeklyVariantMutationProportionQuery = useQuery(
     async signal => {
-      if (!variantDateCounts) {
-        return undefined;
-      }
-
       //calculate weeks
-      const dayRange = globalDateCache.rangeFromDays(
-        variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
-      )!;
+      const dayArray: UnifiedDay[] = [selectors[0].dateRange?.getDateRange().dateFrom!, selectors[0].dateRange?.getDateRange().dateTo!];
+      const dayRange = globalDateCache.rangeFromDays(dayArray)!;
       const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
       const weekDateRanges = new Array<DateRange>();
       for (let i = 0; i < weeks.length; i++) {
@@ -160,7 +141,7 @@ const useData = (
         weekDateRanges[i] = dateRange;
       }
 
-      const weekSelectors = new Array<LapisSelector>; 
+      const weekSelectors = new Array<LapisSelector>(); 
       selectors.forEach(selector => {
           for (let w of weekDateRanges) { 
             weekSelectors.push({
@@ -173,6 +154,7 @@ const useData = (
       let weekLength = weekDateRanges.length;
 
       return {
+        sequenceType: sequenceType,
         weekNumber: weekLength,
         result: await Promise.all(
           weekSelectors.map((w, i) =>
@@ -188,14 +170,14 @@ const useData = (
         )
       }
     },
-    [selectors, sequenceType, variantDateCounts]
+    [selectors, sequenceType]
   );
     
   const data = useMemo(() => {
     if (!weeklyVariantMutationProportionQuery.data) {
       return undefined;
     }
-    const sequenceType = basicVariantDataQuery.data?.sequenceType;
+    let sequenceType = weeklyVariantMutationProportionQuery.data.sequenceType;
     if (!sequenceType) {
       return undefined;
     }
@@ -206,9 +188,15 @@ const useData = (
     if (!selectedGene) {
       return undefined;
     }
+    if (!variants[0]){
+      return undefined;
+    }
+    if (variants.length*weekNumber != weeklyVariantMutationProportionQuery.data.result.length){
+      return undefined;
+    }
 
     const timeData: TransformedTime = WeeklyMeanEntropy(weeklyVariantMutationProportionQuery.data.result, sequenceType, selectedGene[0]).map(({ week, meanEntropy }, i) => {
-      return { day: week.dateFrom?.string, [variants[Math.floor(i/weekNumber)].variant]: meanEntropy };
+      return { day: week.dateFrom?.string, [variants[Math.floor(i/weekNumber)]]: meanEntropy };
     });
     const dayMap = new Map();
     timeData.forEach(tt => {
@@ -224,15 +212,15 @@ const useData = (
     
     return dayArray
 
-  },[basicVariantDataQuery, weeklyVariantMutationProportionQuery, selectedGene, variants]);
+  },[weeklyVariantMutationProportionQuery, selectedGene, variants]);
     
   return data;
 } 
 
 const Plot = ({ plotData, variants }: PlotProps) => {
-  console.log(plotData);
 return (
     <>
+    <div>
     <ResponsiveContainer width='100%' height='100%'>
         <LineChart
         width={500}
@@ -257,17 +245,18 @@ return (
         {variants.map((variant, i) => (
             <Line
             type='monotone'
-            dataKey={variant.variant}
+            dataKey={variant}
             strokeWidth={3}
             dot={false}
             stroke={pprettyColors[i]}
             isAnimationActive={false}
-            key={variant.variant}
+            key={variant}
             legendType='none'
             />
         ))}
         </LineChart>
     </ResponsiveContainer>
+    </div>
     </>
 )
 }
