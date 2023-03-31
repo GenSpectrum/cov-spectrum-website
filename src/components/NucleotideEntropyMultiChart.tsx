@@ -20,9 +20,11 @@ import jsonRefData from '../data/refData.json';
 // import { mapLabelsToColors } from '../helpers/colors';
 //import chroma from 'chroma-js';
 // import Select, { CSSObjectWithLabel, StylesConfig } from 'react-select';
-import { TransformedTime, GeneOption, WeeklyMeanEntropy } from './NucleotideEntropy';
+import { GeneOption, WeeklyMeanEntropy } from './NucleotideEntropy';
 import { useExploreUrl } from '../helpers/explore-url';
 import { pprettyColors } from '../helpers/colors';
+import { getTicks } from '../helpers/ticks';
+import { formatDate } from '../widgets/VariantTimeDistributionLineChartInner';
 
 type Props = {
     selectors: LapisSelector[];
@@ -31,6 +33,11 @@ type Props = {
 type Variant = {
   variant: string;
 }
+
+type TransformedTime = {
+  [x: string]: string | number | undefined;
+  day: number | undefined;
+}[]
 
 const genes = jsonRefData.genes;
 !genes.map(o => o.name).includes('All') &&
@@ -103,7 +110,8 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
     } else {
         plotArea = (
         <Plot
-            plotData={data}
+            plotData={data.dayArray}
+            ticks={data.ticks}
             variants={variants!}
         />
         );
@@ -119,6 +127,7 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
 
 type PlotProps = {
     plotData: TransformedTime;
+    ticks: string[];
     variants: string[];
 };
 
@@ -127,7 +136,7 @@ const useData = (
     selectedGene: GeneOption[],
     variants: any,
     sequenceType: SequenceType
-): TransformedTime | undefined => {
+): any | undefined => {
   //fetch the proportions per position in weekly segments
   const weeklyVariantMutationProportionQuery = useQuery(
     async signal => {
@@ -195,8 +204,12 @@ const useData = (
       return undefined;
     }
 
+    const dates = weeklyVariantMutationProportionQuery.data.result.map(p => { return {date: p.date.dateFrom?.dayjs.toDate()!}});
+    //const ticks = getTicks(dates).map(t => {return { d: new Date(t)}}).map(d => d.d.toISOString().split('T')[0]);
+    const ticks = getTicks(dates)
+
     const timeData: TransformedTime = WeeklyMeanEntropy(weeklyVariantMutationProportionQuery.data.result, sequenceType, selectedGene[0]).map(({ week, meanEntropy }, i) => {
-      return { day: week.dateFrom?.string, [variants[Math.floor(i/weekNumber)]]: meanEntropy };
+      return { day: week.dateFrom?.dayjs.toDate().getTime(), [variants[Math.floor(i/weekNumber)]]: meanEntropy };
     });
     const dayMap = new Map();
     timeData.forEach(tt => {
@@ -210,14 +223,16 @@ const useData = (
     });
     const dayArray = Array.from(dayMap.values());
     
-    return dayArray
+    return {dayArray, ticks}
 
   },[weeklyVariantMutationProportionQuery, selectedGene, variants]);
     
   return data;
 } 
 
-const Plot = ({ plotData, variants }: PlotProps) => {
+const Plot = ({ plotData, ticks, variants }: PlotProps) => {
+  console.log(ticks);
+  console.log(plotData);
 return (
     <>
     <div>
@@ -233,17 +248,26 @@ return (
             bottom: 5,
         }}
         >
-        <XAxis dataKey='day' />
+        <XAxis
+          dataKey='day'
+          scale='time'
+          type='number'
+          tickFormatter={formatDate}
+          domain={[(dataMin: any) => dataMin, () => plotData[plotData.length - 1].day]}
+          ticks={ticks}
+          xAxisId='day'
+        />
         <YAxis  />
         <Tooltip
             formatter={(value: string) => Number(value).toFixed(6)}
             labelFormatter={label => {
-            return 'Week starting on: ' + label;
+            return 'Week starting on: ' + formatDate(label);
             }}
         />
         <Legend />
         {variants.map((variant, i) => (
             <Line
+            xAxisId='day'
             type='monotone'
             dataKey={variant}
             strokeWidth={3}
