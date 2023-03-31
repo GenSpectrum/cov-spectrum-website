@@ -18,7 +18,7 @@ import { decodeNucMutation } from '../helpers/nuc-mutation';
 import { decodeAAMutation, sortListByAAMutation } from '../helpers/aa-mutation';
 import jsonRefData from '../data/refData.json';
 import { colors } from '../widgets/common';
-import { mapLabelsToColors, pprettyColors } from '../helpers/colors';
+import { mapLabelsToColors } from '../helpers/colors';
 import chroma from 'chroma-js';
 import Select, { CSSObjectWithLabel, StylesConfig } from 'react-select';
 

@@ -24,6 +24,7 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { SvgVennDiagram } from '../components/SvgVennDiagram';
+import { NucleotideEntropyMultiChart } from '../components/NucleotideEntropyMultiChart';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { WidgetWrapper } from '../components/WidgetWrapper';
 
@@ -273,6 +274,13 @@ export const FocusCompareEqualsPage = () => {
           ) : (
             ''
           )}
+          <GridCell>
+            <NamedCard title='Nucleotide Entropy'>
+              <NucleotideEntropyMultiChart
+                selectors={ldvsSelectors}
+                />
+            </NamedCard>
+          </GridCell>
         </PackedGrid>
       </div>
 

@@ -101,7 +101,7 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
     if (!data) {
         plotArea = <Loader />;
     } else if (!variants) {
-      plotArea = <NamedCard title=''><p>Select one or multiple lineages.</p></NamedCard>
+      plotArea = <NamedCard title=''><p>Select one or multiple lineages</p></NamedCard>
     }
     else {
         plotArea = (
@@ -128,7 +128,7 @@ type PlotProps = {
 const useData = (
     selectors: LapisSelector[],
     selectedGene: GeneOption[],
-    variants: Variant[],
+    variants: any,
     sequenceType: SequenceType
 ): TransformedTime | undefined => {
 
