@@ -5,22 +5,17 @@ import { useQuery } from '../helpers/query-hook';
 import { MutationProportionEntry } from '../data/MutationProportionEntry';
 import { LapisSelector } from '../data/LapisSelector';
 import { PipeDividedOptionsButtons } from '../helpers/ui';
-//import { NamedCard } from './NamedCard';
 import { XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, LineChart, Line, } from 'recharts';
+import Checkbox from '@mui/material/Checkbox';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import { SequenceType } from '../data/SequenceType';
-// import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { Form } from 'react-bootstrap';
 import { globalDateCache, UnifiedDay } from '../helpers/date-cache';
 import { FixedDateRangeSelector } from '../data/DateRangeSelector';
 import { DateRange } from '../data/DateRange';
-// import { decodeNucMutation } from '../helpers/nuc-mutation';
-// import { decodeAAMutation, sortListByAAMutation } from '../helpers/aa-mutation';
 import jsonRefData from '../data/refData.json';
-//import { colors } from '../widgets/common';
-// import { mapLabelsToColors } from '../helpers/colors';
-//import chroma from 'chroma-js';
-// import Select, { CSSObjectWithLabel, StylesConfig } from 'react-select';
-import { GeneOption, WeeklyMeanEntropy } from './NucleotideEntropy';
+import { GeneOption, WeeklyMeanEntropy, TransformedTime } from './NucleotideEntropy';
 import { useExploreUrl } from '../helpers/explore-url';
 import { pprettyColors } from '../helpers/colors';
 import { getTicks } from '../helpers/ticks';
@@ -34,11 +29,6 @@ type Variant = {
   variant: string;
 }
 
-type TransformedTime = {
-  [x: string]: string | number | undefined;
-  day: number | undefined;
-}[]
-
 const genes = jsonRefData.genes;
 !genes.map(o => o.name).includes('All') &&
   genes.push({ name: 'All', startPosition: 0, endPosition: 29903, aaSeq: ''});
@@ -50,6 +40,11 @@ function nonNullValues(obj: any) {
 export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
     const [sequenceType, setSequenceType] = useState<SequenceType>('nuc');
     const [gene, setGene] = useState<string>('All');
+    const [deletions, setDeletions] = useState<boolean>(false);
+
+    const handleDeletions = (event: React.ChangeEvent<HTMLInputElement>) => {
+      setDeletions(event.target.checked);
+    };
 
     const exploreUrl = useExploreUrl()!;
     const variants = exploreUrl.variants?.map(nonNullValues);
@@ -65,7 +60,7 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
           };
     })
 
-    const data = useData(selectors, selectedGene, variants, sequenceType);
+    const data = useData(selectors, selectedGene, variants, sequenceType, deletions);
 
     const controls = (
         <div className='mb-4'>
@@ -80,6 +75,19 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
               onSelect={setSequenceType}
             />
           </div>
+          {/* Include deletions */}
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={deletions}
+                    onChange={handleDeletions}
+                    inputProps={{ 'aria-label': 'controlled' }}
+                  />
+                }
+                label='Include deletions'
+              />
+            </FormGroup>
           {/* Genes */}
           {
             <div className=' w-72 flex mb-2'>
@@ -135,7 +143,8 @@ const useData = (
     selectors: LapisSelector[],
     selectedGene: GeneOption[],
     variants: any,
-    sequenceType: SequenceType
+    sequenceType: SequenceType,
+    deletions: boolean
 ): any | undefined => {
   //fetch the proportions per position in weekly segments
   const weeklyVariantMutationProportionQuery = useQuery(
@@ -205,10 +214,9 @@ const useData = (
     }
 
     const dates = weeklyVariantMutationProportionQuery.data.result.map(p => { return {date: p.date.dateFrom?.dayjs.toDate()!}});
-    //const ticks = getTicks(dates).map(t => {return { d: new Date(t)}}).map(d => d.d.toISOString().split('T')[0]);
     const ticks = getTicks(dates)
 
-    const timeData: TransformedTime = WeeklyMeanEntropy(weeklyVariantMutationProportionQuery.data.result, sequenceType, selectedGene[0]).map(({ week, meanEntropy }, i) => {
+    const timeData: TransformedTime = WeeklyMeanEntropy(weeklyVariantMutationProportionQuery.data.result, sequenceType, selectedGene[0], deletions).map(({ week, meanEntropy }, i) => {
       return { day: week.dateFrom?.dayjs.toDate().getTime(), [variants[Math.floor(i/weekNumber)]]: meanEntropy };
     });
     const dayMap = new Map();
@@ -221,11 +229,11 @@ const useData = (
         dayMap.set(day, tt);
       }
     });
-    const dayArray = Array.from(dayMap.values());
+    const dayArray = Array.from(dayMap.values()).slice(0, -1); //depending on the day, the latest week just started, so the entropy is calculated as 0 because there are no samples
     
     return {dayArray, ticks}
 
-  },[weeklyVariantMutationProportionQuery, selectedGene, variants]);
+  },[weeklyVariantMutationProportionQuery, selectedGene, variants, deletions]);
     
   return data;
 } 

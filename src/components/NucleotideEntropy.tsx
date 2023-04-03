@@ -7,6 +7,9 @@ import { LapisSelector } from '../data/LapisSelector';
 import { PipeDividedOptionsButtons } from '../helpers/ui';
 import { NamedCard } from './NamedCard';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Brush, TooltipProps, LineChart, Line, } from 'recharts';
+import Checkbox from '@mui/material/Checkbox';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 import { SequenceType } from '../data/SequenceType';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { Form } from 'react-bootstrap';
@@ -20,6 +23,8 @@ import { colors } from '../widgets/common';
 import { mapLabelsToColors } from '../helpers/colors';
 import chroma from 'chroma-js';
 import Select, { CSSObjectWithLabel, StylesConfig } from 'react-select';
+import { getTicks } from '../helpers/ticks';
+import { formatDate } from '../widgets/VariantTimeDistributionLineChartInner';
 
 type Props = {
   selector: LapisSelector;
@@ -45,13 +50,14 @@ type WeekEntropy = {
 
 export type TransformedTime = {
   [x: string]: string | number | undefined;
-  day: string | undefined;
+  day: number | undefined;
 }[];
 
 type Data = {
   positionEntropy: PositionEntropy[];
   timeData: any;
   sequenceType: SequenceType;
+  ticks: number[];
 };
 
 type Gene = {
@@ -127,9 +133,11 @@ const options: GeneOption[] = assignColorsToGeneOptions(genes.map(g => {
 
 export const NucleotideEntropy = ({ selector }: Props) => {
   const [plotType, setPlotType] = useState<string>('time');
+  const [deletions, setDeletions] = useState<boolean>(false);
   const [sequenceType, setSequenceType] = useState<SequenceType>('nuc');
   const [threshold, setThreshold] = useState(0.0);
   const [gene, setGene] = useState<string>('all');
+  //const [ticks, setTicks] = useState<number[]>;
   const [selectedGeneOptions, setSelectedGenes] = useState([
     {
       value: 'All',
@@ -137,10 +145,14 @@ export const NucleotideEntropy = ({ selector }: Props) => {
       color: '#353B89'
     },
   ]);
+
+  const handleDeletions = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setDeletions(event.target.checked);
+  };
   
   let selectedGenes = options.filter(g => selectedGeneOptions.map(o => o.value).includes(g.value));
 
-  const data = useData(selector, sequenceType, selectedGenes);
+  const data = useData(selector, sequenceType, selectedGenes, deletions);
 
   const onChange = (value: any, { action, removedValue }: any) => {
     switch (action) {
@@ -170,6 +182,19 @@ export const NucleotideEntropy = ({ selector }: Props) => {
           onSelect={setSequenceType}
         />
       </div>
+      {/* Include deletions */}
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={deletions}
+                  onChange={handleDeletions}
+                  inputProps={{ 'aria-label': 'controlled' }}
+                />
+              }
+              label='Include deletions'
+            />
+          </FormGroup>
       {/*Plot type*/}
       <div className='mb-2 flex'>
         <PipeDividedOptionsButtons
@@ -256,7 +281,8 @@ export const NucleotideEntropy = ({ selector }: Props) => {
 const useData = (
   selector: LapisSelector,
   sequenceType: SequenceType,
-  selectedGenes: GeneOption[]
+  selectedGenes: GeneOption[],
+  deletions: boolean
 ): Data | undefined => {
   //fetch the proportions per position over the whole date range
   const mutationProportionEntriesQuery = useQuery(
@@ -321,11 +347,15 @@ const useData = (
     if (!selectedGenes) {
       return undefined;
     }
+    //calculate ticks for entropy-over-time plot
+    const dates = weeklyMutationProportionQuery.data.map(p => { return {date: p.date.dateFrom?.dayjs.toDate()!}});
+    const ticks = getTicks(dates)
 
     //transform data for entropy-per-position plot
     const positionEntropy = CalculateEntropy(
       mutationProportionEntriesQuery.data.result.proportions,
-      sequenceType
+      sequenceType, 
+      deletions
     );
     const sortedEntropy =
       sequenceType === 'aa' ? sortListByAAMutation(positionEntropy, m => m.position) : positionEntropy;
@@ -333,9 +363,9 @@ const useData = (
     //transform data for entropy-over-time plot
     const weekEntropies: TransformedTime[] = [];
     selectedGenes.forEach(selectedGene => {
-      const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType, selectedGene)
+      const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType, selectedGene, deletions).slice(0, -1)
         .map(({ week, meanEntropy }) => {
-          return { day: week.dateFrom?.string, [selectedGene.value]: meanEntropy };
+          return { day: week.dateFrom?.dayjs.toDate().getTime(), [selectedGene.value]: meanEntropy };
         });
       weekEntropies.push(timeData);
     });
@@ -352,8 +382,8 @@ const useData = (
     });
     timeMap.forEach(obj => timeArr.push(obj));
 
-    return { positionEntropy: sortedEntropy, timeData: timeArr, sequenceType: sequenceType };
-  }, [mutationProportionEntriesQuery, weeklyMutationProportionQuery, selectedGenes]);
+    return { positionEntropy: sortedEntropy, timeData: timeArr, sequenceType: sequenceType, ticks: ticks };
+  }, [mutationProportionEntriesQuery, weeklyMutationProportionQuery, selectedGenes, deletions]);
 
   return data;
 };
@@ -424,17 +454,26 @@ const Plot = ({ threshold, plotData, plotType, selectedGenes, startIndex, stopIn
               bottom: 5,
             }}
           >
-            <XAxis dataKey='day' />
+            <XAxis
+            dataKey='day'
+            scale='time'
+            type='number'
+            tickFormatter={formatDate}
+            domain={[(dataMin: any) => dataMin, () => plotData.timeData[plotData.timeData.length - 1].day]}
+            ticks={plotData.ticks}
+            xAxisId='day'
+          />
             <YAxis  />
             <Tooltip
-              formatter={(value: string) => Number(value).toFixed(6)}
-              labelFormatter={label => {
-                return 'Week starting on: ' + label;
-              }}
-            />
+            formatter={(value: string) => Number(value).toFixed(6)}
+            labelFormatter={label => {
+            return 'Week starting on: ' + formatDate(label);
+            }}
+        />
             <Legend />
             {selectedGenes.map((gene: GeneOption) => (
               <Line
+                xAxisId='day'
                 type='monotone'
                 dataKey={gene.value}
                 strokeWidth={3}
@@ -454,14 +493,15 @@ const Plot = ({ threshold, plotData, plotType, selectedGenes, startIndex, stopIn
 
 const CalculateEntropy = (
   muts: MutationProportionEntry[] | undefined,
-  sequenceType: SequenceType
+  sequenceType: SequenceType,
+  deletions: boolean
 ): PositionEntropy[] => {
   let positionProps = new Array<PositionProportion>();
 
   muts?.forEach(mut => {
     if (sequenceType === 'aa') {
       let decoded = decodeAAMutation(mut.mutation);
-      if (decoded.mutatedBase !== '-') {
+      if (decoded.mutatedBase !== '-' || (decoded.mutatedBase == '-' && deletions)) {
         let pp: PositionProportion = {
           position: decoded.gene + ':' + decoded.originalBase + decoded.position,
           mutation: decoded.mutatedBase,
@@ -472,7 +512,7 @@ const CalculateEntropy = (
       }
     } else {
       let decoded = decodeNucMutation(mut.mutation);
-      if (decoded.mutatedBase !== '-') {
+      if (decoded.mutatedBase !== '-' || (decoded.mutatedBase == '-' && deletions)) {
         let pp: PositionProportion = {
           position: decoded.position.toString(),
           mutation: decoded.mutatedBase,
@@ -538,13 +578,14 @@ const MeanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType, 
 export const WeeklyMeanEntropy = (
   weeks: { proportions: MutationProportionEntry[]; date: DateRange }[] | undefined,
   sequenceType: SequenceType,
-  selectedGene: GeneOption
+  selectedGene: GeneOption,
+  deletions: boolean
 ): WeekEntropy[] => {
   let means = new Array<WeekEntropy>();
   weeks?.forEach(w =>
     means.push({
       week: w.date,
-      meanEntropy: MeanEntropy(CalculateEntropy(w.proportions, sequenceType), sequenceType, selectedGene),
+      meanEntropy: MeanEntropy(CalculateEntropy(w.proportions, sequenceType, deletions), sequenceType, selectedGene),
     })
   );
 
