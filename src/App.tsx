@@ -39,6 +39,7 @@ import { NewFocusPage } from './pages/NewFocusPage';
 import { useQuery } from './helpers/query-hook';
 import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/default-selectors';
 import { useBaseLocation } from './helpers/use-base-location';
+import { ChatPage } from './pages/ChatPage';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -180,6 +181,7 @@ export const App = () => {
             }
           />
           <Route path='/about' element={<AboutPage />} />
+          <Route path='/chat' element={<ChatPage />} />
         </Routes>
       </div>
       {!hideHeaderAndFooter && (
