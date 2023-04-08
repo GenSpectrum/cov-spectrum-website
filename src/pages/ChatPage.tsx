@@ -4,6 +4,7 @@ import { useQuery } from '../helpers/query-hook';
 import { chatSendMessage, getChatConversation, getChatUserInfo } from '../data/chat/api-chat';
 import { ChatUserInfo } from '../data/chat/types-chat';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
+import { GiPerspectiveDiceSixFacesRandom } from 'react-icons/gi';
 import {
   ChatContainer,
   Conversation,
@@ -13,10 +14,12 @@ import {
   Message,
   MessageInput,
   MessageList,
+  SendButton,
   Sidebar,
   TypingIndicator,
 } from '@chatscope/chat-ui-kit-react';
 import { Table } from 'react-bootstrap';
+import { getRandomChatPrompt } from '../data/chat/chat-example-prompts';
 
 export const ChatPage = () => {
   let queryParamsString = useLocation().search;
@@ -60,6 +63,7 @@ type ChatMainProps = {
 export const ChatMain = ({ chatAccessKey, userInfo }: ChatMainProps) => {
   const [activeConversation, setActiveConversation] = useState(userInfo.conversationIds[0]);
   const [waiting, setWaiting] = useState(false);
+  const [contentInMessageInput, setContentInMessageInput] = useState('');
 
   const conversation = useQuery(
     signal => getChatConversation(chatAccessKey, activeConversation, signal),
@@ -67,6 +71,10 @@ export const ChatMain = ({ chatAccessKey, userInfo }: ChatMainProps) => {
   );
 
   const sendMessage = (content: string) => {
+    if (content.trim().length === 0) {
+      return;
+    }
+    setContentInMessageInput('');
     setWaiting(true);
     if (conversation.data) {
       conversation.data.messages = [...conversation.data.messages, { role: 'user', content }];
@@ -137,24 +145,26 @@ export const ChatMain = ({ chatAccessKey, userInfo }: ChatMainProps) => {
                       <div>
                         <div>{message.text}</div>
                         {message.data && message.data.length && (
-                          <Table striped bordered hover>
-                            <thead>
-                              <tr>
-                                {Object.keys(message.data[0]).map(key => (
-                                  <th key={key}>{key}</th>
-                                ))}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {message.data.map((row, index) => (
-                                <tr key={index}>
-                                  {Object.keys(message.data![0]).map(key => (
-                                    <td key={key}>{row[key]}</td>
+                          <div className='m-2 mt-4'>
+                            <Table striped bordered hover>
+                              <thead>
+                                <tr>
+                                  {Object.keys(message.data[0]).map(key => (
+                                    <th key={key}>{key}</th>
                                   ))}
                                 </tr>
-                              ))}
-                            </tbody>
-                          </Table>
+                              </thead>
+                              <tbody>
+                                {message.data.map((row, index) => (
+                                  <tr key={index}>
+                                    {Object.keys(message.data![0]).map(key => (
+                                      <td key={key}>{row[key]}</td>
+                                    ))}
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </Table>
+                          </div>
                         )}
                       </div>
                     </Message.CustomContent>
@@ -162,13 +172,52 @@ export const ChatMain = ({ chatAccessKey, userInfo }: ChatMainProps) => {
                 )
               )}
             </MessageList>
-            <MessageInput
-              placeholder='Type message here'
-              disabled={waiting}
-              onSend={textContent => {
-                sendMessage(textContent);
+
+            <div
+              /* @ts-ignore */
+              as={MessageInput}
+              style={{
+                display: 'flex',
+                flexDirection: 'row',
+                borderTop: '1px solid #d1dbe4',
               }}
-            />
+            >
+              <button
+                className='cs-button'
+                style={{
+                  fontSize: '1.8em',
+                  marginLeft: 0,
+                  paddingLeft: '0.2em',
+                  paddingRight: 0,
+                }}
+                onClick={() => sendMessage(getRandomChatPrompt())}
+              >
+                <GiPerspectiveDiceSixFacesRandom />
+              </button>
+              <MessageInput
+                sendButton={false}
+                attachButton={false}
+                style={{
+                  flexGrow: 1,
+                  borderTop: 0,
+                  flexShrink: 'initial',
+                }}
+                placeholder='Ask about SARS-CoV-2 variants!'
+                disabled={waiting}
+                onChange={message => setContentInMessageInput(message)}
+                value={contentInMessageInput}
+                onSend={sendMessage}
+              />
+              <SendButton
+                style={{
+                  fontSize: '1.2em',
+                  marginLeft: 0,
+                  paddingLeft: '0.2em',
+                  paddingRight: '0.2em',
+                }}
+                onClick={() => sendMessage(contentInMessageInput)}
+              />
+            </div>
           </ChatContainer>
         </MainContainer>
       </div>
