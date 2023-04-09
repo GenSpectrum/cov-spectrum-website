@@ -100,8 +100,16 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
   };
 
   return (
-    <>
-      <div style={{ position: 'relative', height: '700px' }}>
+    <div className='bg-gray-100'>
+      <div
+        style={{
+          position: 'relative',
+          maxWidth: 1000,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+          height: 'calc(100vh - 4.5em)',
+        }}
+      >
         <MainContainer responsive>
           <ChatContainer>
             <ConversationHeader>
@@ -325,6 +333,6 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
           </ChatContainer>
         </MainContainer>
       </div>
-    </>
+    </div>
   );
 };

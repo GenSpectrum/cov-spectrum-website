@@ -76,7 +76,7 @@ const Header = () => {
         onClose={() => setShowOffCanvas(false)}
         setShowAdvancedFilteringModal={setShowAdvancedFilteringModal}
       />
-      <nav className='flex h-full content-center shadow-md z-50 bg-white pb-2'>
+      <nav className='flex h-[4.5em] content-center shadow-md z-50 bg-white pb-2'>
         <div className='w-full mx-auto px-2 md:px-0 flex content-center'>
           <div className='md:mx-4 w-full justify-between'>
             <div className='w-full h-full flex justify-center md:justify-between items-center'>
