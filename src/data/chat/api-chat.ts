@@ -1,35 +1,38 @@
-import { get, HOST } from '../api';
-import { ChatConversation, ChatSystemMessage, ChatUserInfo } from './types-chat';
+import { get, post, HOST } from '../api';
+import { ChatConversation, ChatSystemMessage } from './types-chat';
 
-export async function getChatUserInfo(accessKey: string, signal?: AbortSignal): Promise<ChatUserInfo | null> {
+export async function checkAuthentication(accessKey: string, signal?: AbortSignal): Promise<boolean> {
   const params = new URLSearchParams();
   params.set('accessKey', accessKey);
-  const res = await get(`/chat/myInfo?${params.toString()}`, signal);
-  if (res.status === 401) {
-    return null;
-  } else if (!res.ok) {
+  const res = await get(`/chat/authenticate?${params.toString()}`, signal);
+  if (!res.ok) {
     throw new Error('Error fetching data');
   }
-  return (await res.json()) as ChatUserInfo;
+  return (await res.json()).success;
 }
 
-export async function getChatConversation(
+export async function createConversation(
   accessKey: string,
-  conversationId: number,
+  toBeLogged: boolean,
   signal?: AbortSignal
 ): Promise<ChatConversation> {
   const params = new URLSearchParams();
   params.set('accessKey', accessKey);
-  const res = await get(`/chat/conversation/${conversationId}?${params.toString()}`, signal);
+  params.set('toBeLogged', toBeLogged.toString());
+  const res = await post(`/chat/createConversation?${params.toString()}`, undefined, signal);
   if (!res.ok) {
     throw new Error('Error fetching data');
   }
-  return (await res.json()) as ChatConversation;
+  const id = await res.text();
+  return {
+    id,
+    messages: [],
+  };
 }
 
 export async function chatSendMessage(
   accessKey: string,
-  conversationId: number,
+  conversationId: string,
   content: string,
   signal?: AbortSignal
 ): Promise<ChatSystemMessage> {

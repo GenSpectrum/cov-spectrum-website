@@ -1,13 +1,5 @@
-export type ChatUserInfo = {
-  id: number;
-  quota: number;
-  quotaUsed: number;
-  conversationIds: number[];
-};
-
 export type ChatConversation = {
-  id: number;
-  owner: number;
+  id: string;
   messages: (ChatUserMessage | ChatSystemMessage)[];
 };
 

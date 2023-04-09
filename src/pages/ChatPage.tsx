@@ -1,37 +1,35 @@
 import { useLocation } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { useQuery } from '../helpers/query-hook';
-import { chatSendMessage, getChatConversation, getChatUserInfo } from '../data/chat/api-chat';
-import { ChatUserInfo } from '../data/chat/types-chat';
+import { chatSendMessage, checkAuthentication, createConversation } from '../data/chat/api-chat';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
 import { GiPerspectiveDiceSixFacesRandom } from 'react-icons/gi';
 import {
   ChatContainer,
-  Conversation,
   ConversationHeader,
-  ConversationList,
   MainContainer,
   Message,
   MessageInput,
   MessageList,
   SendButton,
-  Sidebar,
   TypingIndicator,
 } from '@chatscope/chat-ui-kit-react';
 import { Table } from 'react-bootstrap';
 import { getRandomChatPrompt } from '../data/chat/chat-example-prompts';
+import { ChatConversation } from '../data/chat/types-chat';
+import { Button, ButtonVariant } from '../helpers/ui';
 
 export const ChatPage = () => {
   let queryParamsString = useLocation().search;
   const queryParam = useMemo(() => new URLSearchParams(queryParamsString), [queryParamsString]);
 
   const accessKey = queryParam.get('accessKey');
-  const userInfo = useQuery(
+  const authenticatedQuery = useQuery(
     async signal => {
       if (!accessKey) {
         return null;
       }
-      return getChatUserInfo(accessKey, signal);
+      return checkAuthentication(accessKey, signal);
     },
     [accessKey]
   );
@@ -40,50 +38,63 @@ export const ChatPage = () => {
     return <>This page is only for people with an access key.</>;
   }
 
-  if (userInfo.isLoading) {
+  if (authenticatedQuery.isLoading) {
     return <>Loading...</>;
   }
 
-  if (!userInfo.data) {
+  if (authenticatedQuery.isError) {
+    return <>Something went wrong. Please refresh the page.</>;
+  }
+
+  if (!authenticatedQuery.data) {
     return <>The access key is wrong.</>;
   }
 
   return (
     <>
-      <ChatMain chatAccessKey={accessKey} userInfo={userInfo.data} />
+      <ChatMain chatAccessKey={accessKey} />
     </>
   );
 };
 
 type ChatMainProps = {
   chatAccessKey: string;
-  userInfo: ChatUserInfo;
 };
 
-export const ChatMain = ({ chatAccessKey, userInfo }: ChatMainProps) => {
-  const [activeConversation, setActiveConversation] = useState(userInfo.conversationIds[0]);
+export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
   const [waiting, setWaiting] = useState(false);
   const [contentInMessageInput, setContentInMessageInput] = useState('');
 
-  const conversation = useQuery(
-    signal => getChatConversation(chatAccessKey, activeConversation, signal),
-    [activeConversation]
-  );
+  const [toBeLogged, setToBeLogged] = useState<boolean | undefined>();
+  const [conversation, setConversation] = useState<ChatConversation | undefined>();
+
+  const recordLoggingDecision = async (decision: boolean) => {
+    if (toBeLogged !== undefined) {
+      return;
+    }
+    setToBeLogged(decision);
+
+    // Now, the conversation can actually start! Let's get a conversation ID.
+    setConversation(await createConversation(chatAccessKey, decision));
+  };
 
   const sendMessage = (content: string) => {
+    if (!conversation || waiting) {
+      return;
+    }
     if (content.trim().length === 0) {
       return;
     }
     setContentInMessageInput('');
     setWaiting(true);
-    if (conversation.data) {
-      conversation.data.messages = [...conversation.data.messages, { role: 'user', content }];
+    if (conversation) {
+      conversation.messages = [...conversation.messages, { role: 'user', content }];
     }
-    chatSendMessage(chatAccessKey, activeConversation, content).then(responseMessage => {
-      if (!conversation.data) {
+    chatSendMessage(chatAccessKey, conversation.id, content).then(responseMessage => {
+      if (!conversation) {
         return;
       }
-      conversation.data.messages = [...conversation.data.messages, responseMessage];
+      conversation.messages = [...conversation.messages, responseMessage];
       setWaiting(false);
     });
   };
@@ -92,35 +103,128 @@ export const ChatMain = ({ chatAccessKey, userInfo }: ChatMainProps) => {
     <>
       <div style={{ position: 'relative', height: '700px' }}>
         <MainContainer responsive>
-          <Sidebar position='left' scrollable={false}>
-            <ConversationList>
-              {userInfo.conversationIds.map(id => (
-                <Conversation
-                  name={`Conversation ${id}`}
-                  active={id === activeConversation}
-                  onClick={() => {
-                    if (!waiting) {
-                      setActiveConversation(id);
-                    }
-                  }}
-                  info='Model: ChatGPT-3.5'
-                />
-              ))}
-            </ConversationList>
-          </Sidebar>
           <ChatContainer>
             <ConversationHeader>
-              <ConversationHeader.Back />
               <ConversationHeader.Content
-                userName={`Conversation ${activeConversation}`}
-                info={`Used quota: $${userInfo.quotaUsed / 100} / $${userInfo.quota / 100}`}
+                userName='GenSpectrum'
+                info='LLM: ChatGPT-3.5, data engine: LAPIS, data source: GISAID'
               />
             </ConversationHeader>
-            <MessageList
-              typingIndicator={waiting && <TypingIndicator content='Calculating...' />}
-              loading={conversation.isLoading}
-            >
-              {conversation.data?.messages.map(message =>
+            <MessageList typingIndicator={waiting && <TypingIndicator content='Calculating...' />}>
+              {/* Welcome and introduction message */}
+              <Message
+                model={{
+                  type: 'custom',
+                  sentTime: '',
+                  sender: 'GenSpectrum',
+                  direction: 'incoming',
+                  position: 'single',
+                }}
+              >
+                <Message.CustomContent>
+                  Hello! This is GenSpectrum chat. TODO: Basic description of the chat.
+                </Message.CustomContent>
+              </Message>
+
+              {/* Ask whether the conversation may be recorded */}
+              <Message
+                model={{
+                  type: 'custom',
+                  sentTime: '',
+                  sender: 'GenSpectrum',
+                  direction: 'incoming',
+                  position: 'single',
+                }}
+              >
+                <Message.CustomContent>
+                  <div>
+                    <div>
+                      We would like to record the conversation and use it for research purposes. May we
+                      record?
+                    </div>
+                  </div>
+                </Message.CustomContent>
+              </Message>
+              {toBeLogged === undefined && (
+                <Message
+                  model={{
+                    type: 'custom',
+                    sentTime: '',
+                    sender: 'You',
+                    direction: 'outgoing',
+                    position: 'single',
+                  }}
+                >
+                  <Message.CustomContent>
+                    <div className='flex flex-row gap-x-2'>
+                      <Button variant={ButtonVariant.PRIMARY} onClick={() => recordLoggingDecision(true)}>
+                        Yes
+                      </Button>
+                      <Button variant={ButtonVariant.PRIMARY} onClick={() => recordLoggingDecision(false)}>
+                        No
+                      </Button>
+                    </div>
+                  </Message.CustomContent>
+                </Message>
+              )}
+              {toBeLogged === true && (
+                <>
+                  <Message
+                    model={{
+                      type: 'custom',
+                      sentTime: '',
+                      sender: 'You',
+                      direction: 'outgoing',
+                      position: 'single',
+                    }}
+                  >
+                    <Message.CustomContent>Yes</Message.CustomContent>
+                  </Message>
+                  <Message
+                    model={{
+                      type: 'custom',
+                      sentTime: '',
+                      sender: 'GenSpectrum',
+                      direction: 'incoming',
+                      position: 'single',
+                    }}
+                  >
+                    <Message.CustomContent>
+                      Thank you very much for permitting the conversation to be recorded.
+                    </Message.CustomContent>
+                  </Message>
+                </>
+              )}
+              {toBeLogged === false && (
+                <>
+                  <Message
+                    model={{
+                      type: 'custom',
+                      sentTime: '',
+                      sender: 'You',
+                      direction: 'outgoing',
+                      position: 'single',
+                    }}
+                  >
+                    <Message.CustomContent>No</Message.CustomContent>
+                  </Message>
+                  <Message
+                    model={{
+                      type: 'custom',
+                      sentTime: '',
+                      sender: 'GenSpectrum',
+                      direction: 'incoming',
+                      position: 'single',
+                    }}
+                  >
+                    <Message.CustomContent>
+                      Okay, the conversation will not be recorded.
+                    </Message.CustomContent>
+                  </Message>
+                </>
+              )}
+
+              {conversation?.messages.map(message =>
                 message.role === 'user' ? (
                   <Message
                     model={{
@@ -202,8 +306,8 @@ export const ChatMain = ({ chatAccessKey, userInfo }: ChatMainProps) => {
                   borderTop: 0,
                   flexShrink: 'initial',
                 }}
-                placeholder='Ask about SARS-CoV-2 variants!'
-                disabled={waiting}
+                placeholder={`Let's chat about SARS-CoV-2 variants`}
+                disabled={!conversation || waiting}
                 onChange={message => setContentInMessageInput(message)}
                 value={contentInMessageInput}
                 onSend={sendMessage}
