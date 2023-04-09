@@ -9,7 +9,6 @@ import { Alert, AlertVariant } from './helpers/ui';
 import { StoryOverviewPage } from './pages/StoryOverviewPage';
 import { WasteWaterStoryPage } from './models/wasteWater/story/WasteWaterStoryPage';
 import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLocationPage';
-import { baseLocation } from './baseLocation';
 import StoriesOverview from './stories/StoriesOverview';
 import StoryRouter from './stories/StoryRouter';
 import { useExploreUrl } from './helpers/explore-url';
@@ -39,6 +38,7 @@ import {
 import { NewFocusPage } from './pages/NewFocusPage';
 import { useQuery } from './helpers/query-hook';
 import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/default-selectors';
+import { useBaseLocation } from './helpers/use-base-location';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -56,6 +56,11 @@ export const App = () => {
 
   const { host, qc, setHostAndQc, submissionDate } = useExploreUrl() ?? {};
   const { data: nextcladeDatasetInfo } = useQuery(() => fetchNextcladeDatasetInfo(), []);
+
+  const baseLocation = useBaseLocation();
+  if (!baseLocation) {
+    return <></>; // Just wait a slight bit. It should come very soon!
+  }
 
   return (
     <div className='w-full'>

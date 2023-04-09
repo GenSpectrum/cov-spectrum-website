@@ -16,10 +16,11 @@ describe('useExploreUrl', () => {
     ['/explore/CountryWithoutSpaces/AllSamples/Y2022', 'CountryWithoutSpaces'],
     ['/explore/CountryWithoutSpaces/AllSamples/Y2022/variants', 'CountryWithoutSpaces'],
     ['/explore/Country%20With%20Spaces/AllSamples/Y2022', 'Country With Spaces'],
-  ])('should extract correct parameters from url %s', (url, expectedCountry) => {
+  ])('should extract correct parameters from url %s', async (url, expectedCountry) => {
     const result = renderHook(() => useExploreUrl(), {
       wrapper: memoryRouterWithCurrentLocation(url),
     }).result.current;
+    await act(() => {});
 
     expect(result).not.toBe(undefined);
     expect(result?.location?.country).toBe(expectedCountry);
@@ -71,10 +72,11 @@ describe('useExploreUrl', () => {
     },
   ])(
     'should navigate to $targetUrl from $originUrl when setting location to "$targetCountry"',
-    ({ originUrl, targetUrl, targetCountry }) => {
+    async ({ originUrl, targetUrl, targetCountry }) => {
       const result = renderHook(() => useExploreUrl(), {
         wrapper: memoryRouterWithCurrentLocation(originUrl),
       }).result.current;
+      await act(() => {});
 
       act(() => result?.setLocation({ country: targetCountry }));
       expect(getLocationDisplay()).toHaveTextContent(targetUrl);
@@ -104,10 +106,11 @@ describe('useExploreUrl', () => {
     },
   ])(
     'should navigate to $targetUrl from $originUrl when setting sampling strategy to "$samplingStrategy"',
-    ({ originUrl, targetUrl, samplingStrategy }) => {
+    async ({ originUrl, targetUrl, samplingStrategy }) => {
       const result = renderHook(() => useExploreUrl(), {
         wrapper: memoryRouterWithCurrentLocation(originUrl),
       }).result.current;
+      await act(() => {});
 
       act(() => result?.setSamplingStrategy(samplingStrategy as SamplingStrategy));
       expect(getLocationDisplay()).toHaveTextContent(targetUrl);
@@ -162,10 +165,11 @@ describe('useExploreUrl', () => {
     },
   ])(
     'should navigate to $targetUrl from $originUrl when changing the date range',
-    ({ originUrl, targetUrl, targetDateRange }) => {
+    async ({ originUrl, targetUrl, targetDateRange }) => {
       const result = renderHook(() => useExploreUrl(), {
         wrapper: memoryRouterWithCurrentLocation(originUrl),
       }).result.current;
+      await act(() => {});
 
       act(() => result?.setDateRange(targetDateRange));
       expect(getLocationDisplay()).toHaveTextContent(targetUrl);
@@ -185,10 +189,11 @@ describe('useExploreUrl', () => {
     },
   ])(
     'should navigate to $targetUrl from $originUrl when changing the variants',
-    ({ originUrl, targetUrl, variants }) => {
+    async ({ originUrl, targetUrl, variants }) => {
       const result = renderHook(() => useExploreUrl(), {
         wrapper: memoryRouterWithCurrentLocation(originUrl),
       }).result.current;
+      await act(() => {});
 
       act(() => result?.setVariants(variants));
       expect(getLocationDisplay()).toHaveTextContent(targetUrl);
@@ -218,10 +223,11 @@ describe('useExploreUrl', () => {
     },
   ])(
     'should navigate to $targetUrl from $originUrl when changing the analysis mode to "$analysisMode"',
-    ({ originUrl, targetUrl, analysisMode }) => {
+    async ({ originUrl, targetUrl, analysisMode }) => {
       const result = renderHook(() => useExploreUrl(), {
         wrapper: memoryRouterWithCurrentLocation(originUrl),
       }).result.current;
+      await act(() => {});
 
       act(() => result?.setAnalysisMode(analysisMode as AnalysisMode));
       expect(getLocationDisplay()).toHaveTextContent(targetUrl);

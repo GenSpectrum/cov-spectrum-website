@@ -24,7 +24,6 @@ import {
   submissionDateRangeUrlToSelector,
 } from '../data/DateRangeUrlEncoded';
 import { decodeSamplingStrategy, SamplingStrategy } from '../data/SamplingStrategy';
-import { baseLocation } from '../baseLocation';
 import { AnalysisMode, decodeAnalysisMode } from '../data/AnalysisMode';
 import {
   addHostSelectorToUrlSearchParams,
@@ -39,6 +38,7 @@ import {
 } from '../data/QcSelector';
 import { defaultAnalysisMode, defaultDateRange, defaultSamplingStrategy } from '../data/default-selectors';
 import { assert } from './assert';
+import { useBaseLocation } from './use-base-location';
 
 export interface ExploreUrl {
   location: LocationSelector;
@@ -272,6 +272,8 @@ export function useExploreUrl(): ExploreUrl | undefined {
       dateRange: isDateRangeEncoded(encoded.dateRange) ? dateRangeUrlToSelector(encoded.dateRange) : null,
     };
   }, [encoded.dateRange, encoded.location, encoded.samplingStrategy]);
+
+  const baseLocation = useBaseLocation();
 
   // Redirecting if the explore URL is not complete
   if (!routeMatches.locationSamplingDate || !pathParams) {

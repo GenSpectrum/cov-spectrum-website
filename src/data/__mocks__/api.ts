@@ -1,7 +1,7 @@
 import { CountryMapping } from '../CountryMapping';
 import { PangoLineageAlias } from '../PangoLineageAlias';
 import { ReferenceGenomeInfo } from '../ReferenceGenomeInfo';
-import { get } from '../api';
+import { UserCountry } from '../UserCountry';
 
 export async function fetchCountryMapping(): Promise<CountryMapping[]> {
   return Promise.resolve([
@@ -34,4 +34,11 @@ export async function fetchReferenceGenomeInfo(): Promise<ReferenceGenomeInfo> {
       },
     ],
   });
+}
+
+export async function fetchCurrentUserCountry(): Promise<UserCountry> {
+  return {
+    region: 'Europe',
+    country: 'Switzerland',
+  };
 }
