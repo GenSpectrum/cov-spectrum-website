@@ -48,3 +48,45 @@ export async function chatSendMessage(
   }
   return (await res.json()) as ChatSystemMessage;
 }
+
+export async function chatRateMessage(
+  accessKey: string,
+  conversationId: string,
+  messageId: number,
+  rating: 'up' | 'down',
+  signal?: AbortSignal
+) {
+  const params = new URLSearchParams();
+  params.set('accessKey', accessKey);
+  const endpoint = rating === 'up' ? 'rateUp' : 'rateDown';
+  const res = await post(
+    `/chat/conversation/${conversationId}/message/${messageId}/${endpoint}?${params.toString()}`,
+    undefined,
+    signal
+  );
+  if (!res.ok) {
+    throw new Error('Error fetching data');
+  }
+}
+
+export async function chatCommentMessage(
+  accessKey: string,
+  conversationId: string,
+  messageId: number,
+  comment: string,
+  signal?: AbortSignal
+) {
+  const params = new URLSearchParams();
+  params.set('accessKey', accessKey);
+  const res = await fetch(
+    `${HOST}/chat/conversation/${conversationId}/message/${messageId}/comment?${params.toString()}`,
+    {
+      method: 'POST',
+      body: comment,
+      signal,
+    }
+  );
+  if (!res.ok) {
+    throw new Error('Error fetching data');
+  }
+}

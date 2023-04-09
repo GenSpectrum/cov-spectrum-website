@@ -10,6 +10,7 @@ export type ChatUserMessage = {
 
 export type ChatSystemMessage = {
   role: 'GenSpectrum';
+  id?: number; // The ID will only be provided if the message is logged
   text: string;
   data?: any[];
 };
