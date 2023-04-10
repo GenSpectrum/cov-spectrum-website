@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Header from './Header';
 import { LoginWrapper } from './helpers/app-layout';
 import { AboutPage } from './pages/AboutPage';
@@ -39,6 +39,7 @@ import { NewFocusPage } from './pages/NewFocusPage';
 import { useQuery } from './helpers/query-hook';
 import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/default-selectors';
 import { useBaseLocation } from './helpers/use-base-location';
+import { ChatPage } from './pages/ChatPage';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -56,6 +57,9 @@ export const App = () => {
 
   const { host, qc, setHostAndQc, submissionDate } = useExploreUrl() ?? {};
   const { data: nextcladeDatasetInfo } = useQuery(() => fetchNextcladeDatasetInfo(), []);
+
+  // For Chat page: Don't show footer
+  const isChatPage = useLocation().pathname === '/chat';
 
   const baseLocation = useBaseLocation();
   if (!baseLocation) {
@@ -180,9 +184,10 @@ export const App = () => {
             }
           />
           <Route path='/about' element={<AboutPage />} />
+          <Route path='/chat' element={<ChatPage />} />
         </Routes>
       </div>
-      {!hideHeaderAndFooter && (
+      {!hideHeaderAndFooter && !isChatPage && (
         <Footer className='text-center'>
           <div>
             The sequence data was updated: {dayjs(getCurrentLapisDataVersionDate()).locale('en').calendar()}

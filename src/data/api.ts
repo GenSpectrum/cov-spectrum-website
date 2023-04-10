@@ -10,7 +10,7 @@ import { UserCountry } from './UserCountry';
 import { AddCollectionResponse, Collection } from './Collection';
 import { PangoLineageRecombinant } from './PangoLineageRecombinant';
 
-const HOST = process.env.REACT_APP_SERVER_HOST;
+export const HOST = process.env.REACT_APP_SERVER_HOST;
 
 const getBaseHeaders = (): Headers => {
   const headers: { [key: string]: string } = {
