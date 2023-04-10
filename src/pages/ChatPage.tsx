@@ -167,7 +167,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
             maxWidth: 1000,
             marginLeft: 'auto',
             marginRight: 'auto',
-            height: 'calc(100vh - 4.5em)',
+            height: 'calc(100vh - 4.8em)',
           }}
         >
           <MainContainer responsive>
@@ -430,7 +430,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                     borderTop: 0,
                     flexShrink: 'initial',
                   }}
-                  placeholder={`Let's chat about SARS-CoV-2 variants`}
+                  placeholder={`Let's chat about variants`}
                   disabled={!conversation || waiting}
                   onChange={(_, textContent) => {
                     if (textContent.length <= MAX_MESSAGE_LENGTH) {
