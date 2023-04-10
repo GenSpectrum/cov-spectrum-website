@@ -21,7 +21,7 @@ import {
   SendButton,
   TypingIndicator,
 } from '@chatscope/chat-ui-kit-react';
-import { FloatingLabel, Modal, Table, Form } from 'react-bootstrap';
+import { FloatingLabel, Modal, Table, Form, ProgressBar } from 'react-bootstrap';
 import { getRandomChatPrompt } from '../data/chat/chat-example-prompts';
 import { ChatConversation } from '../data/chat/types-chat';
 import { Button, ButtonVariant } from '../helpers/ui';
@@ -72,6 +72,7 @@ type ChatMainProps = {
 };
 
 export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
+  const MAX_MESSAGE_LENGTH = 350;
   const [waiting, setWaiting] = useState(false);
   const [contentInMessageInput, setContentInMessageInput] = useState('');
   const [greeting, setGreeting] = useState<string | undefined>();
@@ -132,6 +133,14 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
     }
     chatCommentMessage(chatAccessKey, conversation.id, messageId, comment);
   };
+
+  const messageLengthProportionUsed = contentInMessageInput.length / MAX_MESSAGE_LENGTH;
+  let messageLengthBarVariant: 'success' | 'warning' | 'danger' = 'success';
+  if (messageLengthProportionUsed >= 0.75) {
+    messageLengthBarVariant = 'danger';
+  } else if (messageLengthProportionUsed >= 0.5) {
+    messageLengthBarVariant = 'warning';
+  }
 
   if (!greeting) {
     return <></>;
@@ -341,7 +350,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                       <div>
                         <p>{message.textBeforeData}</p>
                         {message.data && message.data.length && (
-                          <div className='m-2 mt-4'>
+                          <div className='m-2 mt-4 max-h-[300px] overflow-auto'>
                             <Table striped bordered hover>
                               <thead>
                                 <tr>
@@ -400,19 +409,29 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                   }}
                   placeholder={`Let's chat about SARS-CoV-2 variants`}
                   disabled={!conversation || waiting}
-                  onChange={(_, textContent) => setContentInMessageInput(textContent)}
+                  onChange={(_, textContent) => {
+                    if (textContent.length <= MAX_MESSAGE_LENGTH) {
+                      setContentInMessageInput(textContent);
+                    }
+                  }}
                   value={contentInMessageInput}
                   onSend={(_, textContent) => sendMessage(textContent)}
                 />
-                <SendButton
-                  style={{
-                    fontSize: '1.2em',
-                    marginLeft: 0,
-                    paddingLeft: '0.2em',
-                    paddingRight: '0.2em',
-                  }}
-                  onClick={() => sendMessage(contentInMessageInput)}
-                />
+                <div className='px-1 flex flex-column'>
+                  <SendButton
+                    style={{
+                      fontSize: '1.2em',
+                    }}
+                    onClick={() => sendMessage(contentInMessageInput)}
+                  />
+                  <ProgressBar
+                    striped
+                    variant={messageLengthBarVariant}
+                    now={contentInMessageInput.length}
+                    max={MAX_MESSAGE_LENGTH}
+                    className='mb-2 h-1.5'
+                  />
+                </div>
               </div>
             </ChatContainer>
           </MainContainer>
