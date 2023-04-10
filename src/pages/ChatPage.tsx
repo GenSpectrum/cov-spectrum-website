@@ -28,6 +28,7 @@ import { Button, ButtonVariant } from '../helpers/ui';
 import { getGreeting } from '../data/chat/chat-greetings';
 import { useBaseLocation } from '../helpers/use-base-location';
 import { ExternalLink } from '../components/ExternalLink';
+import { sequenceDataSource } from '../helpers/sequence-data-source';
 
 export const ChatPage = () => {
   let queryParamsString = useLocation().search;
@@ -44,8 +45,19 @@ export const ChatPage = () => {
     [accessKey]
   );
 
+  if (sequenceDataSource !== 'gisaid') {
+    return (
+      <>
+        The chat is currently only available at{' '}
+        <a href='https://cov-spectrum.org/chat'>https://cov-spectrum.org/chat</a>.
+      </>
+    );
+  }
+
   if (!accessKey) {
-    return <>This page is only for people with an access key.</>;
+    return (
+      <>The chat is currently in a private testing phase and only accessible to people with an access key.</>
+    );
   }
 
   if (authenticatedQuery.isLoading) {
@@ -203,15 +215,6 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                       <ExternalLink url='https://cov-spectrum.org'>cov-spectrum.org</ExternalLink> for
                       reliable information.
                     </p>
-                    <p>
-                      Any feedback and ideas are highly appreciated.
-                      {/* TODO Add this sentence when going to public beta */}
-                      {/*Please visit our{' '}*/}
-                      {/*<ExternalLink url='https://github.com/orgs/GenSpectrum/discussions'>*/}
-                      {/*  <b>GitHub Discussions</b>*/}
-                      {/*</ExternalLink>{' '}*/}
-                      {/*page and share your thoughts!*/}
-                    </p>
                   </Message.CustomContent>
                 </Message>
 
@@ -326,6 +329,26 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                       </Message.CustomContent>
                     </Message>
                   </>
+                )}
+                {toBeLogged !== undefined && (
+                  <Message
+                    model={{
+                      type: 'custom',
+                      sender: 'GenSpectrum',
+                      direction: 'incoming',
+                      position: 'single',
+                    }}
+                  >
+                    <Message.CustomContent>
+                      <p>
+                        Enjoy the chat! Any feedback and ideas are highly appreciated. Please visit our{' '}
+                        <ExternalLink url='https://github.com/orgs/GenSpectrum/discussions'>
+                          <b>GitHub Discussions</b>
+                        </ExternalLink>{' '}
+                        page and share your thoughts!
+                      </p>
+                    </Message.CustomContent>
+                  </Message>
                 )}
 
                 {conversation?.messages.map((message, index) =>
