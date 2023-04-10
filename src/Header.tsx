@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { ExternalLink } from './components/ExternalLink';
 import { AiOutlineGithub, AiOutlineTwitter, AiOutlineMenu } from 'react-icons/ai';
-import { FaExchangeAlt, FaFilter } from 'react-icons/fa';
+import { FaExchangeAlt, FaFilter, FaMastodon } from 'react-icons/fa';
 import { Button, ButtonVariant } from './helpers/ui';
 import { useExploreUrl } from './helpers/explore-url';
 import { alternativeSequenceDataSourceUrl, sequenceDataSource } from './helpers/sequence-data-source';
@@ -150,6 +150,7 @@ const Header = () => {
                   <a className={getButtonClasses('/about')} href='/about'>
                     About
                   </a>
+                  {MastodonButton}
                   {TwitterButton}
                   {GitHubButton}
                 </div>
@@ -213,6 +214,7 @@ const OffcanvasNav = ({ show, onClose, setShowAdvancedFilteringModal }: Offcanva
           <OffcanvasNavItem text='About' url='/about' onClick={onClose} />
         </div>
         <div className='flex justify-center mt-4'>
+          <div className='mx-6'>{MastodonButton}</div>
           <div className='mx-6'>{TwitterButton}</div>
           <div className='mx-6'>{GitHubButton}</div>
         </div>
@@ -255,6 +257,16 @@ const TwitterButton = (
       className='fill-current rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8 hover:opacity-70'
       size={'1.5em'}
       style={{ color: '#1d9bf0' }}
+    />
+  </ExternalLink>
+);
+
+const MastodonButton = (
+  <ExternalLink url='https://mstdn.science/@chaoranchen'>
+    <FaMastodon
+      className='fill-current rounded-xl filter shadow-xl cursor-pointer ml-1 lg:ml-8 hover:opacity-70'
+      size={'1.5em'}
+      style={{ color: '#5a48dd' }}
     />
   </ExternalLink>
 );
