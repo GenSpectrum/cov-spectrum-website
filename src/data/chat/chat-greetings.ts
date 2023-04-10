@@ -249,10 +249,10 @@ for (let { country, greetings } of greetingsData) {
 }
 
 /**
- * Returns a country-specific greeting if available. Otherwise, return a random greeting.
+ * Returns a country-specific greeting with 75% chance if available. Otherwise, return a random greeting.
  */
 export function getGreeting(country: string) {
-  if (greetingsByCountry.has(country)) {
+  if (greetingsByCountry.has(country) && Math.random() < 0.75) {
     const greetings = greetingsByCountry.get(country)!;
     const randomIndex = Math.floor(Math.random() * greetings.length);
     return greetings[randomIndex];

@@ -184,15 +184,24 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                       bottom-left corner to ask a random question.
                     </p>
                     <p>
-                      Please note that your messages will be sent to OpenAI. Please do not share any sensitive
+                      Please note that your messages will be sent to OpenAI. Do not share any sensitive
                       information in this chat.
                     </p>
                     <p>
-                      Any feedback and ideas are highly appreciated. Please visit our{' '}
-                      <ExternalLink url='https://github.com/orgs/GenSpectrum/discussions'>
-                        <b>GitHub Discussions</b>
-                      </ExternalLink>{' '}
-                      page and share your thoughts!
+                      This is a <b>very early release</b> of the chat bot, it has not yet been extensively
+                      evaluated. Please <b>do not</b> rely on the answers for any decision. Check the main
+                      dashboard at{' '}
+                      <ExternalLink url='https://cov-spectrum.org'>cov-spectrum.org</ExternalLink> for
+                      reliable information.
+                    </p>
+                    <p>
+                      Any feedback and ideas are highly appreciated.
+                      {/* TODO Add this sentence when going to public beta */}
+                      {/*Please visit our{' '}*/}
+                      {/*<ExternalLink url='https://github.com/orgs/GenSpectrum/discussions'>*/}
+                      {/*  <b>GitHub Discussions</b>*/}
+                      {/*</ExternalLink>{' '}*/}
+                      {/*page and share your thoughts!*/}
                     </p>
                   </Message.CustomContent>
                 </Message>
@@ -223,7 +232,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                     </ul>
                     <p>
                       We do <b>not</b> collect personal information. This includes that we will <b>not</b>{' '}
-                      link the conversations with your IP address, country, browser, etc.
+                      link the conversations with your IP address.
                     </p>
                     <p>
                       <b>May we record this conversation?</b>
@@ -330,7 +339,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                       onComment={comment => commentMessage(message.id!, comment)}
                     >
                       <div>
-                        <div>{message.text}</div>
+                        <p>{message.textBeforeData}</p>
                         {message.data && message.data.length && (
                           <div className='m-2 mt-4'>
                             <Table striped bordered hover>
@@ -353,6 +362,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                             </Table>
                           </div>
                         )}
+                        {message.textAfterData && <p>{message.textAfterData}</p>}
                       </div>
                     </CustomIncomingMessage>
                   )
