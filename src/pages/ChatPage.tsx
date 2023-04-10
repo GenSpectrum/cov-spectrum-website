@@ -1,5 +1,5 @@
 import { useLocation } from 'react-router-dom';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '../helpers/query-hook';
 import {
   chatCommentMessage,
@@ -25,6 +25,9 @@ import { FloatingLabel, Modal, Table, Form } from 'react-bootstrap';
 import { getRandomChatPrompt } from '../data/chat/chat-example-prompts';
 import { ChatConversation } from '../data/chat/types-chat';
 import { Button, ButtonVariant } from '../helpers/ui';
+import { getGreeting } from '../data/chat/chat-greetings';
+import { useBaseLocation } from '../helpers/use-base-location';
+import { ExternalLink } from '../components/ExternalLink';
 
 export const ChatPage = () => {
   let queryParamsString = useLocation().search;
@@ -71,9 +74,17 @@ type ChatMainProps = {
 export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
   const [waiting, setWaiting] = useState(false);
   const [contentInMessageInput, setContentInMessageInput] = useState('');
+  const [greeting, setGreeting] = useState<string | undefined>();
 
   const [toBeLogged, setToBeLogged] = useState<boolean | undefined>();
   const [conversation, setConversation] = useState<ChatConversation | undefined>();
+
+  const baseLocation = useBaseLocation();
+  useEffect(() => {
+    if (baseLocation) {
+      setGreeting(getGreeting(baseLocation));
+    }
+  }, [baseLocation]);
 
   const recordLoggingDecision = async (decision: boolean) => {
     if (toBeLogged !== undefined) {
@@ -97,8 +108,8 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
     if (conversation) {
       conversation.messages = [...conversation.messages, { role: 'user', content }];
     }
-    // Adding "I have a random question. " as a prefix to allow us to identify randomly generated questions in our database.
-    const contentForAI = (randomlyGenerated ? 'I have a random question. ' : '') + content;
+    // Adding a prefix to allow us to identify randomly generated questions in our database.
+    const contentForAI = (randomlyGenerated ? 'Here is my question foor you: ' : '') + content;
     chatSendMessage(chatAccessKey, conversation.id, contentForAI).then(responseMessage => {
       if (!conversation) {
         return;
@@ -122,6 +133,10 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
     chatCommentMessage(chatAccessKey, conversation.id, messageId, comment);
   };
 
+  if (!greeting) {
+    return <></>;
+  }
+
   return (
     <>
       <div className='bg-gray-100'>
@@ -138,23 +153,47 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
             <ChatContainer>
               <ConversationHeader>
                 <ConversationHeader.Content
-                  userName='GenSpectrum'
+                  userName='GenSpectrum Chat'
                   info='LLM: ChatGPT-3.5, data engine: LAPIS, data source: GISAID'
                 />
               </ConversationHeader>
               <MessageList typingIndicator={waiting && <TypingIndicator content='Calculating...' />}>
-                {/* Welcome and introduction message */}
+                {/* Welcome and introduction messages */}
+                <Message
+                  model={{
+                    message: greeting,
+                    sender: 'GenSpectrum',
+                    direction: 'incoming',
+                    position: 'single',
+                  }}
+                />
                 <Message
                   model={{
                     type: 'custom',
-                    sentTime: '',
                     sender: 'GenSpectrum',
                     direction: 'incoming',
                     position: 'single',
                   }}
                 >
                   <Message.CustomContent>
-                    Hello! This is GenSpectrum chat. TODO: Basic description of the chat.
+                    <p>
+                      Welcome at our OpenAI GPT-3.5-based chat! Here, you can ask about SARS-CoV-2 variants
+                      and we will query our database for you. The chat is intended to only answer data-related
+                      questions. You can click on the{' '}
+                      <GiPerspectiveDiceSixFacesRandom className='inline text-[#007ee0] w-6 h-6' /> in the
+                      bottom-left corner to ask a random question.
+                    </p>
+                    <p>
+                      Please note that your messages will be sent to OpenAI. Please do not share any sensitive
+                      information in this chat.
+                    </p>
+                    <p>
+                      Any feedback and ideas are highly appreciated. Please visit our{' '}
+                      <ExternalLink url='https://github.com/orgs/GenSpectrum/discussions'>
+                        <b>GitHub Discussions</b>
+                      </ExternalLink>{' '}
+                      page and share your thoughts!
+                    </p>
                   </Message.CustomContent>
                 </Message>
 
@@ -162,39 +201,58 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                 <Message
                   model={{
                     type: 'custom',
-                    sentTime: '',
                     sender: 'GenSpectrum',
                     direction: 'incoming',
                     position: 'single',
                   }}
                 >
                   <Message.CustomContent>
-                    <div>
-                      <div>
-                        We would like to record the conversation and use it for research purposes. May we
-                        record?
-                      </div>
-                    </div>
+                    <p>
+                      To improve and evaluate the application, we would like to record the conversation. It is
+                      highly valuable to see how different people phrase the questions and what people are
+                      interested in knowing. (By the way, feel free to ask questions in other languages!)
+                    </p>
+                    <p>We would like to ask you for permission to</p>
+                    <ul className='list-disc ml-8'>
+                      <li>
+                        store and evaluate the messages that you write and the answers that our chat bot
+                        generates
+                      </li>
+                      <li>store and evaluate your feedback to the messages if you rate them</li>
+                      <li>share the data publicly</li>
+                    </ul>
+                    <p>
+                      We do <b>not</b> collect personal information. This includes that we will <b>not</b>{' '}
+                      link the conversations with your IP address, country, browser, etc.
+                    </p>
+                    <p>
+                      <b>May we record this conversation?</b>
+                    </p>
                   </Message.CustomContent>
                 </Message>
                 {toBeLogged === undefined && (
                   <Message
                     model={{
                       type: 'custom',
-                      sentTime: '',
                       sender: 'You',
                       direction: 'outgoing',
                       position: 'single',
                     }}
                   >
                     <Message.CustomContent>
-                      <div className='flex flex-row gap-x-2'>
-                        <Button variant={ButtonVariant.PRIMARY} onClick={() => recordLoggingDecision(true)}>
+                      <div className='flex flex-row gap-x-4 px-2'>
+                        <button
+                          className='underline underline-offset-2 decoration-2 hover:decoration-[#F18805] font-bold'
+                          onClick={() => recordLoggingDecision(true)}
+                        >
                           Yes
-                        </Button>
-                        <Button variant={ButtonVariant.PRIMARY} onClick={() => recordLoggingDecision(false)}>
+                        </button>
+                        <button
+                          className='underline underline-offset-2 decoration-2 hover:decoration-[#F18805] font-bold'
+                          onClick={() => recordLoggingDecision(false)}
+                        >
                           No
-                        </Button>
+                        </button>
                       </div>
                     </Message.CustomContent>
                   </Message>
@@ -204,7 +262,6 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                     <Message
                       model={{
                         type: 'custom',
-                        sentTime: '',
                         sender: 'You',
                         direction: 'outgoing',
                         position: 'single',
@@ -215,14 +272,13 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                     <Message
                       model={{
                         type: 'custom',
-                        sentTime: '',
                         sender: 'GenSpectrum',
                         direction: 'incoming',
                         position: 'single',
                       }}
                     >
                       <Message.CustomContent>
-                        Thank you very much for permitting the conversation to be recorded.
+                        Thank you very much for your consent to record the conversation!
                       </Message.CustomContent>
                     </Message>
                   </>
@@ -232,7 +288,6 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                     <Message
                       model={{
                         type: 'custom',
-                        sentTime: '',
                         sender: 'You',
                         direction: 'outgoing',
                         position: 'single',
@@ -243,7 +298,6 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                     <Message
                       model={{
                         type: 'custom',
-                        sentTime: '',
                         sender: 'GenSpectrum',
                         direction: 'incoming',
                         position: 'single',
@@ -262,7 +316,6 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                       key={index}
                       model={{
                         message: message.content,
-                        sentTime: '',
                         sender: 'You',
                         direction: 'outgoing',
                         position: 'single',
