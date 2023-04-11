@@ -86,7 +86,11 @@ type ChatMainProps = {
 export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
   const MAX_MESSAGE_LENGTH = 350;
   const [waiting, setWaiting] = useState(false);
-  const [contentInMessageInput, setContentInMessageInput] = useState('');
+  const [contentInMessageInput, setContentInMessageInput] = useState({
+    innerHtml: '',
+    textContent: '',
+    innerText: '',
+  });
   const [greeting, setGreeting] = useState<string | undefined>();
 
   const [toBeLogged, setToBeLogged] = useState<boolean | undefined>();
@@ -116,7 +120,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
     if (content.trim().length === 0) {
       return;
     }
-    setContentInMessageInput('');
+    setContentInMessageInput({ innerHtml: '', textContent: '', innerText: '' });
     setWaiting(true);
     if (conversation) {
       conversation.messages = [...conversation.messages, { role: 'user', content }];
@@ -146,7 +150,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
     chatCommentMessage(chatAccessKey, conversation.id, messageId, comment);
   };
 
-  const messageLengthProportionUsed = contentInMessageInput.length / MAX_MESSAGE_LENGTH;
+  const messageLengthProportionUsed = contentInMessageInput.textContent.length / MAX_MESSAGE_LENGTH;
   let messageLengthBarVariant: 'success' | 'warning' | 'danger' = 'success';
   if (messageLengthProportionUsed >= 0.75) {
     messageLengthBarVariant = 'danger';
@@ -432,12 +436,12 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                   }}
                   placeholder={`Let's chat about variants`}
                   disabled={!conversation || waiting}
-                  onChange={(_, textContent) => {
+                  onChange={(innerHtml, textContent, innerText) => {
                     if (textContent.length <= MAX_MESSAGE_LENGTH) {
-                      setContentInMessageInput(textContent);
+                      setContentInMessageInput({ innerHtml, textContent, innerText });
                     }
                   }}
-                  value={contentInMessageInput}
+                  value={contentInMessageInput.innerHtml}
                   onSend={(_, textContent) => sendMessage(textContent)}
                 />
                 <div className='px-1 flex flex-column'>
@@ -445,12 +449,12 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                     style={{
                       fontSize: '1.2em',
                     }}
-                    onClick={() => sendMessage(contentInMessageInput)}
+                    onClick={() => sendMessage(contentInMessageInput.innerText)}
                   />
                   <ProgressBar
                     striped
                     variant={messageLengthBarVariant}
-                    now={contentInMessageInput.length}
+                    now={contentInMessageInput.textContent.length}
                     max={MAX_MESSAGE_LENGTH}
                     className='mb-2 h-1.5'
                   />

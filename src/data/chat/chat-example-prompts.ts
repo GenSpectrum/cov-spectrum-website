@@ -7,6 +7,8 @@ export const chatExamplePrompts = [
   'It has come to my attention that the ORF1a:L3606F mutation is quite intriguing, and I simply cannot resist the urge to discover which country in the vast expanse of South America has generated the highest number of sequences with this specific mutation.',
   "In the realm of scientific inquiry, it's often the case that multiple mutations may coexist within the same sequence, and with this in mind, I would be most grateful if you could reveal the total number of sequences detected in Australia during the month of June 2022, which exhibit both the S:R346T and S:L452R mutations simultaneously.",
   'Which lineages have the mutations A23403G, A23063T, and C3037T?',
+  'Which country submitted the most animal samples?',
+  'For which animals do we have sequences?',
 ];
 
 export function getRandomChatPrompt() {
