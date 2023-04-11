@@ -5,9 +5,7 @@ export async function checkAuthentication(accessKey: string, signal?: AbortSigna
   const params = new URLSearchParams();
   params.set('accessKey', accessKey);
   const res = await get(`/chat/authenticate?${params.toString()}`, signal);
-  if (!res.ok) {
-    throw new Error('Error fetching data');
-  }
+  handleCommonErrors(res.status);
   return (await res.json()).success;
 }
 
@@ -20,9 +18,7 @@ export async function createConversation(
   params.set('accessKey', accessKey);
   params.set('toBeLogged', toBeLogged.toString());
   const res = await post(`/chat/createConversation?${params.toString()}`, undefined, signal);
-  if (!res.ok) {
-    throw new Error('Error fetching data');
-  }
+  handleCommonErrors(res.status);
   const id = await res.text();
   return {
     id,
@@ -43,9 +39,7 @@ export async function chatSendMessage(
     body: content,
     signal,
   });
-  if (!res.ok) {
-    throw new Error('Error fetching data');
-  }
+  handleCommonErrors(res.status);
   return (await res.json()) as ChatSystemMessage;
 }
 
@@ -64,9 +58,7 @@ export async function chatRateMessage(
     undefined,
     signal
   );
-  if (!res.ok) {
-    throw new Error('Error fetching data');
-  }
+  handleCommonErrors(res.status);
 }
 
 export async function chatCommentMessage(
@@ -86,7 +78,28 @@ export async function chatCommentMessage(
       signal,
     }
   );
-  if (!res.ok) {
-    throw new Error('Error fetching data');
+  handleCommonErrors(res.status);
+}
+
+export type ChatApiErrorType = 'CONVERSATION_IS_GONE' | 'UNKNOWN';
+
+export class ChatApiError extends Error {
+  errorType: ChatApiErrorType;
+
+  constructor(errorType: ChatApiErrorType) {
+    super(`Chat API request failed: ${errorType}`);
+    this.errorType = errorType;
+  }
+}
+
+function handleCommonErrors(statusCode: number) {
+  if (statusCode >= 200 && statusCode < 300) {
+    return;
+  }
+  switch (statusCode) {
+    case 410:
+      throw new ChatApiError('CONVERSATION_IS_GONE');
+    default:
+      throw new ChatApiError('UNKNOWN');
   }
 }

@@ -2,6 +2,7 @@ import { useLocation } from 'react-router-dom';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '../helpers/query-hook';
 import {
+  ChatApiError,
   chatCommentMessage,
   chatRateMessage,
   chatSendMessage,
@@ -86,6 +87,7 @@ type ChatMainProps = {
 export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
   const MAX_MESSAGE_LENGTH = 350;
   const [waiting, setWaiting] = useState(false);
+  const [apiError, setApiError] = useState<ChatApiError>();
   const [contentInMessageInput, setContentInMessageInput] = useState({
     innerHtml: '',
     textContent: '',
@@ -113,8 +115,8 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
     setConversation(await createConversation(chatAccessKey, decision));
   };
 
-  const sendMessage = (content: string, randomlyGenerated?: boolean) => {
-    if (!conversation || waiting) {
+  const sendMessage = async (content: string, randomlyGenerated?: boolean) => {
+    if (!conversation || waiting || apiError) {
       return;
     }
     if (content.trim().length === 0) {
@@ -127,13 +129,18 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
     }
     // Adding a prefix to allow us to identify randomly generated questions in our database.
     const contentForAI = (randomlyGenerated ? 'Here is my question foor you: ' : '') + content;
-    chatSendMessage(chatAccessKey, conversation.id, contentForAI).then(responseMessage => {
-      if (!conversation) {
-        return;
-      }
+    try {
+      const responseMessage = await chatSendMessage(chatAccessKey, conversation.id, contentForAI);
       conversation.messages = [...conversation.messages, responseMessage];
+    } catch (e) {
+      if (e instanceof ChatApiError) {
+        setApiError(e);
+      } else {
+        throw e;
+      }
+    } finally {
       setWaiting(false);
-    });
+    }
   };
 
   const rateMessage = (messageId: number, rating: 'up' | 'down') => {
@@ -403,6 +410,19 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                     </CustomIncomingMessage>
                   )
                 )}
+                {apiError && (
+                  <Message
+                    model={{
+                      message:
+                        apiError.errorType === 'CONVERSATION_IS_GONE'
+                          ? 'The conversation is stale. Please refresh the page.'
+                          : 'An unexpected error occurred. Please refresh the page. If the happens more often, please let us know on GitHub.',
+                      sender: 'GenSpectrum',
+                      direction: 'incoming',
+                      position: 'single',
+                    }}
+                  />
+                )}
               </MessageList>
 
               <div
@@ -435,7 +455,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                     flexShrink: 'initial',
                   }}
                   placeholder={`Let's chat about variants`}
-                  disabled={!conversation || waiting}
+                  disabled={!conversation || waiting || !!apiError}
                   onChange={(innerHtml, textContent, innerText) => {
                     if (textContent.length <= MAX_MESSAGE_LENGTH) {
                       setContentInMessageInput({ innerHtml, textContent, innerText });
