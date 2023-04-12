@@ -40,10 +40,12 @@ import { useQuery } from './helpers/query-hook';
 import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/default-selectors';
 import { useBaseLocation } from './helpers/use-base-location';
 import { ChatPage } from './pages/ChatPage';
+import { NextcladeDatasetInfo } from './data/NextcladeDatasetInfo';
+import Loader from './components/Loader';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
-const Footer = styled.footer`
+const FooterStyle = styled.footer`
   margin-top: 50px;
   padding-top: 20px;
   border-top: 1px solid darkgray;
@@ -55,166 +57,220 @@ export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
-  const { host, qc, setHostAndQc, submissionDate } = useExploreUrl() ?? {};
   const { data: nextcladeDatasetInfo } = useQuery(() => fetchNextcladeDatasetInfo(), []);
 
-  // For Chat page: Don't show footer
   const isChatPage = useLocation().pathname === '/chat';
-
-  const baseLocation = useBaseLocation();
-  if (!baseLocation) {
-    return <></>; // Just wait a slight bit. It should come very soon!
-  }
+  const showFooter = !hideHeaderAndFooter && !isChatPage;
 
   return (
     <div className='w-full'>
-      {/* Header */}
       {!hideHeaderAndFooter && <Header />}
       <div ref={ref} className='w-full'>
-        {/* Preview warning */}
-        {isPreview && (
-          <Alert variant={AlertVariant.WARNING}>
-            <div className='text-center font-bold'>
-              Note: This is a preview deployment. Please visit{' '}
-              <a href='https://cov-spectrum.org'>https://cov-spectrum.org</a> for the official website.
-            </div>
-          </Alert>
-        )}
-        {/* Warning - if advanced filters are active */}
-        {host &&
-          qc &&
-          submissionDate &&
-          setHostAndQc &&
-          (!isDefaultHostSelector(host) ||
-            !isDefaultQcSelector(qc) ||
-            !isDefaultSubmissionDateRangeSelector(submissionDate)) && (
-            <Alert variant={AlertVariant.WARNING}>
-              <div className='flex flex-row'>
-                <FaFilter
-                  className='m-1'
-                  style={{ width: '30px', minWidth: '30px', height: '30px', minHeight: '30px' }}
-                />
-                <div className='ml-4 flex-grow-1'>
-                  <div className='font-weight-bold'>Advanced filters are active</div>
-                  {!isDefaultHostSelector(host) && <div>Selected hosts: {host.join(', ')}</div>}
-                  {!isDefaultQcSelector(qc) && <div>Sequence quality: {formatQcSelectorAsString(qc)}</div>}
-                  {!isDefaultSubmissionDateRangeSelector(submissionDate) && (
-                    <div>Submission date: {formatDateRangeSelector(submissionDate)}</div>
-                  )}
-
-                  <div className='mt-4'>
-                    <button
-                      className='underline cursor-pointer'
-                      onClick={() => setHostAndQc(defaultHost, {}, defaultSubmissionDateRangeSelector)}
-                    >
-                      Remove filters
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </Alert>
-          )}
-        {/*Main content*/}
-        <Routes>
-          <Route
-            path='/'
-            element={
-              <Navigate
-                replace
-                to={`/explore/${baseLocation}/${defaultSamplingStrategy}/${defaultDateRange}`}
-              />
-            }
-          />
-          <Route
-            path='/login'
-            element={
-              <LoginWrapper>
-                <LoginPage />
-              </LoginWrapper>
-            }
-          />
-          <Route
-            path='/explore/:country/:samplingStrategy/:dateRange'
-            element={<ExplorePage isSmallScreen={isSmallScreen} />}
-          />
-          <Route
-            path='/explore/:country/:samplingStrategy/:dateRange/sequencing-coverage'
-            element={<DeepSequencingCoveragePage />}
-          />
-          <Route
-            path='/explore/:country/:samplingStrategy/:dateRange/variants'
-            element={<FocusPage isSmallScreen={isSmallScreen} />}
-          />
-          <Route
-            path='/explore/:country/:samplingStrategy/:dateRange/variants/international-comparison'
-            element={<DeepInternationalComparisonPage />}
-          />
-          <Route
-            path='/explore/:country/:samplingStrategy/:dateRange/variants/hospitalization-death'
-            element={<DeepHospitalizationDeathPage />}
-          />
-          <Route
-            path='/explore/:country/:samplingStrategy/:dateRange/variants/waste-water'
-            element={<DeepWastewaterPage />}
-          />
-          <Route
-            path='/explore/:country/:samplingStrategy/:dateRange/variants/chen-2021-fitness'
-            element={<DeepChen2021FitnessPage />}
-          />
-          <Route path='/story' element={<StoryOverviewPage />} />
-          <Route path='/story/wastewater-in-switzerland' element={<WasteWaterStoryPage />} />
-          <Route path='/stories/wastewater-in-switzerland' element={<WasteWaterStoryPage />} />
-          <Route
-            path='/story/wastewater-in-switzerland/location/:location'
-            element={<WasteWaterLocationPage />}
-          />
-          <Route
-            path='/stories/wastewater-in-switzerland/location/:location'
-            element={<WasteWaterLocationPage />}
-          />
-          <Route path='/stories' element={<StoriesOverview />} />
-          <Route path='/stories/:storyId' element={<StoryRouter />} />
-          <Route path='/collections' element={<CollectionOverviewPage />} />
-          <Route path='/collections/add' element={<CollectionAddPage />} />
-          <Route path='/collections/:collectionId' element={<CollectionSinglePage />} />
-          <Route
-            path='/focus'
-            element={
-              <NewFocusPage fullScreenMode={hideHeaderAndFooter} setFullScreenMode={setHideHeaderAndFooter} />
-            }
-          />
-          <Route path='/about' element={<AboutPage />} />
-          <Route path='/chat' element={<ChatPage />} />
-        </Routes>
+        <MainContent
+          isSmallScreen={isSmallScreen}
+          hideHeaderAndFooter={hideHeaderAndFooter}
+          setHideHeaderAndFooter={setHideHeaderAndFooter}
+        />
       </div>
-      {!hideHeaderAndFooter && !isChatPage && (
-        <Footer className='text-center'>
-          <div>
-            The sequence data was updated: {dayjs(getCurrentLapisDataVersionDate()).locale('en').calendar()}
-          </div>
-          {nextcladeDatasetInfo?.tag && <div>Nextclade dataset version: {nextcladeDatasetInfo.tag}</div>}
-          {sequenceDataSource === 'gisaid' && (
-            <div>
-              Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
-              <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
-            </div>
-          )}
-          <div className='flex flex-wrap justify-center items-center gap-x-8 gap-y-4 my-4 mt-8 px-2'>
-            <ExternalLink url='https://ethz.ch'>
-              <img className='h-5' alt='ETH Zurich' src='/img/ethz.png' />
-            </ExternalLink>
-            <ExternalLink url='https://bsse.ethz.ch/cevo'>
-              <img className='h-7' alt='Computational Evolution Group' src='/img/cEvo.png' />
-            </ExternalLink>
-            <ExternalLink url='https://www.sib.swiss/'>
-              <img className='h-7' alt='SIB Swiss Institute of Bioinformatics' src='/img/sib.svg' />
-            </ExternalLink>
-            <ExternalLink url='https://vercel.com/?utm_source=cov-spectrum&utm_campaign=oss'>
-              <img className='h-6' alt='Powered by Vercel' src='/img/powered-by-vercel.svg' />
-            </ExternalLink>
-          </div>
-        </Footer>
-      )}
+      {showFooter && <Footer nextcladeDatasetInfo={nextcladeDatasetInfo} />}
     </div>
   );
 };
+
+type MainContentProps = {
+  isSmallScreen: boolean;
+  hideHeaderAndFooter: boolean;
+  setHideHeaderAndFooter: (value: ((prevState: boolean) => boolean) | boolean) => void;
+};
+
+function MainContent({ isSmallScreen, hideHeaderAndFooter, setHideHeaderAndFooter }: MainContentProps) {
+  const baseLocation = useBaseLocation();
+  if (!baseLocation) {
+    return <Loader />; // Just wait a slight bit. It should come very soon!
+  }
+
+  return (
+    <>
+      {isPreview && <PreviewAlert />}
+      <AdvancedFiltersAlert />
+      <CovSpectrumRoutes
+        baseLocation={baseLocation}
+        isSmallScreen={isSmallScreen}
+        hideHeaderAndFooter={hideHeaderAndFooter}
+        setHideHeaderAndFooter={setHideHeaderAndFooter}
+      />
+    </>
+  );
+}
+
+function PreviewAlert() {
+  return (
+    <Alert variant={AlertVariant.WARNING}>
+      <div className='text-center font-bold'>
+        Note: This is a preview deployment. Please visit{' '}
+        <a href='https://cov-spectrum.org'>https://cov-spectrum.org</a> for the official website.
+      </div>
+    </Alert>
+  );
+}
+
+function AdvancedFiltersAlert() {
+  const { host, qc, setHostAndQc, submissionDate } = useExploreUrl() ?? {};
+
+  if (!(host && qc && submissionDate && setHostAndQc)) {
+    return <></>;
+  }
+
+  let allFiltersHaveTheirDefaultValue =
+    isDefaultHostSelector(host) &&
+    isDefaultQcSelector(qc) &&
+    isDefaultSubmissionDateRangeSelector(submissionDate);
+
+  if (allFiltersHaveTheirDefaultValue) {
+    return <></>;
+  }
+
+  return (
+    <Alert variant={AlertVariant.WARNING}>
+      <div className='flex flex-row'>
+        <FaFilter
+          className='m-1'
+          style={{ width: '30px', minWidth: '30px', height: '30px', minHeight: '30px' }}
+        />
+        <div className='ml-4 flex-grow-1'>
+          <div className='font-weight-bold'>Advanced filters are active</div>
+          {!isDefaultHostSelector(host) && <div>Selected hosts: {host.join(', ')}</div>}
+          {!isDefaultQcSelector(qc) && <div>Sequence quality: {formatQcSelectorAsString(qc)}</div>}
+          {!isDefaultSubmissionDateRangeSelector(submissionDate) && (
+            <div>Submission date: {formatDateRangeSelector(submissionDate)}</div>
+          )}
+
+          <div className='mt-4'>
+            <button
+              className='underline cursor-pointer'
+              onClick={() => setHostAndQc(defaultHost, {}, defaultSubmissionDateRangeSelector)}
+            >
+              Remove filters
+            </button>
+          </div>
+        </div>
+      </div>
+    </Alert>
+  );
+}
+
+type CovSpectrumRoutesProps = {
+  baseLocation: string;
+  isSmallScreen: boolean;
+  hideHeaderAndFooter: boolean;
+  setHideHeaderAndFooter: (value: ((prevState: boolean) => boolean) | boolean) => void;
+};
+
+function CovSpectrumRoutes({
+  baseLocation,
+  isSmallScreen,
+  hideHeaderAndFooter,
+  setHideHeaderAndFooter,
+}: CovSpectrumRoutesProps) {
+  return (
+    <Routes>
+      <Route
+        path='/'
+        element={
+          <Navigate replace to={`/explore/${baseLocation}/${defaultSamplingStrategy}/${defaultDateRange}`} />
+        }
+      />
+      <Route
+        path='/login'
+        element={
+          <LoginWrapper>
+            <LoginPage />
+          </LoginWrapper>
+        }
+      />
+      <Route
+        path='/explore/:country/:samplingStrategy/:dateRange'
+        element={<ExplorePage isSmallScreen={isSmallScreen} />}
+      />
+      <Route
+        path='/explore/:country/:samplingStrategy/:dateRange/sequencing-coverage'
+        element={<DeepSequencingCoveragePage />}
+      />
+      <Route
+        path='/explore/:country/:samplingStrategy/:dateRange/variants'
+        element={<FocusPage isSmallScreen={isSmallScreen} />}
+      />
+      <Route
+        path='/explore/:country/:samplingStrategy/:dateRange/variants/international-comparison'
+        element={<DeepInternationalComparisonPage />}
+      />
+      <Route
+        path='/explore/:country/:samplingStrategy/:dateRange/variants/hospitalization-death'
+        element={<DeepHospitalizationDeathPage />}
+      />
+      <Route
+        path='/explore/:country/:samplingStrategy/:dateRange/variants/waste-water'
+        element={<DeepWastewaterPage />}
+      />
+      <Route
+        path='/explore/:country/:samplingStrategy/:dateRange/variants/chen-2021-fitness'
+        element={<DeepChen2021FitnessPage />}
+      />
+      <Route path='/story' element={<StoryOverviewPage />} />
+      <Route path='/story/wastewater-in-switzerland' element={<WasteWaterStoryPage />} />
+      <Route path='/stories/wastewater-in-switzerland' element={<WasteWaterStoryPage />} />
+      <Route
+        path='/story/wastewater-in-switzerland/location/:location'
+        element={<WasteWaterLocationPage />}
+      />
+      <Route
+        path='/stories/wastewater-in-switzerland/location/:location'
+        element={<WasteWaterLocationPage />}
+      />
+      <Route path='/stories' element={<StoriesOverview />} />
+      <Route path='/stories/:storyId' element={<StoryRouter />} />
+      <Route path='/collections' element={<CollectionOverviewPage />} />
+      <Route path='/collections/add' element={<CollectionAddPage />} />
+      <Route path='/collections/:collectionId' element={<CollectionSinglePage />} />
+      <Route
+        path='/focus'
+        element={
+          <NewFocusPage fullScreenMode={hideHeaderAndFooter} setFullScreenMode={setHideHeaderAndFooter} />
+        }
+      />
+      <Route path='/about' element={<AboutPage />} />
+      <Route path='/chat' element={<ChatPage />} />
+    </Routes>
+  );
+}
+
+function Footer({ nextcladeDatasetInfo }: { nextcladeDatasetInfo?: NextcladeDatasetInfo }) {
+  return (
+    <FooterStyle className='text-center'>
+      <div>
+        The sequence data was updated: {dayjs(getCurrentLapisDataVersionDate()).locale('en').calendar()}
+      </div>
+      {nextcladeDatasetInfo?.tag && <div>Nextclade dataset version: {nextcladeDatasetInfo.tag}</div>}
+      {sequenceDataSource === 'gisaid' && (
+        <div>
+          Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
+          <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
+        </div>
+      )}
+      <div className='flex flex-wrap justify-center items-center gap-x-8 gap-y-4 my-4 mt-8 px-2'>
+        <ExternalLink url='https://ethz.ch'>
+          <img className='h-5' alt='ETH Zurich' src='/img/ethz.png' />
+        </ExternalLink>
+        <ExternalLink url='https://bsse.ethz.ch/cevo'>
+          <img className='h-7' alt='Computational Evolution Group' src='/img/cEvo.png' />
+        </ExternalLink>
+        <ExternalLink url='https://www.sib.swiss/'>
+          <img className='h-7' alt='SIB Swiss Institute of Bioinformatics' src='/img/sib.svg' />
+        </ExternalLink>
+        <ExternalLink url='https://vercel.com/?utm_source=cov-spectrum&utm_campaign=oss'>
+          <img className='h-6' alt='Powered by Vercel' src='/img/powered-by-vercel.svg' />
+        </ExternalLink>
+      </div>
+    </FooterStyle>
+  );
+}
