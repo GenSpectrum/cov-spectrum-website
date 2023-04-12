@@ -110,6 +110,8 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
         </div>
     );
 
+
+
     let plotArea;
     if (variants![0].length == 0) {
       plotArea = <p>Select one or more lineages to compare.</p>
@@ -121,6 +123,7 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
             plotData={data.dayArray}
             ticks={data.ticks}
             variants={variants!}
+            sequenceType={sequenceType}
         />
         );
     }
@@ -137,6 +140,7 @@ type PlotProps = {
     plotData: TransformedTime;
     ticks: string[];
     variants: string[];
+    sequenceType: SequenceType;
 };
 
 const useData = (
@@ -238,14 +242,12 @@ const useData = (
   return data;
 } 
 
-const Plot = ({ plotData, ticks, variants }: PlotProps) => {
-  console.log(ticks);
-  console.log(plotData);
+const Plot = ({ plotData, ticks, variants, sequenceType }: PlotProps) => {
 return (
     <>
-    <div>
-    <ResponsiveContainer width='100%' height='100%'>
+    <ResponsiveContainer width='100%' height={200}>
         <LineChart
+        key={sequenceType}
         width={500}
         height={500}
         data={plotData}
@@ -273,7 +275,7 @@ return (
             }}
         />
         <Legend />
-        {variants.map((variant, i) => (
+        {variants.sort().map((variant, i) => (
             <Line
             xAxisId='day'
             type='monotone'
@@ -282,13 +284,11 @@ return (
             dot={false}
             stroke={pprettyColors[i]}
             isAnimationActive={false}
-            key={variant}
             legendType='none'
             />
         ))}
         </LineChart>
     </ResponsiveContainer>
-    </div>
     </>
 )
 }
