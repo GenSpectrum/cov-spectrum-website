@@ -24,14 +24,13 @@ import { DeepHospitalizationDeathPage } from './pages/DeepHospitalizationDeathPa
 import { DeepWastewaterPage } from './pages/DeepWastewaterPage';
 import { DeepSequencingCoveragePage } from './pages/DeepSequencingCoveragePage';
 import { FocusPage } from './pages/FocusPage';
-import { formatQcSelectorAsString, isDefaultQcSelector, QcSelector } from './data/QcSelector';
-import { HostSelector, isDefaultHostSelector } from './data/HostSelector';
+import { formatQcSelectorAsString, isDefaultQcSelector } from './data/QcSelector';
+import { isDefaultHostSelector } from './data/HostSelector';
 import { FaFilter } from 'react-icons/fa';
 import { CollectionOverviewPage } from './pages/CollectionOverviewPage';
 import { CollectionAddPage } from './pages/CollectionAddPage';
 import { CollectionSinglePage } from './pages/CollectionSinglePage';
 import {
-  DateRangeSelector,
   defaultSubmissionDateRangeSelector,
   formatDateRangeSelector,
   isDefaultSubmissionDateRangeSelector,
@@ -42,6 +41,7 @@ import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/d
 import { useBaseLocation } from './helpers/use-base-location';
 import { ChatPage } from './pages/ChatPage';
 import { NextcladeDatasetInfo } from './data/NextcladeDatasetInfo';
+import Loader from './components/Loader';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -57,41 +57,16 @@ export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
-  const { host, qc, setHostAndQc, submissionDate } = useExploreUrl() ?? {};
   const { data: nextcladeDatasetInfo } = useQuery(() => fetchNextcladeDatasetInfo(), []);
 
   const isChatPage = useLocation().pathname === '/chat';
   const showFooter = !hideHeaderAndFooter && !isChatPage;
 
-  const baseLocation = useBaseLocation();
-  if (!baseLocation) {
-    return <></>; // Just wait a slight bit. It should come very soon!
-  }
-
-  let advancedFiltersAreActive =
-    host &&
-    qc &&
-    submissionDate &&
-    setHostAndQc &&
-    (!isDefaultHostSelector(host) ||
-      !isDefaultQcSelector(qc) ||
-      !isDefaultSubmissionDateRangeSelector(submissionDate));
-
   return (
     <div className='w-full'>
       {!hideHeaderAndFooter && <Header />}
       <div ref={ref} className='w-full'>
-        {isPreview && <PreviewAlert />}
-        {advancedFiltersAreActive && (
-          <AdvancedFiltersAlert
-            host={host!}
-            qc={qc!}
-            submissionDate={submissionDate!}
-            setHostAndQc={setHostAndQc!}
-          />
-        )}
-        <CovSpectrumRoutes
-          baseLocation={baseLocation}
+        <MainContent
           isSmallScreen={isSmallScreen}
           hideHeaderAndFooter={hideHeaderAndFooter}
           setHideHeaderAndFooter={setHideHeaderAndFooter}
@@ -101,6 +76,32 @@ export const App = () => {
     </div>
   );
 };
+
+type MainContentProps = {
+  isSmallScreen: boolean;
+  hideHeaderAndFooter: boolean;
+  setHideHeaderAndFooter: (value: ((prevState: boolean) => boolean) | boolean) => void;
+};
+
+function MainContent({ isSmallScreen, hideHeaderAndFooter, setHideHeaderAndFooter }: MainContentProps) {
+  const baseLocation = useBaseLocation();
+  if (!baseLocation) {
+    return <Loader />; // Just wait a slight bit. It should come very soon!
+  }
+
+  return (
+    <>
+      {isPreview && <PreviewAlert />}
+      <AdvancedFiltersAlert />
+      <CovSpectrumRoutes
+        baseLocation={baseLocation}
+        isSmallScreen={isSmallScreen}
+        hideHeaderAndFooter={hideHeaderAndFooter}
+        setHideHeaderAndFooter={setHideHeaderAndFooter}
+      />
+    </>
+  );
+}
 
 function PreviewAlert() {
   return (
@@ -113,14 +114,22 @@ function PreviewAlert() {
   );
 }
 
-type AdvancedFiltersAlertProps = {
-  host: HostSelector;
-  qc: QcSelector;
-  submissionDate: DateRangeSelector;
-  setHostAndQc: (host?: HostSelector, qc?: QcSelector, dateRangeSelector?: DateRangeSelector) => void;
-};
+function AdvancedFiltersAlert() {
+  const { host, qc, setHostAndQc, submissionDate } = useExploreUrl() ?? {};
 
-function AdvancedFiltersAlert({ host, qc, submissionDate, setHostAndQc }: AdvancedFiltersAlertProps) {
+  if (!(host && qc && submissionDate && setHostAndQc)) {
+    return <></>;
+  }
+
+  let allFiltersHaveTheirDefaultValue =
+    isDefaultHostSelector(host) &&
+    isDefaultQcSelector(qc) &&
+    isDefaultSubmissionDateRangeSelector(submissionDate);
+
+  if (allFiltersHaveTheirDefaultValue) {
+    return <></>;
+  }
+
   return (
     <Alert variant={AlertVariant.WARNING}>
       <div className='flex flex-row'>
