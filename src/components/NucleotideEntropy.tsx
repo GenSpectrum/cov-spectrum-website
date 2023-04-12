@@ -218,7 +218,7 @@ export const NucleotideEntropy = ({ selector }: Props) => {
             size='sm'
           >
             <option value='all'>All</option>
-            {jsonRefData.genes.map(g => (
+            {jsonRefData.genes.slice(0, -1).map(g => (
               <option value={g.name} key={g?.name}>
                 {g.name}
               </option>
@@ -459,7 +459,7 @@ const Plot = ({ threshold, plotData, plotType, selectedGenes, startIndex, stopIn
             scale='time'
             type='number'
             tickFormatter={formatDate}
-            domain={[(dataMin: any) => dataMin, () => plotData.timeData[plotData.timeData.length - 1].day]}
+            domain={[(dataMin: any) => dataMin, () => plotData.timeData[plotData.timeData.length - 1]?.day]}
             ticks={plotData.ticks}
             xAxisId='day'
           />
@@ -637,11 +637,11 @@ const getBrushIndex = (
       gene?.name !== 'All' && gene?.name !== undefined ? names.lastIndexOf(gene.name) : plotData.length - 1;
   } else {
     startIndex =
-      gene?.startPosition !== undefined
+    gene?.name !== 'All' && gene?.startPosition !== undefined
         ? plotData.findIndex(p => parseInt(p.position) > gene.startPosition)
         : 0;
     stopIndex =
-      gene?.endPosition !== undefined
+    gene?.name !== 'All' && gene?.endPosition !== undefined
         ? plotData.findIndex(p => parseInt(p.position) > gene.endPosition)
         : plotData.length - 1;
   }
