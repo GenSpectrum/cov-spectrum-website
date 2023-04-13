@@ -428,10 +428,13 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
               <div
                 /* @ts-ignore */
                 as={MessageInput}
+                // The margin is to avoid the message input bar to be hidden on mobile if one does not scroll down.
+                className='mb-14'
                 style={{
                   display: 'flex',
                   flexDirection: 'row',
                   borderTop: '1px solid #d1dbe4',
+                  borderBottom: '1px solid #d1dbe4',
                 }}
               >
                 <button
