@@ -20,7 +20,7 @@ import { decodeNucMutation } from '../helpers/nuc-mutation';
 import { decodeAAMutation, sortListByAAMutation } from '../helpers/aa-mutation';
 import jsonRefData from '../data/refData.json';
 import { colors } from '../widgets/common';
-import { mapLabelsToColors, pprettyColors } from '../helpers/colors';
+import { mapLabelsToColors } from '../helpers/colors';
 import chroma from 'chroma-js';
 import Select, { CSSObjectWithLabel, StylesConfig } from 'react-select';
 import { getTicks } from '../helpers/ticks';
@@ -678,11 +678,11 @@ const getBrushIndex = (
   } else {
     startIndex =
     gene?.name !== 'All' && gene?.startPosition !== undefined
-        ? plotData.findIndex(p => parseInt(p.position) > gene.startPosition)
+        ? plotData.findIndex(p => parseInt(p.position) > gene.startPosition) 
         : 0;
     stopIndex =
     gene?.name !== 'All' && gene?.endPosition !== undefined
-        ? plotData.findIndex(p => parseInt(p.position) > gene.endPosition)
+        ? plotData.findIndex(p => parseInt(p.position) > gene.endPosition) - 1
         : plotData.length - 1;
   }
   return { startIndex: startIndex, stopIndex: stopIndex };
@@ -698,7 +698,7 @@ const CustomBar = (props: PositionProportion) => {
       {...props}
       fill={
         //(jsonRefData.genes[0].startPosition <= parseInt(props.position) && parseInt(props.position) < jsonRefData.genes[0].endPosition) || (props.position.includes("ORF1a")) ? 'red' : colors.active
-        (props.position.includes(":")) ? pprettyColors[jsonRefData.genes.findIndex(g => props.position.includes(g.name))] : pprettyColors[jsonRefData.genes.findIndex(g => g.startPosition <= parseInt(props.position) && parseInt(props.position) < g.endPosition)]
+        (props.position.includes(":")) ? options.find(o => decodeAAMutation(props.position).gene.includes(o.label))?.color : options.find(o => o.startPosition <= parseInt(props.position) && parseInt(props.position) < o.endPosition)?.color
       }
     />
   )
