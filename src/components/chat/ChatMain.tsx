@@ -14,6 +14,7 @@ import {
   ConversationHeader,
   MainContainer,
   Message,
+  MessageInput,
   MessageList,
   TypingIndicator,
 } from '@chatscope/chat-ui-kit-react';
@@ -243,6 +244,8 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
               </MessageList>
 
               <CustomMessageInput
+                /* @ts-ignore */
+                as={MessageInput}
                 disabled={messageInputDisabled}
                 maxLength={350}
                 onMessageSend={sendMessage}
