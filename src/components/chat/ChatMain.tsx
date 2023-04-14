@@ -221,7 +221,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                 {/* The actual conversation */}
                 {conversation?.messages.map((message, index) =>
                   message.role === 'user' ? (
-                    <OutgoingPlainMessage>{message.content}</OutgoingPlainMessage>
+                    <OutgoingPlainMessage key={index}>{message.content}</OutgoingPlainMessage>
                   ) : (
                     <IncomingResponseMessage
                       key={index}
