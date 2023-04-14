@@ -30,6 +30,7 @@ import { getGreeting } from '../data/chat/chat-greetings';
 import { useBaseLocation } from '../helpers/use-base-location';
 import { ExternalLink } from '../components/ExternalLink';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
+import { useFocus } from '../helpers/use-focus';
 
 export const ChatPage = () => {
   let queryParamsString = useLocation().search;
@@ -86,6 +87,7 @@ type ChatMainProps = {
 
 export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
   const MAX_MESSAGE_LENGTH = 350;
+  const [messageInputRef, setMessageInputFocus] = useFocus();
   const [waiting, setWaiting] = useState(false);
   const [apiError, setApiError] = useState<ChatApiError>();
   const [contentInMessageInput, setContentInMessageInput] = useState({
@@ -98,12 +100,20 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
   const [toBeLogged, setToBeLogged] = useState<boolean | undefined>();
   const [conversation, setConversation] = useState<ChatConversation | undefined>();
 
+  const messageInputDisabled = !conversation || waiting || !!apiError;
+
   const baseLocation = useBaseLocation();
   useEffect(() => {
     if (baseLocation) {
       setGreeting(getGreeting(baseLocation));
     }
   }, [baseLocation]);
+
+  useEffect(() => {
+    if (!messageInputDisabled) {
+      setMessageInputFocus();
+    }
+  }, [setMessageInputFocus, messageInputDisabled]);
 
   const recordLoggingDecision = async (decision: boolean) => {
     if (toBeLogged !== undefined) {
@@ -450,6 +460,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                   <GiPerspectiveDiceSixFacesRandom />
                 </button>
                 <MessageInput
+                  ref={messageInputRef}
                   sendButton={false}
                   attachButton={false}
                   style={{
@@ -458,7 +469,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                     flexShrink: 'initial',
                   }}
                   placeholder={`Let's chat about variants`}
-                  disabled={!conversation || waiting || !!apiError}
+                  disabled={messageInputDisabled}
                   onChange={(innerHtml, textContent, innerText) => {
                     if (textContent.length <= MAX_MESSAGE_LENGTH) {
                       setContentInMessageInput({ innerHtml, textContent, innerText });
