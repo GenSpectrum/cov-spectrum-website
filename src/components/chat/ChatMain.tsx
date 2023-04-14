@@ -19,6 +19,7 @@ import {
   TypingIndicator,
 } from '@chatscope/chat-ui-kit-react';
 import { GiPerspectiveDiceSixFacesRandom } from 'react-icons/gi';
+import { CgArrowUpR, CgArrowDownR } from 'react-icons/cg';
 import { ExternalLink } from '../ExternalLink';
 import { IncomingPlainMessage } from './IncomingPlainMessage';
 import { OutgoingPlainMessage } from './OutgoingPlainMessage';
@@ -137,7 +138,9 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                     we will query our database for you. The chat is intended to only answer data-related
                     questions. You can click on the{' '}
                     <GiPerspectiveDiceSixFacesRandom className='inline text-[#007ee0] w-6 h-6' /> in the
-                    bottom-left corner to ask a random question.
+                    bottom-left corner to ask a random question. You can use the{' '}
+                    <CgArrowUpR className='inline w-6 h-6' /> and <CgArrowDownR className='inline w-6 h-6' />{' '}
+                    buttons on your keyboard to select previous messages (like in a terminal).
                   </p>
                   <p>
                     Please note that your messages will be sent to OpenAI. Do not share any sensitive

@@ -11,13 +11,21 @@ export type CustomMessageInputProps = {
   onMessageSend: (content: string, randomlyGenerated?: boolean) => void;
 };
 
+type MessageInputTriplet = {
+  innerHtml: string;
+  textContent: string;
+  innerText: string;
+};
+
 export const CustomMessageInput = ({ disabled, maxLength, onMessageSend }: CustomMessageInputProps) => {
   const [messageInputRef, setMessageInputFocus] = useFocus();
-  const [contentInMessageInput, setContentInMessageInput] = useState({
+  const [contentInMessageInput, setContentInMessageInput] = useState<MessageInputTriplet>({
     innerHtml: '',
     textContent: '',
     innerText: '',
   });
+  const [history, setHistory] = useState<string[]>([]);
+  const [historyPosition, setHistoryPosition] = useState<number | undefined>();
 
   // Set focus to the input field whenever it switches from disabled to enabled
   useEffect(() => {
@@ -34,8 +42,41 @@ export const CustomMessageInput = ({ disabled, maxLength, onMessageSend }: Custo
     messageLengthBarVariant = 'warning';
   }
 
+  useEffect(() => {
+    if (contentInMessageInput.textContent.length === 0) {
+      setHistoryPosition(history.length);
+    }
+  }, [contentInMessageInput.textContent, history]);
+
+  const changeContentFromUserTyping = (innerHtml: string, textContent: string, innerText: string) => {
+    if (textContent.length <= maxLength) {
+      setContentInMessageInput({ innerHtml, textContent, innerText });
+    }
+    if (textContent.length > 0) {
+      setHistoryPosition(undefined);
+    }
+  };
+
+  const changeContentFromHistory = (direction: 'up' | 'down') => {
+    if (historyPosition !== undefined) {
+      const newProposedPosition = direction === 'up' ? historyPosition - 1 : historyPosition + 1;
+      if (newProposedPosition < 0 || newProposedPosition > history.length) {
+        return;
+      }
+      let content: string;
+      if (newProposedPosition === history.length) {
+        content = '';
+      } else {
+        content = history[newProposedPosition];
+      }
+      setHistoryPosition(newProposedPosition);
+      setContentInMessageInput({ innerHtml: content, textContent: content, innerText: content });
+    }
+  };
+
   const sendMessage = async (content: string, randomlyGenerated?: boolean) => {
     setContentInMessageInput({ innerHtml: '', textContent: '', innerText: '' });
+    setHistory([...history, content]);
     onMessageSend(content, randomlyGenerated);
   };
 
@@ -75,13 +116,16 @@ export const CustomMessageInput = ({ disabled, maxLength, onMessageSend }: Custo
         }}
         placeholder={`Let's chat about variants`}
         disabled={disabled}
-        onChange={(innerHtml, textContent, innerText) => {
-          if (textContent.length <= maxLength) {
-            setContentInMessageInput({ innerHtml, textContent, innerText });
-          }
-        }}
+        onChange={changeContentFromUserTyping}
         value={contentInMessageInput.innerHtml}
         onSend={(_, textContent) => sendMessage(textContent)}
+        onKeyUp={event => {
+          if (event.key === 'ArrowUp') {
+            changeContentFromHistory('up');
+          } else if (event.key === 'ArrowDown') {
+            changeContentFromHistory('down');
+          }
+        }}
       />
       <div className='px-1 flex flex-column'>
         <SendButton
