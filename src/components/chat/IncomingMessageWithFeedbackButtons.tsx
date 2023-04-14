@@ -4,7 +4,7 @@ import { GoComment, GoTriangleDown, GoTriangleUp } from 'react-icons/go';
 import { FloatingLabel, Form, Modal } from 'react-bootstrap';
 import { Button, ButtonVariant } from '../../helpers/ui';
 
-export type CustomIncomingMessageProps = {
+export type IncomingMessageWithFeedbackButtonsProps = {
   children: React.ReactNode;
   showFeedbackButtons: boolean;
   onRateUp: () => void;
@@ -12,13 +12,13 @@ export type CustomIncomingMessageProps = {
   onComment: (comment: string) => void;
 };
 
-export const CustomIncomingMessage = ({
+export const IncomingMessageWithFeedbackButtons = ({
   children,
   showFeedbackButtons,
   onRateUp,
   onRateDown,
   onComment,
-}: CustomIncomingMessageProps) => {
+}: IncomingMessageWithFeedbackButtonsProps) => {
   const [ratedUp, setRatedUp] = useState(false);
   const [ratedDown, setRatedDown] = useState(false);
   const [commented, setCommented] = useState(false);
