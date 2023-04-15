@@ -42,6 +42,7 @@ import { useBaseLocation } from './helpers/use-base-location';
 import { ChatPage } from './pages/ChatPage';
 import { NextcladeDatasetInfo } from './data/NextcladeDatasetInfo';
 import Loader from './components/Loader';
+import { FixedChatButton } from './components/chat/FixedChatButton';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -73,6 +74,7 @@ export const App = () => {
         />
       </div>
       {showFooter && <Footer nextcladeDatasetInfo={nextcladeDatasetInfo} />}
+      {!isSmallScreen && !isChatPage && <FixedChatButton />}
     </div>
   );
 };
