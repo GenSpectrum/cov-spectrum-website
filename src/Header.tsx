@@ -141,6 +141,9 @@ const Header = () => {
               {/* Right part */}
               <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>
                 <div className='ml-1 flex items-center'>
+                  <a className={getButtonClasses('/chat')} href='/chat'>
+                    Chat
+                  </a>
                   <a className={getButtonClasses('/collections')} href='/collections'>
                     Collections
                   </a>
@@ -209,6 +212,7 @@ const OffcanvasNav = ({ show, onClose, setShowAdvancedFilteringModal }: Offcanva
               }}
             />
           )}
+          <OffcanvasNavItem text='Chat' url='/chat' onClick={onClose} />
           <OffcanvasNavItem text='Collections' url='/collections' onClick={onClose} />
           <OffcanvasNavItem text='Stories' url='/stories' onClick={onClose} />
           <OffcanvasNavItem text='About' url='/about' onClick={onClose} />
