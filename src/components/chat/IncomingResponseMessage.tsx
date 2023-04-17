@@ -42,9 +42,22 @@ const ChatDataTable = ({ data }: ChatDataTableProps) => {
   const [pageSize, setPageSize] = React.useState(5);
 
   function deriveHeader(data: { [key: string]: string | number }[]) {
+    const headerFormats = [
+      {
+        key: 'proportion',
+        name: 'Proportion (%)',
+        valueFormatter: (params: any) => `${(params.value * 100).toFixed(2)}`,
+      },
+    ];
+
     const headerData = Object.keys(data[0]);
     return headerData.map(key => {
-      return { field: key, flex: 1, headerName: key };
+      return {
+        field: key,
+        flex: 1,
+        headerName: headerFormats.find(headerName => headerName.key === key)?.name || key,
+        valueFormatter: headerFormats.find(headerName => headerName.key === key)?.valueFormatter,
+      };
     });
   }
 

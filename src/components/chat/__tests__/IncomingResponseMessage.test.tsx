@@ -53,4 +53,26 @@ describe('IncomingResponseMessage', function () {
     expect(screen.getByText('firstColumn')).toBeInTheDocument();
     expect(screen.getByText('SecondColumn')).toBeInTheDocument();
   });
+
+  test('should render proportion as percentage and with two decimal places', function () {
+    const message: IncomingResponseMessageProps = {
+      message: {
+        role: 'GenSpectrum',
+        textBeforeData: 'textBeforeData',
+        data: [{ proportion: 0.12345 }],
+        textAfterData: 'textAfterData',
+      },
+      toBeLogged: true,
+      onRateUp: jest.fn(),
+      onRateDown: jest.fn(),
+      onComment: jest.fn(),
+    };
+
+    renderIncomingResponseMessage(message);
+
+    expect(screen.getByText('textBeforeData')).toBeInTheDocument();
+    expect(screen.getByText('textAfterData')).toBeInTheDocument();
+    expect(screen.getByText('Proportion (%)')).toBeInTheDocument();
+    expect(screen.getByText('12.35')).toBeInTheDocument();
+  });
 });
