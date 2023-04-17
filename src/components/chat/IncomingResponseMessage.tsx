@@ -1,7 +1,7 @@
 import { IncomingMessageWithFeedbackButtons } from './IncomingMessageWithFeedbackButtons';
 import React from 'react';
 import { ChatSystemMessage } from '../../data/chat/types-chat';
-import { DataGrid } from '@mui/x-data-grid';
+import { DataGrid, GridToolbarContainer, GridToolbarExport } from '@mui/x-data-grid';
 
 export type IncomingResponseMessageProps = {
   message: ChatSystemMessage;
@@ -40,7 +40,7 @@ type ChatDataTableProps = {
 
 const ChatDataTable = ({ data }: ChatDataTableProps) => {
   const [paginationModel, setPaginationModel] = React.useState({
-    pageSize: 25,
+    pageSize: 5,
     page: 0,
   });
 
@@ -76,12 +76,18 @@ const ChatDataTable = ({ data }: ChatDataTableProps) => {
   function getHeightOfTable(numberOfRows: number = rows.length) {
     const heightFooter = 3.5;
     const heightHeader = heightFooter;
+    const heightToolbar = heightHeader;
     const heightLine = 3.25;
-    return Math.min(numberOfRows, paginationModel.pageSize) * heightLine + heightFooter + heightHeader;
+    return (
+      Math.min(numberOfRows, paginationModel.pageSize) * heightLine +
+      heightFooter +
+      heightHeader +
+      heightToolbar
+    );
   }
 
   return (
-    <div style={{ height: `${getHeightOfTable()}rem`, width: '100%', backgroundColor: 'background.paper' }}>
+    <div style={{ height: `${getHeightOfTable()}rem`, backgroundColor: 'background.paper' }}>
       <DataGrid
         columns={headers}
         rows={rows}
@@ -92,7 +98,16 @@ const ChatDataTable = ({ data }: ChatDataTableProps) => {
         sx={{
           backgroundColor: 'background.paper',
         }}
+        slots={{ toolbar: CustomToolbar }}
       />
     </div>
   );
 };
+
+function CustomToolbar() {
+  return (
+    <GridToolbarContainer sx={{ justifyContent: 'flex-end' }}>
+      <GridToolbarExport />
+    </GridToolbarContainer>
+  );
+}
