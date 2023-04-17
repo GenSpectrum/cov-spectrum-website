@@ -14,16 +14,18 @@ export type CustomMessageInputProps = {
 type MessageInputTriplet = {
   innerHtml: string;
   textContent: string;
-  innerText: string;
+  innerText: string | undefined;
+};
+
+const EMPTY_CHAT_INPUT = {
+  innerHtml: '<br>',
+  textContent: '<br>',
+  innerText: '',
 };
 
 export const CustomMessageInput = ({ disabled, maxLength, onMessageSend }: CustomMessageInputProps) => {
   const [messageInputRef, setMessageInputFocus] = useFocus();
-  const [contentInMessageInput, setContentInMessageInput] = useState<MessageInputTriplet>({
-    innerHtml: '',
-    textContent: '',
-    innerText: '',
-  });
+  const [contentInMessageInput, setContentInMessageInput] = useState<MessageInputTriplet>(EMPTY_CHAT_INPUT);
   const [history, setHistory] = useState<string[]>([]);
   const [historyPosition, setHistoryPosition] = useState<number | undefined>();
 
@@ -43,12 +45,19 @@ export const CustomMessageInput = ({ disabled, maxLength, onMessageSend }: Custo
   }
 
   useEffect(() => {
-    if (contentInMessageInput.textContent.length === 0) {
+    if (
+      typeof contentInMessageInput.innerText === 'string' &&
+      contentInMessageInput.innerText.trim().length === 0
+    ) {
       setHistoryPosition(history.length);
     }
-  }, [contentInMessageInput.textContent, history]);
+  }, [contentInMessageInput.innerText, history]);
 
-  const changeContentFromUserTyping = (innerHtml: string, textContent: string, innerText: string) => {
+  const changeContentFromUserTyping = (
+    innerHtml: string,
+    textContent: string,
+    innerText: string | undefined
+  ) => {
     if (textContent.length <= maxLength) {
       setContentInMessageInput({ innerHtml, textContent, innerText });
     }
@@ -63,19 +72,20 @@ export const CustomMessageInput = ({ disabled, maxLength, onMessageSend }: Custo
       if (newProposedPosition < 0 || newProposedPosition > history.length) {
         return;
       }
-      let content: string;
+      let content;
       if (newProposedPosition === history.length) {
-        content = '';
+        content = EMPTY_CHAT_INPUT;
       } else {
-        content = history[newProposedPosition];
+        const text = history[newProposedPosition];
+        content = { innerHtml: text, textContent: text, innerText: text };
       }
       setHistoryPosition(newProposedPosition);
-      setContentInMessageInput({ innerHtml: content, textContent: content, innerText: content });
+      setContentInMessageInput(content);
     }
   };
 
   const sendMessage = async (content: string, randomlyGenerated?: boolean) => {
-    setContentInMessageInput({ innerHtml: '', textContent: '', innerText: '' });
+    setContentInMessageInput(EMPTY_CHAT_INPUT);
     setHistory([...history, content]);
     onMessageSend(content, randomlyGenerated);
   };
@@ -132,7 +142,8 @@ export const CustomMessageInput = ({ disabled, maxLength, onMessageSend }: Custo
           style={{
             fontSize: '1.2em',
           }}
-          onClick={() => sendMessage(contentInMessageInput.innerText)}
+          placeholder={'Send'}
+          onClick={() => sendMessage(contentInMessageInput.textContent)}
         />
         <ProgressBar
           striped
