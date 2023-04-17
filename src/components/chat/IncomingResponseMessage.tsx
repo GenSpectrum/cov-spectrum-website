@@ -1,7 +1,7 @@
 import { IncomingMessageWithFeedbackButtons } from './IncomingMessageWithFeedbackButtons';
-import { Table } from 'react-bootstrap';
 import React from 'react';
 import { ChatSystemMessage } from '../../data/chat/types-chat';
+import { DataGrid } from '@mui/x-data-grid';
 
 export type IncomingResponseMessageProps = {
   message: ChatSystemMessage;
@@ -27,30 +27,58 @@ export const IncomingResponseMessage = ({
     >
       <div>
         <p>{message.textBeforeData}</p>
-        {message.data && message.data.length && (
-          <div className='m-2 mt-4 max-h-[300px] overflow-auto'>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  {Object.keys(message.data[0]).map(key => (
-                    <th key={key}>{key}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {message.data.map((row, index) => (
-                  <tr key={index}>
-                    {Object.keys(message.data![0]).map(key => (
-                      <td key={key}>{row[key]}</td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-          </div>
-        )}
+        {message.data?.length && <ChatDataTable data={message.data} />}
         {message.textAfterData && <p>{message.textAfterData}</p>}
       </div>
     </IncomingMessageWithFeedbackButtons>
+  );
+};
+
+type ChatDataTableProps = {
+  data: { [key: string]: string | number }[];
+};
+
+const ChatDataTable = ({ data }: ChatDataTableProps) => {
+  const [pageSize, setPageSize] = React.useState(5);
+
+  function deriveHeader(data: { [key: string]: string | number }[]) {
+    const headerData = Object.keys(data[0]);
+    return headerData.map(key => {
+      return { field: key, flex: 1, headerName: key };
+    });
+  }
+
+  function deriveRows(data: { [key: string]: string | number }[]) {
+    return data.map((row, index) => {
+      return { id: index, ...row };
+    });
+  }
+
+  const headers = deriveHeader(data);
+  const rows = deriveRows(data);
+
+  function getHeightOfTable(numberOfRows: number = rows.length) {
+    const heightFooter = 3.5;
+    const heightHeader = heightFooter;
+    const heightLine = 3.25;
+    return Math.min(numberOfRows, pageSize) * heightLine + heightFooter + heightHeader;
+  }
+
+  return (
+    <div style={{ height: `${getHeightOfTable()}rem`, width: '100%', backgroundColor: 'background.paper' }}>
+      <DataGrid
+        columns={headers}
+        rows={rows}
+        autoHeight={true}
+        pageSize={pageSize}
+        onPageSizeChange={newPageSize => {
+          setPageSize(newPageSize);
+        }}
+        rowsPerPageOptions={[5, 10, 20]}
+        sx={{
+          backgroundColor: 'background.paper',
+        }}
+      />
+    </div>
   );
 };
