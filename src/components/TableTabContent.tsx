@@ -99,7 +99,7 @@ export default function TableTabContent({
       headerName: '',
       width: 40,
       minWidth: 40,
-      renderCell: (params: GridRenderCellParams<string>) => {
+      renderCell: (params: GridRenderCellParams<any, string>) => {
         const highlighted = params.row.highlighted;
         return highlighted ? <AiFillStar size='1.5em' className='text-yellow-400' /> : <></>;
       },
@@ -108,7 +108,7 @@ export default function TableTabContent({
       field: 'name',
       headerName: 'Name',
       minWidth: 200,
-      renderCell: (params: GridRenderCellParams<string>) => {
+      renderCell: (params: GridRenderCellParams<any, string>) => {
         const query = params.row.query;
         const urlParams = new URLSearchParams();
         addVariantSelectorToUrlSearchParams(query, urlParams);
@@ -132,7 +132,7 @@ export default function TableTabContent({
       field: 'queryFormatted',
       headerName: 'Query',
       minWidth: 300,
-      renderCell: (params: GridRenderCellParams<string>) => {
+      renderCell: (params: GridRenderCellParams<any, string>) => {
         return <span className='break-words overflow-hidden'>{params.value}</span>;
       },
     },

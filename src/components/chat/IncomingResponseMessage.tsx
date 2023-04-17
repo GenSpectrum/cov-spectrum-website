@@ -39,9 +39,12 @@ type ChatDataTableProps = {
 };
 
 const ChatDataTable = ({ data }: ChatDataTableProps) => {
-  const [pageSize, setPageSize] = React.useState(5);
+  const [paginationModel, setPaginationModel] = React.useState({
+    pageSize: 25,
+    page: 0,
+  });
 
-  function deriveHeader(data: { [key: string]: string | number }[]) {
+  function deriveHeaders({ data }: ChatDataTableProps) {
     const headerFormats = [
       {
         key: 'proportion',
@@ -61,20 +64,20 @@ const ChatDataTable = ({ data }: ChatDataTableProps) => {
     });
   }
 
-  function deriveRows(data: { [key: string]: string | number }[]) {
+  function deriveRows({ data }: ChatDataTableProps) {
     return data.map((row, index) => {
       return { id: index, ...row };
     });
   }
 
-  const headers = deriveHeader(data);
-  const rows = deriveRows(data);
+  const headers = deriveHeaders({ data });
+  const rows = deriveRows({ data });
 
   function getHeightOfTable(numberOfRows: number = rows.length) {
     const heightFooter = 3.5;
     const heightHeader = heightFooter;
     const heightLine = 3.25;
-    return Math.min(numberOfRows, pageSize) * heightLine + heightFooter + heightHeader;
+    return Math.min(numberOfRows, paginationModel.pageSize) * heightLine + heightFooter + heightHeader;
   }
 
   return (
@@ -83,11 +86,9 @@ const ChatDataTable = ({ data }: ChatDataTableProps) => {
         columns={headers}
         rows={rows}
         autoHeight={true}
-        pageSize={pageSize}
-        onPageSizeChange={newPageSize => {
-          setPageSize(newPageSize);
-        }}
-        rowsPerPageOptions={[5, 10, 20]}
+        paginationModel={paginationModel}
+        pageSizeOptions={[5, 10, 20]}
+        onPaginationModelChange={model => setPaginationModel(model)}
         sx={{
           backgroundColor: 'background.paper',
         }}
