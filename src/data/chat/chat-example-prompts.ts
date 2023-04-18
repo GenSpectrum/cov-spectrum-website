@@ -16,6 +16,8 @@ export const chatExamplePrompts = [
   'Please tell me the most common 10 AA mutations that occur in lineage XBB',
   'When did the S:484K first appear?',
   'When did the S:484K first co-appear with S:501Y?',
+  'number of sequences per canton in Switzerland',
+  'Would you mind giving me the number of sequences per state from the US sorted by the name of the states?',
 ];
 
 export function getRandomChatPrompt() {
