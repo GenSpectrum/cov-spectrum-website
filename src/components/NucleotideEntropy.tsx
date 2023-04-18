@@ -265,7 +265,8 @@ export const NucleotideEntropy = ({ selector }: Props) => {
         <div className='mr-2'>Entropy display threshold: </div>
         <PercentageInput ratio={threshold} setRatio={setThreshold} className='mr-2' />
       </div>)}
-      {empty && plotType === 'pos' && (<div><p>Setting the entropy display threshold to 0 may lead to degraded performance and too many positions to resolve at once in the plot. Zooming in via the brush control displays the bars again.</p></div>)}
+      {empty && plotType === 'pos' && (
+      <div><p>Setting the entropy display threshold to 0 may lead to slower performance and too many positions to resolve at once in the plot. Zooming in via the brush control or gene selector displays the bars again.</p></div>)}
     </div>
   );
 
@@ -420,7 +421,6 @@ type PlotProps = {
 
 const Plot = ({ threshold, plotData, plotType, selectedGenes, ticks, geneRange}: PlotProps) => {
   if (plotType === 'pos') {
-    let refIndex = 0;
     let filteredEntropy = plotData.positionEntropy.filter(p => p.entropy >= threshold)
     let startIndex = getBrushIndex(geneRange, filteredEntropy, plotData.sequenceType).startIndex;
     let stopIndex = getBrushIndex(geneRange, filteredEntropy, plotData.sequenceType).stopIndex;
@@ -697,7 +697,6 @@ const CustomBar = (props: PositionProportion) => {
     <Rectangle
       {...props}
       fill={
-        //(jsonRefData.genes[0].startPosition <= parseInt(props.position) && parseInt(props.position) < jsonRefData.genes[0].endPosition) || (props.position.includes("ORF1a")) ? 'red' : colors.active
         (props.position.includes(":")) ? options.find(o => decodeAAMutation(props.position).gene.includes(o.label))?.color : options.find(o => o.startPosition <= parseInt(props.position) && parseInt(props.position) < o.endPosition)?.color
       }
     />
