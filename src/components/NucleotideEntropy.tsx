@@ -523,6 +523,7 @@ const CalculateEntropy = (
 ): PositionEntropy[] => {
   let positionProps = new Array<PositionProportion>();
 
+  //prefill Arrays for every position
   if (sequenceType === "nuc" && empty) {
     positionProps = Array.apply(null, Array<PositionProportion>(29903)).map(function (x, i) {
       let p: PositionProportion = { position: i.toString(), mutation: undefined, original: jsonRefData.nucSeq.substring(i, i+1), proportion: 0 };
@@ -535,7 +536,7 @@ const CalculateEntropy = (
     }))
   }
 
-
+  //map mutation proportions to positions
   muts?.forEach(mut => {
     if (sequenceType === 'aa') {
       let decoded = decodeAAMutation(mut.mutation);
@@ -562,6 +563,7 @@ const CalculateEntropy = (
     }
   });
 
+  //group proportions by position
   const positionGroups = Object.entries(groupBy(positionProps, p => p.position)).map(p => {
     return {
       position: p[0],
