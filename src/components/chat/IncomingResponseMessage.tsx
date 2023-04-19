@@ -40,7 +40,7 @@ type ChatDataTableProps = {
 
 const ChatDataTable = ({ data }: ChatDataTableProps) => {
   const [paginationModel, setPaginationModel] = React.useState({
-    pageSize: 5,
+    pageSize: 10,
     page: 0,
   });
 
@@ -77,23 +77,21 @@ const ChatDataTable = ({ data }: ChatDataTableProps) => {
     const heightFooter = 3.5;
     const heightHeader = heightFooter;
     const heightToolbar = heightHeader;
-    const heightLine = 3.25;
-    return (
-      Math.min(numberOfRows, paginationModel.pageSize) * heightLine +
-      heightFooter +
-      heightHeader +
-      heightToolbar
-    );
+    const baseElementsRem = heightFooter + heightHeader + heightToolbar;
+    const heightLinePx = 25;
+    return `calc(${baseElementsRem}rem + ${
+      Math.min(numberOfRows, paginationModel.pageSize) * heightLinePx
+    }px)`;
   }
 
   return (
-    <div style={{ height: `${getHeightOfTable()}rem`, backgroundColor: 'background.paper' }}>
+    <div style={{ height: getHeightOfTable(), backgroundColor: 'background.paper' }}>
       <DataGrid
         columns={headers}
         rows={rows}
-        autoHeight={true}
+        rowHeight={25}
         paginationModel={paginationModel}
-        pageSizeOptions={[5, 10, 20]}
+        pageSizeOptions={[10, 25, 50]}
         onPaginationModelChange={model => setPaginationModel(model)}
         sx={{
           backgroundColor: 'background.paper',
