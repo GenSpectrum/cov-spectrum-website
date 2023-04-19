@@ -105,7 +105,7 @@ const ChatDataTable = ({ data }: ChatDataTableProps) => {
 function CustomToolbar() {
   return (
     <GridToolbarContainer sx={{ justifyContent: 'flex-end' }}>
-      <GridToolbarExport />
+      <GridToolbarExport printOptions={{ disableToolbarButton: true }} />
     </GridToolbarContainer>
   );
 }
