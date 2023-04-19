@@ -148,7 +148,7 @@ export const VariantDivisionDistributionChart = ({
             columns={tableColumns}
             rows={selectedGeoSummaries}
             autoHeight={true}
-            rowsPerPageOptions={[100, 200, 500]}
+            pageSizeOptions={[100, 200, 500]}
           />
         </Wrapper>
       )}

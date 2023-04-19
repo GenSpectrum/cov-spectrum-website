@@ -9,7 +9,7 @@
     "@emotion/styled": "^11.10.6",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.13",
-    "@mui/x-data-grid": "^5.17.21",
+    "@mui/x-data-grid": "^6.2.0",
     "@mui/x-date-pickers": "^5.0.17",
     "@sentry/react": "^7.36.0",
     "@sentry/tracing": "^7.36.0",
