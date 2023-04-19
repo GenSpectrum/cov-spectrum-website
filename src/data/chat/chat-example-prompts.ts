@@ -14,10 +14,13 @@ export const chatExamplePrompts = [
   'When and where was the first XBB.1.16 collected?',
   'When was the first XBB.1.16 submitted?',
   'Please tell me the most common 10 AA mutations that occur in lineage XBB',
-  'When did the S:484K first appear?',
   'When did the S:484K first co-appear with S:501Y?',
   'number of sequences per canton in Switzerland',
   'Would you mind giving me the number of sequences per state from the US sorted by the name of the states?',
+  'Calculate the monthly distribution of sequences with the N:R203K mutation in Europe throughout 2020.',
+  'I have a rather complex query that I\'m hoping you can help me with, as I\'m curious about the most frequently observed lineage in Asia that is specifically associated with the N:G769V mutation, and I would be most grateful if you could provide this information.',
+  'Can you provide tips for improving my photography skills?',
+  
 ];
 
 export function getRandomChatPrompt() {
