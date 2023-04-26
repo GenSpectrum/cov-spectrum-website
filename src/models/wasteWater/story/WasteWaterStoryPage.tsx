@@ -40,7 +40,10 @@ export const WasteWaterStoryPage = () => {
             variants={variantsTimeseriesSummaries}
             height={300}
             toolbarChildren={[
-              <ShowMoreButton to={'/story/wastewater-in-switzerland/location/' + location} />,
+              <ShowMoreButton
+                to={'/story/wastewater-in-switzerland/location/' + location}
+                key={`showmore${location}`}
+              />,
             ]}
           />
         ),
