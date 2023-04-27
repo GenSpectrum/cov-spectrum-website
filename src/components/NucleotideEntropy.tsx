@@ -6,7 +6,20 @@ import { MutationProportionEntry } from '../data/MutationProportionEntry';
 import { LapisSelector } from '../data/LapisSelector';
 import { PipeDividedOptionsButtons } from '../helpers/ui';
 import { NamedCard } from './NamedCard';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer, Brush, TooltipProps, LineChart, Line, Rectangle } from 'recharts';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  Brush,
+  TooltipProps,
+  LineChart,
+  Line,
+  Rectangle,
+} from 'recharts';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
@@ -97,14 +110,14 @@ const colorStyles: Partial<StylesConfig<any, true, any>> = {
   }),
   multiValueRemove: (styles: CSSObjectWithLabel, { data }: { data: GeneOption }) => {
     return {
-          ...styles,
-          'color': data.color,
-          ':hover': {
-            backgroundColor: data.color,
-            color: 'white',
-            cursor: 'pointer',
-          },
-        };
+      ...styles,
+      'color': data.color,
+      ':hover': {
+        backgroundColor: data.color,
+        color: 'white',
+        cursor: 'pointer',
+      },
+    };
   },
 };
 
@@ -118,23 +131,24 @@ function assignColorsToGeneOptions<T extends { label: string }>(options: T[]): (
 
 const genes = jsonRefData.genes;
 !genes.map(o => o.name).includes('All') &&
-  genes.push({ name: 'All', startPosition: 0, endPosition: 29903, aaSeq: ''});
+  genes.push({ name: 'All', startPosition: 0, endPosition: 29903, aaSeq: '' });
 
-const options: GeneOption[] = assignColorsToGeneOptions(genes.map(g => {
-  return {
-    value: g.name,
-    label: g.name,
-    startPosition: g.startPosition,
-    endPosition: g.endPosition,
-    aaSeq: g.aaSeq,
-    color: chroma.random().darken().hex()
-  };
-}));
-
+const options: GeneOption[] = assignColorsToGeneOptions(
+  genes.map(g => {
+    return {
+      value: g.name,
+      label: g.name,
+      startPosition: g.startPosition,
+      endPosition: g.endPosition,
+      aaSeq: g.aaSeq,
+      color: chroma.random().darken().hex(),
+    };
+  })
+);
 
 export const NucleotideEntropy = ({ selector }: Props) => {
   const [plotType, setPlotType] = useState<string>('time');
-  const [deletions, setDeletions] = useState<boolean>(false);
+  const [includeDeletions, setIncludeDeletions] = useState<boolean>(false);
   const [empty, setEmpty] = useState<boolean>(false);
   const [sequenceType, setSequenceType] = useState<SequenceType>('nuc');
   const [threshold, setThreshold] = useState(0.00001);
@@ -143,21 +157,21 @@ export const NucleotideEntropy = ({ selector }: Props) => {
     {
       value: 'All',
       label: 'All',
-      color: '#353B89'
+      color: '#353B89',
     },
   ]);
 
   const handleDeletions = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setDeletions(event.target.checked);
+    setIncludeDeletions(event.target.checked);
   };
 
   const handleEmpty = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmpty(event.target.checked);
   };
-  
+
   let selectedGenes = options.filter(g => selectedGeneOptions.map(o => o.value).includes(g.value));
 
-  const data = useData(selector, sequenceType, selectedGenes, deletions, empty);
+  const data = useData(selector, sequenceType, selectedGenes, includeDeletions, empty);
 
   const onChange = (value: any, { action, removedValue }: any) => {
     switch (action) {
@@ -176,31 +190,28 @@ export const NucleotideEntropy = ({ selector }: Props) => {
 
   const controls = (
     <div className='mb-4'>
-      {/* AA vs. nucs */}
       <div className='mb-2 flex'>
         <PipeDividedOptionsButtons
           options={[
-            { label: 'NUC', value: 'nuc' },
-            { label: 'AA', value: 'aa' },
+            { label: 'Nucleotides', value: 'nuc' },
+            { label: 'Amino acids', value: 'aa' },
           ]}
           selected={sequenceType}
           onSelect={setSequenceType}
         />
       </div>
-      {/* Include deletions */}
-          <FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={deletions}
-                  onChange={handleDeletions}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                />
-              }
-              label='Include deletions'
+      <FormGroup>
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={includeDeletions}
+              onChange={handleDeletions}
+              inputProps={{ 'aria-label': 'controlled' }}
             />
-          </FormGroup>
-      {/*Plot type*/}
+          }
+          label='Include deletions'
+        />
+      </FormGroup>
       <div className='mb-2 flex'>
         <PipeDividedOptionsButtons
           options={[
@@ -211,8 +222,6 @@ export const NucleotideEntropy = ({ selector }: Props) => {
           onSelect={setPlotType}
         />
       </div>
-      
-      {/* Genes */}
       {plotType === 'pos' && (
         <div className=' w-72 flex mb-2'>
           <div className='mr-2'>Gene:</div>
@@ -246,27 +255,31 @@ export const NucleotideEntropy = ({ selector }: Props) => {
           />
         </div>
       )}
-      {/* Include deletions */}
-      {plotType === 'pos' && (<FormGroup>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  checked={empty}
-                  onChange={handleEmpty}
-                  inputProps={{ 'aria-label': 'controlled' }}
-                />
-              }
-              label='Include positions with zero entropy'
-            />
-          </FormGroup>)}
-      {/*Minimum entropy treshold to display*/}
       {plotType === 'pos' && (
-      <div className='flex mb-2'>
-        <div className='mr-2'>Entropy display threshold: </div>
-        <PercentageInput ratio={threshold} setRatio={setThreshold} className='mr-2' />
-      </div>)}
+        <FormGroup>
+          <FormControlLabel
+            control={
+              <Checkbox checked={empty} onChange={handleEmpty} inputProps={{ 'aria-label': 'controlled' }} />
+            }
+            label='Include positions with zero entropy'
+          />
+        </FormGroup>
+      )}
+      {plotType === 'pos' && (
+        <div className='flex mb-2'>
+          <div className='mr-2'>Entropy display threshold: </div>
+          <PercentageInput ratio={threshold} setRatio={setThreshold} className='mr-2' />
+        </div>
+      )}
       {empty && plotType === 'pos' && (
-      <div><p>Setting the entropy display threshold to 0 may lead to slower performance and too many positions to resolve at once in the plot. Zooming in via the brush control or gene selector displays the bars again.</p></div>)}
+        <div>
+          <p>
+            Setting the entropy display threshold to 0 may lead to slower performance and too many positions
+            to resolve at once in the plot. Zooming in via the brush control or gene selector displays the
+            bars again.
+          </p>
+        </div>
+      )}
     </div>
   );
 
@@ -327,7 +340,10 @@ const useData = (
   const weeklyMutationProportionQuery = useQuery(
     async signal => {
       //calculate weeks
-      const dayArray: UnifiedDay[] = [selector.dateRange?.getDateRange().dateFrom!, selector.dateRange?.getDateRange().dateTo!];
+      const dayArray: UnifiedDay[] = [
+        selector.dateRange?.getDateRange().dateFrom!,
+        selector.dateRange?.getDateRange().dateTo!,
+      ];
       const dayRange = globalDateCache.rangeFromDays(dayArray)!;
       const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
       const weekDateRanges = new Array<DateRange>();
@@ -369,13 +385,15 @@ const useData = (
       return undefined;
     }
     //calculate ticks for entropy-over-time plot
-    const dates = weeklyMutationProportionQuery.data.map(p => { return {date: p.date.dateFrom?.dayjs.toDate()!}});
-    const ticks = getTicks(dates)
+    const dates = weeklyMutationProportionQuery.data.map(p => {
+      return { date: p.date.dateFrom?.dayjs.toDate()! };
+    });
+    const ticks = getTicks(dates);
 
     //transform data for entropy-per-position plot
-    const positionEntropy = CalculateEntropy(
+    const positionEntropy = calculateEntropy(
       mutationProportionEntriesQuery.data.result.proportions,
-      sequenceType, 
+      sequenceType,
       deletions,
       empty
     );
@@ -385,7 +403,13 @@ const useData = (
     //transform data for entropy-over-time plot
     const weekEntropies: TransformedTime[] = [];
     selectedGenes.forEach(selectedGene => {
-      const timeData = WeeklyMeanEntropy(weeklyMutationProportionQuery.data, sequenceType, selectedGene, deletions).slice(0, -1)
+      const timeData = weeklyMeanEntropy(
+        weeklyMutationProportionQuery.data,
+        sequenceType,
+        selectedGene,
+        deletions
+      )
+        .slice(0, -1)
         .map(({ week, meanEntropy }) => {
           return { day: week.dateFrom?.dayjs.toDate().getTime(), [selectedGene.value]: meanEntropy };
         });
@@ -419,9 +443,9 @@ type PlotProps = {
   geneRange: Gene | undefined;
 };
 
-const Plot = ({ threshold, plotData, plotType, selectedGenes, ticks, geneRange}: PlotProps) => {
+const Plot = ({ threshold, plotData, plotType, selectedGenes, ticks, geneRange }: PlotProps) => {
   if (plotType === 'pos') {
-    let filteredEntropy = plotData.positionEntropy.filter(p => p.entropy >= threshold)
+    let filteredEntropy = plotData.positionEntropy.filter(p => p.entropy >= threshold);
     let startIndex = getBrushIndex(geneRange, filteredEntropy, plotData.sequenceType).startIndex;
     let stopIndex = getBrushIndex(geneRange, filteredEntropy, plotData.sequenceType).stopIndex;
     return (
@@ -479,21 +503,21 @@ const Plot = ({ threshold, plotData, plotType, selectedGenes, ticks, geneRange}:
             }}
           >
             <XAxis
-            dataKey='day'
-            scale='time'
-            type='number'
-            tickFormatter={formatDate}
-            domain={[(dataMin: any) => dataMin, () => plotData.timeData[plotData.timeData.length - 1]?.day]}
-            ticks={plotData.ticks}
-            xAxisId='day'
-          />
-            <YAxis  />
+              dataKey='day'
+              scale='time'
+              type='number'
+              tickFormatter={formatDate}
+              domain={[(dataMin: any) => dataMin, () => plotData.timeData[plotData.timeData.length - 1]?.day]}
+              ticks={plotData.ticks}
+              xAxisId='day'
+            />
+            <YAxis />
             <Tooltip
-            formatter={(value: string) => Number(value).toFixed(6)}
-            labelFormatter={label => {
-            return 'Week starting on: ' + formatDate(label);
-            }}
-        />
+              formatter={(value: string) => Number(value).toFixed(6)}
+              labelFormatter={label => {
+                return 'Week starting on: ' + formatDate(label);
+              }}
+            />
             <Legend />
             {selectedGenes.map((gene: GeneOption) => (
               <Line
@@ -515,7 +539,7 @@ const Plot = ({ threshold, plotData, plotType, selectedGenes, ticks, geneRange}:
   }
 };
 
-const CalculateEntropy = (
+const calculateEntropy = (
   muts: MutationProportionEntry[] | undefined,
   sequenceType: SequenceType,
   deletions: boolean,
@@ -524,16 +548,28 @@ const CalculateEntropy = (
   let positionProps = new Array<PositionProportion>();
 
   //prefill Arrays for every position
-  if (sequenceType === "nuc" && empty) {
+  if (sequenceType === 'nuc' && empty) {
     positionProps = Array.apply(null, Array<PositionProportion>(29903)).map(function (x, i) {
-      let p: PositionProportion = { position: i.toString(), mutation: undefined, original: jsonRefData.nucSeq.substring(i, i+1), proportion: 0 };
+      let p: PositionProportion = {
+        position: i.toString(),
+        mutation: undefined,
+        original: jsonRefData.nucSeq.substring(i, i + 1),
+        proportion: 0,
+      };
       return p;
     });
-  } else if (sequenceType === "aa" && empty){
-    jsonRefData.genes.forEach(g => g.aaSeq.split("").forEach(function (aa, i) {
-      let p: PositionProportion = { position: g.name + ":" + aa + (i+1).toString(), mutation: undefined, original: aa, proportion: 0 };
-      positionProps.push(p);
-    }))
+  } else if (sequenceType === 'aa' && empty) {
+    jsonRefData.genes.forEach(g =>
+      g.aaSeq.split('').forEach(function (aa, i) {
+        let p: PositionProportion = {
+          position: g.name + ':' + aa + (i + 1).toString(),
+          mutation: undefined,
+          original: aa,
+          proportion: 0,
+        };
+        positionProps.push(p);
+      })
+    );
   }
 
   //map mutation proportions to positions
@@ -587,7 +623,6 @@ const CalculateEntropy = (
     pos.proportions = pos.proportions.filter(p => p.proportion > 0);
   });
 
-
   //convert proportion to entropy
   positionGroups.map(p => {
     let sum = 0;
@@ -598,7 +633,7 @@ const CalculateEntropy = (
   return positionGroups;
 };
 
-const MeanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType, gene: GeneOption): number => {
+const meanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType, gene: GeneOption): number => {
   const filteredPos =
     sequenceType === 'nuc'
       ? posEntropy.filter(
@@ -611,13 +646,16 @@ const MeanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType, 
   const count =
     sequenceType === 'nuc'
       ? gene.endPosition - gene.startPosition
-      : (gene.value === 'All' ? jsonRefData.genes : jsonRefData.genes.filter(g => g.name.includes(gene.value)))
+      : (gene.value === 'All'
+          ? jsonRefData.genes
+          : jsonRefData.genes.filter(g => g.name.includes(gene.value))
+        )
           .map(g => g.aaSeq.length)
           .reduce((x, a) => x + a, 0);
   return sum / count;
 };
 
-export const WeeklyMeanEntropy = (
+export const weeklyMeanEntropy = (
   weeks: { proportions: MutationProportionEntry[]; date: DateRange }[] | undefined,
   sequenceType: SequenceType,
   selectedGene: GeneOption,
@@ -627,7 +665,11 @@ export const WeeklyMeanEntropy = (
   weeks?.forEach(w =>
     means.push({
       week: w.date,
-      meanEntropy: MeanEntropy(CalculateEntropy(w.proportions, sequenceType, deletions, false), sequenceType, selectedGene),
+      meanEntropy: meanEntropy(
+        calculateEntropy(w.proportions, sequenceType, deletions, false),
+        sequenceType,
+        selectedGene
+      ),
     })
   );
 
@@ -679,11 +721,11 @@ const getBrushIndex = (
       gene?.name !== 'All' && gene?.name !== undefined ? names.lastIndexOf(gene.name) : plotData.length - 1;
   } else {
     startIndex =
-    gene?.name !== 'All' && gene?.startPosition !== undefined
-        ? plotData.findIndex(p => parseInt(p.position) > gene.startPosition) 
+      gene?.name !== 'All' && gene?.startPosition !== undefined
+        ? plotData.findIndex(p => parseInt(p.position) > gene.startPosition)
         : 0;
     stopIndex =
-    gene?.name !== 'All' && gene?.endPosition !== undefined
+      gene?.name !== 'All' && gene?.endPosition !== undefined
         ? plotData.findIndex(p => parseInt(p.position) > gene.endPosition) - 1
         : plotData.length - 1;
   }
@@ -699,8 +741,12 @@ const CustomBar = (props: PositionProportion) => {
     <Rectangle
       {...props}
       fill={
-        (props.position.includes(":")) ? options.find(o => decodeAAMutation(props.position).gene.includes(o.label))?.color : options.find(o => o.startPosition <= parseInt(props.position) && parseInt(props.position) < o.endPosition)?.color
+        props.position.includes(':')
+          ? options.find(o => decodeAAMutation(props.position).gene.includes(o.label))?.color
+          : options.find(
+              o => o.startPosition <= parseInt(props.position) && parseInt(props.position) < o.endPosition
+            )?.color
       }
     />
-  )
-}
+  );
+};

@@ -15,19 +15,16 @@ import { globalDateCache, UnifiedDay } from '../helpers/date-cache';
 import { FixedDateRangeSelector } from '../data/DateRangeSelector';
 import { DateRange } from '../data/DateRange';
 import jsonRefData from '../data/refData.json';
-import { GeneOption, WeeklyMeanEntropy, TransformedTime } from './NucleotideEntropy';
+import { GeneOption, weeklyMeanEntropy, TransformedTime } from './NucleotideEntropy';
 import { useExploreUrl } from '../helpers/explore-url';
 import { pprettyColors } from '../helpers/colors';
 import { getTicks } from '../helpers/ticks';
 import { formatDate } from '../widgets/VariantTimeDistributionLineChartInner';
+import dayjs from 'dayjs';
 
 type Props = {
     selectors: LapisSelector[];
   };
-
-type Variant = {
-  variant: string;
-}
 
 const genes = jsonRefData.genes;
 !genes.map(o => o.name).includes('All') &&
@@ -64,7 +61,6 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
 
     const controls = (
         <div className='mb-4'>
-          {/* AA vs. nucs */}
           <div className='mb-2 flex'>
             <PipeDividedOptionsButtons
               options={[
@@ -75,7 +71,6 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
               onSelect={setSequenceType}
             />
           </div>
-          {/* Include deletions */}
             <FormGroup>
               <FormControlLabel
                 control={
@@ -88,14 +83,12 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
                 label='Include deletions'
               />
             </FormGroup>
-          {/* Genes */}
-          {
             <div className=' w-72 flex mb-2'>
               <div className='mr-2'>Gene:</div>
               <Form.Control
                 as='select'
                 value={gene}
-                onChange={ev => setGene(ev.target.value)}
+                onChange={event => setGene(event.target.value)}
                 className='flex-grow'
                 size='sm'
               >
@@ -106,7 +99,6 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
                 ))}
               </Form.Control>
             </div>
-          }
         </div>
     );
 
@@ -150,28 +142,26 @@ const useData = (
     sequenceType: SequenceType,
     deletions: boolean
 ): any | undefined => {
-  //fetch the proportions per position in weekly segments
   const weeklyVariantMutationProportionQuery = useQuery(
     async signal => {
-      //calculate weeks
-      const dayArray: UnifiedDay[] = [selectors[0].dateRange?.getDateRange().dateFrom!, selectors[0].dateRange?.getDateRange().dateTo!];
-      const dayRange = globalDateCache.rangeFromDays(dayArray)!;
-      const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
-      const weekDateRanges = new Array<DateRange>();
-      for (let i = 0; i < weeks.length; i++) {
-        let dateRange: DateRange = { dateFrom: weeks[i].firstDay, dateTo: weeks[i].firstDay };
-        weekDateRanges[i] = dateRange;
-      }
+      const days = [selectors[0].dateRange?.getDateRange().dateFrom!, selectors[0].dateRange?.getDateRange().dateTo!];
+      const dayRange = globalDateCache.rangeFromDays(days)!;
+      const weekDateRanges: DateRange[] = globalDateCache
+        .weeksFromRange({
+          min: dayRange.min.isoWeek,
+          max: dayRange.max.isoWeek,
+        })
+        .map(week => ({
+          dateFrom: week.firstDay,
+          dateTo: week.firstDay,
+        }));
 
-      const weekSelectors = new Array<LapisSelector>(); 
-      selectors.forEach(selector => {
-          for (let w of weekDateRanges) { 
-            weekSelectors.push({
+      const weekSelectors = selectors.flatMap(selector =>
+        weekDateRanges.map(w => ({
             ...selector,
             dateRange: new FixedDateRangeSelector(w),
-          })
-        };
-      })
+        })),
+      );
 
       let weekLength = weekDateRanges.length;
 
@@ -179,8 +169,8 @@ const useData = (
         sequenceType: sequenceType,
         weekNumber: weekLength,
         result: await Promise.all(
-          weekSelectors.map((w, i) =>
-            MutationProportionData.fromApi(w, sequenceType, signal).then(data => {
+          weekSelectors.map((weekSelector, i) =>
+            MutationProportionData.fromApi(weekSelector, sequenceType, signal).then(data => {
               const proportions: MutationProportionEntry[] = data.payload.map(m => m);
               let date = weekDateRanges[i % weekLength];
               return {
@@ -195,7 +185,7 @@ const useData = (
     [selectors, sequenceType]
   );
     
-  const data = useMemo(() => {
+  return useMemo(() => {
     if (!weeklyVariantMutationProportionQuery.data) {
       return undefined;
     }
@@ -220,7 +210,7 @@ const useData = (
     const dates = weeklyVariantMutationProportionQuery.data.result.map(p => { return {date: p.date.dateFrom?.dayjs.toDate()!}});
     const ticks = getTicks(dates)
 
-    const timeData: TransformedTime = WeeklyMeanEntropy(weeklyVariantMutationProportionQuery.data.result, sequenceType, selectedGene[0], deletions).map(({ week, meanEntropy }, i) => {
+    const timeData: TransformedTime = weeklyMeanEntropy(weeklyVariantMutationProportionQuery.data.result, sequenceType, selectedGene[0], deletions).map(({ week, meanEntropy }, i) => {
       return { day: week.dateFrom?.dayjs.toDate().getTime(), [variants[Math.floor(i/weekNumber)]]: meanEntropy };
     });
     const dayMap = new Map();
@@ -238,8 +228,6 @@ const useData = (
     return {dayArray, ticks}
 
   },[weeklyVariantMutationProportionQuery, selectedGene, variants, deletions]);
-    
-  return data;
 } 
 
 const Plot = ({ plotData, ticks, variants, sequenceType }: PlotProps) => {
