@@ -276,9 +276,7 @@ export const FocusCompareEqualsPage = () => {
           )}
           <GridCell>
             <NamedCard title='Nucleotide Entropy'>
-              <NucleotideEntropyMultiChart
-                selectors={ldvsSelectors}
-                />
+              <NucleotideEntropyMultiChart selectors={ldvsSelectors} />
             </NamedCard>
           </GridCell>
         </PackedGrid>
