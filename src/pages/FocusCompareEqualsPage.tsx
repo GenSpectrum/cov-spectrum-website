@@ -24,7 +24,7 @@ import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import { SvgVennDiagram } from '../components/SvgVennDiagram';
-import { NucleotideEntropyMultiChart } from '../components/NucleotideEntropyMultiChart';
+import { NucleotideEntropyMultiChart } from '../components/NucleotideEntropy/NucleotideEntropyMultiChart';
 import { ErrorAlert } from '../components/ErrorAlert';
 import { WidgetWrapper } from '../components/WidgetWrapper';
 

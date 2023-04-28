@@ -53,7 +53,7 @@ import { wastewaterVariantColors } from '../models/wasteWater/constants';
 import { WidgetWrapper } from '../components/WidgetWrapper';
 import { VariantSelector } from '../data/VariantSelector';
 import { AnalysisMode } from '../data/AnalysisMode';
-import { NucleotideEntropy } from '../components/NucleotideEntropy';
+import { NucleotideEntropy } from '../components/NucleotideEntropy/NucleotideEntropy';
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
 
