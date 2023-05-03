@@ -141,8 +141,8 @@ export const WasteWaterLocationTimeChart = React.memo(({ variants }: Props): JSX
               backgroundColor: 'white',
               border: '2px solid #ccc',
               borderRadius: '5px',
+              zIndex: 1000,
             }}
-            position={{ y: -80 }}
           />
           {escapedVariantNames.map(escapedVariant => (
             <Line
