@@ -134,8 +134,8 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
                 />
                 <IncomingPlainMessage>
                   <p>
-                    Welcome at our OpenAI GPT-3.5-based chat! Here, you can ask about SARS-CoV-2 variants and
-                    we will query our database for you. The chat is intended to only answer data-related
+                    Welcome at our OpenAI GPT-4-based chat! Here, you can ask about SARS-CoV-2 variants and we
+                    will query our database for you. The chat is intended to only answer data-related
                     questions. You can click on the{' '}
                     <GiPerspectiveDiceSixFacesRandom className='inline text-[#007ee0] w-6 h-6' /> in the
                     bottom-left corner to ask a random question. The chat bot does not have a memory, yet;
