@@ -119,7 +119,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
               <ConversationHeader>
                 <ConversationHeader.Content
                   userName='GenSpectrum Chat'
-                  info='LLM: ChatGPT-3.5, data engine: LAPIS, data source: GISAID'
+                  info='LLM: GPT-4, data engine: LAPIS, data source: GISAID'
                 />
               </ConversationHeader>
               <MessageList typingIndicator={waiting && <TypingIndicator content='Calculating...' />}>
