@@ -132,19 +132,11 @@ export const NucleotideEntropy = ({ selector }: Props) => {
     },
   ]);
 
+  let selectedGenes = options.filter(g => selectedGeneOptions.map(o => o.value).includes(g.value));
+
   const handleDeletions = (event: React.ChangeEvent<HTMLInputElement>) => {
     setIncludeDeletions(event.target.checked);
   };
-
-  let selectedGenes = options.filter(g => selectedGeneOptions.map(o => o.value).includes(g.value));
-
-  const data = useData(
-    selector,
-    sequenceType,
-    selectedGenes,
-    includeDeletions,
-    includePositionsWithZeroEntropy
-  );
 
   const onChange = (value: any, { action, removedValue }: any) => {
     switch (action) {
@@ -261,30 +253,60 @@ export const NucleotideEntropy = ({ selector }: Props) => {
   );
 
   let geneRange: Gene | undefined = jsonRefData.genes.find(gene => gene.name === selectedGene);
-
-  let plotArea;
-  if (!data) {
-    plotArea = <Loader />;
-  } else {
-    plotArea = (
+  return (
+    <NamedCard title='Nucleotide Entropy'>
+      {controls}
       <Plot
-        threshold={threshold}
-        plotData={data}
-        plotType={plotType}
+        selector={selector}
+        sequenceType={sequenceType}
         selectedGenes={selectedGenes}
+        includeDeletions={includeDeletions}
+        includePositionsWithZeroEntropy={includePositionsWithZeroEntropy}
+        threshold={threshold}
+        plotType={plotType}
         geneRange={geneRange}
       />
-    );
+    </NamedCard>
+  );
+};
+
+type PlotProps = {
+  selector: LapisSelector;
+  sequenceType: 'aa' | 'nuc';
+  selectedGenes: GeneOption[];
+  includeDeletions: boolean;
+  includePositionsWithZeroEntropy: boolean;
+  threshold: number;
+  plotType: 'overTime' | 'perPosition';
+  geneRange: Gene | undefined;
+};
+
+export const Plot = ({
+  selector,
+  sequenceType,
+  selectedGenes,
+  includeDeletions,
+  includePositionsWithZeroEntropy,
+  threshold,
+  plotType,
+  geneRange,
+}: PlotProps) => {
+  const data = useData(
+    selector,
+    sequenceType,
+    selectedGenes,
+    includeDeletions,
+    includePositionsWithZeroEntropy
+  );
+
+  if (data === undefined) {
+    return <Loader />;
   }
 
-  return (
-    <>
-      <NamedCard title='Nucleotide Entropy'>
-        {controls}
-        {plotArea}
-      </NamedCard>
-    </>
-  );
+  if (plotType === 'perPosition') {
+    return <PerPositionPlot threshold={threshold} plotData={data} geneRange={geneRange} />;
+  }
+  return <OverTimePlot plotData={data} selectedGenes={selectedGenes} />;
 };
 
 const useData = (
@@ -405,109 +427,111 @@ const useData = (
     timeMap.forEach(obj => timeArr.push(obj));
 
     return { positionEntropy: sortedEntropy, timeData: timeArr, sequenceType: sequenceType, ticks: ticks };
-  }, [mutationProportionEntriesQuery, weeklyMutationProportionQuery, selectedGenes, deletions, includePositionsWithZeroEntropy]);
+  }, [
+    mutationProportionEntriesQuery,
+    weeklyMutationProportionQuery,
+    selectedGenes,
+    deletions,
+    includePositionsWithZeroEntropy,
+  ]);
 };
 
-type PlotProps = {
+type BarPlotProps = {
   threshold: number;
   plotData: Data;
-  plotType: string;
-  selectedGenes: GeneOption[];
   geneRange: Gene | undefined;
 };
 
-const Plot = ({ threshold, plotData, plotType, selectedGenes, geneRange }: PlotProps) => {
-  if (plotType === 'pos') {
-    let filteredEntropy = plotData.positionEntropy.filter(p => p.entropy >= threshold);
-    let startIndex = getBrushIndex(geneRange, filteredEntropy, plotData.sequenceType).startIndex;
-    let stopIndex = getBrushIndex(geneRange, filteredEntropy, plotData.sequenceType).stopIndex;
-    return (
-      <>
-        <ResponsiveContainer width='100%' height='100%'>
-          <BarChart
-            key={(startIndex || 0) + (stopIndex || 0)} //This fixes a weird bug where the plot doesn't redraw when the brush indexes are changed
-            width={500}
-            height={500}
-            data={filteredEntropy}
-            barCategoryGap={0}
-            barGap={0}
-            margin={{
-              top: 30,
-              right: 20,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <XAxis dataKey='position' tickFormatter={formatXAxis} />
-            <YAxis ticks={[0, 0.5, 1]} />
-            <Tooltip
-              content={<CustomTooltip />}
-              allowEscapeViewBox={{ y: true }}
-              wrapperStyle={toolTipStyle}
-            />
-            <Legend />
-            <Bar shape={CustomBar} dataKey='entropy' legendType='none'></Bar>
-            <Brush
-              dataKey='name'
-              height={10}
-              stroke={colors.active}
-              travellerWidth={10}
-              gap={10}
-              startIndex={startIndex}
-              endIndex={stopIndex}
-            />
-          </BarChart>
-        </ResponsiveContainer>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <ResponsiveContainer width='100%' height='100%'>
-          <LineChart
-            width={500}
-            height={500}
-            data={plotData.timeData}
-            margin={{
-              top: 30,
-              right: 20,
-              left: 20,
-              bottom: 5,
-            }}
-          >
-            <XAxis
-              dataKey='day'
-              scale='time'
-              type='number'
-              tickFormatter={formatDate}
-              domain={[(dataMin: any) => dataMin, () => plotData.timeData[plotData.timeData.length - 1]?.day]}
-              ticks={plotData.ticks}
-              xAxisId='day'
-            />
-            <YAxis />
-            <Tooltip
-              formatter={(value: string) => Number(value).toFixed(6)}
-              labelFormatter={label => {
-                return 'Week starting on: ' + formatDate(label);
-              }}
-            />
-            <Legend />
-            {selectedGenes.map((gene: GeneOption) => (
-              <Line
-                xAxisId='day'
-                type='monotone'
-                dataKey={gene.value}
-                strokeWidth={3}
-                dot={false}
-                stroke={gene.color}
-                isAnimationActive={false}
-                key={gene.value}
-                legendType='none'
-              />
-            ))}
-          </LineChart>
-        </ResponsiveContainer>
-      </>
-    );
-  }
+export const PerPositionPlot: React.FC<BarPlotProps> = ({ threshold, plotData, geneRange }) => {
+  const filteredEntropy = plotData.positionEntropy.filter(p => p.entropy >= threshold);
+  const startIndex = getBrushIndex(geneRange, filteredEntropy, plotData.sequenceType).startIndex;
+  const stopIndex = getBrushIndex(geneRange, filteredEntropy, plotData.sequenceType).stopIndex;
+
+  return (
+    <ResponsiveContainer width='100%' height='100%'>
+      <BarChart
+        key={(startIndex || 0) + (stopIndex || 0)} //This fixes a weird bug where the plot doesn't redraw when the brush indexes are changed
+        width={500}
+        height={500}
+        data={filteredEntropy}
+        barCategoryGap={0}
+        barGap={0}
+        margin={{
+          top: 30,
+          right: 20,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <XAxis dataKey='position' tickFormatter={formatXAxis} />
+        <YAxis ticks={[0, 0.5, 1]} />
+        <Tooltip content={<CustomTooltip />} allowEscapeViewBox={{ y: true }} wrapperStyle={toolTipStyle} />
+        <Legend />
+        <Bar shape={CustomBar} dataKey='entropy' legendType='none'></Bar>
+        <Brush
+          dataKey='name'
+          height={10}
+          stroke={colors.active}
+          travellerWidth={10}
+          gap={10}
+          startIndex={startIndex}
+          endIndex={stopIndex}
+        />
+      </BarChart>
+    </ResponsiveContainer>
+  );
+};
+
+type LinePlotProps = {
+  plotData: Data;
+  selectedGenes: GeneOption[];
+};
+
+export const OverTimePlot: React.FC<LinePlotProps> = ({ plotData, selectedGenes }) => {
+  return (
+    <ResponsiveContainer width='100%' height='100%'>
+      <LineChart
+        width={500}
+        height={500}
+        data={plotData.timeData}
+        margin={{
+          top: 30,
+          right: 20,
+          left: 20,
+          bottom: 5,
+        }}
+      >
+        <XAxis
+          dataKey='day'
+          scale='time'
+          type='number'
+          tickFormatter={formatDate}
+          domain={[(dataMin: any) => dataMin, () => plotData.timeData[plotData.timeData.length - 1]?.day]}
+          ticks={plotData.ticks}
+          xAxisId='day'
+        />
+        <YAxis />
+        <Tooltip
+          formatter={(value: string) => Number(value).toFixed(6)}
+          labelFormatter={label => {
+            return 'Week starting on: ' + formatDate(label);
+          }}
+        />
+        <Legend />
+        {selectedGenes.map((gene: GeneOption) => (
+          <Line
+            xAxisId='day'
+            type='monotone'
+            dataKey={gene.value}
+            strokeWidth={3}
+            dot={false}
+            stroke={gene.color}
+            isAnimationActive={false}
+            key={gene.value}
+            legendType='none'
+          />
+        ))}
+      </LineChart>
+    </ResponsiveContainer>
+  );
 };
