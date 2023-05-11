@@ -1,4 +1,4 @@
-import { PositionEntropy, PositionProportion } from './CalculateEntropy';
+import { PositionEntropy, PositionProportion } from './calculateEntropy';
 import { Gene, options } from './NucleotideEntropy';
 import { decodeAAMutation } from '../../helpers/aa-mutation';
 import { SequenceType } from '../../data/SequenceType';

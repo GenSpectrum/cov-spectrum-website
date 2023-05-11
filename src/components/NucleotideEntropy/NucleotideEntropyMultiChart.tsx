@@ -16,7 +16,7 @@ import { FixedDateRangeSelector } from '../../data/DateRangeSelector';
 import { DateRange } from '../../data/DateRange';
 import jsonRefData from '../../data/refData.json';
 import { TransformedTime } from './NucleotideEntropy';
-import { GeneOption, weeklyMeanEntropy } from './CalculateEntropy';
+import { GeneOption, weeklyMeanEntropy } from './calculateEntropy';
 import { useExploreUrl } from '../../helpers/explore-url';
 import { pprettyColors } from '../../helpers/colors';
 import { getTicks } from '../../helpers/ticks';

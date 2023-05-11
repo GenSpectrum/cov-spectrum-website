@@ -32,15 +32,15 @@ type WeekEntropy = {
   meanEntropy: number;
 };
 
-export const CalculateEntropy = (
+export const calculateEntropy = (
   muts: MutationProportionEntry[] | undefined,
   sequenceType: SequenceType,
   deletions: boolean,
-  empty: boolean
+  includePositionsWithZeroEntropy: boolean
 ): PositionEntropy[] => {
   let positionProps = new Array<PositionProportion>();
 
-  if (sequenceType === 'nuc' && empty) {
+  if (sequenceType === 'nuc' && includePositionsWithZeroEntropy) {
     positionProps = Array.apply(null, Array<PositionProportion>(29903)).map(function (x, i) {
       let p: PositionProportion = {
         position: i.toString(),
@@ -50,7 +50,7 @@ export const CalculateEntropy = (
       };
       return p;
     });
-  } else if (sequenceType === 'aa' && empty) {
+  } else if (sequenceType === 'aa' && includePositionsWithZeroEntropy) {
     jsonRefData.genes.forEach(g =>
       g.aaSeq.split('').forEach(function (aa, i) {
         let p: PositionProportion = {
@@ -154,7 +154,7 @@ export const weeklyMeanEntropy = (
     means.push({
       week: w.date,
       meanEntropy: meanEntropy(
-        CalculateEntropy(w.proportions, sequenceType, deletions, false),
+        calculateEntropy(w.proportions, sequenceType, deletions, false),
         sequenceType,
         selectedGene
       ),

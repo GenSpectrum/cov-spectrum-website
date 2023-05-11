@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { MutationProportionData } from '../../data/MutationProportionDataset';
 import Loader from '../Loader';
 import { useQuery } from '../../helpers/query-hook';
@@ -7,16 +7,16 @@ import { LapisSelector } from '../../data/LapisSelector';
 import { PipeDividedOptionsButtons } from '../../helpers/ui';
 import { NamedCard } from '../NamedCard';
 import {
-  BarChart,
   Bar,
+  BarChart,
+  Brush,
+  Legend,
+  Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-  Brush,
-  LineChart,
-  Line,
 } from 'recharts';
 import Checkbox from '@mui/material/Checkbox';
 import FormGroup from '@mui/material/FormGroup';
@@ -35,8 +35,8 @@ import Select, { CSSObjectWithLabel, StylesConfig } from 'react-select';
 import { getTicks } from '../../helpers/ticks';
 import { formatDate } from '../../widgets/VariantTimeDistributionLineChartInner';
 import { PercentageInput } from '../PercentageInput';
-import { CalculateEntropy, PositionEntropy, GeneOption, weeklyMeanEntropy } from './CalculateEntropy';
-import { CustomTooltip, getBrushIndex, CustomBar, formatXAxis } from './PlotUtils';
+import { calculateEntropy, GeneOption, PositionEntropy, weeklyMeanEntropy } from './calculateEntropy';
+import { CustomBar, CustomTooltip, formatXAxis, getBrushIndex } from './PlotUtils';
 
 type Props = {
   selector: LapisSelector;
@@ -118,12 +118,12 @@ export const options: GeneOption[] = assignColorsToGeneOptions(
 );
 
 export const NucleotideEntropy = ({ selector }: Props) => {
-  const [plotType, setPlotType] = useState<string>('time');
+  const [plotType, setPlotType] = useState<'overTime' | 'perPosition'>('overTime');
   const [includeDeletions, setIncludeDeletions] = useState<boolean>(false);
-  const [empty, setEmpty] = useState<boolean>(false);
+  const [includePositionsWithZeroEntropy, setIncludePositionsWithZeroEntropy] = useState<boolean>(false);
   const [sequenceType, setSequenceType] = useState<SequenceType>('nuc');
   const [threshold, setThreshold] = useState(0.00001);
-  const [gene, setGene] = useState<string>('all');
+  const [selectedGene, setSelectedGene] = useState<string>('all');
   const [selectedGeneOptions, setSelectedGenes] = useState([
     {
       value: 'All',
@@ -136,13 +136,15 @@ export const NucleotideEntropy = ({ selector }: Props) => {
     setIncludeDeletions(event.target.checked);
   };
 
-  const handleEmpty = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setEmpty(event.target.checked);
-  };
-
   let selectedGenes = options.filter(g => selectedGeneOptions.map(o => o.value).includes(g.value));
 
-  const data = useData(selector, sequenceType, selectedGenes, includeDeletions, empty);
+  const data = useData(
+    selector,
+    sequenceType,
+    selectedGenes,
+    includeDeletions,
+    includePositionsWithZeroEntropy
+  );
 
   const onChange = (value: any, { action, removedValue }: any) => {
     switch (action) {
@@ -186,33 +188,33 @@ export const NucleotideEntropy = ({ selector }: Props) => {
       <div className='mb-2 flex'>
         <PipeDividedOptionsButtons
           options={[
-            { label: 'Entropy over time', value: 'time' },
-            { label: 'Entropy per position', value: 'pos' },
+            { label: 'Entropy over time', value: 'overTime' },
+            { label: 'Entropy per position', value: 'perPosition' },
           ]}
           selected={plotType}
           onSelect={setPlotType}
         />
       </div>
-      {plotType === 'pos' && (
+      {plotType === 'perPosition' && (
         <div className=' w-72 flex mb-2'>
           <div className='mr-2'>Gene:</div>
           <Form.Control
             as='select'
-            value={gene}
-            onChange={ev => setGene(ev.target.value)}
+            value={selectedGene}
+            onChange={event => setSelectedGene(event.target.value)}
             className='flex-grow'
             size='sm'
           >
             <option value='all'>All</option>
-            {jsonRefData.genes.slice(0, -1).map(g => (
-              <option value={g.name} key={g?.name}>
-                {g.name}
+            {jsonRefData.genes.slice(0, -1).map(gene => (
+              <option value={gene.name} key={gene?.name}>
+                {gene.name}
               </option>
             ))}
           </Form.Control>
         </div>
       )}
-      {plotType === 'time' && (
+      {plotType === 'overTime' && (
         <div className='flex mb-2'>
           <div className='mr-2'>Genes:</div>
           <Select
@@ -226,23 +228,27 @@ export const NucleotideEntropy = ({ selector }: Props) => {
           />
         </div>
       )}
-      {plotType === 'pos' && (
+      {plotType === 'perPosition' && (
         <FormGroup>
           <FormControlLabel
             control={
-              <Checkbox checked={empty} onChange={handleEmpty} inputProps={{ 'aria-label': 'controlled' }} />
+              <Checkbox
+                checked={includePositionsWithZeroEntropy}
+                onChange={event => setIncludePositionsWithZeroEntropy(event.target.checked)}
+                inputProps={{ 'aria-label': 'controlled' }}
+              />
             }
             label='Include positions with zero entropy'
           />
         </FormGroup>
       )}
-      {plotType === 'pos' && (
+      {plotType === 'perPosition' && (
         <div className='flex mb-2'>
-          <div className='mr-2'>Entropy display threshold: </div>
+          <div className='mr-2'>Entropy display threshold:</div>
           <PercentageInput ratio={threshold} setRatio={setThreshold} className='mr-2' />
         </div>
       )}
-      {empty && plotType === 'pos' && (
+      {includePositionsWithZeroEntropy && plotType === 'perPosition' && (
         <div>
           <p>
             Setting the entropy display threshold to 0 may lead to slower performance and too many positions
@@ -254,7 +260,7 @@ export const NucleotideEntropy = ({ selector }: Props) => {
     </div>
   );
 
-  let geneRange: Gene | undefined = jsonRefData.genes.find(g => g.name === gene);
+  let geneRange: Gene | undefined = jsonRefData.genes.find(gene => gene.name === selectedGene);
 
   let plotArea;
   if (!data) {
@@ -286,7 +292,7 @@ const useData = (
   sequenceType: SequenceType,
   selectedGenes: GeneOption[],
   deletions: boolean,
-  empty: boolean
+  includePositionsWithZeroEntropy: boolean
 ): Data | undefined => {
   //fetch the proportions per position over the whole date range
   const mutationProportionEntriesQuery = useQuery(
@@ -361,17 +367,17 @@ const useData = (
     const ticks = getTicks(dates);
 
     //transform data for entropy-per-position plot
-    const positionEntropy = CalculateEntropy(
+    const positionEntropy = calculateEntropy(
       mutationProportionEntriesQuery.data.result.proportions,
       sequenceType,
       deletions,
-      empty
+      includePositionsWithZeroEntropy
     );
     const sortedEntropy =
       sequenceType === 'aa' ? sortListByAAMutation(positionEntropy, m => m.position) : positionEntropy;
 
     //transform data for entropy-over-time plot
-    const weekEntropies: TransformedTime[] = [];
+    const weeklyMeanEntropies: TransformedTime[] = [];
     selectedGenes.forEach(selectedGene => {
       const timeData = weeklyMeanEntropy(
         weeklyMutationProportionQuery.data,
@@ -383,12 +389,12 @@ const useData = (
         .map(({ week, meanEntropy }) => {
           return { day: week.dateFrom?.dayjs.toDate().getTime(), [selectedGene.value]: meanEntropy };
         });
-      weekEntropies.push(timeData);
+      weeklyMeanEntropies.push(timeData);
     });
     const timeArr: any = [];
     const timeMap = new Map();
-    weekEntropies.forEach(w => {
-      w.forEach(obj => {
+    weeklyMeanEntropies.forEach(weeklyEntropy => {
+      weeklyEntropy.forEach(obj => {
         if (timeMap.has(obj.day)) {
           timeMap.set(obj.day, { ...timeMap.get(obj.day), ...obj });
         } else {
@@ -399,7 +405,7 @@ const useData = (
     timeMap.forEach(obj => timeArr.push(obj));
 
     return { positionEntropy: sortedEntropy, timeData: timeArr, sequenceType: sequenceType, ticks: ticks };
-  }, [mutationProportionEntriesQuery, weeklyMutationProportionQuery, selectedGenes, deletions, empty]);
+  }, [mutationProportionEntriesQuery, weeklyMutationProportionQuery, selectedGenes, deletions, includePositionsWithZeroEntropy]);
 };
 
 type PlotProps = {
