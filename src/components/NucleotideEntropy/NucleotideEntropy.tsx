@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { ChangeEvent, Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { MutationProportionData } from '../../data/MutationProportionDataset';
 import Loader from '../Loader';
 import { useQuery } from '../../helpers/query-hook';
@@ -31,7 +31,7 @@ import jsonRefData from '../../data/refData.json';
 import { colors } from '../../widgets/common';
 import { mapLabelsToColors } from '../../helpers/colors';
 import chroma from 'chroma-js';
-import Select, { CSSObjectWithLabel, StylesConfig } from 'react-select';
+import Select, { ActionMeta, CSSObjectWithLabel, MultiValue, StylesConfig } from 'react-select';
 import { getTicks } from '../../helpers/ticks';
 import { formatDate } from '../../widgets/VariantTimeDistributionLineChartInner';
 import { PercentageInput } from '../PercentageInput';
@@ -53,6 +53,10 @@ type Data = {
   sequenceType: SequenceType;
   ticks: number[];
 };
+
+type PlotType = 'overTime' | 'perPosition';
+
+type ColorLabelValue = { color: string; label: string; value: string };
 
 export type Gene = {
   name: string;
@@ -118,13 +122,13 @@ export const options: GeneOption[] = assignColorsToGeneOptions(
 );
 
 export const NucleotideEntropy = ({ selector }: Props) => {
-  const [plotType, setPlotType] = useState<'overTime' | 'perPosition'>('overTime');
+  const [plotType, setPlotType] = useState<PlotType>('overTime');
   const [includeDeletions, setIncludeDeletions] = useState<boolean>(false);
-  const [includePositionsWithZeroEntropy, setIncludePositionsWithZeroEntropy] = useState<boolean>(false);
+  const [includeZeroEntropyPositions, setIncludeZeroEntropyPositions] = useState<boolean>(false);
   const [sequenceType, setSequenceType] = useState<SequenceType>('nuc');
   const [threshold, setThreshold] = useState(0.00001);
   const [selectedGene, setSelectedGene] = useState<string>('all');
-  const [selectedGeneOptions, setSelectedGenes] = useState([
+  const [selectedGeneOptions, setSelectedGenes] = useState<readonly ColorLabelValue[]>([
     {
       value: 'All',
       label: 'All',
@@ -132,115 +136,99 @@ export const NucleotideEntropy = ({ selector }: Props) => {
     },
   ]);
 
-  let selectedGenes = options.filter(g => selectedGeneOptions.map(o => o.value).includes(g.value));
+  let selectedGenes = options.filter(geneOptions =>
+    selectedGeneOptions.map(colorLabelValue => colorLabelValue.value).includes(geneOptions.value)
+  );
 
-  const handleDeletions = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setIncludeDeletions(event.target.checked);
-  };
-
-  const onChange = (value: any, { action, removedValue }: any) => {
-    switch (action) {
-      case 'remove-value':
-      case 'pop-value':
-        if (removedValue.isFixed) {
-          return;
-        }
-        break;
-      case 'clear':
-        value = [{ value: 'All', label: 'All', color: '#353B89' }];
-        break;
+  const onSelectedGenesChange = (
+    value: MultiValue<ColorLabelValue>,
+    { action }: ActionMeta<ColorLabelValue>
+  ) => {
+    if (action === 'clear') {
+      value = [{ value: 'All', label: 'All', color: '#353B89' }];
     }
     setSelectedGenes(value);
   };
 
-  const controls = (
+  let geneRange: Gene | undefined = jsonRefData.genes.find(gene => gene.name === selectedGene);
+  return (
+    <NamedCard title='Nucleotide Entropy'>
+      {plotType === 'perPosition' ? (
+        <PerPositionControls
+          sequenceType={sequenceType}
+          onSequenceTypeSelect={setSequenceType}
+          includeDeletions={includeDeletions}
+          onIncludeDeletionsChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setIncludeDeletions(event.target.checked);
+          }}
+          onPlotTypeSelect={setPlotType}
+          selectedGene={selectedGene}
+          onSelectedGeneChange={event => setSelectedGene(event.target.value)}
+          includeZeroEntropyPositions={includeZeroEntropyPositions}
+          onIncludeZeroEntropyPositionsChange={event => setIncludeZeroEntropyPositions(event.target.checked)}
+          threshold={threshold}
+          onThresholdChange={setThreshold}
+        />
+      ) : (
+        <OverTimeControls
+          sequenceType={sequenceType}
+          onSequenceTypeSelect={setSequenceType}
+          includeDeletions={includeDeletions}
+          onIncludeDeletionsChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setIncludeDeletions(event.target.checked);
+          }}
+          onPlotTypeSelect={setPlotType}
+          onSelectedGenesChange={onSelectedGenesChange}
+          selectedGenes={selectedGeneOptions}
+        />
+      )}
+      <Plot
+        selector={selector}
+        sequenceType={sequenceType}
+        selectedGenes={selectedGenes}
+        includeDeletions={includeDeletions}
+        includePositionsWithZeroEntropy={includeZeroEntropyPositions}
+        threshold={threshold}
+        plotType={plotType}
+        geneRange={geneRange}
+      />
+    </NamedCard>
+  );
+};
+
+type ControlsProps = {
+  sequenceType: SequenceType;
+  onSequenceTypeSelect: Dispatch<SetStateAction<SequenceType>>;
+  includeDeletions: boolean;
+  onIncludeDeletionsChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onPlotTypeSelect: Dispatch<SetStateAction<PlotType>>;
+};
+
+function PerPositionControls(
+  props: ControlsProps & {
+    selectedGene: string;
+    onSelectedGeneChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    includeZeroEntropyPositions: boolean;
+    onIncludeZeroEntropyPositionsChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    threshold: number;
+    onThresholdChange: (value: ((prevState: number) => number) | number) => void;
+  }
+) {
+  return (
     <div className='mb-4'>
-      <div className='mb-2 flex'>
-        <PipeDividedOptionsButtons
-          options={[
-            { label: 'Nucleotides', value: 'nuc' },
-            { label: 'Amino acids', value: 'aa' },
-          ]}
-          selected={sequenceType}
-          onSelect={setSequenceType}
-        />
+      <SequenceTypeSelector selected={props.sequenceType} onSelect={props.onSequenceTypeSelect} />
+      <IncludeDeletionsCheckbox checked={props.includeDeletions} onChange={props.onIncludeDeletionsChange} />
+      <PlotTypeSelector selected={'perPosition'} onSelect={props.onPlotTypeSelect} />
+      <GeneSelector value={props.selectedGene} onChange={props.onSelectedGeneChange} />
+      <IncludeZeroEntropyPositionsCheckbox
+        checked={props.includeZeroEntropyPositions}
+        onChange={props.onIncludeZeroEntropyPositionsChange}
+      />
+      <div className='flex mb-2'>
+        <div className='mr-2'>Entropy display threshold:</div>
+        <PercentageInput ratio={props.threshold} setRatio={props.onThresholdChange} className='mr-2' />
       </div>
-      <FormGroup>
-        <FormControlLabel
-          control={
-            <Checkbox
-              checked={includeDeletions}
-              onChange={handleDeletions}
-              inputProps={{ 'aria-label': 'controlled' }}
-            />
-          }
-          label='Include deletions'
-        />
-      </FormGroup>
-      <div className='mb-2 flex'>
-        <PipeDividedOptionsButtons
-          options={[
-            { label: 'Entropy over time', value: 'overTime' },
-            { label: 'Entropy per position', value: 'perPosition' },
-          ]}
-          selected={plotType}
-          onSelect={setPlotType}
-        />
-      </div>
-      {plotType === 'perPosition' && (
-        <div className=' w-72 flex mb-2'>
-          <div className='mr-2'>Gene:</div>
-          <Form.Control
-            as='select'
-            value={selectedGene}
-            onChange={event => setSelectedGene(event.target.value)}
-            className='flex-grow'
-            size='sm'
-          >
-            <option value='all'>All</option>
-            {jsonRefData.genes.slice(0, -1).map(gene => (
-              <option value={gene.name} key={gene?.name}>
-                {gene.name}
-              </option>
-            ))}
-          </Form.Control>
-        </div>
-      )}
-      {plotType === 'overTime' && (
-        <div className='flex mb-2'>
-          <div className='mr-2'>Genes:</div>
-          <Select
-            closeMenuOnSelect={false}
-            placeholder='Select genes...'
-            isMulti
-            options={options}
-            styles={colorStyles}
-            onChange={onChange}
-            value={selectedGeneOptions}
-          />
-        </div>
-      )}
-      {plotType === 'perPosition' && (
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={includePositionsWithZeroEntropy}
-                onChange={event => setIncludePositionsWithZeroEntropy(event.target.checked)}
-                inputProps={{ 'aria-label': 'controlled' }}
-              />
-            }
-            label='Include positions with zero entropy'
-          />
-        </FormGroup>
-      )}
-      {plotType === 'perPosition' && (
-        <div className='flex mb-2'>
-          <div className='mr-2'>Entropy display threshold:</div>
-          <PercentageInput ratio={threshold} setRatio={setThreshold} className='mr-2' />
-        </div>
-      )}
-      {includePositionsWithZeroEntropy && plotType === 'perPosition' && (
+      {props.includeZeroEntropyPositions && (
         <div>
           <p>
             Setting the entropy display threshold to 0 may lead to slower performance and too many positions
@@ -251,24 +239,137 @@ export const NucleotideEntropy = ({ selector }: Props) => {
       )}
     </div>
   );
+}
 
-  let geneRange: Gene | undefined = jsonRefData.genes.find(gene => gene.name === selectedGene);
+function OverTimeControls(
+  props: ControlsProps & {
+    onSelectedGenesChange: (value: MultiValue<ColorLabelValue>, action: ActionMeta<ColorLabelValue>) => void;
+    selectedGenes: readonly ColorLabelValue[];
+  }
+) {
   return (
-    <NamedCard title='Nucleotide Entropy'>
-      {controls}
-      <Plot
-        selector={selector}
-        sequenceType={sequenceType}
-        selectedGenes={selectedGenes}
-        includeDeletions={includeDeletions}
-        includePositionsWithZeroEntropy={includePositionsWithZeroEntropy}
-        threshold={threshold}
-        plotType={plotType}
-        geneRange={geneRange}
-      />
-    </NamedCard>
+    <div className='mb-4'>
+      <SequenceTypeSelector selected={props.sequenceType} onSelect={props.onSequenceTypeSelect} />
+      <IncludeDeletionsCheckbox checked={props.includeDeletions} onChange={props.onIncludeDeletionsChange} />
+      <PlotTypeSelector selected={'overTime'} onSelect={props.onPlotTypeSelect} />
+      <MultipleGenesSelector value={props.selectedGenes} onChange={props.onSelectedGenesChange} />
+    </div>
   );
-};
+}
+
+function SequenceTypeSelector(props: {
+  selected: 'aa' | 'nuc';
+  onSelect: (value: ((prevState: 'aa' | 'nuc') => 'aa' | 'nuc') | 'aa' | 'nuc') => void;
+}) {
+  return (
+    <div className='mb-2 flex'>
+      <PipeDividedOptionsButtons
+        options={[
+          { label: 'Nucleotides', value: 'nuc' },
+          { label: 'Amino acids', value: 'aa' },
+        ]}
+        selected={props.selected}
+        onSelect={props.onSelect}
+      />
+    </div>
+  );
+}
+
+function IncludeDeletionsCheckbox(props: {
+  checked: boolean;
+  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <FormGroup>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={props.checked}
+            onChange={props.onChange}
+            inputProps={{ 'aria-label': 'controlled' }}
+          />
+        }
+        label='Include deletions'
+      />
+    </FormGroup>
+  );
+}
+
+function PlotTypeSelector(props: {
+  selected: PlotType;
+  onSelect: (
+    value: ((prevState: 'overTime' | 'perPosition') => PlotType) | 'overTime' | 'perPosition'
+  ) => void;
+}) {
+  return (
+    <div className='mb-2 flex'>
+      <PipeDividedOptionsButtons
+        options={[
+          { label: 'Entropy over time', value: 'overTime' },
+          { label: 'Entropy per position', value: 'perPosition' },
+        ]}
+        selected={props.selected}
+        onSelect={props.onSelect}
+      />
+    </div>
+  );
+}
+
+function GeneSelector(props: { value: string; onChange: (event: ChangeEvent<HTMLInputElement>) => void }) {
+  return (
+    <div className=' w-72 flex mb-2'>
+      <div className='mr-2'>Gene:</div>
+      <Form.Control as='select' value={props.value} onChange={props.onChange} className='flex-grow' size='sm'>
+        <option value='all'>All</option>
+        {jsonRefData.genes.slice(0, -1).map(gene => (
+          <option value={gene.name} key={gene?.name}>
+            {gene.name}
+          </option>
+        ))}
+      </Form.Control>
+    </div>
+  );
+}
+
+function MultipleGenesSelector(props: {
+  onChange: (value: MultiValue<ColorLabelValue>, action: ActionMeta<ColorLabelValue>) => void;
+  value: readonly ColorLabelValue[];
+}) {
+  return (
+    <div className='flex mb-2'>
+      <div className='mr-2'>Genes:</div>
+      <Select
+        closeMenuOnSelect={false}
+        placeholder='Select genes...'
+        isMulti
+        options={options}
+        styles={colorStyles}
+        onChange={props.onChange}
+        value={props.value}
+      />
+    </div>
+  );
+}
+
+function IncludeZeroEntropyPositionsCheckbox(props: {
+  checked: boolean;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+}) {
+  return (
+    <FormGroup>
+      <FormControlLabel
+        control={
+          <Checkbox
+            checked={props.checked}
+            onChange={props.onChange}
+            inputProps={{ 'aria-label': 'controlled' }}
+          />
+        }
+        label='Include positions with zero entropy'
+      />
+    </FormGroup>
+  );
+}
 
 type PlotProps = {
   selector: LapisSelector;
@@ -277,7 +378,7 @@ type PlotProps = {
   includeDeletions: boolean;
   includePositionsWithZeroEntropy: boolean;
   threshold: number;
-  plotType: 'overTime' | 'perPosition';
+  plotType: PlotType;
   geneRange: Gene | undefined;
 };
 
