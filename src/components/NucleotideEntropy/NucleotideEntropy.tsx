@@ -1,8 +1,5 @@
-import React, { ChangeEvent, Dispatch, SetStateAction, useMemo, useState } from 'react';
-import { MutationProportionData } from '../../data/MutationProportionDataset';
+import React, { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import Loader from '../Loader';
-import { useQuery } from '../../helpers/query-hook';
-import { MutationProportionEntry } from '../../data/MutationProportionEntry';
 import { LapisSelector } from '../../data/LapisSelector';
 import { PipeDividedOptionsButtons } from '../../helpers/ui';
 import { NamedCard } from '../NamedCard';
@@ -23,20 +20,16 @@ import FormGroup from '@mui/material/FormGroup';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { SequenceType } from '../../data/SequenceType';
 import { Form } from 'react-bootstrap';
-import { globalDateCache, UnifiedDay } from '../../helpers/date-cache';
-import { FixedDateRangeSelector } from '../../data/DateRangeSelector';
-import { DateRange } from '../../data/DateRange';
-import { sortListByAAMutation } from '../../helpers/aa-mutation';
 import jsonRefData from '../../data/refData.json';
 import { colors } from '../../widgets/common';
 import { mapLabelsToColors } from '../../helpers/colors';
 import chroma from 'chroma-js';
 import Select, { ActionMeta, CSSObjectWithLabel, MultiValue, StylesConfig } from 'react-select';
-import { getTicks } from '../../helpers/ticks';
 import { formatDate } from '../../widgets/VariantTimeDistributionLineChartInner';
 import { PercentageInput } from '../PercentageInput';
-import { calculateEntropy, GeneOption, PositionEntropy, weeklyMeanEntropy } from './calculateEntropy';
+import { GeneOption } from './calculateEntropy';
 import { CustomBar, CustomTooltip, formatXAxis, getBrushIndex } from './PlotUtils';
+import { NucleotideEntropyData, useNucleotideEntropyData } from './hooks';
 
 type Props = {
   selector: LapisSelector;
@@ -46,13 +39,6 @@ export type TransformedTime = {
   [x: string]: string | number | undefined;
   day: number | undefined;
 }[];
-
-type Data = {
-  positionEntropy: PositionEntropy[];
-  timeData: any;
-  sequenceType: SequenceType;
-  ticks: number[];
-};
 
 type PlotType = 'overTime' | 'perPosition';
 
@@ -392,7 +378,7 @@ export const Plot = ({
   plotType,
   geneRange,
 }: PlotProps) => {
-  const data = useData(
+  const data = useNucleotideEntropyData(
     selector,
     sequenceType,
     selectedGenes,
@@ -410,136 +396,9 @@ export const Plot = ({
   return <OverTimePlot plotData={data} selectedGenes={selectedGenes} />;
 };
 
-const useData = (
-  selector: LapisSelector,
-  sequenceType: SequenceType,
-  selectedGenes: GeneOption[],
-  deletions: boolean,
-  includePositionsWithZeroEntropy: boolean
-): Data | undefined => {
-  //fetch the proportions per position over the whole date range
-  const mutationProportionEntriesQuery = useQuery(
-    async signal => {
-      return {
-        sequenceType: sequenceType,
-        result: await Promise.all([MutationProportionData.fromApi(selector, sequenceType, signal)]).then(
-          async ([data]) => {
-            const proportions: MutationProportionEntry[] = data.payload.map(m => m);
-            return {
-              proportions,
-            };
-          }
-        ),
-      };
-    },
-    [selector, sequenceType]
-  );
-
-  //fetch the proportions per position in weekly segments
-  const weeklyMutationProportionQuery = useQuery(
-    async signal => {
-      //calculate weeks
-      const dayArray: UnifiedDay[] = [
-        selector.dateRange?.getDateRange().dateFrom!,
-        selector.dateRange?.getDateRange().dateTo!,
-      ];
-      const dayRange = globalDateCache.rangeFromDays(dayArray)!;
-      const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
-      const weekDateRanges = new Array<DateRange>();
-      for (let i = 0; i < weeks.length; i++) {
-        let dateRange: DateRange = { dateFrom: weeks[i].firstDay, dateTo: weeks[i].firstDay };
-        weekDateRanges[i] = dateRange;
-      }
-
-      const weekSelectors: LapisSelector[] = weekDateRanges.map(w => ({
-        ...selector,
-        dateRange: new FixedDateRangeSelector(w),
-      }));
-
-      return Promise.all(
-        weekSelectors.map((w, i) =>
-          MutationProportionData.fromApi(w, sequenceType, signal).then(data => {
-            const proportions: MutationProportionEntry[] = data.payload.map(m => m);
-            let date = weekDateRanges[i];
-            return {
-              proportions,
-              date,
-            };
-          })
-        )
-      );
-    },
-    [selector, sequenceType]
-  );
-
-  return useMemo(() => {
-    if (!mutationProportionEntriesQuery.data || !weeklyMutationProportionQuery.data) {
-      return undefined;
-    }
-    const sequenceType = mutationProportionEntriesQuery.data?.sequenceType;
-    if (!sequenceType) {
-      return undefined;
-    }
-    if (!selectedGenes) {
-      return undefined;
-    }
-    //calculate ticks for entropy-over-time plot
-    const dates = weeklyMutationProportionQuery.data.map(p => {
-      return { date: p.date.dateFrom?.dayjs.toDate()! };
-    });
-    const ticks = getTicks(dates);
-
-    //transform data for entropy-per-position plot
-    const positionEntropy = calculateEntropy(
-      mutationProportionEntriesQuery.data.result.proportions,
-      sequenceType,
-      deletions,
-      includePositionsWithZeroEntropy
-    );
-    const sortedEntropy =
-      sequenceType === 'aa' ? sortListByAAMutation(positionEntropy, m => m.position) : positionEntropy;
-
-    //transform data for entropy-over-time plot
-    const weeklyMeanEntropies: TransformedTime[] = [];
-    selectedGenes.forEach(selectedGene => {
-      const timeData = weeklyMeanEntropy(
-        weeklyMutationProportionQuery.data,
-        sequenceType,
-        selectedGene,
-        deletions
-      )
-        .slice(0, -1)
-        .map(({ week, meanEntropy }) => {
-          return { day: week.dateFrom?.dayjs.toDate().getTime(), [selectedGene.value]: meanEntropy };
-        });
-      weeklyMeanEntropies.push(timeData);
-    });
-    const timeArr: any = [];
-    const timeMap = new Map();
-    weeklyMeanEntropies.forEach(weeklyEntropy => {
-      weeklyEntropy.forEach(obj => {
-        if (timeMap.has(obj.day)) {
-          timeMap.set(obj.day, { ...timeMap.get(obj.day), ...obj });
-        } else {
-          timeMap.set(obj.day, { ...obj });
-        }
-      });
-    });
-    timeMap.forEach(obj => timeArr.push(obj));
-
-    return { positionEntropy: sortedEntropy, timeData: timeArr, sequenceType: sequenceType, ticks: ticks };
-  }, [
-    mutationProportionEntriesQuery,
-    weeklyMutationProportionQuery,
-    selectedGenes,
-    deletions,
-    includePositionsWithZeroEntropy,
-  ]);
-};
-
 type BarPlotProps = {
   threshold: number;
-  plotData: Data;
+  plotData: NucleotideEntropyData;
   geneRange: Gene | undefined;
 };
 
@@ -584,7 +443,7 @@ export const PerPositionPlot: React.FC<BarPlotProps> = ({ threshold, plotData, g
 };
 
 type LinePlotProps = {
-  plotData: Data;
+  plotData: NucleotideEntropyData;
   selectedGenes: GeneOption[];
 };
 
