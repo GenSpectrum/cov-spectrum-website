@@ -8,12 +8,17 @@ import { formatDate } from './WasteWaterTimeChart';
 import { wastewaterVariantColors } from './constants';
 import { Utils } from '../../services/Utils';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
+import { DateRange } from '../../data/DateRange';
 
 interface Props {
   variants: {
     name: string;
     data: WasteWaterTimeseriesSummaryDataset;
   }[];
+  dateRange: {
+    dateFrom: UnifiedDay;
+    dateTo: UnifiedDay;
+  };
 }
 
 interface VariantMap {
@@ -38,12 +43,12 @@ function deEscapeValueName(escapedName: string): string {
 
 const CHART_MARGIN_RIGHT = 15;
 
-function formatProportion(value: number): string {
-  return (Number(value) * 100).toFixed(2);
+function formatProportion(value: number, digitsAfterDot?: number): string {
+  return (Number(value) * 100).toFixed(digitsAfterDot ?? 2);
 }
 
-function formatPercent(value: number): string {
-  return formatProportion(value) + '%';
+function formatPercent(value: number, digitsAfterDot?: number): string {
+  return formatProportion(value, digitsAfterDot) + '%';
 }
 
 function formatCiPercent(ci: [number, number]): string {
@@ -94,8 +99,11 @@ const CustomTooltip = ({ active, payload }: TooltipProps<ValueType, NameType>) =
   return null;
 };
 
-export const WasteWaterLocationTimeChart = React.memo(({ variants }: Props): JSX.Element => {
-  const escapedVariantNames = variants.map(variant => escapeValueName(variant.name));
+function getEscapedVariantNames(variants: { name: string }[]): string[] {
+  return variants.map(variant => escapeValueName(variant.name));
+}
+
+function getPlotData(variants: { name: string; data: WasteWaterTimeseriesSummaryDataset }[]) {
   const dateMap: Map<UnifiedDay, { date: number; proportions: VariantMap; proportionCIs: CIMap }> = new Map();
 
   for (let { name, data } of variants) {
@@ -112,10 +120,43 @@ export const WasteWaterLocationTimeChart = React.memo(({ variants }: Props): JSX
     }
   }
 
-  const plotData = [...dateMap.values()].sort((a, b) => a.date - b.date);
-  const today = Date.now();
-  const ticks = getTicks(plotData.map(({ date }) => ({ date: new Date(date) }))); // TODO This does not seem efficient
-  ticks.push(today);
+  return [...dateMap.values()].sort((a, b) => a.date - b.date);
+}
+
+function getXAxisTicks(
+  plotData: { date: number; proportions: VariantMap; proportionCIs: CIMap }[],
+  dateFrom: number,
+  dateTo: number
+) {
+  const datesToSelectFrom = plotData.map(({ date }) => date);
+  datesToSelectFrom.push(dateFrom);
+  datesToSelectFrom.push(dateTo);
+  datesToSelectFrom.sort((a, b) => a - b);
+
+  const ticks = getTicks(
+    datesToSelectFrom.map(date => {
+      return { date: new Date(date) };
+    })
+  ); // TODO This does not seem efficient
+
+  return ticks;
+}
+
+function getXAxisDomain(dateRange: DateRange, ticks: number[]) {
+  const dateFrom = dateRange.dateFrom?.dayjs.valueOf() ?? ticks[0];
+  const dateTo = dateRange.dateTo?.dayjs.valueOf() ?? ticks[ticks.length - 1];
+  return [dateFrom, dateTo];
+}
+
+export const WasteWaterLocationTimeChart = React.memo(({ variants, dateRange }: Props): JSX.Element => {
+  const escapedVariantNames = getEscapedVariantNames(variants);
+  const plotData = getPlotData(variants);
+  const ticks = getXAxisTicks(plotData, dateRange.dateFrom.dayjs.valueOf(), dateRange.dateTo.dayjs.valueOf());
+  const plotXAxisDomain = getXAxisDomain(dateRange, ticks);
+
+  if (plotData.length === 0) {
+    return <div>No data</div>;
+  }
 
   return (
     <Wrapper>
@@ -131,10 +172,11 @@ export const WasteWaterLocationTimeChart = React.memo(({ variants }: Props): JSX
             scale='time'
             type='number'
             tickFormatter={formatDate}
-            domain={[(dataMin: any) => dataMin, () => today]}
+            domain={plotXAxisDomain}
             ticks={ticks}
           />
-          <YAxis domain={['dataMin', 'auto']} />
+
+          <YAxis domain={['dataMin', 'auto']} tickFormatter={value => formatPercent(value, 0)} />
           <Tooltip
             content={<CustomTooltip />}
             wrapperStyle={{
