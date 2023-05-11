@@ -23,7 +23,7 @@ export const useNucleotideEntropyData = (
   selector: LapisSelector,
   sequenceType: SequenceType,
   selectedGenes: GeneOption[],
-  deletions: boolean,
+  includeDeletions: boolean,
   includePositionsWithZeroEntropy: boolean
 ): NucleotideEntropyData | undefined => {
   //fetch the proportions per position over the whole date range
@@ -33,9 +33,8 @@ export const useNucleotideEntropyData = (
         sequenceType: sequenceType,
         result: await Promise.all([MutationProportionData.fromApi(selector, sequenceType, signal)]).then(
           async ([data]) => {
-            const proportions: MutationProportionEntry[] = data.payload.map(m => m);
             return {
-              proportions,
+              proportions: data.payload,
             };
           }
         ),
@@ -102,7 +101,7 @@ export const useNucleotideEntropyData = (
     const positionEntropy = calculateEntropy(
       mutationProportionEntriesQuery.data.result.proportions,
       sequenceType,
-      deletions,
+      includeDeletions,
       includePositionsWithZeroEntropy
     );
     const sortedEntropy =
@@ -112,10 +111,10 @@ export const useNucleotideEntropyData = (
     const weeklyMeanEntropies: TransformedTime[] = [];
     selectedGenes.forEach(selectedGene => {
       const timeData = weeklyMeanEntropy(
-        weeklyMutationProportionQuery.data,
+        weeklyMutationProportionQuery.data!,
         sequenceType,
         selectedGene,
-        deletions
+        includeDeletions
       )
         .slice(0, -1)
         .map(({ week, meanEntropy }) => {
@@ -136,12 +135,12 @@ export const useNucleotideEntropyData = (
     });
     timeMap.forEach(obj => timeArr.push(obj));
 
-    return { positionEntropy: sortedEntropy, timeData: timeArr, sequenceType: sequenceType, ticks: ticks };
+    return { positionEntropy: sortedEntropy, timeData: timeArr, sequenceType: sequenceType, ticks };
   }, [
     mutationProportionEntriesQuery,
     weeklyMutationProportionQuery,
     selectedGenes,
-    deletions,
+    includeDeletions,
     includePositionsWithZeroEntropy,
   ]);
 };

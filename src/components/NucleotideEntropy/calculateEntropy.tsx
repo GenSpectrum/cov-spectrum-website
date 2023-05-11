@@ -33,7 +33,7 @@ type WeekEntropy = {
 };
 
 export const calculateEntropy = (
-  muts: MutationProportionEntry[] | undefined,
+  mutations: MutationProportionEntry[] | undefined,
   sequenceType: SequenceType,
   deletions: boolean,
   includePositionsWithZeroEntropy: boolean
@@ -64,7 +64,7 @@ export const calculateEntropy = (
     );
   }
 
-  muts?.forEach(mut => {
+  mutations?.forEach(mut => {
     if (sequenceType === 'aa') {
       let decoded = decodeAAMutation(mut.mutation);
       if (decoded.mutatedBase !== '-' || (decoded.mutatedBase === '-' && deletions)) {
@@ -90,32 +90,36 @@ export const calculateEntropy = (
     }
   });
 
-  const positionGroups = Object.entries(groupBy(positionProps, p => p.position)).map(p => {
+  const positionGroups = Object.entries(
+    groupBy(positionProps, positionProportion => positionProportion.position)
+  ).map(([position, positionProportions]) => {
     return {
-      position: p[0],
-      original: p[1][0].original,
-      proportions: p[1],
+      position: position,
+      original: positionProportions[0].original,
+      proportions: positionProportions,
       entropy: 0,
     };
   });
 
-  positionGroups.forEach(pos => {
-    const remainder = 1 - pos.proportions.map(p => p.proportion).reduce((x, a) => x + a, 0);
+  positionGroups.forEach(positionGroup => {
+    const remainder = 1 - positionGroup.proportions.map(p => p.proportion).reduce((x, a) => x + a, 0);
     if (remainder !== 0) {
-      pos.proportions.push({
-        position: pos.position,
-        mutation: pos.original + ' (ref)',
-        original: pos.original,
+      positionGroup.proportions.push({
+        position: positionGroup.position,
+        mutation: positionGroup.original + ' (ref)',
+        original: positionGroup.original,
         proportion: remainder,
       });
     }
-    pos.proportions = pos.proportions.filter(p => p.proportion > 0);
+    positionGroup.proportions = positionGroup.proportions.filter(p => p.proportion > 0);
   });
 
-  positionGroups.map(p => {
+  positionGroups.forEach(positionGroup => {
     let sum = 0;
-    p.proportions.forEach(pp => (sum += pp.proportion * Math.log(pp.proportion)));
-    p.entropy = -sum;
+    positionGroup.proportions.forEach(
+      positionProportion => (sum += positionProportion.proportion * Math.log(positionProportion.proportion))
+    );
+    positionGroup.entropy = -sum;
   });
 
   return positionGroups;
@@ -131,37 +135,34 @@ const meanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType, 
       ? posEntropy
       : posEntropy.filter(g => g.position.includes(gene.value));
   const sum = filteredPos.map(f => f.entropy).reduce((x, a) => x + a, 0);
-  const count =
-    sequenceType === 'nuc'
-      ? gene.endPosition - gene.startPosition
-      : (gene.value === 'All'
-          ? jsonRefData.genes
-          : jsonRefData.genes.filter(g => g.name.includes(gene.value))
-        )
-          .map(g => g.aaSeq.length)
-          .reduce((x, a) => x + a, 0);
+  const count = sequenceType === 'nuc' ? gene.endPosition - gene.startPosition : sumOfGenesLength(gene);
   return sum / count;
 };
 
+function sumOfGenesLength(geneOption: GeneOption) {
+  return (
+    geneOption.value === 'All'
+      ? jsonRefData.genes
+      : jsonRefData.genes.filter(gene => gene.name.includes(geneOption.value))
+  )
+    .map(gene => gene.aaSeq.length)
+    .reduce((partialSum, geneLength) => partialSum + geneLength, 0);
+}
+
 export const weeklyMeanEntropy = (
-  weeks: { proportions: MutationProportionEntry[]; date: DateRange }[] | undefined,
+  weeks: { proportions: MutationProportionEntry[]; date: DateRange }[],
   sequenceType: SequenceType,
   selectedGene: GeneOption,
   deletions: boolean
 ): WeekEntropy[] => {
-  let means = new Array<WeekEntropy>();
-  weeks?.forEach(w =>
-    means.push({
-      week: w.date,
-      meanEntropy: meanEntropy(
-        calculateEntropy(w.proportions, sequenceType, deletions, false),
-        sequenceType,
-        selectedGene
-      ),
-    })
-  );
-
-  return means;
+  return weeks.map(week => ({
+    week: week.date,
+    meanEntropy: meanEntropy(
+      calculateEntropy(week.proportions, sequenceType, deletions, false),
+      sequenceType,
+      selectedGene
+    ),
+  }));
 };
 
 const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>

@@ -95,13 +95,13 @@ const genes = jsonRefData.genes;
   genes.push({ name: 'All', startPosition: 0, endPosition: 29903, aaSeq: '' });
 
 export const options: GeneOption[] = assignColorsToGeneOptions(
-  genes.map(g => {
+  genes.map(gene => {
     return {
-      value: g.name,
-      label: g.name,
-      startPosition: g.startPosition,
-      endPosition: g.endPosition,
-      aaSeq: g.aaSeq,
+      value: gene.name,
+      label: gene.name,
+      startPosition: gene.startPosition,
+      endPosition: gene.endPosition,
+      aaSeq: gene.aaSeq,
       color: chroma.random().darken().hex(),
     };
   })
