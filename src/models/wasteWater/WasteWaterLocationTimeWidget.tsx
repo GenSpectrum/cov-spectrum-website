@@ -4,7 +4,7 @@ import * as zod from 'zod';
 import { filter, getData } from './loading';
 import { WasteWaterTimeseriesSummaryDataset } from './types';
 import { WasteWaterLocationTimeChart } from './WasteWaterLocationTimeChart';
-import { UnifiedDay } from '../../helpers/date-cache';
+import { DateRange } from '../../data/DateRange';
 
 interface Props {
   country: string;
@@ -13,7 +13,7 @@ interface Props {
     name: string;
     data: WasteWaterTimeseriesSummaryDataset;
   }[];
-  dateRange: { dateFrom: UnifiedDay; dateTo: UnifiedDay };
+  dateRange: DateRange;
 }
 
 export const WasteWaterLocationTimeWidget = new Widget(

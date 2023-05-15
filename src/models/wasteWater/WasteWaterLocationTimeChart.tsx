@@ -15,10 +15,7 @@ interface Props {
     name: string;
     data: WasteWaterTimeseriesSummaryDataset;
   }[];
-  dateRange: {
-    dateFrom: UnifiedDay;
-    dateTo: UnifiedDay;
-  };
+  dateRange: DateRange;
 }
 
 interface VariantMap {
@@ -125,12 +122,15 @@ function getPlotData(variants: { name: string; data: WasteWaterTimeseriesSummary
 
 function getXAxisTicks(
   plotData: { date: number; proportions: VariantMap; proportionCIs: CIMap }[],
-  dateFrom: number,
-  dateTo: number
+  dateRange: DateRange
 ) {
   const datesToSelectFrom = plotData.map(({ date }) => date);
-  datesToSelectFrom.push(dateFrom);
-  datesToSelectFrom.push(dateTo);
+  if (dateRange.dateFrom) {
+    datesToSelectFrom.push(dateRange.dateFrom.dayjs.valueOf());
+  }
+  if (dateRange.dateTo) {
+    datesToSelectFrom.push(dateRange.dateTo.dayjs.valueOf());
+  }
   datesToSelectFrom.sort((a, b) => a - b);
 
   const ticks = getTicks(
@@ -151,8 +151,8 @@ function getXAxisDomain(dateRange: DateRange, ticks: number[]) {
 export const WasteWaterLocationTimeChart = React.memo(({ variants, dateRange }: Props): JSX.Element => {
   const escapedVariantNames = getEscapedVariantNames(variants);
   const plotData = getPlotData(variants);
-  const ticks = getXAxisTicks(plotData, dateRange.dateFrom.dayjs.valueOf(), dateRange.dateTo.dayjs.valueOf());
-  const plotXAxisDomain = getXAxisDomain(dateRange, ticks);
+  const xAxisTicks = getXAxisTicks(plotData, dateRange);
+  const xAxisDomain = getXAxisDomain(dateRange, xAxisTicks);
 
   if (plotData.length === 0) {
     return <div>No data</div>;
@@ -172,8 +172,8 @@ export const WasteWaterLocationTimeChart = React.memo(({ variants, dateRange }: 
             scale='time'
             type='number'
             tickFormatter={formatDate}
-            domain={plotXAxisDomain}
-            ticks={ticks}
+            domain={xAxisDomain}
+            ticks={xAxisTicks}
           />
 
           <YAxis domain={['dataMin', 'auto']} tickFormatter={value => formatPercent(value, 0)} />

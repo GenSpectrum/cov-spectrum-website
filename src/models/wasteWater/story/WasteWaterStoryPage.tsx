@@ -1,56 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { ExternalLink } from '../../../components/ExternalLink';
-import Loader from '../../../components/Loader';
-import { GridCell, PackedGrid } from '../../../components/PackedGrid';
-import { WasteWaterLocationTimeWidget } from '../WasteWaterLocationTimeWidget';
-import { ShowMoreButton } from '../../../helpers/ui';
-import DateRangePicker from '../../../components/DateRangePicker';
-import { DateRangeSelector, SpecialDateRangeSelector } from '../../../data/DateRangeSelector';
-import { filterByDateRange, minMaxDate, useWasteWaterData } from './WasteWaterStoryPageHooks';
-
-const WasteWaterSamplingSites = () => {
-  const wasteWaterData = useWasteWaterData();
-  const [dateRangeSelector, setDateRangeSelector] = useState<DateRangeSelector>(
-    new SpecialDateRangeSelector('Past6M')
-  );
-
-  if (!wasteWaterData) {
-    return <Loader />;
-  }
-
-  const dataInTimeRange = filterByDateRange(wasteWaterData, dateRangeSelector.getDateRange());
-  const { dateFrom, dateTo } = minMaxDate(dataInTimeRange);
-  if (dateTo === undefined || dateFrom === undefined) {
-    return <Loader />;
-  }
-
-  return (
-    <>
-      <DateRangePicker dateRangeSelector={dateRangeSelector} onChangeDate={setDateRangeSelector} />
-
-      <PackedGrid maxColumns={2}>
-        {dataInTimeRange.map(dataset => (
-          <GridCell minWidth={600} key={dataset.location}>
-            <WasteWaterLocationTimeWidget.ShareableComponent
-              country='Switzerland'
-              location={dataset.location}
-              title={dataset.location}
-              variants={dataset.variantsTimeseriesSummaries}
-              dateRange={{ dateFrom, dateTo }}
-              height={300}
-              toolbarChildren={[
-                <ShowMoreButton
-                  to={'/story/wastewater-in-switzerland/location/' + dataset.location}
-                  key={`showmore${dataset.location}`}
-                />,
-              ]}
-            />
-          </GridCell>
-        ))}
-      </PackedGrid>
-    </>
-  );
-};
+import { WasteWaterSamplingSites } from './WasteWaterSamplingSites';
 
 export const WasteWaterStoryPage = () => {
   useEffect(() => {
