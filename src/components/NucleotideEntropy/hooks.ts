@@ -10,7 +10,6 @@ import { FixedDateRangeSelector } from '../../data/DateRangeSelector';
 import { useMemo } from 'react';
 import { getTicks } from '../../helpers/ticks';
 import { sortListByAAMutation } from '../../helpers/aa-mutation';
-import { TransformedTime } from './NucleotideEntropy';
 
 export type NucleotideEntropyData = {
   positionEntropy: PositionEntropy[];
@@ -34,7 +33,6 @@ export const useNucleotideEntropyData = (
     [selector, sequenceType]
   );
 
-  //fetch the proportions per position in weekly segments
   const weeklyMutationProportionQuery = useQuery(
     async signal => fetchWeeklyMutationProportions(selector, sequenceType, signal),
     [selector, sequenceType]
@@ -42,9 +40,6 @@ export const useNucleotideEntropyData = (
 
   return useMemo(() => {
     if (!mutationProportionsForWholeDateRange.data || !weeklyMutationProportionQuery.data) {
-      return undefined;
-    }
-    if (!selectedGenes) {
       return undefined;
     }
 
@@ -76,39 +71,34 @@ export const useNucleotideEntropyData = (
 };
 
 function fetchWeeklyMutationProportions(
-    selector: LapisSelector,
-    sequenceType: 'aa' | 'nuc',
-    signal: AbortSignal
+  selector: LapisSelector,
+  sequenceType: 'aa' | 'nuc',
+  signal: AbortSignal
 ) {
-  //calculate weeks
   const dayArray: UnifiedDay[] = [
     selector.dateRange?.getDateRange().dateFrom!,
     selector.dateRange?.getDateRange().dateTo!,
   ];
   const dayRange = globalDateCache.rangeFromDays(dayArray)!;
   const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
-  const weekDateRanges = new Array<DateRange>();
-  for (let i = 0; i < weeks.length; i++) {
-    let dateRange: DateRange = { dateFrom: weeks[i].firstDay, dateTo: weeks[i].firstDay };
-    weekDateRanges[i] = dateRange;
-  }
 
-  const weekSelectors: LapisSelector[] = weekDateRanges.map(w => ({
+  let weekDateRanges = weeks.map(week => ({
+    dateFrom: week.firstDay,
+    dateTo: week.firstDay,
+  }));
+
+  const weekSelectors = weekDateRanges.map(weekDateRange => ({
     ...selector,
-    dateRange: new FixedDateRangeSelector(w),
+    dateRange: new FixedDateRangeSelector(weekDateRange),
   }));
 
   return Promise.all(
-      weekSelectors.map((w, i) =>
-          MutationProportionData.fromApi(w, sequenceType, signal).then(data => {
-            const proportions: MutationProportionEntry[] = data.payload.map(m => m);
-            let date = weekDateRanges[i];
-            return {
-              proportions,
-              date,
-            };
-          })
-      )
+    weekSelectors.map((weekSelector, i) =>
+      MutationProportionData.fromApi(weekSelector, sequenceType, signal).then(data => ({
+        proportions: data.payload,
+        date: weekDateRanges[i],
+      }))
+    )
   );
 }
 
@@ -145,26 +135,21 @@ function calculateEntropyByTime(
   sequenceType: 'aa' | 'nuc',
   includeDeletions: boolean
 ) {
-  const weeklyMeanEntropies: TransformedTime[] = [];
-  selectedGenes.forEach(selectedGene => {
-    const timeData = weeklyMeanEntropy(weeks, sequenceType, selectedGene, includeDeletions)
-      .slice(0, -1)
-      .map(({ week, meanEntropy }) => {
-        return { day: week.dateFrom?.dayjs.toDate().getTime(), [selectedGene.value]: meanEntropy };
-      });
-    weeklyMeanEntropies.push(timeData);
-  });
-  const timeArr: any = [];
-  const timeMap = new Map();
-  weeklyMeanEntropies.forEach(weeklyEntropy => {
-    weeklyEntropy.forEach(obj => {
-      if (timeMap.has(obj.day)) {
-        timeMap.set(obj.day, { ...timeMap.get(obj.day), ...obj });
-      } else {
-        timeMap.set(obj.day, { ...obj });
-      }
-    });
-  });
-  timeMap.forEach(obj => timeArr.push(obj));
-  return timeArr;
+  const timeMap = selectedGenes
+    .map(selectedGene =>
+      weeklyMeanEntropy(weeks, sequenceType, selectedGene, includeDeletions)
+        .slice(0, -1)
+        .map(({ week, meanEntropy }) => ({
+          day: week.dateFrom?.dayjs.toDate().getTime()!,
+          [selectedGene.value]: meanEntropy,
+        }))
+    )
+    .flat()
+    .reduce((aggregated, weeklyMeanEntropy) => {
+      const previousValue = aggregated[weeklyMeanEntropy.day] ?? {};
+      aggregated[weeklyMeanEntropy.day] = { ...previousValue, ...weeklyMeanEntropy };
+      return aggregated;
+    }, {} as Record<number, any>);
+
+  return Object.values(timeMap);
 }
