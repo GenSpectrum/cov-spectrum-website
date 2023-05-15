@@ -36,11 +36,6 @@ type Props = {
   selector: LapisSelector;
 };
 
-export type TransformedTime = {
-  [x: string]: string | number | undefined;
-  day: number | undefined;
-}[];
-
 type PlotType = 'overTime' | 'perPosition';
 
 type ColorLabelValue = { color: string; label: string; value: string };

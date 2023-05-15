@@ -14,7 +14,6 @@ import { globalDateCache } from '../../helpers/date-cache';
 import { FixedDateRangeSelector } from '../../data/DateRangeSelector';
 import { DateRange } from '../../data/DateRange';
 import jsonRefData from '../../data/refData.json';
-import { TransformedTime } from './NucleotideEntropy';
 import { GeneOption, weeklyMeanEntropy } from './calculateEntropy';
 import { useExploreUrl } from '../../helpers/explore-url';
 import { pprettyColors } from '../../helpers/colors';
@@ -26,7 +25,7 @@ type Props = {
   selectors: LapisSelector[];
 };
 
-function nonNullValues(obj: any) {
+function nonNullValuesToString(obj: object) {
   return Object.entries(obj)
     .filter(([_, value]) => value !== undefined)
     .map(([_, value]) => value)
@@ -43,7 +42,7 @@ export const NucleotideEntropyMultiChart = ({ selectors }: Props) => {
   };
 
   const exploreUrl = useExploreUrl()!;
-  const variants = (exploreUrl.variants ?? []).map(nonNullValues);
+  const variants = (exploreUrl.variants ?? []).map(nonNullValuesToString);
 
   let selectedGeneOptions = genes
     .filter(gene => gene.name === selectedGene)
@@ -134,10 +133,10 @@ function Controls(props: {
 const useData = (
   selectors: LapisSelector[],
   selectedGene: GeneOption[],
-  variants: any,
+  variants: string[],
   sequenceType: SequenceType,
   deletions: boolean
-): any | undefined => {
+) => {
   const days = [
     selectors[0].dateRange?.getDateRange().dateFrom!,
     selectors[0].dateRange?.getDateRange().dateTo!,
@@ -194,30 +193,25 @@ const useData = (
     });
     const ticks = getTicks(dates);
 
-    const timeData: TransformedTime = weeklyMeanEntropy(
+    const weeklyDataByTimestamp = weeklyMeanEntropy(
       weeklyVariantMutationProportionQuery.data,
       sequenceType,
       selectedGene[0],
       deletions
-    ).map(({ week, meanEntropy }, i) => {
-      return {
-        day: week.dateFrom?.dayjs.toDate().getTime(),
+    )
+      .map(({ week, meanEntropy }, i) => ({
+        day: week.dateFrom!.dayjs.toDate().getTime(),
         [variants[Math.floor(i / weekRangesCount)]]: meanEntropy,
-      };
-    });
-    const dayMap = new Map();
-    timeData.forEach(tt => {
-      const day = tt.day;
-      if (dayMap.has(day)) {
-        const dayGroup = dayMap.get(day);
-        dayMap.set(day, { ...dayGroup, ...tt });
-      } else {
-        dayMap.set(day, tt);
-      }
-    });
-    const dayArray = Array.from(dayMap.values()).slice(0, -1); //depending on the day, the latest week just started, so the entropy is calculated as 0 because there are no samples
+      }))
+      .reduce((aggregated, weeklyMeanEntropy) => {
+        const previousValue = aggregated[weeklyMeanEntropy.day] ?? {};
+        aggregated[weeklyMeanEntropy.day] = { ...previousValue, ...weeklyMeanEntropy };
+        return aggregated;
+      }, {} as Record<number, any>);
 
-    return { dayArray, ticks };
+    let plotData = Object.values(weeklyDataByTimestamp); //depending on the day, the latest week just started, so the entropy is calculated as 0 because there are no samples
+
+    return { plotData, ticks };
   }, [
     weeklyVariantMutationProportionQuery,
     selectedGene,
@@ -254,7 +248,7 @@ const Plot = ({ selectors, selectedGeneOptions, variants, sequenceType, includeD
           key={sequenceType}
           width={500}
           height={500}
-          data={data.dayArray}
+          data={data.plotData}
           margin={{
             top: 30,
             right: 20,
@@ -267,7 +261,7 @@ const Plot = ({ selectors, selectedGeneOptions, variants, sequenceType, includeD
             scale='time'
             type='number'
             tickFormatter={formatDate}
-            domain={[(dataMin: any) => dataMin, () => data.dayArray[data.dayArray.length - 1].day]}
+            domain={[(dataMin: any) => dataMin, () => data.plotData[data.plotData.length - 1].day]}
             ticks={data.ticks}
             xAxisId='day'
           />
@@ -281,6 +275,7 @@ const Plot = ({ selectors, selectedGeneOptions, variants, sequenceType, includeD
           <Legend />
           {variants.sort().map((variant, i) => (
             <Line
+              key={variant}
               xAxisId='day'
               type='monotone'
               dataKey={variant}

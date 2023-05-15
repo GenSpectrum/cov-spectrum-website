@@ -27,7 +27,7 @@ const ALL_GENES_SELECTED = {
   startPosition: 0,
   endPosition: 29903,
   aaSeq: '',
-  color: 'dnm',
+  color: 'some color',
 };
 
 function getSelector(dateRange: DateRange) {
