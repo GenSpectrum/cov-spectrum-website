@@ -30,6 +30,7 @@ import { PercentageInput } from '../PercentageInput';
 import { GeneOption } from './calculateEntropy';
 import { CustomBar, CustomTooltip, formatXAxis, getBrushIndex } from './PlotUtils';
 import { useNucleotideEntropyDataByPosition, useNucleotideEntropyDataByTime } from './hooks';
+import { genes } from './genes';
 
 type Props = {
   selector: LapisSelector;
@@ -89,10 +90,6 @@ function assignColorsToGeneOptions<T extends { label: string }>(options: T[]): (
     color: colors[i],
   }));
 }
-
-const genes = jsonRefData.genes;
-!genes.map(o => o.name).includes('All') &&
-  genes.push({ name: 'All', startPosition: 0, endPosition: 29903, aaSeq: '' });
 
 export const options: GeneOption[] = assignColorsToGeneOptions(
   genes.map(gene => {
