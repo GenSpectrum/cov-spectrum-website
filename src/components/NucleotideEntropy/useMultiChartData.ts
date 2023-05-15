@@ -7,14 +7,17 @@ import { FixedDateRangeSelector } from '../../data/DateRangeSelector';
 import { useQuery } from '../../helpers/query-hook';
 import { MutationProportionData } from '../../data/MutationProportionDataset';
 import { useMemo } from 'react';
-import { getTicks } from '../../helpers/ticks';
+import {
+  addSequenceTypeToRecognizeWhenUseQueryDidNotUpdateTheReturnedDataYet,
+  calculateDateTicks,
+} from './hooks';
 
 export const useMultiChartData = (
   selectors: LapisSelector[],
   selectedGene: GeneOption[],
   variants: string[],
   sequenceType: SequenceType,
-  deletions: boolean
+  includeDeletions: boolean
 ) => {
   const days = [
     selectors[0].dateRange?.getDateRange().dateFrom!,
@@ -49,34 +52,31 @@ export const useMultiChartData = (
             date: weekDateRanges[i % weekRangesCount],
           }))
         )
-      ),
-    [selectors, sequenceType]
+      ).then(addSequenceTypeToRecognizeWhenUseQueryDidNotUpdateTheReturnedDataYet(sequenceType)),
+    [weekSelectors, sequenceType]
   );
 
   return useMemo(() => {
     if (!weeklyVariantMutationProportionQuery.data) {
       return undefined;
     }
-    if (!selectedGene) {
+    if (sequenceType !== weeklyVariantMutationProportionQuery.data.sequenceType) {
       return undefined;
     }
     if (!variants[0]) {
       return undefined;
     }
-    if (variants.length * weekRangesCount !== weeklyVariantMutationProportionQuery.data.length) {
-      return undefined;
+    if (variants.length * weekRangesCount !== weeklyVariantMutationProportionQuery.data.value.length) {
+      return undefined; // same as for the sequenceType: The query result might hold outdated data when adding a variant
     }
 
-    const dates = weeklyVariantMutationProportionQuery.data.map(proportionData => {
-      return { date: proportionData.date.dateFrom?.dayjs.toDate()! };
-    });
-    const ticks = getTicks(dates);
+    const ticks = calculateDateTicks(weeklyVariantMutationProportionQuery.data.value);
 
     const weeklyDataByTimestamp = weeklyMeanEntropy(
-      weeklyVariantMutationProportionQuery.data,
+      weeklyVariantMutationProportionQuery.data.value,
       sequenceType,
       selectedGene[0],
-      deletions
+      includeDeletions
     )
       .map(({ week, meanEntropy }, i) => ({
         day: week.dateFrom!.dayjs.toDate().getTime(),
@@ -95,7 +95,7 @@ export const useMultiChartData = (
     weeklyVariantMutationProportionQuery,
     selectedGene,
     variants,
-    deletions,
+    includeDeletions,
     sequenceType,
     weekRangesCount,
   ]);

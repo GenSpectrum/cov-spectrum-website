@@ -101,11 +101,8 @@ export const calculateEntropy = (
   return positionGroups;
 };
 
-function initializePositionProportions(
-  sequenceType: 'aa' | 'nuc',
-  includePositionsWithZeroEntropy: boolean
-) {
-  if (includePositionsWithZeroEntropy) {
+function initializePositionProportions(sequenceType: SequenceType, includePositionsWithZeroEntropy: boolean) {
+  if (!includePositionsWithZeroEntropy) {
     return [] as PositionProportion[];
   }
 

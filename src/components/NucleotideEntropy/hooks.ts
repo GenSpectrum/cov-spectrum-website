@@ -4,12 +4,21 @@ import { calculateEntropy, GeneOption, weeklyMeanEntropy } from './calculateEntr
 import { useQuery } from '../../helpers/query-hook';
 import { MutationProportionData } from '../../data/MutationProportionDataset';
 import { MutationProportionEntry } from '../../data/MutationProportionEntry';
-import { globalDateCache, UnifiedDay } from '../../helpers/date-cache';
+import { globalDateCache } from '../../helpers/date-cache';
 import { DateRange } from '../../data/DateRange';
 import { FixedDateRangeSelector } from '../../data/DateRangeSelector';
 import { useMemo } from 'react';
 import { getTicks } from '../../helpers/ticks';
 import { sortListByAAMutation } from '../../helpers/aa-mutation';
+
+export function addSequenceTypeToRecognizeWhenUseQueryDidNotUpdateTheReturnedDataYet(
+  sequenceType: SequenceType
+) {
+  return <V>(value: V) => ({
+    sequenceType,
+    value,
+  });
+}
 
 export const useNucleotideEntropyDataByPosition = (
   selector: LapisSelector,
@@ -18,10 +27,12 @@ export const useNucleotideEntropyDataByPosition = (
   includePositionsWithZeroEntropy: boolean
 ) => {
   const mutationProportionsForWholeDateRange = useQuery(
-    async signal =>
-      await MutationProportionData.fromApi(selector, sequenceType, signal).then(data => ({
-        proportions: data.payload,
-      })),
+    signal =>
+      MutationProportionData.fromApi(selector, sequenceType, signal)
+        .then(data => ({
+          proportions: data.payload,
+        }))
+        .then(addSequenceTypeToRecognizeWhenUseQueryDidNotUpdateTheReturnedDataYet(sequenceType)),
     [selector, sequenceType]
   );
 
@@ -30,8 +41,12 @@ export const useNucleotideEntropyDataByPosition = (
       return undefined;
     }
 
+    if (sequenceType !== mutationProportionsForWholeDateRange.data.sequenceType) {
+      return undefined;
+    }
+
     return calculateEntropyByPosition(
-      mutationProportionsForWholeDateRange.data.proportions,
+      mutationProportionsForWholeDateRange.data.value.proportions,
       sequenceType,
       includeDeletions,
       includePositionsWithZeroEntropy
@@ -46,7 +61,10 @@ export const useNucleotideEntropyDataByTime = (
   includeDeletions: boolean
 ) => {
   const weeklyMutationProportionQuery = useQuery(
-    async signal => fetchWeeklyMutationProportions(selector, sequenceType, signal),
+    signal =>
+      fetchWeeklyMutationProportions(selector, sequenceType, signal).then(
+        addSequenceTypeToRecognizeWhenUseQueryDidNotUpdateTheReturnedDataYet(sequenceType)
+      ),
     [selector, sequenceType]
   );
 
@@ -55,11 +73,15 @@ export const useNucleotideEntropyDataByTime = (
       return undefined;
     }
 
-    const ticks = calculateDateTicks(weeklyMutationProportionQuery.data);
+    if (sequenceType !== weeklyMutationProportionQuery.data.sequenceType) {
+      return undefined;
+    }
+
+    const ticks = calculateDateTicks(weeklyMutationProportionQuery.data.value);
 
     const timeArr = calculateEntropyByTime(
       selectedGenes,
-      weeklyMutationProportionQuery.data!,
+      weeklyMutationProportionQuery.data.value,
       sequenceType,
       includeDeletions
     );
@@ -73,10 +95,7 @@ function fetchWeeklyMutationProportions(
   sequenceType: 'aa' | 'nuc',
   signal: AbortSignal
 ) {
-  const dayArray: UnifiedDay[] = [
-    selector.dateRange?.getDateRange().dateFrom!,
-    selector.dateRange?.getDateRange().dateTo!,
-  ];
+  const dayArray = [selector.dateRange?.getDateRange().dateFrom!, selector.dateRange?.getDateRange().dateTo!];
   const dayRange = globalDateCache.rangeFromDays(dayArray)!;
   const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
 
@@ -100,9 +119,7 @@ function fetchWeeklyMutationProportions(
   );
 }
 
-function calculateDateTicks(
-  weeklyMutationProportions: { date: DateRange; proportions: MutationProportionEntry[] }[]
-) {
+export function calculateDateTicks(weeklyMutationProportions: { date: DateRange }[]) {
   const dates = weeklyMutationProportions.map(weeklyMutationProportion => ({
     date: weeklyMutationProportion.date.dateFrom?.dayjs.toDate()!,
   }));
