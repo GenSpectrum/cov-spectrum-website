@@ -111,7 +111,7 @@ function calculateDateTicks(
 
 function calculateEntropyByPosition(
   mutations: MutationProportionEntry[] | undefined,
-  sequenceType: 'aa' | 'nuc',
+  sequenceType: SequenceType,
   includeDeletions: boolean,
   includePositionsWithZeroEntropy: boolean
 ) {
@@ -130,7 +130,7 @@ function calculateEntropyByTime(
     date: DateRange;
     proportions: MutationProportionEntry[];
   }>[],
-  sequenceType: 'aa' | 'nuc',
+  sequenceType: SequenceType,
   includeDeletions: boolean
 ) {
   const timeMap = selectedGenes

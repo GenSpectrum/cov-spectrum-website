@@ -38,31 +38,7 @@ export const calculateEntropy = (
   deletions: boolean,
   includePositionsWithZeroEntropy: boolean
 ): PositionEntropy[] => {
-  let positionProps = new Array<PositionProportion>();
-
-  if (sequenceType === 'nuc' && includePositionsWithZeroEntropy) {
-    positionProps = Array.apply(null, Array<PositionProportion>(29903)).map(function (x, i) {
-      let p: PositionProportion = {
-        position: i.toString(),
-        mutation: undefined,
-        original: jsonRefData.nucSeq.substring(i, i + 1),
-        proportion: 0,
-      };
-      return p;
-    });
-  } else if (sequenceType === 'aa' && includePositionsWithZeroEntropy) {
-    jsonRefData.genes.forEach(g =>
-      g.aaSeq.split('').forEach(function (aa, i) {
-        let p: PositionProportion = {
-          position: g.name + ':' + aa + (i + 1).toString(),
-          mutation: undefined,
-          original: aa,
-          proportion: 0,
-        };
-        positionProps.push(p);
-      })
-    );
-  }
+  let positionProps = initializePositionProportions(sequenceType, includePositionsWithZeroEntropy);
 
   mutations?.forEach(mut => {
     if (sequenceType === 'aa') {
@@ -124,6 +100,35 @@ export const calculateEntropy = (
 
   return positionGroups;
 };
+
+function initializePositionProportions(
+  sequenceType: 'aa' | 'nuc',
+  includePositionsWithZeroEntropy: boolean
+): PositionProportion[] {
+  if (!includePositionsWithZeroEntropy) {
+    return [];
+  }
+
+  if (sequenceType === 'nuc') {
+    return Array.from<PositionProportion>({ length: 29903 }).map((_, i) => ({
+      position: i.toString(),
+      mutation: undefined,
+      original: jsonRefData.nucSeq.substring(i, i + 1),
+      proportion: 0,
+    }));
+  }
+
+  return jsonRefData.genes
+    .flatMap(gene =>
+      gene.aaSeq.split('').map((aminoAcid, i) => ({
+        position: gene.name + ':' + aminoAcid + (i + 1).toString(),
+        mutation: undefined,
+        original: aminoAcid,
+        proportion: 0,
+      }))
+    )
+    .flat();
+}
 
 const meanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType, gene: GeneOption): number => {
   const filteredPos =
