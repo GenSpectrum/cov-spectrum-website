@@ -29,7 +29,7 @@ import { formatDate } from '../../widgets/VariantTimeDistributionLineChartInner'
 import { PercentageInput } from '../PercentageInput';
 import { GeneOption } from './calculateEntropy';
 import { CustomBar, CustomTooltip, formatXAxis, getBrushIndex } from './PlotUtils';
-import { NucleotideEntropyData, useNucleotideEntropyData } from './hooks';
+import { useNucleotideEntropyDataByPosition, useNucleotideEntropyDataByTime } from './hooks';
 
 type Props = {
   selector: LapisSelector;
@@ -137,9 +137,10 @@ export const NucleotideEntropy = ({ selector }: Props) => {
   };
 
   let geneRange: Gene | undefined = jsonRefData.genes.find(gene => gene.name === selectedGene);
-  return (
-    <NamedCard title='Nucleotide Entropy'>
-      {plotType === 'perPosition' ? (
+
+  if (plotType === 'perPosition') {
+    return (
+      <NamedCard title='Nucleotide Entropy'>
         <PerPositionControls
           sequenceType={sequenceType}
           onSequenceTypeSelect={setSequenceType}
@@ -155,28 +156,36 @@ export const NucleotideEntropy = ({ selector }: Props) => {
           threshold={threshold}
           onThresholdChange={setThreshold}
         />
-      ) : (
-        <OverTimeControls
+        <PerPositionPlot
+          selector={selector}
           sequenceType={sequenceType}
-          onSequenceTypeSelect={setSequenceType}
           includeDeletions={includeDeletions}
-          onIncludeDeletionsChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setIncludeDeletions(event.target.checked);
-          }}
-          onPlotTypeSelect={setPlotType}
-          onSelectedGenesChange={onSelectedGenesChange}
-          selectedGenes={selectedGeneOptions}
+          includePositionsWithZeroEntropy={includeZeroEntropyPositions}
+          threshold={threshold}
+          geneRange={geneRange}
         />
-      )}
-      <Plot
+      </NamedCard>
+    );
+  }
+
+  return (
+    <NamedCard title='Nucleotide Entropy'>
+      <OverTimeControls
+        sequenceType={sequenceType}
+        onSequenceTypeSelect={setSequenceType}
+        includeDeletions={includeDeletions}
+        onIncludeDeletionsChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+          setIncludeDeletions(event.target.checked);
+        }}
+        onPlotTypeSelect={setPlotType}
+        onSelectedGenesChange={onSelectedGenesChange}
+        selectedGenes={selectedGeneOptions}
+      />
+      <OverTimePlot
         selector={selector}
         sequenceType={sequenceType}
         selectedGenes={selectedGenes}
         includeDeletions={includeDeletions}
-        includePositionsWithZeroEntropy={includeZeroEntropyPositions}
-        threshold={threshold}
-        plotType={plotType}
-        geneRange={geneRange}
       />
     </NamedCard>
   );
@@ -357,55 +366,37 @@ function IncludeZeroEntropyPositionsCheckbox(props: {
   );
 }
 
-type PlotProps = {
+type PerPositionPlotProps = {
   selector: LapisSelector;
   sequenceType: 'aa' | 'nuc';
-  selectedGenes: GeneOption[];
   includeDeletions: boolean;
   includePositionsWithZeroEntropy: boolean;
   threshold: number;
-  plotType: PlotType;
   geneRange: Gene | undefined;
 };
 
-export const Plot = ({
+export const PerPositionPlot = ({
   selector,
   sequenceType,
-  selectedGenes,
   includeDeletions,
   includePositionsWithZeroEntropy,
   threshold,
-  plotType,
   geneRange,
-}: PlotProps) => {
-  const data = useNucleotideEntropyData(
+}: PerPositionPlotProps) => {
+  const plotData = useNucleotideEntropyDataByPosition(
     selector,
     sequenceType,
-    selectedGenes,
     includeDeletions,
     includePositionsWithZeroEntropy
   );
 
-  if (data === undefined) {
+  if (plotData === undefined) {
     return <Loader />;
   }
 
-  if (plotType === 'perPosition') {
-    return <PerPositionPlot threshold={threshold} plotData={data} geneRange={geneRange} />;
-  }
-  return <OverTimePlot plotData={data} selectedGenes={selectedGenes} />;
-};
-
-type BarPlotProps = {
-  threshold: number;
-  plotData: NucleotideEntropyData;
-  geneRange: Gene | undefined;
-};
-
-export const PerPositionPlot: React.FC<BarPlotProps> = ({ threshold, plotData, geneRange }) => {
-  const filteredEntropy = plotData.positionEntropy.filter(p => p.entropy >= threshold);
-  const startIndex = getBrushIndex(geneRange, filteredEntropy, plotData.sequenceType).startIndex;
-  const stopIndex = getBrushIndex(geneRange, filteredEntropy, plotData.sequenceType).stopIndex;
+  const filteredEntropy = plotData.filter(positionEntropy => positionEntropy.entropy >= threshold);
+  const startIndex = getBrushIndex(geneRange, filteredEntropy, sequenceType).startIndex;
+  const stopIndex = getBrushIndex(geneRange, filteredEntropy, sequenceType).stopIndex;
 
   return (
     <ResponsiveContainer width='100%' height='100%'>
@@ -442,12 +433,25 @@ export const PerPositionPlot: React.FC<BarPlotProps> = ({ threshold, plotData, g
   );
 };
 
-type LinePlotProps = {
-  plotData: NucleotideEntropyData;
+type OverTimePlotProps = {
+  selector: LapisSelector;
+  sequenceType: 'aa' | 'nuc';
   selectedGenes: GeneOption[];
+  includeDeletions: boolean;
 };
 
-export const OverTimePlot: React.FC<LinePlotProps> = ({ plotData, selectedGenes }) => {
+export const OverTimePlot = ({
+  selector,
+  sequenceType,
+  selectedGenes,
+  includeDeletions,
+}: OverTimePlotProps) => {
+  const plotData = useNucleotideEntropyDataByTime(selector, sequenceType, selectedGenes, includeDeletions);
+
+  if (plotData === undefined) {
+    return <Loader />;
+  }
+
   return (
     <ResponsiveContainer width='100%' height='100%'>
       <LineChart

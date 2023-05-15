@@ -1,6 +1,6 @@
 import { LapisSelector } from '../../data/LapisSelector';
 import { SequenceType } from '../../data/SequenceType';
-import { calculateEntropy, GeneOption, PositionEntropy, weeklyMeanEntropy } from './calculateEntropy';
+import { calculateEntropy, GeneOption, weeklyMeanEntropy } from './calculateEntropy';
 import { useQuery } from '../../helpers/query-hook';
 import { MutationProportionData } from '../../data/MutationProportionDataset';
 import { MutationProportionEntry } from '../../data/MutationProportionEntry';
@@ -11,20 +11,12 @@ import { useMemo } from 'react';
 import { getTicks } from '../../helpers/ticks';
 import { sortListByAAMutation } from '../../helpers/aa-mutation';
 
-export type NucleotideEntropyData = {
-  positionEntropy: PositionEntropy[];
-  timeData: any;
-  sequenceType: SequenceType;
-  ticks: number[];
-};
-
-export const useNucleotideEntropyData = (
+export const useNucleotideEntropyDataByPosition = (
   selector: LapisSelector,
   sequenceType: SequenceType,
-  selectedGenes: GeneOption[],
   includeDeletions: boolean,
   includePositionsWithZeroEntropy: boolean
-): NucleotideEntropyData | undefined => {
+) => {
   const mutationProportionsForWholeDateRange = useQuery(
     async signal =>
       await MutationProportionData.fromApi(selector, sequenceType, signal).then(data => ({
@@ -33,24 +25,37 @@ export const useNucleotideEntropyData = (
     [selector, sequenceType]
   );
 
+  return useMemo(() => {
+    if (!mutationProportionsForWholeDateRange.data) {
+      return undefined;
+    }
+
+    return calculateEntropyByPosition(
+      mutationProportionsForWholeDateRange.data.proportions,
+      sequenceType,
+      includeDeletions,
+      includePositionsWithZeroEntropy
+    );
+  }, [mutationProportionsForWholeDateRange, includeDeletions, includePositionsWithZeroEntropy, sequenceType]);
+};
+
+export const useNucleotideEntropyDataByTime = (
+  selector: LapisSelector,
+  sequenceType: SequenceType,
+  selectedGenes: GeneOption[],
+  includeDeletions: boolean
+) => {
   const weeklyMutationProportionQuery = useQuery(
     async signal => fetchWeeklyMutationProportions(selector, sequenceType, signal),
     [selector, sequenceType]
   );
 
   return useMemo(() => {
-    if (!mutationProportionsForWholeDateRange.data || !weeklyMutationProportionQuery.data) {
+    if (!weeklyMutationProportionQuery.data) {
       return undefined;
     }
 
     const ticks = calculateDateTicks(weeklyMutationProportionQuery.data);
-
-    const sortedEntropy = calculateEntropyByPosition(
-      mutationProportionsForWholeDateRange.data.proportions,
-      sequenceType,
-      includeDeletions,
-      includePositionsWithZeroEntropy
-    );
 
     const timeArr = calculateEntropyByTime(
       selectedGenes,
@@ -59,15 +64,8 @@ export const useNucleotideEntropyData = (
       includeDeletions
     );
 
-    return { positionEntropy: sortedEntropy, timeData: timeArr, sequenceType: sequenceType, ticks };
-  }, [
-    mutationProportionsForWholeDateRange,
-    weeklyMutationProportionQuery,
-    selectedGenes,
-    includeDeletions,
-    includePositionsWithZeroEntropy,
-    sequenceType,
-  ]);
+    return { timeData: timeArr, ticks };
+  }, [weeklyMutationProportionQuery, selectedGenes, includeDeletions, sequenceType]);
 };
 
 function fetchWeeklyMutationProportions(

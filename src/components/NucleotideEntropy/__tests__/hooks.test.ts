@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import { useNucleotideEntropyData } from '../hooks';
+import { useNucleotideEntropyDataByPosition, useNucleotideEntropyDataByTime } from '../hooks';
 import { MutationProportionData } from '../../../data/MutationProportionDataset';
 import { SamplingStrategy } from '../../../data/SamplingStrategy';
 import { addDefaultHostAndQc } from '../../../data/HostAndQcSelector';
@@ -38,18 +38,17 @@ function getSelector(dateRange: DateRange) {
   });
 }
 
-describe('useNucleotideEntropyData', () => {
+describe('useNucleotideEntropyDataByPosition', () => {
   test('should return undefined if backend request fails', async () => {
     mutationProportionDataMock.mockRejectedValue('no data');
 
     const { result } = renderHook(() =>
-      useNucleotideEntropyData(
+      useNucleotideEntropyDataByPosition(
         getSelector({
           dateFrom: globalDateCache.getDay('2023-05-01'),
           dateTo: globalDateCache.getDay('2023-05-15'),
         }),
         'aa',
-        [],
         false,
         false
       )
@@ -69,35 +68,142 @@ describe('useNucleotideEntropyData', () => {
     });
 
     const { result } = renderHook(() =>
-      useNucleotideEntropyData(
+      useNucleotideEntropyDataByPosition(
         getSelector({
           dateFrom: globalDateCache.getDay('2023-05-01'),
           dateTo: globalDateCache.getDay('2023-05-15'),
         }),
         'nuc',
-        [ALL_GENES_SELECTED],
         false,
         false
       )
     );
     await act(() => {});
 
-    expect(result.current).toStrictEqual({
-      positionEntropy: [
-        {
-          entropy: -0,
-          original: 'T',
-          position: '670',
-          proportions: [{ mutation: 'G', original: 'T', position: '670', proportion: 1 }],
-        },
-        {
-          entropy: -0,
-          original: 'T',
-          position: '671',
-          proportions: [{ mutation: 'G', original: 'T', position: '671', proportion: 1 }],
-        },
+    expect(result.current).toStrictEqual([
+      {
+        entropy: -0,
+        original: 'T',
+        position: '670',
+        proportions: [{ mutation: 'G', original: 'T', position: '670', proportion: 1 }],
+      },
+      {
+        entropy: -0,
+        original: 'T',
+        position: '671',
+        proportions: [{ mutation: 'G', original: 'T', position: '671', proportion: 1 }],
+      },
+    ]);
+  });
+
+  test('should compute entropy for a mutation', async () => {
+    mutationProportionDataMock.mockResolvedValue({
+      selector: DEFAULT_SELECTOR,
+      payload: [{ mutation: 'T671G', proportion: 0.3, count: 42 }],
+    });
+
+    const { result } = renderHook(() =>
+      useNucleotideEntropyDataByPosition(
+        getSelector({
+          dateFrom: globalDateCache.getDay('2023-05-01'),
+          dateTo: globalDateCache.getDay('2023-05-15'),
+        }),
+        'nuc',
+        false,
+        false
+      )
+    );
+    await act(() => {});
+
+    expect(result.current).toStrictEqual([
+      {
+        entropy: 0.6108643020548935,
+        original: 'T',
+        position: '671',
+        proportions: [
+          { mutation: 'G', original: 'T', position: '671', proportion: 0.3 },
+          { mutation: 'T (ref)', original: 'T', position: '671', proportion: 0.7 },
+        ],
+      },
+    ]);
+  });
+
+  test('should compute entropy for an amino acid mutation', async () => {
+    mutationProportionDataMock.mockResolvedValue({
+      selector: DEFAULT_SELECTOR,
+      payload: [{ mutation: 'ORF8:R101C', proportion: 0.3, count: 42 }],
+    });
+
+    const { result } = renderHook(() =>
+      useNucleotideEntropyDataByPosition(
+        getSelector({
+          dateFrom: globalDateCache.getDay('2023-05-01'),
+          dateTo: globalDateCache.getDay('2023-05-15'),
+        }),
+        'aa',
+        false,
+        false
+      )
+    );
+    await act(() => {});
+
+    expect(result.current).toStrictEqual([
+      {
+        entropy: 0.6108643020548935,
+        original: 'R',
+        position: 'ORF8:R101',
+        proportions: [
+          { mutation: 'C', original: 'R', position: 'ORF8:R101', proportion: 0.3 },
+          { mutation: 'R (ref)', original: 'R', position: 'ORF8:R101', proportion: 0.7 },
+        ],
+      },
+    ]);
+  });
+});
+
+describe('useNucleotideEntropyDataByTime', () => {
+  test('should return undefined if backend request fails', async () => {
+    mutationProportionDataMock.mockRejectedValue('no data');
+
+    const { result } = renderHook(() =>
+      useNucleotideEntropyDataByTime(
+        getSelector({
+          dateFrom: globalDateCache.getDay('2023-05-01'),
+          dateTo: globalDateCache.getDay('2023-05-15'),
+        }),
+        'aa',
+        [ALL_GENES_SELECTED],
+        false
+      )
+    );
+    await act(() => {});
+
+    expect(result.current).toBe(undefined);
+  });
+
+  test('should return no entropy for two mutations that always occur', async () => {
+    mutationProportionDataMock.mockResolvedValue({
+      selector: DEFAULT_SELECTOR,
+      payload: [
+        { mutation: 'T670G', proportion: 1, count: 42 },
+        { mutation: 'T671G', proportion: 1, count: 42 },
       ],
-      sequenceType: 'nuc',
+    });
+
+    const { result } = renderHook(() =>
+      useNucleotideEntropyDataByTime(
+        getSelector({
+          dateFrom: globalDateCache.getDay('2023-05-01'),
+          dateTo: globalDateCache.getDay('2023-05-15'),
+        }),
+        'nuc',
+        [ALL_GENES_SELECTED],
+        false
+      )
+    );
+    await act(() => {});
+
+    expect(result.current).toStrictEqual({
       ticks: [1682892000000, 1683496800000, 1684101600000],
       timeData: [
         {
@@ -119,32 +225,19 @@ describe('useNucleotideEntropyData', () => {
     });
 
     const { result } = renderHook(() =>
-      useNucleotideEntropyData(
+      useNucleotideEntropyDataByTime(
         getSelector({
           dateFrom: globalDateCache.getDay('2023-05-01'),
           dateTo: globalDateCache.getDay('2023-05-15'),
         }),
         'nuc',
         [ALL_GENES_SELECTED],
-        false,
         false
       )
     );
     await act(() => {});
 
     expect(result.current).toStrictEqual({
-      positionEntropy: [
-        {
-          entropy: 0.6108643020548935,
-          original: 'T',
-          position: '671',
-          proportions: [
-            { mutation: 'G', original: 'T', position: '671', proportion: 0.3 },
-            { mutation: 'T (ref)', original: 'T', position: '671', proportion: 0.7 },
-          ],
-        },
-      ],
-      sequenceType: 'nuc',
       ticks: [1682892000000, 1683496800000, 1684101600000],
       timeData: [
         {
@@ -166,32 +259,19 @@ describe('useNucleotideEntropyData', () => {
     });
 
     const { result } = renderHook(() =>
-      useNucleotideEntropyData(
+      useNucleotideEntropyDataByTime(
         getSelector({
           dateFrom: globalDateCache.getDay('2023-05-01'),
           dateTo: globalDateCache.getDay('2023-05-15'),
         }),
         'aa',
         [ALL_GENES_SELECTED],
-        false,
         false
       )
     );
     await act(() => {});
 
     expect(result.current).toStrictEqual({
-      positionEntropy: [
-        {
-          entropy: 0.6108643020548935,
-          original: 'R',
-          position: 'ORF8:R101',
-          proportions: [
-            { mutation: 'C', original: 'R', position: 'ORF8:R101', proportion: 0.3 },
-            { mutation: 'R (ref)', original: 'R', position: 'ORF8:R101', proportion: 0.7 },
-          ],
-        },
-      ],
-      sequenceType: 'aa',
       ticks: [1682892000000, 1683496800000, 1684101600000],
       timeData: [
         {
