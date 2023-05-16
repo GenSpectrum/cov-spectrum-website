@@ -71,7 +71,7 @@ describe('filterByDateRange', function () {
   });
 });
 
-function getTestWasteWaterDataWithLocation(
+export function getTestWasteWaterDataWithLocation(
   dates = ['2021-01-01', '2021-01-02', '2021-01-03', '2021-01-04'],
   variants = ['variantName1'],
   locations = ['location1']
