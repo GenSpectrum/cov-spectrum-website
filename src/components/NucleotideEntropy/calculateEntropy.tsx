@@ -104,13 +104,13 @@ export const calculateEntropy = (
 function initializePositionProportions(
   sequenceType: 'aa' | 'nuc',
   includePositionsWithZeroEntropy: boolean
-): PositionProportion[] {
-  if (!includePositionsWithZeroEntropy) {
-    return [];
+) {
+  if (includePositionsWithZeroEntropy) {
+    return [] as PositionProportion[];
   }
 
   if (sequenceType === 'nuc') {
-    return Array.from<PositionProportion>({ length: 29903 }).map((_, i) => ({
+    return Array.from({ length: 29903 }).map((_, i) => ({
       position: i.toString(),
       mutation: undefined,
       original: jsonRefData.nucSeq.substring(i, i + 1),
