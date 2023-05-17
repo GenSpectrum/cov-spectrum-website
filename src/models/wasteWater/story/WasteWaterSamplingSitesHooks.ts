@@ -58,7 +58,7 @@ export function filterByDateRange(
   }));
 }
 
-export function minMaxDate(wasteWaterData: WasteWaterDataWithLocation[]) {
+export function getMaxDateRange(wasteWaterData: WasteWaterDataWithLocation[]) {
   const allDates = wasteWaterData
     .flatMap(({ variantsTimeseriesSummaries }) => variantsTimeseriesSummaries)
     .flatMap(({ data }) => data)

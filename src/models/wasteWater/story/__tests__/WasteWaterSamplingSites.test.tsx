@@ -1,5 +1,5 @@
 import ResizeObserver from 'resize-observer-polyfill';
-import { filterByDateRange, minMaxDate, useWasteWaterData } from '../WasteWaterSamplingSitesHooks';
+import { filterByDateRange, getMaxDateRange, useWasteWaterData } from '../WasteWaterSamplingSitesHooks';
 import { render, screen } from '@testing-library/react';
 import { WasteWaterSamplingSites } from '../WasteWaterSamplingSites';
 import { getTestWasteWaterDataWithLocation } from './WasteWaterSamplingSitesHooks.test';
@@ -29,7 +29,7 @@ beforeEach(() => {
 jest.mock('../WasteWaterSamplingSitesHooks');
 const useWasteWaterDataMock = useWasteWaterData as jest.Mock;
 const filterByDateRangeMock = filterByDateRange as jest.Mock;
-const minMaxDateMock = minMaxDate as jest.Mock;
+const minMaxDateMock = getMaxDateRange as jest.Mock;
 
 describe('WasteWaterSamplingSites', function () {
   it('should display loader when no data is provided', function () {

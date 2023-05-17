@@ -63,13 +63,11 @@ function getXAxisTicks(
   }
   datesToSelectFrom.sort((a, b) => a - b);
 
-  const ticks = getTicks(
+  return getTicks(
     datesToSelectFrom.map(date => {
       return { date: new Date(date) };
     })
-  ); // TODO This does not seem efficient
-
-  return ticks;
+  );
 }
 
 function getXAxisDomain(dateRange: DateRange, ticks: number[]) {

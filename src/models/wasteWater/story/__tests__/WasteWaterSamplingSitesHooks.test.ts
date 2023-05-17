@@ -1,6 +1,6 @@
 import {
   filterByDateRange,
-  minMaxDate,
+  getMaxDateRange,
   useWasteWaterData,
   WasteWaterDataWithLocation,
 } from '../WasteWaterSamplingSitesHooks';
@@ -99,7 +99,7 @@ export function getTestWasteWaterDataWithLocation(
   });
 }
 
-describe('minMaxDate', function () {
+describe('getMaxDateRange', function () {
   it('should return minimum and maximum date of wasteWaterData', function () {
     const wasteWaterDataWithLocation = getTestWasteWaterDataWithLocation([
       '2021-01-01',
@@ -108,20 +108,20 @@ describe('minMaxDate', function () {
       '2021-01-04',
     ]);
 
-    const dateRange = minMaxDate(wasteWaterDataWithLocation);
+    const dateRange = getMaxDateRange(wasteWaterDataWithLocation);
     expect(dateRange.dateFrom).toEqual(globalDateCache.getDay('2021-01-01'));
     expect(dateRange.dateTo).toEqual(globalDateCache.getDay('2021-01-04'));
   });
 
   it('should return undefined if wasteWaterData is empty', function () {
-    const dateRange = minMaxDate([]);
+    const dateRange = getMaxDateRange([]);
     expect(dateRange.dateTo).toBeUndefined();
     expect(dateRange.dateFrom).toBeUndefined();
   });
 
   it('should return undefined if data is empty', function () {
     const wasteWaterDataWithLocation = getTestWasteWaterDataWithLocation([]);
-    const dateRange = minMaxDate(wasteWaterDataWithLocation);
+    const dateRange = getMaxDateRange(wasteWaterDataWithLocation);
     expect(dateRange.dateTo).toBeUndefined();
     expect(dateRange.dateFrom).toBeUndefined();
   });

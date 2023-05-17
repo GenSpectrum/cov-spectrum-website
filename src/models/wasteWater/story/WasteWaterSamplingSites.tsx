@@ -1,4 +1,4 @@
-import { filterByDateRange, minMaxDate, useWasteWaterData } from './WasteWaterSamplingSitesHooks';
+import { filterByDateRange, getMaxDateRange, useWasteWaterData } from './WasteWaterSamplingSitesHooks';
 import React, { useState } from 'react';
 import { DateRangeSelector, SpecialDateRangeSelector } from '../../../data/DateRangeSelector';
 import Loader from '../../../components/Loader';
@@ -18,7 +18,7 @@ export const WasteWaterSamplingSites = () => {
   }
 
   const dataInTimeRange = filterByDateRange(wasteWaterData, dateRangeSelector.getDateRange());
-  const dateRange = minMaxDate(dataInTimeRange);
+  const dateRange = getMaxDateRange(dataInTimeRange);
 
   return (
     <>
