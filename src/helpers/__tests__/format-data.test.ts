@@ -1,7 +1,7 @@
 import { formatCiPercent, formatPercent, formatProportion } from '../format-data';
 
 describe('formatProportion', function () {
-  it('should format proportion with standart 2 digits after the dot', function () {
+  it('should format proportion with default 2 digits after the dot', function () {
     expect(formatProportion(0.123)).toBe('12.30');
   });
 
@@ -12,7 +12,7 @@ describe('formatProportion', function () {
 });
 
 describe('formatPercent', function () {
-  it('should format percent with standart 2 digits after the dot', function () {
+  it('should format percent with default 2 digits after the dot', function () {
     expect(formatPercent(0.123)).toBe('12.30%');
   });
 

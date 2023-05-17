@@ -2,9 +2,10 @@ import ResizeObserver from 'resize-observer-polyfill';
 import { filterByDateRange, getMaxDateRange, useWasteWaterData } from '../WasteWaterSamplingSitesHooks';
 import { render, screen } from '@testing-library/react';
 import { WasteWaterSamplingSites } from '../WasteWaterSamplingSites';
-import { getTestWasteWaterDataWithLocation } from './WasteWaterSamplingSitesHooks.test';
 import { useResizeDetector } from 'react-resize-detector';
 import { globalDateCache } from '../../../../helpers/date-cache';
+import { getTestWasteWaterDataWithLocation } from '../testHelper';
+import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('recharts', () => {
   const OriginalModule = jest.requireActual('recharts');
@@ -35,7 +36,11 @@ describe('WasteWaterSamplingSites', function () {
   it('should display loader when no data is provided', function () {
     useWasteWaterDataMock.mockReturnValue(undefined);
 
-    render(<WasteWaterSamplingSites />);
+    render(
+      <MemoryRouter>
+        <WasteWaterSamplingSites />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
@@ -56,7 +61,11 @@ describe('WasteWaterSamplingSites', function () {
       dateTo: globalDateCache.getDay('2021-01-04'),
     });
 
-    render(<WasteWaterSamplingSites />);
+    render(
+      <MemoryRouter>
+        <WasteWaterSamplingSites />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText('Past 6 months')).toBeInTheDocument();
     expect(screen.getByText('location1')).toBeInTheDocument();

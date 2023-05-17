@@ -33,11 +33,7 @@ describe('WasteWaterLocationTimeChart', function () {
 
     const variants = getWasteWaterLocationTimeChartProps(datesOfData, variantNames);
 
-    render(
-      <div style={{ width: 500, height: 500 }}>
-        <WasteWaterLocationTimeChart variants={variants} dateRange={dateRange} />
-      </div>
-    );
+    render(<WasteWaterLocationTimeChart variants={variants} dateRange={dateRange} />);
 
     expect(screen.getByText('No data')).toBeInTheDocument();
   });

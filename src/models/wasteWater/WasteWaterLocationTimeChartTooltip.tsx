@@ -6,29 +6,29 @@ import { formatCiPercent, formatPercent } from '../../helpers/format-data';
 import { deEscapeValueName } from './RechartsKeyConversion';
 
 export const WasteWaterTooltip = ({ active, payload }: TooltipProps<ValueType, NameType>) => {
-  if (active && payload && payload.length > 0) {
-    return (
-      <div className='custom-tooltip'>
-        <div>Date: {formatDate(payload[0].payload.date)}</div>
-        <div>
-          {payload.map((p: any) => {
-            const name = p.name.replace('proportions.', '');
-            return (
-              <TooltipRow
-                key={`tooltipRow${name}`}
-                name={name}
-                proportion={p.payload.proportions[name]}
-                proportionCI={p.payload.proportionCIs[name]}
-                color={p.color}
-              />
-            );
-          })}
-        </div>
-      </div>
-    );
+  if (!(active && payload && payload.length > 0)) {
+    return null;
   }
 
-  return null;
+  return (
+    <div className='custom-tooltip'>
+      <div>Date: {formatDate(payload[0].payload.date)}</div>
+      <div>
+        {payload.map((p: any) => {
+          const name = p.name.replace('proportions.', '');
+          return (
+            <TooltipRow
+              key={`tooltipRow${name}`}
+              name={name}
+              proportion={p.payload.proportions[name]}
+              proportionCI={p.payload.proportionCIs[name]}
+              color={p.color}
+            />
+          );
+        })}
+      </div>
+    </div>
+  );
 };
 
 const TooltipRow = ({

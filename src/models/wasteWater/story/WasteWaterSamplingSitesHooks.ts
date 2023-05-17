@@ -22,7 +22,7 @@ export function useWasteWaterData(): WasteWaterDataWithLocation[] | undefined {
     }).then(dataset => dataset && setWasteWaterData(dataset));
   }, []);
 
-  const locationData = useMemo(() => {
+  return useMemo(() => {
     if (!wasteWaterData) {
       return undefined;
     }
@@ -39,8 +39,6 @@ export function useWasteWaterData(): WasteWaterDataWithLocation[] | undefined {
       return { location, variantsTimeseriesSummaries };
     });
   }, [wasteWaterData]);
-
-  return locationData;
 }
 
 export function filterByDateRange(
