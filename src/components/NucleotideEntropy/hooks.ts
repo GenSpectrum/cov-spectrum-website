@@ -95,14 +95,7 @@ function fetchWeeklyMutationProportions(
   sequenceType: 'aa' | 'nuc',
   signal: AbortSignal
 ) {
-  const dayArray = [selector.dateRange?.getDateRange().dateFrom!, selector.dateRange?.getDateRange().dateTo!];
-  const dayRange = globalDateCache.rangeFromDays(dayArray)!;
-  const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
-
-  let weekDateRanges = weeks.map(week => ({
-    dateFrom: week.firstDay,
-    dateTo: week.firstDay,
-  }));
+  let weekDateRanges = computeWeeklyDateRanges(selector);
 
   const weekSelectors = weekDateRanges.map(weekDateRange => ({
     ...selector,
@@ -117,6 +110,24 @@ function fetchWeeklyMutationProportions(
       }))
     )
   );
+}
+
+export function computeWeeklyDateRanges(selector: LapisSelector) {
+  const startAndEndDays = [
+    selector.dateRange?.getDateRange().dateFrom!,
+    selector.dateRange?.getDateRange().dateTo!,
+  ];
+
+  const dayRange = globalDateCache.rangeFromDays(startAndEndDays)!;
+  const weeks = globalDateCache.weeksFromRange({
+    min: dayRange.min.isoWeek,
+    max: dayRange.max.isoWeek,
+  });
+
+  return weeks.map(week => ({
+    dateFrom: week.firstDay,
+    dateTo: globalDateCache.getDayUsingDayjs(week.firstDay.dayjs.endOf('week')),
+  }));
 }
 
 export function calculateDateTicks(weeklyMutationProportions: { date: DateRange }[]) {

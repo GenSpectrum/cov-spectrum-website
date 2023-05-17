@@ -1,8 +1,6 @@
 import { LapisSelector } from '../../data/LapisSelector';
 import { GeneOption, weeklyMeanEntropy } from './calculateEntropy';
 import { SequenceType } from '../../data/SequenceType';
-import { globalDateCache } from '../../helpers/date-cache';
-import { DateRange } from '../../data/DateRange';
 import { FixedDateRangeSelector } from '../../data/DateRangeSelector';
 import { useQuery } from '../../helpers/query-hook';
 import { MutationProportionData } from '../../data/MutationProportionDataset';
@@ -10,6 +8,7 @@ import { useMemo } from 'react';
 import {
   addSequenceTypeToRecognizeWhenUseQueryDidNotUpdateTheReturnedDataYet,
   calculateDateTicks,
+  computeWeeklyDateRanges,
 } from './hooks';
 
 export const useMultiChartData = (
@@ -19,20 +18,7 @@ export const useMultiChartData = (
   sequenceType: SequenceType,
   includeDeletions: boolean
 ) => {
-  const days = [
-    selectors[0].dateRange?.getDateRange().dateFrom!,
-    selectors[0].dateRange?.getDateRange().dateTo!,
-  ];
-  const dayRange = globalDateCache.rangeFromDays(days)!;
-  const weekDateRanges: DateRange[] = globalDateCache
-    .weeksFromRange({
-      min: dayRange.min.isoWeek,
-      max: dayRange.max.isoWeek,
-    })
-    .map(week => ({
-      dateFrom: week.firstDay,
-      dateTo: week.firstDay,
-    }));
+  const weekDateRanges = computeWeeklyDateRanges(selectors[0]);
 
   const weekSelectors = selectors.flatMap(selector =>
     weekDateRanges.map(weekRange => ({
