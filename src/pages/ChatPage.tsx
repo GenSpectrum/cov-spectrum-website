@@ -3,7 +3,6 @@ import React, { useMemo } from 'react';
 import { useQuery } from '../helpers/query-hook';
 import { checkAuthentication } from '../data/chat/api-chat';
 import '@chatscope/chat-ui-kit-styles/dist/default/styles.min.css';
-import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { ChatMain } from '../components/chat/ChatMain';
 
 export const ChatPage = () => {
@@ -17,15 +16,6 @@ export const ChatPage = () => {
     },
     [accessKey]
   );
-
-  if (sequenceDataSource !== 'gisaid') {
-    return (
-      <>
-        The chat is currently only available at{' '}
-        <a href='https://cov-spectrum.org/chat'>https://cov-spectrum.org/chat</a>.
-      </>
-    );
-  }
 
   if (!accessKey) {
     return (

@@ -1,5 +1,6 @@
 import { get, post, HOST } from '../api';
 import { ChatConversation, ChatSystemMessage } from './types-chat';
+import { SequenceDataSource } from '../../helpers/sequence-data-source';
 
 export async function checkAuthentication(accessKey: string, signal?: AbortSignal): Promise<boolean> {
   const params = new URLSearchParams();
@@ -12,11 +13,13 @@ export async function checkAuthentication(accessKey: string, signal?: AbortSigna
 export async function createConversation(
   accessKey: string,
   toBeLogged: boolean,
+  dataSource: SequenceDataSource,
   signal?: AbortSignal
 ): Promise<ChatConversation> {
   const params = new URLSearchParams();
   params.set('accessKey', accessKey);
   params.set('toBeLogged', toBeLogged.toString());
+  params.set('dataSource', dataSource);
   const res = await post(`/chat/createConversation?${params.toString()}`, undefined, signal);
   handleCommonErrors(res.status);
   const id = await res.text();
