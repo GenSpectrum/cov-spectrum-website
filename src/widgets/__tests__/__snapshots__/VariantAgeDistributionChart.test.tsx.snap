@@ -62,7 +62,7 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
                 2.08%
               </div>
               <div
-                className="sc-bcXHqe bjCFoe self-end"
+                className="sc-bgqQcB buxxeA self-end"
               />
             </div>
             <div
@@ -133,7 +133,7 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
                 13
               </div>
               <div
-                className="sc-bcXHqe bjCFoe self-end"
+                className="sc-bgqQcB buxxeA self-end"
               />
             </div>
             <div

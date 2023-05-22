@@ -16,7 +16,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
       className="h-full"
     >
       <div
-        className="sc-bcXHqe idcAl"
+        className="sc-bgqQcB iTKDhP"
       >
         <h3
           className="my-0 pr-10 pt-0 text-gray-500"
@@ -24,10 +24,10 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
           Estimated probability of death by age group
         </h3>
         <div
-          className="sc-gswNZR jVvoKy"
+          className="sc-gTRrQi elYrUj"
         >
           <div
-            className="sc-dkrFOg kGkFVY"
+            className="sc-ewnqHT fpGYCl"
           >
             <div
               className="recharts-responsive-container"
@@ -47,7 +47,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
           >
             <div>
               <div
-                className="sc-eDvSVe dekPos"
+                className="sc-dicizt gtqZSZ"
               >
                 <svg
                   height={30}
@@ -83,7 +83,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   />
                 </svg>
                 <div
-                  className="sc-jSUZER dEFcBr"
+                  className="sc-iVCKna ggpzZx"
                   style={
                     Object {
                       "color": "#1F407A",
@@ -94,7 +94,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                 </div>
               </div>
               <div
-                className="sc-eDvSVe dekPos"
+                className="sc-dicizt gtqZSZ"
               >
                 <svg
                   height={30}
@@ -134,7 +134,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   </g>
                 </svg>
                 <div
-                  className="sc-jSUZER dEFcBr"
+                  className="sc-iVCKna ggpzZx"
                   style={
                     Object {
                       "color": "#7f8c8d",
@@ -163,7 +163,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   0
                 </div>
                 <div
-                  className="sc-hLBbgP dYEqmk self-end"
+                  className="sc-fFGjHI jbnqCc self-end"
                 />
               </div>
               <div
@@ -234,7 +234,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   110
                 </div>
                 <div
-                  className="sc-hLBbgP dYEqmk self-end"
+                  className="sc-fFGjHI jbnqCc self-end"
                 />
               </div>
               <div
@@ -311,7 +311,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
       className="h-full"
     >
       <div
-        className="sc-bcXHqe idcAl"
+        className="sc-bgqQcB iTKDhP"
       >
         <h3
           className="my-0 pr-10 pt-0 text-gray-500"
@@ -319,10 +319,10 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
           Estimated probability of hospitalization by age group
         </h3>
         <div
-          className="sc-gswNZR jVvoKy"
+          className="sc-gTRrQi elYrUj"
         >
           <div
-            className="sc-dkrFOg kGkFVY"
+            className="sc-ewnqHT fpGYCl"
           >
             <div
               className="recharts-responsive-container"
@@ -342,7 +342,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
           >
             <div>
               <div
-                className="sc-eDvSVe dekPos"
+                className="sc-dicizt gtqZSZ"
               >
                 <svg
                   height={30}
@@ -378,7 +378,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   />
                 </svg>
                 <div
-                  className="sc-jSUZER dEFcBr"
+                  className="sc-iVCKna ggpzZx"
                   style={
                     Object {
                       "color": "#1F407A",
@@ -389,7 +389,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                 </div>
               </div>
               <div
-                className="sc-eDvSVe dekPos"
+                className="sc-dicizt gtqZSZ"
               >
                 <svg
                   height={30}
@@ -429,7 +429,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   </g>
                 </svg>
                 <div
-                  className="sc-jSUZER dEFcBr"
+                  className="sc-iVCKna ggpzZx"
                   style={
                     Object {
                       "color": "#7f8c8d",
@@ -458,7 +458,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   2
                 </div>
                 <div
-                  className="sc-hLBbgP dYEqmk self-end"
+                  className="sc-fFGjHI jbnqCc self-end"
                 />
               </div>
               <div
@@ -529,7 +529,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   108
                 </div>
                 <div
-                  className="sc-hLBbgP dYEqmk self-end"
+                  className="sc-fFGjHI jbnqCc self-end"
                 />
               </div>
               <div
