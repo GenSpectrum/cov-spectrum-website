@@ -7,8 +7,7 @@ import { getTicks } from '../../helpers/ticks';
 import { TooltipSideEffect } from '../../components/RechartsTooltip';
 
 export function formatDate(date: number) {
-  const d = new Date(date);
-  return d.getDate() + '.' + (d.getMonth() + 1);
+  return new Date(date).toISOString().split('T')[0];
 }
 
 interface Props {
