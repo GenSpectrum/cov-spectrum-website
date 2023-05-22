@@ -83,7 +83,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
               0%
             </div>
             <div
-              className="sc-bcXHqe bjCFoe self-end"
+              className="sc-bgqQcB buxxeA self-end"
             />
           </div>
           <div
@@ -154,7 +154,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
               0
             </div>
             <div
-              className="sc-bcXHqe bjCFoe self-end"
+              className="sc-bgqQcB buxxeA self-end"
             />
           </div>
           <div

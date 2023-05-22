@@ -5,7 +5,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
   className="relative h-full"
 >
   <div
-    className="sc-bcXHqe idcAl"
+    className="sc-bgqQcB iTKDhP"
   >
     <h3
       className="my-0 pr-10 pt-0 text-gray-500"
@@ -70,10 +70,10 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
       </div>
     </h3>
     <div
-      className="sc-gswNZR jVvoKy"
+      className="sc-gTRrQi elYrUj"
     >
       <div
-        className="sc-dkrFOg kGkFVY"
+        className="sc-ewnqHT fpGYCl"
       >
         <div
           className="recharts-responsive-container"
@@ -109,7 +109,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
               NaN
             </div>
             <div
-              className="sc-hLBbgP dYEqmk self-end"
+              className="sc-fFGjHI jbnqCc self-end"
             />
           </div>
           <div
@@ -180,7 +180,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
               NaN-NaN
             </div>
             <div
-              className="sc-hLBbgP dYEqmk self-end"
+              className="sc-fFGjHI jbnqCc self-end"
             />
           </div>
           <div
