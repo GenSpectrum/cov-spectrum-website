@@ -26,6 +26,7 @@ import { OutgoingPlainMessage } from './OutgoingPlainMessage';
 import { IncomingResponseMessage } from './IncomingResponseMessage';
 import { CustomMessageInput } from './CustomMessageInput';
 import { sequenceDataSource } from '../../helpers/sequence-data-source';
+import { speak } from '../../helpers/speech-synthesis';
 
 type ChatMainProps = {
   chatAccessKey: string;
@@ -74,6 +75,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
     try {
       const responseMessage = await chatSendMessage(chatAccessKey, conversation.id, contentForAI);
       conversation.messages = [...conversation.messages, responseMessage];
+      speak(responseMessage.textBeforeData + ' ... ' + responseMessage.textAfterData);
     } catch (e) {
       if (e instanceof ChatApiError) {
         setApiError(e);
