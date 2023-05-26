@@ -1,9 +1,11 @@
 import { MessageInput, SendButton } from '@chatscope/chat-ui-kit-react';
 import { getRandomChatPrompt } from '../../data/chat/chat-example-prompts';
 import { GiPerspectiveDiceSixFacesRandom } from 'react-icons/gi';
+import { FaMicrophone } from 'react-icons/fa';
 import { ProgressBar } from 'react-bootstrap';
 import React, { useEffect, useState } from 'react';
 import { useFocus } from '../../helpers/use-focus';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 export type CustomMessageInputProps = {
   disabled: boolean;
@@ -53,6 +55,8 @@ export const CustomMessageInput = ({ disabled, maxLength, onMessageSend }: Custo
     }
   }, [contentInMessageInput.innerText, history]);
 
+  const { transcript, listening, resetTranscript } = useSpeechRecognition();
+
   const changeContentFromUserTyping = (
     innerHtml: string,
     textContent: string,
@@ -85,10 +89,20 @@ export const CustomMessageInput = ({ disabled, maxLength, onMessageSend }: Custo
   };
 
   const sendMessage = async (content: string, randomlyGenerated?: boolean) => {
+    if (listening) {
+      SpeechRecognition.stopListening();
+      resetTranscript();
+    }
     setContentInMessageInput(EMPTY_CHAT_INPUT);
     setHistory([...history, content]);
     onMessageSend(content, randomlyGenerated);
   };
+
+  useEffect(() => {
+    if (transcript !== '') {
+      setContentInMessageInput({ innerHtml: transcript, textContent: transcript, innerText: transcript });
+    }
+  }, [transcript, setContentInMessageInput]);
 
   return (
     <div
@@ -114,6 +128,25 @@ export const CustomMessageInput = ({ disabled, maxLength, onMessageSend }: Custo
         onClick={() => sendMessage(getRandomChatPrompt(), true)}
       >
         <GiPerspectiveDiceSixFacesRandom />
+      </button>
+      <button
+        className={`cs-button ${listening ? 'text-red-600' : ''}`}
+        style={{
+          fontSize: '1.8em',
+          marginLeft: 0,
+          paddingLeft: '0.2em',
+          paddingRight: 0,
+        }}
+        onClick={() => {
+          if (listening) {
+            SpeechRecognition.stopListening();
+            resetTranscript();
+          } else {
+            SpeechRecognition.startListening({ continuous: true });
+          }
+        }}
+      >
+        <FaMicrophone />
       </button>
       <MessageInput
         ref={messageInputRef}
