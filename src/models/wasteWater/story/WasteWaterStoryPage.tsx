@@ -28,12 +28,6 @@ export const WasteWaterStoryPage = () => {
           doi:10.1101/2021.01.08.21249379
         </ExternalLink>{' '}
         and <ExternalLink url='https://github.com/cbg-ethz/cowwid'>cowwid</ExternalLink> for more details).
-        {/*, or*/}
-        {/*at the{' '}*/}
-        {/*<ExternalLink url='https://bsse.ethz.ch/cbg/research/computational-virology/sarscov2-variants-wastewater-surveillance.html#par_textimage_974930497'>*/}
-        {/*  bottom of our webpage for a video presentation*/}
-        {/*</ExternalLink>*/}
-        {/*).*/}
       </p>
       <p>
         Detecting variants in wastewater is challenging if the RNA concentration is low, for example, due to
@@ -41,6 +35,18 @@ export const WasteWaterStoryPage = () => {
         proportions of variants are less reliable in this situation.
       </p>
       <WasteWaterSamplingSites />
+      <DataSources />
+      <VideoPresentation />
+      <Acknowledgements />
+      <Funding />
+      <Contact />
+    </div>
+  );
+};
+
+const DataSources = () => {
+  return (
+    <div>
       <h2>Data sources</h2>
       <p>
         <ExternalLink url={'https://www.eawag.ch/en/department/sww/projects/sars-cov2-in-wastewater/'}>
@@ -61,6 +67,13 @@ export const WasteWaterStoryPage = () => {
         Niederglatt-Fischbach, Uster, Bülach-Furt, Wetzikon-Flos, Horgen-Oberrieden, Meilen, Affoltern
         a.A.-Zwillikon, and Illnau-Mannenberg.
       </p>
+    </div>
+  );
+};
+
+const VideoPresentation = () => {
+  return (
+    <div>
       <h2>Video presentation of the surveillance project</h2>
       <p>
         During the webinar{' '}
@@ -74,34 +87,61 @@ export const WasteWaterStoryPage = () => {
         </ExternalLink>
         .
       </p>
+    </div>
+  );
+};
+
+const Acknowledgements = () => {
+  return (
+    <div>
       <h2>Acknowledgements</h2>
       <h3>Computational Biology Group (CBG) ETH Zürich / Swiss Institute of Bioinformatics</h3>
-      <p>
-        Katharina Jahn, Pelin Burcak Icer, David Dreifuss, Ivan Topolsky, Lara Fuhrmann, Kim Philipp
-        Jablonski, Anika John, Niko Beerenwinkel
-      </p>
+      <Authors
+        authors={
+          'Katharina Jahn, Pelin Burcak Icer, David Dreifuss, Ivan Topolsky, Lara Fuhrmann, Kim Philipp Jablonski, Anika John, Niko Beerenwinkel'
+        }
+      />
       <h3>Computational Evolution (cEvo) ETH Zürich / Swiss Institute of Bioinformatics</h3>
-      <p>Chaoran Chen, Sarah Nadeau, Tanja Stadler</p>
+      <Authors authors={'Chaoran Chen, Sarah Nadeau, Tanja Stadler'} />
       <h3>
         <ExternalLink url={'https://www.nexus.ethz.ch/'}>NEXUS Personalized Health Technologies</ExternalLink>
         , ETH Zürich / Swiss Institute of Bioinformatics
       </h3>
-      <p>Matteo Carrara, Franziska Singer</p>
+      <Authors authors={'Matteo Carrara, Franziska Singer'} />
       <h3>Eawag</h3>
-      <p>
-        Anina Kull, Pravin Ganesanandamoorthy, Carola Bänziger, Alexander J. Devaux, Elyse Stachler, Lea
-        Caduff, Christoph Ort, Timothy R. Julian
-      </p>
+      <Authors
+        authors={
+          'Anina Kull, Pravin Ganesanandamoorthy, Carola Bänziger, Alexander J. Devaux, Elyse Stachler, Lea Caduff, Christoph Ort, Timothy R. Julian'
+        }
+      />
       <h3>Functional Genomic Center Zürich</h3>
-      <p>Catharine Aquino, Lennart Opitz, Tim Sykes</p>
+      <Authors authors={'Catharine Aquino, Lennart Opitz, Tim Sykes'} />
       <h3>Genomic Facility Basel</h3>
-      <p>Mirjam Feldkamp, Christian Beisel</p>
+      <Authors authors={'Mirjam Feldkamp, Christian Beisel'} />
       <h3>Laboratory of Environmental Chemistry EPFL</h3>
-      <p>Xavier Fernandez-Cassi, Federica Cariti, Alex Tuñas Corzón, Tamar Kohn</p>
+      <Authors authors={'Xavier Fernandez-Cassi, Federica Cariti, Alex Tuñas Corzón, Tamar Kohn'} />
       <h3>Microsynth AG</h3>
-      <p>Cristoph Gruenih, Maria-Luise Deflorian</p>
+      <Authors authors={'Cristoph Gruenih, Maria-Luise Deflorian'} />
+    </div>
+  );
+};
+
+const Authors = ({ authors }: { authors: string }) => {
+  return <p className={'italic'}>{authors}</p>;
+};
+
+const Funding = () => {
+  return (
+    <div>
       <h2>Funding</h2>
       <p>Federal Office for Public Health</p>
+    </div>
+  );
+};
+
+const Contact = () => {
+  return (
+    <div>
       <h2>Contact</h2>
       <ExternalLink url={'https://bsse.ethz.ch/cbg'}>Computational Biology, D-BSSE, ETHZ.</ExternalLink> Niko
       Beerenwinkel,
