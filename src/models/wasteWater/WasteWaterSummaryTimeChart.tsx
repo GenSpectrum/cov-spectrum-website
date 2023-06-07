@@ -2,11 +2,13 @@ import React from 'react';
 import { scaleOrdinal } from 'd3-scale';
 import { schemeCategory10 } from 'd3-scale-chromatic';
 import { ChartAndMetricsWrapper, ChartWrapper, TitleWrapper, Wrapper } from '../../widgets/common';
-import { ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { WasteWaterTimeseriesSummaryDataset } from './types';
 import { formatDate } from './WasteWaterTimeChart';
 import { getTicks } from '../../helpers/ticks';
 import { UnifiedDay } from '../../helpers/date-cache';
+import { escapeValueName } from './RechartsKeyConversion';
+import { WasteWaterTooltip } from './WasteWaterLocationTimeChartTooltip';
 
 interface Props {
   wasteWaterPlants: {
@@ -16,58 +18,53 @@ interface Props {
 }
 
 interface LocationMap {
-  [key: string]: number;
+  [location: string]: number;
 }
 
 interface CIMap {
-  [key: string]: [number, number];
-}
-
-/**
- * The key name that will be passed to recharts may not contain additional dots because dots are used to
- * navigate through nested objects.
- */
-function escapeValueName(name: string): string {
-  return name.replaceAll('.', '__');
-}
-
-function deEscapeValueName(escapedName: string): string {
-  return escapedName.replaceAll('__', '.');
+  [location: string]: [number, number];
 }
 
 const CHART_MARGIN_RIGHT = 15;
 
-export const WasteWaterSummaryTimeChart = React.memo(({ wasteWaterPlants }: Props): JSX.Element => {
-  const locations = wasteWaterPlants.map(d => escapeValueName(d.location));
-  const dateMap: Map<UnifiedDay, { date: number; values: LocationMap; cis: CIMap }> = new Map();
+function getPlotData(wasteWaterPlants: { location: string; data: WasteWaterTimeseriesSummaryDataset }[]) {
+  const dateMap: Map<UnifiedDay, { date: number; proportions: LocationMap; proportionCIs: CIMap }> =
+    new Map();
 
   for (let { location, data } of wasteWaterPlants) {
     for (let { date, proportion, proportionCI } of data) {
       if (!dateMap.has(date)) {
         dateMap.set(date, {
           date: date.dayjs.valueOf(),
-          values: {},
-          cis: {},
+          proportions: {},
+          proportionCIs: {},
         });
       }
-      dateMap.get(date)!.values[escapeValueName(location)] = Math.max(proportion, 0);
-      dateMap.get(date)!.cis[escapeValueName(location)] = proportionCI;
+      dateMap.get(date)!.proportions[escapeValueName(location)] = Math.max(proportion, 0);
+      dateMap.get(date)!.proportionCIs[escapeValueName(location)] = proportionCI;
     }
   }
 
-  const plotData = [...dateMap.values()].sort((a, b) => a.date - b.date);
+  return [...dateMap.values()].sort((a, b) => a.date - b.date);
+}
+
+export const WasteWaterSummaryTimeChart = React.memo(({ wasteWaterPlants }: Props): JSX.Element => {
+  const locations = wasteWaterPlants.map(d => escapeValueName(d.location));
+  const plotData = getPlotData(wasteWaterPlants);
+
   const today = Date.now();
   const ticks = getTicks(plotData.map(({ date }) => ({ date: new Date(date) }))); // TODO This does not seem efficient
   ticks.push(today);
 
   const colorScale = scaleOrdinal(schemeCategory10);
+
   return (
     <Wrapper>
       <TitleWrapper>Estimated prevalence in wastewater samples</TitleWrapper>
       <ChartAndMetricsWrapper>
         <ChartWrapper>
           <ResponsiveContainer>
-            <ComposedChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
+            <LineChart data={plotData} margin={{ top: 6, right: CHART_MARGIN_RIGHT, left: 0, bottom: 0 }}>
               <XAxis
                 dataKey='date'
                 scale='time'
@@ -78,27 +75,18 @@ export const WasteWaterSummaryTimeChart = React.memo(({ wasteWaterPlants }: Prop
               />
               <YAxis domain={['dataMin', 'auto']} />
               <Tooltip
-                formatter={(props: any) => {
-                  const escapedName = props.name.replace('values.', '');
-                  const [ciLower, ciUpper] = props.payload.cis[escapedName];
-                  return [
-                    (props.value * 100).toFixed(2) +
-                      '% [' +
-                      (ciLower * 100).toFixed(2) +
-                      '-' +
-                      (ciUpper * 100).toFixed(2) +
-                      '%]',
-                    deEscapeValueName(escapedName),
-                  ];
-                }}
-                labelFormatter={label => {
-                  return 'Date: ' + formatDate(label);
+                content={<WasteWaterTooltip />}
+                wrapperStyle={{
+                  backgroundColor: 'white',
+                  border: '2px solid #ccc',
+                  borderRadius: '5px',
+                  zIndex: 1000,
                 }}
               />
               {locations.map(location => (
                 <Line
                   type='monotone'
-                  dataKey={'values.' + location}
+                  dataKey={'proportions.' + location}
                   strokeWidth={3}
                   stroke={colorScale(location)}
                   dot={false}
@@ -106,7 +94,7 @@ export const WasteWaterSummaryTimeChart = React.memo(({ wasteWaterPlants }: Prop
                   key={location}
                 />
               ))}
-            </ComposedChart>
+            </LineChart>
           </ResponsiveContainer>
         </ChartWrapper>
       </ChartAndMetricsWrapper>
