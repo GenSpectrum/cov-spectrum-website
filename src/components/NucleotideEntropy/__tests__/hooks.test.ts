@@ -24,7 +24,7 @@ describe('useNucleotideEntropyDataByPosition', () => {
     mutationProportionDataMock.mockRejectedValue('no data');
 
     const { result } = renderHook(() =>
-      useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), 'aa', false, false)
+      useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), 'aa', false, true)
     );
     await act(() => {});
 
@@ -41,7 +41,7 @@ describe('useNucleotideEntropyDataByPosition', () => {
     });
 
     const { result } = renderHook(() =>
-      useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), 'nuc', false, false)
+      useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), 'nuc', false, true)
     );
     await act(() => {});
 
@@ -68,7 +68,7 @@ describe('useNucleotideEntropyDataByPosition', () => {
     });
 
     const { result } = renderHook(() =>
-      useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), 'nuc', false, false)
+      useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), 'nuc', false, true)
     );
     await act(() => {});
 
@@ -92,7 +92,7 @@ describe('useNucleotideEntropyDataByPosition', () => {
     });
 
     const { result } = renderHook(() =>
-      useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), 'nuc', false, true)
+      useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), 'nuc', false, false)
     );
     await act(() => {});
 
@@ -117,7 +117,7 @@ describe('useNucleotideEntropyDataByPosition', () => {
     });
 
     const { result } = renderHook(() =>
-      useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), 'aa', false, false)
+      useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), 'aa', false, true)
     );
     await act(() => {});
 
@@ -142,7 +142,7 @@ describe('useNucleotideEntropyDataByPosition', () => {
 
     const { result, rerender } = renderHook(
       (sequenceType: SequenceType) =>
-        useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), sequenceType, false, false),
+        useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), sequenceType, false, true),
       { initialProps: 'nuc' }
     );
     await act(() => {});
@@ -171,7 +171,7 @@ describe('useNucleotideEntropyDataByPosition', () => {
     });
 
     const { result } = renderHook(() =>
-      useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), 'aa', false, true)
+      useNucleotideEntropyDataByPosition(getSelector(DEFAULT_DATE_RANGE), 'aa', false, false)
     );
     await act(() => {});
 

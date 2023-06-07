@@ -24,7 +24,7 @@ export const useNucleotideEntropyDataByPosition = (
   selector: LapisSelector,
   sequenceType: SequenceType,
   includeDeletions: boolean,
-  includePositionsWithZeroEntropy: boolean
+  excludePositionsWithZeroEntropy: boolean
 ) => {
   const mutationProportionsForWholeDateRange = useQuery(
     signal =>
@@ -49,9 +49,9 @@ export const useNucleotideEntropyDataByPosition = (
       mutationProportionsForWholeDateRange.data.value.proportions,
       sequenceType,
       includeDeletions,
-      includePositionsWithZeroEntropy
+      excludePositionsWithZeroEntropy
     );
-  }, [mutationProportionsForWholeDateRange, includeDeletions, includePositionsWithZeroEntropy, sequenceType]);
+  }, [mutationProportionsForWholeDateRange, includeDeletions, excludePositionsWithZeroEntropy, sequenceType]);
 };
 
 export const useNucleotideEntropyDataByTime = (
@@ -141,13 +141,13 @@ function calculateEntropyByPosition(
   mutations: MutationProportionEntry[] | undefined,
   sequenceType: SequenceType,
   includeDeletions: boolean,
-  includePositionsWithZeroEntropy: boolean
+  excludePositionsWithZeroEntropy: boolean
 ) {
   const positionEntropy = calculateEntropy(
     mutations,
     sequenceType,
     includeDeletions,
-    includePositionsWithZeroEntropy
+    excludePositionsWithZeroEntropy
   );
   return sequenceType === 'aa' ? sortListByAAMutation(positionEntropy, m => m.position) : positionEntropy;
 }

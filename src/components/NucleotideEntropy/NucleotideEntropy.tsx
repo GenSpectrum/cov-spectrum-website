@@ -102,7 +102,7 @@ export const options: GeneOption[] = assignColorsToGeneOptions(
 export const NucleotideEntropy = ({ selector }: Props) => {
   const [plotType, setPlotType] = useState<PlotType>('overTime');
   const [includeDeletions, setIncludeDeletions] = useState<boolean>(false);
-  const [includeZeroEntropyPositions, setIncludeZeroEntropyPositions] = useState<boolean>(false);
+  const [excludeZeroEntropyPositions, setExcludeZeroEntropyPositions] = useState<boolean>(false);
   const [sequenceType, setSequenceType] = useState<SequenceType>('nuc');
   const [threshold, setThreshold] = useState(0.00001);
   const [selectedGene, setSelectedGene] = useState<string>('all');
@@ -143,8 +143,8 @@ export const NucleotideEntropy = ({ selector }: Props) => {
           onPlotTypeSelect={setPlotType}
           selectedGene={selectedGene}
           onSelectedGeneChange={event => setSelectedGene(event.target.value)}
-          includeZeroEntropyPositions={includeZeroEntropyPositions}
-          onIncludeZeroEntropyPositionsChange={event => setIncludeZeroEntropyPositions(event.target.checked)}
+          excludeZeroEntropyPositions={excludeZeroEntropyPositions}
+          onExcludeZeroEntropyPositionsChange={event => setExcludeZeroEntropyPositions(event.target.checked)}
           threshold={threshold}
           onThresholdChange={setThreshold}
         />
@@ -152,7 +152,7 @@ export const NucleotideEntropy = ({ selector }: Props) => {
           selector={selector}
           sequenceType={sequenceType}
           includeDeletions={includeDeletions}
-          includePositionsWithZeroEntropy={includeZeroEntropyPositions}
+          excludePositionsWithZeroEntropy={excludeZeroEntropyPositions}
           threshold={threshold}
           geneRange={geneRange}
         />
@@ -195,8 +195,8 @@ function PerPositionControls(
   props: ControlsProps & {
     selectedGene: string;
     onSelectedGeneChange: (event: ChangeEvent<HTMLInputElement>) => void;
-    includeZeroEntropyPositions: boolean;
-    onIncludeZeroEntropyPositionsChange: (event: ChangeEvent<HTMLInputElement>) => void;
+    excludeZeroEntropyPositions: boolean;
+    onExcludeZeroEntropyPositionsChange: (event: ChangeEvent<HTMLInputElement>) => void;
     threshold: number;
     onThresholdChange: (value: ((prevState: number) => number) | number) => void;
   }
@@ -207,15 +207,15 @@ function PerPositionControls(
       <IncludeDeletionsCheckbox checked={props.includeDeletions} onChange={props.onIncludeDeletionsChange} />
       <PlotTypeSelector selected={'perPosition'} onSelect={props.onPlotTypeSelect} />
       <GeneSelector value={props.selectedGene} onChange={props.onSelectedGeneChange} />
-      <IncludeZeroEntropyPositionsCheckbox
-        checked={props.includeZeroEntropyPositions}
-        onChange={props.onIncludeZeroEntropyPositionsChange}
+      <ExcludeZeroEntropyPositionsCheckbox
+        checked={props.excludeZeroEntropyPositions}
+        onChange={props.onExcludeZeroEntropyPositionsChange}
       />
       <div className='flex mb-2'>
         <div className='mr-2'>Entropy display threshold:</div>
         <PercentageInput ratio={props.threshold} setRatio={props.onThresholdChange} className='mr-2' />
       </div>
-      {props.includeZeroEntropyPositions && (
+      {!props.excludeZeroEntropyPositions && (
         <div>
           <p>
             Setting the entropy display threshold to 0 may lead to slower performance and too many positions
@@ -338,7 +338,7 @@ function MultipleGenesSelector(props: {
   );
 }
 
-function IncludeZeroEntropyPositionsCheckbox(props: {
+function ExcludeZeroEntropyPositionsCheckbox(props: {
   checked: boolean;
   onChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }) {
@@ -352,7 +352,7 @@ function IncludeZeroEntropyPositionsCheckbox(props: {
             inputProps={{ 'aria-label': 'controlled' }}
           />
         }
-        label='Include positions with zero entropy'
+        label='Exclude positions with zero entropy'
       />
     </FormGroup>
   );
@@ -362,7 +362,7 @@ type PerPositionPlotProps = {
   selector: LapisSelector;
   sequenceType: 'aa' | 'nuc';
   includeDeletions: boolean;
-  includePositionsWithZeroEntropy: boolean;
+  excludePositionsWithZeroEntropy: boolean;
   threshold: number;
   geneRange: Gene | undefined;
 };
@@ -371,7 +371,7 @@ export const PerPositionPlot = ({
   selector,
   sequenceType,
   includeDeletions,
-  includePositionsWithZeroEntropy,
+  excludePositionsWithZeroEntropy,
   threshold,
   geneRange,
 }: PerPositionPlotProps) => {
@@ -379,7 +379,7 @@ export const PerPositionPlot = ({
     selector,
     sequenceType,
     includeDeletions,
-    includePositionsWithZeroEntropy
+    excludePositionsWithZeroEntropy
   );
 
   if (plotData === undefined) {

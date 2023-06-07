@@ -36,9 +36,9 @@ export const calculateEntropy = (
   mutations: MutationProportionEntry[] | undefined,
   sequenceType: SequenceType,
   deletions: boolean,
-  includePositionsWithZeroEntropy: boolean
+  excludePositionsWithZeroEntropy: boolean
 ): PositionEntropy[] => {
-  let positionProps = initializePositionProportions(sequenceType, includePositionsWithZeroEntropy);
+  let positionProps = initializePositionProportions(sequenceType, excludePositionsWithZeroEntropy);
 
   mutations?.forEach(mut => {
     if (sequenceType === 'aa') {
@@ -101,8 +101,8 @@ export const calculateEntropy = (
   return positionGroups;
 };
 
-function initializePositionProportions(sequenceType: SequenceType, includePositionsWithZeroEntropy: boolean) {
-  if (!includePositionsWithZeroEntropy) {
+function initializePositionProportions(sequenceType: SequenceType, excludePositionsWithZeroEntropy: boolean) {
+  if (excludePositionsWithZeroEntropy) {
     return [] as PositionProportion[];
   }
 
@@ -160,7 +160,7 @@ export const weeklyMeanEntropy = (
   return weeks.map(week => ({
     week: week.date,
     meanEntropy: meanEntropy(
-      calculateEntropy(week.proportions, sequenceType, deletions, false),
+      calculateEntropy(week.proportions, sequenceType, deletions, true),
       sequenceType,
       selectedGene
     ),
