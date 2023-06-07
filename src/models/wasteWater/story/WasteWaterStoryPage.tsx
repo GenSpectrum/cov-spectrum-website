@@ -95,17 +95,38 @@ const Acknowledgements = () => {
   return (
     <div>
       <h2>Acknowledgements</h2>
-      <h3>Computational Biology Group (CBG) ETH Zürich / Swiss Institute of Bioinformatics</h3>
+      <h3>
+        <ExternalLink url={'https://bsse.ethz.ch/cbg'}>
+          Computational Biology Group (CBG), ETH Zürich{' '}
+        </ExternalLink>{' '}
+        /{' '}
+        <ExternalLink url={'https://www.sib.swiss/niko-beerenwinkel-group'}>
+          Swiss Institute of Bioinformatics
+        </ExternalLink>
+      </h3>
       <Authors
         authors={
           'Katharina Jahn, Pelin Burcak Icer, David Dreifuss, Ivan Topolsky, Lara Fuhrmann, Kim Philipp Jablonski, Anika John, Niko Beerenwinkel'
         }
       />
-      <h3>Computational Evolution (cEvo) ETH Zürich / Swiss Institute of Bioinformatics</h3>
+      <h3>
+        <ExternalLink url={'https://bsse.ethz.ch/cevo'}>
+          Computational Evolution (cEvo), ETH Zürich
+        </ExternalLink>{' '}
+        /{' '}
+        <ExternalLink url={'https://www.sib.swiss/tanja-stadler-group'}>
+          Swiss Institute of Bioinformatics
+        </ExternalLink>
+      </h3>
       <Authors authors={'Chaoran Chen, Sarah Nadeau, Tanja Stadler'} />
       <h3>
-        <ExternalLink url={'https://www.nexus.ethz.ch/'}>NEXUS Personalized Health Technologies</ExternalLink>
-        , ETH Zürich / Swiss Institute of Bioinformatics
+        <ExternalLink url={'https://www.nexus.ethz.ch/'}>
+          NEXUS Personalized Health Technologies, ETH Zürich
+        </ExternalLink>{' '}
+        /{' '}
+        <ExternalLink url={'https://www.sib.swiss/daniel-stekhoven-group'}>
+          Swiss Institute of Bioinformatics
+        </ExternalLink>
       </h3>
       <Authors authors={'Matteo Carrara, Franziska Singer'} />
       <h3>Eawag</h3>
