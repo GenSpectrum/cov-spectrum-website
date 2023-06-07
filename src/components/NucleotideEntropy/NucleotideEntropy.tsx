@@ -387,8 +387,7 @@ export const PerPositionPlot = ({
   }
 
   const filteredEntropy = plotData.filter(positionEntropy => positionEntropy.entropy >= threshold);
-  const startIndex = getBrushIndex(geneRange, filteredEntropy, sequenceType).startIndex;
-  const stopIndex = getBrushIndex(geneRange, filteredEntropy, sequenceType).stopIndex;
+  const { startIndex, stopIndex } = getBrushIndex(geneRange, filteredEntropy, sequenceType);
 
   return (
     <ResponsiveContainer width='100%' height='100%'>
