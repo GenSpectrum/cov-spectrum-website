@@ -1,7 +1,7 @@
 import chroma from 'chroma-js';
 
 // These colors are also used by ppretty
-const pprettyColors = [
+export const pprettyColors = [
   '#353B89',
   '#3B8935',
   '#F0A21A',
