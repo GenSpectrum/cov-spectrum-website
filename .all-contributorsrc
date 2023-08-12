@@ -173,6 +173,26 @@
         "ideas",
         "research"
       ]
+    },
+    {
+      "login": "GeorgKreuzmayr",
+      "name": "GeorgKreuzmayr",
+      "avatar_url": "https://avatars.githubusercontent.com/u/68595015?v=4",
+      "profile": "https://github.com/GeorgKreuzmayr",
+      "contributions": [
+        "code",
+        "research"
+      ]
+    },
+    {
+      "login": "danielgrittner",
+      "name": "Daniel Grittner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/29932077?v=4",
+      "profile": "https://github.com/danielgrittner",
+      "contributions": [
+        "code",
+        "research"
+      ]
     }
   ],
   "contributorsPerLine": 7
