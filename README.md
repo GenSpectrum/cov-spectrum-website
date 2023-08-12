@@ -32,6 +32,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JonasKellerer"><img src="https://avatars.githubusercontent.com/u/122305307?v=4?s=100" width="100px;" alt="Jonas Kellerer"/><br /><sub><b>Jonas Kellerer</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=JonasKellerer" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/philipschulz"><img src="https://avatars.githubusercontent.com/u/16674735?v=4?s=100" width="100px;" alt="Philip Schulz"/><br /><sub><b>Philip Schulz</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=philipschulz" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Taepper"><img src="https://avatars.githubusercontent.com/u/25206390?v=4?s=100" width="100px;" alt="Taepper"/><br /><sub><b>Taepper</b></sub></a><br /><a href="https://github.com/cevo-public/cov-spectrum-website/commits?author=Taepper" title="Code">💻</a> <a href="#ideas-Taepper" title="Ideas, Planning, & Feedback">🤔</a> <a href="#research-Taepper" title="Research">🔬</a></td>
     </tr>
   </tbody>
 </table>

@@ -162,6 +162,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Taepper",
+      "name": "Taepper",
+      "avatar_url": "https://avatars.githubusercontent.com/u/25206390?v=4",
+      "profile": "https://github.com/Taepper",
+      "contributions": [
+        "code",
+        "ideas",
+        "research"
+      ]
     }
   ],
   "contributorsPerLine": 7
