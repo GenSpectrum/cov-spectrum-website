@@ -50,7 +50,7 @@ export const get = async (endpoint: string, signal?: AbortSignal, omitDataVersio
   return res;
 };
 
-export async function fetchLapisDataVersionDate(signal?: AbortSignal) {
+export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<string> {
   let url = '/sample/info';
   if (ACCESS_KEY) {
     url += '?accessKey=' + ACCESS_KEY;
@@ -61,6 +61,7 @@ export async function fetchLapisDataVersionDate(signal?: AbortSignal) {
   }
   const info = (await res.json()) as LapisInformation;
   currentLapisDataVersion = info.dataVersion;
+  return dayjs.unix(currentLapisDataVersion).locale('en').calendar();
 }
 
 export function getCurrentLapisDataVersionDate(): Date | undefined {
