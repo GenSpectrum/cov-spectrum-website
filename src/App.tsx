@@ -12,8 +12,7 @@ import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLoca
 import StoriesOverview from './stories/StoriesOverview';
 import StoryRouter from './stories/StoryRouter';
 import { useExploreUrl } from './helpers/explore-url';
-import dayjs from 'dayjs';
-import { fetchNextcladeDatasetInfo, getCurrentLapisDataVersionDate } from './data/api-lapis';
+import { fetchNextcladeDatasetInfo, fetchLapisDataVersion } from './data/api-lapis';
 import { sequenceDataSource } from './helpers/sequence-data-source';
 import { ExternalLink } from './components/ExternalLink';
 import styled from 'styled-components';
@@ -59,6 +58,7 @@ export const App = () => {
   const isSmallScreen = width !== undefined && width < 768;
 
   const { data: nextcladeDatasetInfo } = useQuery(() => fetchNextcladeDatasetInfo(), []);
+  const { data: lapisDataVersion } = useQuery(() => fetchLapisDataVersion(), []);
 
   const isChatPage = useLocation().pathname === '/chat';
   const showFooter = !hideHeaderAndFooter && !isChatPage;
@@ -73,7 +73,9 @@ export const App = () => {
           setHideHeaderAndFooter={setHideHeaderAndFooter}
         />
       </div>
-      {showFooter && <Footer nextcladeDatasetInfo={nextcladeDatasetInfo} />}
+      {showFooter && (
+        <Footer nextcladeDatasetInfo={nextcladeDatasetInfo} lapisDataVersion={lapisDataVersion} />
+      )}
       {!isSmallScreen && !isChatPage && <FixedChatButton />}
     </div>
   );
@@ -246,12 +248,16 @@ function CovSpectrumRoutes({
   );
 }
 
-function Footer({ nextcladeDatasetInfo }: { nextcladeDatasetInfo?: NextcladeDatasetInfo }) {
+function Footer({
+  nextcladeDatasetInfo,
+  lapisDataVersion,
+}: {
+  nextcladeDatasetInfo?: NextcladeDatasetInfo;
+  lapisDataVersion?: string;
+}) {
   return (
     <FooterStyle className='text-center'>
-      <div>
-        The sequence data was updated: {dayjs(getCurrentLapisDataVersionDate()).locale('en').calendar()}
-      </div>
+      {lapisDataVersion && <div>The sequence data was updated: {lapisDataVersion}</div>}
       {nextcladeDatasetInfo?.tag && <div>Nextclade dataset version: {nextcladeDatasetInfo.tag}</div>}
       {sequenceDataSource === 'gisaid' && (
         <div>
