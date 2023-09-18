@@ -7,7 +7,7 @@ import { LapisSelector } from '../../data/LapisSelector';
 const usherUrl =
   'https://genome.ucsc.edu/cgi-bin/hgPhyloPlace?db=wuhCor1&phyloPlaceTree=hgPhyloPlaceData/wuhCor1' +
   '/public.plusGisaid.latest.masked.pb&subtreeSize=5000&remoteFile=';
-const defaultOrderAndLimit: OrderAndLimitConfig = { orderBy: 'random', limit: 1000 };
+const defaultOrderAndLimit: OrderAndLimitConfig = { orderBy: 'random', limit: 400 };
 
 export class UsherIntegration implements Integration {
   name = 'UShER';
