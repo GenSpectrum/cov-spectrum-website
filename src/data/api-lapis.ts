@@ -1,4 +1,4 @@
-import { LapisInformation, LapisResponse } from './LapisResponse';
+import { LapisResponse } from './LapisResponse';
 import { DateCountSampleEntry } from './sample/DateCountSampleEntry';
 import { AgeCountSampleEntry } from './sample/AgeCountSampleEntry';
 import { DivisionCountSampleEntry } from './sample/DivisionCountSampleEntry';
@@ -33,6 +33,9 @@ import { NextcladeDatasetInfo } from './NextcladeDatasetInfo';
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
 
+// const LAPIS_ENDPOINT = '/sample';
+const LAPIS_ENDPOINT = '';
+
 let currentLapisDataVersion: number | undefined = undefined;
 
 export const get = async (endpoint: string, signal?: AbortSignal, omitDataVersion = false) => {
@@ -51,17 +54,18 @@ export const get = async (endpoint: string, signal?: AbortSignal, omitDataVersio
 };
 
 export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<string> {
-  let url = '/sample/info';
-  if (ACCESS_KEY) {
-    url += '?accessKey=' + ACCESS_KEY;
-  }
-  const res = await get(url, signal);
-  if (!res.ok) {
-    throw new Error('Error fetching info');
-  }
-  const info = (await res.json()) as LapisInformation;
-  currentLapisDataVersion = info.dataVersion;
-  return dayjs.unix(currentLapisDataVersion).locale('en').calendar();
+  // let url = `${LAPIS_ENDPOINT}/info`;
+  // if (ACCESS_KEY) {
+  //   url += '?accessKey=' + ACCESS_KEY;
+  // }
+  // const res = await get(url, signal);
+  // if (!res.ok) {
+  //   throw new Error('Error fetching info');
+  // }
+  // const info = (await res.json()) as LapisInformation;
+  // currentLapisDataVersion = info.dataVersion;
+  // return dayjs.unix(currentLapisDataVersion).locale('en').calendar();
+  return '0123456789';
 }
 
 export function getCurrentLapisDataVersionDate(): Date | undefined {
@@ -69,16 +73,20 @@ export function getCurrentLapisDataVersionDate(): Date | undefined {
 }
 
 export async function fetchNextcladeDatasetInfo(signal?: AbortSignal): Promise<NextcladeDatasetInfo> {
-  let url = '/info/nextclade-dataset';
-  const res = await get(url, signal, true);
-  if (!res.ok) {
-    throw new Error('Error fetching Nextclade dataset info');
-  }
-  return (await res.json()) as NextcladeDatasetInfo;
+  // let url = '/info/nextclade-dataset';
+  // const res = await get(url, signal, true);
+  // if (!res.ok) {
+  //   throw new Error('Error fetching Nextclade dataset info');
+  // }
+  // return (await res.json()) as NextcladeDatasetInfo;
+  return {
+    name: 'test',
+    tag: 'test',
+  };
 }
 
 export async function fetchAllHosts(): Promise<string[]> {
-  let url = '/sample/aggregated?fields=host';
+  let url = `${LAPIS_ENDPOINT}/aggregated?fields=host`;
   if (ACCESS_KEY) {
     url += '&accessKey=' + ACCESS_KEY;
   }
@@ -270,9 +278,9 @@ export async function getLinkTo(
     params.set('accessKey', ACCESS_KEY);
   }
   if (omitHost) {
-    return `/sample/${endpoint}?${params.toString()}`;
+    return `${LAPIS_ENDPOINT}/${endpoint}?${params.toString()}`;
   } else {
-    return `${HOST}/sample/${endpoint}?${params.toString()}`;
+    return `${HOST}${LAPIS_ENDPOINT}/${endpoint}?${params.toString()}`;
   }
 }
 
@@ -322,19 +330,20 @@ function _addOrderAndLimitToSearchParams(params: URLSearchParams, orderAndLimitC
 }
 
 function _extractLapisData<T>(response: LapisResponse<T>): T {
-  if (response.errors.length > 0) {
+  if (response.errors?.length > 0) {
     throw new Error('LAPIS returned an error: ' + JSON.stringify(response.errors));
   }
-  if (currentLapisDataVersion === undefined) {
-    currentLapisDataVersion = response.info.dataVersion;
-  } else if (currentLapisDataVersion !== response.info.dataVersion) {
-    // Refresh the website if there are new data
-    window.location.reload();
-    throw new Error(
-      `LAPIS has new data. Old version: ${currentLapisDataVersion}, new version: ${response.info.dataVersion}. ` +
-        `The website will be reloaded.`
-    );
-  }
+
+  // if (currentLapisDataVersion === undefined) {
+  //   currentLapisDataVersion = response.info.dataVersion;
+  // } else if (currentLapisDataVersion !== response.info.dataVersion) {
+  //   // Refresh the website if there are new data
+  //   window.location.reload();
+  //   throw new Error(
+  //     `LAPIS has new data. Old version: ${currentLapisDataVersion}, new version: ${response.info.dataVersion}. ` +
+  //       `The website will be reloaded.`
+  //   );
+  // }
   return response.data;
 }
 
