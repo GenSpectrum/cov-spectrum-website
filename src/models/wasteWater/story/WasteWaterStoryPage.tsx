@@ -26,6 +26,10 @@ export const WasteWaterStoryPage = () => {
         wastewater data displayed on covSpectrum (see{' '}
         <ExternalLink url='https://doi.org/10.1101/2021.01.08.21249379'>
           doi:10.1101/2021.01.08.21249379
+        </ExternalLink>
+        {', '}
+        <ExternalLink url={'https://doi.org/10.1101/2022.11.02.22281825'}>
+          doi:10.1101/2022.11.02.22281825
         </ExternalLink>{' '}
         and <ExternalLink url='https://github.com/cbg-ethz/cowwid'>cowwid</ExternalLink> for more details).
       </p>
@@ -52,14 +56,19 @@ const DataSources = () => {
         <ExternalLink url={'https://www.eawag.ch/en/department/sww/projects/sars-cov2-in-wastewater/'}>
           Eawag
         </ExternalLink>{' '}
-        collects samples daily at six Swiss wastewater treatment plants: Altenrhein (SG), Chur (GR), Genève
-        (GE), Laupen (BE), Lugano (TI). For the City of Zurich, samples are collected from the Werdhölzli
-        plant (catchment area covers the city center). Since 2023 the project has been joined by Microsynth,
-        sampling in Lausanne (Vidy), Sierre/Noes (VS) and Porrentruy (JU). The Health Department of
-        Basel-Stadt provides samples from the ProRheno AG wastewater treatment plant three times per week
-        (once per week until the end of 2022).
+        collects samples daily at multiple locations around Switzerland. Since its inception, the project has
+        been gradually extended and covers now fourteen wastewater treatment plants: Altenrhein (SG), Chur
+        (GR), Genève (GE), Laupen (BE), Lugano (TI), Zürich (ZH), Lausanne (VD), Basel (BS), Luzern (LU), Bern
+        (BE), Porrentruy (JU), Neuchâtel (NE), Solothurn (SO) and Schwyz (SZ).
       </p>
-      <p>Previous monitoring that was discontinued: Lausanne (VD), Kanton Zürich</p>
+      <p>
+        Previously, Microsynth AG provided samples from the wastewater treatment plants of Lausanne (Vidy),
+        Sierre/Noes (VS) and Porrentruy (JU) (3 times per week until the beginning of July 2023).
+      </p>
+      <p>
+        The Health Department of Basel-Stadt provided samples from the ProRheno AG wastewater treatment plant
+        three times per week (once per week until the end of 2022).
+      </p>
       <p>
         Until end of May 2022 three times a week the Cantonal Laboratory Zurich (KLZH) provided samples that
         assess the Canton of Zurich by pooling samples from 12 plants across the canton, namely
@@ -106,7 +115,7 @@ const Acknowledgements = () => {
       </h3>
       <Authors
         authors={
-          'Katharina Jahn, Pelin Burcak Icer, David Dreifuss, Ivan Topolsky, Lara Fuhrmann, Kim Philipp Jablonski, Anika John, Niko Beerenwinkel'
+          'Ivan Topolsky, David Dreifuss, Anika John, Auguste Rimaite, Pelin Burcak Icer, Lara Fuhrmann, Kim Philipp Jablonski, Niko Beerenwinkel'
         }
       />
       <h3>
@@ -132,7 +141,7 @@ const Acknowledgements = () => {
       <h3>Eawag</h3>
       <Authors
         authors={
-          'Anina Kull, Pravin Ganesanandamoorthy, Carola Bänziger, Alexander J. Devaux, Elyse Stachler, Lea Caduff, Christoph Ort, Timothy R. Julian'
+          'Tamar Kohn, Seju Kang, Ayazhan Dauletova, Camille Hablützel, Rachel McLeod, Daniela Yordanova, Jolinda de Korne, Charlie Gan, Lea Caduff, Christoph Ort, Timothy R. Julian'
         }
       />
       <h3>Functional Genomic Center Zürich</h3>
@@ -141,8 +150,6 @@ const Acknowledgements = () => {
       <Authors authors={'Mirjam Feldkamp, Christian Beisel'} />
       <h3>Laboratory of Environmental Chemistry EPFL</h3>
       <Authors authors={'Xavier Fernandez-Cassi, Federica Cariti, Alex Tuñas Corzón, Tamar Kohn'} />
-      <h3>Microsynth AG</h3>
-      <Authors authors={'Cristoph Gruenih, Maria-Luise Deflorian'} />
     </div>
   );
 };
