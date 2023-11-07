@@ -2,22 +2,24 @@ export const wastewaterVariantColors: {
   [key: string]: string;
 } = {
   'B.1.1.7': '#D16666',
-  'B.1.351': '#FF6666',
+  'B.1.351': '#FF6665',
   'P.1': '#FFB3B3',
-  'B.1.617.1': '#A3FFD1',
-  'B.1.617.2': '#66C266',
+  'B.1.617.1': '#66C265',
+  'B.1.617.2': '#66A366',
   'BA.1': '#A366A3',
   'BA.2': '#CFAFCF',
-  'BA.4': '#8467F6',
-  'BA.5': '#595EF6',
-  'BA.2.75': '#DE9ADB',
-  'BQ.1.1': '#8fe000', // improv, not in sync with covariants.org
-  'XBB.1.9': '#dd6bff', // improv, not in sync with covariants.org
-  'XBB.1.5': '#ff5656',
-  'XBB.1.16': '#e99b30',
-  'XBB.2.3': '#b4b82a', // improv, not in sync with covariants.org
-  'EG.5': '#359f99', // improv, not in sync with covariants.org
-  'BA.2.86': '#FF20E0', // improv, not in sync with covariants.org
-  'JN.1': '#00e9ff', // improv, not in sync with covariants.org
-  'undetermined': '#999696',
+  'BA.4': '#8A66FF',
+  'BA.5': '#585EFF',
+  'BA.2.12.1': '#0400E0',
+  'BA.2.75': '#008FE0',
+  'BA.2.75.2': '$208FE0',
+  'BQ.1.1': '#AC00E0',
+  'XBB.1.9': '#BB6A33',
+  'XBB.1.5': '#FF5656',
+  'XBB.1.16': '#E99B30',
+  'XBB.2.3': '#F5E424',
+  'EG.5': '#B4E80B',
+  'BA.2.86': '#FF20E0',
+  'JN.1': '#00E9FF', // improv, not in sync with covariants.org
+  'undetermined': '#969696',
 };
