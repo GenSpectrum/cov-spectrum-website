@@ -29,56 +29,63 @@ import { addQcSelectorToUrlSearchParams } from './QcSelector';
 import { HostCountSampleEntry } from './sample/HostCountSampleEntry';
 import { InsertionCountEntry } from './InsertionCountEntry';
 import { NextcladeDatasetInfo } from './NextcladeDatasetInfo';
+import { mapFilterToLapisV2 } from './api-lapis-v2';
 
-const HOST = process.env.REACT_APP_LAPIS_HOST;
-const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
+// const HOST = process.env.REACT_APP_LAPIS_HOST;
+// TODO: remove this, before merging to master
+const HOST = 'https://s1.int.genspectrum.org/gisaid';
+// const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
+const ACCESS_KEY = 'aggregatedTestKey';
 
 let currentLapisDataVersion: number | undefined = undefined;
 
-export const get = async (endpoint: string, signal?: AbortSignal, omitDataVersion = false) => {
-  let url = HOST + endpoint;
-  if (currentLapisDataVersion !== undefined && !omitDataVersion) {
-    url += '&dataVersion=' + currentLapisDataVersion;
-  }
-  const res = await fetch(url, {
-    method: 'GET',
-    signal,
-  });
-  if (res.status === 410) {
-    window.location.reload();
-  }
-  return res;
+export const get = async (endpoint: string, signal?: AbortSignal) => {
+  let url = `${HOST}/sample${endpoint}`;
+
+  const requestInit =
+    signal === undefined
+      ? {
+          method: 'GET',
+        }
+      : {
+          method: 'GET',
+          signal: signal,
+        };
+  return await fetch(url, requestInit);
 };
 
 export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<string> {
-  let url = '/sample/info';
+  let url = '/info';
   if (ACCESS_KEY) {
     url += '?accessKey=' + ACCESS_KEY;
   }
-  const res = await get(url, signal);
-  if (!res.ok) {
+  const response = await get(url, signal);
+  if (!response.ok) {
     throw new Error('Error fetching info');
   }
-  const info = (await res.json()) as LapisInformation;
+  const info = (await response.json()) as LapisInformation;
   currentLapisDataVersion = info.dataVersion;
   return dayjs.unix(currentLapisDataVersion).locale('en').calendar();
 }
 
-export function getCurrentLapisDataVersionDate(): Date | undefined {
-  return currentLapisDataVersion !== undefined ? dayjs.unix(currentLapisDataVersion).toDate() : undefined;
-}
-
 export async function fetchNextcladeDatasetInfo(signal?: AbortSignal): Promise<NextcladeDatasetInfo> {
-  let url = '/info/nextclade-dataset';
-  const res = await get(url, signal, true);
-  if (!res.ok) {
+  let url = '/aggregated?fields=nextcladeDatasetVersion';
+  if (ACCESS_KEY) {
+    url += '&accessKey=' + ACCESS_KEY;
+  }
+  const response = await get(url, signal);
+  if (!response.ok) {
     throw new Error('Error fetching Nextclade dataset info');
   }
-  return (await res.json()) as NextcladeDatasetInfo;
+  const nexcladeDatasetInfo = (await response.json()) as LapisResponse<{ nextcladeDatasetVersion: string }[]>;
+  return {
+    name: 'nextclade-dataset',
+    tag: nexcladeDatasetInfo.data[0].nextcladeDatasetVersion,
+  };
 }
 
 export async function fetchAllHosts(): Promise<string[]> {
-  let url = '/sample/aggregated?fields=host';
+  let url = '/aggregated?fields=host';
   if (ACCESS_KEY) {
     url += '&accessKey=' + ACCESS_KEY;
   }
@@ -167,7 +174,7 @@ export async function fetchMutationProportions(
   minProportion = 0.001
 ): Promise<MutationProportionEntry[]> {
   const url = await getLinkTo(
-    `${sequenceType}-mutations`,
+    getMutationEndpoint(sequenceType),
     selector,
     undefined,
     undefined,
@@ -183,18 +190,47 @@ export async function fetchMutationProportions(
   return _extractLapisData(body);
 }
 
+function getMutationEndpoint(sequenceType: SequenceType): string {
+  switch (sequenceType) {
+    case 'nuc':
+      return 'nucleotideMutations';
+    case 'aa':
+      return 'aminoAcidMutations';
+    default:
+      throw new Error(`Unknown mutation type: ${sequenceType}`);
+  }
+}
+
 export async function fetchInsertionCounts(
   selector: LapisSelector,
   sequenceType: SequenceType,
   signal?: AbortSignal
 ): Promise<InsertionCountEntry[]> {
-  const url = await getLinkTo(`${sequenceType}-insertions`, selector, undefined, undefined, undefined, true);
+  const url = await getLinkTo(
+    getInsertionEndpoint(sequenceType),
+    selector,
+    undefined,
+    undefined,
+    undefined,
+    true
+  );
   const res = await get(url, signal);
   if (!res.ok) {
     throw new Error('Error fetching new samples data');
   }
   const body = (await res.json()) as LapisResponse<InsertionCountEntry[]>;
   return _extractLapisData(body);
+}
+
+function getInsertionEndpoint(sequenceType: SequenceType): string {
+  switch (sequenceType) {
+    case 'nuc':
+      return 'nucleotideInsertions';
+    case 'aa':
+      return 'aminoAcidInsertions';
+    default:
+      throw new Error(`Unknown mutation type: ${sequenceType}`);
+  }
 }
 
 export async function getLinkToStrainNames(
@@ -224,7 +260,12 @@ export async function getLinkToFasta(
   selector: LapisSelector,
   orderAndLimit?: OrderAndLimitConfig
 ): Promise<string> {
-  return getLinkTo(aligned ? 'fasta-aligned' : 'fasta', selector, orderAndLimit, true);
+  return getLinkTo(
+    aligned ? 'alignedNucleotideSequences' : 'unalignedNucleotideSequences',
+    selector,
+    orderAndLimit,
+    true
+  );
 }
 
 export async function getLinkTo(
@@ -270,9 +311,9 @@ export async function getLinkTo(
     params.set('accessKey', ACCESS_KEY);
   }
   if (omitHost) {
-    return `/sample/${endpoint}?${params.toString()}`;
+    return `/${endpoint}?${params.toString()}`;
   } else {
-    return `${HOST}/sample/${endpoint}?${params.toString()}`;
+    return `${HOST}/${endpoint}?${params.toString()}`;
   }
 }
 
@@ -284,18 +325,20 @@ export async function _fetchAggSamples(
 ): Promise<FullSampleAggEntry[]> {
   const linkPrefix = await getLinkTo('aggregated', selector, undefined, undefined, undefined, true);
   const _additionalParams = new URLSearchParams(additionalParams);
-  _additionalParams.set('fields', fields.join(','));
-  const res = await get(`${linkPrefix}&${_additionalParams}`, signal);
-  if (!res.ok) {
-    if (res.body !== null) {
-      const errors = (await res.json()).errors as { message: string }[];
-      if (errors.length > 0) {
-        throw new Error(errors.map(e => e.message).join(' '));
+  _additionalParams.set('fields', mapFiltersToLapisV2(fields).join(','));
+  const response = await get(`${linkPrefix}&${_additionalParams}`, signal);
+  if (!response.ok) {
+    if (response.body !== null) {
+      if ((await response.json()).errors !== undefined) {
+        const errors = (await response.json()).errors as { message: string }[];
+        if (errors.length > 0) {
+          throw new Error(errors.map(e => e.message).join(' '));
+        }
       }
     }
     throw new Error();
   }
-  const body = (await res.json()) as LapisResponse<FullSampleAggEntryRaw[]>;
+  const body = (await response.json()) as LapisResponse<FullSampleAggEntryRaw[]>;
 
   const parsed = _extractLapisData(body).map(raw => parseFullSampleAggEntry(raw));
   if (fields.includes('country')) {
@@ -307,6 +350,12 @@ export async function _fetchAggSamples(
   }
 
   return parsed;
+}
+
+function mapFiltersToLapisV2(filters: string[]) {
+  return filters.map(filter => {
+    return mapFilterToLapisV2(filter);
+  });
 }
 
 function _addOrderAndLimitToSearchParams(params: URLSearchParams, orderAndLimitConfig?: OrderAndLimitConfig) {
@@ -322,13 +371,17 @@ function _addOrderAndLimitToSearchParams(params: URLSearchParams, orderAndLimitC
 }
 
 function _extractLapisData<T>(response: LapisResponse<T>): T {
-  if (response.errors.length > 0) {
+  if (response.errors !== undefined) {
     throw new Error('LAPIS returned an error: ' + JSON.stringify(response.errors));
   }
   if (currentLapisDataVersion === undefined) {
     currentLapisDataVersion = response.info.dataVersion;
   } else if (currentLapisDataVersion !== response.info.dataVersion) {
-    // Refresh the website if there are new data
+    console.log(
+      `LAPIS has new data. Old version: ${currentLapisDataVersion}, new version: ${response.info.dataVersion}. ` +
+        `The website will be reloaded.`
+    );
+
     window.location.reload();
     throw new Error(
       `LAPIS has new data. Old version: ${currentLapisDataVersion}, new version: ${response.info.dataVersion}. ` +

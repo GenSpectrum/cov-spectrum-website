@@ -20,12 +20,7 @@ const LineageEntry = styled.li`
 export const VariantLineages = ({ selector, onVariantSelect, type }: Props) => {
   const { data } = useQuery(signal => _fetchAggSamples(selector, [type], signal), [selector, type]);
 
-  const distribution:
-    | {
-        lineage: string | null;
-        proportion: number;
-      }[]
-    | undefined = useMemo(() => {
+  const distribution = useMemo(() => {
     if (!data) {
       return undefined;
     }
