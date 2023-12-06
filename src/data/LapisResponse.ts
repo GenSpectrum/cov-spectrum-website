@@ -7,6 +7,6 @@ export type LapisInformation = {
 
 export type LapisResponse<T> = {
   info: LapisInformation;
-  errors: any[];
+  errors?: any[];
   data: T;
 };
