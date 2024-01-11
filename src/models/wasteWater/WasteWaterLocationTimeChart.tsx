@@ -4,13 +4,13 @@ import { UnifiedDay } from '../../helpers/date-cache';
 import { getTicks } from '../../helpers/ticks';
 import { TitleWrapper, Wrapper } from '../../widgets/common';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import { formatDate } from './WasteWaterTimeChart';
 import { wastewaterVariantColors } from './constants';
 import { Utils } from '../../services/Utils';
 import { DateRange } from '../../data/DateRange';
 import { WasteWaterTooltip } from './WasteWaterLocationTimeChartTooltip';
 import { formatPercent } from '../../helpers/format-data';
 import { deEscapeValueName, escapeValueName } from './RechartsKeyConversion';
+import { formatDate } from '../../widgets/VariantTimeDistributionLineChartInner';
 
 interface Props {
   variants: {

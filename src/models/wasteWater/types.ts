@@ -7,8 +7,6 @@ export const WasteWaterSelectorSchema = zod.object({
   location: zod.string().optional(),
 });
 
-export type WasteWaterSelector = zod.infer<typeof WasteWaterSelectorSchema>;
-
 export type WasteWaterRequest = {
   country: string;
 };
@@ -40,8 +38,6 @@ export const WasteWaterResponseSchema = zod.object({
     })
   ),
 });
-
-export type WasteWaterResponse = zod.infer<typeof WasteWaterResponseSchema>;
 
 export type WasteWaterTimeEntry = {
   date: UnifiedDay;

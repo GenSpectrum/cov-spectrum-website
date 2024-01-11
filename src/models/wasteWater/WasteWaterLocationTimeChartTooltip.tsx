@@ -1,9 +1,9 @@
 import { TooltipProps } from 'recharts';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
-import { formatDate } from './WasteWaterTimeChart';
 import React from 'react';
 import { formatCiPercent, formatPercent } from '../../helpers/format-data';
 import { deEscapeValueName } from './RechartsKeyConversion';
+import { formatDate } from '../../widgets/VariantTimeDistributionLineChartInner';
 
 export const WasteWaterTooltip = ({ active, payload }: TooltipProps<ValueType, NameType>) => {
   if (!(active && payload && payload.length > 0)) {

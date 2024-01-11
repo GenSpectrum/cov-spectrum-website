@@ -2,7 +2,6 @@ import {
   WasteWaterDataset,
   WasteWaterDatasetEntry,
   WasteWaterRequest,
-  WasteWaterResponse,
   WasteWaterResponseSchema,
 } from './types';
 import { get } from '../../data/api';
@@ -22,7 +21,7 @@ export async function getData(
     return undefined;
   }
 
-  const responseData: WasteWaterResponse = WasteWaterResponseSchema.parse(json);
+  const responseData = WasteWaterResponseSchema.parse(json);
 
   // fall back json parsing in case zod is slow
   //const responseData = json as WasteWaterResponse;
@@ -50,10 +49,7 @@ export function filter(data: WasteWaterDataset, variantName?: string, location?:
     if (variantName && d.variantName !== variantName) {
       return false;
     }
-    if (location && d.location !== location) {
-      return false;
-    }
-    return true;
+    return !(location && d.location !== location);
   });
 }
 

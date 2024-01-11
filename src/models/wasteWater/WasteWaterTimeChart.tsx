@@ -5,10 +5,7 @@ import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis }
 import { WasteWaterTimeEntry, WasteWaterTimeseriesSummaryDataset } from './types';
 import { getTicks } from '../../helpers/ticks';
 import { TooltipSideEffect } from '../../components/RechartsTooltip';
-
-export function formatDate(date: number) {
-  return new Date(date).toISOString().split('T')[0];
-}
+import { formatDate } from '../../widgets/VariantTimeDistributionLineChartInner';
 
 interface Props {
   data: WasteWaterTimeseriesSummaryDataset;
