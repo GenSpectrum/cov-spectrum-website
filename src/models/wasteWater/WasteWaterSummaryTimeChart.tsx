@@ -4,11 +4,11 @@ import { schemeCategory10 } from 'd3-scale-chromatic';
 import { ChartAndMetricsWrapper, ChartWrapper, TitleWrapper, Wrapper } from '../../widgets/common';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 import { WasteWaterTimeseriesSummaryDataset } from './types';
-import { formatDate } from './WasteWaterTimeChart';
 import { getTicks } from '../../helpers/ticks';
 import { UnifiedDay } from '../../helpers/date-cache';
 import { escapeValueName } from './RechartsKeyConversion';
 import { WasteWaterTooltip } from './WasteWaterLocationTimeChartTooltip';
+import { formatDate } from '../../widgets/VariantTimeDistributionLineChartInner';
 
 interface Props {
   wasteWaterPlants: {

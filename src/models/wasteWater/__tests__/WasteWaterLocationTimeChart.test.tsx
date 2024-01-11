@@ -4,7 +4,7 @@ import { WasteWaterLocationTimeChart } from '../WasteWaterLocationTimeChart';
 import { globalDateCache } from '../../../helpers/date-cache';
 import { WasteWaterTimeseriesSummaryDataset } from '../types';
 import { getTicks } from '../../../helpers/ticks';
-import { formatDate } from '../WasteWaterTimeChart';
+import { formatDate } from '../../../widgets/VariantTimeDistributionLineChartInner';
 
 jest.mock('recharts', () => {
   const OriginalModule = jest.requireActual('recharts');
