@@ -11,6 +11,7 @@ import { HeaderSamplingStrategySelect } from './components/HeaderSamplingStrateg
 import { encodeLocationSelectorToSingleString } from './data/LocationSelector';
 import { AlmostFullscreenModal } from './components/AlmostFullscreenModal';
 import { AdvancedFiltersPanel } from './components/AdvancedFiltersPanel';
+import { defaultDateRange, defaultSamplingStrategy } from './data/default-selectors';
 
 const letters = [
   { color: 'darkgray', text: 'cov' },
@@ -29,11 +30,13 @@ const Logo = () => {
   const exploreUrl = useExploreUrl();
   let redirectLink = '/';
   if (locationState.pathname.startsWith('/explore/') && exploreUrl?.location) {
-    redirectLink = `/explore/${encodeLocationSelectorToSingleString(exploreUrl?.location)}`;
+    redirectLink = `/explore/${encodeLocationSelectorToSingleString(
+      exploreUrl?.location
+    )}/${defaultSamplingStrategy}/${defaultDateRange}`;
   }
 
   return (
-    <a href={redirectLink} className='flex flex-row items-center hover:no-underline md:mb-0.5'>
+    <Link to={redirectLink} className='flex flex-row items-center hover:no-underline md:mb-0.5'>
       <div>
         {letters.map((l: { color: string; text: string }, i) => (
           <span key={i} style={{ color: l.color, fontWeight: 'bold', fontSize: '1.75rem' }}>
@@ -41,7 +44,7 @@ const Logo = () => {
           </span>
         ))}
       </div>
-    </a>
+    </Link>
   );
 };
 
@@ -141,18 +144,18 @@ const Header = () => {
               {/* Right part */}
               <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>
                 <div className='ml-1 flex items-center'>
-                  <a className={getButtonClasses('/chat')} href='/chat'>
+                  <Link className={getButtonClasses('/chat')} to={'/chat'}>
                     Chat
-                  </a>
-                  <a className={getButtonClasses('/collections')} href='/collections'>
+                  </Link>
+                  <Link className={getButtonClasses('/collections')} to={'/collections'}>
                     Collections
-                  </a>
-                  <a className={getButtonClasses('/stories')} href='/stories'>
+                  </Link>
+                  <Link className={getButtonClasses('/stories')} to={'/stories'}>
                     Stories
-                  </a>
-                  <a className={getButtonClasses('/about')} href='/about'>
+                  </Link>
+                  <Link className={getButtonClasses('/about')} to={'/about'}>
                     About
-                  </a>
+                  </Link>
                   {MastodonButton}
                   {TwitterButton}
                   {GitHubButton}
@@ -200,7 +203,7 @@ const OffcanvasNav = ({ show, onClose, setShowAdvancedFilteringModal }: Offcanva
         onClick={e => e.stopPropagation()}
       >
         <div className='font-bold m-4'>
-          <a href='/'>CoV-Spectrum</a>
+          <Link to='/'>CoV-Spectrum</Link>
         </div>
         <div className='divide-y-2 divide-gray-300 divide-solid border-t-2 border-b-2 border-gray-300 border-solid'>
           {exploreUrl && (
