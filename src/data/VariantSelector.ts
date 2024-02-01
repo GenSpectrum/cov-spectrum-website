@@ -1,6 +1,5 @@
 import * as zod from 'zod';
 import jsonRefData from './refData.json';
-import { mapFilterToLapisV2 } from './api-lapis-v2';
 
 export const VariantSelectorEncodedSchema = zod.object({
   pangoLineage: zod.string().optional(),
@@ -54,7 +53,7 @@ export function addVariantSelectorToUrlSearchParams(
     const arr = selector[k];
     if (arr?.length) {
       const key = index && index > 0 ? `${k}${index}` : k;
-      params.set(mapFilterToLapisV2(key), arr.join(','));
+      params.set(key, arr.join(','));
     }
   }
   for (const k of variantStringFields) {
