@@ -57,7 +57,15 @@ export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
-  const { data: nextcladeDatasetInfo } = useQuery(() => fetchNextcladeDatasetInfo(), []);
+    const queryFunction =
+      sequenceDataSource === 'gisaid'
+        ? fetchNextcladeDatasetInfo
+        : () => {
+            return Promise.resolve({ name: 'notNextcladeDatasetInfo', tag: null } as NextcladeDatasetInfo);
+          };
+
+    const nextcladeDatasetInfo = useQuery(queryFunction, []).data;
+
   const { data: lapisDataVersion } = useQuery(() => fetchLapisDataVersion(), []);
 
   const isChatPage = useLocation().pathname === '/chat';
