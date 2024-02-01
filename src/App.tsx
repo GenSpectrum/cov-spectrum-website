@@ -66,7 +66,7 @@ export const App = () => {
 
     const nextcladeDatasetInfo = useQuery(queryFunction, []).data;
 
-  const { data: lapisDataVersion } = useQuery(() => fetchLapisDataVersion(), []);
+    const { data: lapisDataVersion } = useQuery(() => fetchLapisDataVersion(), []);
 
   const isChatPage = useLocation().pathname === '/chat';
   const showFooter = !hideHeaderAndFooter && !isChatPage;
