@@ -233,22 +233,17 @@ function getInsertionEndpoint(sequenceType: SequenceType): string {
   }
 }
 
-export async function getLinkToStrainNames(
+export async function getLinkToListOfPrimaryKeys(
+  primaryKey: string,
   selector: LapisSelector,
   orderAndLimit?: OrderAndLimitConfig
 ): Promise<string> {
-  return getLinkTo('strain-names', selector, orderAndLimit);
-}
+  const dataFormat = 'CSV-WITHOUT-HEADERS';
 
-export async function getLinkToGisaidEpiIsl(
-  selector: LapisSelector,
-  orderAndLimit?: OrderAndLimitConfig
-): Promise<string> {
-  return getLinkTo('gisaid-epi-isl', selector, orderAndLimit);
-}
+  const linkToDetails = new URL(await getLinkTo('details', selector, orderAndLimit, undefined, dataFormat));
+  linkToDetails.searchParams.set('fields', 'primaryKey');
 
-export async function getCsvLinkToContributors(selector: LapisSelector): Promise<string> {
-  return getLinkTo('contributors', selector, undefined, true, 'csv');
+  return linkToDetails.toString();
 }
 
 export async function getCsvLinkToDetails(selector: LapisSelector): Promise<string> {
@@ -302,7 +297,7 @@ export async function getLinkTo(
     params.set('downloadAsFile', 'true');
   }
   if (dataFormat) {
-    params.set('dataFormat', 'csv');
+    params.set('dataFormat', dataFormat);
   }
   if (minProportion) {
     params.set('minProportion', minProportion);
