@@ -1,5 +1,5 @@
 import { Integration } from './Integration';
-import { getLinkToGisaidEpiIsl, getLinkToStrainNames } from '../../data/api-lapis';
+import { getLinkToListOfPrimaryKeys } from '../../data/api-lapis';
 import { sequenceDataSource } from '../../helpers/sequence-data-source';
 import { OrderAndLimitConfig } from '../../data/OrderAndLimitConfig';
 import { LapisSelector } from '../../data/LapisSelector';
@@ -18,8 +18,8 @@ export class UsherIntegration implements Integration {
 
   open(selector: LapisSelector): void {
     (sequenceDataSource === 'gisaid'
-      ? getLinkToGisaidEpiIsl(selector, defaultOrderAndLimit)
-      : getLinkToStrainNames(selector, defaultOrderAndLimit)
+      ? getLinkToListOfPrimaryKeys('gisaid_epi_isl', selector, defaultOrderAndLimit)
+      : getLinkToListOfPrimaryKeys('strain', selector, defaultOrderAndLimit)
     ).then(url => {
       window.open(usherUrl + encodeURIComponent(url));
     });

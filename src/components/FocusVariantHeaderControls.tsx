@@ -7,7 +7,7 @@ import { CoVariantsIntegration } from '../services/external-integrations/CoVaria
 import { UsherIntegration } from '../services/external-integrations/UsherIntegration';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { TaxoniumIntegration } from '../services/external-integrations/TaxoniumIntegration';
-import { getCsvLinkToContributors, getCsvLinkToDetails, getLinkToFasta } from '../data/api-lapis';
+import { getCsvLinkToDetails, getLinkToFasta, getLinkToListOfPrimaryKeys } from '../data/api-lapis';
 import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { useAsync } from 'react-async';
 import { OrderAndLimitConfig } from '../data/OrderAndLimitConfig';
@@ -17,9 +17,9 @@ import { ExternalLink } from './ExternalLink';
 
 // mui stuff
 import Button1 from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
-import { styled, alpha } from '@mui/material/styles';
 import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import { alpha, styled } from '@mui/material/styles';
 import Menu, { MenuProps } from '@mui/material/Menu';
 import DownloadIcon from '@mui/icons-material/Download';
 import Divider from '@mui/material/Divider';
@@ -79,7 +79,10 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
   // Sequence list download
   // If the open version is used, all the metadata will be downloaded. If GISAID is used, only the contributors
   // will be downloaded.
-  const getLinkFunc = sequenceDataSource === 'open' ? getCsvLinkToDetails : getCsvLinkToContributors;
+  const getLinkFunc =
+    sequenceDataSource === 'open'
+      ? getCsvLinkToDetails
+      : (selector: LapisSelector) => getLinkToListOfPrimaryKeys('gisaid-epi-isl', selector);
   const linkToListPromise = useDeepCompareMemo(() => getLinkFunc(selector), [selector]);
   const { data: listLink } = useAsync({ promise: linkToListPromise });
 
