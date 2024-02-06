@@ -94,7 +94,10 @@ export async function fetchAllHosts(): Promise<string[]> {
     throw new Error('Error fetching new samples data');
   }
   const body = (await res.json()) as LapisResponse<{ host: string; count: number }[]>;
-  return _extractLapisData(body).map(e => e.host);
+
+  return _extractLapisData(body)
+    .map(entry => entry.host)
+    .map(host => (host === null ? 'Unknown' : host));
 }
 
 export async function fetchDateCountSamples(
