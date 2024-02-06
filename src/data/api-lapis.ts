@@ -63,8 +63,8 @@ export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<strin
   if (!response.ok) {
     throw new Error('Error fetching info');
   }
-  const info = (await response.json()) as LapisInformation;
-  currentLapisDataVersion = info.dataVersion;
+    const info = (await response.json()) as LapisInformation;
+  currentLapisDataVersion = Number(info.dataVersion);
   return dayjs.unix(currentLapisDataVersion).locale('en').calendar();
 }
 
@@ -373,8 +373,8 @@ function _extractLapisData<T>(response: LapisResponse<T>): T {
     throw new Error('LAPIS returned an error: ' + JSON.stringify(response.errors));
   }
   if (currentLapisDataVersion === undefined) {
-    currentLapisDataVersion = response.info.dataVersion;
-  } else if (currentLapisDataVersion !== response.info.dataVersion) {
+    currentLapisDataVersion = Number(response.info.dataVersion);
+  } else if (currentLapisDataVersion !== Number(response.info.dataVersion)) {
     console.log(
       `LAPIS has new data. Old version: ${currentLapisDataVersion}, new version: ${response.info.dataVersion}. ` +
         `The website will be reloaded.`
