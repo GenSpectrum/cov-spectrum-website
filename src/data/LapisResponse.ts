@@ -1,8 +1,8 @@
 export type LapisInformation = {
-  apiVersion: number;
+  apiVersion: number | undefined;
   dataVersion: number;
-  deprecationDate: string;
-  deprecationInfo: string;
+  deprecationDate: string | undefined;
+  deprecationInfo: string | undefined;
 };
 
 export type LapisResponse<T> = {
