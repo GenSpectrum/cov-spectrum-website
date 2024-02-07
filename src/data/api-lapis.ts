@@ -63,7 +63,7 @@ export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<strin
   if (!response.ok) {
     throw new Error('Error fetching info');
   }
-    const info = (await response.json()) as LapisInformation;
+  const info = (await response.json()) as LapisInformation;
   currentLapisDataVersion = Number(info.dataVersion);
   return dayjs.unix(currentLapisDataVersion).locale('en').calendar();
 }
