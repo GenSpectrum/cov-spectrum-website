@@ -40,7 +40,7 @@ export function useQuery<T>(
       })
       .catch(_error => {
         // TODO: Think about it if it would be a good idea to log such errors??
-        // console.error(_error);
+        console.error(_error);
         if (!isSubscribed) {
           return;
         }
