@@ -9,9 +9,11 @@ export const ErrorAlert = ({ messages }: Props) => {
   const uniqueMessages = [...new Set(messages)];
   return (
     <Alert variant={AlertVariant.DANGER}>
-      <div className='font-bold'>Error:</div>
+      <div key='heading' className='font-bold'>
+        Error:
+      </div>
       {uniqueMessages.map(e => (
-        <div>{e}</div>
+        <div key={e}>{e}</div>
       ))}
     </Alert>
   );
