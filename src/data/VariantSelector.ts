@@ -51,18 +51,41 @@ export function addVariantSelectorToUrlSearchParams(
   index?: number
 ) {
   for (const key of variantArrayFields) {
-    const arr = selector[key];
-    if (arr?.length) {
-      const mappedKey = mapFilterToLapisV2(key);
-      const indexedKey = index && index > 0 ? `${mappedKey}${index}` : mappedKey;
-      params.set(indexedKey, arr.join(','));
+    const variantSelectors = selector[key];
+    if (variantSelectors?.length) {
+      const indexedKey = index && index > 0 ? `${key}${index}` : key;
+      params.set(indexedKey, variantSelectors.join(','));
     }
   }
-  for (const k of variantStringFields) {
-    const value = selector[k];
-    if (value !== undefined) {
-      const key = index && index > 0 ? `${k}${index}` : k;
-      params.set(key, value);
+  addVariantStringFieldsToUrlSearchParams(selector, params, index);
+}
+
+export function addVariantSelectorToUrlSearchParamsForApi(
+  selector: VariantSelector,
+  params: URLSearchParams,
+  index?: number
+) {
+  for (const key of variantArrayFields) {
+    const variantSelectors = selector[key];
+    if (variantSelectors?.length) {
+      const mappedKey = mapFilterToLapisV2(key);
+      const indexedKey = index && index > 0 ? `${mappedKey}${index}` : mappedKey;
+      params.set(indexedKey, variantSelectors.join(','));
+    }
+  }
+  addVariantStringFieldsToUrlSearchParams(selector, params, index);
+}
+
+function addVariantStringFieldsToUrlSearchParams(
+  selector: VariantSelector,
+  params: URLSearchParams,
+  index?: number
+) {
+  for (const key of variantStringFields) {
+    const variantSelector = selector[key];
+    if (variantSelector !== undefined) {
+      const indexedKey = index && index > 0 ? `${key}${index}` : key;
+      params.set(indexedKey, variantSelector);
     }
   }
 }
