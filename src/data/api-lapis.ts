@@ -7,7 +7,6 @@ import {
   addDateRangeSelectorToUrlSearchParams,
   addSubmittedDateRangeSelectorToUrlParams,
 } from './DateRangeSelector';
-import { addVariantSelectorToUrlSearchParams } from './VariantSelector';
 import { CountryDateCountSampleEntry } from './sample/CountryDateCountSampleEntry';
 import { PangoCountSampleEntry } from './sample/PangoCountSampleEntry';
 import {
@@ -30,6 +29,7 @@ import { HostCountSampleEntry } from './sample/HostCountSampleEntry';
 import { InsertionCountEntry } from './InsertionCountEntry';
 import { NextcladeDatasetInfo } from './NextcladeDatasetInfo';
 import { mapFilterToLapisV2 } from './api-lapis-v2';
+import { addVariantSelectorToUrlSearchParamsForApi } from './VariantSelector';
 
 // const HOST = process.env.REACT_APP_LAPIS_HOST;
 // TODO: remove this, before merging to master
@@ -283,7 +283,7 @@ export async function getLinkTo(
     addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
   }
   if (selector.variant) {
-    addVariantSelectorToUrlSearchParams(selector.variant, params);
+    addVariantSelectorToUrlSearchParamsForApi(selector.variant, params);
   }
   if (selector.samplingStrategy) {
     addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
