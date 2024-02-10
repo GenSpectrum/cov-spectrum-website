@@ -243,14 +243,16 @@ export async function getLinkToListOfPrimaryKeys(
 ): Promise<string> {
   const dataFormat = 'CSV-WITHOUT-HEADERS';
 
-  const linkToDetails = new URL(await getLinkTo('details', selector, orderAndLimit, undefined, dataFormat));
-  linkToDetails.searchParams.set('fields', 'primaryKey');
+  const linkToDetails = new URL(
+    await getLinkTo('sample/details', selector, orderAndLimit, undefined, dataFormat)
+  );
+  linkToDetails.searchParams.set('fields', primaryKey);
 
   return linkToDetails.toString();
 }
 
 export async function getCsvLinkToDetails(selector: LapisSelector): Promise<string> {
-  return getLinkTo('details', selector, undefined, true, 'csv');
+  return getLinkTo('sample/details', selector, undefined, true, 'csv');
 }
 
 export async function getLinkToFasta(
