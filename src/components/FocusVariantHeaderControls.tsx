@@ -82,7 +82,7 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
   const getLinkFunc =
     sequenceDataSource === 'open'
       ? getCsvLinkToDetails
-      : (selector: LapisSelector) => getLinkToListOfPrimaryKeys('gisaid-epi-isl', selector);
+      : (selector: LapisSelector) => getLinkToListOfPrimaryKeys('gisaidEpiIsl', selector);
   const linkToListPromise = useDeepCompareMemo(() => getLinkFunc(selector), [selector]);
   const { data: listLink } = useAsync({ promise: linkToListPromise });
 

@@ -18,7 +18,7 @@ export class UsherIntegration implements Integration {
 
   open(selector: LapisSelector): void {
     (sequenceDataSource === 'gisaid'
-      ? getLinkToListOfPrimaryKeys('gisaid_epi_isl', selector, defaultOrderAndLimit)
+      ? getLinkToListOfPrimaryKeys('gisaidEpiIsl', selector, defaultOrderAndLimit)
       : getLinkToListOfPrimaryKeys('strain', selector, defaultOrderAndLimit)
     ).then(url => {
       window.open(usherUrl + encodeURIComponent(url));
