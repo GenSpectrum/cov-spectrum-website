@@ -16,7 +16,7 @@ export function readHostSelectorFromUrlSearchParams(params: URLSearchParams): Ho
   if (!params.has('host')) {
     return defaultHost;
   }
-  return params.get('host')!.split(',');
+  return params.getAll('host');
 }
 
 export function isDefaultHostSelector(selector: HostSelector): boolean {
