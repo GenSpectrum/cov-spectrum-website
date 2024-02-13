@@ -12,7 +12,7 @@ import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLoca
 import StoriesOverview from './stories/StoriesOverview';
 import StoryRouter from './stories/StoryRouter';
 import { useExploreUrl } from './helpers/explore-url';
-import { fetchNextcladeDatasetInfo, fetchLapisDataVersion } from './data/api-lapis';
+import { fetchLapisDataVersion, fetchNextcladeDatasetInfo } from './data/api-lapis';
 import { sequenceDataSource } from './helpers/sequence-data-source';
 import { ExternalLink } from './components/ExternalLink';
 import styled from 'styled-components';
@@ -60,9 +60,7 @@ export const App = () => {
   const queryFunction =
     sequenceDataSource === 'gisaid'
       ? fetchNextcladeDatasetInfo
-      : () => {
-          return Promise.resolve({ name: 'notNextcladeDatasetInfo', tag: null } as NextcladeDatasetInfo);
-        };
+      : () => Promise.resolve({ name: 'notNextcladeDatasetInfo', tag: null } as NextcladeDatasetInfo);
 
   const nextcladeDatasetInfo = useQuery(queryFunction, []).data;
 
