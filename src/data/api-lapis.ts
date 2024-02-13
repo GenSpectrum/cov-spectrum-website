@@ -31,11 +31,11 @@ import { NextcladeDatasetInfo } from './NextcladeDatasetInfo';
 import { mapFilterToLapisV2 } from './api-lapis-v2';
 import { addVariantSelectorToUrlSearchParamsForApi } from './VariantSelector';
 
-// const HOST = process.env.REACT_APP_LAPIS_HOST;
+const HOST = process.env.REACT_APP_LAPIS_HOST;
 // TODO: remove this, before merging to master
-const HOST = 'https://s1.int.genspectrum.org/gisaid';
-// const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
-const ACCESS_KEY = 'aggregatedTestKey';
+// const HOST = 'https://s1.int.genspectrum.org/gisaid';
+const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
+// const ACCESS_KEY = 'aggregatedTestKey';
 
 let currentLapisDataVersion: number | undefined = undefined;
 
@@ -325,7 +325,7 @@ export async function _fetchAggSamples(
 ): Promise<FullSampleAggEntry[]> {
   const linkPrefix = await getLinkTo('aggregated', selector, undefined, undefined, undefined, true);
   const _additionalParams = new URLSearchParams(additionalParams);
-  _additionalParams.set('fields', mapFiltersToLapisV2(fields).join(','));
+  _additionalParams.set('fields', fields.map(mapFilterToLapisV2).join(','));
   const response = await get(`${linkPrefix}&${_additionalParams}`, signal);
   if (!response.ok) {
     if (response.body !== null) {
@@ -350,12 +350,6 @@ export async function _fetchAggSamples(
   }
 
   return parsed;
-}
-
-function mapFiltersToLapisV2(filters: string[]) {
-  return filters.map(filter => {
-    return mapFilterToLapisV2(filter);
-  });
 }
 
 function _addOrderAndLimitToSearchParams(params: URLSearchParams, orderAndLimitConfig?: OrderAndLimitConfig) {

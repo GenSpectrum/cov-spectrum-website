@@ -62,18 +62,16 @@ export function addVariantSelectorToUrlSearchParams(
 
 export function addVariantSelectorToUrlSearchParamsForApi(
   selector: VariantSelector,
-  params: URLSearchParams,
-  index?: number
+  params: URLSearchParams
 ) {
   for (const key of variantArrayFields) {
     const variantSelectors = selector[key];
     if (variantSelectors?.length) {
       const mappedKey = mapFilterToLapisV2(key);
-      const indexedKey = index && index > 0 ? `${mappedKey}${index}` : mappedKey;
-      params.set(indexedKey, variantSelectors.join(','));
+      params.set(mappedKey, variantSelectors.join(','));
     }
   }
-  addVariantStringFieldsToUrlSearchParams(selector, params, index);
+  addVariantStringFieldsToUrlSearchParams(selector, params);
 }
 
 function addVariantStringFieldsToUrlSearchParams(
