@@ -104,7 +104,9 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
 
   const listLink2: string | undefined =
     listLink &&
-    listLink.replace('contributors', 'gisaid-epi-isl').replace('&downloadAsFile=true&dataFormat=csv', '');
+    listLink.replace('contributors', 'gisaid-epi-isl').replace('&downloadAsFile=true&dataFormat=csv', '') +
+      // '&orderBy=random'; TODO(#927) bring back random order
+      '';
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [anchorElSequence, setAnchorElSequence] = React.useState<null | HTMLElement>(null);
