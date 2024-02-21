@@ -3,6 +3,8 @@ import { ExternalLink } from '../components/ExternalLink';
 import { EmailLink } from '../components/EmailLink';
 import { InternalLink } from '../components/InternalLink';
 
+const LAPIS_HOST = process.env.REACT_APP_LAPIS_HOST;
+
 const Question = ({ title, id, children }: { title: string; id?: string; children: React.ReactNode }) => {
   return (
     <div id={id} className='w-full bg-yellow-100 shadow-lg mb-6 mt-4 rounded-xl p-4 dark:bg-gray-200'>
@@ -53,8 +55,7 @@ export const AboutPage = () => {
         CoV-Spectrum uses the{' '}
         <ExternalLink url='https://github.com/cevo-public/LAPIS'>LAPIS API</ExternalLink> to filter and
         aggregate the genomic data. An instance of LAPIS that uses the data from GenBank is openly available,
-        please find the documentation{' '}
-        <ExternalLink url='https://lapis-docs.readthedocs.io/'>here</ExternalLink>.
+        please find the documentation <ExternalLink url={`${LAPIS_HOST}/docs`}>here</ExternalLink>.
       </p>
       <p>If you would like to reference CoV-Spectrum in scientific works, please cite our publication:</p>
       <div className='p-4 mt-4 mb-6 bg-gray-100 rounded-xl'>
