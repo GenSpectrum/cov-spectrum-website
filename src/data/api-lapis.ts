@@ -32,10 +32,7 @@ import { mapFilterToLapisV2 } from './api-lapis-v2';
 import { addVariantSelectorToUrlSearchParamsForApi } from './VariantSelector';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
-// TODO: remove this, before merging to master
-// const HOST = 'https://s1.int.genspectrum.org/gisaid';
 const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
-// const ACCESS_KEY = 'aggregatedTestKey';
 
 let currentLapisDataVersion: number | undefined = undefined;
 
