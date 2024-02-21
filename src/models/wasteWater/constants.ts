@@ -21,6 +21,6 @@ export const wastewaterVariantColors: {
   'EG.5': '#B4E80B',
   'BA.2.86': '#FF20E0',
   'JN.1': '#00E9FF', // improv, not in sync with covariants.org
-  'BA.2.87.1': '#91b3b9', //improv, not in sync with covariants.org
+  'BA.2.87.1': '#56acbc', //improv, not in sync with covariants.org
   'undetermined': '#969696',
 };
