@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { HeaderCountrySelect } from './components/HeaderCountrySelect';
 import { ExternalLink } from './components/ExternalLink';
-import { AiOutlineGithub, AiOutlineTwitter, AiOutlineMenu } from 'react-icons/ai';
+import { AiOutlineGithub, AiOutlineMenu, AiOutlineTwitter } from 'react-icons/ai';
 import { FaExchangeAlt, FaFilter, FaMastodon } from 'react-icons/fa';
 import { Button, ButtonVariant } from './helpers/ui';
 import { useExploreUrl } from './helpers/explore-url';
@@ -48,7 +48,7 @@ const Logo = () => {
   );
 };
 
-const Header = () => {
+const Header = ({ hideInternalLinks }: { hideInternalLinks?: true }) => {
   const [showAdvancedFilteringModal, setShowAdvancedFilteringModal] = useState(false);
   const [showOffCanvas, setShowOffCanvas] = useState(false);
 
@@ -144,18 +144,22 @@ const Header = () => {
               {/* Right part */}
               <div id='right-nav-buttons' className='items-center justify-center hidden lg:block'>
                 <div className='ml-1 flex items-center'>
-                  <Link className={getButtonClasses('/chat')} to={'/chat'}>
-                    Chat
-                  </Link>
-                  <Link className={getButtonClasses('/collections')} to={'/collections'}>
-                    Collections
-                  </Link>
-                  <Link className={getButtonClasses('/stories')} to={'/stories'}>
-                    Stories
-                  </Link>
-                  <Link className={getButtonClasses('/about')} to={'/about'}>
-                    About
-                  </Link>
+                  {!hideInternalLinks && (
+                    <>
+                      <Link className={getButtonClasses('/chat')} to={'/chat'}>
+                        Chat
+                      </Link>
+                      <Link className={getButtonClasses('/collections')} to={'/collections'}>
+                        Collections
+                      </Link>
+                      <Link className={getButtonClasses('/stories')} to={'/stories'}>
+                        Stories
+                      </Link>
+                      <Link className={getButtonClasses('/about')} to={'/about'}>
+                        About
+                      </Link>
+                    </>
+                  )}
                   {MastodonButton}
                   {TwitterButton}
                   {GitHubButton}
