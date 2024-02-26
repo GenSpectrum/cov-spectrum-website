@@ -12,7 +12,7 @@ import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLoca
 import StoriesOverview from './stories/StoriesOverview';
 import StoryRouter from './stories/StoryRouter';
 import { useExploreUrl } from './helpers/explore-url';
-import { fetchLapisDataVersion, fetchNextcladeDatasetInfo } from './data/api-lapis';
+import { checkSiloAvailability, fetchLapisDataVersion, fetchNextcladeDatasetInfo } from './data/api-lapis';
 import { sequenceDataSource } from './helpers/sequence-data-source';
 import { ExternalLink } from './components/ExternalLink';
 import styled from 'styled-components';
@@ -57,17 +57,42 @@ export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
-  const queryFunction =
+  const getNextcladeDatasetInfo =
     sequenceDataSource === 'gisaid'
       ? fetchNextcladeDatasetInfo
       : () => Promise.resolve({ name: 'notNextcladeDatasetInfo', tag: null } as NextcladeDatasetInfo);
 
-  const nextcladeDatasetInfo = useQuery(queryFunction, []).data;
-
-  const { data: lapisDataVersion } = useQuery(() => fetchLapisDataVersion(), []);
+  const nextcladeDatasetInfo = useQuery(getNextcladeDatasetInfo, []).data;
+  const { data: siloAvailability } = useQuery(checkSiloAvailability, []);
+  const { data: lapisDataVersion } = useQuery(fetchLapisDataVersion, []);
 
   const isChatPage = useLocation().pathname === '/chat';
   const showFooter = !hideHeaderAndFooter && !isChatPage;
+
+  if (siloAvailability?.isAvailable === false) {
+    return (
+      <div className='w-full'>
+        {!hideHeaderAndFooter && <Header hideInternalLinks />}
+        <div className='text-center mt-8 max-w-lg m-auto'>
+          <Alert variant={AlertVariant.DANGER}>
+            Our database (LAPIS) is currently unavailable. Sorry for the inconvenience!
+            {siloAvailability.retryAfterInSeconds === null ? (
+              <>
+                {' '}
+                Please try again later. You can file an issue{' '}
+                <a className='underline' href='https://github.com/GenSpectrum/cov-spectrum-website/issues'>
+                  on GitHub
+                </a>{' '}
+                if the problem persists.
+              </>
+            ) : (
+              ` Please try again in ${Math.ceil(siloAvailability.retryAfterInSeconds / 60)} minutes.`
+            )}
+          </Alert>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className='w-full'>

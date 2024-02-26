@@ -11,3 +11,5 @@ export async function fetchLapisDataVersion(): Promise<string> {
 export async function fetchNextcladeDatasetInfo(): Promise<NextcladeDatasetInfo> {
   return { name: 'mockName', tag: null };
 }
+
+export const checkSiloAvailability = jest.fn();

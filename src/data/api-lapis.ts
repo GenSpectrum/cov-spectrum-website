@@ -51,6 +51,28 @@ export const get = async (endpoint: string, signal?: AbortSignal) => {
   return await fetch(url, requestInit);
 };
 
+export type SiloAvailability =
+  | { isAvailable: true }
+  | { isAvailable: false; retryAfterInSeconds: number | null };
+
+export async function checkSiloAvailability(signal?: AbortSignal): Promise<SiloAvailability> {
+  let url = '/aggregated';
+  if (ACCESS_KEY) {
+    url += '?accessKey=' + ACCESS_KEY;
+  }
+  const response = await get(url, signal);
+
+  if (response.status !== 503) {
+    return { isAvailable: true as const };
+  }
+
+  const retryAfterInSeconds = response.headers.get('Retry-After');
+  if (retryAfterInSeconds === null) {
+    return { isAvailable: false, retryAfterInSeconds: null };
+  }
+  return { isAvailable: false, retryAfterInSeconds: Number(retryAfterInSeconds) };
+}
+
 export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<string> {
   let url = '/info';
   if (ACCESS_KEY) {
