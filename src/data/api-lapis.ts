@@ -31,8 +31,11 @@ import { NextcladeDatasetInfo } from './NextcladeDatasetInfo';
 import { mapFilterToLapisV2 } from './api-lapis-v2';
 import { addVariantSelectorToUrlSearchParamsForApi } from './VariantSelector';
 
-const HOST = process.env.REACT_APP_LAPIS_HOST;
-const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
+// const HOST = process.env.REACT_APP_LAPIS_HOST;
+// const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
+
+const HOST = 'https://s1.int.genspectrum.org/gisaid';
+const ACCESS_KEY = 'aggregatedTestKey';
 
 let currentLapisDataVersion: number | undefined = undefined;
 
