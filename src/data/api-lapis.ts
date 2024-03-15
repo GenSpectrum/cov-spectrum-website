@@ -36,7 +36,11 @@ const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
 
 let currentLapisDataVersion: number | undefined = undefined;
 
-export const get = async (endpoint: string, signal?: AbortSignal) => {
+export const get = async (
+  endpoint: string,
+  signal?: AbortSignal,
+  options: { skipMaintenanceCheck?: boolean } = {}
+) => {
   let url = `${HOST}/sample${endpoint}`;
 
   const requestInit =
@@ -48,7 +52,12 @@ export const get = async (endpoint: string, signal?: AbortSignal) => {
           method: 'GET',
           signal: signal,
         };
-  return await fetch(url, requestInit);
+
+  const response = await fetch(url, requestInit);
+  if (!(options.skipMaintenanceCheck === true) && response.status === 503) {
+    window.location.reload();
+  }
+  return response;
 };
 
 export type SiloAvailability =
@@ -60,7 +69,7 @@ export async function checkSiloAvailability(signal?: AbortSignal): Promise<SiloA
   if (ACCESS_KEY) {
     url += '?accessKey=' + ACCESS_KEY;
   }
-  const response = await get(url, signal);
+  const response = await get(url, signal, { skipMaintenanceCheck: true });
 
   if (response.status !== 503) {
     return { isAvailable: true as const };
@@ -78,7 +87,7 @@ export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<strin
   if (ACCESS_KEY) {
     url += '?accessKey=' + ACCESS_KEY;
   }
-  const response = await get(url, signal);
+  const response = await get(url, signal, { skipMaintenanceCheck: true });
   if (!response.ok) {
     throw new Error('Error fetching info');
   }
@@ -92,7 +101,7 @@ export async function fetchNextcladeDatasetInfo(signal?: AbortSignal): Promise<N
   if (ACCESS_KEY) {
     url += '&accessKey=' + ACCESS_KEY;
   }
-  const response = await get(url, signal);
+  const response = await get(url, signal, { skipMaintenanceCheck: true });
   if (!response.ok) {
     throw new Error('Error fetching Nextclade dataset info');
   }
@@ -108,7 +117,7 @@ export async function fetchAllHosts(): Promise<string[]> {
   if (ACCESS_KEY) {
     url += '&accessKey=' + ACCESS_KEY;
   }
-  const res = await get(url);
+  const res = await get(url, undefined, { skipMaintenanceCheck: true });
   if (!res.ok) {
     throw new Error('Error fetching new samples data');
   }
