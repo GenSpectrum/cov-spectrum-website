@@ -1,7 +1,7 @@
 import ResizeObserver from 'resize-observer-polyfill';
 import { filterByDateRange, getMaxDateRange, useWasteWaterData } from '../WasteWaterSamplingSitesHooks';
 import { render, screen } from '@testing-library/react';
-import { WasteWaterSamplingSites } from '../WasteWaterSamplingSites';
+import { WasteWaterLegacySites } from '../WasteWaterLegacySites';
 import { useResizeDetector } from 'react-resize-detector';
 import { globalDateCache } from '../../../../helpers/date-cache';
 import { getTestWasteWaterDataWithLocation } from '../testHelper';
@@ -32,20 +32,20 @@ const useWasteWaterDataMock = useWasteWaterData as jest.Mock;
 const filterByDateRangeMock = filterByDateRange as jest.Mock;
 const minMaxDateMock = getMaxDateRange as jest.Mock;
 
-describe('WasteWaterSamplingSites', function () {
+describe('WasteWaterLegacySites', function () {
   it('should display loader when no data is provided', function () {
     useWasteWaterDataMock.mockReturnValue(undefined);
 
     render(
       <MemoryRouter>
-        <WasteWaterSamplingSites />
+        <WasteWaterLegacySites />
       </MemoryRouter>
     );
 
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
-  it('should display Widgets for all locations except legacy', function () {
+  it('should display Widgets for only legacy locations', function () {
     useResizeDetectorMock.mockReturnValue({ width: 500, ref: { current: null } });
 
     const data = getTestWasteWaterDataWithLocation(
@@ -63,13 +63,13 @@ describe('WasteWaterSamplingSites', function () {
 
     render(
       <MemoryRouter>
-        <WasteWaterSamplingSites />
+        <WasteWaterLegacySites />
       </MemoryRouter>
     );
 
     expect(screen.getByText('Past 6 months')).toBeInTheDocument();
-    expect(screen.getByText('location1')).toBeInTheDocument();
-    expect(screen.getByText('location2')).toBeInTheDocument();
-    expect(() => screen.getByText('test_legacylocation')).toThrow();
+    expect(() => screen.getByText('location1')).toThrow();
+    expect(() => screen.getByText('location2')).toThrow();
+    expect(screen.getByText('test_legacylocation')).toBeInTheDocument();
   });
 });

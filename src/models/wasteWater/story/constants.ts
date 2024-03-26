@@ -4,7 +4,8 @@ export const legacyLocations = new Set<string>([
   'Porrentruy (JU)',
   'Neuchâtel (NE)',
   'Solothurn (SO)',
-  'Schwyz (SZ)'
+  'Schwyz (SZ)',
+  'test_legacylocation' // for tests
 ]);
 
 export const discontinuedDate = ' since Jan 1, 2024';
