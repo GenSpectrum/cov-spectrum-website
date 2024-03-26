@@ -40,6 +40,7 @@ export const WasteWaterStoryPage = () => {
       </p>
       <WasteWaterSamplingSites />
       <DataSources />
+      <DataAvailability />
       <VideoPresentation />
       <Acknowledgements />
       <Funding />
@@ -56,10 +57,14 @@ const DataSources = () => {
         <ExternalLink url={'https://www.eawag.ch/en/department/sww/projects/sars-cov2-in-wastewater/'}>
           Eawag
         </ExternalLink>{' '}
-        collects samples daily at multiple locations around Switzerland. Since its inception, the project has
-        been gradually extended and covers now fourteen wastewater treatment plants: Altenrhein (SG), Chur
-        (GR), Genève (GE), Laupen (BE), Lugano (TI), Zürich (ZH), Lausanne (VD), Basel (BS), Luzern (LU), Bern
-        (BE), Porrentruy (JU), Neuchâtel (NE), Solothurn (SO) and Schwyz (SZ).
+        collects samples daily at multiple locations around Switzerland. Over the course of the project 
+        different locations have been covered. Since January 1st of 2024 the following eight wastewater 
+        treatment plants are monitored: Altenrhein (SG), Chur (GR), Genève (GE), Laupen (BE), Lugano (TI), 
+        Zürich (ZH), Luzern (LU) and Bern (BE).
+      </p>
+      <p>
+        Until end of December 2023 the project covered six additional wastewater treatment plants:
+        Lausanne (VD), Basel (BS), Porrentruy (JU), Neuchâtel (NE), Solothurn (SO) and Schwyz (SZ).
       </p>
       <p>
         Previously, Microsynth AG provided samples from the wastewater treatment plants of Lausanne (Vidy),
@@ -75,6 +80,21 @@ const DataSources = () => {
         Zürich-Werdhölzli (also used by Eawag), Winterthur-Hard, Dietikon-Limmattal, Dübendorf-Neugut,
         Niederglatt-Fischbach, Uster, Bülach-Furt, Wetzikon-Flos, Horgen-Oberrieden, Meilen, Affoltern
         a.A.-Zwillikon, and Illnau-Mannenberg.
+      </p>
+    </div>
+  );
+};
+
+const DataAvailability = () => {
+  return (
+    <div>
+      <h2>Data availability</h2>
+      <p>
+        De-humanized sequencing libraries in FASTQ format for each collection event are publicly available on ENA under{' '}
+        <ExternalLink url={'https://www.ebi.ac.uk/ena/browser/view/PRJEB44932'}>
+          project ID PRJEB44932
+        </ExternalLink>
+        .
       </p>
     </div>
   );

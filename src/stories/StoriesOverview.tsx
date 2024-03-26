@@ -33,11 +33,7 @@ const StoriesOverview = () => (
       </div>
       <p>
         We report estimates of the prevalence of different genomic variants of SARS-CoV-2 obtained from
-        samples collected at different Swiss wastewater treatment plants (
-        <ExternalLink url='https://bsse.ethz.ch/cbg/research/computational-virology/sarscov2-variants-wastewater-surveillance.html#data-sources'>
-          see our website for the sources
-        </ExternalLink>
-        ).
+        samples collected at different Swiss wastewater treatment plants (see story for details).
       </p>
     </StoryPreviewWrapper>
   </div>
