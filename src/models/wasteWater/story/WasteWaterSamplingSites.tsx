@@ -6,8 +6,17 @@ import DateRangePicker from '../../../components/DateRangePicker';
 import { GridCell, PackedGrid } from '../../../components/PackedGrid';
 import { WasteWaterLocationTimeWidget } from '../WasteWaterLocationTimeWidget';
 import { ShowMoreButton } from '../../../helpers/ui';
+import { discontinuedLocations } from '../constants';
 
-export const WasteWaterSamplingSites = () => {
+export interface WasteWaterSitesProps {
+  locationFilter?: (location: string) => Boolean;
+}
+
+export const isDiscontinuedSite = (location: string) => {
+  return discontinuedLocations.has(location);
+};
+
+export const WasteWaterSamplingSites = ({ locationFilter }: WasteWaterSitesProps) => {
   const wasteWaterData = useWasteWaterData();
   const [dateRangeSelector, setDateRangeSelector] = useState<DateRangeSelector>(
     new SpecialDateRangeSelector('Past6M')
@@ -17,7 +26,12 @@ export const WasteWaterSamplingSites = () => {
     return <Loader />;
   }
 
-  const dataInTimeRange = filterByDateRange(wasteWaterData, dateRangeSelector.getDateRange());
+  const dataInTimeRange = filterByDateRange(wasteWaterData, dateRangeSelector.getDateRange()).filter(
+    ({ location }) => {
+      return locationFilter ? locationFilter(location) : true;
+    }
+  );
+
   const dateRange = getMaxDateRange(dataInTimeRange);
 
   return (
