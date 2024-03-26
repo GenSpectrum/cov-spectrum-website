@@ -8,7 +8,7 @@ import { GridCell, PackedGrid } from '../../../components/PackedGrid';
 import { WasteWaterLocationTimeWidget } from '../WasteWaterLocationTimeWidget';
 import { ShowMoreButton } from '../../../helpers/ui';
 
-export const WasteWaterSamplingSites = () => {
+export const WasteWaterLegacySites = () => {
   const wasteWaterData = useWasteWaterData();
   const [dateRangeSelector, setDateRangeSelector] = useState<DateRangeSelector>(
     new SpecialDateRangeSelector('Past6M')
@@ -18,7 +18,7 @@ export const WasteWaterSamplingSites = () => {
     return <Loader />;
   }
 
-  const dataInTimeRange = filterByDateRange(wasteWaterData, dateRangeSelector.getDateRange()).filter((ds) => !legacyLocations.has(ds.location));
+  const dataInTimeRange = filterByDateRange(wasteWaterData, dateRangeSelector.getDateRange()).filter((ds) => legacyLocations.has(ds.location));
   const dateRange = getMaxDateRange(dataInTimeRange);
 
   return (

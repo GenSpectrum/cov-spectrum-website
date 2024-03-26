@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { ExternalLink } from '../../../components/ExternalLink';
 import { WasteWaterSamplingSites } from './WasteWaterSamplingSites';
+import { WasteWaterLegacySites } from './WasteWaterLegacySites';
+import { discontinuedDate } from './constants';
 
 export const WasteWaterStoryPage = () => {
   useEffect(() => {
@@ -39,12 +41,22 @@ export const WasteWaterStoryPage = () => {
         proportions of variants are less reliable in this situation.
       </p>
       <WasteWaterSamplingSites />
+      <LocationsDiscontinued />
+      <WasteWaterLegacySites />
       <DataSources />
       <DataAvailability />
       <VideoPresentation />
       <Acknowledgements />
       <Funding />
       <Contact />
+    </div>
+  );
+};
+
+const LocationsDiscontinued = () => {
+  return (
+    <div>
+      <h2>Locations discontinued{ discontinuedDate }</h2>
     </div>
   );
 };
