@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import { WasteWaterSamplingSites } from '../WasteWaterSamplingSites';
 import { useResizeDetector } from 'react-resize-detector';
 import { globalDateCache } from '../../../../helpers/date-cache';
-import { getTestWasteWaterDataWithLocation } from '../testHelper';
+import { getTestWasteWaterDataWithLocation } from '../testHelpers';
 import { MemoryRouter } from 'react-router-dom';
 
 jest.mock('recharts', () => {
@@ -70,5 +70,36 @@ describe('WasteWaterSamplingSites', function () {
     expect(screen.getByText('Past 6 months')).toBeInTheDocument();
     expect(screen.getByText('location1')).toBeInTheDocument();
     expect(screen.getByText('location2')).toBeInTheDocument();
+  });
+
+  it('should display only filtered locations', function () {
+    useResizeDetectorMock.mockReturnValue({ width: 500, ref: { current: null } });
+
+    const data = getTestWasteWaterDataWithLocation(
+      ['2021-01-01', '2021-01-02', '2021-01-03', '2021-01-04'],
+      ['variantName1'],
+      ['location1', 'location2']
+    );
+
+    useWasteWaterDataMock.mockReturnValue(data);
+    filterByDateRangeMock.mockReturnValue(data);
+    minMaxDateMock.mockReturnValue({
+      dateFrom: globalDateCache.getDay('2021-01-01'),
+      dateTo: globalDateCache.getDay('2021-01-04'),
+    });
+
+    render(
+      <MemoryRouter>
+        <WasteWaterSamplingSites
+          locationFilter={location => {
+            return location === 'location1';
+          }}
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText('Past 6 months')).toBeInTheDocument();
+    expect(screen.getByText('location1')).toBeInTheDocument();
+    expect(screen.queryByText('location2')).not.toBeInTheDocument();
   });
 });

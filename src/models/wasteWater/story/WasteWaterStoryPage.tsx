@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { ExternalLink } from '../../../components/ExternalLink';
-import { WasteWaterSamplingSites } from './WasteWaterSamplingSites';
+import { discontinuedDate } from '../constants';
+import { isDiscontinuedSite, WasteWaterSamplingSites } from './WasteWaterSamplingSites';
 
 export const WasteWaterStoryPage = () => {
   useEffect(() => {
@@ -38,7 +39,8 @@ export const WasteWaterStoryPage = () => {
         low infection numbers in the catchment area of the wastewater treatment plant. Estimates of the
         proportions of variants are less reliable in this situation.
       </p>
-      <WasteWaterSamplingSites />
+      <WasteWaterSamplingSites locationFilter={location => !isDiscontinuedSite(location)} />
+      <DiscontinuedSamplingSites />
       <DataSources />
       <DataAvailability />
       <VideoPresentation />
@@ -46,6 +48,15 @@ export const WasteWaterStoryPage = () => {
       <Funding />
       <Contact />
     </div>
+  );
+};
+
+const DiscontinuedSamplingSites = () => {
+  return (
+    <>
+      <h2>Locations discontinued{discontinuedDate}</h2>
+      <WasteWaterSamplingSites locationFilter={isDiscontinuedSite} />
+    </>
   );
 };
 
@@ -57,14 +68,14 @@ const DataSources = () => {
         <ExternalLink url={'https://www.eawag.ch/en/department/sww/projects/sars-cov2-in-wastewater/'}>
           Eawag
         </ExternalLink>{' '}
-        collects samples daily at multiple locations around Switzerland. Over the course of the project 
-        different locations have been covered. Since January 1st of 2024 the following eight wastewater 
-        treatment plants are monitored: Altenrhein (SG), Chur (GR), Genève (GE), Laupen (BE), Lugano (TI), 
+        collects samples daily at multiple locations around Switzerland. Over the course of the project
+        different locations have been covered. Since January 1st of 2024 the following eight wastewater
+        treatment plants are monitored: Altenrhein (SG), Chur (GR), Genève (GE), Laupen (BE), Lugano (TI),
         Zürich (ZH), Luzern (LU) and Bern (BE).
       </p>
       <p>
-        Until end of December 2023 the project covered six additional wastewater treatment plants:
-        Lausanne (VD), Basel (BS), Porrentruy (JU), Neuchâtel (NE), Solothurn (SO) and Schwyz (SZ).
+        Until end of December 2023 the project covered six additional wastewater treatment plants: Lausanne
+        (VD), Basel (BS), Porrentruy (JU), Neuchâtel (NE), Solothurn (SO) and Schwyz (SZ).
       </p>
       <p>
         Previously, Microsynth AG provided samples from the wastewater treatment plants of Lausanne (Vidy),
@@ -90,11 +101,9 @@ const DataAvailability = () => {
     <div>
       <h2>Data availability</h2>
       <p>
-        De-humanized sequencing libraries in FASTQ format for each collection event are publicly available on ENA under{' '}
-        <ExternalLink url={'https://www.ebi.ac.uk/ena/browser/view/PRJEB44932'}>
-          project ID PRJEB44932
-        </ExternalLink>
-        .
+        De-humanized sequencing libraries in FASTQ format for each collection event are publicly available on
+        ENA under project ID{' '}
+        <ExternalLink url={'https://www.ebi.ac.uk/ena/browser/view/PRJEB44932'}>PRJEB44932</ExternalLink>.
       </p>
     </div>
   );

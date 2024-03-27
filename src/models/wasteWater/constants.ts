@@ -24,3 +24,15 @@ export const wastewaterVariantColors: {
   'BA.2.87.1': '#56ACBC', //improv, not in sync with covariants.org
   'undetermined': '#969696',
 };
+
+export const discontinuedLocations = new Set<string>([
+  'Lausanne (VD)',
+  'Basel (BS)',
+  'Porrentruy (JU)',
+  'Neuchâtel (NE)',
+  'Solothurn (SO)',
+  'Schwyz (SZ)',
+  'test_legacylocation', // for tests
+]);
+
+export const discontinuedDate = ' since Jan 1, 2024';

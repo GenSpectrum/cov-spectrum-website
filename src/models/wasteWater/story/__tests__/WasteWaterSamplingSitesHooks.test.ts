@@ -2,7 +2,7 @@ import { filterByDateRange, getMaxDateRange, useWasteWaterData } from '../WasteW
 import { getData } from '../../loading';
 import { renderHook, waitFor } from '@testing-library/react';
 import { globalDateCache } from '../../../../helpers/date-cache';
-import { getTestWasteWaterDataWithLocation } from '../testHelper';
+import { getTestWasteWaterDataWithLocation } from '../testHelpers';
 
 jest.mock('../../loading');
 const getDataMock = getData as jest.Mock;
