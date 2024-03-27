@@ -39,12 +39,36 @@ export const WasteWaterStoryPage = () => {
         proportions of variants are less reliable in this situation.
       </p>
       <WasteWaterSamplingSites />
+      <Viloca />
       <DataSources />
       <DataAvailability />
       <VideoPresentation />
       <Acknowledgements />
       <Funding />
       <Contact />
+    </div>
+  );
+};
+
+const Viloca = () => {
+  return (
+    <div>
+      <h2>Potential drug resistance mutations in wastewater in Switzerland</h2>
+      <p>
+        We are analyzing the Swiss wastewater samples to detect the presence of potential drug resistance
+        mutations. Specifically, we are focusing on identifying mutations that have the potential to cause
+        resistance to Nirmatrelvir and Remdesivir. The mutations in the sites of interest are visualized in a
+        heatmap, which indicates the frequency of the mutation with color shading ranging from light (minimum:
+        0) to dark (maximum: 1). Any mutations not observed in the respective sample have been shaded gray,
+        indicating a frequency of 0. Additionally, any non-synonymous mutations are marked with an asterisk
+        (*).
+      </p>
+      <p>
+        We only report mutation calls with high levels of certainty in our results (posterior {'>'} 0.9). We
+        have made our data processing pipeline available on GitHub at the following link:{' '}
+        <ExternalLink url='https://github.com/cbg-ethz/SARS-CoV-2-wastewater-sample-processing-VILOCA' />
+      </p>
+      <img src='https://cov-spectrum.org/api/v2/resource/wastewater-viloca' alt='Mutation frequency' />
     </div>
   );
 };
