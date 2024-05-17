@@ -37,6 +37,7 @@ import MutationTableTabContent from '../components/MutationOverviewTable/Mutatio
 import TableTabContent from '../components/TableTabContent';
 import SequencesOverTimeTabContent from '../components/SequencesOverTimeTabContent';
 import { SequenceType } from '../data/SequenceType';
+import { promiseAllSettledQueued } from '../helpers/PromiseQueue';
 
 export const CollectionSingleViewPage = () => {
   const { collectionId: collectionIdStr } = useParams();
@@ -85,18 +86,20 @@ export const CollectionSingleViewPage = () => {
       if (!variants) {
         return undefined;
       }
-      const [baselineDateCounts, ...variantsDateCounts] = await Promise.allSettled(
-        [{ query: baselineVariant }, ...variants].map(variant =>
-          DateCountSampleData.fromApi(
-            addDefaultHostAndQc({
-              location: locationSelector,
-              variant: variant.query,
-              samplingStrategy: SamplingStrategy.AllSamples,
-              dateRange: dateRangeSelector,
-            }),
-            signal
-          )
-        )
+      const [baselineDateCounts, ...variantsDateCounts] = await promiseAllSettledQueued(
+        [{ query: baselineVariant }, ...variants].map(
+          variant => () =>
+            DateCountSampleData.fromApi(
+              addDefaultHostAndQc({
+                location: locationSelector,
+                variant: variant.query,
+                samplingStrategy: SamplingStrategy.AllSamples,
+                dateRange: dateRangeSelector,
+              }),
+              signal
+            )
+        ),
+        10
       );
       if (baselineDateCounts.status === 'rejected') {
         throw new Error(baselineDateCounts.reason);
@@ -120,10 +123,10 @@ export const CollectionSingleViewPage = () => {
         return undefined;
       }
 
-      return Promise.allSettled(
+      return promiseAllSettledQueued(
         variants.map(variant => {
           if (variantIsAllLineages(baselineVariant)) {
-            return Promise.resolve(baselineDateCounts);
+            return () => Promise.resolve(baselineDateCounts);
           }
           const baselineVariantQuery = transformToVariantQuery(baselineVariant);
           const variantVariantQuery = transformToVariantQuery(variant.query);
@@ -132,16 +135,18 @@ export const CollectionSingleViewPage = () => {
             : {
                 variantQuery: `(${variantVariantQuery})  | (${baselineVariantQuery})`,
               };
-          return DateCountSampleData.fromApi(
-            addDefaultHostAndQc({
-              location: locationSelector,
-              variant: variantSelector,
-              samplingStrategy: SamplingStrategy.AllSamples,
-              dateRange: dateRangeSelector,
-            }),
-            signal
-          );
-        })
+          return () =>
+            DateCountSampleData.fromApi(
+              addDefaultHostAndQc({
+                location: locationSelector,
+                variant: variantSelector,
+                samplingStrategy: SamplingStrategy.AllSamples,
+                dateRange: dateRangeSelector,
+              }),
+              signal
+            );
+        }),
+        10
       );
     },
     [variants, locationSelector, baselineVariant, baselineDateCounts, dateRangeSelector]
