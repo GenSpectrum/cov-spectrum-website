@@ -30,3 +30,10 @@ export class PromiseQueue {
     }
   }
 }
+
+export function promiseAllSettledQueued<T>(promiseSuppliers: (() => Promise<T>)[], batchSize: number) {
+  const promiseQueue = new PromiseQueue(batchSize);
+  return Promise.allSettled(
+    promiseSuppliers.map(promiseSupplier => promiseQueue.addTask(() => promiseSupplier()))
+  );
+}
