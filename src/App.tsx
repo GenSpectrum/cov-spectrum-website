@@ -38,10 +38,9 @@ import { NewFocusPage } from './pages/NewFocusPage';
 import { useQuery } from './helpers/query-hook';
 import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/default-selectors';
 import { useBaseLocation } from './helpers/use-base-location';
-import { ChatPage } from './pages/ChatPage';
+import { DisabledChatPage } from './pages/ChatPage';
 import { NextcladeDatasetInfo } from './data/NextcladeDatasetInfo';
 import Loader from './components/Loader';
-import { FixedChatButton } from './components/chat/FixedChatButton';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -107,7 +106,6 @@ export const App = () => {
       {showFooter && (
         <Footer nextcladeDatasetInfo={nextcladeDatasetInfo} lapisDataVersion={lapisDataVersion} />
       )}
-      {!isSmallScreen && !isChatPage && <FixedChatButton />}
     </div>
   );
 };
@@ -274,7 +272,7 @@ function CovSpectrumRoutes({
         }
       />
       <Route path='/about' element={<AboutPage />} />
-      <Route path='/chat' element={<ChatPage />} />
+      <Route path='/chat' element={<DisabledChatPage />} />
     </Routes>
   );
 }

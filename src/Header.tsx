@@ -146,9 +146,6 @@ const Header = ({ hideInternalLinks }: { hideInternalLinks?: true }) => {
                 <div className='ml-1 flex items-center'>
                   {!hideInternalLinks && (
                     <>
-                      <Link className={getButtonClasses('/chat')} to={'/chat'}>
-                        Chat
-                      </Link>
                       <Link className={getButtonClasses('/collections')} to={'/collections'}>
                         Collections
                       </Link>
@@ -219,7 +216,6 @@ const OffcanvasNav = ({ show, onClose, setShowAdvancedFilteringModal }: Offcanva
               }}
             />
           )}
-          <OffcanvasNavItem text='Chat' url='/chat' onClick={onClose} />
           <OffcanvasNavItem text='Collections' url='/collections' onClick={onClose} />
           <OffcanvasNavItem text='Stories' url='/stories' onClick={onClose} />
           <OffcanvasNavItem text='About' url='/about' onClick={onClose} />
