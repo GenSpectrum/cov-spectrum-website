@@ -56,6 +56,7 @@ import { AnalysisMode } from '../data/AnalysisMode';
 import { NucleotideEntropy } from '../components/NucleotideEntropy/NucleotideEntropy';
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
+const CASES_ENABLED = false;
 
 export const FocusSinglePage = () => {
   const exploreUrl = useExploreUrl();
@@ -403,7 +404,7 @@ export const FocusSinglePageContent = ({
                   />
                 }
               </GridCell>
-              {isDefaultHostSelector(host) && (
+              {CASES_ENABLED && isDefaultHostSelector(host) && (
                 <GridCell minWidth={600}>
                   <EstimatedCasesChartWidget.ShareableComponent
                     caseCounts={caseCountDataset}
@@ -463,15 +464,17 @@ export const FocusSinglePageContent = ({
                   wholeDateCounts={wholeDateCountWithDateFilter.data}
                 />
               </GridCell>
-              <GridCell minWidth={600}>
-                <NamedCard title='Reproduction number'>
-                  <HuismanScire2021ReContainer
-                    wholeDateCounts={wholeDateCountWithDateFilter.data}
-                    variantDateCounts={variantDateCount.data}
-                    caseCounts={caseCountDataset}
-                  />
-                </NamedCard>
-              </GridCell>
+              {CASES_ENABLED && (
+                <GridCell minWidth={600}>
+                  <NamedCard title='Reproduction number'>
+                    <HuismanScire2021ReContainer
+                      wholeDateCounts={wholeDateCountWithDateFilter.data}
+                      variantDateCounts={variantDateCount.data}
+                      caseCounts={caseCountDataset}
+                    />
+                  </NamedCard>
+                </GridCell>
+              )}
               {isDefaultHostSelector(host) && (
                 <GridCell minWidth={600}>
                   <VariantAgeDistributionChartWidget.ShareableComponent
@@ -545,32 +548,34 @@ export const FocusSinglePageContent = ({
               header='Sequences over time'
             />
           )}
-          {showEstimatedCasesDivGrid && (splitField === 'country' || country === 'Switzerland') && (
-            <DivisionModal
-              getData={splitSequencesOverTime.getData}
-              splitData={splitSequencesOverTime.splitData}
-              generate={(division, d) =>
-                d.cases ? (
-                  <EstimatedCasesChartWidget.ShareableComponent
-                    caseCounts={{
-                      selector: d.cases.selector,
-                      payload: d.cases.payload,
-                      status: 'fulfilled',
-                    }}
-                    wholeDateCounts={d.whole}
-                    variantDateCounts={d.variant}
-                    title={division}
-                    height={300}
-                  />
-                ) : (
-                  <></>
-                )
-              }
-              show={showEstimatedCasesDivGrid}
-              handleClose={() => setShowEstimatedCasesDivGrid(false)}
-              header='Estimated cases'
-            />
-          )}
+          {CASES_ENABLED &&
+            showEstimatedCasesDivGrid &&
+            (splitField === 'country' || country === 'Switzerland') && (
+              <DivisionModal
+                getData={splitSequencesOverTime.getData}
+                splitData={splitSequencesOverTime.splitData}
+                generate={(division, d) =>
+                  d.cases ? (
+                    <EstimatedCasesChartWidget.ShareableComponent
+                      caseCounts={{
+                        selector: d.cases.selector,
+                        payload: d.cases.payload,
+                        status: 'fulfilled',
+                      }}
+                      wholeDateCounts={d.whole}
+                      variantDateCounts={d.variant}
+                      title={division}
+                      height={300}
+                    />
+                  ) : (
+                    <></>
+                  )
+                }
+                show={showEstimatedCasesDivGrid}
+                handleClose={() => setShowEstimatedCasesDivGrid(false)}
+                header='Estimated cases'
+              />
+            )}
           {showVariantAgeDistributionDivGrid && (
             <DivisionModal
               getData={splitAgeDistribution.getData}
