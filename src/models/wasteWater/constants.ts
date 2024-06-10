@@ -22,12 +22,15 @@ export const wastewaterVariantColors: {
   'BA.2.86': '#FF20E0',
   'JN.1': '#00E9FF', // improv, not in sync with covariants.org
   'BA.2.87.1': '#56ACBC', //improv, not in sync with covariants.org
+  'KP.2': '#876566', //improv not in sync with covariants.org
   'undetermined': '#969696',
 };
 
 export const discontinuedLocations = new Set<string>([
+  'Sierre/Noes (VS)',
   'Lausanne (VD)',
-  'Basel (BS)',
+  'Sion (VS)',
+  'Bern (BE)',
   'Porrentruy (JU)',
   'Neuchâtel (NE)',
   'Solothurn (SO)',
