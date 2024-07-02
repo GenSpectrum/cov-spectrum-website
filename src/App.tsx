@@ -19,7 +19,6 @@ import styled from 'styled-components';
 import { ExplorePage } from './pages/ExplorePage';
 import { DeepInternationalComparisonPage } from './pages/DeepInternationalComparisonPage';
 import { DeepChen2021FitnessPage } from './pages/DeepChen2021FitnessPage';
-import { DeepHospitalizationDeathPage } from './pages/DeepHospitalizationDeathPage';
 import { DeepWastewaterPage } from './pages/DeepWastewaterPage';
 import { DeepSequencingCoveragePage } from './pages/DeepSequencingCoveragePage';
 import { FocusPage } from './pages/FocusPage';
@@ -236,10 +235,6 @@ function CovSpectrumRoutes({
       <Route
         path='/explore/:country/:samplingStrategy/:dateRange/variants/international-comparison'
         element={<DeepInternationalComparisonPage />}
-      />
-      <Route
-        path='/explore/:country/:samplingStrategy/:dateRange/variants/hospitalization-death'
-        element={<DeepHospitalizationDeathPage />}
       />
       <Route
         path='/explore/:country/:samplingStrategy/:dateRange/variants/waste-water'

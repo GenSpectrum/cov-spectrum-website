@@ -34,8 +34,6 @@ import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { WasteWaterDataset } from '../models/wasteWater/types';
 import { filter, getData } from '../models/wasteWater/loading';
 import { WasteWaterSummaryTimeWidget } from '../models/wasteWater/WasteWaterSummaryTimeWidget';
-import { HospDiedAgeSampleData } from '../data/sample/HospDiedAgeSampleDataset';
-import { HospitalizationDeathChartWidget } from '../widgets/HospitalizationDeathChartWidget';
 import {
   SingleSelectorsFromExploreUrlHook,
   useSingleSelectorsFromExploreUrl,
@@ -97,7 +95,6 @@ export const createDivisionBreakdownButton = (key: string, setter: (show: boolea
 const deepFocusPaths = {
   internationalComparison: '/international-comparison',
   chen2021Fitness: '/chen-2021-fitness',
-  hospitalizationAndDeath: '/hospitalization-death',
   wasteWater: '/waste-water',
 };
 
@@ -156,16 +153,6 @@ export const FocusSinglePageContent = ({
   );
   const wholeDivisionCount = useQuery(
     signal => DivisionCountSampleData.fromApi(ldsSelector, signal),
-    [ldsSelector]
-  );
-
-  // Hospitalization and death
-  const variantHospDeathAgeCount = useQuery(
-    signal => HospDiedAgeSampleData.fromApi(ldvsSelector, signal),
-    [ldvsSelector]
-  );
-  const wholeHospDeathAgeCount = useQuery(
-    signal => HospDiedAgeSampleData.fromApi(ldsSelector, signal),
     [ldsSelector]
   );
 
@@ -296,8 +283,6 @@ export const FocusSinglePageContent = ({
     wholeDivisionCount.error,
     variantInternationalDateCount.error,
     wholeInternationalDateCount.error,
-    variantHospDeathAgeCount.error,
-    wholeHospDeathAgeCount.error,
   ].filter(e => !!e) as string[];
   if (allErrors.length > 0) {
     return <ErrorAlert messages={allErrors} />;
@@ -354,9 +339,7 @@ export const FocusSinglePageContent = ({
       variantDivisionCount.data &&
       wholeDivisionCount.data &&
       variantInternationalDateCount.data &&
-      wholeInternationalDateCount.data &&
-      variantHospDeathAgeCount.data &&
-      wholeHospDeathAgeCount.data ? (
+      wholeInternationalDateCount.data ? (
         <>
           <div>
             <CoreMetrics
@@ -485,21 +468,6 @@ export const FocusSinglePageContent = ({
                     toolbarChildren={[
                       createDivisionBreakdownButton('AgeDemographics', setShowVariantAgeDistributionDivGrid),
                     ]}
-                  />
-                </GridCell>
-              )}
-              {SWISS_SPECIALTIES_ACTIVATED && country === 'Switzerland' && isDefaultHostSelector(host) && (
-                <GridCell minWidth={600}>
-                  <HospitalizationDeathChartWidget.ShareableComponent
-                    extendedMetrics={false}
-                    relativeToOtherVariants={false}
-                    field='hospitalized'
-                    variantSampleSet={variantHospDeathAgeCount.data}
-                    wholeSampleSet={wholeHospDeathAgeCount.data}
-                    variantName={ldvsSelector.variant.pangoLineage ?? 'unnamed variant'}
-                    title='Hospitalization probabilities'
-                    height={300}
-                    toolbarChildren={deepFocusButtons?.hospitalizationAndDeath}
                   />
                 </GridCell>
               )}
