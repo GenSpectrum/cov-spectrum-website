@@ -23,6 +23,7 @@ export const wastewaterVariantColors: {
   'JN.1': '#00E9FF', // improv, not in sync with covariants.org
   'BA.2.87.1': '#56ACBC', //improv, not in sync with covariants.org
   'KP.2': '#876566', //improv not in sync with covariants.org
+   "KP.3": "#eebebf", //improv not in sync with covariants.org
   'undetermined': '#969696',
 };
 
