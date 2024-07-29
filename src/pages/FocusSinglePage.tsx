@@ -39,7 +39,6 @@ import {
   useSingleSelectorsFromExploreUrl,
 } from '../helpers/selectors-from-explore-url-hook';
 import { ErrorBoundaryFallback } from '../components/ErrorBoundaryFallback';
-import * as Sentry from '@sentry/react';
 import { isDefaultHostSelector } from '../data/HostSelector';
 import { VariantHosts } from '../components/VariantHosts';
 import { HuismanScire2021ReContainer } from '../models/huismanScire2021Re/HuismanScire2021ReContainer';
@@ -52,6 +51,7 @@ import { WidgetWrapper } from '../components/WidgetWrapper';
 import { VariantSelector } from '../data/VariantSelector';
 import { AnalysisMode } from '../data/AnalysisMode';
 import { NucleotideEntropy } from '../components/NucleotideEntropy/NucleotideEntropy';
+import { ErrorBoundary } from 'react-error-boundary';
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
 const CASES_ENABLED = false;
@@ -483,18 +483,18 @@ export const FocusSinglePageContent = ({
             </div>
 
             <div className='m-4'>
-              <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
+              <ErrorBoundary fallback={<ErrorBoundaryFallback />}>
                 <VariantInsertions selector={ldvsSelector} />
-              </Sentry.ErrorBoundary>
+              </ErrorBoundary>
             </div>
 
             <div className='m-4' id={MUTATIONS_HASH_LINK}>
-              <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
+              <ErrorBoundary fallback={<ErrorBoundaryFallback />}>
                 {/* HACK(by Chaoran): This is to add an "Export" button without actually implementing a Widget. */}
                 <WidgetWrapper getShareUrl={async () => ''} title='Substitutions and deletions'>
                   <VariantMutations selector={ldvsSelector} />
                 </WidgetWrapper>
-              </Sentry.ErrorBoundary>
+              </ErrorBoundary>
             </div>
           </div>
 

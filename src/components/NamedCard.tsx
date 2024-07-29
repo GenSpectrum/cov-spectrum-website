@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { ExpandableTextBox } from './ExpandableTextBox';
-import * as Sentry from '@sentry/react';
 import { ErrorBoundaryFallback } from './ErrorBoundaryFallback';
+import { ErrorBoundary } from 'react-error-boundary';
 
 export enum NamedCardStyle {
   NORMAL,
@@ -147,7 +147,7 @@ export const NamedCard = ({
       </Title>
       {/* We define the error boundary here because the NamedCard is currently the component that wraps most
        of the charts.*/}
-      <Sentry.ErrorBoundary fallback={<ErrorBoundaryFallback />}>
+      <ErrorBoundary fallback={<ErrorBoundaryFallback />}>
         {description && (
           <div className='pr-3 mb-3 text-gray-500'>
             <ExpandableTextBox text={description} maxChars={60} />
@@ -155,7 +155,7 @@ export const NamedCard = ({
         )}
         <ToolbarWrapper className='static lg:absolute'>{toolbar}</ToolbarWrapper>
         <ContentWrapper>{children}</ContentWrapper>
-      </Sentry.ErrorBoundary>
+      </ErrorBoundary>
     </SelectedCard>
   );
 };

@@ -4,9 +4,6 @@ import { App } from './App';
 import { EmbedPage } from './pages/EmbedPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
-import * as Sentry from '@sentry/react';
-import { Integrations } from '@sentry/tracing';
-import { env } from './env';
 import {
   DndProvider,
   MultiBackendOptions,
@@ -37,28 +34,6 @@ const HTML5toTouch: MultiBackendOptions = {
 };
 
 async function main() {
-  // Initialize Sentry
-  if (env.sentryDsn) {
-    Sentry.init({
-      dsn: env.sentryDsn,
-      environment: env.sentryEnvironment,
-      integrations: [new Integrations.BrowserTracing()],
-      tracesSampleRate: 0,
-      beforeSend: event => {
-        if (
-          event.message === 'ResizeObserver loop limit exceeded' ||
-          event.message === 'ResizeObserver loop completed with undelivered notifications.'
-        ) {
-          // This error should be very harmless and not impact the user experience.
-          // The error message is different in Chrome and Firefox.
-          // See https://stackoverflow.com/questions/64238740/how-to-ignore-the-resizeobserver-loop-limit-exceeded-in-testcafe
-          return null;
-        }
-        return event;
-      },
-    });
-  }
-
   setupDayjs();
 
   const container = document.getElementById('root');
