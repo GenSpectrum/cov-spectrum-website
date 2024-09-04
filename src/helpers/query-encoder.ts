@@ -17,7 +17,10 @@ export class ZodQueryEncoder<S extends zod.ZodSchema<any>, T extends zod.input<S
 {
   _decodedType!: T;
 
-  constructor(private schema: S, private searchParamsKey: string = 'json') {}
+  constructor(
+    private schema: S,
+    private searchParamsKey: string = 'json'
+  ) {}
 
   encode(decoded: T): URLSearchParams {
     return new URLSearchParams({ [this.searchParamsKey]: JSON.stringify(this.schema.parse(decoded)) });
@@ -38,7 +41,7 @@ export class ZodQueryEncoder<S extends zod.ZodSchema<any>, T extends zod.input<S
 export class AsyncZodQueryEncoder<
   ExternalType,
   Schema extends zod.ZodSchema<any>,
-  InternalType extends zod.infer<Schema>
+  InternalType extends zod.infer<Schema>,
 > implements AsyncQueryEncoder<ExternalType>
 {
   _decodedType!: ExternalType;

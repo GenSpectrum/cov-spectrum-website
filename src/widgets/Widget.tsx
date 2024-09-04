@@ -24,7 +24,7 @@ type LabelledComponent<C> = { label: string; component: C };
 export class Widget<
   E extends AsyncQueryEncoder<any>,
   P extends E['_decodedType'],
-  C extends React.FunctionComponent<P>
+  C extends React.FunctionComponent<P>,
 > {
   readonly ShareableComponent: React.FunctionComponent<P & WidgetWrapperExternalProps>;
   readonly mergedPropsEncoder: MergedAsyncQueryEncoder<{

@@ -134,8 +134,8 @@ const meanEntropy = (posEntropy: PositionEntropy[], sequenceType: SequenceType, 
           g => gene.startPosition <= parseInt(g.position) && parseInt(g.position) <= gene.endPosition
         )
       : gene.value === 'All'
-      ? posEntropy
-      : posEntropy.filter(g => g.position.includes(gene.value));
+        ? posEntropy
+        : posEntropy.filter(g => g.position.includes(gene.value));
   const sum = filteredPos.map(f => f.entropy).reduce((x, a) => x + a, 0);
   const count = sequenceType === 'nuc' ? gene.endPosition - gene.startPosition : sumOfGenesLength(gene);
   return sum / count;
@@ -168,7 +168,10 @@ export const weeklyMeanEntropy = (
 };
 
 const groupBy = <T, K extends keyof any>(arr: T[], key: (i: T) => K) =>
-  arr.reduce((groups, item) => {
-    (groups[key(item)] ||= []).push(item);
-    return groups;
-  }, {} as Record<K, T[]>);
+  arr.reduce(
+    (groups, item) => {
+      (groups[key(item)] ||= []).push(item);
+      return groups;
+    },
+    {} as Record<K, T[]>
+  );

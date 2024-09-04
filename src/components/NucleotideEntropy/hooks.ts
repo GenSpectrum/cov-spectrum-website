@@ -171,11 +171,14 @@ function calculateEntropyByTime(
         }))
     )
     .flat()
-    .reduce((aggregated, weeklyMeanEntropy) => {
-      const previousValue = aggregated[weeklyMeanEntropy.day] ?? {};
-      aggregated[weeklyMeanEntropy.day] = { ...previousValue, ...weeklyMeanEntropy };
-      return aggregated;
-    }, {} as Record<number, any>);
+    .reduce(
+      (aggregated, weeklyMeanEntropy) => {
+        const previousValue = aggregated[weeklyMeanEntropy.day] ?? {};
+        aggregated[weeklyMeanEntropy.day] = { ...previousValue, ...weeklyMeanEntropy };
+        return aggregated;
+      },
+      {} as Record<number, any>
+    );
 
   return Object.values(timeMap);
 }

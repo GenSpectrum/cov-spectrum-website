@@ -144,8 +144,8 @@ export const HospitalizationDeathChart = ({
           ? ageGroup.replace(/-\d+$/, '-')
           : '?'
         : ageGroup
-        ? ageGroup
-        : 'Unk.';
+          ? ageGroup
+          : 'Unk.';
 
       const baseCounts = {
         subject: processCounts(variantCounts),
