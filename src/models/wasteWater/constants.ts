@@ -39,4 +39,4 @@ export const discontinuedLocations = new Set<string>([
   'test_legacylocation', // for tests
 ]);
 
-export const discontinuedDate = ' since Jan 1, 2024';
+export const discontinuedDate = ' since March 26th, 2024';
