@@ -371,7 +371,7 @@ export async function _fetchAggSamples(
     const gisaidToCovSpectrumNameMap = await LocationService.getGisaidToCovSpectrumNameMap();
     return parsed.map(e => ({
       ...e,
-      country: e.country ? gisaidToCovSpectrumNameMap.get(e.country) ?? null : null,
+      country: e.country ? (gisaidToCovSpectrumNameMap.get(e.country) ?? null) : null,
     }));
   }
 

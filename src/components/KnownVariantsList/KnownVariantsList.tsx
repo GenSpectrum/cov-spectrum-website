@@ -123,8 +123,8 @@ const Grid = ({
           isHorizontal
             ? 'w-max grid-flow-col overflow-hidden auto-rows-min auto-cols-min'
             : isLandingPage
-            ? 'grid-cols-2'
-            : 'grid-cols-1'
+              ? 'grid-cols-2'
+              : 'grid-cols-1'
         }`}
       >
         {children}

@@ -303,6 +303,6 @@ export function getPangoLineage(variant: VariantSelector) {
   return variant.pangoLineage
     ? variant.pangoLineage
     : variant.nextcladePangoLineage
-    ? variant.nextcladePangoLineage
-    : '';
+      ? variant.nextcladePangoLineage
+      : '';
 }

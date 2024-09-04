@@ -7,7 +7,7 @@ export function getLocation(exploreUrl?: ExploreUrl): string {
     'country' in locationObj
       ? locationObj['country']
       : 'region' in locationObj
-      ? locationObj['region']
-      : 'World';
+        ? locationObj['region']
+        : 'World';
   return place;
 }

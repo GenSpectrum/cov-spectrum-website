@@ -3,9 +3,7 @@
   "projectOwner": "cevo-public",
   "repoType": "github",
   "repoHost": "https://github.com",
-  "files": [
-    "README.md"
-  ],
+  "files": ["README.md"],
   "imageSize": 100,
   "commit": true,
   "commitConvention": "none",
@@ -15,184 +13,133 @@
       "name": "Chaoran Chen",
       "avatar_url": "https://avatars.githubusercontent.com/u/18666552?v=4",
       "profile": "https://github.com/chaoran-chen",
-      "contributions": [
-        "code",
-        "data",
-        "ideas",
-        "maintenance",
-        "platform",
-        "research",
-        "infra"
-      ]
+      "contributions": ["code", "data", "ideas", "maintenance", "platform", "research", "infra"]
     },
     {
       "login": "tanja819",
       "name": "tanja819",
       "avatar_url": "https://avatars.githubusercontent.com/u/8371380?v=4",
       "profile": "https://github.com/tanja819",
-      "contributions": [
-        "ideas"
-      ]
+      "contributions": ["ideas"]
     },
     {
       "login": "SarahNadeau",
       "name": "Sarah Nadeau",
       "avatar_url": "https://avatars.githubusercontent.com/u/30396464?v=4",
       "profile": "https://github.com/SarahNadeau",
-      "contributions": [
-        "ideas",
-        "data",
-        "code"
-      ]
+      "contributions": ["ideas", "data", "code"]
     },
     {
       "login": "TKGZ",
       "name": "Michael Yared",
       "avatar_url": "https://avatars.githubusercontent.com/u/36269621?v=4",
       "profile": "https://github.com/TKGZ",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "tehwalris",
       "name": "Philippe Voinov",
       "avatar_url": "https://avatars.githubusercontent.com/u/1489115?v=4",
       "profile": "https://walr.is/",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "ningxie1991",
       "name": "ningxie",
       "avatar_url": "https://avatars.githubusercontent.com/u/3387698?v=4",
       "profile": "https://github.com/ningxie1991",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "corneliusroemer",
       "name": "Cornelius Roemer",
       "avatar_url": "https://avatars.githubusercontent.com/u/25161793?v=4",
       "profile": "https://github.com/corneliusroemer",
-      "contributions": [
-        "ideas"
-      ]
+      "contributions": ["ideas"]
     },
     {
       "login": "DrYak",
       "name": "DrYak",
       "avatar_url": "https://avatars.githubusercontent.com/u/11413679?v=4",
       "profile": "https://github.com/DrYak",
-      "contributions": [
-        "data"
-      ]
+      "contributions": ["data"]
     },
     {
       "login": "gautier-collab",
       "name": "gautier-collab",
       "avatar_url": "https://avatars.githubusercontent.com/u/55604970?v=4",
       "profile": "https://github.com/gautier-collab",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "dameyerdave",
       "name": "David Meyer",
       "avatar_url": "https://avatars.githubusercontent.com/u/5663605?v=4",
       "profile": "https://github.com/dameyerdave",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "anastasia-escher",
       "name": "Anastasia Escher",
       "avatar_url": "https://avatars.githubusercontent.com/u/52914023?v=4",
       "profile": "https://github.com/anastasia-escher",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "theosanderson",
       "name": "Theo Sanderson",
       "avatar_url": "https://avatars.githubusercontent.com/u/19732295?v=4",
       "profile": "http://theo.io/",
-      "contributions": [
-        "code",
-        "ideas"
-      ]
+      "contributions": ["code", "ideas"]
     },
     {
       "login": "adrian-lison",
       "name": "Adrian Lison",
       "avatar_url": "https://avatars.githubusercontent.com/u/16266527?v=4",
       "profile": "https://github.com/adrian-lison",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "fengelniederhammer",
       "name": "Fabian Engelniederhammer",
       "avatar_url": "https://avatars.githubusercontent.com/u/92720311?v=4",
       "profile": "https://github.com/fengelniederhammer",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "JonasKellerer",
       "name": "Jonas Kellerer",
       "avatar_url": "https://avatars.githubusercontent.com/u/122305307?v=4",
       "profile": "https://github.com/JonasKellerer",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "philipschulz",
       "name": "Philip Schulz",
       "avatar_url": "https://avatars.githubusercontent.com/u/16674735?v=4",
       "profile": "https://github.com/philipschulz",
-      "contributions": [
-        "code"
-      ]
+      "contributions": ["code"]
     },
     {
       "login": "Taepper",
       "name": "Taepper",
       "avatar_url": "https://avatars.githubusercontent.com/u/25206390?v=4",
       "profile": "https://github.com/Taepper",
-      "contributions": [
-        "code",
-        "ideas",
-        "research"
-      ]
+      "contributions": ["code", "ideas", "research"]
     },
     {
       "login": "GeorgKreuzmayr",
       "name": "GeorgKreuzmayr",
       "avatar_url": "https://avatars.githubusercontent.com/u/68595015?v=4",
       "profile": "https://github.com/GeorgKreuzmayr",
-      "contributions": [
-        "code",
-        "research"
-      ]
+      "contributions": ["code", "research"]
     },
     {
       "login": "danielgrittner",
       "name": "Daniel Grittner",
       "avatar_url": "https://avatars.githubusercontent.com/u/29932077?v=4",
       "profile": "https://github.com/danielgrittner",
-      "contributions": [
-        "code",
-        "research"
-      ]
+      "contributions": ["code", "research"]
     }
   ],
   "contributorsPerLine": 7

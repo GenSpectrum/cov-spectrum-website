@@ -68,11 +68,14 @@ export const useMultiChartData = (
         day: week.dateFrom!.dayjs.toDate().getTime(),
         [variants[Math.floor(i / weekRangesCount)]]: meanEntropy,
       }))
-      .reduce((aggregated, weeklyMeanEntropy) => {
-        const previousValue = aggregated[weeklyMeanEntropy.day] ?? {};
-        aggregated[weeklyMeanEntropy.day] = { ...previousValue, ...weeklyMeanEntropy };
-        return aggregated;
-      }, {} as Record<number, any>);
+      .reduce(
+        (aggregated, weeklyMeanEntropy) => {
+          const previousValue = aggregated[weeklyMeanEntropy.day] ?? {};
+          aggregated[weeklyMeanEntropy.day] = { ...previousValue, ...weeklyMeanEntropy };
+          return aggregated;
+        },
+        {} as Record<number, any>
+      );
 
     let plotData = Object.values(weeklyDataByTimestamp); //depending on the day, the latest week just started, so the entropy is calculated as 0 because there are no samples
 

@@ -86,8 +86,8 @@ export const fetchDatePangoLineageCount = async (
           data2.push({
             ...d,
             nextcladePangoLineageFullName: d.nextcladePangoLineage
-              ? (await PangoLineageAliasResolverService.findFullName(d.nextcladePangoLineage)) ??
-                d.nextcladePangoLineage
+              ? ((await PangoLineageAliasResolverService.findFullName(d.nextcladePangoLineage)) ??
+                d.nextcladePangoLineage)
               : null,
           });
         }
