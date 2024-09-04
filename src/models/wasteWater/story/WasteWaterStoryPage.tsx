@@ -13,18 +13,17 @@ export const WasteWaterStoryPage = () => {
       <h1>Wastewater in Switzerland</h1>
       <div className='italic'>
         by{' '}
-        <ExternalLink url='https://bsse.ethz.ch/cbg/'>Computational Biology Group, ETH Zurich</ExternalLink>
+        <ExternalLink url='https://bsse.ethz.ch/cbg/'>Computational Biology Group, ETH Zürich</ExternalLink>
       </div>
       <p>
-        We analyze wastewater samples collected at different Swiss wastewater treatment plants ( see data
+        We analyze wastewater samples collected at different Swiss wastewater treatment plants (see data
         sources below) using next-generation sequencing (done by{' '}
         <ExternalLink url='https://fgcz.ch/'>FGCZ</ExternalLink>), process the resulting short-read data with{' '}
         <ExternalLink url='https://cbg-ethz.github.io/V-pipe/'>V-pipe</ExternalLink>, and search for mutations
-        characteristic of several variants of concern. The relative frequency of each signature mutation is
-        determined, and all frequencies are combined per day, which provides an estimate of the relative
-        prevalence of the variant in the population. Some variants have specific signature mutations that
-        co-occur on the same fragment. Amplicons with such co-occurrences are included in the heatmaps of the
-        wastewater data displayed on covSpectrum (see{' '}
+        characteristic of variants of concern. The relative frequency of each signature mutation is
+        determined, and all mutation frequencies are combined within a selected time window and translated
+        into estimates of the relative prevalence of the variant in the population for each day. Some variants
+        have specific signature mutations that co-occur on the same fragment. (see{' '}
         <ExternalLink url='https://doi.org/10.1101/2021.01.08.21249379'>
           doi:10.1101/2021.01.08.21249379
         </ExternalLink>
@@ -36,8 +35,9 @@ export const WasteWaterStoryPage = () => {
       </p>
       <p>
         Detecting variants in wastewater is challenging if the RNA concentration is low, for example, due to
-        low infection numbers in the catchment area of the wastewater treatment plant. Estimates of the
-        proportions of variants are less reliable in this situation.
+        low infection numbers in the catchment area of the wastewater treatment plant. Variants with very
+        similar mutation profiles can also be harder to distinguish. Estimates of the proportions of variants
+        are less reliable in these situations.
       </p>
       <WasteWaterSamplingSites locationFilter={location => !isDiscontinuedSite(location)} />
       <DiscontinuedSamplingSites />
@@ -68,14 +68,18 @@ const DataSources = () => {
         <ExternalLink url={'https://www.eawag.ch/en/department/sww/projects/sars-cov2-in-wastewater/'}>
           Eawag
         </ExternalLink>{' '}
-        collects samples daily at multiple locations around Switzerland. Over the course of the project
-        different locations have been covered. Since January 1st of 2024 the following eight wastewater
-        treatment plants are monitored: Altenrhein (SG), Chur (GR), Genève (GE), Laupen (BE), Lugano (TI),
-        Zürich (ZH), Luzern (LU) and Bern (BE).
+        collects samples at multiple locations around Switzerland. Over the course of the project, different
+        locations have been covered. Since March 26th of 2024 the following eight wastewater treatment plants
+        are sampled three times per week: Altenrhein (SG), Chur (GR), Genève (GE), Laupen (BE), Lugano (TI),
+        Zürich (ZH), Luzern (LU) and Basel (BS).
       </p>
       <p>
-        Until end of December 2023 the project covered six additional wastewater treatment plants: Lausanne
-        (VD), Basel (BS), Porrentruy (JU), Neuchâtel (NE), Solothurn (SO) and Schwyz (SZ).
+        Previously, the project covered six additional wastewater treatment plants: Lausanne (VD), Bern (BE),
+        Porrentruy (JU), Neuchâtel (NE), Solothurn (SO), and Schwyz (SZ).
+      </p>
+      <p>
+        Monitoring of Bern (BE) ended on March 25th, 2024. Monitoring of Lausanne ended February 24th, 2024.
+        The monitoring of all other discontinued treatment plants ended on December 31st, 2023.
       </p>
       <p>
         Previously, Microsynth AG provided samples from the wastewater treatment plants of Lausanne (Vidy),
@@ -86,7 +90,7 @@ const DataSources = () => {
         three times per week (once per week until the end of 2022).
       </p>
       <p>
-        Until end of May 2022 three times a week the Cantonal Laboratory Zurich (KLZH) provided samples that
+        Until end of May 2022, three times a week the Cantonal Laboratory Zurich (KLZH) provided samples that
         assess the Canton of Zurich by pooling samples from 12 plants across the canton, namely
         Zürich-Werdhölzli (also used by Eawag), Winterthur-Hard, Dietikon-Limmattal, Dübendorf-Neugut,
         Niederglatt-Fischbach, Uster, Bülach-Furt, Wetzikon-Flos, Horgen-Oberrieden, Meilen, Affoltern
@@ -118,7 +122,7 @@ const VideoPresentation = () => {
         <ExternalLink url={'https://iwa-network.org/learn/detecting-covid-19-variants-in-wastewater/'}>
           "Detecting COVID-19 Variants in Wastewater" by the International Water Association (IWA)
         </ExternalLink>
-        , Prof. Tamar Kohn and Prof. Niko Beerenwinkel have presented this surveillance project. The
+        , Prof. Tamar Kohn, and Prof. Niko Beerenwinkel have presented this surveillance project. The
         presentation is the second session of this webinar,
         <ExternalLink url={'https://vimeo.com/560055953#t=1337s'}>
           "Detection and surveillance of SARS-CoV-2 genomic variants in Swiss wastewater" (timecode 22:17).
@@ -144,7 +148,7 @@ const Acknowledgements = () => {
       </h3>
       <Authors
         authors={
-          'Ivan Topolsky, David Dreifuss, Anika John, Auguste Rimaite, Pelin Burcak Icer, Lara Fuhrmann, Kim Philipp Jablonski, Niko Beerenwinkel'
+          'Ivan Topolsky, David Dreifuss, Anika John, Auguste Rimaite, Pelin Burcak Icer, Lara Fuhrmann, Niko Beerenwinkel'
         }
       />
       <h3>
@@ -200,8 +204,9 @@ const Contact = () => {
   return (
     <div>
       <h2>Contact</h2>
-      <ExternalLink url={'https://bsse.ethz.ch/cbg'}>Computational Biology, D-BSSE, ETHZ.</ExternalLink> Niko
-      Beerenwinkel,
+      <p>
+        Prof. Niko Beerenwinkel, <ExternalLink url='https://bsse.ethz.ch/cbg'>ETH</ExternalLink> Zürich.
+      </p>
     </div>
   );
 };
