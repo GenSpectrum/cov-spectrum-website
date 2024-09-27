@@ -30,7 +30,7 @@
     "chroma-js": "^2.4.2",
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.0.0",
-    "dayjs": "^1.11.7",
+    "dayjs": "^1.11.13",
     "downloadjs": "^1.4.7",
     "json2csv": "^5.0.7",
     "jszip": "^3.10.1",
