@@ -24,7 +24,7 @@ export const wastewaterVariantColors: {
   'BA.2.87.1': '#56ACBC', //improv, not in sync with covariants.org
   'KP.2': '#876566', //improv not in sync with covariants.org
   'KP.3': '#331eee',
-  "XEC": "#a2a626", //improv not in sync with covariants.org
+  'XEC': '#a2a626', //improv not in sync with covariants.org
   'undetermined': '#969696',
 };
 
