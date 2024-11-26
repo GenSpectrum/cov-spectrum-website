@@ -122,9 +122,9 @@ function optionsToVariantSelector(options: SearchOption[]): VariantSelector {
     } else if (type === 'nuc-insertion') {
       selector.nucInsertions!.push(value);
     } else if (type === 'pango-lineage') {
-      selector.pangoLineage = value;
+      selector.pangoLineage = value.toUpperCase();
     } else if (type === 'nextclade-pango-lineage') {
-      selector.nextcladePangoLineage = value;
+      selector.nextcladePangoLineage = value.toUpperCase();
     } else if (type === 'nextstrain-clade') {
       selector.nextstrainClade = value;
     }
