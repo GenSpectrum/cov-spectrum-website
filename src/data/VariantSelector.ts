@@ -121,8 +121,8 @@ export function readVariantListFromUrlSearchParams(params: URLSearchParams): Var
   // Create the variant selectors.
   const variants: VariantSelector[] = [
     {
-      pangoLineage: params.get('pangoLineage') ?? undefined,
-      nextcladePangoLineage: params.get('nextcladePangoLineage') ?? undefined,
+      pangoLineage: params.get('pangoLineage')?.toUpperCase() ?? undefined,
+      nextcladePangoLineage: params.get('nextcladePangoLineage')?.toUpperCase() ?? undefined,
       gisaidClade: params.get('gisaidClade') ?? undefined,
       nextstrainClade: params.get('nextstrainClade') ?? undefined,
       aaMutations: params.get('aaMutations')?.split(','),
@@ -134,8 +134,8 @@ export function readVariantListFromUrlSearchParams(params: URLSearchParams): Var
   ];
   for (let id of variantIds) {
     variants.push({
-      pangoLineage: params.get('pangoLineage' + id) ?? undefined,
-      nextcladePangoLineage: params.get('nextcladePangoLineage' + id) ?? undefined,
+      pangoLineage: params.get('pangoLineage' + id)?.toUpperCase() ?? undefined,
+      nextcladePangoLineage: params.get('nextcladePangoLineage' + id)?.toUpperCase() ?? undefined,
       gisaidClade: params.get('gisaidClade' + id) ?? undefined,
       nextstrainClade: params.get('nextstrainClade' + id) ?? undefined,
       aaMutations: params.get('aaMutations' + id)?.split(','),
