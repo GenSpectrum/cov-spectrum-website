@@ -6,14 +6,14 @@ import DateRangePicker from '../../../components/DateRangePicker';
 import { GridCell, PackedGrid } from '../../../components/PackedGrid';
 import { WasteWaterLocationTimeWidget } from '../WasteWaterLocationTimeWidget';
 import { ShowMoreButton } from '../../../helpers/ui';
-import { discontinuedLocations } from '../constants';
+import { discontinuedSites } from '../constants';
 
 export interface WasteWaterSitesProps {
   locationFilter?: (location: string) => Boolean;
 }
 
 export const isDiscontinuedSite = (location: string) => {
-  return discontinuedLocations.has(location);
+  return discontinuedSites.some(site => site.discontinuedLocations.has(location));
 };
 
 export const WasteWaterSamplingSites = ({ locationFilter }: WasteWaterSitesProps) => {
