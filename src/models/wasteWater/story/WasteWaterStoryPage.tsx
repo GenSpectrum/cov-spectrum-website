@@ -69,17 +69,20 @@ const DataSources = () => {
           Eawag
         </ExternalLink>{' '}
         collects samples at multiple locations around Switzerland. Over the course of the project, different
-        locations have been covered. Since March 26th of 2024 the following eight wastewater treatment plants
-        are sampled three times per week: Altenrhein (SG), Chur (GR), Genève (GE), Laupen (BE), Lugano (TI),
-        Zürich (ZH), Luzern (LU) and Basel (BS).
+        locations have been covered.
       </p>
       <p>
-        Previously, the project covered six additional wastewater treatment plants: Lausanne (VD), Bern (BE),
-        Porrentruy (JU), Neuchâtel (NE), Solothurn (SO), and Schwyz (SZ).
+        Since November 25th of 2024 the following six wastewater treatment plants are sampled three times per
+        week: Chur (GR), Genève (GE), Laupen (BE), Lugano (TI), Zürich (ZH), and Basel (BS).
       </p>
       <p>
-        Monitoring of Bern (BE) ended on March 25th, 2024. Monitoring of Lausanne ended February 24th, 2024.
-        The monitoring of all other discontinued treatment plants ended on December 31st, 2023.
+        Previously, the project covered eight additional wastewater treatment plants: Lausanne (VD), Bern
+        (BE), Porrentruy (JU), Neuchâtel (NE), Solothurn (SO), Schwyz (SZ), Luzern (LU) and Altenrhein (SG).
+      </p>
+      <p>
+        Monitoring of Luzern (LU) and Altenrhein (SG) ended on November 25th, 2024. Monitoring of Bern (BE)
+        ended on March 25th, 2024. Monitoring of Lausanne ended February 24th, 2024. The monitoring of all
+        other discontinued treatment plants ended on December 31st, 2023.
       </p>
       <p>
         Previously, Microsynth AG provided samples from the wastewater treatment plants of Lausanne (Vidy),
