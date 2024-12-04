@@ -28,16 +28,23 @@ export const wastewaterVariantColors: {
   'undetermined': '#969696',
 };
 
-export const discontinuedLocations = new Set<string>([
-  'Sierre/Noes (VS)',
-  'Lausanne (VD)',
-  'Sion (VS)',
-  'Bern (BE)',
-  'Porrentruy (JU)',
-  'Neuchâtel (NE)',
-  'Solothurn (SO)',
-  'Schwyz (SZ)',
-  'test_legacylocation', // for tests
-]);
-
-export const discontinuedDate = ' since March 26th, 2024';
+export const discontinuedSites = [
+  {
+    discontinuedLocations: new Set<string>([
+      'Sierre/Noes (VS)',
+      'Lausanne (VD)',
+      'Sion (VS)',
+      'Bern (BE)',
+      'Porrentruy (JU)',
+      'Neuchâtel (NE)',
+      'Solothurn (SO)',
+      'Schwyz (SZ)',
+      'test_legacylocation', // for tests
+    ]),
+    discontinuedDate: ' March 26th, 2024',
+  },
+  {
+    discontinuedLocations: new Set<string>(['Luzern (LU)', 'Altenrhein (SG)']),
+    discontinuedDate: ' November 25th, 2024',
+  },
+];

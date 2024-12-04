@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { ExternalLink } from '../../../components/ExternalLink';
-import { discontinuedDate } from '../constants';
 import { isDiscontinuedSite, WasteWaterSamplingSites } from './WasteWaterSamplingSites';
+import { discontinuedSites } from '../constants';
 
 export const WasteWaterStoryPage = () => {
   useEffect(() => {
@@ -54,8 +54,12 @@ export const WasteWaterStoryPage = () => {
 const DiscontinuedSamplingSites = () => {
   return (
     <>
-      <h2>Locations discontinued{discontinuedDate}</h2>
-      <WasteWaterSamplingSites locationFilter={isDiscontinuedSite} />
+      {discontinuedSites.map(site => (
+        <>
+          <h2>Locations discontinued since{site.discontinuedDate}</h2>
+          <WasteWaterSamplingSites locationFilter={location => site.discontinuedLocations.has(location)} />
+        </>
+      ))}
     </>
   );
 };
