@@ -1,11 +1,20 @@
 import React, { PropsWithChildren } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { MdOutlineOpenInNew } from 'react-icons/md';
 import { GitHubButton, MastodonButton, TwitterButton } from './SocialIcons';
 
 export function TopNavigation(props: { hideInternalLinks: boolean | undefined }) {
   return (
     <nav id='right-nav-buttons' className='items-center justify-center '>
       <ul className='ml-1 flex items-center gap-6 xl:gap-8'>
+        <li>
+          <NavigationLink path={'https://genspectrum.org'}>
+            <span className='inline-flex gap-1 items-center'>
+              GenSpectrum
+              <MdOutlineOpenInNew />
+            </span>
+          </NavigationLink>
+        </li>
         {!props.hideInternalLinks && (
           <>
             <li>
