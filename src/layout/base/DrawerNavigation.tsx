@@ -1,5 +1,6 @@
 import { useExploreUrl } from '../../helpers/explore-url';
 import { Link } from 'react-router-dom';
+import { MdOutlineOpenInNew } from 'react-icons/md';
 import { GitHubButton, MastodonButton, TwitterButton } from './SocialIcons';
 import React from 'react';
 
@@ -40,6 +41,10 @@ export const DrawerNavigation = ({ show, onClose, setShowAdvancedFilteringModal 
               }}
             />
           )}
+          <div className='flex flex-row gap-1 items-center'>
+            <OffcanvasNavItem text='GenSpectrum' url='https://genspectrum.org' onClick={onClose} />
+            <MdOutlineOpenInNew />
+          </div>
           <OffcanvasNavItem text='Collections' url='/collections' onClick={onClose} />
           <OffcanvasNavItem text='Stories' url='/stories' onClick={onClose} />
           <OffcanvasNavItem text='About' url='/about' onClick={onClose} />

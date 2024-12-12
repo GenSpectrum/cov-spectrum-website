@@ -15,6 +15,8 @@ import { AnalysisMode } from '../data/AnalysisMode';
 import { getLocation } from '../helpers/get-location';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 import { InternalLink } from '../components/InternalLink';
+import { MdOutlineOpenInNew } from 'react-icons/md';
+import { Link } from 'react-router-dom';
 
 type Props = {
   isSmallScreen: boolean;
@@ -52,6 +54,7 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
 
   return (
     <div className={`w-full mx-auto max-w-6xl mt-4`}>
+      <GenspectrumBanner />
       <div className='p-2 mr-4 '>
         <h1>Detect and analyze variants of SARS-CoV-2</h1>
         <div className='text-sm pl-3'>
@@ -96,3 +99,21 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
     </div>
   );
 };
+
+function GenspectrumBanner() {
+  return (
+    <div className='w-full bg-blue-50 shadow-lg mt-4 rounded-xl p-4 dark:bg-gray-800 mx-2 mr-4'>
+      <h2>Investigate other pathogens</h2>
+      <p>
+        Explore <span className='font-bold'>Influenza A/H5N1, West Nile, RSV-A and RSV-B</span> on our new
+        interactive platform{' '}
+        <Link to={'https://genspectrum.org/'} className={'text-active-secondary'}>
+          <span className='inline-flex gap-1 items-center'>
+            GenSpectrum
+            <MdOutlineOpenInNew />
+          </span>
+        </Link>
+      </p>
+    </div>
+  );
+}
