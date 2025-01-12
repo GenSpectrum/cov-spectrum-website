@@ -82,7 +82,7 @@ export async function checkSiloAvailability(signal?: AbortSignal): Promise<SiloA
   return { isAvailable: false, retryAfterInSeconds: Number(retryAfterInSeconds) };
 }
 
-export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<string> {
+export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<number> {
   let url = '/info';
   if (ACCESS_KEY) {
     url += '?accessKey=' + ACCESS_KEY;
@@ -92,8 +92,7 @@ export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<strin
     throw new Error('Error fetching info');
   }
   const info = (await response.json()) as LapisInformation;
-  currentLapisDataVersion = Number(info.dataVersion);
-  return dayjs.unix(currentLapisDataVersion).locale('en').calendar();
+  return Number(info.dataVersion);
 }
 
 export async function fetchNextcladeDatasetInfo(signal?: AbortSignal): Promise<NextcladeDatasetInfo> {

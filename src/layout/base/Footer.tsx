@@ -3,6 +3,7 @@ import { sequenceDataSource } from '../../helpers/sequence-data-source';
 import { ExternalLink } from '../../components/ExternalLink';
 import React from 'react';
 import styled from 'styled-components';
+import dayjs from 'dayjs';
 
 const FooterStyle = styled.footer`
   margin-top: 50px;
@@ -16,11 +17,15 @@ export function Footer({
   lapisDataVersion,
 }: {
   nextcladeDatasetInfo?: NextcladeDatasetInfo;
-  lapisDataVersion?: string;
+  lapisDataVersion?: number;
 }) {
+  let lapisUpdateFormattedString = '';
+  if (lapisDataVersion !== undefined) {
+    lapisUpdateFormattedString = dayjs.unix(lapisDataVersion).locale('en').calendar();
+  }
   return (
     <FooterStyle className='text-center'>
-      {lapisDataVersion && <div>The sequence data was updated: {lapisDataVersion}</div>}
+      {lapisUpdateFormattedString && <div>The sequence data was updated: {lapisUpdateFormattedString}</div>}
       {nextcladeDatasetInfo?.tag && <div>Nextclade dataset version: {nextcladeDatasetInfo.tag}</div>}
       {sequenceDataSource === 'gisaid' && (
         <div>

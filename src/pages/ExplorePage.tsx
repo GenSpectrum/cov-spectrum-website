@@ -17,6 +17,8 @@ import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-expl
 import { InternalLink } from '../components/InternalLink';
 import { MdOutlineOpenInNew } from 'react-icons/md';
 import { Link } from 'react-router-dom';
+import { sequenceDataSource } from '../helpers/sequence-data-source';
+import { fetchLapisDataVersion } from '../data/api-lapis';
 
 type Props = {
   isSmallScreen: boolean;
@@ -54,6 +56,7 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
 
   return (
     <div className={`w-full mx-auto max-w-6xl mt-4`}>
+      <MissingDataUpdateBanner />
       <GenspectrumBanner />
       <div className='p-2 mr-4 '>
         <h1>Detect and analyze variants of SARS-CoV-2</h1>
@@ -99,6 +102,36 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
     </div>
   );
 };
+
+function MissingDataUpdateBanner() {
+  const { data: lapisDataVersion } = useQuery(fetchLapisDataVersion, []);
+  console.log(lapisDataVersion);
+  if (sequenceDataSource === 'gisaid' && lapisDataVersion === 1734968364) {
+    return (
+      <div className='w-full bg-yellow-100 shadow-lg mt-4 rounded-xl p-4 dark:bg-gray-800 mx-2 mr-4'>
+        <h2>Data feed interruption</h2>
+        <p>
+          Data on this dashboard has not been updated since{' '}
+          <span className='font-bold'>23 December 2024</span> due to an interruption in the data feed. We have
+          contacted the data provider GISAID regarding this issue and hope for a resolution soon. In the
+          meantime, you can check out the{' '}
+          <Link to='https://open.cov-spectrum.org' className='text-active-secondary'>
+            Open instance of CoV-Spectrum
+          </Link>{' '}
+          or the new{' '}
+          <Link to={'https://genspectrum.org/'} className={'text-active-secondary'}>
+            <span className='inline-flex gap-1 items-center'>
+              GenSpectrum dashboard
+              <MdOutlineOpenInNew />
+            </span>
+          </Link>{' '}
+          for more recent data from INSDC.
+        </p>
+      </div>
+    );
+  }
+  return <></>;
+}
 
 function GenspectrumBanner() {
   return (
