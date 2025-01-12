@@ -1,8 +1,6 @@
 import { KnownVariantsList } from '../components/KnownVariantsList/KnownVariantsList';
 import { SequencingIntensityChartWidget } from '../widgets/SequencingIntensityChartWidget';
 import { ShowMoreButton } from '../helpers/ui';
-import { MetadataAvailabilityChartWidget } from '../widgets/MetadataAvailabilityChartWidget';
-import { DatelessCountrylessCountSampleData } from '../data/sample/DatelessCountrylessCountSampleDataset';
 import React, { useEffect } from 'react';
 import { useExploreUrl } from '../helpers/explore-url';
 import { CaseCountAsyncDataset, CaseCountData } from '../data/CaseCountDataset';
@@ -29,10 +27,10 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
   const { lsSelector, lSelector, hostAndQc } = useSingleSelectorsFromExploreUrl(exploreUrl!);
 
   // Fetch data
-  const wholeDatelessDataset = useQuery(
-    signal => DatelessCountrylessCountSampleData.fromApi(lsSelector, signal),
-    [lsSelector]
-  );
+  // const wholeDatelessDataset = useQuery(
+  //   signal => DatelessCountrylessCountSampleData.fromApi(lsSelector, signal),
+  //   [lsSelector]
+  // );
   const wholeDateCountDataset = useQuery(
     signal => DateCountSampleData.fromApi(lsSelector, signal),
     [lsSelector]
@@ -50,7 +48,7 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
   if (!exploreUrl) {
     return null;
   }
-  if (!wholeDatelessDataset.data || !wholeDateCountDataset.data) {
+  if (!wholeDateCountDataset.data) {
     return <Loader />;
   }
 
@@ -90,13 +88,15 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
             height={300}
             toolbarChildren={<ShowMoreButton to={exploreUrl.getDeepExplorePageUrl('/sequencing-coverage')} />}
           />
-          <div>
-            <MetadataAvailabilityChartWidget.ShareableComponent
-              title='Metadata Availability'
-              sampleSet={wholeDatelessDataset.data}
-              height={300}
-            />
-          </div>
+          {/*This widget is quite slow (which can be (probably easily) improved but as it is probably not
+          super useful, it's easier to just disable it.*/}
+          {/*<div>*/}
+          {/*  <MetadataAvailabilityChartWidget.ShareableComponent*/}
+          {/*    title='Metadata Availability'*/}
+          {/*    sampleSet={wholeDatelessDataset.data}*/}
+          {/*    height={300}*/}
+          {/*  />*/}
+          {/*</div>*/}
         </div>
       </div>
     </div>
