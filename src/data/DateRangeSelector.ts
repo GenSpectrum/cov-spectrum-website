@@ -25,6 +25,7 @@ export const specialDateRanges = [
   'Y2022',
   'Y2023',
   'Y2024',
+  'Y2025',
   'Past2W',
   'Past1M',
   'Past2M',
@@ -72,6 +73,11 @@ export class SpecialDateRangeSelector implements DateRangeSelector {
         return {
           dateFrom: globalDateCache.getDay('2024-01-01'),
           dateTo: globalDateCache.getDay('2024-12-29'),
+        };
+      case 'Y2025':
+        return {
+          dateFrom: globalDateCache.getDay('2024-12-30'),
+          dateTo: globalDateCache.getDay('2025-12-28'),
         };
       case 'Past2W':
         return { dateFrom: weeksAgo(2), dateTo: daysAgo(7) };
@@ -214,5 +220,7 @@ export function specialDateRangeToString(dateRange: SpecialDateRange): string {
       return '2023';
     case 'Y2024':
       return '2024';
+    case 'Y2025':
+      return '2025';
   }
 }
