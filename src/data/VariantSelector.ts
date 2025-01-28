@@ -235,7 +235,7 @@ export const normalizeMutationName = (name: string) => {
         // Unexpectedly, an unknown gene name was found.
         return name;
       }
-      const refBase = geneRefData.aaSeq[stripNumber(items[1]) - 1];
+      const refBase = geneRefData.aaSeq[stripNumber(items[1]) - 1] ?? '';
 
       return `${formatGeneName(items[0])}:${isNumeric(items[1][0]) ? refBase : ''}${items[1].toUpperCase()}`;
     }
