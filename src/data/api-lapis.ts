@@ -36,7 +36,7 @@ const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
 
 let currentLapisDataVersion: number | undefined = undefined;
 
-export const get = async (
+const getRaw = async (
   endpoint: string,
   signal?: AbortSignal,
   options: { skipMaintenanceCheck?: boolean } = {}
@@ -60,6 +60,30 @@ export const get = async (
   return response;
 };
 
+const get = async (
+  endpoint: string,
+  signal?: AbortSignal,
+  options: { skipMaintenanceCheck?: boolean } = {}
+) => {
+  const response = await getRaw(endpoint, signal, options);
+  if (!response.ok) {
+    if (response.body !== null) {
+      let body;
+      try {
+        body = await response.json();
+      } catch (e) {
+        throw new Error(`Failed to fetch data from LAPIS: ${response.status}`);
+      }
+      if (body.error?.detail !== undefined) {
+        throw new Error(`Failed to fetch data from LAPIS: ${body.error?.detail}`);
+      }
+    }
+
+    throw new Error(`Failed to fetch data from LAPIS: ${response.status}`);
+  }
+  return response;
+};
+
 export type SiloAvailability =
   | { isAvailable: true }
   | { isAvailable: false; retryAfterInSeconds: number | null };
@@ -69,7 +93,7 @@ export async function checkSiloAvailability(signal?: AbortSignal): Promise<SiloA
   if (ACCESS_KEY) {
     url += '?accessKey=' + ACCESS_KEY;
   }
-  const response = await get(url, signal, { skipMaintenanceCheck: true });
+  const response = await getRaw(url, signal, { skipMaintenanceCheck: true });
 
   if (response.status !== 503) {
     return { isAvailable: true as const };
@@ -101,9 +125,6 @@ export async function fetchNextcladeDatasetInfo(signal?: AbortSignal): Promise<N
     url += '&accessKey=' + ACCESS_KEY;
   }
   const response = await get(url, signal, { skipMaintenanceCheck: true });
-  if (!response.ok) {
-    throw new Error('Error fetching Nextclade dataset info');
-  }
   const nexcladeDatasetInfo = (await response.json()) as LapisResponse<{ nextcladeDatasetVersion: string }[]>;
   return {
     name: 'nextclade-dataset',
@@ -117,9 +138,6 @@ export async function fetchAllHosts(): Promise<string[]> {
     url += '&accessKey=' + ACCESS_KEY;
   }
   const res = await get(url, undefined, { skipMaintenanceCheck: true });
-  if (!res.ok) {
-    throw new Error('Error fetching new samples data');
-  }
   const body = (await res.json()) as LapisResponse<{ host: string; count: number }[]>;
 
   return _extractLapisData(body)
@@ -213,9 +231,6 @@ export async function fetchMutationProportions(
     minProportion.toString()
   );
   const res = await get(url, signal);
-  if (!res.ok) {
-    throw new Error('Error fetching new samples data');
-  }
   const body = (await res.json()) as LapisResponse<MutationProportionEntry[]>;
   return _extractLapisData(body);
 }
@@ -245,9 +260,6 @@ export async function fetchInsertionCounts(
     true
   );
   const res = await get(url, signal);
-  if (!res.ok) {
-    throw new Error('Error fetching new samples data');
-  }
   const body = (await res.json()) as LapisResponse<InsertionCountEntry[]>;
   return _extractLapisData(body);
 }
@@ -352,17 +364,6 @@ export async function _fetchAggSamples(
   const _additionalParams = new URLSearchParams(additionalParams);
   _additionalParams.set('fields', fields.map(mapFilterToLapisV2).join(','));
   const response = await get(`${linkPrefix}&${_additionalParams}`, signal);
-  if (!response.ok) {
-    if (response.body !== null) {
-      if ((await response.json()).errors !== undefined) {
-        const errors = (await response.json()).errors as { message: string }[];
-        if (errors.length > 0) {
-          throw new Error(errors.map(e => e.message).join(' '));
-        }
-      }
-    }
-    throw new Error();
-  }
   const body = (await response.json()) as LapisResponse<FullSampleAggEntryRaw[]>;
 
   const parsed = _extractLapisData(body).map(raw => parseFullSampleAggEntry(raw));
@@ -390,9 +391,6 @@ function _addOrderAndLimitToSearchParams(params: URLSearchParams, orderAndLimitC
 }
 
 function _extractLapisData<T>(response: LapisResponse<T>): T {
-  if (response.errors !== undefined) {
-    throw new Error('LAPIS returned an error: ' + JSON.stringify(response.errors));
-  }
   if (currentLapisDataVersion === undefined) {
     currentLapisDataVersion = Number(response.info.dataVersion);
   } else if (currentLapisDataVersion !== Number(response.info.dataVersion)) {
