@@ -30,6 +30,28 @@ interface CIMap {
 
 const CHART_MARGIN_RIGHT = 15;
 
+// Minimum threshold for a variant to be considered "present" in the data
+const MIN_PREVALENCE_THRESHOLD = 0.005; // 0.5%
+
+function hasSignificantData(variant: { name: string; data: WasteWaterTimeseriesSummaryDataset }, dateRange: DateRange): boolean {
+  // Check if the variant has any data points above the threshold within the date range
+  for (const dataPoint of variant.data) {
+    // Only consider data points within the date range
+    if (dateRange.dateFrom && dataPoint.date.dayjs.isBefore(dateRange.dateFrom.dayjs)) {
+      continue;
+    }
+    if (dateRange.dateTo && dataPoint.date.dayjs.isAfter(dateRange.dateTo.dayjs)) {
+      continue;
+    }
+    
+    // If proportion is above threshold, this variant has significant data
+    if (dataPoint.proportion > MIN_PREVALENCE_THRESHOLD) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function getPlotData(variants: { name: string; data: WasteWaterTimeseriesSummaryDataset }[]) {
   const dateMap: Map<UnifiedDay, { date: number; proportions: VariantMap; proportionCIs: CIMap }> = new Map();
 
@@ -77,8 +99,11 @@ function getXAxisDomain(dateRange: DateRange, ticks: number[]) {
 }
 
 export const WasteWaterLocationTimeChart = React.memo(({ variants, dateRange }: Props): JSX.Element => {
-  const escapedVariantNames = variants.map(variant => escapeValueName(variant.name));
-  const plotData = getPlotData(variants);
+  // Filter variants to only include those with significant data in the current timeframe
+  const filteredVariants = variants.filter(variant => hasSignificantData(variant, dateRange));
+  
+  const escapedVariantNames = filteredVariants.map(variant => escapeValueName(variant.name));
+  const plotData = getPlotData(filteredVariants);
   const xAxisTicks = getXAxisTicks(plotData, dateRange);
   const xAxisDomain = getXAxisDomain(dateRange, xAxisTicks);
 
