@@ -52,6 +52,7 @@ import { VariantSelector } from '../data/VariantSelector';
 import { AnalysisMode } from '../data/AnalysisMode';
 import { NucleotideEntropy } from '../components/NucleotideEntropy/NucleotideEntropy';
 import { ErrorBoundary } from 'react-error-boundary';
+import { sequenceDataSource } from '../helpers/sequence-data-source';
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
 const CASES_ENABLED = false;
@@ -354,7 +355,11 @@ export const FocusSinglePageContent = ({
             <NamedCard
               title='Lineages'
               tabs={{
-                labels: ['Pango lineage (pangolin)', 'Pango lineage (Nextclade)', 'Nextstrain clade'],
+                labels: [
+                  `Pango lineage (${sequenceDataSource === 'gisaid' ? 'GISAID' : 'pangolin'})`,
+                  'Pango lineage (Nextclade)',
+                  'Nextstrain clade',
+                ],
                 activeTabIndex: lineageDistributionIndex,
                 onNewTabSelect: newIndex => setLineageDistributionIndex(newIndex),
               }}
