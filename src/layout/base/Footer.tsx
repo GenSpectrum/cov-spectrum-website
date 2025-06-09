@@ -43,9 +43,6 @@ export function Footer({
         <ExternalLink url='https://www.sib.swiss/'>
           <img className='h-7' alt='SIB Swiss Institute of Bioinformatics' src='/img/sib.svg' />
         </ExternalLink>
-        <ExternalLink url='https://vercel.com/?utm_source=cov-spectrum&utm_campaign=oss'>
-          <img className='h-6' alt='Powered by Vercel' src='/img/powered-by-vercel.svg' />
-        </ExternalLink>
       </div>
     </FooterStyle>
   );
