@@ -75,15 +75,15 @@ describe('WasteWaterLocationTimeChart', function () {
 
     // Create variants with high prevalence (above 0.5% threshold)
     const highPrevalenceVariants = getWasteWaterLocationTimeChartPropsWithPrevalence(
-      datesOfData, 
-      variantNamesHighPrevalence, 
+      datesOfData,
+      variantNamesHighPrevalence,
       0.01 // 1% prevalence
     );
-    
+
     // Create variants with low prevalence (below 0.5% threshold)
     const lowPrevalenceVariants = getWasteWaterLocationTimeChartPropsWithPrevalence(
-      datesOfData, 
-      variantNamesLowPrevalence, 
+      datesOfData,
+      variantNamesLowPrevalence,
       0.001 // 0.1% prevalence
     );
 
@@ -92,7 +92,7 @@ describe('WasteWaterLocationTimeChart', function () {
     render(<WasteWaterLocationTimeChart variants={allVariants} dateRange={dateRange} />);
 
     expect(screen.getByText('Estimated prevalence in wastewater samples')).toBeInTheDocument();
-    
+
     // Should render chart since high prevalence variant exists
     expect(screen.queryByText('No data')).not.toBeInTheDocument();
   });
