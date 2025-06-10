@@ -62,6 +62,40 @@ describe('WasteWaterLocationTimeChart', function () {
     expect(screen.getByText(formatDate(expectedTicks[0]))).toBeInTheDocument();
     expect(screen.getByText(formatDate(expectedTicks[2]))).toBeInTheDocument();
   });
+
+  it('should filter out variants with low prevalence below threshold', function () {
+    const datesOfData = ['2020-01-01', '2020-01-02'];
+    const variantNamesHighPrevalence = ['highPrevalenceVariant'];
+    const variantNamesLowPrevalence = ['lowPrevalenceVariant'];
+
+    const dateRange = {
+      dateFrom: globalDateCache.getDay('2020-01-01'),
+      dateTo: globalDateCache.getDay('2020-01-02'),
+    };
+
+    // Create variants with high prevalence (above 0.5% threshold)
+    const highPrevalenceVariants = getWasteWaterLocationTimeChartPropsWithPrevalence(
+      datesOfData,
+      variantNamesHighPrevalence,
+      0.01 // 1% prevalence
+    );
+
+    // Create variants with low prevalence (below 0.5% threshold)
+    const lowPrevalenceVariants = getWasteWaterLocationTimeChartPropsWithPrevalence(
+      datesOfData,
+      variantNamesLowPrevalence,
+      0.001 // 0.1% prevalence
+    );
+
+    const allVariants = [...highPrevalenceVariants, ...lowPrevalenceVariants];
+
+    render(<WasteWaterLocationTimeChart variants={allVariants} dateRange={dateRange} />);
+
+    expect(screen.getByText('Estimated prevalence in wastewater samples')).toBeInTheDocument();
+
+    // Should render chart since high prevalence variant exists
+    expect(screen.queryByText('No data')).not.toBeInTheDocument();
+  });
 });
 
 function getWasteWaterLocationTimeChartProps(
@@ -81,6 +115,28 @@ function getWasteWaterLocationTimeChartProps(
       date,
       proportion: 0.1,
       proportionCI: [0.1, 0.1],
+    })),
+  }));
+}
+
+function getWasteWaterLocationTimeChartPropsWithPrevalence(
+  dates: string[],
+  variants: string[],
+  prevalence: number
+): {
+  name: string;
+  data: WasteWaterTimeseriesSummaryDataset;
+}[] {
+  const unifiedDays = dates.map(date => {
+    return globalDateCache.getDay(date);
+  });
+
+  return variants.map(variant => ({
+    name: variant,
+    data: unifiedDays.map(date => ({
+      date,
+      proportion: prevalence,
+      proportionCI: [prevalence, prevalence],
     })),
   }));
 }
