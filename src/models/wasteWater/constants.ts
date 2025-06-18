@@ -20,12 +20,14 @@ export const wastewaterVariantColors: {
   'XBB.2.3': '#F5E424',
   'EG.5': '#B4E80B',
   'BA.2.86': '#FF20E0',
-  'JN.1': '#00E9FF', // improv, not in sync with covariants.org
+  'JN.1': '#29a4ef',
   'BA.2.87.1': '#56ACBC', //improv, not in sync with covariants.org
   'KP.2': '#876566', //improv not in sync with covariants.org
   'KP.3': '#331eee',
-  'XEC': '#a2a626', //improv not in sync with covariants.org
+  'XEC': '#77096b',
   'LP.8': '#11a90b',
+  'NB.1.8.1': '#b3cb23',
+  'XFG': '#bd8e23',
   'undetermined': '#969696',
 };
 
