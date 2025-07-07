@@ -97,7 +97,7 @@ const DataSources = () => {
         Sierre/Noes (VS) and Porrentruy (JU), three times per week until the beginning of July 2023. 
       </p>
       <p>
-        TThe Health Department Basel-Stadt provided samples from the ProRheno AG wastewater treatment plant
+        The Health Department Basel-Stadt provided samples from the ProRheno AG wastewater treatment plant
         three times per week (once per week until the end of 2022). 
       </p>
       <p>
