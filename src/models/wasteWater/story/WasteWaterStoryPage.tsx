@@ -16,14 +16,14 @@ export const WasteWaterStoryPage = () => {
         <ExternalLink url='https://bsse.ethz.ch/cbg/'>Computational Biology Group, ETH Zürich</ExternalLink>
       </div>
       <p>
-        We analyze wastewater samples collected at different Swiss wastewater treatment plants (see data
-        sources below) using next-generation sequencing (done by{' '}
-        <ExternalLink url='https://fgcz.ch/'>FGCZ</ExternalLink>), process the resulting short-read data with{' '}
-        <ExternalLink url='https://cbg-ethz.github.io/V-pipe/'>V-pipe</ExternalLink>, and search for mutations
-        characteristic of variants of concern. The relative frequency of each signature mutation is
-        determined, and all mutation frequencies are combined within a selected time window and translated
-        into estimates of the relative prevalence of the variant in the population for each day. Some variants
-        have specific signature mutations that co-occur on the same fragment. (see{' '}
+        We analyze wastewater samples collected at different Swiss wastewater treatment plants for their genomic
+        composition. Specifically, using next-generation sequencing (which is done at{' '}
+        <ExternalLink url='https://fgcz.ch/'>FGCZ</ExternalLink>) we process the resulting short-read data with{' '}
+        <ExternalLink url='https://cbg-ethz.github.io/V-pipe/'>V-pipe</ExternalLink>and search for mutations
+        characteristic of variants of concern or under monitoring. The relative frequency of each signature mutation
+        is determined, and all mutation frequencies are combined within a selected time window and translated into
+        estimates of the relative prevalence of the variant in the population over the considered time period
+        (see {' '}
         <ExternalLink url='https://doi.org/10.1101/2021.01.08.21249379'>
           doi:10.1101/2021.01.08.21249379
         </ExternalLink>
@@ -36,14 +36,13 @@ export const WasteWaterStoryPage = () => {
       <p>
         Detecting variants in wastewater is challenging if the RNA concentration is low, for example, due to
         low infection numbers in the catchment area of the wastewater treatment plant. Variants with very
-        similar mutation profiles can also be harder to distinguish. Estimates of the proportions of variants
-        are less reliable in these situations.
+        similar mutation profiles can also be difficult to distinguish. Estimates of the proportions of
+        variants are less reliable in these situations.
       </p>
       <WasteWaterSamplingSites locationFilter={location => !isDiscontinuedSite(location)} />
       <DiscontinuedSamplingSites />
       <DataSources />
       <DataAvailability />
-      <VideoPresentation />
       <Acknowledgements />
       <Funding />
       <Contact />
@@ -69,39 +68,44 @@ const DataSources = () => {
     <div>
       <h2>Data sources</h2>
       <p>
+        Starting from 2 Nov 2024, the project is divided in two phases every year. The winter phase includes
+        pooled sequencing of SARS-CoV-2, Respiratory Syncytial Virus (RSV), and Influenza A Virus (IAV). The
+        summer phase includes sequencing of SARS-CoV-2 only.
+      </p>
+      <p>
         <ExternalLink url={'https://www.eawag.ch/en/department/sww/projects/sars-cov2-in-wastewater/'}>
           Eawag
         </ExternalLink>{' '}
-        collects samples at multiple locations around Switzerland. Over the course of the project, different
-        locations have been covered.
+        collects samples at multiple wastewater treatment plans across Switzerland. Over the course of the
+        project, different locations have been covered. 
       </p>
       <p>
-        Since November 25th of 2024 the following six wastewater treatment plants are sampled three times per
-        week: Chur (GR), Genève (GE), Laupen (BE), Lugano (TI), Zürich (ZH), and Basel (BS).
+        Since 25 Nov 2024, the following six wastewater treatment plants are sampled three times per week:
+        Chur (GR), Geneva (GE), Laupen (BE), Lugano (TI), Zurich (ZH), and Basel (BS). 
       </p>
       <p>
         Previously, the project covered eight additional wastewater treatment plants: Lausanne (VD), Bern
-        (BE), Porrentruy (JU), Neuchâtel (NE), Solothurn (SO), Schwyz (SZ), Luzern (LU) and Altenrhein (SG).
+        (BE), Porrentruy (JU), Neuchâtel (NE), Solothurn (SO), Schwyz (SZ), Luzern (LU) and Altenrhein (SG). 
       </p>
       <p>
-        Monitoring of Luzern (LU) and Altenrhein (SG) ended on November 25th, 2024. Monitoring of Bern (BE)
-        ended on March 25th, 2024. Monitoring of Lausanne ended February 24th, 2024. The monitoring of all
-        other discontinued treatment plants ended on December 31st, 2023.
+        Monitoring of Luzern (LU) and Altenrhein (SG) ended on 25 Nov 2024. Monitoring of Bern (BE) ended on
+        25 March 2024. Monitoring of Lausanne (VD) ended 25 Feb 2024. The monitoring of all other discontinued
+        treatment plants ended on 31 Dec 2023. 
       </p>
       <p>
-        Previously, Microsynth AG provided samples from the wastewater treatment plants of Lausanne (Vidy),
-        Sierre/Noes (VS) and Porrentruy (JU) (3 times per week until the beginning of July 2023).
+        Previously, Microsynth AG provided samples from the wastewater treatment plants of Lausanne-Vidy (VD),
+        Sierre/Noes (VS) and Porrentruy (JU), three times per week until the beginning of July 2023. 
       </p>
       <p>
-        The Health Department of Basel-Stadt provided samples from the ProRheno AG wastewater treatment plant
-        three times per week (once per week until the end of 2022).
+        TThe Health Department Basel-Stadt provided samples from the ProRheno AG wastewater treatment plant
+        three times per week (once per week until the end of 2022). 
       </p>
       <p>
-        Until end of May 2022, three times a week the Cantonal Laboratory Zurich (KLZH) provided samples that
-        assess the Canton of Zurich by pooling samples from 12 plants across the canton, namely
+        Until end of May 2022, three times a week, the Cantonal Laboratory Zurich (KLZH) provided samples
+        that assess the Canton of Zurich by pooling samples from 12 plants across the canton, namely
         Zürich-Werdhölzli (also used by Eawag), Winterthur-Hard, Dietikon-Limmattal, Dübendorf-Neugut,
         Niederglatt-Fischbach, Uster, Bülach-Furt, Wetzikon-Flos, Horgen-Oberrieden, Meilen, Affoltern
-        a.A.-Zwillikon, and Illnau-Mannenberg.
+        a.A.-Zwillikon, and Illnau-Mannenberg. 
       </p>
     </div>
   );
@@ -112,29 +116,15 @@ const DataAvailability = () => {
     <div>
       <h2>Data availability</h2>
       <p>
-        De-humanized sequencing libraries in FASTQ format for each collection event are publicly available on
-        ENA under project ID{' '}
-        <ExternalLink url={'https://www.ebi.ac.uk/ena/browser/view/PRJEB44932'}>PRJEB44932</ExternalLink>.
+        De-humanized sequencing libraries in FASTQ format for each sample are publicly available on ENA.
       </p>
-    </div>
-  );
-};
-
-const VideoPresentation = () => {
-  return (
-    <div>
-      <h2>Video presentation of the surveillance project</h2>
       <p>
-        During the webinar{' '}
-        <ExternalLink url={'https://iwa-network.org/learn/detecting-covid-19-variants-in-wastewater/'}>
-          "Detecting COVID-19 Variants in Wastewater" by the International Water Association (IWA)
-        </ExternalLink>
-        , Prof. Tamar Kohn, and Prof. Niko Beerenwinkel have presented this surveillance project. The
-        presentation is the second session of this webinar,
-        <ExternalLink url={'https://vimeo.com/560055953#t=1337s'}>
-          "Detection and surveillance of SARS-CoV-2 genomic variants in Swiss wastewater" (timecode 22:17).
-        </ExternalLink>
-        .
+        Ongoing project ID:{' '}
+        <ExternalLink url={'https://www.ebi.ac.uk/ena/browser/view/PRJEB85524'}>PRJEB85524</ExternalLink>.
+      </p>
+      <p>
+        Project ID before 2 Nov 2024:{' '}
+        <ExternalLink url={'https://www.ebi.ac.uk/ena/browser/view/PRJEB44932'}>PRJEB44932</ExternalLink>.
       </p>
     </div>
   );
@@ -155,7 +145,7 @@ const Acknowledgements = () => {
       </h3>
       <Authors
         authors={
-          'Ivan Topolsky, David Dreifuss, Anika John, Auguste Rimaite, Pelin Burcak Icer, Lara Fuhrmann, Niko Beerenwinkel'
+          'Ivan Topolsky, David Dreifuss, Gordon J. Köhn, Anika John, Auguste Rimaite, Pelin Burcak Icer, Lara Fuhrmann, Niko Beerenwinkel'
         }
       />
       <h3>
@@ -167,7 +157,7 @@ const Acknowledgements = () => {
           Swiss Institute of Bioinformatics
         </ExternalLink>
       </h3>
-      <Authors authors={'Chaoran Chen, Sarah Nadeau, Tanja Stadler'} />
+      <Authors authors={'Louis du Plessis, Tanja Stadler'} />
       <h3>
         <ExternalLink url={'https://www.nexus.ethz.ch/'}>
           NEXUS Personalized Health Technologies, ETH Zürich
@@ -177,15 +167,15 @@ const Acknowledgements = () => {
           Swiss Institute of Bioinformatics
         </ExternalLink>
       </h3>
-      <Authors authors={'Matteo Carrara, Franziska Singer'} />
+      <Authors authors={'Matteo Carrara, Kyra Kirschenbühler, Franziska Singer'} />
       <h3>Eawag</h3>
       <Authors
         authors={
-          'Tamar Kohn, Seju Kang, Ayazhan Dauletova, Camille Hablützel, Rachel McLeod, Daniela Yordanova, Jolinda de Korne, Charlie Gan, Lea Caduff, Christoph Ort, Timothy R. Julian'
+          'Christoph Ort, Tim Julian, Lea Caduff, Charlie Gan, Seju Kang, Jolinda de Korne, Melissa Pitton, Linda Schneider, Anna Wettlauffer, Patrick Schmidhalter, Nadine Hürlimann, Nadja Widrig'
         }
       />
       <h3>Functional Genomic Center Zürich</h3>
-      <Authors authors={'Catharine Aquino, Lennart Opitz, Tim Sykes'} />
+      <Authors authors={'Catharine Aquino, Lennart Opitz, Dominika Brchnelova, Adriana Hotz'} />
       <h3>Genomic Facility Basel</h3>
       <Authors authors={'Mirjam Feldkamp, Christian Beisel'} />
       <h3>Laboratory of Environmental Chemistry EPFL</h3>
