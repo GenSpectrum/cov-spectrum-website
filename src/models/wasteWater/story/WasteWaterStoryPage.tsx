@@ -19,7 +19,7 @@ export const WasteWaterStoryPage = () => {
         We analyze wastewater samples collected at different Swiss wastewater treatment plants for their
         genomic composition. Specifically, using next-generation sequencing (which is done at{' '}
         <ExternalLink url='https://fgcz.ch/'>FGCZ</ExternalLink>) we process the resulting short-read data
-        with <ExternalLink url='https://cbg-ethz.github.io/V-pipe/'>V-pipe</ExternalLink>and search for
+        with <ExternalLink url='https://cbg-ethz.github.io/V-pipe/'>V-pipe</ExternalLink> and search for
         mutations characteristic of variants of concern or under monitoring. The relative frequency of each
         signature mutation is determined, and all mutation frequencies are combined within a selected time
         window and translated into estimates of the relative prevalence of the variant in the population over
