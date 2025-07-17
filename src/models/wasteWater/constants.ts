@@ -45,9 +45,11 @@ export const discontinuedSites = [
       'test_legacylocation', // for tests
     ]),
     discontinuedDate: ' March 26th, 2024',
+    discontinuedDateTime: new Date(2024, 2, 26), // March 26, 2024 (month is 0-indexed)
   },
   {
     discontinuedLocations: new Set<string>(['Luzern (LU)', 'Altenrhein (SG)']),
     discontinuedDate: ' November 25th, 2024',
+    discontinuedDateTime: new Date(2024, 10, 25), // November 25, 2024 (month is 0-indexed)
   },
 ];

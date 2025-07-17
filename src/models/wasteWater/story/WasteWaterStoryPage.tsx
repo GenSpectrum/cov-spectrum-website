@@ -67,60 +67,11 @@ const DiscontinuedSamplingSites = () => {
 const DiscontinuedSiteSection = ({ site }: { site: (typeof discontinuedSites)[0] }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Parse the discontinuation date and create a date range for the last 6 months before discontinuation
-  const getDateRangeForDiscontinuedSite = () => {
-    // Parse dates like " March 26th, 2024" or " November 25th, 2024"
-    const dateString = site.discontinuedDate.trim();
-
-    // Create a mapping for month names to numbers
-    const monthMap: { [key: string]: number } = {
-      january: 0,
-      february: 1,
-      march: 2,
-      april: 3,
-      may: 4,
-      june: 5,
-      july: 6,
-      august: 7,
-      september: 8,
-      october: 9,
-      november: 10,
-      december: 11,
-    };
-
-    let discontinuationDate: dayjs.Dayjs;
-
-    try {
-      // Parse dates in format "Month DDth, YYYY" or "Month DD, YYYY"
-      const regex = /(\w+)\s+(\d+)(?:st|nd|rd|th)?,\s+(\d{4})/i;
-      const match = dateString.match(regex);
-
-      if (match) {
-        const [, monthName, day, year] = match;
-        const monthNum = monthMap[monthName.toLowerCase()];
-
-        if (monthNum !== undefined) {
-          discontinuationDate = dayjs(new Date(parseInt(year), monthNum, parseInt(day)));
-        } else {
-          throw new Error(`Unknown month: ${monthName}`);
-        }
-      } else {
-        throw new Error(`Unable to parse date: ${dateString}`);
-      }
-    } catch (error) {
-      console.warn(`Failed to parse discontinuation date "${dateString}":`, error);
-      // Fallback to current date
-      discontinuationDate = dayjs();
-    }
-
-    // Create a date range for the 6 months before discontinuation
-    const dateFrom = globalDateCache.getDayUsingDayjs(discontinuationDate.subtract(6, 'months'));
-    const dateTo = globalDateCache.getDayUsingDayjs(discontinuationDate);
-
-    return new FixedDateRangeSelector({ dateFrom, dateTo });
-  };
-
-  const dateRangeSelector = getDateRangeForDiscontinuedSite();
+  // Create a date range for the 6 months before discontinuation using the constant datetime
+  const discontinuationDate = dayjs(site.discontinuedDateTime);
+  const dateFrom = globalDateCache.getDayUsingDayjs(discontinuationDate.subtract(6, 'months'));
+  const dateTo = globalDateCache.getDayUsingDayjs(discontinuationDate);
+  const dateRangeSelector = new FixedDateRangeSelector({ dateFrom, dateTo });
 
   return (
     <div className='mb-4'>

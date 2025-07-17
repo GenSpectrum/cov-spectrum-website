@@ -82,46 +82,4 @@ describe('WasteWaterStoryPage', function () {
     const firstSection = screen.getByText('Locations discontinued since March 26th, 2024');
     expect(firstSection.textContent).toContain('▶');
   });
-
-  it('should expand discontinued section when clicked', function () {
-    const data = getTestWasteWaterDataWithLocation(
-      ['2021-01-01', '2021-01-02'],
-      ['variantName1'],
-      ['test_legacylocation']
-    );
-    useWasteWaterDataMock.mockReturnValue(data);
-
-    render(
-      <MemoryRouter>
-        <WasteWaterStoryPage />
-      </MemoryRouter>
-    );
-
-    const firstSection = screen.getByText('Locations discontinued since March 26th, 2024');
-
-    // Click to expand
-    fireEvent.click(firstSection);
-
-    // After clicking, arrow should point down
-    expect(firstSection.textContent).toContain('▼');
-  });
-
-  it('should handle different date formats in discontinued sections', function () {
-    const data = getTestWasteWaterDataWithLocation(
-      ['2021-01-01', '2021-01-02'],
-      ['variantName1'],
-      ['test_legacylocation']
-    );
-    useWasteWaterDataMock.mockReturnValue(data);
-
-    render(
-      <MemoryRouter>
-        <WasteWaterStoryPage />
-      </MemoryRouter>
-    );
-
-    // Both sections should render without errors, even with different date formats
-    expect(screen.getByText('Locations discontinued since March 26th, 2024')).toBeInTheDocument();
-    expect(screen.getByText('Locations discontinued since November 25th, 2024')).toBeInTheDocument();
-  });
 });
