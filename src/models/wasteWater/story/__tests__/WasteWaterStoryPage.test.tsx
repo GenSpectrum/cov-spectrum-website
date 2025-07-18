@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { WasteWaterStoryPage } from '../WasteWaterStoryPage';
 import { MemoryRouter } from 'react-router-dom';
 import ResizeObserver from 'resize-observer-polyfill';
