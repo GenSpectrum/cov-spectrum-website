@@ -10,16 +10,20 @@ import { discontinuedSites } from '../constants';
 
 export interface WasteWaterSitesProps {
   locationFilter?: (location: string) => Boolean;
+  defaultDateRangeSelector?: DateRangeSelector;
 }
 
 export const isDiscontinuedSite = (location: string) => {
   return discontinuedSites.some(site => site.discontinuedLocations.has(location));
 };
 
-export const WasteWaterSamplingSites = ({ locationFilter }: WasteWaterSitesProps) => {
+export const WasteWaterSamplingSites = ({
+  locationFilter,
+  defaultDateRangeSelector,
+}: WasteWaterSitesProps) => {
   const wasteWaterData = useWasteWaterData();
   const [dateRangeSelector, setDateRangeSelector] = useState<DateRangeSelector>(
-    new SpecialDateRangeSelector('Past6M')
+    defaultDateRangeSelector || new SpecialDateRangeSelector('Past6M')
   );
 
   if (!wasteWaterData) {

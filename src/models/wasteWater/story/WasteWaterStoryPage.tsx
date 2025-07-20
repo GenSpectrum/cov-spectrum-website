@@ -1,7 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Collapse } from 'react-bootstrap';
 import { ExternalLink } from '../../../components/ExternalLink';
 import { isDiscontinuedSite, WasteWaterSamplingSites } from './WasteWaterSamplingSites';
 import { discontinuedSites } from '../constants';
+import { FixedDateRangeSelector } from '../../../data/DateRangeSelector';
+import { globalDateCache } from '../../../helpers/date-cache';
+import dayjs from 'dayjs';
 
 export const WasteWaterStoryPage = () => {
   useEffect(() => {
@@ -53,13 +57,41 @@ export const WasteWaterStoryPage = () => {
 const DiscontinuedSamplingSites = () => {
   return (
     <>
-      {discontinuedSites.map(site => (
-        <>
-          <h2>Locations discontinued since{site.discontinuedDate}</h2>
-          <WasteWaterSamplingSites locationFilter={location => site.discontinuedLocations.has(location)} />
-        </>
+      {discontinuedSites.map((site, index) => (
+        <DiscontinuedSiteSection key={index} site={site} />
       ))}
     </>
+  );
+};
+
+const DiscontinuedSiteSection = ({ site }: { site: (typeof discontinuedSites)[0] }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Create a date range for the 6 months before discontinuation using the constant datetime
+  const discontinuationDate = dayjs(site.discontinuedDateTime);
+  const dateFrom = globalDateCache.getDayUsingDayjs(discontinuationDate.subtract(6, 'months'));
+  const dateTo = globalDateCache.getDayUsingDayjs(discontinuationDate);
+  const dateRangeSelector = new FixedDateRangeSelector({ dateFrom, dateTo });
+
+  return (
+    <div className='mb-4'>
+      <h2
+        onClick={() => setIsOpen(!isOpen)}
+        style={{ cursor: 'pointer', userSelect: 'none' }}
+        className='d-flex align-items-center'
+      >
+        <span className='me-2'>{isOpen ? '▼' : '▶'}</span>
+        Locations discontinued since{site.discontinuedDate}
+      </h2>
+      <Collapse in={isOpen}>
+        <div>
+          <WasteWaterSamplingSites
+            locationFilter={location => site.discontinuedLocations.has(location)}
+            defaultDateRangeSelector={dateRangeSelector}
+          />
+        </div>
+      </Collapse>
+    </div>
   );
 };
 
