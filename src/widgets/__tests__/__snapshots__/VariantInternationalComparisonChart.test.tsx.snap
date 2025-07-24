@@ -21,7 +21,7 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
         </button>
       </div>
       <div
-        className=" ***masked***-container"
+        className="***masked***-container"
         onKeyDown={[Function]}
       >
         <span
@@ -33,26 +33,27 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
           aria-live="polite"
           aria-relevant="additions text"
           className="***masked***-a11yText-A11yText"
+          role="log"
         />
         <div
-          className=" ***masked***-control"
+          className="***masked***-control"
           onMouseDown={[Function]}
           onTouchEnd={[Function]}
         >
           <div
-            className=" ***masked***-Component"
+            className="***masked***"
           >
             <div
-              className=" ***masked***-multiValue"
+              className="***masked***-multiValue"
             >
               <div
-                className=" ***masked***-Component"
+                className="***masked***"
               >
                 Germany
               </div>
               <div
                 aria-label="Remove Germany"
-                className=" ***masked***-Component"
+                className="***masked***"
                 onClick={[Function]}
                 onMouseDown={[Function]}
                 onTouchEnd={[Function]}
@@ -73,16 +74,16 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
               </div>
             </div>
             <div
-              className=" ***masked***-multiValue"
+              className="***masked***-multiValue"
             >
               <div
-                className=" ***masked***-Component"
+                className="***masked***"
               >
                 United Kingdom
               </div>
               <div
                 aria-label="Remove United Kingdom"
-                className=" ***masked***-Component"
+                className="***masked***"
                 onClick={[Function]}
                 onMouseDown={[Function]}
                 onTouchEnd={[Function]}
@@ -103,16 +104,16 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
               </div>
             </div>
             <div
-              className=" ***masked***-multiValue"
+              className="***masked***-multiValue"
             >
               <div
-                className=" ***masked***-Component"
+                className="***masked***"
               >
                 United States
               </div>
               <div
                 aria-label="Remove United States"
-                className=" ***masked***-Component"
+                className="***masked***"
                 onClick={[Function]}
                 onMouseDown={[Function]}
                 onTouchEnd={[Function]}
@@ -133,16 +134,16 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
               </div>
             </div>
             <div
-              className=" ***masked***-multiValue"
+              className="***masked***-multiValue"
             >
               <div
-                className=" ***masked***-Component"
+                className="***masked***"
               >
                 Denmark
               </div>
               <div
                 aria-label="Remove Denmark"
-                className=" ***masked***-Component"
+                className="***masked***"
                 onClick={[Function]}
                 onMouseDown={[Function]}
                 onTouchEnd={[Function]}
@@ -163,16 +164,16 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
               </div>
             </div>
             <div
-              className=" ***masked***-multiValue"
+              className="***masked***-multiValue"
             >
               <div
-                className=" ***masked***-Component"
+                className="***masked***"
               >
                 South Africa
               </div>
               <div
                 aria-label="Remove South Africa"
-                className=" ***masked***-Component"
+                className="***masked***"
                 onClick={[Function]}
                 onMouseDown={[Function]}
                 onTouchEnd={[Function]}
@@ -193,10 +194,11 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
               </div>
             </div>
             <div
-              className=" ***masked***-Component"
+              className="***masked***"
               data-value=""
             >
               <input
+                aria-activedescendant=""
                 aria-autocomplete="list"
                 aria-expanded={false}
                 aria-haspopup={true}
@@ -234,11 +236,11 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
             </div>
           </div>
           <div
-            className=" ***masked***-Component"
+            className="***masked***"
           >
             <div
               aria-hidden="true"
-              className=" ***masked***-indicatorContainer"
+              className="***masked***-indicatorContainer"
               onMouseDown={[Function]}
               onTouchEnd={[Function]}
             >
@@ -256,11 +258,11 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
               </svg>
             </div>
             <span
-              className=" ***masked***-indicatorSeparator"
+              className="***masked***-indicatorSeparator"
             />
             <div
               aria-hidden="true"
-              className=" ***masked***-indicatorContainer"
+              className="***masked***-indicatorContainer"
               onMouseDown={[Function]}
               onTouchEnd={[Function]}
             >
