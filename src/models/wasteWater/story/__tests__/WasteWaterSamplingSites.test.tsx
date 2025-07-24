@@ -46,7 +46,7 @@ describe('WasteWaterSamplingSites', function () {
   });
 
   it('should display Widgets for all locations', function () {
-    useResizeDetectorMock.mockReturnValue({ width: 500, ref: { current: null } });
+    useResizeDetectorMock.mockReturnValue({ width: 500, ref: jest.fn() });
 
     const data = getTestWasteWaterDataWithLocation(
       ['2021-01-01', '2021-01-02', '2021-01-03', '2021-01-04'],
@@ -73,7 +73,7 @@ describe('WasteWaterSamplingSites', function () {
   });
 
   it('should display only filtered locations', function () {
-    useResizeDetectorMock.mockReturnValue({ width: 500, ref: { current: null } });
+    useResizeDetectorMock.mockReturnValue({ width: 500, ref: jest.fn() });
 
     const data = getTestWasteWaterDataWithLocation(
       ['2021-01-01', '2021-01-02', '2021-01-03', '2021-01-04'],

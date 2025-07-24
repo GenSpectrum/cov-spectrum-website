@@ -22,7 +22,7 @@ beforeEach(() => {
 
 describe('App', () => {
   test('should render', async () => {
-    useResizeDetectorMock.mockReturnValue({ width: 500, ref: { current: null } });
+    useResizeDetectorMock.mockReturnValue({ width: 500, ref: jest.fn() });
     checkSiloAvailabilityMock.mockResolvedValue({ isAvailable: true });
 
     await act(() => {
@@ -38,7 +38,7 @@ describe('App', () => {
   });
 
   test('should display maintenance box', async () => {
-    useResizeDetectorMock.mockReturnValue({ width: 500, ref: { current: null } });
+    useResizeDetectorMock.mockReturnValue({ width: 500, ref: jest.fn() });
     checkSiloAvailabilityMock.mockResolvedValue({ isAvailable: false, retryAfterInSeconds: 120 });
 
     await act(() => {
