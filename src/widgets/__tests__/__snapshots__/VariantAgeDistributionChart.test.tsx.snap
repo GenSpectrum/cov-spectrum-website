@@ -23,24 +23,11 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
         <div />
       </h3>
       <div
-        className="flex flex-col lg:flex-row h-full"
+        className="sc-gTRrQi elYrUj"
       >
         <div
-          className="h-full w-full"
-        >
-          <div
-            className="recharts-responsive-container"
-            style={
-              Object {
-                "height": "100%",
-                "maxHeight": undefined,
-                "minHeight": undefined,
-                "minWidth": undefined,
-                "width": "100%",
-              }
-            }
-          />
-        </div>
+          className="sc-ewnqHT bRaosl"
+        />
         <div
           className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
         >
@@ -62,7 +49,7 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
                 2.08%
               </div>
               <div
-                className="sc-bgqQcB buxxeA self-end"
+                className="sc-fFGjHI jbnqCc self-end"
               />
             </div>
             <div
@@ -133,7 +120,7 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
                 13
               </div>
               <div
-                className="sc-bgqQcB buxxeA self-end"
+                className="sc-fFGjHI jbnqCc self-end"
               />
             </div>
             <div

@@ -5,15 +5,13 @@ import { maskRegex, maskUuid } from '../../helpers/testing/snapshot-tests-maskin
 import React from 'react';
 import { dataset0 } from '../../helpers/testing/snapshot-tests-data0';
 import { VariantDivisionDistributionChart } from '../VariantDivisionDistributionChart';
-import { useResizeDetector } from 'react-resize-detector';
 
 window.ResizeObserver = ResizeObserver;
-jest.mock('react-resize-detector');
+jest.mock('recharts');
 
 describe('<VariantDivisionDistributionChart>', () => {
   it('dataset0 renders correctly', async () => {
     const { variantDivisionCount, wholeDivisionCount } = dataset0;
-    (useResizeDetector as any).mockReturnValue({ width: 800, height: 400 });
     const tree = renderer.create(
       <VariantDivisionDistributionChart
         variantSampleSet={variantDivisionCount}

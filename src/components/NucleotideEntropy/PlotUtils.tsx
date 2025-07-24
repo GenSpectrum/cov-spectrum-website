@@ -59,7 +59,9 @@ export function formatXAxis(value: any) {
   return value.toString().includes(':') ? decodeAAMutation(value).position : value;
 }
 
-export const CustomBar = (props: PositionProportion) => {
+// TODO(#1111) - Don't use any
+export const CustomBar = (_props: any): JSX.Element => {
+  const props = _props as PositionProportion;
   return (
     <Rectangle
       {...props}

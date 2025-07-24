@@ -5,16 +5,14 @@ import { maskUuid } from '../../helpers/testing/snapshot-tests-masking';
 import React from 'react';
 import { dataset0 } from '../../helpers/testing/snapshot-tests-data0';
 import VariantAgeDistributionChart from '../VariantAgeDistributionChart';
-import { useResizeDetector } from 'react-resize-detector';
 
 window.ResizeObserver = ResizeObserver;
-jest.mock('react-resize-detector');
 
 jest.mock('../../data/api');
+jest.mock('recharts');
 
 describe('<VariantAgeDistributionChart>', () => {
   it('dataset0 renders correctly', async () => {
-    (useResizeDetector as any).mockReturnValue({ width: 800, height: 400 });
     const { variantAgeCount, wholeAgeCount } = dataset0;
 
     let tree: any = null;

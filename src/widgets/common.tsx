@@ -54,6 +54,7 @@ export const ChartWrapper = styled.div`
 
   @media (min-width: 640px) {
     width: 70%;
+    min-width: 70%;
   }
 `;
 

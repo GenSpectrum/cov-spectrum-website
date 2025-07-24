@@ -8,8 +8,9 @@ import { HospitalizationDeathChart } from '../HospitalizationDeathChart';
 import { useResizeDetector } from 'react-resize-detector';
 
 window.ResizeObserver = ResizeObserver;
-jest.mock('react-resize-detector');
 
+jest.mock('react-resize-detector');
+jest.mock('recharts');
 jest.mock('../../data/api');
 
 describe('<HospitalizationDeathChart>', () => {

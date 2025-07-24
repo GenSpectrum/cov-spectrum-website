@@ -163,7 +163,7 @@ export const SequencingRepresentativenessChart = React.memo(
                           ))}
                         </Bar>
                         <Tooltip
-                          active={false}
+                          active={true}
                           cursor={false}
                           content={tooltipProps => {
                             return (
