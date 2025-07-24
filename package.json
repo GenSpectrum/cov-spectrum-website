@@ -49,7 +49,7 @@
     "react-icons": "~5.4.0",
     "react-plotly.js": "^2.6.0",
     "react-resize-detector": "^12.1.0",
-    "react-reverse-portal": "^2.1.1",
+    "react-reverse-portal": "^2.3.0",
     "react-router-dom": "^6.8.2",
     "react-router-hash-link": "^2.4.3",
     "react-scripts": "^5.0.1",
