@@ -53,7 +53,7 @@
     "react-router-dom": "^6.8.2",
     "react-router-hash-link": "^2.4.3",
     "react-scripts": "^5.0.1",
-    "react-select": "^5.7.0",
+    "react-select": "^5.10.2",
     "react-test-renderer": "^18.2.0",
     "recharts": "^2.4.3",
     "styled-components": "^5.3.10",
