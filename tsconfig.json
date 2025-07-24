@@ -16,6 +16,7 @@
     "noEmit": true,
     "downlevelIteration": true,
     "jsx": "react-jsx",
+    "jsxImportSource": "react",
     "allowJs": true
   },
   "include": ["src"]
