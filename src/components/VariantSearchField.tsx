@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import AsyncSelect from 'react-select/async';
-import { components, CSSObjectWithLabel, InputActionMeta, StylesConfig } from 'react-select';
+import {
+  ActionMeta,
+  components,
+  CSSObjectWithLabel,
+  InputActionMeta,
+  MultiValue,
+  StylesConfig,
+} from 'react-select';
 import { isValidAAMutation, isValidABNotation, isValidNspNotation } from '../helpers/aa-mutation';
 import { PangoCountSampleData } from '../data/sample/PangoCountSampleDataset';
 import { isValidPangoLineageQuery, transformToVariantQuery, VariantSelector } from '../data/VariantSelector';
@@ -468,7 +475,7 @@ function SimpleVariantSearchField({
       isMulti
       defaultOptions={suggestOptions('')}
       loadOptions={promiseOptions}
-      onChange={(_, change) => {
+      onChange={(_: MultiValue<SearchOption>, change: ActionMeta<SearchOption>) => {
         if (change.action === 'select-option') {
           setSelectedOptions([...selectedOptions!, change.option!]);
           setInputValue('');

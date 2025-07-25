@@ -37,7 +37,7 @@ const { filterByDateRange, getMaxDateRange } = require('../WasteWaterSamplingSit
 
 beforeEach(() => {
   jest.resetAllMocks();
-  useResizeDetectorMock.mockReturnValue({ width: 500, ref: { current: null } });
+  useResizeDetectorMock.mockReturnValue({ width: 500, ref: jest.fn() });
 
   // Setup default mocks
   filterByDateRange.mockImplementation((data: any) => data || []);
