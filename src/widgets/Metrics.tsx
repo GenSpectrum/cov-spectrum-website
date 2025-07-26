@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import { BiHelpCircle } from 'react-icons/bi';
 import styled from 'styled-components';
 import { Tooltip } from '@mui/material';

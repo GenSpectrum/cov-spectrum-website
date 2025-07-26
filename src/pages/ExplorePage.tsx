@@ -14,7 +14,7 @@ import { getLocation } from '../helpers/get-location';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';
 import { InternalLink } from '../components/InternalLink';
 import { MdOutlineOpenInNew } from 'react-icons/md';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { fetchLapisDataVersion } from '../data/api-lapis';
 

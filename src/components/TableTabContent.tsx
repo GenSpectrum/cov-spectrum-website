@@ -15,11 +15,11 @@ import {
 import { PromiseQueue } from '../helpers/PromiseQueue';
 import { Chen2021FitnessResponse, ValueWithCI } from '../models/chen2021Fitness/chen2021Fitness-types';
 import { getModelData } from '../models/chen2021Fitness/loading';
-import { HashLink as Link } from 'react-router-hash-link';
 import Loader from '../components/Loader';
 import { Button, ButtonVariant } from '../helpers/ui';
 import { csvStringify } from '../helpers/csvStringifyHelper';
 import download from 'downloadjs';
+import { Link } from 'react-router';
 
 type TableTabContentProps = {
   collectionId: number;

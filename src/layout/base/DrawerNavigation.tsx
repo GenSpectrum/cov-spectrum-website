@@ -1,5 +1,5 @@
 import { useExploreUrl } from '../../helpers/explore-url';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { MdOutlineOpenInNew } from 'react-icons/md';
 import { GitHubButton, MastodonButton, TwitterButton } from './SocialIcons';
 import React from 'react';

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { JSX, useMemo, useState } from 'react';
 import { scaleLinear } from 'd3-scale';
 import styled from 'styled-components';
 import Metric, { MetricsWrapper } from '../../widgets/Metrics';

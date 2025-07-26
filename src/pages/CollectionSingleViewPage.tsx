@@ -1,9 +1,8 @@
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
 import { fetchCollection } from '../data/api';
 import React, { useMemo, useState } from 'react';
 import Loader from '../components/Loader';
-import { HashLink as Link } from 'react-router-hash-link';
 import { Button, ButtonVariant } from '../helpers/ui';
 import {
   formatVariantDisplayName,

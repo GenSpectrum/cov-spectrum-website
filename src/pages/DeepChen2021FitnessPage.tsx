@@ -2,7 +2,7 @@ import { useExploreUrl } from '../helpers/explore-url';
 import { makeLayout } from '../helpers/deep-page';
 import { VariantHeader } from '../components/VariantHeader';
 import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import React, { useMemo } from 'react';
 import { Chen2021FitnessWidget } from '../models/chen2021Fitness/Chen2021FitnessWidget';
 import { useQuery } from '../helpers/query-hook';

@@ -2,7 +2,7 @@ import { DependencyList, EffectCallback, useEffect, useRef, useState } from 'rea
 import { isEqual } from './lodash_alternatives';
 
 function useDeepCompareMemoize<T>(value: T): T | undefined {
-  const ref = useRef<T>();
+  const ref = useRef<T>(undefined);
 
   if (!isEqual(value, ref.current)) {
     ref.current = value;

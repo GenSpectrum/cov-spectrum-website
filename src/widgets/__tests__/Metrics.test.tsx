@@ -1,17 +1,14 @@
 import React from 'react';
-import renderer from 'react-test-renderer';
 import Metric from '../Metrics';
-import { maskUuid } from '../../helpers/testing/snapshot-tests-masking';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { renderAndWaitToMatchSnapshot } from '../../helpers/testing/renderAndWaitToMatchSnapshot';
 
 describe('<Metric>', () => {
-  it('renders correctly', () => {
-    const tree = renderer
-      .create(<Metric title='Proportion' value={0.59} helpText='This is the proportion of something.' />)
-      .toJSON();
-    maskUuid(tree);
-    expect(tree).toMatchSnapshot();
+  it('renders correctly', async () => {
+    await renderAndWaitToMatchSnapshot(
+      <Metric title='Proportion' value={0.59} helpText='This is the proportion of something.' />
+    );
   });
 
   test('should show value and title of metric without percent', () => {

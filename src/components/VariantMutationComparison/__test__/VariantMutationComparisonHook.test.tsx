@@ -11,8 +11,6 @@ jest.mock('../../../data/api');
 jest.mock('../../../helpers/query-hook');
 const useQueryMock = useQuery as jest.Mock;
 
-const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
 describe('VariantMutationComparisonHook', () => {
   beforeEach(() => {
     useQueryMock.mockReset();
@@ -40,7 +38,6 @@ describe('VariantMutationComparisonHook', () => {
           return useOverlappingData(selectors, 0.123);
         })
       ).toThrow();
-      expect(consoleSpy).toHaveBeenCalled();
     });
   });
 

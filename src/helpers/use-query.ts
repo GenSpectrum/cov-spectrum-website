@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { AsyncState, PromiseFn, useAsync } from 'react-async';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { AsyncQueryEncoder, QueryEncoder } from './query-encoder';
 
 export function useQueryWithEncoder<T>(encoder: QueryEncoder<T> | undefined): T | undefined {

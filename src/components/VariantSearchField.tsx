@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import AsyncSelect from 'react-select/async';
 import {
   ActionMeta,
@@ -214,6 +214,7 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
     }
   };
 
+  const dragRef = useRef<HTMLDivElement>(null);
   const [{ isOver }, drop] = useDrop(() => ({
     accept: 'div',
     drop: (item: any) => dropToField(item.query),
@@ -221,12 +222,13 @@ export const VariantSearchField = ({ onVariantSelect, currentSelection, triggerS
       isOver: monitor.isOver(),
     }),
   }));
+  drop(dragRef);
 
   // --- Rendering ---
 
   return (
     <div
-      ref={drop}
+      ref={dragRef}
       className={'m-1 p-1 border-2 border-dashed ' + (isOver ? 'border-black' : 'border-transparent')}
     >
       <form

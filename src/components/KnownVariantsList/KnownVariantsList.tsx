@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { JSX, useEffect, useMemo, useState } from 'react';
 import { KnownVariantCard } from './KnownVariantCard';
 import { KnownVariantsListSelection } from './KnownVariantsListSelection';
 import { DateCountSampleData, DateCountSampleDataset } from '../../data/sample/DateCountSampleDataset';

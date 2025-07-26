@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import styled from 'styled-components';
 import { globalDateCache } from '../helpers/date-cache';
 import chroma from 'chroma-js';

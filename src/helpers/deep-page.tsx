@@ -2,7 +2,7 @@
  * This file contains helper functions that are shared by the Deep... pages.
  */
 
-import React from 'react';
+import React, { JSX } from 'react';
 import styled from 'styled-components';
 import Loader from '../components/Loader';
 

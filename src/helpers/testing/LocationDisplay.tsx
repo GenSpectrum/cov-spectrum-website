@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { screen } from '@testing-library/react';
 
 const LOCATION_DISPLAY_ID = 'location-display';

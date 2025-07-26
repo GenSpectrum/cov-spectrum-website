@@ -2,7 +2,7 @@ import React from 'react';
 import { act, render, screen, within } from '@testing-library/react';
 import { BaselineMutationsTable, SingleMutationsTable } from '../MutationsTable';
 import { LocationSelector } from '../../../data/LocationSelector';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { SpecialDateRangeSelector } from '../../../data/DateRangeSelector';
 import { useBaselineMutationTableData, useMutationTableData } from '../hooks';
 import userEvent from '@testing-library/user-event';

@@ -4,6 +4,7 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
 import setupDayjs from './helpers/dayjsSetup';
+import { TextEncoder } from 'util';
 
 setupDayjs();
 
@@ -17,3 +18,5 @@ global.fetch = jest
         JSON.stringify(args)
     )
   );
+
+global.TextEncoder = TextEncoder;

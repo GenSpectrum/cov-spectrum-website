@@ -1,9 +1,9 @@
-import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router';
 import { useQuery } from '../helpers/query-hook';
 import { deleteCollection, fetchCollection, updateCollection, validateCollectionAdminKey } from '../data/api';
 import React, { useMemo, useState } from 'react';
 import Loader from '../components/Loader';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import { Alert, AlertVariant, Button, ButtonVariant } from '../helpers/ui';
 import {
   Button as MuiButton,

@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { useExploreUrl } from '../explore-url';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { ReactNode } from 'react';
 import { FixedDateRangeSelector, SpecialDateRangeSelector } from '../../data/DateRangeSelector';
 import { globalDateCache } from '../date-cache';

@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import { useExploreUrl } from '../../helpers/explore-url';
 import { encodeLocationSelectorToSingleString } from '../../data/LocationSelector';
 import { defaultDateRange, defaultSamplingStrategy } from '../../data/default-selectors';

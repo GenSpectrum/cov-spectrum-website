@@ -2,7 +2,7 @@ import { TextField } from '@mui/material';
 import { Button, ButtonVariant } from '../helpers/ui';
 import { useState } from 'react';
 import { addCollection } from '../data/api';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
 export const CollectionAddPage = () => {
   const [title, setTitle] = useState('');

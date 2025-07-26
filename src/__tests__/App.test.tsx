@@ -1,6 +1,6 @@
 import { act, render, screen } from '@testing-library/react';
 import { App } from '../App';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import ResizeObserver from 'resize-observer-polyfill';
 import { useResizeDetector } from 'react-resize-detector';
 import { checkSiloAvailability } from '../data/api-lapis';
