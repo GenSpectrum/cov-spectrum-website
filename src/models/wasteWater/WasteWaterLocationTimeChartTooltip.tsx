@@ -24,8 +24,12 @@ export const WasteWaterTooltip = ({ active, payload }: TooltipProps<ValueType, N
               proportionCI={p.payload.proportionCIs[name]}
               color={p.color}
             />
+            
           );
         })}
+      </div>
+      <div style={{ fontSize: '0.85em', color: '#666', marginTop: '4px' }}>
+        mean [95% confidence interval]
       </div>
     </div>
   );
