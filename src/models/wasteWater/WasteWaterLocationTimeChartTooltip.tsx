@@ -24,7 +24,6 @@ export const WasteWaterTooltip = ({ active, payload }: TooltipProps<ValueType, N
               proportionCI={p.payload.proportionCIs[name]}
               color={p.color}
             />
-            
           );
         })}
       </div>
