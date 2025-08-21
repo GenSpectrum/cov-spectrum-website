@@ -144,9 +144,9 @@ interface Props {
 
 /**
  * For KnownVariantsList, we don't need very old data, since convertKnownVariantChartData (in load-data.ts)
- * will only take the latest 2 months. However since our data collection lags by a couple
+ * will only take the latest 2 months. However, since our data collection lags by a couple
  * of weeks, we need to fetch slightly more here to ensure we have enough. Therefore,
- * we use past 3 months (Past3M) as the date range across all API calls within KnownVariantsList,
+ * we use past 6 months (Past6M) as the date range across all API calls within KnownVariantsList,
  * e.g. useWholeSampleSet, getPangolinLineages, loadKnownVariantSampleSets.
  */
 export const KnownVariantsList = ({
@@ -191,7 +191,7 @@ export const KnownVariantsList = ({
     ): LapisSelector => {
       return {
         location: wholeDateCountSampleDataset.selector.location,
-        dateRange: new SpecialDateRangeSelector('Past3M'),
+        dateRange: new SpecialDateRangeSelector('Past6M'),
         variant: variantSelector,
         samplingStrategy: wholeDateCountSampleDataset.selector.samplingStrategy,
         ...hostAndQc,
