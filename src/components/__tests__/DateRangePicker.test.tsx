@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { DateRange } from '../../data/DateRange';
 import { globalDateCache } from '../../helpers/date-cache';
 import dayjs from 'dayjs';
+import React from 'react';
 
 window.ResizeObserver = ResizeObserver;
 jest.mock('react-resize-detector');
@@ -41,6 +42,13 @@ describe('DateRangePicker', () => {
     return screen.getByRole('combobox');
   }
 
+  async function clearAndType(input: HTMLElement, value: string) {
+    await userEvent.click(input);
+    await userEvent.keyboard('{Control>}a{/Control}');
+    await userEvent.keyboard('{Delete}');
+    await userEvent.keyboard(value);
+  }
+
   test('should render', () => {
     renderDateRangePicker();
 
@@ -62,21 +70,17 @@ describe('DateRangePicker', () => {
   test('should display invalid date entered by user', async () => {
     renderDateRangePicker();
 
-    await userEvent.clear(fromPicker());
-    await userEvent.type(fromPicker(), '1');
+    await clearAndType(fromPicker(), '1');
 
-    expect(fromPicker()).toHaveValue('1');
+    expect(fromPicker()).toHaveValue('0001-MM-DD');
     expect(onChangeDateMock).not.toHaveBeenCalled();
   });
 
   test('should set correct date on user input', async () => {
     renderDateRangePicker();
 
-    await userEvent.clear(fromPicker());
-    await userEvent.type(fromPicker(), '2020-01-06');
-
-    await userEvent.clear(toPicker());
-    await userEvent.type(toPicker(), '2021-01-06');
+    await clearAndType(fromPicker(), '2020-01-06');
+    await clearAndType(toPicker(), '2021-01-06');
 
     expect(fromPicker()).toHaveValue('2020-01-06');
     expect(toPicker()).toHaveValue('2021-01-06');

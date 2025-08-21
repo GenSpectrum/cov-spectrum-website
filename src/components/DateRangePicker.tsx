@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import TextField from '@mui/material/TextField';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { useResizeDetector } from 'react-resize-detector';
@@ -92,11 +92,12 @@ function DateFromPicker({
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
-        inputFormat='yyyy-MM-dd'
+        format='yyyy-MM-dd'
         label='from'
         value={dateFromDate}
         onChange={handleDateChange}
-        renderInput={params => <TextField {...params} sx={{ height, width: '150px' }} />}
+        slots={{ textField: TextField }}
+        slotProps={{ textField: { sx: { height, width: 150 } } }}
       />
     </LocalizationProvider>
   );
@@ -115,23 +116,21 @@ function DateToPicker({
     <LocalizationProvider dateAdapter={AdapterDateFns}>
       <DatePicker
         className={`${width && width < 330 ? 'mt-10' : ''}`}
-        inputFormat='yyyy-MM-dd'
+        format='yyyy-MM-dd'
         label='to'
         value={toDate}
         onChange={handleDateChange}
-        renderInput={params => (
-          <TextField
-            InputProps={{
-              readOnly: true,
-            }}
-            {...params}
-            sx={{
-              marginLeft: `${width && width < 320 ? '2px' : '5px'}`,
+        slots={{ textField: TextField }}
+        slotProps={{
+          textField: {
+            InputProps: { readOnly: true },
+            sx: {
+              ml: width && width < 320 ? '2px' : '5px',
               height: '50px',
               width: '150px',
-            }}
-          />
-        )}
+            },
+          },
+        }}
       />
     </LocalizationProvider>
   );

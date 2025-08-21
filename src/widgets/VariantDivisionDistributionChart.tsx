@@ -48,7 +48,7 @@ const tableColumns: GridColDef[] = [
     field: 'prevalence',
     headerName: 'Prevalence',
     minWidth: 100,
-    valueFormatter: params => (params.value * 100).toFixed(3) + '%',
+    valueFormatter: value => (value * 100).toFixed(3) + '%',
   },
 ];
 

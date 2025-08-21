@@ -393,9 +393,14 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
               value={geneName}
               onChange={handleChange}
               input={<OutlinedInput label='Select genes' />}
-              renderValue={selected => selected.join(', ')}
+              renderValue={selected => {
+                if (selected.length === 0) {
+                  return <em>All</em>;
+                }
+
+                return selected.join(', ');
+              }}
               MenuProps={MenuProps}
-              placeholder='All'
             >
               {ReferenceGenomeService.genes.sort().map(gene => (
                 <MenuItem key={gene} value={gene}>
