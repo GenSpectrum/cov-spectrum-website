@@ -52,7 +52,11 @@ export interface ExploreUrl {
 
   setLocation: (location: LocationSelector) => void;
   setDateRange: (dateRange: DateRangeSelector) => void;
-  setVariants: (variants: VariantSelector[], analysisMode?: AnalysisMode) => void;
+  setVariants: (
+    variants: VariantSelector[],
+    analysisMode?: AnalysisMode,
+    dryrun?: boolean
+  ) => string | undefined;
   setAnalysisMode: (analysisMode: AnalysisMode) => void;
   setSamplingStrategy: (samplingStrategy: SamplingStrategy) => void;
   setHostAndQc: (
@@ -149,7 +153,7 @@ export function useExploreUrl(): ExploreUrl | undefined {
     [navigate, locationState.pathname, locationState.search, routeMatches.locationSamplingDate]
   );
   const setVariants = useCallback(
-    (variants: VariantSelector[], analysisMode?: AnalysisMode) => {
+    (variants: VariantSelector[], analysisMode?: AnalysisMode, dryrun = false) => {
       if (!routeMatches.locationSamplingDate) {
         return;
       }
@@ -170,7 +174,10 @@ export function useExploreUrl(): ExploreUrl | undefined {
       const currentPath = locationState.pathname + locationState.search;
       assert(currentPath.startsWith(prefix));
       const path = `${prefix}/variants?${newQueryParam}&`;
-      navigate(path);
+      if (!dryrun) {
+        navigate(path);
+      }
+      return path;
     },
     [navigate, locationState.pathname, locationState.search, queryString, routeMatches.locationSamplingDate]
   );
