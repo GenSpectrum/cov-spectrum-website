@@ -3,12 +3,17 @@
 exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = `
 <div
   className="relative h-full"
+  ref={
+    Object {
+      "current": null,
+    }
+  }
 >
   <div
-    className="sc-bgqQcB iTKDhP"
+    className="sc-bRKDuR fSLEEj"
   >
     <div
-      className="sc-fFGjHI jhUGJR"
+      className="sc-ggWZvA gQrGZn"
     >
       <div
         className="mt-2 mb-4 w-40"
@@ -16,6 +21,7 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
         <button
           className="undefined bg-gray-400 hover:bg-gray-500 focus:ring-gray-500 focus:ring-offset-gray-200 px-2 text-white w-full transition ease-in duration-100 scale-110 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg "
           onClick={[Function]}
+          ref={null}
         >
           Toggle log scale
         </button>
@@ -39,6 +45,7 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
           className="***masked***-control"
           onMouseDown={[Function]}
           onTouchEnd={[Function]}
+          ref={[Function]}
         >
           <div
             className="***masked***"
@@ -211,6 +218,7 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
                 onBlur={[Function]}
                 onChange={[Function]}
                 onFocus={[Function]}
+                ref={[Function]}
                 role="combobox"
                 spellCheck="false"
                 style={

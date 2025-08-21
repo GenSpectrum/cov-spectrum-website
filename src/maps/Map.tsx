@@ -98,7 +98,7 @@ const colorScale = scaleQuantile<string>()
   .domain([0, 100])
   .range(['#ffedea', '#ffcec5', '#ffad9f', '#ff8a75', '#ff5533', '#e2492d', '#be3d26', '#9a311f', '#782618']);
 
-const Wrapper = styled.div`
+const Wrapper = styled.div<WrapperProps>`
   svg {
     max-height: 500px;
     margin-left: auto;

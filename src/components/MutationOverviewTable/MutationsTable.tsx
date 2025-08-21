@@ -1,13 +1,13 @@
 import { encodeLocationSelectorToSingleString, LocationSelector } from '../../data/LocationSelector';
 import { mutationColumnsProperties } from '../../data/mutationsOnCollectionPageData';
 import { addVariantSelectorToUrlSearchParams, VariantSelector } from '../../data/VariantSelector';
-import { HashLink } from 'react-router-hash-link';
 import { DateRangeSelector } from '../../data/DateRangeSelector';
 import { dateRangeUrlFromSelector } from '../../data/DateRangeUrlEncoded';
 import { SequenceType } from '../../data/SequenceType';
 import { useBaselineMutationTableData, useMutationTableData } from './hooks';
 import Loader from '../Loader';
 import { MUTATIONS_HASH_LINK } from '../../pages/FocusSinglePage';
+import { Link } from 'react-router';
 
 export type SingleMutationsTableProps = {
   variants: { query: VariantSelector; name: string; description: string }[];
@@ -35,17 +35,12 @@ const NameCell = ({ query, locationSelector, name, baseline, dateRangeSelector }
     dateRangeSelector
   )}/variants?${urlParams.toString()}${suffix}`;
 
-  function scrollAfterWaiting(element: HTMLElement) {
-    setTimeout(() => {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }, 2000);
-  }
-
+  // TODO: Check that the scrolling behavior is acceptable
   return (
     <div style={{ display: 'block' }}>
-      <HashLink to={targetUrl} className='overflow-hidden' scroll={scrollAfterWaiting}>
+      <Link to={targetUrl} className='overflow-hidden'>
         <button className='underline break-words overflow-hidden w-full'>{name}</button>
-      </HashLink>
+      </Link>
     </div>
   );
 };

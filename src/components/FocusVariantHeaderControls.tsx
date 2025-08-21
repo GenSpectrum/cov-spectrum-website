@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import { Integration } from '../services/external-integrations/Integration';
 import { PangoLineageIntegration } from '../services/external-integrations/PangoLineageIntegration';
 import { OutbreakInfoIntegration } from '../services/external-integrations/OutbreakInfoIntegration';

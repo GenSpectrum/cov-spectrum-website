@@ -1,5 +1,5 @@
 import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import React from 'react';
 import { VariantHeader } from '../components/VariantHeader';
 import { useExploreUrl } from '../helpers/explore-url';

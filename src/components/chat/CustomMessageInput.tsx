@@ -142,7 +142,6 @@ export const CustomMessageInput = ({ disabled, maxLength, onMessageSend }: Custo
           style={{
             fontSize: '1.2em',
           }}
-          placeholder={'Send'}
           onClick={() => sendMessage(contentInMessageInput.textContent)}
         />
         <ProgressBar

@@ -11,12 +11,17 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
 >
   <div
     className="relative h-full"
+    ref={
+      Object {
+        "current": null,
+      }
+    }
   >
     <div
       className="h-full"
     >
       <div
-        className="sc-bgqQcB iTKDhP"
+        className="sc-bRKDuR fSLEEj"
       >
         <h3
           className="my-0 pr-10 pt-0 text-gray-500"
@@ -24,17 +29,17 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
           Estimated probability of death by age group
         </h3>
         <div
-          className="sc-gTRrQi elYrUj"
+          className="sc-hvigdm kGdHkJ"
         >
           <div
-            className="sc-ewnqHT bRaosl"
+            className="sc-fhHczv cPPmXF"
           />
           <div
             className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
           >
             <div>
               <div
-                className="sc-dicizt gtqZSZ"
+                className="sc-dTvVRJ gVabPg"
               >
                 <svg
                   height={30}
@@ -70,7 +75,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   />
                 </svg>
                 <div
-                  className="sc-iVCKna ggpzZx"
+                  className="sc-jwTyAe dDQtJR"
                   style={
                     Object {
                       "color": "#1F407A",
@@ -81,7 +86,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                 </div>
               </div>
               <div
-                className="sc-dicizt gtqZSZ"
+                className="sc-dTvVRJ gVabPg"
               >
                 <svg
                   height={30}
@@ -121,7 +126,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   </g>
                 </svg>
                 <div
-                  className="sc-iVCKna ggpzZx"
+                  className="sc-jwTyAe dDQtJR"
                   style={
                     Object {
                       "color": "#7f8c8d",
@@ -150,7 +155,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   0
                 </div>
                 <div
-                  className="sc-fFGjHI jbnqCc self-end"
+                  className="sc-ggWZvA CgeUe self-end"
                 />
               </div>
               <div
@@ -177,6 +182,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                     onMouseOver={[Function]}
                     onTouchEnd={[Function]}
                     onTouchStart={[Function]}
+                    ref={[Function]}
                   >
                     <svg
                       fill="currentColor"
@@ -221,7 +227,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   110
                 </div>
                 <div
-                  className="sc-fFGjHI jbnqCc self-end"
+                  className="sc-ggWZvA CgeUe self-end"
                 />
               </div>
               <div
@@ -248,6 +254,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                     onMouseOver={[Function]}
                     onTouchEnd={[Function]}
                     onTouchStart={[Function]}
+                    ref={[Function]}
                   >
                     <svg
                       fill="currentColor"
@@ -293,12 +300,17 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
 >
   <div
     className="relative h-full"
+    ref={
+      Object {
+        "current": null,
+      }
+    }
   >
     <div
       className="h-full"
     >
       <div
-        className="sc-bgqQcB iTKDhP"
+        className="sc-bRKDuR fSLEEj"
       >
         <h3
           className="my-0 pr-10 pt-0 text-gray-500"
@@ -306,17 +318,17 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
           Estimated probability of hospitalization by age group
         </h3>
         <div
-          className="sc-gTRrQi elYrUj"
+          className="sc-hvigdm kGdHkJ"
         >
           <div
-            className="sc-ewnqHT bRaosl"
+            className="sc-fhHczv cPPmXF"
           />
           <div
             className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
           >
             <div>
               <div
-                className="sc-dicizt gtqZSZ"
+                className="sc-dTvVRJ gVabPg"
               >
                 <svg
                   height={30}
@@ -352,7 +364,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   />
                 </svg>
                 <div
-                  className="sc-iVCKna ggpzZx"
+                  className="sc-jwTyAe dDQtJR"
                   style={
                     Object {
                       "color": "#1F407A",
@@ -363,7 +375,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                 </div>
               </div>
               <div
-                className="sc-dicizt gtqZSZ"
+                className="sc-dTvVRJ gVabPg"
               >
                 <svg
                   height={30}
@@ -403,7 +415,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   </g>
                 </svg>
                 <div
-                  className="sc-iVCKna ggpzZx"
+                  className="sc-jwTyAe dDQtJR"
                   style={
                     Object {
                       "color": "#7f8c8d",
@@ -432,7 +444,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   2
                 </div>
                 <div
-                  className="sc-fFGjHI jbnqCc self-end"
+                  className="sc-ggWZvA CgeUe self-end"
                 />
               </div>
               <div
@@ -459,6 +471,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                     onMouseOver={[Function]}
                     onTouchEnd={[Function]}
                     onTouchStart={[Function]}
+                    ref={[Function]}
                   >
                     <svg
                       fill="currentColor"
@@ -503,7 +516,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   108
                 </div>
                 <div
-                  className="sc-fFGjHI jbnqCc self-end"
+                  className="sc-ggWZvA CgeUe self-end"
                 />
               </div>
               <div
@@ -530,6 +543,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                     onMouseOver={[Function]}
                     onTouchEnd={[Function]}
                     onTouchStart={[Function]}
+                    ref={[Function]}
                   >
                     <svg
                       fill="currentColor"

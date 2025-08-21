@@ -5,7 +5,7 @@ import { WasteWaterSamplingSites } from '../WasteWaterSamplingSites';
 import { useResizeDetector } from 'react-resize-detector';
 import { globalDateCache } from '../../../../helpers/date-cache';
 import { getTestWasteWaterDataWithLocation } from '../testHelpers';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 
 jest.mock('recharts', () => {
   const OriginalModule = jest.requireActual('recharts');

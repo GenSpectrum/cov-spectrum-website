@@ -3,6 +3,11 @@
 exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
 <div
   className="relative h-full"
+  ref={
+    Object {
+      "current": null,
+    }
+  }
 >
   <div
     className="flex flex-col h-full w-full"
@@ -16,7 +21,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
       <div>
         <div
           className="mb-1 btn-toolbar"
-          role="toolbar"
+          ref={null}
         >
           <div
             className="mt-1 ml-2"
@@ -24,6 +29,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
             <button
               className="undefined bg-active-secondary hover:bg-active focus:ring-blue-500 focus:ring-offset-blue-200 px-2 text-white w-full transition ease-in duration-100 scale-110 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg "
               onClick={[Function]}
+              ref={null}
             >
                
               Proportion
@@ -35,6 +41,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
             <button
               className="undefined bg-gray-400 hover:bg-gray-500 focus:ring-gray-500 focus:ring-offset-gray-200 px-2 text-white w-full transition ease-in duration-100 scale-110 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg "
               onClick={[Function]}
+              ref={null}
             >
                
               Absolute
@@ -44,10 +51,10 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
       </div>
     </h3>
     <div
-      className="sc-gTRrQi elYrUj"
+      className="sc-hvigdm kGdHkJ"
     >
       <div
-        className="sc-ewnqHT bRaosl"
+        className="sc-fhHczv cPPmXF"
       />
       <div
         className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
@@ -70,7 +77,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
               0%
             </div>
             <div
-              className="sc-fFGjHI jbnqCc self-end"
+              className="sc-ggWZvA CgeUe self-end"
             />
           </div>
           <div
@@ -97,6 +104,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
                 onMouseOver={[Function]}
                 onTouchEnd={[Function]}
                 onTouchStart={[Function]}
+                ref={[Function]}
               >
                 <svg
                   fill="currentColor"
@@ -141,7 +149,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
               0
             </div>
             <div
-              className="sc-fFGjHI jbnqCc self-end"
+              className="sc-ggWZvA CgeUe self-end"
             />
           </div>
           <div
@@ -168,6 +176,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
                 onMouseOver={[Function]}
                 onTouchEnd={[Function]}
                 onTouchStart={[Function]}
+                ref={[Function]}
               >
                 <svg
                   fill="currentColor"

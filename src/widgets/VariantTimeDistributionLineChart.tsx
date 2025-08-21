@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import { fillAndFilterFromDailyMap } from '../helpers/fill-missing';
 import {} from './VariantTimeDistributionBarChart';
 import { UnifiedDay } from '../helpers/date-cache';

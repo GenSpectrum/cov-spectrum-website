@@ -1,5 +1,5 @@
 import { Button } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 import React, { useEffect } from 'react';
 import { useExploreUrl } from '../helpers/explore-url';
 import { makeLayout } from '../helpers/deep-page';

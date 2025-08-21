@@ -1,5 +1,5 @@
 import React, { PropsWithChildren } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router';
 import { MdOutlineOpenInNew } from 'react-icons/md';
 import { GitHubButton, MastodonButton, TwitterButton } from './SocialIcons';
 

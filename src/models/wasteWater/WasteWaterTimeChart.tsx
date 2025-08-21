@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { JSX, useState } from 'react';
 import { ChartAndMetricsWrapper, ChartWrapper, colors, TitleWrapper, Wrapper } from '../../widgets/common';
 import Metric, { MetricsWrapper } from '../../widgets/Metrics';
 import { Area, ComposedChart, Line, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';

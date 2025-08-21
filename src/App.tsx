@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router';
 import Header from './layout/base/Header';
 import { LoginWrapper } from './helpers/app-layout';
 import { AboutPage } from './pages/AboutPage';

@@ -2,7 +2,7 @@ import { useQuery } from '../helpers/query-hook';
 import { fetchCollections } from '../data/api';
 import Loader from '../components/Loader';
 import { Button, ButtonVariant } from '../helpers/ui';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 export const CollectionOverviewPage = () => {
   const { data } = useQuery(

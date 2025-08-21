@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Card } from 'react-bootstrap';
 import { Area, AreaChart, ResponsiveContainer } from 'recharts';
 import styled from 'styled-components';
@@ -84,6 +84,7 @@ const SimpleAreaPlot = React.memo(
 );
 
 export const KnownVariantCard = ({ variant, chartData, recentProportion, onClick, selected }: Props) => {
+  const dragRef = useRef<HTMLDivElement>(null);
   const [{ isDragging }, drag] = useDrag(() => ({
     type: 'div',
     item: { query: variant.query, variant: variant.name },
@@ -91,6 +92,7 @@ export const KnownVariantCard = ({ variant, chartData, recentProportion, onClick
       isDragging: !!monitor.isDragging(),
     }),
   }));
+  drag(dragRef);
 
   const VariantDnDPreview = () => {
     const preview = usePreview<{ variant: string }, HTMLDivElement>();
@@ -114,12 +116,11 @@ export const KnownVariantCard = ({ variant, chartData, recentProportion, onClick
   };
 
   return (
-    <div title={variant.description} ref={drag}>
+    <div title={variant.description} ref={dragRef}>
       <Card
         as={StyledCard}
         className={`shadow-md border-0 m-0.5 hover:border-4 transition delay-20 duration-300 ease-in-out transform hover:scale-105 hover:shadow-xl w-full`}
         onClick={onClick}
-        selected={selected}
         style={{ opacity: `${isDragging ? '0.5' : '1'}` }}
       >
         <div

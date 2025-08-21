@@ -4,6 +4,7 @@ import { decodeAAMutation } from '../../helpers/aa-mutation';
 import { SequenceType } from '../../data/SequenceType';
 import { Rectangle, TooltipProps } from 'recharts';
 import { NameType, ValueType } from 'recharts/types/component/DefaultTooltipContent';
+import { JSX } from 'react';
 
 export const CustomTooltip = ({ active, payload, label }: TooltipProps<ValueType, NameType>) => {
   if (active) {

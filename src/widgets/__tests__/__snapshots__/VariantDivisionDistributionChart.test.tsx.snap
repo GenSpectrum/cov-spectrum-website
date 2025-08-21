@@ -3,6 +3,11 @@
 exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
 <div
   className="relative h-full"
+  ref={
+    Object {
+      "current": null,
+    }
+  }
 >
   <div
     className="flex flex-col h-full w-full"
@@ -101,6 +106,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
               },
             ]
           }
+          focusDivision={null}
         >
           <svg
             aria-label="Germany"
@@ -302,6 +308,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
                 onMouseOver={[Function]}
                 onTouchEnd={[Function]}
                 onTouchStart={[Function]}
+                ref={[Function]}
               >
                 <svg
                   fill="currentColor"
@@ -373,6 +380,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
                 onMouseOver={[Function]}
                 onTouchEnd={[Function]}
                 onTouchStart={[Function]}
+                ref={[Function]}
               >
                 <svg
                   fill="currentColor"

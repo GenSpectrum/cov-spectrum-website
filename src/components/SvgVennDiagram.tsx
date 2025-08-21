@@ -1,5 +1,5 @@
 import { Checkbox, InputLabel, ListItemText, OutlinedInput, Select, SelectChangeEvent } from '@mui/material';
-import { useEffect, useMemo, useState } from 'react';
+import { JSX, useEffect, useMemo, useState } from 'react';
 import { useResizeDetector } from 'react-resize-detector';
 import { LapisSelector } from '../data/LapisSelector';
 import { MutationProportionData } from '../data/MutationProportionDataset';

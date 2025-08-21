@@ -1,5 +1,5 @@
 import { Althaus2021GrowthParameters, Althaus2021GrowthParametersAttribute } from './althaus2021Growth-types';
-import { useCallback, useState } from 'react';
+import { JSX, useCallback, useState } from 'react';
 import { useDeepCompareEffect } from '../../helpers/deep-compare-hooks';
 import { Slider } from '@mui/material';
 import { Form } from 'react-bootstrap';

@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { JSX, useEffect, useMemo, useState } from 'react';
 import { useExploreUrl } from '../helpers/explore-url';
 import { useQuery } from '../helpers/query-hook';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';

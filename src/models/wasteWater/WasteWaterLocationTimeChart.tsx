@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { JSX } from 'react';
 import { WasteWaterTimeseriesSummaryDataset } from './types';
 import { UnifiedDay } from '../../helpers/date-cache';
 import { getTicks } from '../../helpers/ticks';

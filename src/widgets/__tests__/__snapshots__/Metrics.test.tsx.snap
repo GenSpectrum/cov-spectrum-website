@@ -19,7 +19,7 @@ exports[`<Metric> renders correctly 1`] = `
       0.59
     </div>
     <div
-      className="sc-fFGjHI jbnqCc self-end"
+      className="sc-ggWZvA CgeUe self-end"
     />
   </div>
   <div
@@ -46,6 +46,7 @@ exports[`<Metric> renders correctly 1`] = `
         onMouseOver={[Function]}
         onTouchEnd={[Function]}
         onTouchStart={[Function]}
+        ref={[Function]}
       >
         <svg
           fill="currentColor"

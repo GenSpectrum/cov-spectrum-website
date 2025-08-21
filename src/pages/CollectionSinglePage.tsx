@@ -1,8 +1,8 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { useMemo } from 'react';
 import { CollectionSingleAdminPage } from './CollectionSingleAdminPage';
 import { CollectionSingleViewPage } from './CollectionSingleViewPage';
-import { Link } from 'react-router-dom';
+import { Link } from 'react-router';
 
 export const CollectionSinglePage = () => {
   let queryParamsString = useLocation().search;

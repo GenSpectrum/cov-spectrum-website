@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from 'react-bootstrap';
 import Form from 'react-bootstrap/Form';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { Alert, AlertVariant } from '../helpers/ui';
 import { AccountService } from '../services/AccountService';
 

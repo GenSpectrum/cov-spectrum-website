@@ -4,7 +4,7 @@ import { FocusSinglePage } from './FocusSinglePage';
 import { SplitExploreWrapper, SplitFocusWrapper, SplitParentWrapper } from '../helpers/app-layout';
 import { KnownVariantsList } from '../components/KnownVariantsList/KnownVariantsList';
 import Loader from '../components/Loader';
-import React, { useEffect } from 'react';
+import React, { JSX, useEffect } from 'react';
 import { useQuery } from '../helpers/query-hook';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import { useSingleSelectorsFromExploreUrl } from '../helpers/selectors-from-explore-url-hook';

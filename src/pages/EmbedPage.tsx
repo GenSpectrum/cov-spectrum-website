@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { IfFulfilled, IfPending, IfRejected } from 'react-async';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import Loader from '../components/Loader';
 import { useQueryWithAsyncEncoder } from '../helpers/use-query';
 import { allWidgets } from '../widgets';

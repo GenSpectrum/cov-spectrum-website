@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useQuery } from '../helpers/query-hook';
 import { checkAuthentication } from '../data/chat/api-chat';
