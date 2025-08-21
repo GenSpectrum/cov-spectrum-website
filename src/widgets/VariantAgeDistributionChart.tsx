@@ -176,7 +176,7 @@ export const VariantAgeDistributionChart = React.memo(
                 <CartesianGrid vertical={false} />
                 {bars}
                 <Tooltip
-                  active={false}
+                  active={true}
                   cursor={false}
                   content={tooltipProps => {
                     return (

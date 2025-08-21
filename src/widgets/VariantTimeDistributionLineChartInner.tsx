@@ -265,7 +265,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
                     allowDataOverflow={true}
                   />
                   <Tooltip
-                    active={false}
+                    active={true}
                     content={tooltipProps => {
                       return (
                         <TooltipSideEffect

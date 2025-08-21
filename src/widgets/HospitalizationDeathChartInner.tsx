@@ -55,7 +55,9 @@ interface ScatterBarShapeProps {
   fill?: string;
 }
 
-const ScatterBarShape = ({ cx, cy, fill }: ScatterBarShapeProps) => {
+// TODO(#1111) - Don't use any
+const ScatterBarShape = (_props: any) => {
+  const { cx, cy, fill } = _props as ScatterBarShapeProps;
   const width = 24;
   const height = 7;
   return (

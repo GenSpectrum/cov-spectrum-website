@@ -16,10 +16,10 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
       <div />
     </h3>
     <div
-      className="flex flex-col lg:flex-row "
+      className="***masked***"
     >
       <div
-        className="w-full lg:w-2/3"
+        className="***masked***"
       >
         <img
           alt="color scale legend"

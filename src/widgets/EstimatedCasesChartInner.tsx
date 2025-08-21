@@ -139,7 +139,7 @@ export const EstimatedCasesChartInner = React.memo(
                     width={50}
                   />
                   <Tooltip
-                    active={false}
+                    active={true}
                     content={tooltipProps => {
                       return (
                         <TooltipSideEffect

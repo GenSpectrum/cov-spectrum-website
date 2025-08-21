@@ -80,7 +80,7 @@ export const MetadataAvailabilityChart = ({ sampleSet }: MetadataAvailabilityCha
                   ))}
                 </Bar>
                 <Tooltip
-                  active={false}
+                  active={true}
                   cursor={false}
                   content={tooltipProps => {
                     return (

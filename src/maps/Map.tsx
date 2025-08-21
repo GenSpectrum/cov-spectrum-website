@@ -212,7 +212,6 @@ const Map = ({ data: inputData, country }: Props) => {
       metrics={metrics}
       title={`Average proportion during selected timeframe`}
       metricsTitle={focusData && focusData.division !== null ? focusData.division : undefined}
-      notFullWidth={true}
     >
       <img src={leg2} alt='color scale legend' />
       <Wrapper data={data} focusDivision={focusData ? focusData.division : null} className='pd-1 md:m-2'>

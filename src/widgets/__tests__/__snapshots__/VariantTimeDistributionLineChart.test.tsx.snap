@@ -5,7 +5,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
   className="relative h-full"
 >
   <div
-    className="sc-gTRrQi iUtEAc"
+    className="sc-bgqQcB iTKDhP"
   >
     <h3
       className="my-0 pr-10 pt-0 text-gray-500"
@@ -119,24 +119,11 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
       </div>
     </h3>
     <div
-      className="sc-ewnqHT eYHYyR"
+      className="sc-gTRrQi elYrUj"
     >
       <div
-        className="sc-fFGjHI iYhQdk"
-      >
-        <div
-          className="recharts-responsive-container"
-          style={
-            Object {
-              "height": "100%",
-              "maxHeight": undefined,
-              "minHeight": undefined,
-              "minWidth": undefined,
-              "width": "100%",
-            }
-          }
-        />
-      </div>
+        className="sc-ewnqHT bRaosl"
+      />
       <div
         className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
       >
@@ -158,7 +145,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
               0.0%
             </div>
             <div
-              className="sc-bgqQcB buxxeA self-end"
+              className="sc-fFGjHI jbnqCc self-end"
             />
           </div>
           <div
@@ -229,7 +216,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
               0.0-100.0%
             </div>
             <div
-              className="sc-bgqQcB buxxeA self-end"
+              className="sc-fFGjHI jbnqCc self-end"
             />
           </div>
           <div

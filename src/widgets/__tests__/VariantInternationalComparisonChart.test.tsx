@@ -5,15 +5,13 @@ import { maskRegex, maskUuid } from '../../helpers/testing/snapshot-tests-maskin
 import React from 'react';
 import { dataset0 } from '../../helpers/testing/snapshot-tests-data0';
 import { VariantInternationalComparisonChart } from '../VariantInternationalComparisonChart';
-import { useResizeDetector } from 'react-resize-detector';
 
 window.ResizeObserver = ResizeObserver;
-jest.mock('react-resize-detector');
+jest.mock('recharts');
 
 describe('<VariantInternationalComparisonChart>', () => {
   it('dataset0 renders correctly', async () => {
     const { variantInternationalDateCount, wholeInternationalDateCount } = dataset0;
-    (useResizeDetector as any).mockReturnValue({ width: 800, height: 400 });
     const tree = renderer.create(
       <VariantInternationalComparisonChart
         preSelectedCountries={['Germany']}

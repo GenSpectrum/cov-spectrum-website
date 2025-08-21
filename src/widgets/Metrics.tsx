@@ -2,6 +2,7 @@ import React from 'react';
 import { BiHelpCircle } from 'react-icons/bi';
 import styled from 'styled-components';
 import { Tooltip } from '@mui/material';
+import { ChartAndMetricsWrapper, ChartWrapper } from './common';
 
 const TOOLTIP_DELAY = 300;
 
@@ -88,7 +89,6 @@ interface ChartAndMetricsProps {
   metrics: MetricProps[];
   title: string;
   metricsTitle?: string | undefined;
-  notFullWidth?: boolean | undefined;
   buttons?: React.ReactNode;
 }
 
@@ -97,33 +97,23 @@ export const ChartAndMetrics = ({
   metrics,
   title,
   metricsTitle,
-  notFullWidth,
   buttons,
 }: ChartAndMetricsProps) => {
-  let childrenParentClass: string = 'flex flex-col lg:flex-row h-full';
-  let childrenClass: string = 'h-full w-full';
-  if (typeof notFullWidth === 'boolean') {
-    if (notFullWidth) {
-      childrenParentClass = childrenParentClass.replace('h-full', '');
-      childrenClass = 'w-full lg:w-2/3';
-    }
-  }
-
   return (
     <div id={`chart-and-metrics-${title}`} className='flex flex-col h-full w-full'>
       <h3 id={`chart-title-${title}`} className='my-0 pb-4 pr-10 pt-0 text-gray-500'>
         {title}
         <div>{buttons}</div>
       </h3>
-      <div className={childrenParentClass}>
-        <div className={childrenClass}>{children}</div>
+      <ChartAndMetricsWrapper>
+        <ChartWrapper>{children}</ChartWrapper>
         <MetricsWrapper>
           {metricsTitle && <h3>{metricsTitle}</h3>}
           {metrics.map((mProps, index) => (
             <Metric key={index} {...mProps} />
           ))}
         </MetricsWrapper>
-      </div>
+      </ChartAndMetricsWrapper>
     </div>
   );
 };
