@@ -30,6 +30,7 @@ import { InsertionCountEntry } from './InsertionCountEntry';
 import { NextcladeDatasetInfo } from './NextcladeDatasetInfo';
 import { mapFilterToLapisV2 } from './api-lapis-v2';
 import { addVariantSelectorToUrlSearchParamsForApi } from './VariantSelector';
+import { MRCAResponse } from './phylo/MRCAResponse';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
@@ -275,6 +276,48 @@ function getInsertionEndpoint(sequenceType: SequenceType): string {
   }
 }
 
+export async function fetchDetails<Fields extends readonly string[]>(
+  selector: LapisSelector,
+  fields: Fields,
+  signal?: AbortSignal
+): Promise<Array<{ [K in Fields[number]]: any }>> {
+  let url = await getLinkTo('details', selector, undefined, undefined, undefined, true);
+  const additionalParams = new URLSearchParams({
+    fields: fields.join(','),
+  });
+  url += '&' + additionalParams.toString();
+
+  const res = await get(url, signal);
+  const body = (await res.json()) as LapisResponse<
+    Array<{ usherTree: string } & { [K in Fields[number]]: any }>
+  >;
+
+  return _extractLapisData(body);
+}
+
+export async function fetchMRCA(selector: LapisSelector, signal?: AbortSignal): Promise<MRCAResponse> {
+  let url = await getLinkTo('mostRecentCommonAncestor', selector, undefined, undefined, undefined, true);
+  const additionalParams = new URLSearchParams({
+    phyloTreeField: 'usherTree',
+  });
+  url += '&' + additionalParams.toString();
+
+  const res = await get(url, signal);
+  const body = (await res.json()) as LapisResponse<MRCAResponse[]>;
+  return _extractLapisData(body)[0];
+}
+
+export async function fetchNewickTree(selector: LapisSelector, signal?: AbortSignal): Promise<string> {
+  let url = await getLinkTo('phyloSubtree', selector, undefined, undefined, undefined, true);
+  const additionalParams = new URLSearchParams({
+    phyloTreeField: 'usherTree',
+  });
+  url += '&' + additionalParams.toString();
+
+  const res = await get(url, signal);
+  return await res.text();
+}
+
 export async function getLinkToListOfPrimaryKeys(
   primaryKey: string,
   selector: LapisSelector,
@@ -335,6 +378,7 @@ export async function getLinkTo(
   }
 
   addQcSelectorToUrlSearchParams(selector.qc, params);
+
   if (downloadAsFile) {
     params.set('downloadAsFile', 'true');
   }

@@ -3,15 +3,16 @@ import jsonRefData from './refData.json';
 import { mapFilterToLapisV2 } from './api-lapis-v2';
 
 export const VariantSelectorEncodedSchema = zod.object({
-  pangoLineage: zod.string().optional(),
-  nextcladePangoLineage: zod.string().optional(),
-  gisaidClade: zod.string().optional(),
-  nextstrainClade: zod.string().optional(),
-  aaMutations: zod.array(zod.string()).optional(),
-  nucMutations: zod.array(zod.string()).optional(),
-  aaInsertions: zod.array(zod.string()).optional(),
-  nucInsertions: zod.array(zod.string()).optional(),
-  variantQuery: zod.string().optional(),
+  'pangoLineage': zod.string().optional(),
+  'nextcladePangoLineage': zod.string().optional(),
+  'gisaidClade': zod.string().optional(),
+  'nextstrainClade': zod.string().optional(),
+  'aaMutations': zod.array(zod.string()).optional(),
+  'nucMutations': zod.array(zod.string()).optional(),
+  'aaInsertions': zod.array(zod.string()).optional(),
+  'nucInsertions': zod.array(zod.string()).optional(),
+  'usherTree.phyloDescendantOf': zod.string().optional(),
+  'variantQuery': zod.string().optional(),
 });
 
 export type VariantSelector = zod.infer<typeof VariantSelectorEncodedSchema>;
@@ -25,6 +26,7 @@ export const variantFields = [
   'nucMutations',
   'aaInsertions',
   'nucInsertions',
+  'usherTree.phyloDescendantOf',
   'variantQuery',
 ] as const;
 export type VariantField = (typeof variantFields)[number];
@@ -33,6 +35,7 @@ const variantStringFields = [
   'nextcladePangoLineage',
   'gisaidClade',
   'nextstrainClade',
+  'usherTree.phyloDescendantOf',
   'variantQuery',
 ] as const;
 const variantArrayFields = ['aaMutations', 'nucMutations', 'aaInsertions', 'nucInsertions'] as const;
@@ -121,28 +124,31 @@ export function readVariantListFromUrlSearchParams(params: URLSearchParams): Var
   // Create the variant selectors.
   const variants: VariantSelector[] = [
     {
-      pangoLineage: params.get('pangoLineage')?.toUpperCase() ?? undefined,
-      nextcladePangoLineage: params.get('nextcladePangoLineage')?.toUpperCase() ?? undefined,
-      gisaidClade: params.get('gisaidClade') ?? undefined,
-      nextstrainClade: params.get('nextstrainClade') ?? undefined,
-      aaMutations: params.get('aaMutations')?.split(','),
-      nucMutations: params.get('nucMutations')?.split(','),
-      aaInsertions: params.get('aaInsertions')?.split(','),
-      nucInsertions: params.get('nucInsertions')?.split(','),
-      variantQuery: params.get('variantQuery') ?? undefined,
+      'pangoLineage': params.get('pangoLineage')?.toUpperCase() ?? undefined,
+      'nextcladePangoLineage': params.get('nextcladePangoLineage')?.toUpperCase() ?? undefined,
+      'gisaidClade': params.get('gisaidClade') ?? undefined,
+      'nextstrainClade': params.get('nextstrainClade') ?? undefined,
+      'aaMutations': params.get('aaMutations')?.split(','),
+      'nucMutations': params.get('nucMutations')?.split(','),
+      'aaInsertions': params.get('aaInsertions')?.split(','),
+      'nucInsertions': params.get('nucInsertions')?.split(','),
+      'usherTree.phyloDescendantOf': params.get('usherTree.phyloDescendantOf')?.toLowerCase() ?? undefined,
+      'variantQuery': params.get('variantQuery') ?? undefined,
     },
   ];
   for (let id of variantIds) {
     variants.push({
-      pangoLineage: params.get('pangoLineage' + id)?.toUpperCase() ?? undefined,
-      nextcladePangoLineage: params.get('nextcladePangoLineage' + id)?.toUpperCase() ?? undefined,
-      gisaidClade: params.get('gisaidClade' + id) ?? undefined,
-      nextstrainClade: params.get('nextstrainClade' + id) ?? undefined,
-      aaMutations: params.get('aaMutations' + id)?.split(','),
-      nucMutations: params.get('nucMutations' + id)?.split(','),
-      aaInsertions: params.get('aaInsertions' + id)?.split(','),
-      nucInsertions: params.get('nucInsertions' + id)?.split(','),
-      variantQuery: params.get('variantQuery' + id) ?? undefined,
+      'pangoLineage': params.get('pangoLineage' + id)?.toUpperCase() ?? undefined,
+      'nextcladePangoLineage': params.get('nextcladePangoLineage' + id)?.toUpperCase() ?? undefined,
+      'gisaidClade': params.get('gisaidClade' + id) ?? undefined,
+      'nextstrainClade': params.get('nextstrainClade' + id) ?? undefined,
+      'aaMutations': params.get('aaMutations' + id)?.split(','),
+      'nucMutations': params.get('nucMutations' + id)?.split(','),
+      'aaInsertions': params.get('aaInsertions' + id)?.split(','),
+      'nucInsertions': params.get('nucInsertions' + id)?.split(','),
+      'usherTree.phyloDescendantOf':
+        params.get('usherTree.phyloDescendantOf' + id)?.toLowerCase() ?? undefined,
+      'variantQuery': params.get('variantQuery' + id) ?? undefined,
     });
   }
   return variants;
@@ -253,6 +259,7 @@ export function formatVariantDisplayName(
     nucInsertions,
     aaInsertions,
     variantQuery,
+    'usherTree.phyloDescendantOf': phyloDescendantOf,
   }: VariantSelector,
   dense = false
 ): string {
@@ -269,6 +276,7 @@ export function formatVariantDisplayName(
     aaMutations && aaMutations.map(mutation => normalizeMutationName(mutation)).join(', '),
     nucInsertions && nucInsertions.map(mutation => normalizeMutationName(mutation)).join(', '),
     aaInsertions && aaInsertions.map(mutation => normalizeMutationName(mutation)).join(', '),
+    phyloDescendantOf ? phyloDescendantOf.toLowerCase() + ' (UShER tree)' : undefined,
   ].filter(c => !!c && c.length > 0);
   if (components.length === 0) {
     return 'All lineages';

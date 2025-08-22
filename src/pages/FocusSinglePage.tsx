@@ -53,6 +53,7 @@ import { AnalysisMode } from '../data/AnalysisMode';
 import { NucleotideEntropy } from '../components/NucleotideEntropy/NucleotideEntropy';
 import { ErrorBoundary } from 'react-error-boundary';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
+import { PhyloPanel } from '../components/phylo/PhyloPanel';
 // Due to missing additional data, we are currently not able to maintain some of our Swiss specialties.
 const SWISS_SPECIALTIES_ACTIVATED = false;
 const CASES_ENABLED = false;
@@ -341,7 +342,7 @@ export const FocusSinglePageContent = ({
       wholeDivisionCount.data &&
       variantInternationalDateCount.data &&
       wholeInternationalDateCount.data ? (
-        <>
+        <div>
           <div>
             <CoreMetrics
               variantSampleSet={variantDateCount.data}
@@ -419,6 +420,17 @@ export const FocusSinglePageContent = ({
                   logScale={false}
                 />
               </GridCell>
+              {sequenceDataSource === 'open' && (
+                <GridCell minWidth={1200}>
+                  <NamedCard title='Phylogeny'>
+                    <PhyloPanel
+                      ldvsSelector={ldvsSelector}
+                      ldsSelector={ldsSelector}
+                      variantSampleSet={variantDateCount.data}
+                    />
+                  </NamedCard>
+                </GridCell>
+              )}
               <GridCell minWidth={600}>
                 <VariantDivisionDistributionChartWidget.ShareableComponent
                   title='Geographic distribution'
@@ -583,7 +595,7 @@ export const FocusSinglePageContent = ({
               header='Relative growth advantage'
             />
           )}
-        </>
+        </div>
       ) : (
         <Loader />
       )}

@@ -23,6 +23,7 @@ import { isValidNucInsertion } from '../helpers/nuc-insertion';
 import { _fetchAggSamples } from '../data/api-lapis';
 import { useDrop } from 'react-dnd';
 import { addDefaultHostAndQc } from '../data/HostAndQcSelector';
+import { isValidUsherPhyloDescendant } from '../helpers/phylo';
 
 type SearchType =
   | 'aa-mutation'
@@ -31,7 +32,8 @@ type SearchType =
   | 'nuc-insertion'
   | 'pango-lineage'
   | 'nextclade-pango-lineage'
-  | 'nextstrain-clade';
+  | 'nextstrain-clade'
+  | 'usher-phylo-descendant';
 
 type SearchOption = {
   label: string;
@@ -47,6 +49,7 @@ const backgroundColor: { [key in SearchType]: string } = {
   'nuc-mutation': 'rgba(33,162,162,0.29)',
   'aa-insertion': 'rgba(4,133,27,0.1)',
   'nuc-insertion': 'rgba(33,162,162,0.29)',
+  'usher-phylo-descendant': 'rgba(183,45,197,0.29)',
 };
 
 function mapOption(optionString: string, type: SearchType): SearchOption {
@@ -70,6 +73,9 @@ function mapOption(optionString: string, type: SearchType): SearchOption {
   }
   if (type === 'nextstrain-clade') {
     label = `${optionString} (Nextstrain clade)`;
+  }
+  if (type === 'usher-phylo-descendant') {
+    label = `${optionString} (UShER tree)`;
   }
   return {
     label,
@@ -109,6 +115,13 @@ function variantSelectorToOptions(selector: VariantSelector): SearchOption[] {
   if (selector.nucInsertions) {
     selector.nucInsertions.forEach(m => options.push({ label: m, value: m, type: 'nuc-insertion' }));
   }
+  if (selector['usherTree.phyloDescendantOf']) {
+    options.push({
+      label: selector['usherTree.phyloDescendantOf'] + ' (UShER tree)',
+      value: selector['usherTree.phyloDescendantOf'],
+      type: 'usher-phylo-descendant',
+    });
+  }
   return options;
 }
 
@@ -134,6 +147,8 @@ function optionsToVariantSelector(options: SearchOption[]): VariantSelector {
       selector.nextcladePangoLineage = value.toUpperCase();
     } else if (type === 'nextstrain-clade') {
       selector.nextstrainClade = value;
+    } else if (type === 'usher-phylo-descendant') {
+      selector['usherTree.phyloDescendantOf'] = value;
     }
   }
   return selector;
@@ -316,6 +331,8 @@ function SimpleVariantSearchField({
       ).length > 0;
     const oneNextstrainCladeAlreadySelected =
       selectedOptions.filter(option => option.type === 'nextstrain-clade').length > 0;
+    const oneUsherPhyloDescendantAlreadySelected =
+      selectedOptions.filter(option => option.type === 'usher-phylo-descendant').length > 0;
     const suggestions: SearchOption[] = [];
 
     const queryWithoutNextcladeLabel = query.replace('(Nextclade)', '').trim();
@@ -340,6 +357,8 @@ function SimpleVariantSearchField({
       if (!query.endsWith('*')) {
         suggestions.push(mapOption(query + '*', 'pango-lineage'));
       }
+    } else if (!oneUsherPhyloDescendantAlreadySelected && isValidUsherPhyloDescendant(query)) {
+      suggestions.push(mapOption(query, 'usher-phylo-descendant'));
     }
     const queryWithoutNextstrainLabel = query.replace('(Nextstrain clade)', '').trim();
     if (
@@ -426,7 +445,9 @@ function SimpleVariantSearchField({
               option => option.type === 'pango-lineage' || option.type === 'nextclade-pango-lineage'
             ).length < 1) ||
           (selectedOption.type === 'nextstrain-clade' &&
-            newSelectedOptions.filter(option => option.type === 'nextstrain-clade').length < 1)
+            newSelectedOptions.filter(option => option.type === 'nextstrain-clade').length < 1) ||
+          (selectedOption.type === 'usher-phylo-descendant' &&
+            newSelectedOptions.filter(option => option.type === 'usher-phylo-descendant').length < 1)
         ) {
           newSelectedOptions.push(selectedOption);
         }
