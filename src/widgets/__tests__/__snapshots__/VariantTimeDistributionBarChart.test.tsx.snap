@@ -22,6 +22,7 @@ exports[`<VariantTimeDistributionBarChart> dataset0 renders correctly 1`] = `
         <div
           className="mb-1 btn-toolbar"
           ref={null}
+          role="toolbar"
         >
           <div
             className="mt-1 ml-2"
