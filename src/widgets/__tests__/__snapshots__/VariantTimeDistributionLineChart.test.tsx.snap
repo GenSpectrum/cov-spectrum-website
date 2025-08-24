@@ -30,6 +30,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
       <div
         className="mb-1 btn-toolbar"
         ref={null}
+        role="toolbar"
         style={
           Object {
             "display": "inline-block",
@@ -40,6 +41,7 @@ exports[`<VariantTimeDistributionLineChart> dataset0 renders correctly 1`] = `
         <div
           className="btn-group"
           ref={null}
+          role="group"
         >
           <div
             className="mt-1 ml-2"
