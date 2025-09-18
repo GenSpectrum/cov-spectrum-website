@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Collapse } from 'react-bootstrap';
 import { ExternalLink } from '../../../components/ExternalLink';
 import { isDiscontinuedSite, WasteWaterSamplingSites } from './WasteWaterSamplingSites';
 import { discontinuedSites } from '../constants';
@@ -83,14 +82,12 @@ const DiscontinuedSiteSection = ({ site }: { site: (typeof discontinuedSites)[0]
         <span className='me-2'>{isOpen ? '▼' : '▶'}</span>
         Locations discontinued since{site.discontinuedDate}
       </h2>
-      <Collapse in={isOpen}>
-        <div>
-          <WasteWaterSamplingSites
-            locationFilter={location => site.discontinuedLocations.has(location)}
-            defaultDateRangeSelector={dateRangeSelector}
-          />
-        </div>
-      </Collapse>
+      <div className={isOpen ? 'visible' : 'collapse'}>
+        <WasteWaterSamplingSites
+          locationFilter={location => site.discontinuedLocations.has(location)}
+          defaultDateRangeSelector={dateRangeSelector}
+        />
+      </div>
     </div>
   );
 };
