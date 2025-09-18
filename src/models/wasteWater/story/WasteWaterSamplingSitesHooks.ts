@@ -62,6 +62,11 @@ export function getMaxDateRange(wasteWaterData: WasteWaterDataWithLocation[]) {
     .flatMap(({ data }) => data)
     .map(({ date }) => date);
 
+  // Handle empty data case
+  if (allDates.length === 0) {
+    return { dateFrom: undefined, dateTo: undefined };
+  }
+
   const minDate = dayjs.min(allDates.map(date => date.dayjs));
   const maxDate = dayjs.max(allDates.map(date => date.dayjs));
 
