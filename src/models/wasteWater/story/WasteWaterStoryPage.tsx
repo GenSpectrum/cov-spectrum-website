@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Collapse } from 'react-bootstrap';
 import { ExternalLink } from '../../../components/ExternalLink';
 import { isDiscontinuedSite, WasteWaterSamplingSites } from './WasteWaterSamplingSites';
@@ -67,11 +67,13 @@ const DiscontinuedSamplingSites = () => {
 const DiscontinuedSiteSection = ({ site }: { site: (typeof discontinuedSites)[0] }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // Create a date range for the 6 months before discontinuation using the constant datetime
-  const discontinuationDate = dayjs(site.discontinuedDateTime);
-  const dateFrom = globalDateCache.getDayUsingDayjs(discontinuationDate.subtract(6, 'months'));
-  const dateTo = globalDateCache.getDayUsingDayjs(discontinuationDate);
-  const dateRangeSelector = new FixedDateRangeSelector({ dateFrom, dateTo });
+  // Memoize the date range selector to prevent recreation on every render
+  const dateRangeSelector = useMemo(() => {
+    const discontinuationDate = dayjs(site.discontinuedDateTime);
+    const dateFrom = globalDateCache.getDayUsingDayjs(discontinuationDate.subtract(6, 'months'));
+    const dateTo = globalDateCache.getDayUsingDayjs(discontinuationDate);
+    return new FixedDateRangeSelector({ dateFrom, dateTo });
+  }, [site.discontinuedDateTime]);
 
   return (
     <div className='mb-4'>

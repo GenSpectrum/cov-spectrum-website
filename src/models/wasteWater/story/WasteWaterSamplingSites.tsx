@@ -38,6 +38,16 @@ export const WasteWaterSamplingSites = ({
 
   const dateRange = getMaxDateRange(dataInTimeRange);
 
+  // Handle empty data case
+  if (dataInTimeRange.length === 0 || !dateRange.dateFrom || !dateRange.dateTo) {
+    return (
+      <>
+        <DateRangePicker dateRangeSelector={dateRangeSelector} onChangeDate={setDateRangeSelector} />
+        <div className="py-4 text-gray-600">No data available for the selected time range.</div>
+      </>
+    );
+  }
+
   return (
     <>
       <DateRangePicker dateRangeSelector={dateRangeSelector} onChangeDate={setDateRangeSelector} />
