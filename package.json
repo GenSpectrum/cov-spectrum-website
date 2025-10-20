@@ -54,7 +54,7 @@
     "react-scripts": "^5.0.1",
     "react-select": "^5.10.2",
     "react-test-renderer": "^19.1.0",
-    "recharts": "^2.15.4",
+    "recharts": "^3.3.0",
     "styled-components": "^6.1.19",
     "taxonium-component": "^2.1.11",
     "typescript": "^4.9.5",
