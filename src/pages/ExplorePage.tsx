@@ -106,7 +106,7 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
 function MissingDataUpdateBanner() {
   const { data: lapisDataVersion } = useQuery(fetchLapisDataVersion, []);
   console.log(lapisDataVersion);
-  if (sequenceDataSource === 'gisaid' && lapisDataVersion === 17467315) {
+  if (sequenceDataSource === 'gisaid' && lapisDataVersion === 1760243718) {
     return (
       <div className='w-full bg-yellow-100 shadow-lg mt-4 rounded-xl p-4 dark:bg-gray-800 mx-2 mr-4'>
         <h2>Data feed interruption</h2>
