@@ -356,7 +356,7 @@ export async function fetchMutationsOverTime(
   // Add accessKey if available
   let endpointWithParams = `/${endpoint}`;
   if (ACCESS_KEY) {
-    endpointWithParams += '&accessKey=' + (await _getCurrentAccessKey());
+    endpointWithParams += '?accessKey=' + (await _getCurrentAccessKey());
   }
 
   const res = await post(endpointWithParams, requestBody, signal);
