@@ -73,9 +73,6 @@ const postRaw = async (
 ) => {
   let url = `${HOST}${endpoint}`;
 
-  console.log('######');
-  console.log(body);
-
   const requestInit: RequestInit = {
     method: 'POST',
     headers: {
