@@ -92,7 +92,7 @@ export type SiloAvailability =
 export async function checkSiloAvailability(signal?: AbortSignal): Promise<SiloAvailability> {
   let url = '/aggregated';
   if (ACCESS_KEY) {
-    url += '?accessKey=' + ACCESS_KEY;
+    url += '?accessKey=' + (await _getCurrentAccessKey());
   }
   const response = await getRaw(url, signal, { skipMaintenanceCheck: true });
 
@@ -110,7 +110,7 @@ export async function checkSiloAvailability(signal?: AbortSignal): Promise<SiloA
 export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<number> {
   let url = '/info';
   if (ACCESS_KEY) {
-    url += '?accessKey=' + ACCESS_KEY;
+    url += '?accessKey=' + (await _getCurrentAccessKey());
   }
   const response = await get(url, signal, { skipMaintenanceCheck: true });
   if (!response.ok) {
@@ -123,7 +123,7 @@ export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<numbe
 export async function fetchNextcladeDatasetInfo(signal?: AbortSignal): Promise<NextcladeDatasetInfo> {
   let url = '/aggregated?fields=nextcladeDatasetVersion';
   if (ACCESS_KEY) {
-    url += '&accessKey=' + ACCESS_KEY;
+    url += '&accessKey=' + (await _getCurrentAccessKey());
   }
   const response = await get(url, signal, { skipMaintenanceCheck: true });
   const nexcladeDatasetInfo = (await response.json()) as LapisResponse<{ nextcladeDatasetVersion: string }[]>;
@@ -136,7 +136,7 @@ export async function fetchNextcladeDatasetInfo(signal?: AbortSignal): Promise<N
 export async function fetchAllHosts(): Promise<string[]> {
   let url = '/aggregated?fields=host';
   if (ACCESS_KEY) {
-    url += '&accessKey=' + ACCESS_KEY;
+    url += '&accessKey=' + (await _getCurrentAccessKey());
   }
   const res = await get(url, undefined, { skipMaintenanceCheck: true });
   const body = (await res.json()) as LapisResponse<{ host: string; count: number }[]>;
@@ -325,7 +325,7 @@ export async function getLinkToListOfPrimaryKeys(
 ): Promise<string> {
   const dataFormat = 'CSV-WITHOUT-HEADERS';
 
-  const linkToDetails = new URL(await getLinkTo('details', selector, orderAndLimit, undefined, dataFormat));
+  const linkToDetails = new URL(await getLinkTo('details', selector, orderAndLimit, true, dataFormat));
   linkToDetails.searchParams.set('fields', primaryKey);
 
   return linkToDetails.toString();
@@ -389,7 +389,7 @@ export async function getLinkTo(
     params.set('minProportion', minProportion);
   }
   if (ACCESS_KEY) {
-    params.set('accessKey', ACCESS_KEY);
+    params.set('accessKey', await _getCurrentAccessKey());
   }
   if (omitHost) {
     return `/${endpoint}?${params.toString()}`;
@@ -463,4 +463,13 @@ async function _mapCountryName<T extends { location: LocationSelector }>(selecto
     };
   }
   return selector;
+}
+
+async function _getCurrentAccessKey(): Promise<string> {
+  const currentKeyRaw = `${ACCESS_KEY}:${Math.floor(Date.now() / 1000)}`;
+  const data = new TextEncoder().encode(currentKeyRaw);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 }
