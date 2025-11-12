@@ -294,6 +294,28 @@ const useDataNew = (
         return 'empty';
       }
 
+      // Fetch variant mutations to know which mutations to query
+      const variantMutations = await MutationProportionData.fromApi(selector, sequenceType, signal);
+
+      // Filter mutations based on proportion, deletion filter, and gene (like useData)
+      let filteredMutations = variantMutations.payload.filter(
+        m => m.proportion >= minProportion && m.proportion <= maxProportion
+      );
+      if (deletionFilter === 'non-deletion') {
+        filteredMutations = filteredMutations.filter(m => !m.mutation.endsWith('-'));
+      } else if (deletionFilter === 'deletion-only') {
+        filteredMutations = filteredMutations.filter(m => m.mutation.endsWith('-'));
+      }
+      if (sequenceType === 'aa' && gene !== 'all') {
+        filteredMutations = filteredMutations.filter(m => m.mutation.startsWith(gene + ':'));
+      }
+      if (filteredMutations.length > 70) {
+        return 'too-big';
+      }
+
+      // Extract mutation strings
+      const mutations = filteredMutations.map(m => m.mutation);
+
       // Calculate day range and weeks from date counts
       const dayRange = globalDateCache.rangeFromDays(
         variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
@@ -317,19 +339,18 @@ const useDataNew = (
       });
       const ticks = { min: weekRange.min.firstDay, middle: middleDay, max: weekRange.max.firstDay };
 
-      // Call fetchMutationsOverTime
-      // TODO: Determine which mutations to pass. For now passing empty array.
+      // Call fetchMutationsOverTime with filtered mutations
       const response = await fetchMutationsOverTime(
         selector,
         sequenceType,
-        [],
+        mutations,
         dateRanges,
         'date',
         signal
       );
 
       // Transform response into Data format
-      const mutations = response.mutations.map((mutation, mutationIndex) => {
+      const mutationsWithData = response.mutations.map((mutation, mutationIndex) => {
         const mutationData = response.data[mutationIndex];
         const proportions: number[] = mutationData.map(dataPoint => {
           if (dataPoint.coverage === 0) {
@@ -339,49 +360,18 @@ const useDataNew = (
         });
         const counts: number[] = mutationData.map(dataPoint => dataPoint.count);
 
-        // Calculate max proportion for filtering
-        const validProportions = proportions.filter(p => !isNaN(p));
-        const maxProportion = validProportions.length > 0 ? Math.max(...validProportions) : 0;
-
         return {
           mutation,
           proportions,
           counts,
-          maxProportion,
         };
       });
 
-      // Filter mutations based on proportion, deletion filter, and gene
-      let filteredMutations = mutations.filter(
-        m => m.maxProportion >= minProportion && m.maxProportion <= maxProportion
-      );
-
-      if (deletionFilter === 'non-deletion') {
-        filteredMutations = filteredMutations.filter(m => !m.mutation.endsWith('-'));
-      } else if (deletionFilter === 'deletion-only') {
-        filteredMutations = filteredMutations.filter(m => m.mutation.endsWith('-'));
-      }
-
-      if (sequenceType === 'aa' && gene !== 'all') {
-        filteredMutations = filteredMutations.filter(m => m.mutation.startsWith(gene + ':'));
-      }
-
-      if (filteredMutations.length > 70) {
-        return 'too-big';
-      }
-
       // Sort mutations (same as old code)
       const sortFunc = sequenceType === 'aa' ? sortListByAAMutation : sortListByNucMutation;
-      const sorted = sortFunc(filteredMutations, m => m.mutation);
+      const sortedMutations = sortFunc(mutationsWithData, m => m.mutation);
 
-      // Remove maxProportion from final data
-      const finalMutations = sorted.map(({ mutation, proportions, counts }) => ({
-        mutation,
-        proportions,
-        counts,
-      }));
-
-      return { weeks, mutations: finalMutations, ticks };
+      return { weeks, mutations: sortedMutations, ticks };
     },
     [variantDateCounts, sequenceType, minProportion, maxProportion, gene, deletionFilter]
   );

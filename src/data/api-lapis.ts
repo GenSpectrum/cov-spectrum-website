@@ -73,8 +73,8 @@ const postRaw = async (
 ) => {
   let url = `${HOST}${endpoint}`;
 
-  console.log("######")
-  console.log(body)
+  console.log('######');
+  console.log(body);
 
   const requestInit: RequestInit = {
     method: 'POST',
@@ -584,11 +584,13 @@ function _extractLapisData<T>(response: LapisResponse<T>): T {
         `The website will be reloaded.`
     );
 
+    /*
     window.location.reload();
     throw new Error(
       `LAPIS has new data. Old version: ${currentLapisDataVersion}, new version: ${response.info.dataVersion}. ` +
         `The website will be reloaded.`
     );
+    */
   }
   return response.data;
 }
