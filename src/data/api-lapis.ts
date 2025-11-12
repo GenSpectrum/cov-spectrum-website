@@ -335,6 +335,25 @@ function getInsertionEndpoint(sequenceType: SequenceType): string {
   }
 }
 
+// Helper function to convert URLSearchParams to filters object
+function urlSearchParamsToFilters(params: URLSearchParams): Record<string, any> {
+  const filters: Record<string, any> = {};
+  params.forEach((value, key) => {
+    // Skip accessKey as it goes in the URL, not the filters
+    if (key === 'accessKey') {
+      return;
+    }
+    // Try to parse as number if it looks like a number
+    const numValue = Number(value);
+    if (!isNaN(numValue) && value !== '') {
+      filters[key] = numValue;
+    } else {
+      filters[key] = value;
+    }
+  });
+  return filters;
+}
+
 export async function fetchMutationsOverTime(
   selector: LapisSelector,
   sequenceType: SequenceType,
@@ -348,44 +367,28 @@ export async function fetchMutationsOverTime(
   // Map country name if needed
   selector = await _mapCountryName(selector);
 
-  // Build the filters object
-  const filters: Record<string, any> = {};
-
-  // Location filters
-  if (selector.location) {
-    if (selector.location.region) {
-      filters.region = selector.location.region;
-    }
-    if (selector.location.country) {
-      filters.country = selector.location.country;
-    }
-    if (selector.location.division) {
-      filters.division = selector.location.division;
-    }
+  // Build filters using the same logic as getLinkTo, but convert URLSearchParams to object
+  const params = new URLSearchParams();
+  addLocationSelectorToUrlSearchParams(selector.location, params);
+  if (selector.dateRange) {
+    addDateRangeSelectorToUrlSearchParams(selector.dateRange, params);
   }
-
-  // Variant filters (lineages and clades only for now)
   if (selector.variant) {
-    if (selector.variant.pangoLineage) {
-      filters.pangoLineage = selector.variant.pangoLineage;
-    }
-    if (selector.variant.nextcladePangoLineage) {
-      filters.nextcladePangoLineage = selector.variant.nextcladePangoLineage;
-    }
-    if (selector.variant.gisaidClade) {
-      filters.gisaidClade = selector.variant.gisaidClade;
-    }
-    if (selector.variant.nextstrainClade) {
-      filters.nextstrainClade = selector.variant.nextstrainClade;
-    }
+    addVariantSelectorToUrlSearchParamsForApi(selector.variant, params);
   }
+  if (selector.samplingStrategy) {
+    addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params);
+  }
+  if (selector.host) {
+    addHostSelectorToUrlSearchParams(selector.host, params);
+  }
+  if (selector.submissionDate) {
+    addSubmittedDateRangeSelectorToUrlParams(params, selector.submissionDate, true);
+  }
+  addQcSelectorToUrlSearchParams(selector.qc, params);
 
-  // TODO: Add remaining filters
-  // - dateRange
-  // - samplingStrategy
-  // - host
-  // - submissionDate
-  // - qc
+  // Convert URLSearchParams to filters object
+  const filters = urlSearchParamsToFilters(params);
 
   // Build the request body
   const requestBody = {
