@@ -31,6 +31,10 @@ import { NextcladeDatasetInfo } from './NextcladeDatasetInfo';
 import { mapFilterToLapisV2 } from './api-lapis-v2';
 import { addVariantSelectorToUrlSearchParamsForApi } from './VariantSelector';
 import { MRCAResponse } from './phylo/MRCAResponse';
+import {
+  MutationsOverTimeDateRange,
+  MutationsOverTimeResponse,
+} from './MutationsOverTimeResponse';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
@@ -61,6 +65,36 @@ const getRaw = async (
   return response;
 };
 
+// NOTE: Unlike getRaw, this does NOT add '/sample' to the path.
+// The caller is responsible for providing the full endpoint path.
+// TODO: Harmonize with getRaw in the future.
+const postRaw = async (
+  endpoint: string,
+  body: unknown,
+  signal?: AbortSignal,
+  options: { skipMaintenanceCheck?: boolean } = {}
+) => {
+  let url = `${HOST}${endpoint}`;
+
+  const requestInit: RequestInit = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  };
+
+  if (signal !== undefined) {
+    requestInit.signal = signal;
+  }
+
+  const response = await fetch(url, requestInit);
+  if (!(options.skipMaintenanceCheck === true) && response.status === 503) {
+    window.location.reload();
+  }
+  return response;
+};
+
 const get = async (
   endpoint: string,
   signal?: AbortSignal,
@@ -77,6 +111,31 @@ const get = async (
       }
       if (body.error?.detail !== undefined) {
         throw new Error(`Failed to fetch data from LAPIS: ${body.error?.detail}`);
+      }
+    }
+
+    throw new Error(`Failed to fetch data from LAPIS: ${response.status}`);
+  }
+  return response;
+};
+
+const post = async (
+  endpoint: string,
+  body: unknown,
+  signal?: AbortSignal,
+  options: { skipMaintenanceCheck?: boolean } = {}
+) => {
+  const response = await postRaw(endpoint, body, signal, options);
+  if (!response.ok) {
+    if (response.body !== null) {
+      let responseBody;
+      try {
+        responseBody = await response.json();
+      } catch (e) {
+        throw new Error(`Failed to fetch data from LAPIS: ${response.status}`);
+      }
+      if (responseBody.error?.detail !== undefined) {
+        throw new Error(`Failed to fetch data from LAPIS: ${responseBody.error?.detail}`);
       }
     }
 
@@ -271,6 +330,58 @@ function getInsertionEndpoint(sequenceType: SequenceType): string {
       return 'nucleotideInsertions';
     case 'aa':
       return 'aminoAcidInsertions';
+    default:
+      throw new Error(`Unknown mutation type: ${sequenceType}`);
+  }
+}
+
+export async function fetchMutationsOverTime(
+  selector: LapisSelector,
+  sequenceType: SequenceType,
+  mutations: string[],
+  dateRanges: MutationsOverTimeDateRange[],
+  dateField: string,
+  signal?: AbortSignal
+): Promise<MutationsOverTimeResponse> {
+  const endpoint = getMutationsOverTimeEndpoint(sequenceType);
+
+  // Build the request body
+  const requestBody = {
+    filters: {
+      // TODO: Convert LapisSelector to filters object
+      // The selector contains location, dateRange, variant, samplingStrategy, host, submissionDate, qc
+      // These need to be mapped to the LAPIS filters format
+      // For reference, see how getLinkTo() uses:
+      // - addLocationSelectorToUrlSearchParams(selector.location, params)
+      // - addDateRangeSelectorToUrlSearchParams(selector.dateRange, params)
+      // - addVariantSelectorToUrlSearchParamsForApi(selector.variant, params)
+      // - addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params)
+      // - addHostSelectorToUrlSearchParams(selector.host, params)
+      // - addSubmittedDateRangeSelectorToUrlParams(params, selector.submissionDate, true)
+      // - addQcSelectorToUrlSearchParams(selector.qc, params)
+    },
+    includeMutations: mutations,
+    dateRanges: dateRanges,
+    dateField: dateField,
+  };
+
+  // Add accessKey if available
+  let endpointWithParams = `/${endpoint}`;
+  if (ACCESS_KEY) {
+    endpointWithParams += `?accessKey=${ACCESS_KEY}`;
+  }
+
+  const res = await post(endpointWithParams, requestBody, signal);
+  const body = (await res.json()) as LapisResponse<MutationsOverTimeResponse>;
+  return _extractLapisData(body);
+}
+
+function getMutationsOverTimeEndpoint(sequenceType: SequenceType): string {
+  switch (sequenceType) {
+    case 'nuc':
+      return 'component/nucleotideMutationsOverTime';
+    case 'aa':
+      return 'component/aminoAcidMutationsOverTime';
     default:
       throw new Error(`Unknown mutation type: ${sequenceType}`);
   }

@@ -182,6 +182,16 @@ const useData = (
       if (filteredMutations.length > 70) {
         return 'too-big';
       }
+
+      const dayRange = globalDateCache.rangeFromDays(
+        variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
+      )!;
+      const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
+
+      // TODO
+
+      data
+
       const variantAsVariantQuery = transformToVariantQuery(selector.variant ?? {});
       const selectorsWithMutation: LapisSelector[] = filteredMutations.map(m => ({
         ...selector,
