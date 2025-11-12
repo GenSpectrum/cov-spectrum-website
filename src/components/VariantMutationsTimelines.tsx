@@ -318,6 +318,11 @@ const useDataNew = (
         };
       });
 
+      // Calculate weeks and ticks (reusing logic from useData)
+      const weekRange = globalDateCache.rangeFromWeeks(weeks)!;
+      const middleDay = globalDateCache.middleDay({ min: weekRange.min.firstDay, max: weekRange.max.firstDay });
+      const ticks = { min: weekRange.min.firstDay, middle: middleDay, max: weekRange.max.firstDay };
+
       // Call fetchMutationsOverTime without mutations - API will return all available mutations
       const response = await fetchMutationsOverTime(
         selector,
@@ -328,16 +333,66 @@ const useDataNew = (
         signal
       );
 
-      // TODO: Transform response into Data format
+      // Transform response into Data format
+      const mutations = response.mutations.map((mutation, mutationIndex) => {
+        const mutationData = response.data[mutationIndex];
+        const proportions: number[] = mutationData.map(dataPoint => {
+          if (dataPoint.coverage === 0) {
+            return NaN;
+          }
+          return dataPoint.count / dataPoint.coverage;
+        });
+        const counts: number[] = mutationData.map(dataPoint => dataPoint.count);
 
-      // Placeholder return for now
-      return undefined;
+        // Calculate max proportion for filtering
+        const validProportions = proportions.filter(p => !isNaN(p));
+        const maxProportion = validProportions.length > 0 ? Math.max(...validProportions) : 0;
+
+        return {
+          mutation,
+          proportions,
+          counts,
+          maxProportion,
+        };
+      });
+
+      // Filter mutations based on proportion, deletion filter, and gene
+      let filteredMutations = mutations.filter(
+        m => m.maxProportion >= minProportion && m.maxProportion <= maxProportion
+      );
+
+      if (deletionFilter === 'non-deletion') {
+        filteredMutations = filteredMutations.filter(m => !m.mutation.endsWith('-'));
+      } else if (deletionFilter === 'deletion-only') {
+        filteredMutations = filteredMutations.filter(m => m.mutation.endsWith('-'));
+      }
+
+      if (sequenceType === 'aa' && gene !== 'all') {
+        filteredMutations = filteredMutations.filter(m => m.mutation.startsWith(gene + ':'));
+      }
+
+      if (filteredMutations.length > 70) {
+        return 'too-big';
+      }
+
+      // Sort mutations (same as old code)
+      const sortFunc = sequenceType === 'aa' ? sortListByAAMutation : sortListByNucMutation;
+      const sorted = sortFunc(filteredMutations, m => m.mutation);
+
+      // Remove maxProportion from final data
+      const finalMutations = sorted.map(({ mutation, proportions, counts }) => ({
+        mutation,
+        proportions,
+        counts,
+      }));
+
+      return { weeks, mutations: finalMutations, ticks };
     },
     [variantDateCounts, sequenceType, minProportion, maxProportion, gene, deletionFilter]
   );
 
-  // TODO: Transform mutationsOverTimeQuery.data into Data format
-  return undefined;
+  // Return the query data directly
+  return mutationsOverTimeQuery.data;
 };
 
 type PlotProps = {
