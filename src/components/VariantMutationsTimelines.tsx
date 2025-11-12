@@ -2,7 +2,6 @@ import { LapisSelector } from '../data/LapisSelector';
 import { useQuery } from '../helpers/query-hook';
 import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
-import { transformToVariantQuery } from '../data/VariantSelector';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import React, { useMemo, useState } from 'react';
 import { globalDateCache, UnifiedDay, UnifiedIsoWeek } from '../helpers/date-cache';
@@ -49,7 +48,7 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
     maxColor: '#040e8c',
   });
 
-  const data = useDataNew(selector, sequenceType, minProportion, maxProportion, gene, deletionFilter);
+  const data = useData(selector, sequenceType, minProportion, maxProportion, gene, deletionFilter);
 
   const controls = (
     <div className='mb-4'>
@@ -142,133 +141,6 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
 };
 
 const useData = (
-  selector: LapisSelector,
-  sequenceType: SequenceType,
-  minProportion: number,
-  maxProportion: number,
-  gene: string,
-  deletionFilter: DeletionFilter
-): undefined | 'empty' | 'too-big' | Data => {
-  // Fetch the date distribution and mutations of the variant
-  const basicVariantDataQuery = useQuery(
-    async signal => ({
-      sequenceType,
-      result: await Promise.all([
-        DateCountSampleData.fromApi(selector, signal),
-        MutationProportionData.fromApi(selector, sequenceType, signal),
-      ]),
-    }),
-    [selector, sequenceType]
-  );
-  const [variantDateCounts, variantMutations] = basicVariantDataQuery.data?.result ?? [undefined, undefined];
-
-  // Fetch the date distributions of the "variant+mutation"s
-  const mutationsTimesQuery = useQuery(
-    async signal => {
-      const sequenceType = basicVariantDataQuery.data?.sequenceType;
-      if (!variantMutations || !sequenceType) {
-        return undefined;
-      }
-      let filteredMutations = variantMutations.payload.filter(
-        m => m.proportion >= minProportion && m.proportion <= maxProportion
-      );
-      if (deletionFilter === 'non-deletion') {
-        filteredMutations = filteredMutations.filter(m => !m.mutation.endsWith('-'));
-      } else if (deletionFilter === 'deletion-only') {
-        filteredMutations = filteredMutations.filter(m => m.mutation.endsWith('-'));
-      }
-      if (sequenceType === 'aa' && gene !== 'all') {
-        filteredMutations = filteredMutations.filter(m => m.mutation.startsWith(gene + ':'));
-      }
-      if (filteredMutations.length > 70) {
-        return 'too-big';
-      }
-
-      const variantAsVariantQuery = transformToVariantQuery(selector.variant ?? {});
-      const selectorsWithMutation: LapisSelector[] = filteredMutations.map(m => ({
-        ...selector,
-        variant: {
-          variantQuery: `(${variantAsVariantQuery}) & ${m.mutation}`,
-        },
-      }));
-      return {
-        sequenceType,
-        result: await Promise.all(
-          selectorsWithMutation.map((s, i) =>
-            DateCountSampleData.fromApi(s, signal).then(data => ({
-              mutation: filteredMutations[i].mutation,
-              data,
-            }))
-          )
-        ),
-      };
-    },
-    [
-      variantMutations,
-      basicVariantDataQuery.data?.sequenceType,
-      minProportion,
-      maxProportion,
-      gene,
-      deletionFilter,
-    ]
-  );
-
-  // Transform the data: calculate weekly proportions
-  const data = useMemo(() => {
-    if (!variantDateCounts || !mutationsTimesQuery.data) {
-      return undefined;
-    }
-    if (mutationsTimesQuery.data === 'too-big') {
-      return 'too-big';
-    }
-    if (variantDateCounts.payload.length === 0) {
-      return 'empty';
-    }
-    const sequenceType = mutationsTimesQuery.data?.sequenceType;
-    if (!sequenceType) {
-      return undefined;
-    }
-
-    // Calculate weeks
-    const dayRange = globalDateCache.rangeFromDays(
-      variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
-    )!;
-    const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
-    const weekToIndexMap: Map<UnifiedIsoWeek, number> = new Map();
-    weeks.forEach((w, i) => weekToIndexMap.set(w, i));
-    const weekRange = globalDateCache.rangeFromWeeks(weeks)!;
-    const middleDay = globalDateCache.middleDay({ min: weekRange.min.firstDay, max: weekRange.max.firstDay });
-    const ticks = { min: weekRange.min.firstDay, middle: middleDay, max: weekRange.max.firstDay };
-
-    // Calculate proportions
-    const mutations = mutationsTimesQuery.data.result.map(mutationDateCounts => {
-      const proportionsByWeek = DateCountSampleData.proportionByWeek(
-        mutationDateCounts.data.payload,
-        variantDateCounts.payload
-      );
-      const proportions: number[] = new Array(weeks.length).fill(NaN);
-      const counts: number[] = new Array(weeks.length).fill(0);
-      proportionsByWeek.forEach(({ count, proportion }, week) => {
-        const index = weekToIndexMap.get(week)!;
-        proportions[index] = proportion ?? NaN;
-        counts[index] = count;
-      });
-      return {
-        mutation: mutationDateCounts.mutation,
-        proportions,
-        counts,
-      };
-    });
-    const sortFunc = sequenceType === 'aa' ? sortListByAAMutation : sortListByNucMutation;
-    const sorted = sortFunc(mutations, m => m.mutation);
-
-    return { weeks, mutations: sorted, ticks };
-  }, [variantDateCounts, mutationsTimesQuery]);
-
-  return data;
-};
-
-const useDataNew = (
   selector: LapisSelector,
   sequenceType: SequenceType,
   minProportion: number,
