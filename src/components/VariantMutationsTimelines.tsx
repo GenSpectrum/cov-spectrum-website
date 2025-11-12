@@ -2,7 +2,6 @@ import { LapisSelector } from '../data/LapisSelector';
 import { useQuery } from '../helpers/query-hook';
 import { MutationProportionData } from '../data/MutationProportionDataset';
 import Loader from './Loader';
-import { transformToVariantQuery } from '../data/VariantSelector';
 import { DateCountSampleData } from '../data/sample/DateCountSampleDataset';
 import React, { useMemo, useState } from 'react';
 import { globalDateCache, UnifiedDay, UnifiedIsoWeek } from '../helpers/date-cache';
@@ -17,6 +16,7 @@ import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import { ColorScale, ColorScaleInput } from './ColorScaleInput';
 import { PipeDividedOptionsButtons } from '../helpers/ui';
 import { ProportionSelector } from './ProportionsSelector';
+import { fetchMutationsOverTime } from '../data/api-lapis';
 
 type Data = {
   weeks: UnifiedIsoWeek[];
@@ -161,13 +161,18 @@ const useData = (
   );
   const [variantDateCounts, variantMutations] = basicVariantDataQuery.data?.result ?? [undefined, undefined];
 
-  // Fetch the date distributions of the "variant+mutation"s
-  const mutationsTimesQuery = useQuery(
+  // Fetch mutations over time using the new endpoint
+  const mutationsOverTimeQuery = useQuery(
     async signal => {
       const sequenceType = basicVariantDataQuery.data?.sequenceType;
-      if (!variantMutations || !sequenceType) {
+      if (!variantDateCounts || !variantMutations || !sequenceType) {
         return undefined;
       }
+
+      if (variantDateCounts.payload.length === 0) {
+        return 'empty';
+      }
+
       let filteredMutations = variantMutations.payload.filter(
         m => m.proportion >= minProportion && m.proportion <= maxProportion
       );
@@ -182,26 +187,36 @@ const useData = (
       if (filteredMutations.length > 70) {
         return 'too-big';
       }
-      const variantAsVariantQuery = transformToVariantQuery(selector.variant ?? {});
-      const selectorsWithMutation: LapisSelector[] = filteredMutations.map(m => ({
-        ...selector,
-        variant: {
-          variantQuery: `(${variantAsVariantQuery}) & ${m.mutation}`,
-        },
-      }));
+
+      const dayRange = globalDateCache.rangeFromDays(
+        variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
+      )!;
+      const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
+      const dateRanges = weeks.map(week => {
+        const lastDay = globalDateCache.getDayUsingDayjs(week.firstDay.dayjs.add(6, 'days'));
+        return {
+          dateFrom: week.firstDay.string,
+          dateTo: lastDay.string,
+        };
+      });
+
+      const response = await fetchMutationsOverTime(
+        selector,
+        sequenceType,
+        filteredMutations.map(m => m.mutation),
+        dateRanges,
+        'date',
+        signal
+      );
+
       return {
         sequenceType,
-        result: await Promise.all(
-          selectorsWithMutation.map((s, i) =>
-            DateCountSampleData.fromApi(s, signal).then(data => ({
-              mutation: filteredMutations[i].mutation,
-              data,
-            }))
-          )
-        ),
+        weeks,
+        response,
       };
     },
     [
+      variantDateCounts,
       variantMutations,
       basicVariantDataQuery.data?.sequenceType,
       minProportion,
@@ -211,57 +226,48 @@ const useData = (
     ]
   );
 
-  // Transform the data: calculate weekly proportions
+  // Transform the data: calculate proportions and sort
   const data = useMemo(() => {
-    if (!variantDateCounts || !mutationsTimesQuery.data) {
+    if (!mutationsOverTimeQuery.data) {
       return undefined;
     }
-    if (mutationsTimesQuery.data === 'too-big') {
-      return 'too-big';
-    }
-    if (variantDateCounts.payload.length === 0) {
-      return 'empty';
-    }
-    const sequenceType = mutationsTimesQuery.data?.sequenceType;
-    if (!sequenceType) {
-      return undefined;
+    if (mutationsOverTimeQuery.data === 'too-big' || mutationsOverTimeQuery.data === 'empty') {
+      return mutationsOverTimeQuery.data;
     }
 
-    // Calculate weeks
-    const dayRange = globalDateCache.rangeFromDays(
-      variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
-    )!;
-    const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
-    const weekToIndexMap: Map<UnifiedIsoWeek, number> = new Map();
-    weeks.forEach((w, i) => weekToIndexMap.set(w, i));
+    const { sequenceType, weeks, response } = mutationsOverTimeQuery.data;
+
+    // Calculate week range and ticks
     const weekRange = globalDateCache.rangeFromWeeks(weeks)!;
-    const middleDay = globalDateCache.middleDay({ min: weekRange.min.firstDay, max: weekRange.max.firstDay });
+    const middleDay = globalDateCache.middleDay({
+      min: weekRange.min.firstDay,
+      max: weekRange.max.firstDay,
+    });
     const ticks = { min: weekRange.min.firstDay, middle: middleDay, max: weekRange.max.firstDay };
 
-    // Calculate proportions
-    const mutations = mutationsTimesQuery.data.result.map(mutationDateCounts => {
-      const proportionsByWeek = DateCountSampleData.proportionByWeek(
-        mutationDateCounts.data.payload,
-        variantDateCounts.payload
-      );
-      const proportions: number[] = new Array(weeks.length).fill(NaN);
-      const counts: number[] = new Array(weeks.length).fill(0);
-      proportionsByWeek.forEach(({ count, proportion }, week) => {
-        const index = weekToIndexMap.get(week)!;
-        proportions[index] = proportion ?? NaN;
-        counts[index] = count;
+    // Transform response into mutations with proportions
+    const mutationsWithData = response.mutations.map((mutation, mutationIndex) => {
+      const mutationData = response.data[mutationIndex];
+      const proportions: number[] = mutationData.map(dataPoint => {
+        if (dataPoint.coverage === 0) {
+          return NaN;
+        }
+        return dataPoint.count / dataPoint.coverage;
       });
+      const counts: number[] = mutationData.map(dataPoint => dataPoint.count);
+
       return {
-        mutation: mutationDateCounts.mutation,
+        mutation,
         proportions,
         counts,
       };
     });
+
     const sortFunc = sequenceType === 'aa' ? sortListByAAMutation : sortListByNucMutation;
-    const sorted = sortFunc(mutations, m => m.mutation);
+    const sorted = sortFunc(mutationsWithData, m => m.mutation);
 
     return { weeks, mutations: sorted, ticks };
-  }, [variantDateCounts, mutationsTimesQuery]);
+  }, [mutationsOverTimeQuery.data]);
 
   return data;
 };

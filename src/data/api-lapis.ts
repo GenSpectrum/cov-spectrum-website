@@ -31,6 +31,7 @@ import { NextcladeDatasetInfo } from './NextcladeDatasetInfo';
 import { mapFilterToLapisV2 } from './api-lapis-v2';
 import { addVariantSelectorToUrlSearchParamsForApi } from './VariantSelector';
 import { MRCAResponse } from './phylo/MRCAResponse';
+import { MutationsOverTimeDateRange, MutationsOverTimeResponse } from './MutationsOverTimeResponse';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
@@ -61,6 +62,36 @@ const getRaw = async (
   return response;
 };
 
+// NOTE: Unlike getRaw, this does NOT add '/sample' to the path.
+// The caller is responsible for providing the full endpoint path.
+// TODO: Harmonize with getRaw in the future.
+const postRaw = async (
+  endpoint: string,
+  body: unknown,
+  signal?: AbortSignal,
+  options: { skipMaintenanceCheck?: boolean } = {}
+) => {
+  let url = `${HOST}${endpoint}`;
+
+  const requestInit: RequestInit = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  };
+
+  if (signal !== undefined) {
+    requestInit.signal = signal;
+  }
+
+  const response = await fetch(url, requestInit);
+  if (!(options.skipMaintenanceCheck === true) && response.status === 503) {
+    window.location.reload();
+  }
+  return response;
+};
+
 const get = async (
   endpoint: string,
   signal?: AbortSignal,
@@ -77,6 +108,31 @@ const get = async (
       }
       if (body.error?.detail !== undefined) {
         throw new Error(`Failed to fetch data from LAPIS: ${body.error?.detail}`);
+      }
+    }
+
+    throw new Error(`Failed to fetch data from LAPIS: ${response.status}`);
+  }
+  return response;
+};
+
+const post = async (
+  endpoint: string,
+  body: unknown,
+  signal?: AbortSignal,
+  options: { skipMaintenanceCheck?: boolean } = {}
+) => {
+  const response = await postRaw(endpoint, body, signal, options);
+  if (!response.ok) {
+    if (response.body !== null) {
+      let responseBody;
+      try {
+        responseBody = await response.json();
+      } catch (e) {
+        throw new Error(`Failed to fetch data from LAPIS: ${response.status}`);
+      }
+      if (responseBody.error?.detail !== undefined) {
+        throw new Error(`Failed to fetch data from LAPIS: ${responseBody.error?.detail}`);
       }
     }
 
@@ -271,6 +327,49 @@ function getInsertionEndpoint(sequenceType: SequenceType): string {
       return 'nucleotideInsertions';
     case 'aa':
       return 'aminoAcidInsertions';
+    default:
+      throw new Error(`Unknown mutation type: ${sequenceType}`);
+  }
+}
+
+export async function fetchMutationsOverTime(
+  selector: LapisSelector,
+  sequenceType: SequenceType,
+  mutations: string[],
+  dateRanges: MutationsOverTimeDateRange[],
+  dateField: string,
+  signal?: AbortSignal
+): Promise<MutationsOverTimeResponse> {
+  const endpoint = getMutationsOverTimeEndpoint(sequenceType);
+
+  // Build filters object directly from selector
+  const filters = await _buildFiltersFromSelector(selector);
+
+  // Build the request body
+  const requestBody = {
+    filters,
+    includeMutations: mutations,
+    dateRanges: dateRanges,
+    dateField: dateField,
+  };
+
+  // Add accessKey if available
+  let endpointWithParams = `/${endpoint}`;
+  if (ACCESS_KEY) {
+    endpointWithParams += '?accessKey=' + (await _getCurrentAccessKey());
+  }
+
+  const res = await post(endpointWithParams, requestBody, signal);
+  const body = (await res.json()) as LapisResponse<MutationsOverTimeResponse>;
+  return _extractLapisData(body);
+}
+
+function getMutationsOverTimeEndpoint(sequenceType: SequenceType): string {
+  switch (sequenceType) {
+    case 'nuc':
+      return 'component/nucleotideMutationsOverTime';
+    case 'aa':
+      return 'component/aminoAcidMutationsOverTime';
     default:
       throw new Error(`Unknown mutation type: ${sequenceType}`);
   }
@@ -472,4 +571,143 @@ async function _getCurrentAccessKey(): Promise<string> {
   return Array.from(new Uint8Array(hashBuffer))
     .map(b => b.toString(16).padStart(2, '0'))
     .join('');
+}
+
+async function _buildFiltersFromSelector(selector: LapisSelector): Promise<Record<string, any>> {
+  const filters: Record<string, any> = {};
+
+  // Map country name if needed
+  selector = await _mapCountryName(selector);
+
+  // Location filters
+  if (selector.location.region) {
+    filters.region = selector.location.region;
+  }
+  if (selector.location.country) {
+    filters.country = selector.location.country;
+  }
+  if (selector.location.division) {
+    filters.division = selector.location.division;
+  }
+
+  // Date range filters
+  if (selector.dateRange) {
+    const dateRange = selector.dateRange.getDateRange();
+    if (dateRange.dateFrom) {
+      filters.dateFrom = dateRange.dateFrom.string;
+    }
+    if (dateRange.dateTo) {
+      filters.dateTo = dateRange.dateTo.string;
+    }
+  }
+
+  // Submission date filters
+  if (selector.submissionDate) {
+    const submissionDateRange = selector.submissionDate.getDateRange();
+    if (submissionDateRange.dateFrom) {
+      filters.dateSubmittedFrom = submissionDateRange.dateFrom.string;
+    }
+    if (submissionDateRange.dateTo) {
+      filters.dateSubmittedTo = submissionDateRange.dateTo.string;
+    }
+  }
+
+  // Variant filters
+  if (selector.variant) {
+    if (selector.variant.pangoLineage) {
+      filters.pangoLineage = selector.variant.pangoLineage;
+    }
+    if (selector.variant.nextcladePangoLineage) {
+      filters.nextcladePangoLineage = selector.variant.nextcladePangoLineage;
+    }
+    if (selector.variant.gisaidClade) {
+      filters.gisaidClade = selector.variant.gisaidClade;
+    }
+    if (selector.variant.nextstrainClade) {
+      filters.nextstrainClade = selector.variant.nextstrainClade;
+    }
+    // Keep arrays as arrays (not comma-separated strings)
+    if (selector.variant.aaMutations?.length) {
+      filters.aminoAcidMutations = selector.variant.aaMutations;
+    }
+    if (selector.variant.nucMutations?.length) {
+      filters.nucleotideMutations = selector.variant.nucMutations;
+    }
+    if (selector.variant.aaInsertions?.length) {
+      filters.aminoAcidInsertions = selector.variant.aaInsertions;
+    }
+    if (selector.variant.nucInsertions?.length) {
+      filters.nucleotideInsertions = selector.variant.nucInsertions;
+    }
+    if (selector.variant['usherTree.phyloDescendantOf']) {
+      filters['usherTree.phyloDescendantOf'] = selector.variant['usherTree.phyloDescendantOf'];
+    }
+    if (selector.variant.variantQuery) {
+      filters.variantQuery = selector.variant.variantQuery;
+    }
+  }
+
+  // Sampling strategy filter
+  if (selector.samplingStrategy && selector.samplingStrategy.toString() === 'Surveillance') {
+    filters.samplingStrategy = 'Baseline surveillance';
+  }
+
+  // Host filters (keep as array)
+  if (selector.host?.length) {
+    filters.host = selector.host;
+  }
+
+  // QC filters (keep as numbers)
+  if (selector.qc) {
+    if (selector.qc.nextcladeQcOverallScoreFrom !== undefined) {
+      filters.nextcladeQcOverallScoreFrom = selector.qc.nextcladeQcOverallScoreFrom;
+    }
+    if (selector.qc.nextcladeQcOverallScoreTo !== undefined) {
+      filters.nextcladeQcOverallScoreTo = selector.qc.nextcladeQcOverallScoreTo;
+    }
+    if (selector.qc.nextcladeQcMissingDataScoreFrom !== undefined) {
+      filters.nextcladeQcMissingDataScoreFrom = selector.qc.nextcladeQcMissingDataScoreFrom;
+    }
+    if (selector.qc.nextcladeQcMissingDataScoreTo !== undefined) {
+      filters.nextcladeQcMissingDataScoreTo = selector.qc.nextcladeQcMissingDataScoreTo;
+    }
+    if (selector.qc.nextcladeQcMixedSitesScoreFrom !== undefined) {
+      filters.nextcladeQcMixedSitesScoreFrom = selector.qc.nextcladeQcMixedSitesScoreFrom;
+    }
+    if (selector.qc.nextcladeQcMixedSitesScoreTo !== undefined) {
+      filters.nextcladeQcMixedSitesScoreTo = selector.qc.nextcladeQcMixedSitesScoreTo;
+    }
+    if (selector.qc.nextcladeQcPrivateMutationsScoreFrom !== undefined) {
+      filters.nextcladeQcPrivateMutationsScoreFrom = selector.qc.nextcladeQcPrivateMutationsScoreFrom;
+    }
+    if (selector.qc.nextcladeQcPrivateMutationsScoreTo !== undefined) {
+      filters.nextcladeQcPrivateMutationsScoreTo = selector.qc.nextcladeQcPrivateMutationsScoreTo;
+    }
+    if (selector.qc.nextcladeQcSnpClustersScoreFrom !== undefined) {
+      filters.nextcladeQcSnpClustersScoreFrom = selector.qc.nextcladeQcSnpClustersScoreFrom;
+    }
+    if (selector.qc.nextcladeQcSnpClustersScoreTo !== undefined) {
+      filters.nextcladeQcSnpClustersScoreTo = selector.qc.nextcladeQcSnpClustersScoreTo;
+    }
+    if (selector.qc.nextcladeQcFrameShiftsScoreFrom !== undefined) {
+      filters.nextcladeQcFrameShiftsScoreFrom = selector.qc.nextcladeQcFrameShiftsScoreFrom;
+    }
+    if (selector.qc.nextcladeQcFrameShiftsScoreTo !== undefined) {
+      filters.nextcladeQcFrameShiftsScoreTo = selector.qc.nextcladeQcFrameShiftsScoreTo;
+    }
+    if (selector.qc.nextcladeQcStopCodonsScoreFrom !== undefined) {
+      filters.nextcladeQcStopCodonsScoreFrom = selector.qc.nextcladeQcStopCodonsScoreFrom;
+    }
+    if (selector.qc.nextcladeQcStopCodonsScoreTo !== undefined) {
+      filters.nextcladeQcStopCodonsScoreTo = selector.qc.nextcladeQcStopCodonsScoreTo;
+    }
+    if (selector.qc.nextcladeCoverageFrom !== undefined) {
+      filters.nextcladeCoverageFrom = selector.qc.nextcladeCoverageFrom;
+    }
+    if (selector.qc.nextcladeCoverageTo !== undefined) {
+      filters.nextcladeCoverageTo = selector.qc.nextcladeCoverageTo;
+    }
+  }
+
+  return filters;
 }
