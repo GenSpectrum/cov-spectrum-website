@@ -342,21 +342,51 @@ export async function fetchMutationsOverTime(
 ): Promise<MutationsOverTimeResponse> {
   const endpoint = getMutationsOverTimeEndpoint(sequenceType);
 
+  // Map country name if needed
+  selector = await _mapCountryName(selector);
+
+  // Build the filters object
+  const filters: Record<string, any> = {};
+
+  // Location filters
+  if (selector.location) {
+    if (selector.location.region) {
+      filters.region = selector.location.region;
+    }
+    if (selector.location.country) {
+      filters.country = selector.location.country;
+    }
+    if (selector.location.division) {
+      filters.division = selector.location.division;
+    }
+  }
+
+  // Variant filters (lineages and clades only for now)
+  if (selector.variant) {
+    if (selector.variant.pangoLineage) {
+      filters.pangoLineage = selector.variant.pangoLineage;
+    }
+    if (selector.variant.nextcladePangoLineage) {
+      filters.nextcladePangoLineage = selector.variant.nextcladePangoLineage;
+    }
+    if (selector.variant.gisaidClade) {
+      filters.gisaidClade = selector.variant.gisaidClade;
+    }
+    if (selector.variant.nextstrainClade) {
+      filters.nextstrainClade = selector.variant.nextstrainClade;
+    }
+  }
+
+  // TODO: Add remaining filters
+  // - dateRange
+  // - samplingStrategy
+  // - host
+  // - submissionDate
+  // - qc
+
   // Build the request body
   const requestBody: Record<string, any> = {
-    filters: {
-      // TODO: Convert LapisSelector to filters object
-      // The selector contains location, dateRange, variant, samplingStrategy, host, submissionDate, qc
-      // These need to be mapped to the LAPIS filters format
-      // For reference, see how getLinkTo() uses:
-      // - addLocationSelectorToUrlSearchParams(selector.location, params)
-      // - addDateRangeSelectorToUrlSearchParams(selector.dateRange, params)
-      // - addVariantSelectorToUrlSearchParamsForApi(selector.variant, params)
-      // - addSamplingStrategyToUrlSearchParams(selector.samplingStrategy, params)
-      // - addHostSelectorToUrlSearchParams(selector.host, params)
-      // - addSubmittedDateRangeSelectorToUrlParams(params, selector.submissionDate, true)
-      // - addQcSelectorToUrlSearchParams(selector.qc, params)
-    },
+    filters,
     dateRanges: dateRanges,
     dateField: dateField,
   };
