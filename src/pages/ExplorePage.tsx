@@ -17,6 +17,7 @@ import { MdOutlineOpenInNew } from 'react-icons/md';
 import { Link } from 'react-router';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { fetchLapisDataVersion } from '../data/api-lapis';
+import { FineGrainedFilteringBanner } from '../components/FineGrainedFilteringBanner';
 
 type Props = {
   isSmallScreen: boolean;
@@ -54,6 +55,7 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
 
   return (
     <div className={`w-full mx-auto max-w-6xl mt-4`}>
+      <FineGrainedFilteringBanner />
       <MissingDataUpdateBanner />
       <GenspectrumBanner />
       <div className='p-2 mr-4 '>
