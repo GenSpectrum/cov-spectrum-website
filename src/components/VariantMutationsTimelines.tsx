@@ -317,13 +317,14 @@ const useDataNew = (
       });
       const ticks = { min: weekRange.min.firstDay, middle: middleDay, max: weekRange.max.firstDay };
 
-      // Call fetchMutationsOverTime without mutations - API will return all available mutations
+      // Call fetchMutationsOverTime
+      // TODO: Determine which mutations to pass. For now passing empty array.
       const response = await fetchMutationsOverTime(
         selector,
         sequenceType,
+        [],
         dateRanges,
         'date',
-        undefined,
         signal
       );
 

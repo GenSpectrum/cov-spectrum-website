@@ -73,6 +73,9 @@ const postRaw = async (
 ) => {
   let url = `${HOST}${endpoint}`;
 
+  console.log("######")
+  console.log(body)
+
   const requestInit: RequestInit = {
     method: 'POST',
     headers: {
@@ -335,9 +338,9 @@ function getInsertionEndpoint(sequenceType: SequenceType): string {
 export async function fetchMutationsOverTime(
   selector: LapisSelector,
   sequenceType: SequenceType,
+  mutations: string[],
   dateRanges: MutationsOverTimeDateRange[],
   dateField: string,
-  mutations?: string[],
   signal?: AbortSignal
 ): Promise<MutationsOverTimeResponse> {
   const endpoint = getMutationsOverTimeEndpoint(sequenceType);
@@ -385,16 +388,12 @@ export async function fetchMutationsOverTime(
   // - qc
 
   // Build the request body
-  const requestBody: Record<string, any> = {
+  const requestBody = {
     filters,
+    includeMutations: mutations,
     dateRanges: dateRanges,
     dateField: dateField,
   };
-
-  // Only add includeMutations if mutations are provided
-  if (mutations && mutations.length > 0) {
-    requestBody.includeMutations = mutations;
-  }
 
   // Add accessKey if available
   let endpointWithParams = `/${endpoint}`;
