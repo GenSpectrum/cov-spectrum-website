@@ -17,6 +17,7 @@ import { ReferenceGenomeService } from '../services/ReferenceGenomeService';
 import { ColorScale, ColorScaleInput } from './ColorScaleInput';
 import { PipeDividedOptionsButtons } from '../helpers/ui';
 import { ProportionSelector } from './ProportionsSelector';
+import { fetchMutationsOverTime } from '../data/api-lapis';
 
 type Data = {
   weeks: UnifiedIsoWeek[];
@@ -274,6 +275,53 @@ const useData = (
   }, [variantDateCounts, mutationsTimesQuery]);
 
   return data;
+};
+
+const useDataNew = (
+  selector: LapisSelector,
+  sequenceType: SequenceType,
+  minProportion: number,
+  maxProportion: number,
+  gene: string,
+  deletionFilter: DeletionFilter
+): undefined | 'empty' | 'too-big' | Data => {
+  // Fetch only the date distribution to calculate date ranges
+  const variantDateCountsQuery = useQuery(
+    async signal => DateCountSampleData.fromApi(selector, signal),
+    [selector]
+  );
+  const variantDateCounts = variantDateCountsQuery.data;
+
+  // Fetch mutations over time using the new endpoint
+  const mutationsOverTimeQuery = useQuery(
+    async signal => {
+      if (!variantDateCounts) {
+        return undefined;
+      }
+
+      if (variantDateCounts.payload.length === 0) {
+        return 'empty';
+      }
+
+      // Calculate day range and weeks from date counts
+      const dayRange = globalDateCache.rangeFromDays(
+        variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
+      )!;
+      const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
+
+      // TODO: Build dateRanges array from weeks
+      // TODO: Determine which mutations to query (maybe pass empty array for all mutations?)
+      // TODO: Call fetchMutationsOverTime
+      // TODO: Transform response into Data format
+
+      // Placeholder return for now
+      return undefined;
+    },
+    [variantDateCounts, sequenceType, minProportion, maxProportion, gene, deletionFilter]
+  );
+
+  // TODO: Transform mutationsOverTimeQuery.data into Data format
+  return undefined;
 };
 
 type PlotProps = {
