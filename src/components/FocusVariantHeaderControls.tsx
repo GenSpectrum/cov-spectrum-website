@@ -13,7 +13,7 @@ import { useAsync } from 'react-async';
 import { OrderAndLimitConfig } from '../data/OrderAndLimitConfig';
 import { NextcladeIntegration } from '../services/external-integrations/NextcladeIntegration';
 import { LapisSelector } from '../data/LapisSelector';
-import { ExternalLink } from './ExternalLink';
+import { ExternalLink, ExternalLinkAsync } from './ExternalLink';
 
 // mui stuff
 import Button1 from '@mui/material/Button';
@@ -83,8 +83,7 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
     sequenceDataSource === 'open'
       ? getCsvLinkToDetails
       : (selector: LapisSelector) => getLinkToListOfPrimaryKeys('gisaidEpiIsl', selector);
-  const linkToListPromise = useDeepCompareMemo(() => getLinkFunc(selector), [selector]);
-  const { data: listLink } = useAsync({ promise: linkToListPromise });
+  const listLinkFunc = () => getLinkFunc(selector);
 
   // FASTA download
   const orderAndLimit: OrderAndLimitConfig = {
@@ -101,11 +100,6 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
     [selector]
   );
   const { data: alignedFastaLink } = useAsync({ promise: linkToAlignedFastaPromise });
-
-  const listLink2: string | undefined =
-    listLink &&
-    listLink.replace('contributors', 'gisaid-epi-isl').replace('&downloadAsFile=true&dataFormat=csv', '') +
-      '&orderBy=random';
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [anchorElSequence, setAnchorElSequence] = React.useState<null | HTMLElement>(null);
@@ -150,14 +144,14 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
         >
           <MenuItem disableRipple key='sequenceList'>
             <DownloadIcon />
-            <ExternalLink url={listLink ?? ''}>Sequence list</ExternalLink>
+            <ExternalLinkAsync urlFunc={listLinkFunc}>Sequence list</ExternalLinkAsync>
           </MenuItem>
 
           <Divider sx={{ my: 0.5 }} />
 
           {sequenceDataSource === 'gisaid' && (
             <MenuItem disableRipple key='gisaid'>
-              <ExternalLink url={listLink2 ?? ''}>GISAID list</ExternalLink>
+              <ExternalLinkAsync urlFunc={listLinkFunc}>GISAID list</ExternalLinkAsync>
             </MenuItem>
           )}
 
