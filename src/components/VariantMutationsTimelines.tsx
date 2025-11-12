@@ -309,9 +309,25 @@ const useDataNew = (
       )!;
       const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
 
-      // TODO: Build dateRanges array from weeks
-      // TODO: Determine which mutations to query (maybe pass empty array for all mutations?)
-      // TODO: Call fetchMutationsOverTime
+      // Build dateRanges array from weeks
+      const dateRanges = weeks.map(week => {
+        const lastDay = globalDateCache.getDayUsingDayjs(week.firstDay.dayjs.add(6, 'days'));
+        return {
+          dateFrom: week.firstDay.string,
+          dateTo: lastDay.string,
+        };
+      });
+
+      // Call fetchMutationsOverTime without mutations - API will return all available mutations
+      const response = await fetchMutationsOverTime(
+        selector,
+        sequenceType,
+        dateRanges,
+        'date',
+        undefined,
+        signal
+      );
+
       // TODO: Transform response into Data format
 
       // Placeholder return for now
