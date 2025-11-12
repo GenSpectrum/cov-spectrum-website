@@ -49,7 +49,7 @@ export const VariantMutationsTimelines = ({ selector }: Props) => {
     maxColor: '#040e8c',
   });
 
-  const data = useData(selector, sequenceType, minProportion, maxProportion, gene, deletionFilter);
+  const data = useDataNew(selector, sequenceType, minProportion, maxProportion, gene, deletionFilter);
 
   const controls = (
     <div className='mb-4'>
@@ -184,15 +184,6 @@ const useData = (
         return 'too-big';
       }
 
-      const dayRange = globalDateCache.rangeFromDays(
-        variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
-      )!;
-      const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
-
-      // TODO
-
-      data
-
       const variantAsVariantQuery = transformToVariantQuery(selector.variant ?? {});
       const selectorsWithMutation: LapisSelector[] = filteredMutations.map(m => ({
         ...selector,
@@ -320,7 +311,10 @@ const useDataNew = (
 
       // Calculate weeks and ticks (reusing logic from useData)
       const weekRange = globalDateCache.rangeFromWeeks(weeks)!;
-      const middleDay = globalDateCache.middleDay({ min: weekRange.min.firstDay, max: weekRange.max.firstDay });
+      const middleDay = globalDateCache.middleDay({
+        min: weekRange.min.firstDay,
+        max: weekRange.max.firstDay,
+      });
       const ticks = { min: weekRange.min.firstDay, middle: middleDay, max: weekRange.max.firstDay };
 
       // Call fetchMutationsOverTime without mutations - API will return all available mutations

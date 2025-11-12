@@ -31,10 +31,7 @@ import { NextcladeDatasetInfo } from './NextcladeDatasetInfo';
 import { mapFilterToLapisV2 } from './api-lapis-v2';
 import { addVariantSelectorToUrlSearchParamsForApi } from './VariantSelector';
 import { MRCAResponse } from './phylo/MRCAResponse';
-import {
-  MutationsOverTimeDateRange,
-  MutationsOverTimeResponse,
-} from './MutationsOverTimeResponse';
+import { MutationsOverTimeDateRange, MutationsOverTimeResponse } from './MutationsOverTimeResponse';
 
 const HOST = process.env.REACT_APP_LAPIS_HOST;
 const ACCESS_KEY = process.env.REACT_APP_LAPIS_ACCESS_KEY;
