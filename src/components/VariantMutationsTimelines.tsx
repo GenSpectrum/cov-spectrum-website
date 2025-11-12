@@ -188,16 +188,10 @@ const useData = (
         return 'too-big';
       }
 
-      // Extract mutation strings
-      const mutations = filteredMutations.map(m => m.mutation);
-
-      // Calculate day range and weeks from date counts
       const dayRange = globalDateCache.rangeFromDays(
         variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
       )!;
       const weeks = globalDateCache.weeksFromRange({ min: dayRange.min.isoWeek, max: dayRange.max.isoWeek });
-
-      // Build dateRanges array from weeks
       const dateRanges = weeks.map(week => {
         const lastDay = globalDateCache.getDayUsingDayjs(week.firstDay.dayjs.add(6, 'days'));
         return {
@@ -206,11 +200,10 @@ const useData = (
         };
       });
 
-      // Call fetchMutationsOverTime with filtered mutations
       const response = await fetchMutationsOverTime(
         selector,
         sequenceType,
-        mutations,
+        filteredMutations.map(m => m.mutation),
         dateRanges,
         'date',
         signal
@@ -270,7 +263,6 @@ const useData = (
       };
     });
 
-    // Sort mutations (same as old code)
     const sortFunc = sequenceType === 'aa' ? sortListByAAMutation : sortListByNucMutation;
     const sorted = sortFunc(mutationsWithData, m => m.mutation);
 
