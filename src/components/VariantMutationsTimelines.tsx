@@ -276,17 +276,24 @@ const useDataNew = (
   gene: string,
   deletionFilter: DeletionFilter
 ): undefined | 'empty' | 'too-big' | Data => {
-  // Fetch only the date distribution to calculate date ranges
-  const variantDateCountsQuery = useQuery(
-    async signal => DateCountSampleData.fromApi(selector, signal),
-    [selector]
+  // Fetch the date distribution and mutations of the variant
+  const basicVariantDataQuery = useQuery(
+    async signal => ({
+      sequenceType,
+      result: await Promise.all([
+        DateCountSampleData.fromApi(selector, signal),
+        MutationProportionData.fromApi(selector, sequenceType, signal),
+      ]),
+    }),
+    [selector, sequenceType]
   );
-  const variantDateCounts = variantDateCountsQuery.data;
+  const [variantDateCounts, variantMutations] = basicVariantDataQuery.data?.result ?? [undefined, undefined];
 
   // Fetch mutations over time using the new endpoint
   const mutationsOverTimeQuery = useQuery(
     async signal => {
-      if (!variantDateCounts) {
+      const sequenceType = basicVariantDataQuery.data?.sequenceType;
+      if (!variantDateCounts || !variantMutations || !sequenceType) {
         return undefined;
       }
 
@@ -294,10 +301,6 @@ const useDataNew = (
         return 'empty';
       }
 
-      // Fetch variant mutations to know which mutations to query
-      const variantMutations = await MutationProportionData.fromApi(selector, sequenceType, signal);
-
-      // Filter mutations based on proportion, deletion filter, and gene (like useData)
       let filteredMutations = variantMutations.payload.filter(
         m => m.proportion >= minProportion && m.proportion <= maxProportion
       );
@@ -331,14 +334,6 @@ const useDataNew = (
         };
       });
 
-      // Calculate weeks and ticks (reusing logic from useData)
-      const weekRange = globalDateCache.rangeFromWeeks(weeks)!;
-      const middleDay = globalDateCache.middleDay({
-        min: weekRange.min.firstDay,
-        max: weekRange.max.firstDay,
-      });
-      const ticks = { min: weekRange.min.firstDay, middle: middleDay, max: weekRange.max.firstDay };
-
       // Call fetchMutationsOverTime with filtered mutations
       const response = await fetchMutationsOverTime(
         selector,
@@ -349,35 +344,68 @@ const useDataNew = (
         signal
       );
 
-      // Transform response into Data format
-      const mutationsWithData = response.mutations.map((mutation, mutationIndex) => {
-        const mutationData = response.data[mutationIndex];
-        const proportions: number[] = mutationData.map(dataPoint => {
-          if (dataPoint.coverage === 0) {
-            return NaN;
-          }
-          return dataPoint.count / dataPoint.coverage;
-        });
-        const counts: number[] = mutationData.map(dataPoint => dataPoint.count);
-
-        return {
-          mutation,
-          proportions,
-          counts,
-        };
-      });
-
-      // Sort mutations (same as old code)
-      const sortFunc = sequenceType === 'aa' ? sortListByAAMutation : sortListByNucMutation;
-      const sortedMutations = sortFunc(mutationsWithData, m => m.mutation);
-
-      return { weeks, mutations: sortedMutations, ticks };
+      return {
+        sequenceType,
+        weeks,
+        response,
+      };
     },
-    [variantDateCounts, sequenceType, minProportion, maxProportion, gene, deletionFilter]
+    [
+      variantDateCounts,
+      variantMutations,
+      basicVariantDataQuery.data?.sequenceType,
+      minProportion,
+      maxProportion,
+      gene,
+      deletionFilter,
+    ]
   );
 
-  // Return the query data directly
-  return mutationsOverTimeQuery.data;
+  // Transform the data: calculate proportions and sort
+  const data = useMemo(() => {
+    if (!mutationsOverTimeQuery.data) {
+      return undefined;
+    }
+    if (mutationsOverTimeQuery.data === 'too-big' || mutationsOverTimeQuery.data === 'empty') {
+      return mutationsOverTimeQuery.data;
+    }
+
+    const { sequenceType, weeks, response } = mutationsOverTimeQuery.data;
+
+    // Calculate week range and ticks
+    const weekRange = globalDateCache.rangeFromWeeks(weeks)!;
+    const middleDay = globalDateCache.middleDay({
+      min: weekRange.min.firstDay,
+      max: weekRange.max.firstDay,
+    });
+    const ticks = { min: weekRange.min.firstDay, middle: middleDay, max: weekRange.max.firstDay };
+
+    // Transform response into mutations with proportions
+    const mutationsWithData = response.mutations.map((mutation, mutationIndex) => {
+      const mutationData = response.data[mutationIndex];
+      const proportions: number[] = mutationData.map(dataPoint => {
+        if (dataPoint.coverage === 0) {
+          return NaN;
+        }
+        return dataPoint.count / dataPoint.coverage;
+      });
+      const counts: number[] = mutationData.map(dataPoint => dataPoint.count);
+
+      return {
+        mutation,
+        proportions,
+        counts,
+      };
+    });
+
+    // Sort mutations (same as old code)
+    const sortFunc = sequenceType === 'aa' ? sortListByAAMutation : sortListByNucMutation;
+    const sorted = sortFunc(mutationsWithData, m => m.mutation);
+
+    return { weeks, mutations: sorted, ticks };
+  }, [mutationsOverTimeQuery.data]);
+
+  return data;
 };
 
 type PlotProps = {
