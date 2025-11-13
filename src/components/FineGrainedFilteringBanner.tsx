@@ -17,7 +17,7 @@ export const FineGrainedFilteringBanner = () => {
           in principle reconstruct the original sequence, up to changes introduced by the alignment algorithm.
           This circumvents the "aggregation" which is the intended and GISAID-compliant way CoV-Spectrum
           surfaces data. Importantly, we have no evidence that this was used in any concerning way and did not
-          hear concerns from data generators or GISAID. At no moment, it had been possible to download bulk
+          hear concerns from data generators or GISAID. At no moment has it been possible to download bulk
           sequencing data.
         </p>
         <p>
