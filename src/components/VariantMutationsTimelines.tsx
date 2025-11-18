@@ -187,6 +187,9 @@ const useData = (
       if (filteredMutations.length > 70) {
         return 'too-big';
       }
+      if (filteredMutations.length === 0) {
+        return 'empty';
+      }
 
       const dayRange = globalDateCache.rangeFromDays(
         variantDateCounts.payload.filter(v => v.date).map(v => v.date!)
