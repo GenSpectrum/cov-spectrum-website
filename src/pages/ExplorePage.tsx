@@ -18,6 +18,7 @@ import { Link } from 'react-router';
 import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { fetchLapisDataVersion } from '../data/api-lapis';
 import { FineGrainedFilteringBanner } from '../components/FineGrainedFilteringBanner';
+import { GisaidRemovalBanner } from '../components/GisaidRemovalBanner';
 
 type Props = {
   isSmallScreen: boolean;
@@ -55,6 +56,7 @@ export const ExplorePage = ({ isSmallScreen }: Props) => {
 
   return (
     <div className={`w-full mx-auto max-w-6xl mt-4`}>
+      <GisaidRemovalBanner />
       <FineGrainedFilteringBanner />
       <MissingDataUpdateBanner />
       <GenspectrumBanner />
