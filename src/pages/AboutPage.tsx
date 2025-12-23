@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { ExternalLink } from '../components/ExternalLink';
 import { EmailLink } from '../components/EmailLink';
 import { InternalLink } from '../components/InternalLink';
+import { Link } from 'react-router';
 
 const LAPIS_HOST = process.env.REACT_APP_LAPIS_HOST;
 
@@ -80,12 +81,17 @@ export const AboutPage = () => {
         analyze new variants.
       </Question>
       <Question title='Which data do you use?' id='faq-data-sources'>
-        We offer two instances of CoV-Spectrum On{' '}
-        <ExternalLink url='https://cov-spectrum.org'>cov-spectrum.org</ExternalLink>, we use genomic data from
-        GISAID. On <ExternalLink url='https://open.cov-spectrum.org'>open.cov-spectrum.org</ExternalLink>, we
-        use the data from GenBank which is fully open. The API that we use for the GenBank instance is openly
-        available and can be used for other projects (
-        <ExternalLink url='https://lapis-docs.readthedocs.io/'>API documentation</ExternalLink>).
+        CoV-Spectrum uses data from INSDC (GenBank, ENA, and DDBJ) and Germany's RKI, ingested from{' '}
+        <ExternalLink url='https://docs.nextstrain.org/en/latest/reference/data-files.html'>
+          Nextstrain
+        </ExternalLink>
+        . The data is also available through an API and can be used for other projects (
+        <ExternalLink url='https://lapis-docs.readthedocs.io/'>API documentation</ExternalLink>). Until 23
+        December 2025, we also provided an instance with GISAD data (
+        <Link to='/news/2025-12-23-removal-of-gisaid-data' className='text-active-secondary'>
+          see why it was removed
+        </Link>
+        ).
       </Question>
       <Question title='How do you determine the Pango lineages?' id='faq-pango-lineage-classifiers'>
         <p>
@@ -260,18 +266,6 @@ export const AboutPage = () => {
       </Disclaimer>
 
       <h1 id='acknowledgements'>Acknowledgements</h1>
-      <Component title='GISAID'>
-        We gratefully acknowledge all data contributors, i.e. the Authors and their Originating laboratories
-        responsible for obtaining the specimens, and their Submitting laboratories for generating the genetic
-        sequence and metadata and sharing via the GISAID Initiative<sup>1</sup> on which this research is
-        based.
-      </Component>
-      <p>
-        <sup>1</sup> Elbe, S., and Buckland-Merrett, G. (2017) Data, disease and diplomacy: GISAID’s
-        innovative contribution to global health. <i>Global Challenges</i>, 1:33-46. DOI:{' '}
-        <ExternalLink url='https://dx.doi.org/10.1002/gch2.1018'>10.1002/gch2.1018</ExternalLink>, PMCID:{' '}
-        <ExternalLink url='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6607375/'>31565258</ExternalLink>
-      </p>
       <Component title='GenBank and ENA'>
         We gratefully acknowledge all data contributors that share genetic sequences and metadata openly
         through <ExternalLink url='https://www.ncbi.nlm.nih.gov/genbank/'>GenBank</ExternalLink> and the{' '}
