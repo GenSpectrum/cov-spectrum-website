@@ -39,6 +39,8 @@ import { DisabledChatPage } from './pages/ChatPage';
 import { NextcladeDatasetInfo } from './data/NextcladeDatasetInfo';
 import Loader from './components/Loader';
 import { Footer } from './layout/base/Footer';
+import { RemovalOfGisaidDataPage } from './pages/news/2025-12-23-removal-of-gisaid-data';
+import { DefaultDataSourceChangeBanner } from './components/banners/DefaultDataSourceChangeBanner';
 
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
@@ -86,7 +88,12 @@ export const App = () => {
 
   return (
     <div className='w-full'>
-      {!hideHeaderAndFooter && <Header />}
+      {!hideHeaderAndFooter && (
+        <>
+          <DefaultDataSourceChangeBanner />
+          <Header />
+        </>
+      )}
       <div ref={ref} className='w-full'>
         <MainContent
           isSmallScreen={isSmallScreen}
@@ -260,6 +267,7 @@ function CovSpectrumRoutes({
       />
       <Route path='/about' element={<AboutPage />} />
       <Route path='/chat' element={<DisabledChatPage />} />
+      <Route path='/news/2025-12-23-removal-of-gisaid-data' element={<RemovalOfGisaidDataPage />} />
     </Routes>
   );
 }
