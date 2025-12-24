@@ -4,12 +4,11 @@ import { AiOutlineMenu } from 'react-icons/ai';
 import { FaFilter } from 'react-icons/fa';
 import { Button, ButtonVariant } from '../../helpers/ui';
 import { useExploreUrl } from '../../helpers/explore-url';
-import { sequenceDataSource } from '../../helpers/sequence-data-source';
 import { HeaderSamplingStrategySelect } from '../../components/HeaderSamplingStrategySelect';
 import { AlmostFullscreenModal } from '../../components/AlmostFullscreenModal';
 import { AdvancedFiltersPanel } from '../../components/AdvancedFiltersPanel';
 import { Logo } from './Logo';
-import { GisaidDataSource, OpenDataSource } from './DataSource';
+import { OpenDataSource } from './DataSource';
 import { DrawerNavigation } from './DrawerNavigation';
 import { TopNavigation } from './TopNavigation';
 
@@ -31,7 +30,7 @@ const Header = ({ hideInternalLinks }: { hideInternalLinks?: true }) => {
               <div id='logo-and-search' className='flex h-full md:flex-row flex-column justify-center'>
                 <div id='logo-and-gsid' className='flex flex-column items-center justify-center md:pr-4'>
                   <Logo />
-                  {sequenceDataSource === 'gisaid' ? <GisaidDataSource /> : <OpenDataSource />}
+                  <OpenDataSource />
                 </div>
                 <div className='lg:hidden'>
                   <OpenDrawerNavigationButton setShowOffCanvas={setShowDrawerNavigation} />

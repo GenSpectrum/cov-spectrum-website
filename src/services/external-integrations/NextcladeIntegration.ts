@@ -1,5 +1,4 @@
 import { Integration } from './Integration';
-import { sequenceDataSource } from '../../helpers/sequence-data-source';
 import { OrderAndLimitConfig } from '../../data/OrderAndLimitConfig';
 import { getLinkToFasta } from '../../data/api-lapis';
 import { LapisSelector } from '../../data/LapisSelector';
@@ -8,7 +7,7 @@ export class NextcladeIntegration implements Integration {
   name = 'Nextclade';
 
   isAvailable(_: LapisSelector): boolean {
-    return sequenceDataSource === 'open';
+    return true;
   }
 
   async open(selector: LapisSelector) {

@@ -25,7 +25,6 @@ import { IncomingPlainMessage } from './IncomingPlainMessage';
 import { OutgoingPlainMessage } from './OutgoingPlainMessage';
 import { IncomingResponseMessage } from './IncomingResponseMessage';
 import { CustomMessageInput } from './CustomMessageInput';
-import { sequenceDataSource } from '../../helpers/sequence-data-source';
 
 type ChatMainProps = {
   chatAccessKey: string;
@@ -55,7 +54,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
     setToBeLogged(decision);
 
     // Now, the conversation can actually start! Let's get a conversation ID.
-    setConversation(await createConversation(chatAccessKey, decision, sequenceDataSource));
+    setConversation(await createConversation(chatAccessKey, decision));
   };
 
   const sendMessage = async (content: string, randomlyGenerated?: boolean) => {
@@ -120,7 +119,7 @@ export const ChatMain = ({ chatAccessKey }: ChatMainProps) => {
               <ConversationHeader>
                 <ConversationHeader.Content
                   userName='GenSpectrum Chat'
-                  info={`LLM: GPT-4, data engine: LAPIS, data source: ${sequenceDataSource.toUpperCase()}`}
+                  info={`LLM: GPT-4, data engine: LAPIS`}
                 />
               </ConversationHeader>
               <MessageList typingIndicator={waiting && <TypingIndicator content='Calculating...' />}>

@@ -5,9 +5,8 @@ import { OutbreakInfoIntegration } from '../services/external-integrations/Outbr
 import { WikipediaIntegration } from '../services/external-integrations/WikipediaIntegration';
 import { CoVariantsIntegration } from '../services/external-integrations/CoVariantsIntegration';
 import { UsherIntegration } from '../services/external-integrations/UsherIntegration';
-import { sequenceDataSource } from '../helpers/sequence-data-source';
 import { TaxoniumIntegration } from '../services/external-integrations/TaxoniumIntegration';
-import { getCsvLinkToDetails, getLinkToFasta, getLinkToListOfPrimaryKeys } from '../data/api-lapis';
+import { getCsvLinkToDetails, getLinkToFasta } from '../data/api-lapis';
 import { useDeepCompareMemo } from '../helpers/deep-compare-hooks';
 import { useAsync } from 'react-async';
 import { OrderAndLimitConfig } from '../data/OrderAndLimitConfig';
@@ -77,13 +76,7 @@ const integrations: Integration[] = [
 
 export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.Element => {
   // Sequence list download
-  // If the open version is used, all the metadata will be downloaded. If GISAID is used, only the contributors
-  // will be downloaded.
-  const getLinkFunc =
-    sequenceDataSource === 'open'
-      ? getCsvLinkToDetails
-      : (selector: LapisSelector) => getLinkToListOfPrimaryKeys('gisaidEpiIsl', selector);
-  const listLinkFunc = () => getLinkFunc(selector);
+  const listLinkFunc = () => getCsvLinkToDetails(selector);
 
   // FASTA download
   const orderAndLimit: OrderAndLimitConfig = {
@@ -149,23 +142,13 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
 
           <Divider sx={{ my: 0.5 }} />
 
-          {sequenceDataSource === 'gisaid' && (
-            <MenuItem disableRipple key='gisaid'>
-              <ExternalLinkAsync urlFunc={listLinkFunc}>GISAID list</ExternalLinkAsync>
-            </MenuItem>
-          )}
+          <MenuItem disableRipple key='fasta'>
+            <ExternalLink url={fastaLink ?? ''}>FASTA</ExternalLink>
+          </MenuItem>
 
-          {sequenceDataSource === 'open' && (
-            <>
-              <MenuItem disableRipple key='fasta'>
-                <ExternalLink url={fastaLink ?? ''}>FASTA</ExternalLink>
-              </MenuItem>
-
-              <MenuItem disableRipple key='fastaAligned'>
-                <ExternalLink url={alignedFastaLink ?? ''}>FASTA (aligned)</ExternalLink>
-              </MenuItem>
-            </>
-          )}
+          <MenuItem disableRipple key='fastaAligned'>
+            <ExternalLink url={alignedFastaLink ?? ''}>FASTA (aligned)</ExternalLink>
+          </MenuItem>
         </StyledMenu>
 
         <Button1

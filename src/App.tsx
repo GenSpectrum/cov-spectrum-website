@@ -12,8 +12,7 @@ import { WasteWaterLocationPage } from './models/wasteWater/story/WasteWaterLoca
 import StoriesOverview from './stories/StoriesOverview';
 import StoryRouter from './stories/StoryRouter';
 import { useExploreUrl } from './helpers/explore-url';
-import { checkSiloAvailability, fetchLapisDataVersion, fetchNextcladeDatasetInfo } from './data/api-lapis';
-import { sequenceDataSource } from './helpers/sequence-data-source';
+import { checkSiloAvailability, fetchLapisDataVersion } from './data/api-lapis';
 import { ExplorePage } from './pages/ExplorePage';
 import { DeepInternationalComparisonPage } from './pages/DeepInternationalComparisonPage';
 import { DeepChen2021FitnessPage } from './pages/DeepChen2021FitnessPage';
@@ -36,7 +35,6 @@ import { useQuery } from './helpers/query-hook';
 import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/default-selectors';
 import { useBaseLocation } from './helpers/use-base-location';
 import { DisabledChatPage } from './pages/ChatPage';
-import { NextcladeDatasetInfo } from './data/NextcladeDatasetInfo';
 import Loader from './components/Loader';
 import { Footer } from './layout/base/Footer';
 import { RemovalOfGisaidDataPage } from './pages/news/2025-12-23-removal-of-gisaid-data';
@@ -49,12 +47,6 @@ export const App = () => {
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
-  const getNextcladeDatasetInfo =
-    sequenceDataSource === 'gisaid'
-      ? fetchNextcladeDatasetInfo
-      : () => Promise.resolve({ name: 'notNextcladeDatasetInfo', tag: null } as NextcladeDatasetInfo);
-
-  const nextcladeDatasetInfo = useQuery(getNextcladeDatasetInfo, []).data;
   const { data: siloAvailability } = useQuery(checkSiloAvailability, []);
   const { data: lapisDataVersion } = useQuery(fetchLapisDataVersion, []);
 
@@ -102,7 +94,7 @@ export const App = () => {
         />
       </div>
       {showFooter && (
-        <Footer nextcladeDatasetInfo={nextcladeDatasetInfo} lapisDataVersion={lapisDataVersion} />
+        <Footer lapisDataVersion={lapisDataVersion} />
       )}
     </div>
   );
