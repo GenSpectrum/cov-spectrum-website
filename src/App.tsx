@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Navigate, Route, Routes, useLocation } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
 import Header from './layout/base/Header';
 import { LoginWrapper } from './helpers/app-layout';
 import { AboutPage } from './pages/AboutPage';
@@ -34,7 +34,6 @@ import { NewFocusPage } from './pages/NewFocusPage';
 import { useQuery } from './helpers/query-hook';
 import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/default-selectors';
 import { useBaseLocation } from './helpers/use-base-location';
-import { DisabledChatPage } from './pages/ChatPage';
 import Loader from './components/Loader';
 import { Footer } from './layout/base/Footer';
 import { RemovalOfGisaidDataPage } from './pages/news/2025-12-23-removal-of-gisaid-data';
@@ -50,8 +49,7 @@ export const App = () => {
   const { data: siloAvailability } = useQuery(checkSiloAvailability, []);
   const { data: lapisDataVersion } = useQuery(fetchLapisDataVersion, []);
 
-  const isChatPage = useLocation().pathname === '/chat';
-  const showFooter = !hideHeaderAndFooter && !isChatPage;
+  const showFooter = !hideHeaderAndFooter;
 
   if (siloAvailability?.isAvailable === false) {
     return (
@@ -93,9 +91,7 @@ export const App = () => {
           setHideHeaderAndFooter={setHideHeaderAndFooter}
         />
       </div>
-      {showFooter && (
-        <Footer lapisDataVersion={lapisDataVersion} />
-      )}
+      {showFooter && <Footer lapisDataVersion={lapisDataVersion} />}
     </div>
   );
 };
@@ -258,7 +254,6 @@ function CovSpectrumRoutes({
         }
       />
       <Route path='/about' element={<AboutPage />} />
-      <Route path='/chat' element={<DisabledChatPage />} />
       <Route path='/news/2025-12-23-removal-of-gisaid-data' element={<RemovalOfGisaidDataPage />} />
     </Routes>
   );

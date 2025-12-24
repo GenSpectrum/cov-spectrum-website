@@ -355,11 +355,7 @@ export const FocusSinglePageContent = ({
             <NamedCard
               title='Lineages'
               tabs={{
-                labels: [
-                  `Pango lineage (pangolin)`,
-                  'Pango lineage (Nextclade)',
-                  'Nextstrain clade',
-                ],
+                labels: [`Pango lineage (pangolin)`, 'Pango lineage (Nextclade)', 'Nextstrain clade'],
                 activeTabIndex: lineageDistributionIndex,
                 onNewTabSelect: newIndex => setLineageDistributionIndex(newIndex),
               }}
