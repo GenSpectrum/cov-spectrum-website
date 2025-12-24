@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import Header from './layout/base/Header';
 import { LoginWrapper } from './helpers/app-layout';
@@ -30,7 +30,6 @@ import {
   formatDateRangeSelector,
   isDefaultSubmissionDateRangeSelector,
 } from './data/DateRangeSelector';
-import { NewFocusPage } from './pages/NewFocusPage';
 import { useQuery } from './helpers/query-hook';
 import { defaultDateRange, defaultHost, defaultSamplingStrategy } from './data/default-selectors';
 import { useBaseLocation } from './helpers/use-base-location';
@@ -42,19 +41,16 @@ import { DefaultDataSourceChangeBanner } from './components/banners/DefaultDataS
 const isPreview = !!process.env.REACT_APP_IS_VERCEL_DEPLOYMENT;
 
 export const App = () => {
-  const [hideHeaderAndFooter, setHideHeaderAndFooter] = useState(false);
   const { width, ref } = useResizeDetector<HTMLDivElement>();
   const isSmallScreen = width !== undefined && width < 768;
 
   const { data: siloAvailability } = useQuery(checkSiloAvailability, []);
   const { data: lapisDataVersion } = useQuery(fetchLapisDataVersion, []);
 
-  const showFooter = !hideHeaderAndFooter;
-
   if (siloAvailability?.isAvailable === false) {
     return (
       <div className='w-full'>
-        {!hideHeaderAndFooter && <Header hideInternalLinks />}
+        <Header hideInternalLinks />
         <div className='text-center mt-8 max-w-lg m-auto'>
           <Alert variant={AlertVariant.DANGER}>
             Our database (LAPIS) is currently unavailable. Sorry for the inconvenience!
@@ -78,31 +74,21 @@ export const App = () => {
 
   return (
     <div className='w-full'>
-      {!hideHeaderAndFooter && (
-        <>
-          <DefaultDataSourceChangeBanner />
-          <Header />
-        </>
-      )}
+      <DefaultDataSourceChangeBanner />
+      <Header />
       <div ref={ref} className='w-full'>
-        <MainContent
-          isSmallScreen={isSmallScreen}
-          hideHeaderAndFooter={hideHeaderAndFooter}
-          setHideHeaderAndFooter={setHideHeaderAndFooter}
-        />
+        <MainContent isSmallScreen={isSmallScreen} />
       </div>
-      {showFooter && <Footer lapisDataVersion={lapisDataVersion} />}
+      <Footer lapisDataVersion={lapisDataVersion} />
     </div>
   );
 };
 
 type MainContentProps = {
   isSmallScreen: boolean;
-  hideHeaderAndFooter: boolean;
-  setHideHeaderAndFooter: (value: ((prevState: boolean) => boolean) | boolean) => void;
 };
 
-function MainContent({ isSmallScreen, hideHeaderAndFooter, setHideHeaderAndFooter }: MainContentProps) {
+function MainContent({ isSmallScreen }: MainContentProps) {
   const baseLocation = useBaseLocation();
   if (!baseLocation) {
     return <Loader />; // Just wait a slight bit. It should come very soon!
@@ -115,8 +101,6 @@ function MainContent({ isSmallScreen, hideHeaderAndFooter, setHideHeaderAndFoote
       <CovSpectrumRoutes
         baseLocation={baseLocation}
         isSmallScreen={isSmallScreen}
-        hideHeaderAndFooter={hideHeaderAndFooter}
-        setHideHeaderAndFooter={setHideHeaderAndFooter}
       />
     </>
   );
@@ -181,15 +165,11 @@ function AdvancedFiltersAlert() {
 type CovSpectrumRoutesProps = {
   baseLocation: string;
   isSmallScreen: boolean;
-  hideHeaderAndFooter: boolean;
-  setHideHeaderAndFooter: (value: ((prevState: boolean) => boolean) | boolean) => void;
 };
 
 function CovSpectrumRoutes({
   baseLocation,
   isSmallScreen,
-  hideHeaderAndFooter,
-  setHideHeaderAndFooter,
 }: CovSpectrumRoutesProps) {
   return (
     <Routes>
@@ -247,12 +227,6 @@ function CovSpectrumRoutes({
       <Route path='/collections' element={<CollectionOverviewPage />} />
       <Route path='/collections/add' element={<CollectionAddPage />} />
       <Route path='/collections/:collectionId' element={<CollectionSinglePage />} />
-      <Route
-        path='/focus'
-        element={
-          <NewFocusPage fullScreenMode={hideHeaderAndFooter} setFullScreenMode={setHideHeaderAndFooter} />
-        }
-      />
       <Route path='/about' element={<AboutPage />} />
       <Route path='/news/2025-12-23-removal-of-gisaid-data' element={<RemovalOfGisaidDataPage />} />
     </Routes>
