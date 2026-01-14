@@ -6,12 +6,6 @@ import React, { JSX } from 'react';
 import styled from 'styled-components';
 import Loader from '../components/Loader';
 
-export interface DeepRoute<Props> {
-  key: string;
-  title: string;
-  content: (props: Props) => JSX.Element;
-}
-
 const HeaderWrapper = styled.div`
   border-bottom: 1px solid #dee2e6;
   background: var(--light);

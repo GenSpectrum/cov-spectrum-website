@@ -244,20 +244,6 @@ export const getModelData = async (
   return getModelDataFromRequestData(data, config, signal);
 };
 
-export const getModelDataNew = async (
-  variantDateCounts: { date: UnifiedDay; count: number }[],
-  wholeDateCounts: { date: UnifiedDay; count: number }[],
-  config?: Chen2021FitnessRequestConfigPartial,
-  signal?: AbortSignal
-): Promise<{
-  response: Chen2021FitnessResponse | undefined;
-  request: Chen2021FitnessRequest;
-  t0: UnifiedDay;
-}> => {
-  const data = transformToRequestDataNew(variantDateCounts, wholeDateCounts);
-  return getModelDataFromRequestData(data, config, signal);
-};
-
 const getModelDataFromRequestData = async (
   data: { request: Chen2021FitnessRequestData; t0: UnifiedDay },
   config?: Chen2021FitnessRequestConfigPartial,

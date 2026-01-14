@@ -287,10 +287,6 @@ export class LocationService {
     return (await LocationService.data).covSpectrumToGisaid.get(covSpectrumName);
   }
 
-  static async fromGisaidName(gisaidName: string): Promise<string | undefined> {
-    return (await LocationService.data).gisaidToCovSpectrum.get(gisaidName);
-  }
-
   static async getGisaidToCovSpectrumNameMap(): Promise<ReadonlyMap<string, string>> {
     return (await LocationService.data).gisaidToCovSpectrum;
   }

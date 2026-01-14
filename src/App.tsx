@@ -1,9 +1,7 @@
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 import Header from './layout/base/Header';
-import { LoginWrapper } from './helpers/app-layout';
 import { AboutPage } from './pages/AboutPage';
-import { LoginPage } from './pages/LoginPage';
 import { useResizeDetector } from 'react-resize-detector';
 import { Alert, AlertVariant } from './helpers/ui';
 import { StoryOverviewPage } from './pages/StoryOverviewPage';
@@ -98,10 +96,7 @@ function MainContent({ isSmallScreen }: MainContentProps) {
     <>
       {isPreview && <PreviewAlert />}
       <AdvancedFiltersAlert />
-      <CovSpectrumRoutes
-        baseLocation={baseLocation}
-        isSmallScreen={isSmallScreen}
-      />
+      <CovSpectrumRoutes baseLocation={baseLocation} isSmallScreen={isSmallScreen} />
     </>
   );
 }
@@ -167,24 +162,13 @@ type CovSpectrumRoutesProps = {
   isSmallScreen: boolean;
 };
 
-function CovSpectrumRoutes({
-  baseLocation,
-  isSmallScreen,
-}: CovSpectrumRoutesProps) {
+function CovSpectrumRoutes({ baseLocation, isSmallScreen }: CovSpectrumRoutesProps) {
   return (
     <Routes>
       <Route
         path='/'
         element={
           <Navigate replace to={`/explore/${baseLocation}/${defaultSamplingStrategy}/${defaultDateRange}`} />
-        }
-      />
-      <Route
-        path='/login'
-        element={
-          <LoginWrapper>
-            <LoginPage />
-          </LoginWrapper>
         }
       />
       <Route

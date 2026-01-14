@@ -378,7 +378,7 @@ const ProportionBox = ({
 }: ProportionBoxProps) => {
   const { maxValue, minValue, maxColor, minColor } = colorScale;
   const d3ColorScale = scaleLinear<string, string>().domain([minValue, maxValue]).range([minColor, maxColor]);
-  let backgroundColor = '';
+  let backgroundColor: string;
   if (isNaN(proportion)) {
     backgroundColor = 'lightgrey';
   } else if (proportion === 0) {
