@@ -17,13 +17,3 @@ export function getPangoLineageIfPure(selector: LocationDateVariantSelector): st
   }
   return selector.variant.pangoLineage;
 }
-
-/**
- * If the variant is only defined by a set of mutations, return the mutations; otherwise undefined.
- */
-export function getAAMutationsIfPure(selector: LocationDateVariantSelector): string[] | undefined {
-  if (!selector.variant || !variantIsOnlyDefinedBy(selector.variant, 'aaMutations')) {
-    return undefined;
-  }
-  return selector.variant.aaMutations;
-}

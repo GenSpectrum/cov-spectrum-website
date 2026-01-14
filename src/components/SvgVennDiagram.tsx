@@ -510,7 +510,7 @@ export const SvgVennDiagram = ({ selectors, domain, numberOfvariants }: Props) =
   );
 };
 
-export function MutationListFormat2(mutations: string[], domain: SequenceType): JSX.Element {
+function MutationListFormat2(mutations: string[], domain: SequenceType): JSX.Element {
   let sorted: string[] = domain === 'aa' ? sortAAMutationList(mutations) : sortNucMutationList(mutations);
   return (
     <>
