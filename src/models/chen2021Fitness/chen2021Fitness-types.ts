@@ -67,7 +67,6 @@ export const Chen2021FitnessResponseRawSchema = zod.object({
 });
 
 export type ValueWithCI = zod.infer<typeof ValueWithCISchema>;
-export type Chen2021FitnessResponseRaw = zod.infer<typeof Chen2021FitnessResponseRawSchema>;
 export type Chen2021FitnessResponse = {
   params: {
     a: ValueWithCI;
@@ -87,4 +86,3 @@ export type Chen2021FitnessResponse = {
     ciUpper: number[];
   };
 };
-export type ChangePointResult = zod.infer<typeof ChangePointResultSchema>;

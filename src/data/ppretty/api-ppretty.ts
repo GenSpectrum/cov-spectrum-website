@@ -1,12 +1,11 @@
 import { PprettyFileFormat, PprettyRequest } from './ppretty-request';
-import { sequenceDataSource } from '../../helpers/sequence-data-source';
 
 const HOST = process.env.REACT_APP_PPRETTY_HOST;
 const saveEndpoint = HOST + '/save';
 const getEndpoint = HOST + '/get';
 
 export const getPlotUrl = async (req: PprettyRequest, format: PprettyFileFormat): Promise<string> => {
-  req.config.dataSource = sequenceDataSource === 'gisaid' ? 'GISAID' : 'GenBank';
+  req.config.dataSource = 'GenBank';
 
   const requestStr = JSON.stringify(req);
   const requestHash = await hashRequest(requestStr);

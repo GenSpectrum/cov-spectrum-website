@@ -22,12 +22,6 @@ export function decodeAAMutation(mutation: string): DecodedAAMutation {
   };
 }
 
-export function decodedAAMutationToString(mutation: DecodedAAMutation) {
-  return (
-    mutation.gene + ':' + (mutation.originalBase || '') + mutation.position + (mutation.mutatedBase || '')
-  );
-}
-
 /**
  * A mutation list should be first sorted by the protein, then by the position within the protein.
  */

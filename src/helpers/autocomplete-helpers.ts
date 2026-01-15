@@ -35,34 +35,6 @@ const nsps: NspMap = {
   nsp16: 6799,
 };
 
-//  gets the equivalents of the orf1a/b notation for the autocomplete options
-export function getEquivalent(value: string, notation: 'nsp' | 'orf1ab') {
-  let mutationArray = value.split(':');
-  if (mutationArray[0] === 'ORF1b' || mutationArray[0] === 'ORF1a') {
-    // get the letters
-    let letterBefore = mutationArray[1].charAt(0);
-    let letterAfter = mutationArray[1].charAt(mutationArray[1].length - 1);
-    // calculate combined codon and nsp codeone: https://github.com/theosanderson/Codon2Nucleotide/blob/main/src/App.js
-    let orf1aorbcodon: number = parseInt(mutationArray[1].slice(1, -1));
-    let combinedCodon: number = orf1aorbcodon + (mutationArray[0] === 'ORF1b' ? 4401 : 0);
-    let nsp: string = 'nsp1';
-    let nspCodon: number = combinedCodon - nsps[nsp] + 1;
-    for (const [key, value] of Object.entries(nsps)) {
-      if (combinedCodon > value && combinedCodon - value < combinedCodon - nsps[nsp]) {
-        nsp = key;
-        nspCodon = combinedCodon - value + 1;
-      }
-    }
-    if (notation === 'nsp') {
-      return `${nsp}:${letterBefore}${nspCodon}${letterAfter}`;
-    } else if (notation === 'orf1ab') {
-      return `ORF1ab:${letterBefore}:${combinedCodon}${letterAfter}`;
-    } else {
-      return value;
-    }
-  }
-}
-
 // gets the translation of the entered nsp or orf1ab value
 export const translateMutation = (oldValue: string) => {
   let mutationArray = oldValue.split(':');

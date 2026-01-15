@@ -1,5 +1,4 @@
 import { NextcladeDatasetInfo } from '../../data/NextcladeDatasetInfo';
-import { sequenceDataSource } from '../../helpers/sequence-data-source';
 import { ExternalLink } from '../../components/ExternalLink';
 import React from 'react';
 import styled from 'styled-components';
@@ -27,12 +26,6 @@ export function Footer({
     <FooterStyle className='text-center'>
       {lapisUpdateFormattedString && <div>The sequence data was updated: {lapisUpdateFormattedString}</div>}
       {nextcladeDatasetInfo?.tag && <div>Nextclade dataset version: {nextcladeDatasetInfo.tag}</div>}
-      {sequenceDataSource === 'gisaid' && (
-        <div>
-          Data obtained from GISAID that is used in this Web Application remain subject to GISAID’s{' '}
-          <ExternalLink url='http://gisaid.org/daa'>Terms and Conditions</ExternalLink>.
-        </div>
-      )}
       <div className='flex flex-wrap justify-center items-center gap-x-8 gap-y-4 my-4 mt-8 px-2'>
         <ExternalLink url='https://ethz.ch'>
           <img className='h-5' alt='ETH Zurich' src='/img/ethz.png' />

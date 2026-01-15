@@ -27,7 +27,6 @@ import { addHostSelectorToUrlSearchParams } from './HostSelector';
 import { addQcSelectorToUrlSearchParams } from './QcSelector';
 import { HostCountSampleEntry } from './sample/HostCountSampleEntry';
 import { InsertionCountEntry } from './InsertionCountEntry';
-import { NextcladeDatasetInfo } from './NextcladeDatasetInfo';
 import { mapFilterToLapisV2 } from './api-lapis-v2';
 import { addVariantSelectorToUrlSearchParamsForApi } from './VariantSelector';
 import { MRCAResponse } from './phylo/MRCAResponse';
@@ -174,19 +173,6 @@ export async function fetchLapisDataVersion(signal?: AbortSignal): Promise<numbe
   }
   const info = (await response.json()) as LapisInformation;
   return Number(info.dataVersion);
-}
-
-export async function fetchNextcladeDatasetInfo(signal?: AbortSignal): Promise<NextcladeDatasetInfo> {
-  let url = '/aggregated?fields=nextcladeDatasetVersion';
-  if (ACCESS_KEY) {
-    url += '&accessKey=' + (await _getCurrentAccessKey());
-  }
-  const response = await get(url, signal, { skipMaintenanceCheck: true });
-  const nexcladeDatasetInfo = (await response.json()) as LapisResponse<{ nextcladeDatasetVersion: string }[]>;
-  return {
-    name: 'nextclade-dataset',
-    tag: nexcladeDatasetInfo.data[0].nextcladeDatasetVersion,
-  };
 }
 
 export async function fetchAllHosts(): Promise<string[]> {

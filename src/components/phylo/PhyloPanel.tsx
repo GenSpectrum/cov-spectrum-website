@@ -74,7 +74,7 @@ export const PhyloPanel = ({ ldvsSelector, ldsSelector, variantSampleSet }: Phyl
           },
         };
 
-  let treeElement = <></>;
+  let treeElement: React.JSX.Element;
   if (numberTipsOfTree === 0) {
     treeElement = (
       <div className='flex-1'>The tree does not contain any sequence of the selected variant.</div>

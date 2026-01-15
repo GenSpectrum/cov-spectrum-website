@@ -1,10 +1,10 @@
 /**
  * A very basic function that returns three ticks: the first date, the last date, and the date that lies in the middle.
  *
- * @param data: A list that is sorted by date ascendantly
+ * @param data A list that is sorted by date ascendantly
  */
 export function getTicks(data: { date: Date }[]): number[] {
-  let ticksDates: Date[] = [];
+  let ticksDates: Date[];
   if (data.length === 0) {
     ticksDates = [];
   } else if (data.length === 1) {

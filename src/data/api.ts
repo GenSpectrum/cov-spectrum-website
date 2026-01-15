@@ -4,7 +4,6 @@ import { addLocationSelectorToUrlSearchParams } from './LocationSelector';
 import { addDateRangeSelectorToUrlSearchParams } from './DateRangeSelector';
 import { PangoLineageAlias } from './PangoLineageAlias';
 import { CountryMapping } from './CountryMapping';
-import { AccountService } from '../services/AccountService';
 import { ReferenceGenomeInfo } from './ReferenceGenomeInfo';
 import { UserCountry } from './UserCountry';
 import { AddCollectionResponse, Collection } from './Collection';
@@ -17,9 +16,6 @@ const getBaseHeaders = (): Headers => {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
   };
-  if (AccountService.isLoggedIn()) {
-    headers['Authorization'] = 'Bearer ' + AccountService.getJwt();
-  }
   return new Headers(headers);
 };
 
