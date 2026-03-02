@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import React from 'react';
+import { ExternalLink } from '../ExternalLink';
 
 export const DefaultDataSourceChangeBanner = () => {
   return (
@@ -10,6 +11,9 @@ export const DefaultDataSourceChangeBanner = () => {
         here
       </Link>
       .
+      <br />
+      <b>Update</b> (2 March 2026): responding to a recent statement by GISAID, we published a joint response{' '}
+      <ExternalLink url='https://github.com/andersen-lab/2026_gisaid_response'>here</ExternalLink>.
     </div>
   );
 };
