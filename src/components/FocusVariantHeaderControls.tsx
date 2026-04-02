@@ -36,6 +36,8 @@ const StyledMenu = styled((props: MenuProps) => (
     {...props}
   />
 ))(({ theme }) => ({
+  // The doubled selector and !important are needed to override a global
+  // `box-shadow: none !important` rule on .MuiPaper-root.MuiPaper-rounded.MuiPaper-elevation
   '& .MuiPaper-root.MuiPaper-root': {
     'borderRadius': 6,
     'marginTop': theme.spacing(1),
