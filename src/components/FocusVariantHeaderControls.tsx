@@ -15,7 +15,6 @@ import { LapisSelector } from '../data/LapisSelector';
 import { ExternalLink, ExternalLinkAsync } from './ExternalLink';
 
 // mui stuff
-import Button1 from '@mui/material/Button';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import { alpha, styled } from '@mui/material/styles';
@@ -26,7 +25,6 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
-    elevation={0}
     anchorOrigin={{
       vertical: 'bottom',
       horizontal: 'right',
@@ -38,13 +36,13 @@ const StyledMenu = styled((props: MenuProps) => (
     {...props}
   />
 ))(({ theme }) => ({
-  '& .MuiPaper-root': {
+  '& .MuiPaper-root.MuiPaper-root': {
     'borderRadius': 6,
     'marginTop': theme.spacing(1),
     'minWidth': 180,
     'color': theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
     'boxShadow':
-      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px !important',
     '& .MuiMenu-list': {
       padding: '4px 0',
     },
@@ -151,7 +149,7 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
           </MenuItem>
         </StyledMenu>
 
-        <Button1
+        <Button
           id='basic-button'
           aria-controls={open ? 'basic-menu' : undefined}
           aria-haspopup='true'
@@ -159,8 +157,8 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
           onClick={handleClick}
         >
           Other websites
-        </Button1>
-        <Menu
+        </Button>
+        <StyledMenu
           disableScrollLock={true}
           id='basic-menu'
           anchorEl={anchorEl}
@@ -178,7 +176,7 @@ export const FocusVariantHeaderControls = React.memo(({ selector }: Props): JSX.
                 </MenuItem>
               )
           )}
-        </Menu>
+        </StyledMenu>
       </div>
     </>
   );
