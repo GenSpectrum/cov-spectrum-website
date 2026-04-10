@@ -13,15 +13,11 @@ jobs:
     env:
       REACT_APP_IS_TESTING: true
       REACT_APP_SERVER_HOST: https://cov-spectrum.org/api/v2
-    strategy:
-      matrix:
-        node-version: [18.x]
     steps:
       - uses: actions/checkout@v6
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 24.x
       - uses: actions/cache@v5
         with:
           path: ~/.npm

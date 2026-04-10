@@ -1,6 +1,6 @@
 ## Build app
 
-FROM node:18-buster AS builder
+FROM node:24-bookworm AS builder
 WORKDIR /build
 
 COPY package.json .
