@@ -7,7 +7,7 @@ import { VariantDivisionDistributionChart } from '../VariantDivisionDistribution
 import { renderAndWaitToMatchSnapshot } from '../../helpers/testing/renderAndWaitToMatchSnapshot';
 
 window.ResizeObserver = ResizeObserver;
-jest.mock('recharts');
+vi.mock('recharts');
 
 describe('<VariantDivisionDistributionChart>', () => {
   it('dataset0 renders correctly', async () => {
