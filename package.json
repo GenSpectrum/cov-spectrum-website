@@ -48,7 +48,7 @@
     "react-plotly.js": "^2.6.0",
     "react-resize-detector": "^12.1.0",
     "react-reverse-portal": "^2.3.0",
-    "react-router": "^7.7.1",
+    "react-router": "^7.13.2",
     "react-scripts": "^5.0.1",
     "react-select": "^5.10.2",
     "react-test-renderer": "^19.1.0",
