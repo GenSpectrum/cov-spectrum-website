@@ -86,8 +86,8 @@ export const AboutPage = () => {
           Nextstrain
         </ExternalLink>
         . The data is also available through an API and can be used for other projects (
-        <ExternalLink url='https://lapis-docs.readthedocs.io/'>API documentation</ExternalLink>). Until 23
-        December 2025, we also provided an instance with GISAD data (
+        <ExternalLink url='https://lapis.cov-spectrum.org/open/v2/docs/'>API documentation</ExternalLink>).
+        Until 23 December 2025, we also provided an instance with GISAD data (
         <Link to='/news/2025-12-23-removal-of-gisaid-data' className='text-active-secondary'>
           see why it was removed
         </Link>
