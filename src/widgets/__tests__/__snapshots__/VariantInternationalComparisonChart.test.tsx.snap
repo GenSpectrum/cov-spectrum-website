@@ -1,19 +1,19 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = `
+exports[`<VariantInternationalComparisonChart> > dataset0 renders correctly 1`] = `
 <div
   className="relative h-full"
   ref={
-    Object {
+    {
       "current": null,
     }
   }
 >
   <div
-    className="sc-bRKDuR fSLEEj"
+    className="sc-bdDsCe lagCuH"
   >
     <div
-      className="sc-ggWZvA gQrGZn"
+      className="sc-hKVpXn caQzNd"
     >
       <div
         className="mt-2 mb-4 w-40"
@@ -222,7 +222,7 @@ exports[`<VariantInternationalComparisonChart> dataset0 renders correctly 1`] = 
                 role="combobox"
                 spellCheck="false"
                 style={
-                  Object {
+                  {
                     "background": 0,
                     "border": 0,
                     "color": "inherit",

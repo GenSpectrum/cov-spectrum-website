@@ -9,12 +9,12 @@ import dayjs from 'dayjs';
 import React from 'react';
 
 window.ResizeObserver = ResizeObserver;
-jest.mock('react-resize-detector');
-const onChangeDateMock = jest.fn();
+vi.mock('react-resize-detector');
+const onChangeDateMock = vi.fn();
 describe('DateRangePicker', () => {
   beforeEach(() => {
     onChangeDateMock.mockReset();
-    (useResizeDetector as jest.Mock).mockReturnValue({ width: 800, height: 400 });
+    (useResizeDetector as vi.Mock).mockReturnValue({ width: 800, height: 400 });
   });
 
   function renderDateRangePicker(dateRange?: DateRange) {
