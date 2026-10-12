@@ -64,4 +64,14 @@ describe('<VariantTimeDistributionLineChartInner>', () => {
       '"2022-01-11",0,"0.0000"',
     ]);
   });
+
+  it('shows zero samples in absolute mode for a 7-day window without sequences', async () => {
+    const lateVariantData = data.map((entry, i) => ({ ...entry, variantCount: i === 6 ? 7 : 0 }));
+    render(<VariantTimeDistributionLineChartInner data={lateVariantData} />);
+
+    await userEvent.click(screen.getByText('Absolute'));
+
+    expect(screen.getByText('Samples')).toBeInTheDocument();
+    expect(screen.getByText('0')).toBeInTheDocument();
+  });
 });

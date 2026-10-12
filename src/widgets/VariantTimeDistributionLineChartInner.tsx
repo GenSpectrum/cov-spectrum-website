@@ -103,7 +103,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
             count: dailyVariantCount,
             countSevenDayAverage: variantCount,
             // If we don't have data, we carry over the last available value as our "best guess". The CI is from 0 to 1.
-            proportion: lastProportion,
+            proportion: absoluteNumbers ? variantCount : lastProportion,
             proportionCI: [0, 1],
             log: lastProportion !== 0 ? lastProportion : undefined,
             logCI: [0.001, 1],
