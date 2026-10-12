@@ -30,6 +30,8 @@ export type VariantTimeDistributionLineChartProps = {
 
 type PlotEntry = {
   date: Date;
+  count: number;
+  countSevenDayAverage: number;
   proportion: number;
   proportionCI: [number, number];
   log?: number | undefined;
@@ -59,7 +61,7 @@ export const VariantTimeDistributionLineChartInner = React.memo(
       yMax: number;
     } = useMemo(() => {
       const sortedData = [...data].sort((a, b) => (a.date.dayjs.isAfter(b.date.dayjs) ? 1 : -1));
-      const smoothedData: VariantTimeDistributionLineChartEntry[] = [];
+      const smoothedData: (VariantTimeDistributionLineChartEntry & { dailyVariantCount: number })[] = [];
       for (let i = 3; i < sortedData.length - 3; i++) {
         const window = [
           sortedData[i - 3],
@@ -75,16 +77,19 @@ export const VariantTimeDistributionLineChartInner = React.memo(
           date: sortedData[i].date,
           sequenced: window.map(d => d.sequenced).reduce(sum) / 7,
           variantCount: window.map(d => d.variantCount).reduce(sum) / 7,
+          dailyVariantCount: sortedData[i].variantCount,
         });
       }
 
       const plotData: PlotEntry[] = [];
       let lastProportion = 0;
-      for (let { date, sequenced, variantCount } of smoothedData) {
+      for (let { date, sequenced, variantCount, dailyVariantCount } of smoothedData) {
         if (date.dayjs.isAfter(dayjs())) {
           // We don't show values for days after today
           plotData.push({
             date: date.dayjs.toDate(),
+            count: NaN,
+            countSevenDayAverage: NaN,
             proportion: NaN,
             proportionCI: [NaN, NaN],
             log: NaN,
@@ -95,6 +100,8 @@ export const VariantTimeDistributionLineChartInner = React.memo(
         if (sequenced === 0) {
           plotData.push({
             date: date.dayjs.toDate(),
+            count: dailyVariantCount,
+            countSevenDayAverage: variantCount,
             // If we don't have data, we carry over the last available value as our "best guess". The CI is from 0 to 1.
             proportion: lastProportion,
             proportionCI: [0, 1],
@@ -108,6 +115,8 @@ export const VariantTimeDistributionLineChartInner = React.memo(
         // Math.max(..., 0) compensates for numerical inaccuracies which can lead to negative values.
         let item: PlotEntry = {
           date: date.dayjs.toDate(),
+          count: dailyVariantCount,
+          countSevenDayAverage: variantCount,
           proportion: absoluteNumbers ? variantCount : Math.max(variantCount / sequenced, 0),
           proportionCI: [Math.max(wilsonInterval[0], 0), Math.max(wilsonInterval[1], 0)],
           // select only those values which are greater than zero for the log scale
@@ -148,12 +157,18 @@ export const VariantTimeDistributionLineChartInner = React.memo(
     }, [plotData]);
 
     const { csvData, pprettyRequest } = useMemo(() => {
-      const csvData = plotData.map(({ date, proportion, proportionCI }) => ({
-        date: dayjs(date).format('YYYY-MM-DD'),
-        proportion: proportion.toFixed(4),
-        proportionCILow: proportionCI[0].toFixed(4),
-        proportionCIHigh: proportionCI[1].toFixed(4),
-      }));
+      const csvData = absoluteNumbers
+        ? plotData.map(({ date, count, countSevenDayAverage }) => ({
+            date: dayjs(date).format('YYYY-MM-DD'),
+            count: count,
+            countSevenDayAverage: countSevenDayAverage.toFixed(4),
+          }))
+        : plotData.map(({ date, proportion, proportionCI }) => ({
+            date: dayjs(date).format('YYYY-MM-DD'),
+            proportion: proportion.toFixed(4),
+            proportionCILow: proportionCI[0].toFixed(4),
+            proportionCIHigh: proportionCI[1].toFixed(4),
+          }));
       const pprettyRequest: PprettyRequest | undefined = absoluteNumbers
         ? undefined
         : {
