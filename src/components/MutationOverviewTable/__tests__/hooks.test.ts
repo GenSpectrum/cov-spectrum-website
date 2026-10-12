@@ -4,9 +4,9 @@ import { SpecialDateRangeSelector } from '../../../data/DateRangeSelector';
 import { MutationProportionData } from '../../../data/MutationProportionDataset';
 import { LapisSelector } from '../../../data/LapisSelector';
 
-jest.mock('../../../data/api');
+vi.mock('../../../data/api');
 
-const mutationDataFromApiMock: jest.Mock<ReturnType<typeof MutationProportionData.fromApi>> = jest.fn();
+const mutationDataFromApiMock: vi.Mock<ReturnType<typeof MutationProportionData.fromApi>> = vi.fn();
 MutationProportionData.fromApi = mutationDataFromApiMock;
 
 const variants = [
@@ -30,7 +30,7 @@ function mutationDataWithPercentageProportions(proportions: number[]) {
 }
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 const testCasesForMutationProportions: [string, number[], [string, string, string, string]][] = [
@@ -56,7 +56,7 @@ describe('useMutationTableData', () => {
   test.each(testCasesForMutationProportions)(
     'should return data in %s for proportions %p',
     async (_, proportions, expectedColumns) => {
-      mutationDataFromApiMock.mockImplementation(selector =>
+      mutationDataFromApiMock.mockImplementation((selector: LapisSelector) =>
         Promise.resolve({
           selector,
           payload: mutationDataWithPercentageProportions(proportions),
@@ -81,7 +81,7 @@ describe('useMutationTableData', () => {
   );
 
   test('should return multiple rows when several variants are given', async () => {
-    mutationDataFromApiMock.mockImplementation(selector =>
+    mutationDataFromApiMock.mockImplementation((selector: LapisSelector) =>
       Promise.resolve({
         selector,
         payload: mutationDataWithPercentageProportions([42]),

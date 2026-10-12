@@ -8,20 +8,20 @@ import { useBaselineMutationTableData, useMutationTableData } from '../hooks';
 import userEvent from '@testing-library/user-event';
 import { getLocationDisplay, LocationDisplay } from '../../../helpers/testing/LocationDisplay';
 
-jest.mock('../../../data/api');
-jest.mock('../../../data/api-lapis');
+vi.mock('../../../data/api');
+vi.mock('../../../data/api-lapis');
 
-jest.mock('../hooks');
-const useMutationTableDataMock = useMutationTableData as jest.Mock<ReturnType<typeof useMutationTableData>>;
-const useBaselineMutationTableDataMock = useBaselineMutationTableData as jest.Mock<
+vi.mock('../hooks');
+const useMutationTableDataMock = useMutationTableData as vi.Mock<ReturnType<typeof useMutationTableData>>;
+const useBaselineMutationTableDataMock = useBaselineMutationTableData as vi.Mock<
   ReturnType<typeof useBaselineMutationTableData>
 >;
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
-window.HTMLElement.prototype.scrollIntoView = jest.fn();
+window.HTMLElement.prototype.scrollIntoView = vi.fn();
 
 const dateRangeSelector = new SpecialDateRangeSelector('Past6M');
 const mutationTypeAa = 'aa';

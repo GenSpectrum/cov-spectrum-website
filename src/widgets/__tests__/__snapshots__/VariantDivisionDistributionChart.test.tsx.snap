@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
+exports[`<VariantDivisionDistributionChart> > dataset0 renders correctly 1`] = `
 <div
   className="relative h-full"
   ref={
-    Object {
+    {
       "current": null,
     }
   }
@@ -28,78 +28,78 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
       >
         <img
           alt="color scale legend"
-          src="leg2.png"
+          src="/src/maps/leg2.png"
         />
         <div
           className="***masked*** pd-1 md:m-2"
           data={
-            Array [
-              Object {
+            [
+              {
                 "count": 78,
                 "division": "North Rhine Westphalia",
                 "prevalence": 0.16844469399213924,
               },
-              Object {
+              {
                 "count": 7,
                 "division": "Saxony",
                 "prevalence": 0.05544993662864385,
               },
-              Object {
+              {
                 "count": 34,
                 "division": "Hesse",
                 "prevalence": 0.4649254751811842,
               },
-              Object {
+              {
                 "count": 13,
                 "division": "Niedersachsen",
                 "prevalence": 0.2896613190730838,
               },
-              Object {
+              {
                 "count": 24,
                 "division": "Baden-Wuerttemberg",
                 "prevalence": 0.07543374402816193,
               },
-              Object {
+              {
                 "count": 59,
                 "division": "Bavaria",
                 "prevalence": 0.2789730010875219,
               },
-              Object {
+              {
                 "count": 12,
                 "division": "Rheinland-Pfalz",
                 "prevalence": 0.22927015666794037,
               },
-              Object {
+              {
                 "count": 2,
                 "division": "Saarland",
                 "prevalence": 0.09229349330872173,
               },
-              Object {
+              {
                 "count": 23,
                 "division": "Berlin",
                 "prevalence": 0.2656809518308883,
               },
-              Object {
+              {
                 "count": 12,
                 "division": "Hamburg",
                 "prevalence": 0.1754642491592338,
               },
-              Object {
+              {
                 "count": 30,
                 "division": "Schleswig-Holstein",
                 "prevalence": 0.2996703626011388,
               },
-              Object {
+              {
                 "count": 1,
                 "division": "Thuringia",
                 "prevalence": 0.03367003367003367,
               },
-              Object {
+              {
                 "count": 4,
                 "division": "Brandenburg",
                 "prevalence": 0.20931449502878074,
               },
-              Object {
+              {
                 "count": 1,
                 "division": "Saxony-Anhalt",
                 "prevalence": 0.03263707571801567,
@@ -273,7 +273,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
             <div
               className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
               style={
-                Object {
+                {
                   "color": "#1F407A",
                 }
               }
@@ -316,7 +316,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
                   stroke="currentColor"
                   strokeWidth="0"
                   style={
-                    Object {
+                    {
                       "color": undefined,
                     }
                   }
@@ -345,7 +345,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
             <div
               className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
               style={
-                Object {
+                {
                   "color": "#7f8c8d",
                 }
               }
@@ -388,7 +388,7 @@ exports[`<VariantDivisionDistributionChart> dataset0 renders correctly 1`] = `
                   stroke="currentColor"
                   strokeWidth="0"
                   style={
-                    Object {
+                    {
                       "color": undefined,
                     }
                   }

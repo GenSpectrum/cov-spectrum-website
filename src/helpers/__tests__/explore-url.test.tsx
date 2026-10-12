@@ -9,7 +9,7 @@ import { SamplingStrategy } from '../../data/SamplingStrategy';
 import { AnalysisMode } from '../../data/AnalysisMode';
 import { getLocationDisplay, LocationDisplay } from '../testing/LocationDisplay';
 
-jest.mock('../../data/api');
+vi.mock('../../data/api');
 
 describe('useExploreUrl', () => {
   test.each([

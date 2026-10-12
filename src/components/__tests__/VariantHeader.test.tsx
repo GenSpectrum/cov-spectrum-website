@@ -3,11 +3,11 @@ import { VariantHeader } from '../VariantHeader';
 import { useQuery } from '../../helpers/query-hook';
 import { usePangoLineageFullName } from '../../services/pangoLineageAlias';
 
-jest.mock('../../services/pangoLineageAlias');
-const usePangoLineageFullNameMock = usePangoLineageFullName as jest.Mock;
+vi.mock('../../services/pangoLineageAlias');
+const usePangoLineageFullNameMock = usePangoLineageFullName as vi.Mock;
 
-jest.mock('../../helpers/query-hook');
-const useQueryMock = useQuery as jest.Mock;
+vi.mock('../../helpers/query-hook');
+const useQueryMock = useQuery as vi.Mock;
 
 describe('VariantHeader', () => {
   beforeEach(() => {

@@ -83,7 +83,7 @@ const textBaseProperties = {
   y: 0,
   dx: 0,
   textAnchor: 'middle',
-};
+} as const;
 
 const hasSameValue = (prev: TimeTickProps, next: TimeTickProps): boolean => {
   return prev.currentValue === next.currentValue;
