@@ -156,7 +156,7 @@
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-unused-imports": "^2.0.0",
     "jest-canvas-mock": "^2.5.2",
-    "postcss": "^8.4.38",
+    "postcss": "^8.5.10",
     "prettier": "^3.3.3",
     "puppeteer": "^23.4.1",
     "resize-observer-polyfill": "^1.5.1",
