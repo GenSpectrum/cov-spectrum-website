@@ -7,67 +7,67 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^6.5.0",
     "@mui/material": "^6.5.0",
-    "@mui/x-data-grid": "^7.29.8",
+    "@mui/x-data-grid": "^7.29.13",
     "@mui/x-date-pickers": "^7.29.4",
-    "@testing-library/jest-dom": "^6.6.3",
-    "@testing-library/react": "^16.3.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
-    "@types/bootstrap": "^5.2.6",
-    "@types/chroma-js": "^2.1.4",
+    "@types/bootstrap": "^5.2.10",
+    "@types/chroma-js": "^2.4.5",
     "@types/d3": "^7.4.3",
-    "@types/downloadjs": "^1.4.3",
-    "@types/jest": "^30.0.0",
-    "@types/json2csv": "^5.0.3",
-    "@types/node": "^24.0.0",
-    "@types/plotly.js": "^2.33.3",
-    "@types/react": "^19.1.8",
+    "@types/downloadjs": "^1.4.6",
+    "@types/json2csv": "^5.0.7",
+    "@types/node": "^24.12.4",
+    "@types/plotly.js": "^2.35.14",
+    "@types/react": "^19.2.15",
     "@types/react-test-renderer": "^19.1.0",
-    "bootstrap": "^5.2.3",
-    "chroma-js": "^2.4.2",
+    "bootstrap": "^5.3.8",
+    "chroma-js": "^2.6.0",
     "d3-scale": "^4.0.2",
     "d3-scale-chromatic": "^3.1.0",
     "date-fns": "^3.6.0",
-    "dayjs": "^1.11.20",
+    "dayjs": "^1.11.21",
     "downloadjs": "^1.4.7",
     "json2csv": "^5.0.7",
     "jszip": "^3.10.1",
-    "plotly.js": "^2.35.0",
-    "react": "^19.1.0",
+    "plotly.js": "^2.35.3",
+    "react": "^19.2.6",
     "react-async": "^10.0.1",
     "react-bootstrap": "^2.10.10",
-    "react-colorful": "^5.6.1",
+    "react-colorful": "^5.7.0",
     "react-dnd": "^16.0.1",
     "react-dnd-html5-backend": "^16.0.1",
     "react-dnd-multi-backend": "^9.0.0",
     "react-dnd-preview": "^9.0.0",
     "react-dnd-test-backend": "^16.0.1",
     "react-dnd-touch-backend": "^16.0.1",
-    "react-dom": "^19.1.0",
-    "react-error-boundary": "^6.0.0",
+    "react-dom": "^19.2.6",
+    "react-error-boundary": "^6.1.2",
     "react-icons": "~5.4.0",
     "react-plotly.js": "^2.6.0",
-    "react-resize-detector": "^12.1.0",
+    "react-resize-detector": "^12.3.0",
     "react-reverse-portal": "^2.3.0",
-    "react-router": "^7.7.1",
-    "react-scripts": "^5.0.1",
+    "react-router": "^7.16.0",
     "react-select": "^5.10.2",
-    "react-test-renderer": "^19.1.0",
+    "react-test-renderer": "^19.2.6",
     "recharts": "^2.15.4",
-    "styled-components": "^6.1.19",
-    "taxonium-component": "^2.1.11",
+    "styled-components": "^6.4.2",
+    "taxonium-component": "^2.1.24",
     "typescript": "^4.9.5",
-    "zod": "^3.22.4"
+    "zod": "^3.25.76"
   },
   "overrides": {
+    "@types/d3-dispatch": "3.0.6",
     "d3-color": "^3.1.0",
     "svgo": "^3.0.2",
     "color-space": "2.0.0"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "cross-env REACT_APP_IS_TESTING=true react-scripts test",
-    "eject": "react-scripts eject",
+    "start": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "cross-env REACT_APP_IS_TESTING=true NODE_OPTIONS=--localstorage-file=/tmp/cov-spectrum-vitest-localstorage vitest run",
+    "test:e2e:live": "playwright test",
     "format": "prettier --write . && npx eslint . --fix",
     "check-format": "prettier --check .",
     "check-types": "tsc --noEmit"
@@ -95,46 +95,6 @@
       "testing-library/no-unnecessary-act": "off"
     }
   },
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx,ts,tsx}",
-      "!src/**/*.d.ts",
-      "!src/index.tsx",
-      "!src/serviceWorker.ts",
-      "!src/reportWebVitals.ts"
-    ],
-    "coveragePathIgnorePatterns": [
-      "./src/*/*.types.{ts,tsx}",
-      "./src/index.tsx",
-      "./src/serviceWorker.ts"
-    ],
-    "coverageReporters": [
-      "json",
-      "lcov",
-      "text-summary",
-      "clover"
-    ],
-    "coverageThreshold": {
-      "global": {
-        "statements": 95,
-        "branches": 95,
-        "lines": 95,
-        "functions": 95
-      }
-    },
-    "transform": {
-      "^.+\\.(js|jsx|ts|tsx)$": "<rootDir>/node_modules/ts-jest"
-    },
-    "transformIgnorePatterns": [
-      "node_modules/(?!@ngrx|(?!deck.gl)|recharts)"
-    ],
-    "moduleNameMapper": {
-      "^react-native$": "react-native-web",
-      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy",
-      "(lib-vendor/.*)": "victory-vendor/$1",
-      "src/(.*)$": "<rootDir>/src/$1"
-    }
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -148,19 +108,24 @@
     ]
   },
   "devDependencies": {
-    "@types/react-dom": "^19.1.6",
-    "@types/react-plotly.js": "^2.6.0",
+    "@playwright/test": "^1.60.0",
+    "@types/react-dom": "^19.2.3",
+    "@types/react-plotly.js": "^2.6.4",
     "@types/react-router-hash-link": "^2.4.9",
+    "@vitejs/plugin-react": "^6.0.2",
+    "autoprefixer": "^10.5.0",
     "cross-env": "^7.0.3",
-    "eslint": "^8.34.0",
+    "eslint": "^8.57.1",
     "eslint-config-react-app": "^7.0.1",
     "eslint-plugin-unused-imports": "^2.0.0",
     "jest-canvas-mock": "^2.5.2",
-    "postcss": "^8.4.38",
-    "prettier": "^3.3.3",
-    "puppeteer": "^23.4.1",
+    "jsdom": "^29.1.1",
+    "postcss": "^8.5.15",
+    "prettier": "^3.8.3",
+    "puppeteer": "^23.11.1",
     "resize-observer-polyfill": "^1.5.1",
-    "tailwindcss": "^3.2.7",
-    "ts-jest": "^29.4.0"
+    "tailwindcss": "^3.4.19",
+    "vite": "^8.0.14",
+    "vitest": "^4.1.7"
   }
 }

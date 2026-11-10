@@ -8,8 +8,8 @@ import VariantAgeDistributionChart from '../VariantAgeDistributionChart';
 
 window.ResizeObserver = ResizeObserver;
 
-jest.mock('../../data/api');
-jest.mock('recharts');
+vi.mock('../../data/api');
+vi.mock('recharts');
 
 describe('<VariantAgeDistributionChart>', () => {
   it('dataset0 renders correctly', async () => {

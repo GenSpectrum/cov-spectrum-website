@@ -2,8 +2,8 @@ import { useQuery } from '../../helpers/query-hook';
 import { renderHook } from '@testing-library/react';
 import { usePangoLineageFullName, usePangoLineageWithAlias } from '../pangoLineageAlias';
 
-jest.mock('../../helpers/query-hook');
-const useQueryMock = useQuery as jest.Mock;
+vi.mock('../../helpers/query-hook');
+const useQueryMock = useQuery as vi.Mock;
 
 describe('usePangoLineageFullName', () => {
   beforeEach(() => {

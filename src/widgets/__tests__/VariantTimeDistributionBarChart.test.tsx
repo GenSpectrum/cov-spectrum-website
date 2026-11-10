@@ -7,8 +7,8 @@ import { renderAndWaitToMatchSnapshot } from '../../helpers/testing/renderAndWai
 
 window.ResizeObserver = ResizeObserver;
 
-jest.mock('recharts');
-jest.mock('../../data/api');
+vi.mock('recharts');
+vi.mock('../../data/api');
 
 describe('<VariantTimeDistributionBarChart>', () => {
   it('dataset0 renders correctly', async () => {

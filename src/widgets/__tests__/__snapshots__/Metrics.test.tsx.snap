@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<Metric> renders correctly 1`] = `
+exports[`<Metric> > renders correctly 1`] = `
 <div
   className="flex flex-col justify-end pr-1 mb-2 overflow-hidden h-full w-auto"
   id="metric-with-tooltip"
@@ -11,7 +11,7 @@ exports[`<Metric> renders correctly 1`] = `
     <div
       className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
       style={
-        Object {
+        {
           "color": undefined,
         }
       }
@@ -19,7 +19,7 @@ exports[`<Metric> renders correctly 1`] = `
       0.59
     </div>
     <div
-      className="sc-ggWZvA CgeUe self-end"
+      className="sc-hKVpXn bDCElU self-end"
     />
   </div>
   <div
@@ -54,7 +54,7 @@ exports[`<Metric> renders correctly 1`] = `
           stroke="currentColor"
           strokeWidth="0"
           style={
-            Object {
+            {
               "color": undefined,
             }
           }

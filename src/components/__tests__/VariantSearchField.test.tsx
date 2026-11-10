@@ -8,17 +8,17 @@ import { PangoCountSampleData } from '../../data/sample/PangoCountSampleDataset'
 import { _fetchAggSamples } from '../../data/api-lapis';
 import { isValidPangoLineageQuery } from '../../data/VariantSelector';
 
-jest.mock('../../data/sample/PangoCountSampleDataset');
-const fromApiMock = jest.fn();
+vi.mock('../../data/sample/PangoCountSampleDataset');
+const fromApiMock = vi.fn();
 PangoCountSampleData.fromApi = fromApiMock;
 
-jest.mock('../../data/api-lapis', () => ({
-  _fetchAggSamples: jest.fn(),
+vi.mock('../../data/api-lapis', () => ({
+  _fetchAggSamples: vi.fn(),
 }));
-const fetchAggSamplesMock = _fetchAggSamples as jest.Mock;
+const fetchAggSamplesMock = _fetchAggSamples as vi.Mock;
 
-const onVariantSelectMock = jest.fn();
-const triggerSearchMock = jest.fn();
+const onVariantSelectMock = vi.fn();
+const triggerSearchMock = vi.fn();
 
 function getSearchTextField() {
   return screen.getByRole('combobox');
@@ -36,7 +36,7 @@ async function renderVariantSearchField() {
 
 describe('VariantSearchField', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    vi.resetAllMocks();
     fromApiMock.mockResolvedValue({ payload: [] });
     fetchAggSamplesMock.mockResolvedValue([]);
   });

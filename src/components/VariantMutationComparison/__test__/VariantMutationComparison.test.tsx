@@ -8,16 +8,16 @@ import React from 'react';
 import { formatVariantDisplayName } from '../../../data/VariantSelector';
 import userEvent from '@testing-library/user-event';
 
-jest.mock('../../../data/api');
+vi.mock('../../../data/api');
 
-jest.mock('../VariantMutationComparisonHook');
-const useOverlappingDataMock = useOverlappingData as jest.Mock;
+vi.mock('../VariantMutationComparisonHook');
+const useOverlappingDataMock = useOverlappingData as vi.Mock;
 
-jest.mock('../../../data/VariantSelector');
-const formatVariantDisplayNameMock = formatVariantDisplayName as jest.Mock;
+vi.mock('../../../data/VariantSelector');
+const formatVariantDisplayNameMock = formatVariantDisplayName as vi.Mock;
 
 window.ResizeObserver = ResizeObserver;
-jest.mock('react-resize-detector');
+vi.mock('react-resize-detector');
 
 describe('VariantMutationComparison', () => {
   beforeEach(() => {

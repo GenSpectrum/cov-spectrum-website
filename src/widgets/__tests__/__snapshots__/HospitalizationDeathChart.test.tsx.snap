@@ -1,9 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] = `
+exports[`<HospitalizationDeathChart> > (died plot) dataset1 renders correctly 1`] = `
 <div
   style={
-    Object {
+    {
       "height": "400px",
       "width": "600px",
     }
@@ -12,7 +12,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
   <div
     className="relative h-full"
     ref={
-      Object {
+      {
         "current": null,
       }
     }
@@ -21,7 +21,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
       className="h-full"
     >
       <div
-        className="sc-bRKDuR fSLEEj"
+        className="sc-bdDsCe lagCuH"
       >
         <h3
           className="my-0 pr-10 pt-0 text-gray-500"
@@ -29,17 +29,17 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
           Estimated probability of death by age group
         </h3>
         <div
-          className="sc-hvigdm kGdHkJ"
+          className="sc-gtcBCx hgkiLq"
         >
           <div
-            className="sc-fhHczv cPPmXF"
+            className="sc-dkXsAU eJEKNj"
           />
           <div
             className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
           >
             <div>
               <div
-                className="sc-dTvVRJ gVabPg"
+                className="sc-eCQgVK bnSJhu"
               >
                 <svg
                   height={30}
@@ -75,9 +75,9 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   />
                 </svg>
                 <div
-                  className="sc-jwTyAe dDQtJR"
+                  className="sc-jSppWd jDNgzI"
                   style={
-                    Object {
+                    {
                       "color": "#1F407A",
                     }
                   }
@@ -86,7 +86,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                 </div>
               </div>
               <div
-                className="sc-dTvVRJ gVabPg"
+                className="sc-eCQgVK bnSJhu"
               >
                 <svg
                   height={30}
@@ -126,9 +126,9 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   </g>
                 </svg>
                 <div
-                  className="sc-jwTyAe dDQtJR"
+                  className="sc-jSppWd jDNgzI"
                   style={
-                    Object {
+                    {
                       "color": "#7f8c8d",
                     }
                   }
@@ -147,7 +147,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                 <div
                   className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
                   style={
-                    Object {
+                    {
                       "color": "#1F407A",
                     }
                   }
@@ -155,7 +155,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   0
                 </div>
                 <div
-                  className="sc-ggWZvA CgeUe self-end"
+                  className="sc-hKVpXn bDCElU self-end"
                 />
               </div>
               <div
@@ -190,7 +190,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                       stroke="currentColor"
                       strokeWidth="0"
                       style={
-                        Object {
+                        {
                           "color": undefined,
                         }
                       }
@@ -219,7 +219,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                 <div
                   className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
                   style={
-                    Object {
+                    {
                       "color": "#1F407A",
                     }
                   }
@@ -227,7 +227,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                   110
                 </div>
                 <div
-                  className="sc-ggWZvA CgeUe self-end"
+                  className="sc-hKVpXn bDCElU self-end"
                 />
               </div>
               <div
@@ -262,7 +262,7 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
                       stroke="currentColor"
                       strokeWidth="0"
                       style={
-                        Object {
+                        {
                           "color": undefined,
                         }
                       }
@@ -289,10 +289,10 @@ exports[`<HospitalizationDeathChart> (died plot) dataset1 renders correctly 1`] 
 </div>
 `;
 
-exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correctly 1`] = `
+exports[`<HospitalizationDeathChart> > (hospitalized plot) dataset1 renders correctly 1`] = `
 <div
   style={
-    Object {
+    {
       "height": "400px",
       "width": "600px",
     }
@@ -301,7 +301,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
   <div
     className="relative h-full"
     ref={
-      Object {
+      {
         "current": null,
       }
     }
@@ -310,7 +310,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
       className="h-full"
     >
       <div
-        className="sc-bRKDuR fSLEEj"
+        className="sc-bdDsCe lagCuH"
       >
         <h3
           className="my-0 pr-10 pt-0 text-gray-500"
@@ -318,17 +318,17 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
           Estimated probability of hospitalization by age group
         </h3>
         <div
-          className="sc-hvigdm kGdHkJ"
+          className="sc-gtcBCx hgkiLq"
         >
           <div
-            className="sc-fhHczv cPPmXF"
+            className="sc-dkXsAU eJEKNj"
           />
           <div
             className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
           >
             <div>
               <div
-                className="sc-dTvVRJ gVabPg"
+                className="sc-eCQgVK bnSJhu"
               >
                 <svg
                   height={30}
@@ -364,9 +364,9 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   />
                 </svg>
                 <div
-                  className="sc-jwTyAe dDQtJR"
+                  className="sc-jSppWd jDNgzI"
                   style={
-                    Object {
+                    {
                       "color": "#1F407A",
                     }
                   }
@@ -375,7 +375,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                 </div>
               </div>
               <div
-                className="sc-dTvVRJ gVabPg"
+                className="sc-eCQgVK bnSJhu"
               >
                 <svg
                   height={30}
@@ -415,9 +415,9 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   </g>
                 </svg>
                 <div
-                  className="sc-jwTyAe dDQtJR"
+                  className="sc-jSppWd jDNgzI"
                   style={
-                    Object {
+                    {
                       "color": "#7f8c8d",
                     }
                   }
@@ -436,7 +436,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                 <div
                   className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
                   style={
-                    Object {
+                    {
                       "color": "#1F407A",
                     }
                   }
@@ -444,7 +444,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   2
                 </div>
                 <div
-                  className="sc-ggWZvA CgeUe self-end"
+                  className="sc-hKVpXn bDCElU self-end"
                 />
               </div>
               <div
@@ -479,7 +479,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                       stroke="currentColor"
                       strokeWidth="0"
                       style={
-                        Object {
+                        {
                           "color": undefined,
                         }
                       }
@@ -508,7 +508,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                 <div
                   className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
                   style={
-                    Object {
+                    {
                       "color": "#1F407A",
                     }
                   }
@@ -516,7 +516,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                   108
                 </div>
                 <div
-                  className="sc-ggWZvA CgeUe self-end"
+                  className="sc-hKVpXn bDCElU self-end"
                 />
               </div>
               <div
@@ -551,7 +551,7 @@ exports[`<HospitalizationDeathChart> (hospitalized plot) dataset1 renders correc
                       stroke="currentColor"
                       strokeWidth="0"
                       style={
-                        Object {
+                        {
                           "color": undefined,
                         }
                       }

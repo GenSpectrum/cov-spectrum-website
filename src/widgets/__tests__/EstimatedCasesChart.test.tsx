@@ -6,7 +6,7 @@ import { EstimatedCasesChart } from '../EstimatedCasesChart';
 import { renderAndWaitToMatchSnapshot } from '../../helpers/testing/renderAndWaitToMatchSnapshot';
 
 window.ResizeObserver = ResizeObserver;
-jest.mock('recharts');
+vi.mock('recharts');
 
 describe('<EstimatedCasesChart>', () => {
   it('dataset0 renders correctly', async () => {

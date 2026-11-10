@@ -68,6 +68,7 @@ export const AdvancedFiltersPanel = ({ onClose }: Props) => {
 };
 
 function Host(props: { setHost: (host: string[]) => void; host: string[] }) {
+  const { setHost, host } = props;
   const { data: allHosts } = useQuery(
     () => HostService.allHosts.then(hs => hs.sort((a, b) => a.localeCompare(b))),
     []
@@ -75,9 +76,9 @@ function Host(props: { setHost: (host: string[]) => void; host: string[] }) {
 
   const changeHostSelect = useCallback(
     (selected: ReadonlyArray<{ label: string; value: string }>) => {
-      props.setHost(selected.map(option => option.value));
+      setHost(selected.map(option => option.value));
     },
-    [props.setHost]
+    [setHost]
   );
 
   if (!allHosts) {
@@ -94,17 +95,17 @@ function Host(props: { setHost: (host: string[]) => void; host: string[] }) {
   return (
     <>
       <h2>Hosts</h2>
-      <button className='underline cursor-pointer mr-2' onClick={() => props.setHost(allHosts)}>
+      <button className='underline cursor-pointer mr-2' onClick={() => setHost(allHosts)}>
         Select all
       </button>
       {' | '}
-      <button className='underline cursor-pointer ml-2' onClick={() => props.setHost([HUMAN])}>
+      <button className='underline cursor-pointer ml-2' onClick={() => setHost([HUMAN])}>
         Select human
       </button>
       {' | '}
       <button
         className='underline cursor-pointer ml-2'
-        onClick={() => props.setHost(allHosts.filter(h => h !== HUMAN))}
+        onClick={() => setHost(allHosts.filter(h => h !== HUMAN))}
       >
         Select non-human
       </button>
@@ -112,7 +113,7 @@ function Host(props: { setHost: (host: string[]) => void; host: string[] }) {
         isMulti
         closeMenuOnSelect={false}
         options={allHosts.map(toSelectOption)}
-        value={props.host.map(toSelectOption)}
+        value={host.map(toSelectOption)}
         placeholder='Select hosts...'
         onChange={changeHostSelect}
         className='mt-2'
@@ -126,14 +127,15 @@ function SequenceQuality(props: {
   setQcSelector: React.Dispatch<React.SetStateAction<QcSelector>>;
   qcSelector: QcSelector;
 }) {
+  const { setQcSelector, qcSelector } = props;
   const setQcValue = useCallback(
     (field: any, type: QcFieldType, valueString?: string) => {
-      props.setQcSelector(prev => ({
+      setQcSelector(prev => ({
         ...prev,
         [field]: type === 'integer' ? Utils.safeParseInt(valueString) : Utils.safeParseFloat(valueString),
       }));
     },
-    [props.setQcSelector]
+    [setQcSelector]
   );
 
   return (
@@ -147,27 +149,27 @@ function SequenceQuality(props: {
       </ExternalLink>
       .
       <div>
-        <button className='underline cursor-pointer mr-2' onClick={() => props.setQcSelector({})}>
+        <button className='underline cursor-pointer mr-2' onClick={() => setQcSelector({})}>
           Select all
         </button>
         {' | '}
         <button
           className='underline cursor-pointer mr-2'
-          onClick={() => props.setQcSelector({ nextcladeQcOverallScoreTo: 29 })}
+          onClick={() => setQcSelector({ nextcladeQcOverallScoreTo: 29 })}
         >
           Select good
         </button>
         {' | '}
         <button
           className='underline cursor-pointer mr-2'
-          onClick={() => props.setQcSelector({ nextcladeQcOverallScoreTo: 99 })}
+          onClick={() => setQcSelector({ nextcladeQcOverallScoreTo: 99 })}
         >
           Select good and mediocre
         </button>
         {' | '}
         <button
           className='underline cursor-pointer mr-2'
-          onClick={() => props.setQcSelector({ nextcladeQcOverallScoreFrom: 100 })}
+          onClick={() => setQcSelector({ nextcladeQcOverallScoreFrom: 100 })}
         >
           Select only bad
         </button>
@@ -178,14 +180,14 @@ function SequenceQuality(props: {
           <input
             className='border w-24'
             type='number'
-            value={props.qcSelector[fromField] ?? ''}
+            value={qcSelector[fromField] ?? ''}
             onChange={e => setQcValue(fromField, type, e.target.value)}
           />{' '}
           -{' '}
           <input
             className='border w-24'
             type='number'
-            value={props.qcSelector[toField] ?? ''}
+            value={qcSelector[toField] ?? ''}
             onChange={e => setQcValue(toField, type, e.target.value)}
           />
         </div>

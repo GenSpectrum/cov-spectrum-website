@@ -10,13 +10,13 @@ import {
 } from '../testUtils';
 import { MutationProportionData } from '../../../data/MutationProportionDataset';
 
-jest.mock('../../../data/api');
+vi.mock('../../../data/api');
 
-let mutationProportionDataMock = jest.fn() as jest.Mock<ReturnType<typeof MutationProportionData.fromApi>>;
+let mutationProportionDataMock = vi.fn() as vi.Mock<ReturnType<typeof MutationProportionData.fromApi>>;
 MutationProportionData.fromApi = mutationProportionDataMock;
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
 describe('useMultiChartData', () => {

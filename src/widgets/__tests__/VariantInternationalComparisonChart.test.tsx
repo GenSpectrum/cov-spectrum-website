@@ -7,7 +7,7 @@ import { VariantInternationalComparisonChart } from '../VariantInternationalComp
 import { renderAndWaitToMatchSnapshot } from '../../helpers/testing/renderAndWaitToMatchSnapshot';
 
 window.ResizeObserver = ResizeObserver;
-jest.mock('recharts');
+vi.mock('recharts');
 
 describe('<VariantInternationalComparisonChart>', () => {
   it('dataset0 renders correctly', async () => {
