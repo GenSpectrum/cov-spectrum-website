@@ -7,8 +7,8 @@ import { globalDateCache } from '../../../../helpers/date-cache';
 import { getTestWasteWaterDataWithLocation } from '../testHelpers';
 import { MemoryRouter } from 'react-router';
 
-jest.mock('recharts', () => {
-  const OriginalModule = jest.requireActual('recharts');
+vi.mock('recharts', async importOriginal => {
+  const OriginalModule = await importOriginal<typeof import('recharts')>();
   return {
     ...OriginalModule,
     ResponsiveContainer: ({ children }: any) => (
@@ -20,17 +20,17 @@ jest.mock('recharts', () => {
 });
 
 window.ResizeObserver = ResizeObserver;
-jest.mock('react-resize-detector');
-const useResizeDetectorMock = useResizeDetector as jest.Mock<ReturnType<typeof useResizeDetector>>;
+vi.mock('react-resize-detector');
+const useResizeDetectorMock = useResizeDetector as vi.Mock<ReturnType<typeof useResizeDetector>>;
 
 beforeEach(() => {
-  jest.resetAllMocks();
+  vi.resetAllMocks();
 });
 
-jest.mock('../WasteWaterSamplingSitesHooks');
-const useWasteWaterDataMock = useWasteWaterData as jest.Mock;
-const filterByDateRangeMock = filterByDateRange as jest.Mock;
-const minMaxDateMock = getMaxDateRange as jest.Mock;
+vi.mock('../WasteWaterSamplingSitesHooks');
+const useWasteWaterDataMock = useWasteWaterData as vi.Mock;
+const filterByDateRangeMock = filterByDateRange as vi.Mock;
+const minMaxDateMock = getMaxDateRange as vi.Mock;
 
 describe('WasteWaterSamplingSites', function () {
   it('should display loader when no data is provided', function () {
@@ -46,7 +46,7 @@ describe('WasteWaterSamplingSites', function () {
   });
 
   it('should display Widgets for all locations', function () {
-    useResizeDetectorMock.mockReturnValue({ width: 500, ref: jest.fn() });
+    useResizeDetectorMock.mockReturnValue({ width: 500, ref: vi.fn() });
 
     const data = getTestWasteWaterDataWithLocation(
       ['2021-01-01', '2021-01-02', '2021-01-03', '2021-01-04'],
@@ -73,7 +73,7 @@ describe('WasteWaterSamplingSites', function () {
   });
 
   it('should display only filtered locations', function () {
-    useResizeDetectorMock.mockReturnValue({ width: 500, ref: jest.fn() });
+    useResizeDetectorMock.mockReturnValue({ width: 500, ref: vi.fn() });
 
     const data = getTestWasteWaterDataWithLocation(
       ['2021-01-01', '2021-01-02', '2021-01-03', '2021-01-04'],

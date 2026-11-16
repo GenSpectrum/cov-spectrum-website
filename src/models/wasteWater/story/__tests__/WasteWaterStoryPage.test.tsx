@@ -3,12 +3,12 @@ import { render, screen } from '@testing-library/react';
 import { WasteWaterStoryPage } from '../WasteWaterStoryPage';
 import { MemoryRouter } from 'react-router';
 import ResizeObserver from 'resize-observer-polyfill';
-import { useWasteWaterData } from '../WasteWaterSamplingSitesHooks';
+import { filterByDateRange, getMaxDateRange, useWasteWaterData } from '../WasteWaterSamplingSitesHooks';
 import { useResizeDetector } from 'react-resize-detector';
 import { getTestWasteWaterDataWithLocation } from '../testHelpers';
 
-jest.mock('recharts', () => {
-  const OriginalModule = jest.requireActual('recharts');
+vi.mock('recharts', async importOriginal => {
+  const OriginalModule = await importOriginal<typeof import('recharts')>();
   return {
     ...OriginalModule,
     ResponsiveContainer: ({ children }: any) => (
@@ -20,28 +20,26 @@ jest.mock('recharts', () => {
 });
 
 window.ResizeObserver = ResizeObserver;
-jest.mock('react-resize-detector');
-const useResizeDetectorMock = useResizeDetector as jest.Mock<ReturnType<typeof useResizeDetector>>;
+vi.mock('react-resize-detector');
+const useResizeDetectorMock = useResizeDetector as vi.Mock<ReturnType<typeof useResizeDetector>>;
 
-jest.mock('../WasteWaterSamplingSitesHooks');
-const useWasteWaterDataMock = useWasteWaterData as jest.Mock;
-
-// Mock the filterByDateRange and getMaxDateRange functions as well
-jest.mock('../WasteWaterSamplingSitesHooks', () => ({
-  useWasteWaterData: jest.fn(),
-  filterByDateRange: jest.fn(),
-  getMaxDateRange: jest.fn(),
+vi.mock('../WasteWaterSamplingSitesHooks', () => ({
+  useWasteWaterData: vi.fn(),
+  filterByDateRange: vi.fn(),
+  getMaxDateRange: vi.fn(),
 }));
 
-const { filterByDateRange, getMaxDateRange } = require('../WasteWaterSamplingSitesHooks');
+const useWasteWaterDataMock = useWasteWaterData as vi.Mock;
+const filterByDateRangeMock = filterByDateRange as vi.Mock;
+const getMaxDateRangeMock = getMaxDateRange as vi.Mock;
 
 beforeEach(() => {
-  jest.resetAllMocks();
-  useResizeDetectorMock.mockReturnValue({ width: 500, ref: jest.fn() });
+  vi.resetAllMocks();
+  useResizeDetectorMock.mockReturnValue({ width: 500, ref: vi.fn() });
 
   // Setup default mocks
-  filterByDateRange.mockImplementation((data: any) => data || []);
-  getMaxDateRange.mockReturnValue({
+  filterByDateRangeMock.mockImplementation((data: any) => data || []);
+  getMaxDateRangeMock.mockReturnValue({
     dateFrom: { string: '2021-01-01' },
     dateTo: { string: '2021-12-31' },
   });

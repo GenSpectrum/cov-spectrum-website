@@ -1,16 +1,16 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
+exports[`<EstimatedCasesChart> > dataset0 renders correctly 1`] = `
 <div
   className="relative h-full"
   ref={
-    Object {
+    {
       "current": null,
     }
   }
 >
   <div
-    className="sc-bRKDuR fSLEEj"
+    className="sc-bdDsCe lagCuH"
   >
     <h3
       className="my-0 pr-10 pt-0 text-gray-500"
@@ -66,7 +66,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
           </span>
           <span
             className="MuiTypography-root MuiTypography-body1 MuiFormControlLabel-label css-rizt0-MuiTypography-root"
-            style={Object {}}
+            style={{}}
           >
             Log scale
           </span>
@@ -74,10 +74,10 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
       </div>
     </h3>
     <div
-      className="sc-hvigdm kGdHkJ"
+      className="sc-gtcBCx hgkiLq"
     >
       <div
-        className="sc-fhHczv cPPmXF"
+        className="sc-dkXsAU eJEKNj"
       />
       <div
         className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
@@ -92,7 +92,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
             <div
               className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
               style={
-                Object {
+                {
                   "color": "#1F407A",
                 }
               }
@@ -100,7 +100,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
               NaN
             </div>
             <div
-              className="sc-ggWZvA CgeUe self-end"
+              className="sc-hKVpXn bDCElU self-end"
             />
           </div>
           <div
@@ -135,7 +135,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
                   stroke="currentColor"
                   strokeWidth="0"
                   style={
-                    Object {
+                    {
                       "color": undefined,
                     }
                   }
@@ -164,7 +164,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
             <div
               className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
               style={
-                Object {
+                {
                   "color": "#7f8c8d",
                 }
               }
@@ -172,7 +172,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
               NaN-NaN
             </div>
             <div
-              className="sc-ggWZvA CgeUe self-end"
+              className="sc-hKVpXn bDCElU self-end"
             />
           </div>
           <div
@@ -207,7 +207,7 @@ exports[`<EstimatedCasesChart> dataset0 renders correctly 1`] = `
                   stroke="currentColor"
                   strokeWidth="0"
                   style={
-                    Object {
+                    {
                       "color": undefined,
                     }
                   }

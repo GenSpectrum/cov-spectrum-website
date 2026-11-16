@@ -4,8 +4,8 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { globalDateCache } from '../../../../helpers/date-cache';
 import { getTestWasteWaterDataWithLocation } from '../testHelpers';
 
-jest.mock('../../loading');
-const getDataMock = getData as jest.Mock;
+vi.mock('../../loading');
+const getDataMock = getData as vi.Mock;
 
 describe('useWasteWaterData', function () {
   beforeEach(() => {

@@ -6,8 +6,8 @@ import { WasteWaterTimeseriesSummaryDataset } from '../types';
 import { getTicks } from '../../../helpers/ticks';
 import { formatDate } from '../../../widgets/VariantTimeDistributionLineChartInner';
 
-jest.mock('recharts', () => {
-  const OriginalModule = jest.requireActual('recharts');
+vi.mock('recharts', async importOriginal => {
+  const OriginalModule = await importOriginal<typeof import('recharts')>();
   return {
     ...OriginalModule,
     ResponsiveContainer: ({ children }: any) => (
@@ -19,7 +19,7 @@ jest.mock('recharts', () => {
 });
 
 window.ResizeObserver = ResizeObserver;
-jest.mock('react-resize-detector');
+vi.mock('react-resize-detector');
 
 describe('WasteWaterLocationTimeChart', function () {
   it('should display no data message when no data is provided', function () {

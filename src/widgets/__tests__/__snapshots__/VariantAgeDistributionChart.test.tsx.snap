@@ -1,10 +1,10 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
+exports[`<VariantAgeDistributionChart> > dataset0 renders correctly 1`] = `
 <div
   ref={[Function]}
   style={
-    Object {
+    {
       "height": "100%",
     }
   }
@@ -12,7 +12,7 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
   <div
     className="relative h-full"
     ref={
-      Object {
+      {
         "current": null,
       }
     }
@@ -29,10 +29,10 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
         <div />
       </h3>
       <div
-        className="sc-hvigdm kGdHkJ"
+        className="sc-gtcBCx hgkiLq"
       >
         <div
-          className="sc-fhHczv cPPmXF"
+          className="sc-dkXsAU eJEKNj"
         />
         <div
           className="pl-2 pt-3 flex lg:inline flex-row w-full sm:w-auto md:justify-end sm:flex-col sm:pt-0 sm:pl-1 sm:pb-8  md:mt-auto"
@@ -47,7 +47,7 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
               <div
                 className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
                 style={
-                  Object {
+                  {
                     "color": "#1F407A",
                   }
                 }
@@ -55,7 +55,7 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
                 2.08%
               </div>
               <div
-                className="sc-ggWZvA CgeUe self-end"
+                className="sc-hKVpXn bDCElU self-end"
               />
             </div>
             <div
@@ -90,7 +90,7 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
                     stroke="currentColor"
                     strokeWidth="0"
                     style={
-                      Object {
+                      {
                         "color": undefined,
                       }
                     }
@@ -119,7 +119,7 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
               <div
                 className="w-auto grow-0 text-xl sm:text-3xl md:text-5xl"
                 style={
-                  Object {
+                  {
                     "color": "#7f8c8d",
                   }
                 }
@@ -127,7 +127,7 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
                 13
               </div>
               <div
-                className="sc-ggWZvA CgeUe self-end"
+                className="sc-hKVpXn bDCElU self-end"
               />
             </div>
             <div
@@ -162,7 +162,7 @@ exports[`<VariantAgeDistributionChart> dataset0 renders correctly 1`] = `
                     stroke="currentColor"
                     strokeWidth="0"
                     style={
-                      Object {
+                      {
                         "color": undefined,
                       }
                     }

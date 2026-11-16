@@ -8,9 +8,9 @@ import { renderAndWaitToMatchSnapshot } from '../../helpers/testing/renderAndWai
 
 window.ResizeObserver = ResizeObserver;
 
-jest.mock('react-resize-detector');
-jest.mock('recharts');
-jest.mock('../../data/api');
+vi.mock('react-resize-detector');
+vi.mock('recharts');
+vi.mock('../../data/api');
 
 describe('<HospitalizationDeathChart>', () => {
   (['hospitalized', 'died'] as ('hospitalized' | 'died')[]).forEach(field =>

@@ -12,9 +12,10 @@ export interface AsyncQueryEncoder<T> {
   decode(encoded: URLSearchParams, signal: AbortSignal | undefined): Promise<T>;
 }
 
-export class ZodQueryEncoder<S extends zod.ZodSchema<any>, T extends zod.input<S> & zod.output<S>>
-  implements QueryEncoder<T>
-{
+export class ZodQueryEncoder<
+  S extends zod.ZodSchema<any>,
+  T extends zod.input<S> & zod.output<S>,
+> implements QueryEncoder<T> {
   _decodedType!: T;
 
   constructor(
@@ -42,8 +43,7 @@ export class AsyncZodQueryEncoder<
   ExternalType,
   Schema extends zod.ZodSchema<any>,
   InternalType extends zod.infer<Schema>,
-> implements AsyncQueryEncoder<ExternalType>
-{
+> implements AsyncQueryEncoder<ExternalType> {
   _decodedType!: ExternalType;
   private zodQueryEncoder: ZodQueryEncoder<Schema, InternalType>;
 

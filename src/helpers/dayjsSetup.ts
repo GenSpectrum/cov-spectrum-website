@@ -4,9 +4,9 @@ import utc from 'dayjs/plugin/utc';
 import minMax from 'dayjs/plugin/minMax';
 import weekday from 'dayjs/plugin/weekday';
 import calendar from 'dayjs/plugin/calendar';
+import 'dayjs/locale/de';
 
 export default function setupDayjs() {
-  require('dayjs/locale/de');
   dayjs.locale('de');
   dayjs.extend(isoWeek);
   dayjs.extend(utc);
