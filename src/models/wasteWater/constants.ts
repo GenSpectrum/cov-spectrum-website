@@ -29,7 +29,8 @@ export const wastewaterVariantColors: {
   'NB.1.8.1': '#b3cb23',
   'XFG': '#bd8e23',
   'BA.3.2': '#2EE6D6', //improv not in sync with covariants.org
-  'PJ.2.1': '#2a2470', // improv not in sync with covariants.org 
+  'PJ.2.1': '#2a2470', // improv not in sync with covariants.org
+  'ST.1': '#FF6B5A', // improv not in sync with covariants.org 
   'undetermined': '#969696',
 };
 
